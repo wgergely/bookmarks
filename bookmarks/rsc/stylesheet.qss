@@ -1,0 +1,563 @@
+QWidget {{
+	background-color: {BG};
+	color: {TEXT};
+	border-width: 0;
+	border: none;
+	margin: 0;
+	padding: 0;
+	outline: 0;
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+}}
+
+QWidget:disabled {{
+	color: {DISABLED_TEXT};
+}}
+
+QStackedWidget {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	background-color: {SEPARATOR};
+}}
+QStackedWidget:focus {{
+	border-color: {BLUE};
+}}
+
+QGroupBox {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	border: {ROW_SEPARATOR}px solid {TRANSPARENT_BLACK};
+	border-radius: {RADIUS}px;
+	background-color: {TRANSPARENT_BLACK};
+}}
+QGroupBox::title {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {SMALL_FONT_SIZE}px;
+	color: {SECONDARY_TEXT};
+  subcontrol-origin: margin;
+  subcontrol-position: top center; /* position at the top center */
+  margin: 0 {RADIUS}px;
+}}
+QGroupBox:focus {{
+	border: {ROW_SEPARATOR}px solid {BLUE};
+}}
+
+QSplitter:handle {{
+	border: {ROW_SEPARATOR}px solid {TRANSPARENT_BLACK};
+}}
+
+QStatusBar {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {SMALL_FONT_SIZE}px;
+	color: {TEXT};
+	background-color: {SEPARATOR};
+	padding: {RADIUS}px;
+	margin: {RADIUS}px;
+}}
+QStatusBar::item {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	text-align: center;
+	padding: {RADIUS}px;
+	margin: {RADIUS}px;
+	border: none;
+}}
+
+
+QCheckBox {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	height: {MEDIUM_FONT_SIZE}px;
+	border-radius: {RADIUS}px;
+	background-color: {DARK_BG};
+	margin: 0;
+	padding: {RADIUS}px;
+	color: {SECONDARY_TEXT};
+}}
+QCheckBox::indicator {{
+	height: {MEDIUM_FONT_SIZE}px;
+	width: {MEDIUM_FONT_SIZE}px;
+	border: none;
+	border-radius: {RADIUS}px;
+}}
+QCheckBox::indicator:unchecked {{
+	image: url({UNCHECKED});
+}}
+QCheckBox::indicator:checked  {{
+	image: url({CHECKED});
+}}
+QCheckBox:checked  {{
+	color: {SELECTED_TEXT};
+	background-color: {GREEN};
+}}
+
+
+QRadioButton {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	color: {SECONDARY_TEXT};
+	background-color: {TRANSPARENT};
+	margin: 0;
+	padding: {RADIUS}px;
+}}
+QRadioButton:disabled {{
+	color: {DISABLED_TEXT};
+	background-color: {DARK_BG};
+}}
+QRadioButton::indicator {{
+	height: {MEDIUM_FONT_SIZE}px;
+	width: {MEDIUM_FONT_SIZE}px;
+	border: none;
+	border-radius: {ROW_SEPARATOR}px;
+}}
+QRadioButton::indicator:unchecked {{
+	background-color: {DARK_BG};
+}}
+QRadioButton::indicator:checked  {{
+	background-color: {SECONDARY_TEXT};
+}}
+
+
+QPushButton {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	color: {TEXT};
+	text-align: center;
+	padding-left: {MEDIUM_FONT_SIZE}px;
+	padding-right: {MEDIUM_FONT_SIZE}px;
+	border-style: none;
+	background-color: {SELECTED_BG};
+	border-radius: {RADIUS_SM}px;
+}}
+QPushButton:disabled {{
+	color: {SECONDARY_TEXT};
+	background-color: {DARK_BG};
+	border: {ROW_SEPARATOR}px solid {DARK_BG};
+}}
+QPushButton:hover {{
+	color: {SELECTED_TEXT};
+	background-color: {SELECTED_BG};
+	border: {ROW_SEPARATOR}px solid {SELECTED_BG};
+}}
+QPushButton:pressed {{
+	color: {SELECTED_TEXT};
+	background-color: {DARK_BG};
+	border: {ROW_SEPARATOR}px solid {DARK_BG};
+}}
+QPushButton:focus {{
+	border: {ROW_SEPARATOR}px solid {BLUE};
+}}
+
+
+QComboBox {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	color: {TEXT};
+	text-align: left;
+	padding-left: {MEDIUM_FONT_SIZE}px;
+	padding-right: {MEDIUM_FONT_SIZE}px;
+	border-style: solid;
+	border: {ROW_SEPARATOR}px solid {TRANSPARENT_BLACK};
+	background-color: {DARK_BG};
+	border-radius: {RADIUS}px;
+}}
+QComboBox:focus {{
+	border: {ROW_SEPARATOR}px solid {BLUE};
+}}
+
+QComboBox::drop-down {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	width: 0;
+	height: 0;
+	padding: 0;
+	margin: {ROW_SEPARATOR}px;
+	border-width: 0;
+	border-style: none;
+	border-radius: {RADIUS_SM}px;
+}}
+QComboBox QListView::item {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	color: {TEXT};
+	background-color: {DARK_BG};
+	padding-left: {RADIUS_SM}px;
+}}
+QComboBox QListView::item:hover {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	color: {SELECTED_TEXT};
+	background-color: {SELECTED_BG};
+}}
+
+QComboBox:hover {{
+		color: {SELECTED_TEXT};
+}}
+QComboBox:disabled {{
+	color: {DISABLED_TEXT};
+	background-color: {DARK_BG};
+}}
+QComboBox:on {{
+	color: {DISABLED_TEXT};
+	background-color: {TRANSPARENT_BLACK};
+}}
+
+
+QLineEdit {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	background-color: {DARK_BG};
+	border: none;
+	border-radius: {ROW_SEPARATOR}px;
+	padding: {RADIUS}px;
+}}
+QLineEdit:disabled {{
+	background-color: {DARK_BG};
+	color: {DISABLED_TEXT};
+}}
+
+.QTextEdit {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	background-color: {DARK_BG};
+	border: none;
+	border-radius: {ROW_SEPARATOR}px;
+	padding: {RADIUS}px;
+}}
+.QTextEdit:disabled {{
+	background-color: {DARK_BG};
+	color: {DISABLED_TEXT};
+}}
+
+QScrollBar {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	background: {SEPARATOR};
+	width: {SCROLLBAR_SIZE}px;
+	height: {SCROLLBAR_SIZE}px;
+}}
+QScrollBar::handle {{
+	background: {DARK_BG};
+	border: none;
+	min-height: {SCROLLBAR_MINHEIGHT}px;
+}}
+
+QScrollBar::add-page,
+QScrollBar::add-line,
+QScrollBar::sub-page,
+QScrollBar::up-arrow,
+QScrollBar::down-arrow,
+QScrollBar::sub-line {{
+	background: {SEPARATOR};
+}}
+
+
+QTableWidget,
+QListWidget,
+QListView {{
+	border-radius: {RADIUS}px;
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	background: {DARK_BG};
+}}
+QTableWidget::item,
+QListWidget::item,
+QListView::item {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	outline: 0;
+	color: {TEXT};
+  background: {BG};
+	border-bottom: {ROW_SEPARATOR}px solid {TRANSPARENT_BLACK};
+}}
+QTableWidget::item:hover,
+QListWidget::item:hover,
+QListView::item:hover {{
+  background: {SELECTED_BG};
+}}
+QTableWidget::item:selected,
+QListWidget::item:selected,
+QListView::item:selected {{
+	background: {SELECTED_BG};
+}}
+QTableWidget::item:selected:hover,
+QListWidget::item:selected:hover,
+QListView::item:selected:hover {{
+	background: {SELECTED_BG};
+}}
+QTableWidget::item:disabled,
+QListWidget::item:disabled,
+QListView::item:disabled {{
+  color: {DISABLED_TEXT};
+	background: {TRANSPARENT};
+}}
+QTableWidget::indicator,
+QListWidget::indicator,
+QListView::indicator {{
+	width: {MEDIUM_FONT_SIZE}px;
+	height: {MEDIUM_FONT_SIZE}px;
+	border-radius: {RADIUS}px;
+	background-color: {DARK_BG};
+	margin-left: {RADIUS}px;
+	margin-right: {RADIUS}px;
+	subcontrol-position: center;
+}}
+QTableWidget::indicator:checked,
+QListWidget::indicator:checked,
+QListView::indicator:checked {{
+	background: {GREEN};
+}}
+
+TableWidget {{
+	background: {TRANSPARENT};
+	background-color: {TRANSPARENT};
+	selection-background-color: {TRANSPARENT};
+}}
+TableWidget::item:selected,
+TableWidget::item:hover,
+TableWidget::item:disabled,
+TableWidget::item {{
+		padding: {INDICATOR_WIDTH}px;
+		background-color: {TRANSPARENT};
+		background: {TRANSPARENT};
+}}
+
+QHeaderView::section {{
+	font-family: "{SECONDARY_FONT}";
+	font-size: {SMALL_FONT_SIZE}px;
+	background-color: {TRANSPARENT};
+	alignment: center;
+	text-align: center;
+	color: {SECONDARY_TEXT};
+	border: none;
+}}
+
+
+QTreeView {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	background-color: {DARK_BG};
+	border: none;
+}}
+QTreeView::item {{
+	border: none;
+}}
+QTreeView::item:hover {{
+  background: {BG};
+}}
+QTreeView::item:focus {{
+  background: {TRANSPARENT};
+}}
+QTreeView::item:selected {{
+	background: {SELECTED_BG};
+}}
+QTreeView:branch {{
+	background-color: {DARK_BG};
+	border: none;
+	border-image: none;
+}}
+QTreeView::branch:focus {{
+  background: {TRANSPARENT};
+}}
+QTreeView:branch:selected {{
+	background: {SELECTED_BG};
+}}
+QTreeView:branch:!open:has-children {{
+  image: url("{BRANCH_CLOSED}");
+}}
+QTreeView:branch:open:has-children:!has-siblings,
+QTreeView:branch:open:has-children:has-siblings {{
+  image: url("{BRANCH_OPEN}");
+}}
+
+QLabel {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	background-color: {TRANSPARENT};
+}}
+QLabel:disabled {{
+	background-color: {TRANSPARENT};
+	color: {DISABLED_TEXT};
+}}
+
+QMenu {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+  background-color: {DARK_BG};
+	menu-scrollable: 1;
+	icon-size: {CONTEXT_MENU_HEIGHT}px;
+}}
+QMenu::separator {{
+	height: {ROW_SEPARATOR}px;
+	margin-top: {INDICATOR_WIDTH}px;
+	margin-bottom: {INDICATOR_WIDTH}px;
+  background-color: {TRANSPARENT_BLACK};
+  color: {TRANSPARENT};
+	min-width: 1000px;
+}}
+QMenu::item {{
+	height: {CONTEXT_MENU_HEIGHT}px;
+	margin: 0px;
+	padding-right: {MARGIN}px;
+	padding-left: {MARGIN}px;
+}}
+QMenu::icon {{
+	padding: {CONTEXT_MENU_ICON_PADDING}px;
+}}
+
+QMenu::item:selected {{
+	color: {SELECTED_TEXT};
+  background-color: {SELECTED_BG};
+}}
+QMenu::item:disabled {{
+	color: {DISABLED_TEXT};
+  background-color: {TRANSPARENT_BLACK};
+}}
+QMenu::right-arrow {{
+  margin: 0;
+	padding-right: {MARGIN}px;
+  image: url({ARROW_RIGHT});
+  height: {MARGIN}px;
+  width: {MARGIN}px;
+}}
+QMenu::keystroke {{
+  color: red;
+}}
+QMenu::shortcut {{
+  color: red;
+}}
+
+QToolTip {{
+	opacity: 200;
+	font-family: "{SECONDARY_FONT}";
+	font-size: {SMALL_FONT_SIZE}px;
+  background-color: {DARK_BG};
+	padding: {RADIUS}px;
+	color: {SECONDARY_TEXT};
+	border: {ROW_SEPARATOR}px solid {SEPARATOR};
+}}
+
+CheckBoxButton,
+DragIndicatorButton {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	background-color: {TEXT};
+	margin: 0 0 0 0;
+	padding: 0 0 0 0;
+}}
+CheckBoxButton:disabled,
+DragIndicatorButton:disabled {{
+	background-color: {TRANSPARENT};
+}}
+
+TodoEditors,
+TodoItemWidget,
+TodoItemEditor {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	color: {DARK_BG};
+	background-color: {TRANSPARENT};
+	border-radius: {RADIUS}px;
+	border: {ROW_SEPARATOR}px solid {TRANSPARENT};
+}}
+TodoEditors:disabled,
+TodoItemWidget:disabled,
+TodoItemEditor:disabled {{
+	color: {GREEN};
+}}
+TodoItemEditor:focus {{
+	border: {ROW_SEPARATOR}px solid {TRANSPARENT_BLACK};
+}}
+
+TodoEditorWidget QScrollBar {{
+	background: {TRANSPARENT};
+	border: none;
+	border-radius: 0;
+	width:{RADIUS}px;
+	height: {RADIUS}px;
+}}
+TodoEditorWidget QScrollBar:vertical,
+TodoEditorWidget QScrollBar:horizontal {{
+	background: {TEXT};
+	border: none;
+}}
+TodoEditorWidget QScrollBar::handle {{
+	background: {SECONDARY_TEXT};
+	border: none;
+	border-radius: {RADIUS}px;
+	border: none;
+	max-height: 250;
+	min-height: {MARGIN}px;
+}}
+
+TodoEditorWidget QScrollBar::add-page,
+TodoEditorWidget QScrollBar::sub-page,
+TodoEditorWidget QScrollBar::add-line,
+TodoEditorWidget QScrollBar::up-arrow,
+TodoEditorWidget QScrollBar::down-arrow,
+TodoEditorWidget QScrollBar::sub-line {{
+	background: {TEXT};
+	border: none;
+	border-radius: 0;
+}}
+
+LineEdit,
+LineEdit:disabled {{
+    background-color: {TRANSPARENT};
+    font-family: "{PRIMARY_FONT}";
+    font-size: {MEDIUM_FONT_SIZE}px;
+    border-bottom: {ROW_SEPARATOR}px solid {TRANSPARENT};
+    border-radius: 0;
+    color: {TEXT};
+}}
+
+LineEdit:disabled {{
+	color: {DISABLED_TEXT};
+}}
+
+
+LineEdit:!read-only:focus{{
+    border-bottom: {ROW_SEPARATOR}px solid {GREEN};
+}}
+
+LogView {{
+		color: {SECONDARY_TEXT};
+    margin: 0;
+    padding: 0;
+    border-radius: {RADIUS}px;
+    font-size: {SMALL_FONT_SIZE}px;
+    background-color: {LOG_BG};
+}}
+
+.ListWidget {{
+	border-radius: {RADIUS}px;
+	border: {ROW_SEPARATOR}px solid {DARK_BG};
+	border-radius: {RADIUS}px;
+}}
+.ListWidget:focus {{
+		border: {ROW_SEPARATOR}px solid {BLUE};
+}}
+
+PropertiesWidget,
+PropertiesWidget > QWidget,
+PropertiesWidget > QScrollArea,
+PropertiesWidget > QScrollArea > QWidget,
+PropertiesWidget > QScrollArea > QWidget > QWidget {{
+	background: {BG};
+	background-color: {BG};
+}}
+
+MainWidget  {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	background-color: {SEPARATOR};
+}}
+PluginWidget {{
+	font-family: "{PRIMARY_FONT}";
+	font-size: {MEDIUM_FONT_SIZE}px;
+	background-color: {SEPARATOR};
+}}
+
+QWidget#mainRow {{
+	background-color: {DARK_BG};
+}}

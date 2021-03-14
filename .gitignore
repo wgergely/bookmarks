@@ -1,0 +1,16 @@
+# Byte-compiled / optimized / DLL files
+*.py[co]
+*$py.class
+
+# Distribution / packaging
+build-scripts/win/bin/*.exe
+.Python
+.DS_Store
+build/
+develop-eggs/
+dist/
+eggs/
+.eggs/
+lib/
+MANIFEST
+debug.log

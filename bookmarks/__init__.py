@@ -10,7 +10,7 @@ import platform
 author = 'Gergely Wootsch'
 website = 'https://gergely-wootsch.com'
 email = 'hello@gergely-wootsch.com'
-__version__ = u'0.4.5'
+__version__ = u'0.4.6'
 
 def get_info():
     return (

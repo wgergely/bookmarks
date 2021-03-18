@@ -1201,3 +1201,13 @@ class BaseContextMenu(QtWidgets.QMenu):
                 'action': func,
                 'disabled': disabled,
             }
+            
+    def import_json_menu(self):
+        k = u'Import Asset Properties'
+        if k not in self.menu:
+            self.menu[k] = collections.OrderedDict()
+
+        self.menu[k][key()] = {
+            'text': u'Import data from JSON',
+            'action': actions.import_asset_properties_from_json,
+        }

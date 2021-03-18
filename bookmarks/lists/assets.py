@@ -36,6 +36,7 @@ class AssetsWidgetContextMenu(contextmenu.BaseContextMenu):
         self.sg_link_assets_menu()
         self.sg_link_asset_menu()
         self.sg_url_menu()
+        self.import_json_menu()
 
         self.separator()
 

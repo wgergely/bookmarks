@@ -34,6 +34,11 @@ def init_environment():
         raise EnvironmentError(
             'Cannot load the plugin, because "{}" does not exist.'.format(os.environ[k]))
 
+    # Add the package root to bin
+    r = os.path.normapth(os.environ[k])
+    if r not in os.environ['PATH']:
+        os.environ['PATH'] = r + ';' + os.environ['PATH']
+
     # Add install directories to sys.path
     for d in ('shared', 'bin'):
         p = os.path.normpath(os.environ[k] + os.path.sep + d)

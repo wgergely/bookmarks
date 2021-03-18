@@ -243,17 +243,17 @@ class ToggleArchivedButton(BaseControlButton):
             self.hide()
 
 
-class SimpleModeButton(BaseControlButton):
+class ToggleInlineIcons(BaseControlButton):
     def __init__(self, parent=None):
-        super(SimpleModeButton, self).__init__(
+        super(ToggleInlineIcons, self).__init__(
             u'showbuttons',
             u'Show/Hide List Buttons  -  {}'.format(shortcuts.string(
                 shortcuts.MainWidgetShortcuts, shortcuts.HideInlineButtons)),
             parent=parent
         )
 
-        self.clicked.connect(common.signals.toggleSimpleButton)
-        common.signals.toggleSimpleButton.connect(self.update)
+        self.clicked.connect(common.signals.toggleInlineIcons)
+        common.signals.toggleInlineIcons.connect(self.update)
 
     def state(self):
         if not current_widget():
@@ -773,7 +773,7 @@ class ListControlWidget(QtWidgets.QWidget):
         self.favourite_button = ToggleFavouriteButton(parent=self)
         self.slack_button = SlackButton(parent=self)
         self.slack_button.setHidden(True)
-        self.simple_mode_button = SimpleModeButton(parent=self)
+        self.inline_icons_button = ToggleInlineIcons(parent=self)
 
         self.layout().addWidget(self.bookmarks_button, 1)
         self.layout().addWidget(self.assets_button, 1)
@@ -781,7 +781,7 @@ class ListControlWidget(QtWidgets.QWidget):
 
         self.layout().addStretch()
 
-        self.layout().addWidget(self.simple_mode_button)
+        self.layout().addWidget(self.inline_icons_button)
         self.layout().addSpacing(common.INDICATOR_WIDTH())
         self.layout().addWidget(self.generate_thumbnails_button)
         self.layout().addSpacing(common.INDICATOR_WIDTH())

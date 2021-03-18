@@ -150,6 +150,7 @@ class MainWidget(QtWidgets.QWidget):
             l.model().sourceModel().modelDataResetRequested)
         f.model().sourceModel().taskFolderChanged.connect(
             l.model().sourceModel().check_task)
+            
         #####################################################
         # Stacked widget navigation
         b.activated.connect(
@@ -304,7 +305,7 @@ class MainWidget(QtWidgets.QWidget):
         connect(shortcuts.ToggleActive, actions.toggle_active_item)
 
         connect(shortcuts.HideInlineButtons,
-                common.signals.toggleSimpleButton)
+                common.signals.toggleInlineIcons)
 
         connect(shortcuts.OpenSlack, actions.show_slack)
         connect(shortcuts.OpenPreferences, actions.show_preferences)

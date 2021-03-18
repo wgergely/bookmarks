@@ -164,7 +164,7 @@ class Signals(QtCore.QObject):
     toggleFilterButton = QtCore.Signal()
     toggleSequenceButton = QtCore.Signal()
     toggleArchivedButton = QtCore.Signal()
-    toggleSimpleButton = QtCore.Signal()
+    toggleInlineIcons = QtCore.Signal()
     toggleFavouritesButton = QtCore.Signal()
     toggleMakeThumbnailsButton = QtCore.Signal()
 
@@ -188,7 +188,7 @@ class Signals(QtCore.QObject):
         self.toggleFilterButton.connect(actions.toggle_filter_editor)
         self.toggleSequenceButton.connect(actions.toggle_sequence)
         self.toggleArchivedButton.connect(actions.toggle_archived_items)
-        self.toggleSimpleButton.connect(actions.toggle_simple)
+        self.toggleInlineIcons.connect(actions.toggle_inline_icons)
         self.toggleFavouritesButton.connect(actions.toggle_favourite_items)
         self.toggleMakeThumbnailsButton.connect(actions.toggle_make_thumbnails)
         self.databaseValueUpdated.connect(actions.asset_identifier_changed)

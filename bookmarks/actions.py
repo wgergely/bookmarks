@@ -402,10 +402,8 @@ def toggle_favourite_items():
 
 @common.error
 @common.debug
-def toggle_simple():
+def toggle_inline_icons():
     if instance() is None:
-        return
-    if instance().stackedwidget.currentIndex() not in (common.FileTab, common.FavouriteTab):
         return
 
     widget = instance().widget()
@@ -415,7 +413,7 @@ def toggle_simple():
     widget.set_buttons_hidden(state)
 
     widget.model().sourceModel().sort_data()
-    widget.reset()
+    # widget.reset()
 
 
 @common.error

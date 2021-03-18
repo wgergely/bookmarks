@@ -265,17 +265,15 @@ class AssetsWidget(base.ThreadedBaseWidget):
         return 6
 
     @QtCore.Slot(QtCore.QModelIndex)
-    def save_activated(self, index):
-        """Sets the current item item as ``active`` and
-        emits the ``activeChanged`` signal.
-
-        """
+    def set_active(self, index):
         if not index.isValid():
             return
         if not index.data(common.ParentPathRole):
             return
-        actions.set_active(settings.AssetKey, index.data(
-            common.ParentPathRole)[-1])
+        actions.set_active(
+            settings.AssetKey,
+            index.data(common.ParentPathRole)[-1]
+        )
 
     def get_hint_string(self):
         return u'No assets. Select right-click -> Add Asset to create a new one.'

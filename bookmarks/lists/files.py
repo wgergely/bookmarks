@@ -571,25 +571,27 @@ class FilesModel(base.BaseModel):
                 yield entry
 
     def task(self):
-        """Current key to the data dictionary."""
         return settings.active(settings.TaskKey)
 
     @QtCore.Slot(unicode)
     def set_task(self, val):
         """Slot used to set the model's task folder.
 
-        The current task folder is saved in the `local_settings` for future
-        retrieval.
+        The active task folder is stored in `settings` and
+        can be retried using `self.task()`.
 
         """
         if self.task() == val:
             return
 
+        # Trigger a model load if the task folder data has never been loaded
         if val not in self.INTERNAL_MODEL_DATA or not self.INTERNAL_MODEL_DATA[val]:
             actions.set_active(settings.TaskKey, val)
             self.__resetdata__()
             return True
 
+        # Set the current task folder and emit the begin and end reset signals
+        # to notify the ui of the data change
         self.beginResetModel()
         actions.set_active(settings.TaskKey, val)
         self.endResetModel()
@@ -602,15 +604,14 @@ class FilesModel(base.BaseModel):
         """Data type refers to the internal data set exposed to the model.
 
         We have two types implemented: A `FileItem` type and a `SequenceItem`
-        type. The latter is used to display image sequences as a single
+        type. The latter is used to display image sequences as single
         collapsed items.
 
-        The type can be toggled by the user via the `dataTypeChanged` signal.
-        The selections are unique to each task folder and are persistent
-        across sessions (the selection is stored in the `local_settings`).
+        The type can be toggled with the `dataTypeChanged` signal.
 
         """
         task = self.task()
+
         if task not in self._datatype:
             key = u'{}/{}'.format(
                 self.__class__.__name__,
@@ -624,29 +625,26 @@ class FilesModel(base.BaseModel):
             val = common.SequenceItem if val not in (
                 common.FileItem, common.SequenceItem) else val
             self._datatype[task] = val
+
         return self._datatype[task]
 
     @common.debug
     @common.error
     @QtCore.Slot(int)
     def set_data_type(self, val):
-        """Sets the data type to `FileItem` or `SequenceItem`.
-
-        """
         if val not in (common.FileItem, common.SequenceItem):
-            raise TypeError('Wrong data type.')
+            s = u'Invalid data type value.'
+            raise TypeError(s)
 
         task = self.task()
         if task not in self._datatype:
             self._datatype[task] = val
+
+        # We don't have to do anything as the type is already the to `val`
         if self._datatype[task] == val:
             return
 
-        if val not in (common.FileItem, common.SequenceItem):
-            s = u'Invalid value {} ({}) provided for `data_type`'.format(
-                val, type(val))
-            raise ValueError(s)
-
+        # Set the data type to the local settings file
         key = u'{}/{}'.format(
             self.__class__.__name__,
             self.task()
@@ -657,6 +655,7 @@ class FilesModel(base.BaseModel):
             key=key,
             section=settings.UIStateSection
         )
+
         self.beginResetModel()
         self._datatype[task] = val
         self.endResetModel()
@@ -772,17 +771,21 @@ class FilesWidget(base.ThreadedBaseWidget):
         self.activate(self.selectionModel().currentIndex())
 
     @QtCore.Slot(QtCore.QModelIndex)
-    def save_activated(self, index):
-        """Sets the current file as the ``active`` file."""
-        parent_role = index.data(common.ParentPathRole)
-        if not parent_role:
+    def set_active(self, index):
+        if not index.isValid():
             return
+        if not index.data(QtCore.Qt.StatusTipRole):
+            return
+        if not index.data(common.ParentPathRole):
+            return
+
+        parent_role = index.data(common.ParentPathRole)
         if len(parent_role) < 5:
             return
 
         file_info = QtCore.QFileInfo(index.data(QtCore.Qt.StatusTipRole))
         filepath = parent_role[5] + u'/' + \
-            common.get_sequence_startpath(file_info.fileName())
+            common.get_sequence_endpath(file_info.fileName())
 
         actions.set_active(settings.FileKey, filepath)
 

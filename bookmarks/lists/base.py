@@ -1246,7 +1246,7 @@ class BaseListWidget(QtWidgets.QListView):
         """Slot called to reselect a previously saved selection."""
 
         proxy = self.model()
-        if not proxy.rowCount():
+        if not proxy or not proxy.rowCount():
             return
 
         model = proxy.sourceModel()

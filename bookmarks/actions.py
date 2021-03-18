@@ -1394,3 +1394,65 @@ def toggle_session_mode():
         settings.active(settings.TaskKey))
 
     common.signals.sessionModeChanged.emit(common.SESSION_MODE)
+
+
+@common.error
+@common.debug
+def import_asset_properties_from_json():
+    source, _ = QtWidgets.QFileDialog.getOpenFileName(
+        caption=u'Select *.json file to import properties from',
+        filter=u'*.json'
+    )
+    if not source:
+        return
+
+    from . import main
+    from . import ui
+
+    with open(source, 'r') as f:
+        v = f.read()
+
+    import_data = json.loads(v)
+
+
+    mbox = ui.MessageBox(u'Applying properties...', no_buttons=True)
+    mbox.open()
+    try:
+        w = main.instance().stackedwidget.widget(common.AssetTab)
+        model = w.model().sourceModel()
+        data = model.model_data()
+
+        # Iterate over shots and assets and apply properties to any partial matches
+        for k in import_data:
+            mbox_title = u'Applying properties ({})...'
+            mbox.set_labels(mbox_title)
+            QtWidgets.QApplication.instance().processEvents()
+
+            for idx in data:
+                if k.lower() not in data[idx][QtCore.Qt.StatusTipRole].lower():
+                    continue
+
+                mbox.set_labels((mbox_title, data[idx][QtCore.Qt.DisplayRole]))
+                QtWidgets.QApplication.instance().processEvents()
+
+                server, job, root = data[idx][common.ParentPathRole][0:3]
+                if not all((server, job, root)):
+                    continue
+
+                with bookmark_db.transactions(server, job, root) as db:
+                    # Iterate over all our implemented asset keys and check if
+                    # we have any data to import
+                    for key in bookmark_db.TABLES[bookmark_db.AssetTable]:
+                        if key not in import_data[k]:
+                            continue
+
+                        db.setValue(
+                            data[idx][QtCore.Qt.StatusTipRole],
+                            key,
+                            import_data[k][key],
+                            table=bookmark_db.AssetTable,
+                        )
+    except:
+        raise
+    finally:
+        mbox.close()

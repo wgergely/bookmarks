@@ -298,20 +298,14 @@ class BookmarksWidget(base.ThreadedBaseWidget):
             return 0
         return 6
 
-    @common.error
-    @common.debug
     @QtCore.Slot(QtCore.QModelIndex)
-    def save_activated(self, index, reset=False):
-        """Saves the activated index to ``Settings``."""
-        if not reset:
-            if not index.isValid() and not reset:
-                return
-            if not index.data(common.ParentPathRole):
-                return
-            server, job, root = index.data(common.ParentPathRole)
-        else:
-            server, job, root = None, None, None
+    def set_active(self, index):
+        if not index.isValid():
+            return
+        if not index.data(common.ParentPathRole):
+            return
 
+        server, job, root = index.data(common.ParentPathRole)
         actions.set_active(settings.ServerKey, server)
         actions.set_active(settings.JobKey, job)
         actions.set_active(settings.RootKey, root)

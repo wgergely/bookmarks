@@ -1115,8 +1115,6 @@ class BaseListWidget(QtWidgets.QListView):
 
         self.interruptRequested.connect(model.set_interrupt_requested)
 
-        model.activeChanged.connect(self.save_activated)
-
         self.filter_editor.finished.connect(proxy.set_filter_text)
         self.filter_editor.finished.connect(proxy.filterTextChanged)
 
@@ -1154,11 +1152,14 @@ class BaseListWidget(QtWidgets.QListView):
         if index.flags() & common.MarkedAsArchived:
             return
 
-        # We will only request a tab change
+        # If the item is already active, we'll emit the standard activated
+        # signal. This will change tabs but won't trigger a model update
         if index.flags() & common.MarkedAsActive:
             self.activated.emit(index)
             return
 
+        # If the current item is not active, we'll unset the current active
+        # item's MarkedAsActive flag and emit the activeChanged signal.
         proxy = self.model()
         model = proxy.sourceModel()
         data = model.model_data()
@@ -1168,11 +1169,14 @@ class BaseListWidget(QtWidgets.QListView):
 
         source_index = proxy.mapToSource(index)
         idx = source_index.row()
+
+        # Unset flag
         data[idx][common.FlagsRole] = data[idx][common.FlagsRole] | common.MarkedAsActive
         self.update(index)
 
+        self.set_active(index)
         self.activated.emit(index)
-        model.activeChanged.emit(model.active_index())
+        model.activeChanged.emit(source_index)
 
     def deactivate(self, index):
         """Unsets the active flag."""
@@ -1192,8 +1196,11 @@ class BaseListWidget(QtWidgets.QListView):
         self.update(index)
 
     @QtCore.Slot(QtCore.QModelIndex)
-    def save_activated(self, index):
-        """Implemented only in the asset, bookmark and file list widgets.
+    def set_active(self, index):
+        """Set a newly activated item the globally active item.
+
+        The active items are stored in `settings.active` and are used by the
+        models to locate items to load (see `BaseModel.parent_paths()`).
 
         """
         pass
@@ -1263,11 +1270,16 @@ class BaseListWidget(QtWidgets.QListView):
             for n in xrange(proxy.rowCount()):
                 index = proxy.index(n, 0)
 
+                if not index.isValid():
+                    continue
+                p = index.data(QtCore.Qt.StatusTipRole)
+                if not p:
+                    continue
+
                 if data_type == common.SequenceItem:
-                    current = common.proxy_path(
-                        index.data(QtCore.Qt.StatusTipRole))
+                    current = common.proxy_path(p)
                 else:
-                    current = index.data(QtCore.Qt.StatusTipRole)
+                    current = p
 
                 if current != previous:
                     continue

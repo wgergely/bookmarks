@@ -171,12 +171,12 @@ class MainWidget(QtWidgets.QWidget):
         )
         a.activated.connect(
             lambda x: common.signals.assetActivated.emit(
-                x.data(common.ParentPathRole)[3]
+                *x.data(common.ParentPathRole)[0:4]
             )
         )
         f.activated.connect(
             lambda x: common.signals.fileActivated.emit(
-                x.data(common.ParentPathRole)[-1]
+                *x.data(common.ParentPathRole)[0:5]
             )
         )
 

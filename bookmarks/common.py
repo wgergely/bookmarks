@@ -182,6 +182,11 @@ class Signals(QtCore.QObject):
     assetsLinked = QtCore.Signal()
     shotgunEntityDataReady = QtCore.Signal(str, list)
 
+    # General activation signals
+    bookmarkActivated = QtCore.Signal(unicode, unicode, unicode)
+    assetActivated = QtCore.Signal(unicode)
+    fileActivated = QtCore.Signal(unicode)
+
     def __init__(self, parent=None):
         super(Signals, self).__init__(parent=parent)
         from . import actions

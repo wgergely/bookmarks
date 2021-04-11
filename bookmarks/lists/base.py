@@ -924,11 +924,23 @@ class BaseModel(QtCore.QAbstractListModel):
         return 1
 
     def rowCount(self, parent=QtCore.QModelIndex()):
-        return len(list(self.model_data()))
+        k = self.task()
+        if k not in self.INTERNAL_MODEL_DATA:
+            return 0
+        t = self.data_type()
+        if t not in self.INTERNAL_MODEL_DATA[k]:
+            return 0
+
+        return len(self.INTERNAL_MODEL_DATA[k][t])
 
     def index(self, row, column, parent=QtCore.QModelIndex()):
         k = self.task()
+        if k not in self.INTERNAL_MODEL_DATA:
+            return QtCore.QModelIndex()
         t = self.data_type()
+        if t not in self.INTERNAL_MODEL_DATA[k]:
+            return QtCore.QModelIndex()
+
         if row not in self.INTERNAL_MODEL_DATA[k][t]:
             return QtCore.QModelIndex()
         ptr = weakref.ref(self.INTERNAL_MODEL_DATA[k][t][row])

@@ -367,13 +367,13 @@ class FilePropertiesWidget(base.PropertiesWidget):
         # Get generic shot and sequence numbers from the current asset name
         match = re.match(
             ur'.*(?:SQ|SEQ|SEQUENCE)([0-9]+).*',
-            _get('asset'),
+            self.parent_folder(),
             re.IGNORECASE
         )
         seq = match.group(1) if match else u'###'
         match = re.match(
             ur'.*(?:SH|SHOT)([0-9]+).*',
-            _get('asset'),
+            self.parent_folder(),
             re.IGNORECASE
         )
         shot = match.group(1) if match else u'###'

@@ -15,7 +15,6 @@ from .. import contextmenu
 from .. import shortcuts
 from .. import actions
 from ..templates import templates
-from ..templates import actions as template_actions
 from ..properties import base
 
 

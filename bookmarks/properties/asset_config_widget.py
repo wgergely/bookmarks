@@ -89,10 +89,14 @@ class TokenEditor(QtWidgets.QDialog):
             host=u'localhost',
             task=u'ANIM',
             mode=u'ANIM',
-            element=u'Tower',
+            element=u'MyElement',
             ext=images.THUMBNAIL_FORMAT,
-            prefix=u'ABC',
-            asset='test'
+            prefix=u'MYP',
+            asset='MyAsset',
+            seq='###',
+            shot='###',
+            sequence='###',
+            project=self.job,
         )
         for k in sorted(v.keys()):
             token = u'{{{}}}'.format(k)

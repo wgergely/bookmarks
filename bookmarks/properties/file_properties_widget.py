@@ -29,6 +29,7 @@ Example
             ).open()
 
 """
+import re
 import os
 import functools
 import _scandir
@@ -265,7 +266,7 @@ class FilePropertiesWidget(base.PropertiesWidget):
 
     def set_file(self, file):
         self._file = file
-        
+
         self.version_editor.setText(u'')
 
         if not common.is_collapsed(file):
@@ -363,6 +364,20 @@ class FilePropertiesWidget(base.PropertiesWidget):
 
             return _strip(v)
 
+        # Get generic shot and sequence numbers from the current asset name
+        match = re.match(
+            ur'.*(?:SQ|SEQ|SEQUENCE)([0-9]+).*',
+            _get('asset'),
+            re.IGNORECASE
+        )
+        seq = match.group(1) if match else u'###'
+        match = re.match(
+            ur'.*(?:SH|SHOT)([0-9]+).*',
+            _get('asset'),
+            re.IGNORECASE
+        )
+        shot = match.group(1) if match else u'###'
+
         v = config.expand_tokens(
             template,
             asset_root=asset_root,
@@ -373,6 +388,10 @@ class FilePropertiesWidget(base.PropertiesWidget):
             task=_get('folder'),
             mode=_get('folder'),
             element=_get('element'),
+            seq=seq,
+            shot=shot,
+            sequence=seq,
+            project=self.job,
             ext=_get('extension').lower()
         )
         v = _strip(v)

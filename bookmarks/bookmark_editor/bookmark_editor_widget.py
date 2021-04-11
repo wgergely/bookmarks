@@ -64,7 +64,6 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         self.bookmark_editor = None
         self.bookmark_add_button = None
 
-
         self.setObjectName(u'BookmarksEditorWidget')
         self.setWindowTitle(u'Add Bookmarks')
 

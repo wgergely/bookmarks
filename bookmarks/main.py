@@ -4,7 +4,6 @@
 This is where the UI is assembled and signals & slots are connected.
 
 """
-import gc
 import functools
 from PySide2 import QtWidgets, QtGui, QtCore
 
@@ -16,13 +15,11 @@ from . import topbar
 from . import shortcuts
 from . import actions
 from . import statusbar
-from . import bookmark_db
 
 from .lists import base
 from .lists import assets
 from .lists import bookmarks
 from .lists import favourites
-from .lists import delegate
 from .lists import files
 from .lists import tasks
 
@@ -150,7 +147,7 @@ class MainWidget(QtWidgets.QWidget):
             l.model().sourceModel().modelDataResetRequested)
         f.model().sourceModel().taskFolderChanged.connect(
             l.model().sourceModel().check_task)
-            
+
         #####################################################
         # Stacked widget navigation
         b.activated.connect(
@@ -165,6 +162,23 @@ class MainWidget(QtWidgets.QWidget):
         self.taskswidget.connect_signals()
 
         common.signals.tabChanged.connect(common.signals.updateButtons)
+
+        # Standard activation signals
+        b.activated.connect(
+            lambda x: common.signals.bookmarkActivated.emit(
+                *x.data(common.ParentPathRole)[0:3]
+            )
+        )
+        a.activated.connect(
+            lambda x: common.signals.assetActivated.emit(
+                x.data(common.ParentPathRole)[3]
+            )
+        )
+        f.activated.connect(
+            lambda x: common.signals.fileActivated.emit(
+                x.data(common.ParentPathRole)[-1]
+            )
+        )
 
     @QtCore.Slot()
     @common.error

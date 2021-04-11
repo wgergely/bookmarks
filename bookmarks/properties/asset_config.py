@@ -49,7 +49,6 @@ import OpenImageIO
 from .. import log
 from .. import bookmark_db
 from .. import images
-from .. import common
 
 
 ASSET_CONFIG_KEY = u'asset_config'
@@ -161,6 +160,16 @@ DEFAULT_ASSET_CONFIG = {
             'name': u'Element Only',
             'value': u'{element}.{ext}',
             'description': 'File name with the element name.'
+        },
+        5: {
+            'name': u'Custom 1',
+            'value': u'MyCustomFile.ma',
+            'description': 'A custom file name'
+        },
+        6: {
+            'name': u'Custom 2',
+            'value': u'MyCustomFile.ma',
+            'description': 'A custom file name'
         }
     },
     AssetFolderConfig: {

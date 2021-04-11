@@ -184,8 +184,8 @@ class Signals(QtCore.QObject):
 
     # General activation signals
     bookmarkActivated = QtCore.Signal(unicode, unicode, unicode)
-    assetActivated = QtCore.Signal(unicode)
-    fileActivated = QtCore.Signal(unicode)
+    assetActivated = QtCore.Signal(unicode, unicode, unicode, unicode)
+    fileActivated = QtCore.Signal(unicode, unicode, unicode, unicode, unicode)
 
     def __init__(self, parent=None):
         super(Signals, self).__init__(parent=parent)

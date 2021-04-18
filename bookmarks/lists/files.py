@@ -585,21 +585,8 @@ class FilesModel(base.BaseModel):
             return
 
         k = val
-        d = datacache.get_task_data(p, k)
-
-        # Trigger a model load if the task folder data has never been loaded
-        if not d[common.FileItem]:
-            actions.set_active(settings.TaskKey, val)
-            self.__resetdata__()
-            return True
-
-        # Set the current task folder and emit the begin and end reset signals
-        # to notify the ui of the data change
-        self.beginResetModel()
         actions.set_active(settings.TaskKey, val)
-        self.endResetModel()
-
-        return False
+        self.__resetdata__()
 
     @common.debug
     @common.error
@@ -859,7 +846,7 @@ class FilesWidget(base.ThreadedBaseWidget):
         # Change task folder
         task = v.replace(parent_path, u'').strip(u'/').split(u'/')[0]
         if k != task:
-            update = model.set_task(task)
+            model.set_task(task)
 
         data = model.model_data()
         t = model.data_type()
@@ -867,8 +854,8 @@ class FilesWidget(base.ThreadedBaseWidget):
             v = common.proxy_path(v)
 
         # Refresh the model if
-        if update and len(data) < limit:
-            model.modelDataResetRequested.emit()
+        if len(data) < limit:
+            model.__resetdata__(force=True)
 
         # Delay the selection to let the model process events
         QtCore.QTimer.singleShot(300, functools.partial(self.select_item, v, role=QtCore.Qt.StatusTipRole))

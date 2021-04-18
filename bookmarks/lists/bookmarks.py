@@ -6,11 +6,11 @@ in `local_settings`.
 from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
-from .. import bookmark_db
 from ..threads import threads
 from .. import contextmenu
 from .. import settings
 from .. import actions
+from .. import datacache
 
 from . import base
 from . import delegate
@@ -110,9 +110,10 @@ class BookmarksModel(base.BaseModel):
                 QtCore.Qt.ItemIsEnabled |
                 QtCore.Qt.ItemIsSelectable)
 
+        p = self.parent_path()
         _k = self.task()
         t = self.data_type()
-        data = self.INTERNAL_MODEL_DATA[_k][t]
+        data = datacache.get_data(p, _k, t)
 
         for k, v in common.BOOKMARKS.iteritems():
             if not all(v.values()):
@@ -197,6 +198,9 @@ class BookmarksModel(base.BaseModel):
                 continue
 
         self.activeChanged.emit(self.active_index())
+
+    def parent_path(self):
+        return (u'bookmarks',)
 
     def data_type(self):
         return common.FileItem

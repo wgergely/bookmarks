@@ -244,11 +244,6 @@ class TaskFolderModel(base.BaseModel):
         """Bookmarks and assets are static. But files will be any number of """
         self.reset_monitor()
 
-        self.INTERNAL_MODEL_DATA[0] = common.DataDict({
-            common.FileItem: common.DataDict(),
-            common.SequenceItem: common.DataDict()
-        })
-
         flags = (
             QtCore.Qt.ItemIsSelectable |
             QtCore.Qt.ItemIsEnabled |

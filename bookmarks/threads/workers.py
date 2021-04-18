@@ -17,6 +17,7 @@ from .. import log
 from .. import common
 from .. import images
 from .. import bookmark_db
+from .. import datacache
 from ..shotgun import shotgun
 
 
@@ -245,6 +246,7 @@ class BaseWorker(QtCore.QObject):
 
         model = get_model(self.queue)
 
+        p = model.parent_path()
         k = model.task()
         source = common.proxy_path(source)
         n = -1
@@ -253,10 +255,10 @@ class BaseWorker(QtCore.QObject):
         t2 = common.FileItem if t1 == common.SequenceItem else common.SequenceItem
 
         for t in (t1, t2):
-            ref = weakref.ref(model.INTERNAL_MODEL_DATA[k][t])
+            ref = datacache.get_data_ref(p, k, t)
             for idx in ref():
                 if not ref():
-                    raise RuntimeError('Model mutated during update.')
+                    raise RuntimeError('Data changed during update.')
                 # Impose a limit on how many items we'll querry
                 n += 1
                 if n > 99999:
@@ -334,6 +336,8 @@ class BaseWorker(QtCore.QObject):
 
         sortrole = model.sort_role()
         sortorder = model.sort_order()
+
+        p = model.parent_path()
         k = model.task()
         t = ref().data_type
 
@@ -343,7 +347,7 @@ class BaseWorker(QtCore.QObject):
             sortorder
         )
 
-        model.INTERNAL_MODEL_DATA[k][t] = d
+        datacache.set_data(p, k, t, d)
 
         if model.data_type() == t:
             self.dataTypeSorted.emit(t)

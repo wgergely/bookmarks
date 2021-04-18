@@ -19,11 +19,13 @@ LOCAL_SETTINGS_FILE_NAME = u'local_settings.ini'
 
 _instance = None
 
+
 def instance():
     global _instance
     if _instance is None:
         _instance = Settings()
     return _instance
+
 
 def delete():
     global _instance
@@ -113,7 +115,6 @@ CurrentSelectionKey = u'CurrentSelection'
 SGUserKey = u'SGUser'
 SGStorageKey = u'SGStorage'
 SGTypeKey = u'SGType'
-
 
 
 def strip(s):
@@ -356,7 +357,7 @@ class Settings(QtCore.QSettings):
 
         """
         s = os.path.sep
-        p =  os.pardir
+        p = os.pardir
 
         config = __file__ + s + p + s + \
             u'rsc' + s + u'templates' + s + u'persistent_bookmarks.json'

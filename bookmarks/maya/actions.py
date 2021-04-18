@@ -4,7 +4,6 @@
 """
 import sys
 import uuid
-import weakref
 import time
 import os
 import re
@@ -22,6 +21,7 @@ from .. import ui
 from .. import settings
 from .. import main
 from .. import actions
+from .. import datacache
 from . import base as mbase
 
 from .. import __path__ as package_path
@@ -540,6 +540,8 @@ def update_active_item(*args):
 
     scene = cmds.file(query=True, expandName=True)
     model = f.model().sourceModel()
+
+    p = model.parent_path()
     k = model.task()
     t1 = model.data_type()
     t2 = common.FileItem if t1 == common.SequenceItem else common.SequenceItem
@@ -547,7 +549,7 @@ def update_active_item(*args):
     for t in (t1, t2):
         if t == common.SequenceItem:
             scene = common.proxy_path(scene)
-        ref = weakref.ref(model.INTERNAL_MODEL_DATA[k][t])
+        ref = datacache.get_data_ref(p, k, t)
         for idx in ref().keys():
             if not ref():
                 continue
@@ -1024,7 +1026,7 @@ def push_capture(path):
 
     # If save warning has been explicitly disabled return
     if v == QtCore.Qt.Checked:
-        return      
+        return
 
     rv.push(path)
 

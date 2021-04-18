@@ -13,6 +13,7 @@ from ..threads import threads
 from .. import settings
 from .. import images
 from .. import actions
+from .. import datacache
 from ..properties import asset_config
 
 from . import base
@@ -266,11 +267,6 @@ class FilesModel(base.BaseModel):
     allowed to display in the folder.
     See the `asset_config.py` module for details.
 
-    .. code-block:: python
-
-        data = self.model_data() # the current data set
-        data == self.INTERNAL_MODEL_DATA[self.task()][self.data_type()]
-
     """
     queues = (threads.FileInfo, threads.FileThumbnail)
 
@@ -314,11 +310,12 @@ class FilesModel(base.BaseModel):
                 QtCore.Qt.ItemIsEnabled |
                 QtCore.Qt.ItemIsSelectable)
 
+        p = self.parent_path()
         k = self.task()
         if not k:
             return
         t = common.FileItem
-        data = self.INTERNAL_MODEL_DATA[k][t]
+        data = datacache.get_data(p, k, t)
 
         SEQUENCE_DATA = common.DataDict()  # temporary dict for temp data
 
@@ -505,7 +502,7 @@ class FilesModel(base.BaseModel):
 
         # Cast the sequence data back onto the model
         t = common.SequenceItem
-        data = self.INTERNAL_MODEL_DATA[k][t]
+        data = datacache.get_data(p, k, t)
 
         for idx, v in enumerate(SEQUENCE_DATA.itervalues()):
             if idx >= common.MAXITEMS:
@@ -581,11 +578,17 @@ class FilesModel(base.BaseModel):
         can be retried using `self.task()`.
 
         """
-        if self.task() == val:
+        p = self.parent_path()
+        k = self.task()
+
+        if k == val:
             return
 
+        k = val
+        d = datacache.get_task_data(p, k)
+
         # Trigger a model load if the task folder data has never been loaded
-        if val not in self.INTERNAL_MODEL_DATA or not self.INTERNAL_MODEL_DATA[val]:
+        if not d[common.FileItem]:
             actions.set_active(settings.TaskKey, val)
             self.__resetdata__()
             return True
@@ -809,9 +812,10 @@ class FilesWidget(base.ThreadedBaseWidget):
 
     def get_hint_string(self):
         model = self.model().sourceModel()
-        if not model.task():
+        k = model.task()
+        if not k:
             return u'Click the File tab to select a folder.'
-        return u'{} has not files.'.format(model.task())
+        return u'No files found in {}.'.format(k)
 
     @QtCore.Slot(unicode)
     @QtCore.Slot(int)

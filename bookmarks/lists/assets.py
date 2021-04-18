@@ -14,7 +14,7 @@ from .. import contextmenu
 from .. import bookmark_db
 from .. import settings
 from .. import actions
-from ..shotgun import actions as sg_actions
+from .. import datacache
 
 from . import delegate
 from . import base
@@ -111,9 +111,10 @@ class AssetModel(base.BaseModel):
         if not parent_path or not all(parent_path):
             return
 
+        p = self.parent_path()
         k = self.task()
         t = self.data_type()
-        data = self.INTERNAL_MODEL_DATA[k][t]
+        data = datacache.get_data(p, k, t)
 
         source = u'/'.join(parent_path)
 

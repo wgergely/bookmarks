@@ -4,20 +4,19 @@ file items.
 
 BaseModel:
     The model is used to wrap data needed to display bookmark, asset and file
-    items. Data is stored internally in :const:`.BaseModel.INTERNAL_MODEL_DATA`
-    and populated by :func:`.BaseModel.__initdata__`. However, the model is
-    always initiated by the `BaseModel.modelDataResetRequested` signal.
+    items. Data is stored in :const:`datacache.DATA` and populated by
+    :func:`.BaseModel.__initdata__`. The model can be initiated by the
+    `BaseModel.modelDataResetRequested` signal.
 
-    The model can store multiple sets of data simultaneously. This is because
-    file items are stored as file sequences and individual items in two separate
-    data sets. The file model also keeps this data in separate sets for each
-    subfolder it encounters in an asset's root folder.
+    The model refers to multiple data sets simultaneously. This is because file
+    items are stored as file sequences and individual items in two separate data
+    sets (both cached in the datacache module). The file model also keeps this
+    data in separate sets for each subfolder it encounters in an asset's root
+    folder.
 
-    For a consistent implementation, all subclasses must tbe set to expose the
-    data populated by `__initdata__`. The current data set can be retrieved by
-    `BaseModel.model_data()` and are set by `taskFolderChanged` and
-    `dataTypeChanged` signals. Internally, the data is stored in
-    `BaseModel.INTERNAL_MODEL_DATA[task][data_type]`.
+    The current data exposed to the model can be retrieved by
+    `BaseModel.model_data()`. To change/set the data set emit the `taskFolderChanged` and
+    `dataTypeChanged` signals with their apporpiate arguments.
 
     Each `BaseModel` instance can be initiated with worker threads used to load
     secondary file information, like custom descriptions and thumbnails. See
@@ -43,6 +42,7 @@ from .. import contextmenu
 from .. import settings
 from .. import images
 from .. import actions
+from .. import datacache
 from ..threads import threads
 
 from ..editors import filter_editor
@@ -96,12 +96,14 @@ def initdata(func):
         self.endResetModel()
 
         # Emit  references to the just loaded core data
+        p = self.parent_path()
         k = self.task()
         t1 = self.data_type()
         t2 = common.FileItem if t1 == common.SequenceItem else common.SequenceItem
+
         self.coreDataLoaded.emit(
-            weakref.ref(self.INTERNAL_MODEL_DATA[k][t1]),
-            weakref.ref(self.INTERNAL_MODEL_DATA[k][t2])
+            datacache.get_data_ref(p, k, t1),
+            datacache.get_data_ref(p, k, t2),
         )
 
     return func_wrapper
@@ -342,7 +344,8 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         together.
 
         """
-        self.queued_invalidate_timer.start(self.queued_invalidate_timer.interval())
+        self.queued_invalidate_timer.start(
+            self.queued_invalidate_timer.interval())
 
     def _invalidateFilter(self, *args, **kwargs):
         """Slot called by the queued invalidate timer's timeout signal."""
@@ -424,10 +427,11 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
         """
         model = self.sourceModel()
+        p = model.parent_path()
         k = model.task()
         t = model.data_type()
 
-        ref = weakref.ref(model.INTERNAL_MODEL_DATA[k][t])
+        ref = datacache.get_data_ref(p, k, t)
         if not ref() or idx not in ref():
             return False
 
@@ -530,31 +534,11 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
 
 class BaseModel(QtCore.QAbstractListModel):
-    """The base model for storing bookmark, asset and file information.
+    """The base model used for interacting with all bookmark, asset and
+    file items.
 
-    The model stores its internal data in **self.INTERNAL_MODEL_DATA**
-    dictionary (a custom dict =that enables weakrefs).
-
-    Data internally is stored per `task folder`. Each task folder keeps
-    information about individual files and file sequences, like so:
-
-    .. code-block:: python
-
-        self.INTERNAL_MODEL_DATA = {}
-        self.INTERNAL_MODEL_DATA['scene'] = common.DataDict({
-            common.FileItem: common.DataDict(),
-            common.SequenceItem: common.DataDict()
-        })
-        self.INTERNAL_MODEL_DATA['export'] = common.DataDict({
-            common.FileItem: common.DataDict(),
-            common.SequenceItem: common.DataDict()
-        })
-
-    `self.INTERNAL_MODEL_DATA` is exposed to the model via `self.model_data()`.
-    To get the current task folder use `self.task()` and
-    `self.set_task()``.
-
-    Data sorting is also handled by the model, see `self.sort_data()`.
+    Data is stored in the datacache module that can be fetched using the model's
+    `parent_path`, `task` and `data_type`.
 
     """
     modelDataResetRequested = QtCore.Signal()  # Main signal to load model data
@@ -579,8 +563,6 @@ class BaseModel(QtCore.QAbstractListModel):
         self.view = parent
 
         # Custom data type for weakref compatibility
-        self.INTERNAL_MODEL_DATA = common.DataDict()
-
         self._interrupt_requested = False
         self._generate_thumbnails_enabled = True
         self._task = None
@@ -592,8 +574,6 @@ class BaseModel(QtCore.QAbstractListModel):
 
         self.sortingChanged.connect(self.set_sorting)
         self.dataTypeSorted.connect(self.data_type_sorted)
-
-        from .. import topbar
 
         self.modelAboutToBeReset.connect(common.signals.updateButtons)
         self.modelReset.connect(common.signals.updateButtons)
@@ -632,16 +612,21 @@ class BaseModel(QtCore.QAbstractListModel):
         raise NotImplementedError(
             u'__initdata__ is abstract and must be overriden')
 
-    def __resetdata__(self):
+    def __resetdata__(self, force=False):
+        p = self.parent_path()
         k = self.task()
-        self.INTERNAL_MODEL_DATA[k] = common.DataDict()
 
-        # Add the containers for File and Sequence items and set their type
-        for t in (common.FileItem, common.SequenceItem):
-            self.INTERNAL_MODEL_DATA[k][t] = common.DataDict()
-            self.INTERNAL_MODEL_DATA[k][t].data_type = t
+        if force:
+            datacache.reset_data(p, k)
+            self.__initdata__()
+            return
 
-        self.__initdata__()
+        d = datacache.get_task_data(p, k)
+        if not d[common.FileItem]:
+            self.__initdata__()
+
+    def parent_path(self):
+        return ()
 
     @common.debug
     @common.error
@@ -741,27 +726,26 @@ class BaseModel(QtCore.QAbstractListModel):
     @common.status_bar_message(u'Sorting items...')
     @QtCore.Slot()
     def sort_data(self, *args, **kwargs):
-        """Sorts the internal `INTERNAL_MODEL_DATA` by the current
-        `sort_role` and `sort_order`.
-
-        The data sorting is wrapped in a begin- & endResetModel sequence.
+        """Sorts the current data set using current `sort_role` and
+        `sort_order`.
 
         """
         sortrole = self.sort_role()
         sortorder = self.sort_order()
-        k = self.task()
 
+        p = self.parent_path()
+        k = self.task()
         t1 = self.data_type()
         t2 = common.FileItem if t1 == common.SequenceItem else common.SequenceItem
 
         self.beginResetModel()
         try:
             for t in (t1, t2):
-                ref = weakref.ref(self.INTERNAL_MODEL_DATA[k][t])
+                ref = datacache.get_data_ref(p, k, t)
                 if not ref():
                     continue
                 d = common.sort_data(ref, sortrole, sortorder)
-                self.INTERNAL_MODEL_DATA[k][t] = d
+                datacache.set_data(p, k, t, d)
         except:
             log.error('Sorting error')
         finally:
@@ -774,9 +758,10 @@ class BaseModel(QtCore.QAbstractListModel):
     @QtCore.Slot(int)
     def is_data_type_loaded(self, t):
         """Check if the given data type is loaded."""
+        p = self.parent_path()
         k = self.task()
         t = self.data_type()
-        return self.INTERNAL_MODEL_DATA[k][t].loaded
+        return datacache.is_loaded(p, k, t)
 
     def generate_thumbnails_enabled(self):
         return self._generate_thumbnails_enabled
@@ -793,15 +778,11 @@ class BaseModel(QtCore.QAbstractListModel):
 
     def model_data(self):
         """A pointer to the model's currently set internal data."""
-        k = self.task()
-        t = self.data_type()
-
-        if not k in self.INTERNAL_MODEL_DATA:
-            self.INTERNAL_MODEL_DATA[k] = common.DataDict({
-                common.FileItem: common.DataDict(),
-                common.SequenceItem: common.DataDict()
-            })
-        return self.INTERNAL_MODEL_DATA[k][t]
+        return datacache.get_data(
+            self.parent_path(),
+            self.task(),
+            self.data_type(),
+        )
 
     def active_index(self):
         """The model's active_index."""
@@ -924,26 +905,23 @@ class BaseModel(QtCore.QAbstractListModel):
         return 1
 
     def rowCount(self, parent=QtCore.QModelIndex()):
+        p = self.parent_path()
         k = self.task()
-        if k not in self.INTERNAL_MODEL_DATA:
-            return 0
         t = self.data_type()
-        if t not in self.INTERNAL_MODEL_DATA[k]:
-            return 0
-
-        return len(self.INTERNAL_MODEL_DATA[k][t])
+        return datacache.count(p, k, t)
 
     def index(self, row, column, parent=QtCore.QModelIndex()):
+        p = self.parent_path()
         k = self.task()
-        if k not in self.INTERNAL_MODEL_DATA:
-            return QtCore.QModelIndex()
         t = self.data_type()
-        if t not in self.INTERNAL_MODEL_DATA[k]:
+        d = datacache.get_data(p, k, t)
+
+        if not d:
+            return QtCore.QModelIndex()
+        if row not in d:
             return QtCore.QModelIndex()
 
-        if row not in self.INTERNAL_MODEL_DATA[k][t]:
-            return QtCore.QModelIndex()
-        ptr = weakref.ref(self.INTERNAL_MODEL_DATA[k][t][row])
+        ptr = weakref.ref(d[row])
         return self.createIndex(row, 0, ptr=ptr)
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
@@ -1056,7 +1034,8 @@ class BaseListWidget(QtWidgets.QListView):
         self.resized.connect(self.filter_editor.setGeometry)
 
         self.delayed_save_selection_timer.timeout.connect(self.save_selection)
-        self.delayed_restore_selection_timer.timeout.connect(self.restore_selection)
+        self.delayed_restore_selection_timer.timeout.connect(
+            self.restore_selection)
 
         self.init_buttons_state()
 
@@ -1218,7 +1197,8 @@ class BaseListWidget(QtWidgets.QListView):
         pass
 
     def delay_save_selection(self):
-        self.delayed_save_selection_timer.start(self.delayed_save_selection_timer.interval())
+        self.delayed_save_selection_timer.start(
+            self.delayed_save_selection_timer.interval())
 
     @QtCore.Slot()
     def save_selection(self):
@@ -1251,7 +1231,8 @@ class BaseListWidget(QtWidgets.QListView):
 
     @QtCore.Slot()
     def delay_restore_selection(self):
-        self.delayed_restore_selection_timer.start(self.delayed_restore_selection_timer.interval())
+        self.delayed_restore_selection_timer.start(
+            self.delayed_restore_selection_timer.interval())
 
     @QtCore.Slot()
     def restore_selection(self):
@@ -1297,7 +1278,8 @@ class BaseListWidget(QtWidgets.QListView):
                     continue
 
                 # When we found an item, let's make sure it is visible
-                self.scrollTo(index, hint=QtWidgets.QAbstractItemView.PositionAtCenter)
+                self.scrollTo(
+                    index, hint=QtWidgets.QAbstractItemView.PositionAtCenter)
                 self.selectionModel().setCurrentIndex(
                     index, QtCore.QItemSelectionModel.ClearAndSelect)
                 return
@@ -1418,11 +1400,14 @@ class BaseListWidget(QtWidgets.QListView):
             return None
 
         model = self.model().sourceModel()
-        task = model.task()
-        data = model.model_data()[source_index.row()]
+        p = model.parent_path()
+        k = model.task()
 
-        FILE_DATA = model.INTERNAL_MODEL_DATA[task][common.FileItem]
-        SEQ_DATA = model.INTERNAL_MODEL_DATA[task][common.SequenceItem]
+        idx = source_index.row()
+        data = model.model_data()[idx]
+
+        FILE_DATA = datacache.get_data(p, k, common.FileItem)
+        SEQ_DATA = datacache.get_data(p, k, common.SequenceItem)
 
         applied = data[common.FlagsRole] & flag
         collapsed = common.is_collapsed(data[QtCore.Qt.StatusTipRole])
@@ -1743,8 +1728,8 @@ class BaseListWidget(QtWidgets.QListView):
             model.modelDataResetRequested.emit()
 
         # Delay the selection to let the model process events
-        QtCore.QTimer.singleShot(300, functools.partial(self.select_item, v, role=role))
-
+        QtCore.QTimer.singleShot(300, functools.partial(
+            self.select_item, v, role=role))
 
     def select_item(self, v, role=QtCore.Qt.DisplayRole):
         proxy = self.model()

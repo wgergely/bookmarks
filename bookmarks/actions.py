@@ -758,7 +758,7 @@ def edit_item(index):
 def refresh():
     w = instance().widget()
     model = w.model().sourceModel()
-    model.modelDataResetRequested.emit()
+    model.__resetdata__(force=True)
 
 
 @common.error

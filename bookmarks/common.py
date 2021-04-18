@@ -313,9 +313,6 @@ def get_visible_indexes(widget):
 
 
 def sort_data(ref, sortrole, sortorder):
-    """Method used to sort a data type within a `BaseModel`'s `INTERNAL_MODEL_DATA`.
-
-    """
     def sort_key(idx):
         # If SORT_WITH_BASENAME is `True` we'll use the base file name for sorting
         if SORT_WITH_BASENAME and sortrole == SortByNameRole:

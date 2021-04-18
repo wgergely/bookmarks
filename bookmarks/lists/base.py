@@ -625,6 +625,9 @@ class BaseModel(QtCore.QAbstractListModel):
         if not d[common.FileItem]:
             self.__initdata__()
 
+        self.beginResetModel()
+        self.endResetModel()
+
     def parent_path(self):
         return ()
 

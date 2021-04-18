@@ -13,6 +13,7 @@ from ..threads import threads
 from .. import settings
 from .. import contextmenu
 from .. import actions
+from .. import datacache
 
 from . import delegate
 from . import files
@@ -74,9 +75,10 @@ class FavouritesModel(files.FilesModel):
                 QtCore.Qt.ItemIsEnabled |
                 QtCore.Qt.ItemIsSelectable)
 
+        p = self.parent_path()
         k = self.task()
         t = self.data_type()
-        data = self.INTERNAL_MODEL_DATA[k][t]
+        data = datacache.get_data(p, k, t)
 
         SEQUENCE_DATA = common.DataDict()
 
@@ -230,7 +232,7 @@ class FavouritesModel(files.FilesModel):
 
         # Cast the sequence data back onto the model
         t = common.SequenceItem
-        data = self.INTERNAL_MODEL_DATA[k][t]
+        data = datacache.get_data(p, k, t)
 
         # Casting the sequence data back onto the model
         for idx, v in enumerate(SEQUENCE_DATA.itervalues()):

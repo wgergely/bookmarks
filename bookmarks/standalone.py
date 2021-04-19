@@ -251,8 +251,8 @@ class StandaloneMainWidget(main.MainWidget):
         self.installEventFilter(self)
         self.setMouseTracking(True)
 
-        self.initialized.connect(self.connect_extra_signals)
-        self.initialized.connect(self.update_layout)
+        self.connectExtraSignals.connect(self.connect_extra_signals)
+        self.connectExtraSignals.connect(self.update_layout)
 
         self.adjustSize()
         self.init_window_flags()

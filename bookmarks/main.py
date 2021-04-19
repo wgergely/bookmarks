@@ -50,6 +50,7 @@ class MainWidget(QtWidgets.QWidget):
 
     """
     initialized = QtCore.Signal()
+    connectExtraSignals = QtCore.Signal()
 
     def __init__(self, parent=None):
         global _instance
@@ -193,6 +194,7 @@ class MainWidget(QtWidgets.QWidget):
         self._init_shortcuts()
         self._create_ui()
         self._connect_signals()
+        self.connectExtraSignals.emit()
 
         # Load active paths from the local settings
         settings.instance().verify_active()

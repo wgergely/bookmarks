@@ -127,6 +127,9 @@ class AssetModel(base.BaseModel):
         c = 0
 
         for entry in self._entry_iterator(source):
+            if self._interrupt_requested:
+                break
+
             filepath = entry.path.replace(u'\\', u'/')
 
             if ASSET_IDENTIFIER:
@@ -139,9 +142,8 @@ class AssetModel(base.BaseModel):
             c += 1
             if not c % nth:
                 common.signals.showStatusBarMessage.emit(
-                    u'Found {} assets...'.format(c))
-                QtWidgets.QApplication.instance().processEvents(
-                    QtCore.QEventLoop.ExcludeUserInputEvents)
+                    u'Loading assets ({} found)...'.format(c))
+                QtWidgets.QApplication.instance().processEvents()
 
             filename = entry.name
             flags = dflags()

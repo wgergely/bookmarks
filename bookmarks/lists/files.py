@@ -299,7 +299,7 @@ class FilesModel(base.BaseModel):
             module. Both on Windows and Mac OS X the performance seems to be
             great.
 
-        Internally, the actual files are returned by `self._entry_iterator()`,
+        Internally, the actual files are returned by `self.item_iterator()`,
         the method where scandir is evoked.
 
         """
@@ -337,7 +337,7 @@ class FilesModel(base.BaseModel):
         nth = 987
         c = 0
 
-        for entry in self._entry_iterator(_parent_path):
+        for entry in self.item_iterator(_parent_path):
             if self._interrupt_requested:
                 break
 
@@ -556,16 +556,37 @@ class FilesModel(base.BaseModel):
             settings.active(settings.AssetKey)
         )
 
-    def _entry_iterator(self, path):
+    def item_iterator(self, path):
         """Recursive iterator for retrieving files from all subfolders.
 
         """
         for entry in _scandir.scandir(path):
             if entry.is_dir():
-                for _entry in self._entry_iterator(entry.path):
+                for _entry in self.item_iterator(entry.path):
                     yield _entry
             else:
                 yield entry
+
+    def save_active(self):
+        index = self.active_index()
+        
+        if not index.isValid():
+            return
+        if not index.data(QtCore.Qt.StatusTipRole):
+            return
+        if not index.data(common.ParentPathRole):
+            return
+
+        parent_role = index.data(common.ParentPathRole)
+        if len(parent_role) < 5:
+            return
+
+        file_info = QtCore.QFileInfo(index.data(QtCore.Qt.StatusTipRole))
+        filepath = parent_role[5] + u'/' + \
+            common.get_sequence_endpath(file_info.fileName())
+
+        actions.set_active(settings.FileKey, filepath)
+
 
     def task(self):
         return settings.active(settings.TaskKey)
@@ -759,25 +780,6 @@ class FilesWidget(base.ThreadedBaseWidget):
 
     def action_on_enter_key(self):
         self.activate(self.selectionModel().currentIndex())
-
-    @QtCore.Slot(QtCore.QModelIndex)
-    def set_active(self, index):
-        if not index.isValid():
-            return
-        if not index.data(QtCore.Qt.StatusTipRole):
-            return
-        if not index.data(common.ParentPathRole):
-            return
-
-        parent_role = index.data(common.ParentPathRole)
-        if len(parent_role) < 5:
-            return
-
-        file_info = QtCore.QFileInfo(index.data(QtCore.Qt.StatusTipRole))
-        filepath = parent_role[5] + u'/' + \
-            common.get_sequence_endpath(file_info.fileName())
-
-        actions.set_active(settings.FileKey, filepath)
 
     def startDrag(self, supported_actions):
         index = self.selectionModel().currentIndex()

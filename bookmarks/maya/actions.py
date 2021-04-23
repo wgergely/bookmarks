@@ -523,23 +523,25 @@ def save_warning(*args):
 @common.debug
 def unmark_active(*args):
     """Callback responsible for keeping the active-file in the list updated."""
-    f = main.instance().stackedwidget.widget(common.FileTab)
-    if not f.model().sourceModel().active_index().isValid():
-        return
-    f.deactivate(f.model().sourceModel().active_index())
+    widget = main.instance().stackedwidget.widget(common.FileTab)
+    model = widget.model().sourceModel()
+    model.unset_active()
 
 
 @common.error
 @common.debug
 def update_active_item(*args):
-    """Callback responsible for keeping the active-file in the list updated."""
+    """Callback responsible for keeping the active-file in the list updated.
+
+    """
     f = main.instance().stackedwidget.widget(common.FileTab)
-    active_index = f.model().sourceModel().active_index()
+    model = f.model().sourceModel()
+    active_index = model.active_index()
+
     if active_index.isValid():
-        f.deactivate(active_index.active_index())
+        model.unset_active()
 
     scene = cmds.file(query=True, expandName=True)
-    model = f.model().sourceModel()
 
     p = model.parent_path()
     k = model.task()

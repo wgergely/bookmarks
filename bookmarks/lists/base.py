@@ -609,10 +609,41 @@ class BaseModel(QtCore.QAbstractListModel):
     @common.error
     @initdata
     def __initdata__(self):
+        """The main method used by the model to fetch and store item information
+        from the file system.
+
+        The model itself does not store any data, instead, we're using the
+        :mod:`datacache` module to store item data.
+
+        The individual items are returned by :func:`item_generator`.
+
+        """
         raise NotImplementedError(
-            u'__initdata__ is abstract and must be overriden')
+            'Abstract method has to be implemented in subclass.')
+
+    def item_iterator(self):
+        """A generator function used by :func:`__initdata__` find and yield the
+        items the model should load.
+
+        Eg. for assets, the function should return a series of `_scandir` entries
+        referring to folders, or for files a series of file entires.
+
+        """
+        raise NotImplementedError(
+            'Abstract method has to be implemented in subclass.')
 
     def __resetdata__(self, force=False):
+        """Resets the model's internal data.
+
+        The underlying data is cached in the :mod:`datacache` module, so here
+        we'll make sure the data is available for the model to use. When the
+        optional `force` flag is set, we'll use `__initdata__` to load the item
+        data from disk.
+
+        Otherwise, the method will check if our cached data is available and if
+        not, uses `__initdata__` to fetch it.
+
+        """
         p = self.parent_path()
         k = self.task()
 
@@ -625,8 +656,13 @@ class BaseModel(QtCore.QAbstractListModel):
         if not d[common.FileItem]:
             self.__initdata__()
 
+        # The let's signal the model reset and emit the current active index
         self.beginResetModel()
         self.endResetModel()
+        index = self.active_index()
+        if not index.isValid():
+            return
+        self.set_active(index)
 
     def parent_path(self):
         return ()
@@ -780,20 +816,72 @@ class BaseModel(QtCore.QAbstractListModel):
         self._generate_thumbnails_enabled = val
 
     def model_data(self):
-        """A pointer to the model's currently set internal data."""
+        """The pointer to the model's internal data.
+
+        """
         return datacache.get_data(
             self.parent_path(),
             self.task(),
             self.data_type(),
         )
 
+    def _active_idx(self):
+        data = self.model_data()
+        if not data:
+            return None
+        for idx in data:
+            if data[idx][common.FlagsRole] & common.MarkedAsActive:
+                return idx
+        return None
+
     def active_index(self):
-        """The model's active_index."""
-        for n in xrange(self.rowCount()):
-            index = self.index(n, 0)
-            if index.flags() & common.MarkedAsActive:
-                return index
-        return QtCore.QModelIndex()
+        """The model's active_index.
+
+        """
+        idx = self._active_idx()
+        if idx is None:
+            return QtCore.QModelIndex()
+        return self.index(idx, 0)
+
+    def set_active(self, index):
+        """Set the given item as the model's active item.
+
+        """
+        if not index.isValid():
+            return
+
+        self.unset_active()
+
+        data = self.model_data()
+        idx = index.row()
+        data[idx][common.FlagsRole] = data[idx][common.FlagsRole] | common.MarkedAsActive
+
+        self.save_active()
+        self.updateIndex.emit(index)
+        self.activeChanged.emit(index)
+
+    def save_active(self):
+        """Set a newly activated item in globally active item.
+
+        The active items are stored in `settings.active` and are used by the
+        models to locate items to load (see `BaseModel.parent_paths()`).
+
+        """
+        pass
+
+    def unset_active(self):
+        """Unsets the current data set's active item.
+
+        """
+        idx = self._active_idx()
+        if idx is None:
+            return
+
+        data = self.model_data()
+        data[idx][common.FlagsRole] = data[idx][common.FlagsRole] & ~common.MarkedAsActive
+
+        index = self.index(idx, 0)
+        self.updateIndex.emit(index)
 
     def data_type(self):
         """Current key to the data dictionary."""
@@ -1136,7 +1224,8 @@ class BaseListWidget(QtWidgets.QListView):
 
     @QtCore.Slot(QtCore.QModelIndex)
     def activate(self, index):
-        """Marks the given index by adding the ``MarkedAsActive`` flag.
+        """This method is called in response to a user action and is used
+        to mark an item `active`.
 
         """
         if not index.isValid():
@@ -1156,48 +1245,10 @@ class BaseListWidget(QtWidgets.QListView):
         # item's MarkedAsActive flag and emit the activeChanged signal.
         proxy = self.model()
         model = proxy.sourceModel()
-        data = model.model_data()
-
-        # Remove the active flag from the currently active item
-        self.deactivate(model.active_index())
-
         source_index = proxy.mapToSource(index)
-        idx = source_index.row()
 
-        # Unset flag
-        data[idx][common.FlagsRole] = data[idx][common.FlagsRole] | common.MarkedAsActive
-        self.update(index)
-
-        self.set_active(index)
+        model.set_active(source_index)
         self.activated.emit(index)
-        model.activeChanged.emit(source_index)
-
-    def deactivate(self, index):
-        """Unsets the active flag."""
-        if not index.isValid():
-            return
-
-        if isinstance(index.model(), FilterProxyModel):
-            source_index = index.model().mapToSource(index)
-        else:
-            source_index = index
-
-        data = source_index.model().model_data()
-        idx = source_index.row()
-
-        data[idx][common.FlagsRole] = data[idx][common.FlagsRole] & ~common.MarkedAsActive
-
-        self.update(index)
-
-    @QtCore.Slot(QtCore.QModelIndex)
-    def set_active(self, index):
-        """Set a newly activated item the globally active item.
-
-        The active items are stored in `settings.active` and are used by the
-        models to locate items to load (see `BaseModel.parent_paths()`).
-
-        """
-        pass
 
     def delay_save_selection(self):
         self.delayed_save_selection_timer.start(

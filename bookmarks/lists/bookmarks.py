@@ -115,7 +115,7 @@ class BookmarksModel(base.BaseModel):
         t = self.data_type()
         data = datacache.get_data(p, _k, t)
 
-        for k, v in common.BOOKMARKS.iteritems():
+        for k, v in self.item_generator():
             if not all(v.values()):
                 continue
             if not len(v.values()) >= 3:
@@ -198,6 +198,25 @@ class BookmarksModel(base.BaseModel):
                 continue
 
         self.activeChanged.emit(self.active_index())
+
+    def item_generator(self):
+        for item in common.BOOKMARKS.iteritems():
+            yield item
+
+    def save_active(self):
+        index = self.active_index()
+        
+        if not index.isValid():
+            return
+        if not index.data(QtCore.Qt.StatusTipRole):
+            return
+        if not index.data(common.ParentPathRole):
+            return
+
+        server, job, root = index.data(common.ParentPathRole)
+        actions.set_active(settings.ServerKey, server)
+        actions.set_active(settings.JobKey, job)
+        actions.set_active(settings.RootKey, root)
 
     def parent_path(self):
         return (u'bookmarks',)
@@ -301,18 +320,6 @@ class BookmarksWidget(base.ThreadedBaseWidget):
         if self.buttons_hidden():
             return 0
         return 6
-
-    @QtCore.Slot(QtCore.QModelIndex)
-    def set_active(self, index):
-        if not index.isValid():
-            return
-        if not index.data(common.ParentPathRole):
-            return
-
-        server, job, root = index.data(common.ParentPathRole)
-        actions.set_active(settings.ServerKey, server)
-        actions.set_active(settings.JobKey, job)
-        actions.set_active(settings.RootKey, root)
 
     def toggle_item_flag(self, index, flag, state=None, commit_now=True):
         """Overrides the base behaviour because bookmark items cannot be archived.

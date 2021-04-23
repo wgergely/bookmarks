@@ -126,7 +126,7 @@ class AssetModel(base.BaseModel):
         nth = 1
         c = 0
 
-        for entry in self._entry_iterator(source):
+        for entry in self.item_iterator(source):
             if self._interrupt_requested:
                 break
 
@@ -214,7 +214,7 @@ class AssetModel(base.BaseModel):
             settings.active(settings.RootKey),
         )
 
-    def _entry_iterator(self, path):
+    def item_iterator(self, path):
         """Yields DirEntry instances to be processed in __initdata__.
 
         """
@@ -224,6 +224,21 @@ class AssetModel(base.BaseModel):
             if not entry.is_dir():
                 continue
             yield entry
+
+    def save_active(self):
+        index = self.active_index()
+        
+        if not index.isValid():
+            return
+        if not index.data(QtCore.Qt.StatusTipRole):
+            return
+        if not index.data(common.ParentPathRole):
+            return
+
+        actions.set_active(
+            settings.AssetKey,
+            index.data(common.ParentPathRole)[-1]
+        )
 
     def data_type(self):
         return common.FileItem
@@ -267,17 +282,6 @@ class AssetsWidget(base.ThreadedBaseWidget):
         if self.buttons_hidden():
             return 0
         return 6
-
-    @QtCore.Slot(QtCore.QModelIndex)
-    def set_active(self, index):
-        if not index.isValid():
-            return
-        if not index.data(common.ParentPathRole):
-            return
-        actions.set_active(
-            settings.AssetKey,
-            index.data(common.ParentPathRole)[-1]
-        )
 
     def get_hint_string(self):
         return u'No assets. Select right-click -> Add Asset to create a new one.'

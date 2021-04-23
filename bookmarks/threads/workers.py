@@ -863,14 +863,14 @@ class TaskFolderWorker(InfoWorker):
 
     def count_todos(self, db, k):
         count = 0
-        for _ in self._entry_iterator(k):
+        for _ in self.item_iterator(k):
             count += 1
             if count > 9999:
                 break
         return count
 
     @classmethod
-    def _entry_iterator(cls, path):
+    def item_iterator(cls, path):
         """Used to iterate over all files in a given folder.
 
         Yields:
@@ -907,7 +907,7 @@ class TaskFolderWorker(InfoWorker):
             except OSError:
                 is_symlink = False
             if not is_symlink:
-                for entry in cls._entry_iterator(entry.path):
+                for entry in cls.item_iterator(entry.path):
                     yield entry
 
 

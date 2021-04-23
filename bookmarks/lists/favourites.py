@@ -84,7 +84,7 @@ class FavouritesModel(files.FilesModel):
 
         nth = 1
         c = 0
-        for entry, parent_paths in self._entry_iterator():
+        for entry, parent_paths in self.item_iterator():
             _parent_path = u'/'.join(parent_paths)
 
             if self._interrupt_requested:
@@ -268,7 +268,7 @@ class FavouritesModel(files.FilesModel):
             data[idx][common.IdRole] = idx
             data[idx][common.DataTypeRole] = common.SequenceItem
 
-    def _entry_iterator(self):
+    def item_iterator(self):
         """We're using the saved keys to find and return the DirEntries
         corresponding to the saved favourites.
 

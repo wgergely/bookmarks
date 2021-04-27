@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
-"""Contains the definition for the widget used set and edit list model filters.
+"""The widget used set and edit search filters.
 
 """
 from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
 from .. import ui
+from .. import settings
 
 
 class FilterEditor(QtWidgets.QDialog):
-    """Editor widget used to set a persistent text filter for list models.
+    """Editor widget used to set a model's persistent text filter.
 
     """
     finished = QtCore.Signal(unicode)
@@ -18,15 +19,15 @@ class FilterEditor(QtWidgets.QDialog):
         super(FilterEditor, self).__init__(parent=parent)
 
         self.editor = None
+        self.ok_button = None
         self.context_menu_open = False
 
-        self.setAttribute(QtCore.Qt.WA_NoSystemBackground, True)
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
-
-        self.setWindowFlags(QtCore.Qt.Widget)
         self._create_ui()
         self._connect_signals()
 
+        self.setAttribute(QtCore.Qt.WA_NoSystemBackground, True)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
+        self.setWindowFlags(QtCore.Qt.Widget)
         self.setFocusProxy(self.editor)
 
     def _create_ui(self):
@@ -37,39 +38,72 @@ class FilterEditor(QtWidgets.QDialog):
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
 
         row = ui.add_row(
-            None, parent=self, padding=0, height=common.ROW_HEIGHT())
-        icon = ui.ClickableIconButton(
-            u'filter',
-            (common.RED, common.RED),
-            common.ROW_HEIGHT()
+            None,
+            parent=self,
+            padding=0,
+            height=common.ROW_HEIGHT()
         )
 
-        label = u'Search'
-        label = ui.PaintedLabel(label, parent=self)
-        row.layout().addWidget(icon, 0)
-        row.layout().addWidget(label, 0)
+        self.history_button = ui.ClickableIconButton(
+            u'filter',
+            (common.SECONDARY_TEXT, common.SECONDARY_TEXT),
+            common.MARGIN()
+        )
+        self.history_button.setFocusPolicy(QtCore.Qt.NoFocus)
+        row.layout().addWidget(self.history_button, 0)
 
         self.editor = ui.LineEdit(parent=self)
-        self.editor.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter)
+        self.editor.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         row.layout().addWidget(self.editor, 1)
+
+        self.ok_button = ui.PaintedButton(u'Set Filter', parent=self)
+        row.layout().addWidget(self.ok_button, 0)
+
         self.layout().addStretch(1)
 
     def _connect_signals(self):
         self.editor.returnPressed.connect(self.action)
-        self.finished.connect(
-            lambda _: self.done(QtWidgets.QDialog.Accepted))
+        self.ok_button.clicked.connect(self.action)
+
+    def set_completer(self):
+        proxy = self.parent().model()
+        model = proxy.sourceModel()
+
+        v = model.get_local_setting(settings.TextFilterKeyHistory)
+        v = v.split(';') if v else []
+        v.reverse()
+        v = [f for f in v if f]
+
+        completer = QtWidgets.QCompleter(v, parent=self.editor)
+        completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        common.set_custom_stylesheet(completer.popup())
+
+        self.editor.setCompleter(completer)
+
+        self.history_button.clicked.connect(self.show_history)
+
+    def show_history(self):
+        self.editor.completer().setCompletionPrefix(u'')
+        self.editor.completer().complete()
+
+    def init_text(self):
+        proxy = self.parent().model()
+        text = proxy.filter_text()
+        text = text.lower() if text else u''
+        text = u'' if text == u'/' else text
+        self.editor.setText(text)
 
     @QtCore.Slot()
     def action(self):
         self.finished.emit(self.editor.text())
+        self.done(QtWidgets.QDialog.Accepted)
 
     @QtCore.Slot()
     def adjust_size(self):
         if not self.parent():
             return
-        self.resize(
-            self.parent().geometry().width(),
-            self.parent().geometry().height())
+        geo = self.parent().geometry()
+        self.resize(geo.width(), geo.height())
 
     def paintEvent(self, event):
         painter = QtGui.QPainter()
@@ -82,31 +116,19 @@ class FilterEditor(QtWidgets.QDialog):
         painter.setPen(pen)
 
         o = common.MARGIN()
-        rect = self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o))
-        rect.setHeight(common.ROW_HEIGHT() + (common.MARGIN() * 2))
+        i = common.INDICATOR_WIDTH()
+        r = common.ROW_HEIGHT()
+
+        rect = self.rect().adjusted(o, o, -o, -o)
+        rect.setHeight(r + (o * 2))
+
         painter.setBrush(common.DARK_BG)
-        painter.setOpacity(0.9)
-        painter.drawRoundedRect(
-            rect, common.INDICATOR_WIDTH(), common.INDICATOR_WIDTH())
+        painter.setOpacity(0.85)
+        painter.drawRoundedRect(rect, i, i)
         painter.end()
 
-    def mousePressEvent(self, event):
-        if not isinstance(event, QtGui.QMouseEvent):
-            return
-        self.close()
-
-    def focusOutEvent(self, event):
-        """Closes the editor on focus loss."""
-        if event.lostFocus():
-            if self.context_menu_open:
-                return
-            self.close()
-
     def showEvent(self, event):
-        text = self.parent().model().filter_text()
-        text = text.lower() if text else u''
-        text = u'' if text == u'/' else text
-
-        self.editor.setText(text)
+        self.init_text()
+        self.set_completer()
         self.editor.selectAll()
         self.editor.setFocus()

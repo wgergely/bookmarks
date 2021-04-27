@@ -52,6 +52,7 @@ from . import delegate
 
 
 BG_COLOR = QtGui.QColor(0, 0, 0, 50)
+MAX_HISTORY = 20
 
 
 def validate_index(func):
@@ -395,11 +396,36 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
     @QtCore.Slot(unicode)
     def set_filter_text(self, v):
-        """Sets the path-segment to use as a filter."""
+        """Slot called when a filter text has been set by the filter text editor
+        widget.
+
+        """
         v = v if v is not None else u''
         v = unicode(v).strip()
+
+        # Save the set text in the model
         self._filter_text = v
+
+        # Save the text in the local settings file
         self.sourceModel().set_local_setting(settings.TextFilterKey, v)
+        self.save_history(v)
+        self.filterTextChanged.emit(v)
+
+    def save_history(self, v):
+        if not v:
+            return
+
+        _v = self.sourceModel().get_local_setting(settings.TextFilterKeyHistory)
+        _v = _v.split(u';') if _v else []
+
+        if v.lower() in [f.lower() for f in _v]:
+            return
+
+        _v.append(v)
+        self.sourceModel().set_local_setting(
+            settings.TextFilterKeyHistory,
+            u';'.join(_v[0:MAX_HISTORY])
+        )
 
     def filter_flag(self, flag):
         """Returns the current flag-filter."""
@@ -1198,7 +1224,6 @@ class BaseListWidget(QtWidgets.QListView):
         self.interruptRequested.connect(model.set_interrupt_requested)
 
         self.filter_editor.finished.connect(proxy.set_filter_text)
-        self.filter_editor.finished.connect(proxy.filterTextChanged)
 
         model.taskFolderChanged.connect(proxy.invalidateFilter)
 
@@ -2233,7 +2258,6 @@ class BaseInlineIconWidget(BaseListWidget):
                         filter_text = filter_text + u' ' + folder_filter
 
                     self.model().set_filter_text(filter_text)
-                    self.model().filterTextChanged.emit(filter_text)
                     self.repaint(self.rect())
                 elif alt_modifier or control_modifier:
                     # The alt or control modifiers will add a "negative filter"
@@ -2249,7 +2273,6 @@ class BaseInlineIconWidget(BaseListWidget):
                             folder_filter = filter_text + u' ' + folder_filter
 
                     self.model().set_filter_text(folder_filter)
-                    self.model().filterTextChanged.emit(folder_filter)
                     self.repaint(self.rect())
                     return
 

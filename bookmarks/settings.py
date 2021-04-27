@@ -79,6 +79,7 @@ ActiveFlagFilterKey = u'ActiveFilter'
 ArchivedFlagFilterKey = u'ArchivedFilter'
 FavouriteFlagFilterKey = u'FavouriteFilter'
 TextFilterKey = u'TextFilter'
+TextFilterKeyHistory = u'TextFilterHistory'
 
 UIStateSection = u'UIState'
 WindowGeometryKey = u'WindowGeometry'

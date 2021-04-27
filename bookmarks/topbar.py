@@ -91,6 +91,8 @@ class QuickSwitchMenu(contextmenu.BaseContextMenu):
 
 
 class SwitchBookmarkMenu(QuickSwitchMenu):
+    @common.error
+    @common.debug
     def setup(self):
         self.add_menu()
         self.separator()
@@ -110,6 +112,8 @@ class SwitchBookmarkMenu(QuickSwitchMenu):
 
 
 class SwitchAssetMenu(QuickSwitchMenu):
+    @common.error
+    @common.debug
     def setup(self):
         self.add_menu()
         self.separator()
@@ -127,6 +131,49 @@ class SwitchAssetMenu(QuickSwitchMenu):
             'description': shortcuts.hint(shortcuts.MainWidgetShortcuts, shortcuts.AddItem),
         }
 
+
+class FilterHistoryMenu(contextmenu.BaseContextMenu):
+    @common.error
+    @common.debug
+    def setup(self):
+        self.history_menu()
+
+    def history_menu(self):
+        w = current_widget()
+        proxy = w.model()
+        model = w.model().sourceModel()
+
+        v = model.get_local_setting(settings.TextFilterKeyHistory)
+        v = v.split(';') if v else []
+        v.reverse()
+
+        self.menu[contextmenu.key()] = {
+            u'text': u'Show All Items  (alt + click)',
+            u'action': functools.partial(proxy.set_filter_text, u''),
+        }
+
+        self.separator()
+
+        for t in v:
+            if not t:
+                continue
+                
+            self.menu[contextmenu.key()] = {
+                u'icon': self.get_icon(u'filter'),
+                u'text': t,
+                u'action': functools.partial(proxy.set_filter_text, t),
+            }
+
+        self.separator()
+
+        self.menu[contextmenu.key()] = {
+            u'icon': self.get_icon(u'close', color=common.RED),
+            u'text': u'Clear History',
+            u'action': (
+                functools.partial(proxy.set_filter_text, u''),
+                lambda: model.set_local_setting(settings.TextFilterKeyHistory, u'')
+            ),
+        }
 
 class BaseControlButton(ui.ClickableIconButton):
     """Base-class used for control buttons on the top bar."""
@@ -146,7 +193,7 @@ class FilterButton(BaseControlButton):
     def __init__(self, parent=None):
         super(FilterButton, self).__init__(
             u'filter',
-            u'Search  -  {}'.format(shortcuts.string(
+            u'Set Filter  -  {}'.format(shortcuts.string(
                 shortcuts.MainWidgetShortcuts, shortcuts.ToggleSearch)),
             parent=parent
         )
@@ -163,6 +210,12 @@ class FilterButton(BaseControlButton):
         if filter_text == u'/':
             return False
         return True
+
+    def contextMenuEvent(self, event):
+        menu = FilterHistoryMenu(QtCore.QModelIndex(), parent=self)
+        pos = self.mapToGlobal(event.pos())
+        menu.move(pos)
+        menu.exec_()
 
     def mouseReleaseEvent(self, event):
         modifiers = QtWidgets.QApplication.instance().keyboardModifiers()

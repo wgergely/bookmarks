@@ -15,7 +15,7 @@ from . import settings
 from . import bookmark_db
 
 
-IMAGESEQ_TO_H264 = '\
+PRESET1 = '\
 "{BIN}" \
 -y \
 -hwaccel auto \
@@ -47,8 +47,107 @@ IMAGESEQ_TO_H264 = '\
 "{OUTPUT}"\
 '
 
+PRESET2 = '\
+"{BIN}" \
+-y \
+-hwaccel auto \
+-probesize 5000000 \
+-framerate {FRAMERATE} \
+-start_number {STARTFRAME} \
+-gamma 2.2  \
+-i "{INPUT}" \
+-c:v libx264 \
+-preset slow \
+-b:v 9500K \
+-g 1  \
+-tune stillimage  \
+-x264-params "colormatrix=bt709" \
+-pix_fmt yuv420p \
+-colorspace bt709 \
+-color_primaries bt709 \
+-color_trc gamma22 \
+-map 0:v:0? \
+-map_chapters 0 \
+-c:s mov_text \
+-map 0:s? \
+-an \
+-map_metadata 0 \
+-f mp4 \
+-threads 0 \
+-movflags +faststart \
+"{OUTPUT}"\
+'
+
+PRESET3 = '\
+"{BIN}" \
+-y \
+-hwaccel auto \
+-probesize 5000000 \
+-framerate {FRAMERATE} \
+-start_number {STARTFRAME} \
+-gamma 2.2  \
+-i "{INPUT}" \
+-vf "pad=ceil(iw/2)*2:ceil(ih/2)*2, drawtext=fontfile={FONT}: text=\'{LABEL} %{{frame_num}}\': start_number={STARTFRAME}: x=10: y=h-lh-10: fontcolor=white: fontsize=ceil(h/40): box=1: boxcolor=black: boxborderw=10" \
+-c:v libx264 \
+-preset slow \
+-b:v 25000K \
+-g 1  \
+-tune stillimage  \
+-x264-params "colormatrix=bt709" \
+-pix_fmt yuv420p \
+-colorspace bt709 \
+-color_primaries bt709 \
+-color_trc gamma22 \
+-map 0:v:0? \
+-map_chapters 0 \
+-c:s mov_text \
+-map 0:s? \
+-an \
+-map_metadata 0 \
+-f mp4 \
+-threads 0 \
+-movflags +faststart \
+"{OUTPUT}"\
+'
+
+PRESET4 = '\
+"{BIN}" \
+-y \
+-hwaccel auto \
+-probesize 5000000 \
+-framerate {FRAMERATE} \
+-start_number {STARTFRAME} \
+-gamma 2.2  \
+-i "{INPUT}" \
+-c:v libx264 \
+-preset slow \
+-b:v 25000K \
+-g 1  \
+-tune stillimage  \
+-x264-params "colormatrix=bt709" \
+-pix_fmt yuv420p \
+-colorspace bt709 \
+-color_primaries bt709 \
+-color_trc gamma22 \
+-map 0:v:0? \
+-map_chapters 0 \
+-c:s mov_text \
+-map 0:s? \
+-an \
+-map_metadata 0 \
+-f mp4 \
+-threads 0 \
+-movflags +faststart \
+"{OUTPUT}"\
+'
+
+
+
 PRESETS = {
-    u'Convert Image Sequence to .mp4 (h.264)': IMAGESEQ_TO_H264,
+    u'Sequence to H264 with TC (Low Quality)': PRESET1,
+    u'Sequence to H264 (Low Quality)': PRESET2,
+    u'Sequence to H264 with TC (High Quality)': PRESET3,
+    u'Sequence to H264 (High Quality)': PRESET4,
 }
 
 

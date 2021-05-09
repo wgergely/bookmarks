@@ -234,7 +234,8 @@ def save_entity_data_to_db(server, job, root, source, table, entity, value_map):
 
     s = source
     t = table
-    with bookmark_db.transactions(server, job, root) as db:
+    db = bookmark_db.get_db(server, job, root)
+    with db.connection():
 
         # Let's iterate over the value map dictionary to extract data from the
         # entity and save it into our bookmark database

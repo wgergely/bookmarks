@@ -342,11 +342,8 @@ class ShotgunProperties(object):
         """
         if not all((self.server, self.job, self.root)):
             return
-
         if db is None:
-            with bookmark_db.transactions(self.server, self.job, self.root) as db:
-                self._load_values_from_database(db)
-            return
+            db = bookmark_db.get_db(self.server, self.job, self.root)
         self._load_values_from_database(db)
 
     def verify(self, connection=False, bookmark=False, asset=False):

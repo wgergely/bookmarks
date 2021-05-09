@@ -1449,13 +1449,12 @@ class BaseListWidget(QtWidgets.QListView):
             if flag == common.MarkedAsActive:
                 pass
             elif flag == common.MarkedAsArchived:
-                db = bookmark_db.get_db(
-                    index.data(common.ParentPathRole)[0],
-                    index.data(common.ParentPathRole)[1],
-                    index.data(common.ParentPathRole)[2],
+                db = bookmark_db.get_db(*index.data(common.ParentPathRole)[0:3])
+                flags = db.value(
+                    proxy_k,
+                    u'flags',
+                    table=bookmark_db.AssetTable
                 )
-                flags = db.value(proxy_k, u'flags',
-                                 table=bookmark_db.AssetTable)
                 if not flags:
                     return True
                 if flags & common.MarkedAsArchived:

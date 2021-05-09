@@ -243,6 +243,7 @@ class Settings(QtCore.QSettings):
 
         """
         v = self.value(CurrentUserPicksSection, FavouritesKey)
+        
         if not v:
             common.FAVOURITES = {}
             common.FAVOURITES_SET = set()
@@ -255,6 +256,10 @@ class Settings(QtCore.QSettings):
 
         common.FAVOURITES = v
         common.FAVOURITES_SET = set(v)
+
+        # Emit signal to indicate the favourite items have been loaded
+        common.signals.favouritesChanged.emit()
+
         return v
 
     def init_bookmarks(self):

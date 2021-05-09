@@ -493,12 +493,12 @@ class FilePropertiesWidget(base.PropertiesWidget):
         # Prefix
         self.prefix_editor.setReadOnly(True)
         if self._file is None:
-            with bookmark_db.transactions(self.server, self.job, self.root) as db:
-                prefix = db.value(
-                    db.source(),
-                    u'prefix',
-                    table=bookmark_db.BookmarkTable
-                )
+            db = bookmark_db.get_db(self.server, self.job, self.root)
+            prefix = db.value(
+                db.source(),
+                u'prefix',
+                table=bookmark_db.BookmarkTable
+            )
             if prefix:
                 self.prefix_editor.setText(prefix)
 
@@ -514,12 +514,12 @@ class FilePropertiesWidget(base.PropertiesWidget):
 
         # Description
         if self._file is not None:
-            with bookmark_db.transactions(self.server, self.job, self.root) as db:
-                v = db.value(
-                    self.db_source(),
-                    u'description',
-                    table=bookmark_db.AssetTable
-                )
+            db = bookmark_db.get_db(self.server, self.job, self.root)
+            v = db.value(
+                self.db_source(),
+                u'description',
+                table=bookmark_db.AssetTable
+            )
             v = v if v else u''
             self.description_editor.setText(v)
             self.description_editor.setFocus()

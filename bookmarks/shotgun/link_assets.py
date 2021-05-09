@@ -237,58 +237,69 @@ class LinkMultiple(QtWidgets.QDialog):
 
         sg_properties = shotgun.ShotgunProperties(active=True)
 
-        with bookmark_db.transactions(sg_properties.server, sg_properties.job, sg_properties.root) as db:
-            sg_properties.init(db=db)
-            identifier = db.value(db.source(), 'identifier',
-                                  table=bookmark_db.BookmarkTable)
+        db = bookmark_db.get_db(
+            sg_properties.server,
+            sg_properties.job,
+            sg_properties.root
+        )
+        sg_properties.init(db=db)
 
-            if not sg_properties.verify(connection=True):
-                raise RuntimeError(
-                    u'Bookmark is not configured to use Shotgun.')
+        identifier = db.value(
+            db.source(),
+            'identifier',
+            table=bookmark_db.BookmarkTable
+        )
 
-            self.emit_request(sg_properties)
+        if not sg_properties.verify(connection=True):
+            raise RuntimeError(
+                u'Bookmark is not configured to use Shotgun.')
 
-            for entry in _scandir.scandir(self.source()):
-                # Skip archived items
-                flags = db.value(db.source(entry.name), 'flags',
-                                 table=bookmark_db.AssetTable)
-                if flags and flags & common.MarkedAsArchived:
-                    continue
+        self.emit_request(sg_properties)
 
-                # Skip non-folders and hidden files
-                if not entry.is_dir():
-                    continue
-                if entry.name.startswith('.'):
-                    continue
+        for entry in _scandir.scandir(self.source()):
+            # Skip archived items
+            flags = db.value(
+                db.source(entry.name),
+                'flags',
+                table=bookmark_db.AssetTable
+            )
+            if flags and flags & common.MarkedAsArchived:
+                continue
 
-                # Skip if identifier is set but missing
-                p = u'{}/{}'.format(entry.path, identifier)
-                if identifier and not QtCore.QFileInfo(p).exists():
-                    continue
+            # Skip non-folders and hidden files
+            if not entry.is_dir():
+                continue
+            if entry.name.startswith('.'):
+                continue
 
-                # Manually create an entity based on the current db values
-                s = db.source(entry.name)
-                t = bookmark_db.AssetTable
-                entity = {
-                    'id': db.value(s, 'shotgun_id', table=t),
-                    'code': db.value(s, 'shotgun_name', table=t),
-                    'type': db.value(s, 'shotgun_type', table=t),
-                    'cut_out': db.value(s, 'cut_out', table=t),
-                    'cut_in': db.value(s, 'cut_in', table=t),
-                    'cut_duration': db.value(s, 'cut_duration', table=t),
-                    'description': db.value(s, 'description', table=t),
-                }
+            # Skip if identifier is set but missing
+            p = u'{}/{}'.format(entry.path, identifier)
+            if identifier and not QtCore.QFileInfo(p).exists():
+                continue
 
-                # Add rows to the table widget
-                editor = shotgun.EntityComboBox(
-                    [NOT_LINKED, CURRENT_VALUES], fixed_height=None, parent=None)
-                editor.set_model(self.model)
+            # Manually create an entity based on the current db values
+            s = db.source(entry.name)
+            t = bookmark_db.AssetTable
+            entity = {
+                'id': db.value(s, 'shotgun_id', table=t),
+                'code': db.value(s, 'shotgun_name', table=t),
+                'type': db.value(s, 'shotgun_type', table=t),
+                'cut_out': db.value(s, 'cut_out', table=t),
+                'cut_in': db.value(s, 'cut_in', table=t),
+                'cut_duration': db.value(s, 'cut_duration', table=t),
+                'description': db.value(s, 'description', table=t),
+            }
 
-                proxy = editor.model()
-                self.entityTypeFilterChanged.connect(proxy.set_entity_type)
-                self.model.entityDataReceived.connect(self.select_candidates)
+            # Add rows to the table widget
+            editor = shotgun.EntityComboBox(
+                [NOT_LINKED, CURRENT_VALUES], fixed_height=None, parent=None)
+            editor.set_model(self.model)
 
-                self.table.add_row(entry.name, editor, entity)
+            proxy = editor.model()
+            self.entityTypeFilterChanged.connect(proxy.set_entity_type)
+            self.model.entityDataReceived.connect(self.select_candidates)
+
+            self.table.add_row(entry.name, editor, entity)
 
         self.entityTypeFilterChanged.connect(self.select_candidates)
         self.emit_filter_changed()

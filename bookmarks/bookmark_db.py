@@ -11,14 +11,8 @@ The sqlite3 database table definitions are stored in `bookmark_db.json`.
 Usage
 -----
 
-
     Use the thread-safe `bookmark_db.get_db()` to create thread-specific
-    connections to a database:
-
-.. code-block:: python
-
-        with bookmark_db.transactions(server, job, root) as db:
-            v = db.value(db.source(), bookmark_db.DescriptionColumn)
+    connections to a database
 
 The bookmark databases have currently 3 tables. The `data` table is used to
 store information about folders and files, eg. assets would store their
@@ -252,13 +246,17 @@ def copy_properties(server, job, root, asset=None, table=BookmarkTable):
 
     """
     data = {}
-    source = u'/'.join((server, job, root)
-                       ) if not asset else u'/'.join((server, job, root, asset))
-    with transactions(server, job, root) as db:
-        for k in TABLES[table]:
-            if k == 'id':
-                continue
-            data[k] = db.value(source, k, table=table)
+
+    if asset:
+        source = u'/'.join((server, job, root, asset))
+    else:
+        source = u'/'.join((server, job, root))
+
+    db = get_db(server, job, root)
+    for k in TABLES[table]:
+        if k == 'id':
+            continue
+        data[k] = db.value(source, k, table=table)
 
     if data:
         global CLIPBOARD
@@ -277,9 +275,13 @@ def paste_properties(server, job, root, asset=None, table=BookmarkTable):
     if not CLIPBOARD[table]:
         return
 
-    source = u'/'.join((server, job, root)
-                       ) if not asset else u'/'.join((server, job, root, asset))
-    with transactions(server, job, root) as db:
+    if asset:
+        source = u'/'.join((server, job, root, asset))
+    else:
+        source = u'/'.join((server, job, root))
+
+    db = get_db(server, job, root)
+    with db.connection():
         for k in CLIPBOARD[table]:
             db.setValue(source, k, CLIPBOARD[table][k], table=table)
 
@@ -313,10 +315,11 @@ def set_flag(server, job, root, k, mode, flag):
     """A utility method used by the base view to set an item flag to the database.
 
     """
-    with transactions(server, job, root) as db:
-        f = db.value(k, u'flags', table=AssetTable)
-        f = 0 if f is None else f
-        f = f | flag if mode else f & ~flag
+    db = get_db(server, job, root)
+    f = db.value(k, u'flags', table=AssetTable)
+    f = 0 if f is None else f
+    f = f | flag if mode else f & ~flag
+    with db.connection():
         db.setValue(k, u'flags', f, table=AssetTable)
 
 
@@ -384,27 +387,6 @@ def remove_db(server, job, root):
             log.error('Error removing the database.')
 
 
-@contextlib.contextmanager
-def transactions(server, job, root, force=False):
-    """Context manager for controlling transactions.
-
-    We're explicitly calling `BEGIN` before the `execute()`. We also roll
-    changes back if an error has been encountered. The transactions are
-    commited when the context manager goes out of scope.
-
-    """
-    db = get_db(server, job, root, force=force)
-
-    try:
-        yield db
-    except:
-        db.connection().rollback()
-        raise
-    else:
-        db.connection().commit()
-
-
-
 def _get_thread_key(*args):
     t = unicode(repr(QtCore.QThread.currentThread()))
     return u'/'.join(args) + t
@@ -468,9 +450,9 @@ class BookmarkDB(QtCore.QObject):
         """Connects to the database file.
 
         The database can be locked for a brief period of time whilst it is being
-        used by another controller instance in another thread. This normally will raise an
-        exception, but it is safe to wait on this a little and try a few times
-        before deeming it permanently unopenable.
+        used by an another controller instance in another thread. This normally
+        will raise an exception, but it is safe to wait on this a little and try
+        a few times before deeming it permanently unopenable.
 
         When a database is unopenable, we'll create an in-memory database, and
         mark the instance invalid (`self.is_valid()` returns `False`).
@@ -512,7 +494,7 @@ class BookmarkDB(QtCore.QObject):
             return True
         return False
 
-    def _create_table(self, table, _cursor):
+    def _create_table(self, table):
         """Creates a table based on the TABLES definition.
 
         """
@@ -525,17 +507,17 @@ class BookmarkDB(QtCore.QObject):
             table=table,
             args=u','.join(args)
         )
-        _cursor.execute(sql)
+        self.connection().execute(sql)
 
 
-    def _patch_table(self, table, _cursor):
+    def _patch_table(self, table):
         """For backwards compatibility, we will ALTER the database if any of the
         required columns are missing.
 
         """
         sql = u'PRAGMA table_info(\'{}\');'.format(table)
 
-        table_info = _cursor.execute(sql).fetchall()
+        table_info = self.connection().execute(sql).fetchall()
 
         columns = [c[1] for c in table_info]
         missing = list(set(TABLES[table]) - set(columns))
@@ -543,14 +525,14 @@ class BookmarkDB(QtCore.QObject):
         for column in missing:
             cmd = 'ALTER TABLE {} ADD COLUMN {};'.format(table, column)
             try:
-                _cursor.execute(cmd)
+                self.connection().execute(cmd)
                 log.success(u'Added missing column {}'.format(missing))
             except Exception as e:
                 log.error(
                     u'Failed to add missing column {}\n{}'.format(column, e))
                 raise
 
-    def _add_info(self, _cursor):
+    def _add_info(self):
         """Adds information about who and when created the database.
 
         """
@@ -571,7 +553,7 @@ class BookmarkDB(QtCore.QObject):
             host=b64encode(platform.node().decode('utf-8')),
             created=time.time(),
         )
-        _cursor.execute(sql.encode('utf-8'))
+        self.connection().execute(sql.encode('utf-8'))
 
     def _init_tables(self):
         """Initialises the database with the default tables.
@@ -586,12 +568,10 @@ class BookmarkDB(QtCore.QObject):
             n += 1
 
             try:
-                _cursor = self._connection.cursor()
                 for table in TABLES:
-                    self._create_table(table, _cursor)
-                    self._patch_table(table, _cursor)
-                self._add_info(_cursor)
-                _cursor.close()
+                    self._create_table(table)
+                    self._patch_table(table)
+                self._add_info()
                 self.connection().commit()
                 return
             except:
@@ -670,15 +650,11 @@ class BookmarkDB(QtCore.QObject):
             id=_hash
         )
 
-        _cursor = self._connection.cursor()
         try:
-            _cursor.execute(sql.encode('utf-8'))
-            row = _cursor.fetchone()
+            row = self.connection().execute(sql.encode('utf-8')).fetchone()
         except Exception as e:
             log.error(u'Failed to get value from database.\n{}'.format(e))
             raise
-        finally:
-            _cursor.close()
 
         if not row:
             return None
@@ -780,9 +756,8 @@ class BookmarkDB(QtCore.QObject):
             table=table
         )
 
-        _cursor = self._connection.cursor()
         try:
-            _cursor.execute(sql)
+            self.connection().execute(sql)
 
             # Finally, we'll notify others of the changed value
             _value = self.value(source, key, table=table)
@@ -791,5 +766,3 @@ class BookmarkDB(QtCore.QObject):
 
         except Exception as e:
             log.error(u'Failed to set value.\n{}'.format(e))
-        finally:
-            _cursor.close()

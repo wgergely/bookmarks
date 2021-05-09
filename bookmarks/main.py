@@ -243,8 +243,10 @@ class MainWidget(QtWidgets.QWidget):
         # Initialize the bookmarks model. This will initialise the
         # connected models asset, task and file models.
         self.bookmarkswidget.model().sourceModel().modelDataResetRequested.emit()
-        self.favouriteswidget.queued_model_reset()
 
+        # Let's load our favourite items
+        common.signals.favouritesChanged.emit()
+        
         # We're done, let other componenets know, we have finished initializing
         # the base widget
         self._initialized = True

@@ -119,9 +119,12 @@ class AssetModel(base.BaseModel):
         source = u'/'.join(parent_path)
 
         # Let's get the identifier from the bookmark database
-        with bookmark_db.transactions(*parent_path) as db:
-            ASSET_IDENTIFIER = db.value(
-                source, u'identifier', table=bookmark_db.BookmarkTable)
+        db = bookmark_db.get_db(*parent_path)
+        ASSET_IDENTIFIER = db.value(
+            source,
+            u'identifier',
+            table=bookmark_db.BookmarkTable
+        )
 
         nth = 1
         c = 0
@@ -227,7 +230,7 @@ class AssetModel(base.BaseModel):
 
     def save_active(self):
         index = self.active_index()
-        
+
         if not index.isValid():
             return
         if not index.data(QtCore.Qt.StatusTipRole):

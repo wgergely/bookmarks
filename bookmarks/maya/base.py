@@ -487,14 +487,19 @@ class MayaProperties(object):
 
     def init_data(self, server, job, root, asset):
         # Bookmark properties
+        db = bookmark_db.get_db(server, job, root)
         for k in DB_KEYS[bookmark_db.BookmarkTable]:
-            with bookmark_db.transactions(server, job, root) as db:
-                self.data[k] = db.value(db.source(), k, table=bookmark_db.BookmarkTable)
-
-        # Asset properties
+            self.data[k] = db.value(
+                db.source(),
+                k,
+                table=bookmark_db.BookmarkTable
+            )
         for k in DB_KEYS[bookmark_db.AssetTable]:
-            with bookmark_db.transactions(server, job, root) as db:
-                self.data[k] = db.value(db.source(asset), k, table=bookmark_db.AssetTable)
+            self.data[k] = db.value(
+                db.source(asset),
+                k,
+                table=bookmark_db.AssetTable
+            )
 
     @property
     def framerate(self):

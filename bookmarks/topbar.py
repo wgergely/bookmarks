@@ -157,7 +157,7 @@ class FilterHistoryMenu(contextmenu.BaseContextMenu):
         for t in v:
             if not t:
                 continue
-                
+
             self.menu[contextmenu.key()] = {
                 u'icon': self.get_icon(u'filter'),
                 u'text': t,
@@ -385,13 +385,12 @@ class SlackButton(BaseControlButton):
             self.setHidden(True)
             return False
 
-        with bookmark_db.transactions(*args) as db:
-            source = u'/'.join(args)
-            slacktoken = db.value(
-                source,
-                u'slacktoken',
-                table=bookmark_db.BookmarkTable
-            )
+        db = bookmark_db.get_db(*args)
+        slacktoken = db.value(
+            db.source(),
+            u'slacktoken',
+            table=bookmark_db.BookmarkTable
+        )
 
         if not slacktoken:
             self.setHidden(True)

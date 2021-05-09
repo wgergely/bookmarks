@@ -792,8 +792,12 @@ class TodoEditorWidget(QtWidgets.QDialog):
             row.deleteLater()
             del row
 
+    @common.error
+    @common.debug
     def refresh(self):
-        """Populates the list from the database."""
+        """Populates the list from the database.
+
+        """
         if not self.parent():
             return
         if not self.index.isValid():
@@ -806,23 +810,18 @@ class TodoEditorWidget(QtWidgets.QDialog):
         elif self.index.data(common.TypeRole) == common.SequenceItem:
             source = common.proxy_path(self.index)
 
-        with bookmark_db.transactions(*self.index.data(common.ParentPathRole)[0:3]) as db:
-            v = db.value(source, u'notes')
+        db = bookmark_db.get_db(*self.index.data(common.ParentPathRole)[0:3])
+        v = db.value(source, u'notes')
         if not v:
             return
 
         self.clear()
 
         keys = sorted(v.keys())
-        try:
-            for k in keys:
-                self.add_item(
-                    text=v[k][u'text']
-                )
-        except:
-            log.error(u'Error adding notes')
-            ui.ErrorBox(u'Error refreshing the data', u'').open()
-            raise
+        for k in keys:
+            self.add_item(
+                text=v[k][u'text']
+            )
 
     @property
     def index(self):
@@ -1000,7 +999,8 @@ class TodoEditorWidget(QtWidgets.QDialog):
         elif self.index.data(common.TypeRole) == common.SequenceItem:
             source = common.proxy_path(self.index)
 
-        with bookmark_db.transactions(*self.index.data(common.ParentPathRole)[0:3]) as db:
+        db = bookmark_db.get_db(*self.index.data(common.ParentPathRole)[0:3])
+        with db.connection():
             db.setValue(source, u'notes', data)
 
     def init_lock(self):

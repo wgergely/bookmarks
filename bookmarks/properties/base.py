@@ -474,67 +474,67 @@ class PropertiesWidget(QtWidgets.QDialog):
         if self._db_table is None or self._db_table not in bookmark_db.TABLES:
             raise RuntimeError(u'Invalid database table.')
 
-        with bookmark_db.transactions(self.server, self.job, self.root) as db:
-            for k in bookmark_db.TABLES[self._db_table]:
-                if not hasattr(self, k + '_editor'):
-                    continue
+        db = bookmark_db.get_db(self.server, self.job, self.root)
+        for k in bookmark_db.TABLES[self._db_table]:
+            if not hasattr(self, k + '_editor'):
+                continue
 
-                # If the source is not specified we won't be able to load data
-                # from the database
-                if self.db_source() is None:
-                    self.current_data[k] = None
-                    continue
+            # If the source is not specified we won't be able to load data
+            # from the database
+            if self.db_source() is None:
+                self.current_data[k] = None
+                continue
 
-                editor = getattr(self, k + '_editor')
+            editor = getattr(self, k + '_editor')
 
-                v = db.value(self.db_source(), k, table=self._db_table)
-                if v is not None:
+            v = db.value(self.db_source(), k, table=self._db_table)
+            if v is not None:
 
-                    # Type verification
-                    for section in self._sections.itervalues():
-                        for group in section['groups'].itervalues():
-                            for item in group.itervalues():
-                                if item['key'] != k:
-                                    continue
-                                _type = bookmark_db.TABLES[self._db_table][item['key']]['type']
-                                try:
-                                    v = _type(v)
-                                except Exception as e:
-                                    log.error(e)
-                                break
+                # Type verification
+                for section in self._sections.itervalues():
+                    for group in section['groups'].itervalues():
+                        for item in group.itervalues():
+                            if item['key'] != k:
+                                continue
+                            _type = bookmark_db.TABLES[self._db_table][item['key']]['type']
+                            try:
+                                v = _type(v)
+                            except Exception as e:
+                                log.error(e)
+                            break
 
-                if k not in self.current_data:
-                    self.current_data[k] = v
+            if k not in self.current_data:
+                self.current_data[k] = v
 
-                if v is not None and not isinstance(v, unicode):
-                    v = u'{}'.format(v)
-                if v is not None:
-                    if hasattr(editor, 'setText'):
-                        editor.setText(v)
-                    if hasattr(editor, 'setCurrentText'):
-                        editor.setCurrentText(v)
-                else:
-                    if hasattr(editor, 'setCurrentText'):
-                        editor.setCurrentIndex(-1)
-
-            for k in bookmark_db.TABLES[bookmark_db.InfoTable]:
-                if k == u'id':
-                    continue
-
-                source = u'{}/{}/{}'.format(self.server, self.job, self.root)
-                v = db.value(source, k, table=bookmark_db.InfoTable)
-
-                if k == 'created':
-                    try:
-                        v = datetime.datetime.fromtimestamp(
-                            float(v)).strftime('%Y-%m-%d %H:%M:%S')
-                    except Exception as e:
-                        v = u'error'
-
-                if hasattr(self, k + '_editor'):
-                    editor = getattr(self, k + '_editor')
-                    editor.setDisabled(True)
+            if v is not None and not isinstance(v, unicode):
+                v = u'{}'.format(v)
+            if v is not None:
+                if hasattr(editor, 'setText'):
                     editor.setText(v)
+                if hasattr(editor, 'setCurrentText'):
+                    editor.setCurrentText(v)
+            else:
+                if hasattr(editor, 'setCurrentText'):
+                    editor.setCurrentIndex(-1)
+
+        for k in bookmark_db.TABLES[bookmark_db.InfoTable]:
+            if k == u'id':
+                continue
+
+            source = u'{}/{}/{}'.format(self.server, self.job, self.root)
+            v = db.value(source, k, table=bookmark_db.InfoTable)
+
+            if k == 'created':
+                try:
+                    v = datetime.datetime.fromtimestamp(
+                        float(v)).strftime('%Y-%m-%d %H:%M:%S')
+                except Exception as e:
+                    v = u'error'
+
+            if hasattr(self, k + '_editor'):
+                editor = getattr(self, k + '_editor')
+                editor.setDisabled(True)
+                editor.setText(v)
 
     def _save_db_data(self):
         if self._db_table is None or self._db_table not in bookmark_db.TABLES:
@@ -543,8 +543,9 @@ class PropertiesWidget(QtWidgets.QDialog):
         if self.db_source() is None:
             return
 
-        for k, v in self.changed_data.copy().iteritems():
-            with bookmark_db.transactions(self.server, self.job, self.root) as db:
+        db = bookmark_db.get_db(self.server, self.job, self.root)
+        with db.connection():
+            for k, v in self.changed_data.copy().iteritems():
                 db.setValue(
                     self.db_source(),
                     k,
@@ -552,11 +553,10 @@ class PropertiesWidget(QtWidgets.QDialog):
                     table=self._db_table
                 )
 
-    QtCore.Slot(unicode)
-    QtCore.Slot(type)
-    QtCore.Slot(QtWidgets.QWidget)
-    QtCore.Slot(unicode)
-
+    @QtCore.Slot(unicode)
+    @QtCore.Slot(type)
+    @QtCore.Slot(QtWidgets.QWidget)
+    @QtCore.Slot(unicode)
     def text_changed(self, key, _type, editor, v):
         """Signal called when the user changes a value in the editor.
 

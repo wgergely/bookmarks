@@ -214,18 +214,18 @@ def export_favourites(destination=None):
 
             # Add description
             k = 'description'
-            with bookmark_db.transactions(server, job, root) as db:
-                if source == db.source():
-                    table = bookmark_db.BookmarkTable
-                else:
-                    table = bookmark_db.AssetTable
+            db = bookmark_db.get_db(server, job, root)
+            if source == db.source():
+                table = bookmark_db.BookmarkTable
+            else:
+                table = bookmark_db.AssetTable
 
-                v = db.value(source, k, table=table)
-                if v:
-                    _zip.writestr(
-                        file_info.baseName() + k,
-                        bookmark_db.b64encode(v)
-                    )
+            v = db.value(source, k, table=table)
+            if v:
+                _zip.writestr(
+                    file_info.baseName() + k,
+                    bookmark_db.b64encode(v)
+                )
 
         # Let's Save the current list favourites to the zip
         v = json.dumps(
@@ -297,11 +297,12 @@ def import_favourites(source=None):
             if not v:
                 continue
 
-            with bookmark_db.transactions(server, job, root) as db:
-                if source == db.source():
-                    table = bookmark_db.BookmarkTable
-                else:
-                    table = bookmark_db.AssetTable
+            db = bookmark_db.get_db(server, job, root)
+            if source == db.source():
+                table = bookmark_db.BookmarkTable
+            else:
+                table = bookmark_db.AssetTable
+            with db.connection():
                 db.setValue(source, k, bookmark_db.b64decode(v), table=table)
 
     common.FAVOURITES = data
@@ -693,12 +694,12 @@ def show_slack():
     if not all(args):
         return
 
-    with bookmark_db.transactions(*args) as db:
-        token = db.value(
-            db.source(),
-            u'slacktoken',
-            table=bookmark_db.BookmarkTable
-        )
+    db = bookmark_db.get_db(*args)
+    token = db.value(
+        db.source(),
+        u'slacktoken',
+        table=bookmark_db.BookmarkTable
+    )
     if token is None:
         raise RuntimeError(u'Slack is not yet configured.')
 
@@ -1030,9 +1031,9 @@ def reveal_url(index):
     else:
         table = bookmark_db.AssetTable
 
-    source = u'/'.join(index.data(common.ParentPathRole))
-    with bookmark_db.transactions(*index.data(common.ParentPathRole)[0:3]) as db:
-        v = db.value(source, 'url1', table=table)
+    source = u'/'.join(parent_path)
+    db = bookmark_db.get_db(*parent_path[0:3])
+    v = db.value(source, 'url1', table=table)
 
     if not v:
         return
@@ -1439,7 +1440,8 @@ def import_asset_properties_from_json():
                 if not all((server, job, root)):
                     continue
 
-                with bookmark_db.transactions(server, job, root) as db:
+                db = bookmark_db.get_db(server, job, root)
+                with db.connection():
                     # Iterate over all our implemented asset keys and check if
                     # we have any data to import
                     for key in bookmark_db.TABLES[bookmark_db.AssetTable]:

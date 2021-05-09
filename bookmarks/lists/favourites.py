@@ -2,6 +2,7 @@
 """Classes responsible for viewing and editing items marked as favourites.
 
 """
+import functools
 import _scandir
 
 from PySide2 import QtWidgets, QtCore, QtGui
@@ -63,6 +64,26 @@ class FavouritesWidgetContextMenu(contextmenu.BaseContextMenu):
 class FavouritesModel(files.FilesModel):
     """The model responsible for displaying the saved favourites."""
     queues = (threads.FavouriteInfo, threads.FavouriteThumbnail)
+
+    def __init__(self, *args, **kwargs):
+        super(FavouritesModel, self).__init__(*args, **kwargs)
+
+        self.reset_timer = common.Timer(parent=self)
+        self.reset_timer.setInterval(10)
+        self.reset_timer.setSingleShot(True)
+
+        self.reset_timer.timeout.connect(
+            functools.partial(self.__resetdata__, force=True)
+        )
+        common.signals.favouritesChanged.connect(self.queued_model_reset)
+
+    @QtCore.Slot()
+    def queued_model_reset(self):
+        """Starts/reset the timer responsible for reloading the list of
+        favourite items.
+
+        """
+        self.reset_timer.start(self.reset_timer.interval())
 
     @common.error
     @common.status_bar_message(u'Loading My Files...')
@@ -143,7 +164,7 @@ class FavouritesModel(files.FilesModel):
                 break
 
             data[idx] = common.DataDict({
-                QtCore.Qt.DisplayRole: parent_paths[1] + u'|' + filename,
+                QtCore.Qt.DisplayRole: parent_paths[1] + u' | ' + filename,
                 QtCore.Qt.EditRole: filename,
                 QtCore.Qt.StatusTipRole: filepath,
                 QtCore.Qt.SizeHintRole: self._row_size,
@@ -315,15 +336,6 @@ class FavouritesWidget(files.FilesWidget):
             icon=icon,
             parent=parent
         )
-        self.reset_timer = common.Timer(parent=self)
-        self.reset_timer.setInterval(100)
-        self.reset_timer.setSingleShot(True)
-        self.reset_timer.timeout.connect(
-            self.model().sourceModel().modelDataResetRequested)
-        common.signals.favouritesChanged.connect(self.queued_model_reset)
-
-    def queued_model_reset(self):
-        self.reset_timer.start(self.reset_timer.interval())
 
     def buttons_hidden(self):
         """Returns the visibility of the inline icon buttons."""
@@ -335,7 +347,7 @@ class FavouritesWidget(files.FilesWidget):
     def toggle_item_flag(self, index, flag, state=None, commit_now=False):
         super(FavouritesWidget, self).toggle_item_flag(
             index, common.MarkedAsFavourite, state=False, commit_now=commit_now)
-        self.reset_timer.start()
+        common.signals.favouritesChanged.emit()
 
     def dragEnterEvent(self, event):
         if event.source() == self:

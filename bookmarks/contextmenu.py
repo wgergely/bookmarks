@@ -349,11 +349,18 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[k + ':icon'] = self.get_icon('bookmark')
 
         server, job, root = self.index.data(common.ParentPathRole)[0:3]
-        with bookmark_db.transactions(server, job, root) as db:
-            primary_url = db.value(db.source(), 'url1',
-                                   table=bookmark_db.BookmarkTable)
-            secondary_url = db.value(
-                db.source(), 'url2', table=bookmark_db.BookmarkTable)
+
+        db = bookmark_db.get_db(server, job, root)
+        primary_url = db.value(
+            db.source(),
+            'url1',
+            table=bookmark_db.BookmarkTable
+        )
+        secondary_url = db.value(
+            db.source(),
+            'url2',
+            table=bookmark_db.BookmarkTable
+        )
 
         if not any((primary_url, secondary_url)):
             return
@@ -388,9 +395,10 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         server, job, root = self.index.data(common.ParentPathRole)[0:3]
         asset = self.index.data(common.ParentPathRole)[3]
-        with bookmark_db.transactions(server, job, root) as db:
-            primary_url = db.value(db.source(asset), 'url1')
-            secondary_url = db.value(db.source(asset), 'url2')
+
+        db = bookmark_db.get_db(server, job, root)
+        primary_url = db.value(db.source(asset), 'url1')
+        secondary_url = db.value(db.source(asset), 'url2')
 
         if not any((primary_url, secondary_url)):
             return
@@ -1201,7 +1209,7 @@ class BaseContextMenu(QtWidgets.QMenu):
                 'action': func,
                 'disabled': disabled,
             }
-            
+
     def import_json_menu(self):
         k = u'Import Asset Properties'
         if k not in self.menu:

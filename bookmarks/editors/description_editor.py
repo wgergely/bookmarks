@@ -37,7 +37,8 @@ class DescriptionEditorWidget(ui.LineEdit):
             self.hide()
             return
 
-        if not index.data(common.ParentPathRole):
+        parent_path = index.data(common.ParentPathRole)
+        if not parent_path:
             self.hide()
             return
 
@@ -47,7 +48,8 @@ class DescriptionEditorWidget(ui.LineEdit):
         else:
             k = p
 
-        with bookmark_db.transactions(*index.data(common.ParentPathRole)[0:3]) as db:
+        db = bookmark_db.get_db(*parent_path[0:3])
+        with db.connection():
             db.setValue(k, u'description', self.text())
 
         source_index = index.model().mapToSource(index)

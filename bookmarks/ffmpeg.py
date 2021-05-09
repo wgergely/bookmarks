@@ -236,12 +236,12 @@ def launch_ffmpeg_command(input, preset, server=None, job=None, root=None, asset
     endframe = max(f)
 
     # Framerate
-    with bookmark_db.transactions(server, job, root) as db:
-        framerate = db.value(
-            db.source(),
-            u'framerate',
-            table=bookmark_db.BookmarkTable
-        )
+    db = bookmark_db.get_db(server, job, root)
+    framerate = db.value(
+        db.source(),
+        u'framerate',
+        table=bookmark_db.BookmarkTable
+    )
 
     if not framerate:
         framerate = 24

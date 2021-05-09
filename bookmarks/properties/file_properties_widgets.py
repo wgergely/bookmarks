@@ -156,9 +156,12 @@ class AssetsModel(BaseModel):
         icon = QtGui.QIcon(pixmap)
 
         # Let's get the identifier from the bookmark database
-        with bookmark_db.transactions(server, job, root) as db:
-            ASSET_IDENTIFIER = db.value(
-                bookmark, u'identifier', table=bookmark_db.BookmarkTable)
+        db = bookmark_db.get_db(server, job, root)
+        ASSET_IDENTIFIER = db.value(
+            bookmark,
+            u'identifier',
+            table=bookmark_db.BookmarkTable
+        )
 
         for entry in _scandir.scandir(bookmark):
             if entry.name.startswith(u'.'):
@@ -420,13 +423,13 @@ class PrefixEditor(QtWidgets.QDialog):
         self.parent().prefix_editor.setText(self.editor.text())
 
         p = self.parent()
-        args = (p.server, p.job, p.root)
-        with bookmark_db.transactions(*args) as db:
-            v = db.value(
-                u'/'.join(args),
-                u'prefix',
-                table=bookmark_db.BookmarkTable
-            )
+        db = bookmark_db.get_db(p.server, p.job, p.root)
+
+        v = db.value(
+            db.source(),
+            u'prefix',
+            table=bookmark_db.BookmarkTable
+        )
 
         if not v:
             return
@@ -440,10 +443,11 @@ class PrefixEditor(QtWidgets.QDialog):
 
         p = self.parent()
         p.prefix_editor.setText(self.editor.text())
-        args = (p.server, p.job, p.root)
-        with bookmark_db.transactions(*args) as db:
+
+        db = bookmark_db.get_db(p.server, p.job, p.root)
+        with db.connection():
             db.setValue(
-                u'/'.join(args),
+                db.source(),
                 u'prefix',
                 self.editor.text(),
                 table=bookmark_db.BookmarkTable

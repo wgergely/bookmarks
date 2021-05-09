@@ -429,66 +429,65 @@ class InfoWorker(BaseWorker):
                     return False
                 k = ref()[QtCore.Qt.StatusTipRole]
 
-            # Issues SQLite "BEGIN"
-            with bookmark_db.transactions(pp[0], pp[1], pp[2]) as db:
-
-                # Bookmark items
-                if len(pp) == 3:
-                    identifier = db.value(
-                        db.source(),
-                        u'identifier',
-                        table=bookmark_db.BookmarkTable
-                    )
-                    count = self.count_assets(db.source(), identifier)
-                    if not is_valid():
-                        return False
-                    ref()[common.AssetCountRole] = count
-
-                    description = self.get_bookmark_description(db)
-                    if not is_valid():
-                        return False
-                    ref()[common.DescriptionRole] = description
-                    if not is_valid():
-                        return False
-                    ref()[QtCore.Qt.ToolTipRole] = description
-                    if not is_valid():
-                        return False
-
-                if len(pp) > 3:
-                    # I made a mistake and didn't realise I was settings things
-                    # up so that bookmark descriptions won't be stored in
-                    # the asset table. Well. This just means, I'll have to make
-                    # sure I won't overwrite the previously retrieved bookmark
-                    # description here.
-                    v = db.value(k, u'description')
-                    if not is_valid():
-                        return False
-                    ref()[common.DescriptionRole] = v
-
-                # Let's load an verify the shotgun status
-                self.update_shotgun_configured(pp, db, ref())
-
-                v = self.count_todos(db, k)
+            # Load values from the database
+            db = bookmark_db.get_db(pp[0], pp[1], pp[2])
+            # Bookmark items
+            if len(pp) == 3:
+                identifier = db.value(
+                    db.source(),
+                    u'identifier',
+                    table=bookmark_db.BookmarkTable
+                )
+                count = self.count_assets(db.source(), identifier)
                 if not is_valid():
                     return False
-                ref()[common.TodoCountRole] = v
+                ref()[common.AssetCountRole] = count
 
-                # Item flags
+                description = self.get_bookmark_description(db)
                 if not is_valid():
                     return False
-                flags = ref()[
-                    common.FlagsRole] | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsDragEnabled
-
-                v = db.value(k, u'flags', table=bookmark_db.AssetTable)
-                if v:
-                    flags = flags | v
-                v = db.value(proxy_k, u'flags', table=bookmark_db.AssetTable)
-                if v:
-                    flags = flags | v
-
+                ref()[common.DescriptionRole] = description
                 if not is_valid():
                     return False
-                ref()[common.FlagsRole] = QtCore.Qt.ItemFlags(flags)
+                ref()[QtCore.Qt.ToolTipRole] = description
+                if not is_valid():
+                    return False
+
+            if len(pp) > 3:
+                # I made a mistake and didn't realise I was settings things
+                # up so that bookmark descriptions won't be stored in
+                # the asset table. Well. This just means, I'll have to make
+                # sure I won't overwrite the previously retrieved bookmark
+                # description here.
+                v = db.value(k, u'description')
+                if not is_valid():
+                    return False
+                ref()[common.DescriptionRole] = v
+
+            # Let's load an verify the shotgun status
+            self.update_shotgun_configured(pp, db, ref())
+
+            v = self.count_todos(db, k)
+            if not is_valid():
+                return False
+            ref()[common.TodoCountRole] = v
+
+            # Item flags
+            if not is_valid():
+                return False
+            flags = ref()[
+                common.FlagsRole] | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsDragEnabled
+
+            v = db.value(k, u'flags', table=bookmark_db.AssetTable)
+            if v:
+                flags = flags | v
+            v = db.value(proxy_k, u'flags', table=bookmark_db.AssetTable)
+            if v:
+                flags = flags | v
+
+            if not is_valid():
+                return False
+            ref()[common.FlagsRole] = QtCore.Qt.ItemFlags(flags)
 
             # For sequences we will work out the name of the sequence based on
             # the frames.

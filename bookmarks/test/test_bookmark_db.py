@@ -13,7 +13,7 @@ class Test(base.BaseApplicationTest):
     @classmethod
     def setUpClass(cls):
         super(Test, cls).setUpClass()
-        
+
         if not os.path.exists(common.temp_path()):
             os.makedirs(common.temp_path())
         if not os.path.exists(common.temp_path() + '2'):
@@ -171,18 +171,3 @@ class Test(base.BaseApplicationTest):
 
         for _ in xrange(10):
             bookmark_db.paste_properties(server, job, root, asset=base.random_unicode(32), table=bookmark_db.AssetTable)
-
-    def test_contextmanager(self):
-        from .. import bookmark_db
-        server, job, root = common.local_parent_paths()
-        root += '3'
-        with bookmark_db.transactions(server, job, root) as db:
-            self.assertTrue(db.is_valid())
-
-    def test_contextmanager2(self):
-        from .. import bookmark_db
-        server, job, root = common.local_parent_paths()
-        root += '3'
-
-        with bookmark_db.transactions(server, job, root) as db:
-            self.assertTrue(db.is_valid())

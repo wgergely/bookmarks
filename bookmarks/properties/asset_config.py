@@ -349,13 +349,12 @@ class AssetConfig(QtCore.QObject):
             return self._data
 
         try:
-            with bookmark_db.transactions(self.server, self.job, self.root) as db:
-                source = u'/'.join((self.server, self.job, self.root))
-                v = db.value(
-                    source,
-                    ASSET_CONFIG_KEY,
-                    table=bookmark_db.BookmarkTable
-                )
+            db = bookmark_db.get_db(self.server, self.job, self.root)
+            v = db.value(
+                db.source(),
+                ASSET_CONFIG_KEY,
+                table=bookmark_db.BookmarkTable
+            )
             # Let's do some very basic sanity check for the returned data
             if (
                 isinstance(v, dict) and
@@ -383,10 +382,14 @@ class AssetConfig(QtCore.QObject):
             raise TypeError(
                 u'Invalid type, expected <type \'dict\'>, got {}'.format(type(data)))
 
-        with bookmark_db.transactions(self.server, self.job, self.root) as db:
-            source = u'{}/{}/{}'.format(self.server, self.job, self.root)
-            db.setValue(source, ASSET_CONFIG_KEY, data,
-                        table=bookmark_db.BookmarkTable)
+        db = bookmark_db.get_db(self.server, self.job, self.root)
+        with db.connection():
+            db.setValue(
+                db.source(),
+                ASSET_CONFIG_KEY,
+                data,
+                table=bookmark_db.BookmarkTable
+            )
 
         # Refetching the data from the database
         return self.data(force=True)
@@ -497,14 +500,13 @@ class AssetConfig(QtCore.QObject):
 
         # We can also use some of the bookmark properties as tokens.
         # Let's load the values from the database:
-        source = u'/'.join((self.server, self.job, self.root))
-        with bookmark_db.transactions(self.server, self.job, self.root) as db:
-            _get('width')
-            _get('height')
-            _get('framerate')
-            _get('prefix')
-            _get('startframe')
-            _get('duration')
+        db = bookmark_db.get_db(self.server, self.job, self.root)
+        _get('width')
+        _get('height')
+        _get('framerate')
+        _get('prefix')
+        _get('startframe')
+        _get('duration')
 
         # The asset root token will only be available when the asset is manually
         # specified

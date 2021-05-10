@@ -979,6 +979,16 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         painter.drawRect(option.rect)
 
     @paintmethod
+    def paint_persistent(self, *args):
+        """Paints a gray overlay when an item is archived."""
+        rectangles, painter, option, index, selected, focused, active, archived, favourite, hover, font, metrics, cursor_position = args
+        if not index.data(common.FlagsRole) & common.MarkedAsPersistent:
+            return
+        painter.setBrush(common.BLUE)
+        painter.setOpacity(0.5)
+        painter.drawRect(option.rect)
+
+    @paintmethod
     def paint_shotgun_status(self, *args):
         rectangles, painter, option, index, selected, focused, active, archived, favourite, hover, font, metrics, cursor_position = args
         if not index.isValid():
@@ -1011,6 +1021,7 @@ class BookmarksWidgetDelegate(BaseDelegate):
         args = self.get_paint_arguments(
             painter, option, index, antialiasing=False)
         self.paint_background(*args)
+        self.paint_persistent(*args)
         self.paint_thumbnail(*args)
         self.paint_thumbnail_shadow(*args)
         self.paint_name(*args)

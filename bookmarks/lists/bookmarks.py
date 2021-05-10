@@ -122,6 +122,9 @@ class BookmarksModel(base.BaseModel):
             else:
                 flags = DEFAULT_ITEM_FLAGS | common.MarkedAsArchived
 
+            if k in common.PERSISTENT_BOOKMARKS:
+                flags = flags | common.MarkedAsPersistent
+
             filepath = file_info.filePath()
 
             # Item flags. Active and favourite flags will be only set if the

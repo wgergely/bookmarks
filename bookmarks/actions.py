@@ -1057,6 +1057,7 @@ def toggle_archived(index):
     instance().widget().save_selection()
     instance().widget().toggle_item_flag(index, common.MarkedAsArchived)
     instance().widget().update(index)
+    instance().widget().model().invalidateFilter()
 
 
 @common.debug

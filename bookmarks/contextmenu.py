@@ -275,13 +275,10 @@ class BaseContextMenu(QtWidgets.QMenu):
         sortorder = m.sort_order()
         sortrole = m.sort_role()
 
-        sort_by_name = sortrole == common.SortByNameRole
-        sort_modified = sortrole == common.SortByLastModifiedRole
-        sort_size = sortrole == common.SortBySizeRole
-
         k = u'Sort List'
         self.menu[k] = collections.OrderedDict()
         self.menu[k + u':icon'] = self.get_icon(u'sort')
+
 
         self.menu[k][key()] = {
             'text': u'Ascending' if not sortorder else u'Descending',
@@ -293,33 +290,16 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         self.separator(self.menu[k])
 
-        self.menu[k][key()] = {
-            'text': u'Name',
-            'icon': item_on_icon if sort_by_name else None,
-            'action': functools.partial(
-                actions.change_sorting,
-                common.SortByNameRole,
-                sortorder
-            )
-        }
-        self.menu[k][key()] = {
-            'text': u'Date Modified',
-            'icon': item_on_icon if sort_modified else None,
-            'action': functools.partial(
-                actions.change_sorting,
-                common.SortByLastModifiedRole,
-                sortorder
-            )
-        }
-        self.menu[k][key()] = {
-            'text': u'Size',
-            'icon': item_on_icon if sort_size else None,
-            'action': functools.partial(
-                actions.change_sorting,
-                common.SortBySizeRole,
-                sortorder
-            )
-        }
+        for _k in common.DEFAULT_SORT_VALUES:
+            self.menu[k][key()] = {
+                'text': common.DEFAULT_SORT_VALUES[_k],
+                'icon': item_on_icon if sortrole == _k else None,
+                'action': functools.partial(
+                    actions.change_sorting,
+                    _k,
+                    sortorder
+                )
+            }
 
     def reveal_item_menu(self):
         if not self.index.isValid():

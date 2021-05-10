@@ -22,6 +22,7 @@ from . import delegate
 
 FILTER_EXTENSIONS = False
 
+
 class DropIndicatorWidget(QtWidgets.QWidget):
     """Widgets responsible for drawing an overlay."""
 
@@ -121,7 +122,7 @@ class DragPixmapFactory(QtWidgets.QWidget):
         self._pixmap = pixmap
         self._text = text
 
-        font, metrics = common.font_db.primary_font(common.MEDIUM_FONT_SIZE())
+        _, metrics = common.font_db.primary_font(common.MEDIUM_FONT_SIZE())
         self._text_width = metrics.width(text)
 
         width = self._text_width + common.MARGIN()
@@ -276,7 +277,6 @@ class FilesModel(base.BaseModel):
         self.dataTypeChanged.connect(self.set_data_type)
         self.dataTypeChanged.connect(common.signals.updateButtons)
 
-
     @common.status_bar_message(u'Loading Files...')
     @base.initdata
     def __initdata__(self):
@@ -288,7 +288,7 @@ class FilesModel(base.BaseModel):
         fetched by addittional thread workers.
 
         The method will iterate through all files in every subfolder and will
-        automatically populate both individual ``FileItems`` and collapsed
+         populate both individual ``FileItems`` and collapsed
         ``SequenceItems`` data sets. Switching between the two datasets is done
         by emitting the ``dataTypeChanged`` signal with the data type.
 
@@ -303,13 +303,6 @@ class FilesModel(base.BaseModel):
         the method where scandir is evoked.
 
         """
-        def dflags():
-            """The default flags to apply to the item."""
-            return (
-                QtCore.Qt.ItemNeverHasChildren |
-                QtCore.Qt.ItemIsEnabled |
-                QtCore.Qt.ItemIsSelectable)
-
         p = self.parent_path()
         k = self.task()
         if not k:
@@ -319,14 +312,13 @@ class FilesModel(base.BaseModel):
 
         SEQUENCE_DATA = common.DataDict()  # temporary dict for temp data
 
-        parent_path = self.parent_path()
-        _parent_path = u'/'.join(parent_path + (k,))
+        _parent_path = u'/'.join(p + (k,))
         if not QtCore.QFileInfo(_parent_path).exists():
             return
 
         # Let' get the asset config instance to check what extensions are
         # currently allowed to be displayed in the task folder
-        config = asset_config.get(*parent_path[0:3])
+        config = asset_config.get(*p[0:3])
         is_valid_task = config.check_task(k)
         if is_valid_task:
             valid_extensions = config.get_task_extensions(k)
@@ -397,7 +389,7 @@ class FilesModel(base.BaseModel):
                 log.error(u'"' + filename + u'" named incorrectly. Skipping.')
                 continue
 
-            flags = dflags()
+            flags = base.DEFAULT_ITEM_FLAGS
 
             if seq:
                 seqpath = seq.group(1) + common.SEQPROXY + \
@@ -405,7 +397,7 @@ class FilesModel(base.BaseModel):
             if (seq and (seqpath in common.FAVOURITES_SET or filepath in common.FAVOURITES_SET)) or (filepath in common.FAVOURITES_SET):
                 flags = flags | common.MarkedAsFavourite
 
-            parent_path_role = parent_path + (k, fileroot)
+            parent_path_role = p + (k, fileroot)
 
             idx = len(data)
 
@@ -440,6 +432,7 @@ class FilesModel(base.BaseModel):
                 common.SortByNameRole: sort_by_name_role,
                 common.SortByLastModifiedRole: 0,
                 common.SortBySizeRole: 0,
+                common.SortByTypeRole: ext,
                 #
                 common.IdRole: idx,  # non-mutable
                 #
@@ -453,7 +446,7 @@ class FilesModel(base.BaseModel):
                 # of seqeunces we add it here
                 if seqpath not in SEQUENCE_DATA:  # ... and create it if it doesn't exist
                     seqname = seqpath.split(u'/')[-1]
-                    flags = dflags()
+                    flags = base.DEFAULT_ITEM_FLAGS
 
                     if seqpath in common.FAVOURITES_SET:
                         flags = flags | common.MarkedAsFavourite
@@ -484,9 +477,11 @@ class FilesModel(base.BaseModel):
                         common.ThumbnailLoaded: False,
                         #
                         common.TypeRole: common.SequenceItem,
+                        #
                         common.SortByNameRole: sort_by_name_role,
                         common.SortByLastModifiedRole: 0,
                         common.SortBySizeRole: 0,  # Initializing with null-size
+                        common.SortByTypeRole: ext,
                         #
                         common.IdRole: 0,
                         #
@@ -525,7 +520,7 @@ class FilesModel(base.BaseModel):
                 v[common.TypeRole] = common.FileItem
                 v[common.SortByLastModifiedRole] = 0
 
-                flags = dflags()
+                flags = base.DEFAULT_ITEM_FLAGS
                 if filepath in common.FAVOURITES_SET:
                     flags = flags | common.MarkedAsFavourite
 
@@ -569,7 +564,7 @@ class FilesModel(base.BaseModel):
 
     def save_active(self):
         index = self.active_index()
-        
+
         if not index.isValid():
             return
         if not index.data(QtCore.Qt.StatusTipRole):
@@ -586,7 +581,6 @@ class FilesModel(base.BaseModel):
             common.get_sequence_endpath(file_info.fileName())
 
         actions.set_active(settings.FileKey, filepath)
-
 
     def task(self):
         return settings.active(settings.TaskKey)
@@ -860,4 +854,5 @@ class FilesWidget(base.ThreadedBaseWidget):
             model.__resetdata__(force=True)
 
         # Delay the selection to let the model process events
-        QtCore.QTimer.singleShot(300, functools.partial(self.select_item, v, role=QtCore.Qt.StatusTipRole))
+        QtCore.QTimer.singleShot(300, functools.partial(
+            self.select_item, v, role=QtCore.Qt.StatusTipRole))

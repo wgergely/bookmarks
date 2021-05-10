@@ -11,7 +11,6 @@ from PySide2 import QtWidgets, QtCore, QtGui
 from .. import log
 from .. import common
 from ..threads import threads
-from .. import settings
 from .. import contextmenu
 from .. import actions
 from .. import datacache
@@ -89,16 +88,11 @@ class FavouritesModel(files.FilesModel):
     @common.status_bar_message(u'Loading My Files...')
     @base.initdata
     def __initdata__(self):
-        def dflags():
-            """The default flags to apply to the item."""
-            return (
-                QtCore.Qt.ItemNeverHasChildren |
-                QtCore.Qt.ItemIsEnabled |
-                QtCore.Qt.ItemIsSelectable)
-
         p = self.parent_path()
         k = self.task()
-        t = self.data_type()
+        if not k:
+            return
+        t = common.FileItem
         data = datacache.get_data(p, k, t)
 
         SEQUENCE_DATA = common.DataDict()
@@ -110,6 +104,11 @@ class FavouritesModel(files.FilesModel):
 
             if self._interrupt_requested:
                 break
+
+            if u'.' in entry.name:
+                ext = entry.name.split('.')[-1]
+            else:
+                ext = '0'
 
             filename = entry.name
 
@@ -150,7 +149,7 @@ class FavouritesModel(files.FilesModel):
                 log.error(u'"' + filename + u'" named incorrectly. Skipping.')
                 continue
 
-            flags = dflags()
+            flags = base.DEFAULT_ITEM_FLAGS
 
             if seq:
                 seqpath = seq.group(1) + common.SEQPROXY + \
@@ -164,7 +163,7 @@ class FavouritesModel(files.FilesModel):
                 break
 
             data[idx] = common.DataDict({
-                QtCore.Qt.DisplayRole: parent_paths[1] + u' | ' + filename,
+                QtCore.Qt.DisplayRole: filename,
                 QtCore.Qt.EditRole: filename,
                 QtCore.Qt.StatusTipRole: filepath,
                 QtCore.Qt.SizeHintRole: self._row_size,
@@ -191,6 +190,7 @@ class FavouritesModel(files.FilesModel):
                 common.SortByNameRole: sort_by_name_role,
                 common.SortByLastModifiedRole: 0,
                 common.SortBySizeRole: 0,
+                common.SortByTypeRole: ext,
                 #
                 common.IdRole: idx,  # non-mutable
                 #
@@ -204,7 +204,7 @@ class FavouritesModel(files.FilesModel):
                 # of seqeunces we add it here
                 if seqpath not in SEQUENCE_DATA:  # ... and create it if it doesn't exist
                     seqname = seqpath.split(u'/')[-1]
-                    flags = dflags()
+                    flags = base.DEFAULT_ITEM_FLAGS
 
                     if seqpath in common.FAVOURITES_SET:
                         flags = flags | common.MarkedAsFavourite
@@ -235,9 +235,11 @@ class FavouritesModel(files.FilesModel):
                         common.ThumbnailLoaded: False,
                         #
                         common.TypeRole: common.SequenceItem,
+                        #
                         common.SortByNameRole: sort_by_name_role,
                         common.SortByLastModifiedRole: 0,
-                        common.SortBySizeRole: 0,  # Initializing with null-size
+                        common.SortBySizeRole: 0,  # Initializing with null-size,
+                        common.SortByTypeRole: ext,
                         #
                         common.IdRole: 0,
                         #
@@ -276,7 +278,7 @@ class FavouritesModel(files.FilesModel):
                 v[common.TypeRole] = common.FileItem
                 v[common.SortByLastModifiedRole] = 0
 
-                flags = dflags()
+                flags = base.DEFAULT_ITEM_FLAGS
                 if filepath in common.FAVOURITES_SET:
                     flags = flags | common.MarkedAsFavourite
 
@@ -288,6 +290,15 @@ class FavouritesModel(files.FilesModel):
             data[idx] = v
             data[idx][common.IdRole] = idx
             data[idx][common.DataTypeRole] = common.SequenceItem
+
+    def parent_path(self):
+        """The model's parent folder path segments.
+
+        Returns:
+            tuple: A tuple of path segments.
+
+        """
+        return common.local_parent_paths()
 
     def item_iterator(self):
         """We're using the saved keys to find and return the DirEntries
@@ -319,6 +330,9 @@ class FavouritesModel(files.FilesModel):
     def task(self):
         return u'favourites'
 
+    def set_task(self, v):
+        pass
+
     def local_settings_key(self):
         return self.task()
 
@@ -344,10 +358,16 @@ class FavouritesWidget(files.FilesWidget):
     def inline_icons_count(self):
         return 3
 
-    def toggle_item_flag(self, index, flag, state=None, commit_now=False):
+    def toggle_item_flag(self, index, flag, state=None, commit_now=True):
+        if flag != common.MarkedAsFavourite:
+            return
+
         super(FavouritesWidget, self).toggle_item_flag(
-            index, common.MarkedAsFavourite, state=False, commit_now=commit_now)
-        common.signals.favouritesChanged.emit()
+            index,
+            flag,
+            state=False,
+            commit_now=commit_now
+        )
 
     def dragEnterEvent(self, event):
         if event.source() == self:
@@ -381,16 +401,22 @@ class FavouritesWidget(files.FilesWidget):
         for url in mime.urls():
             file_info = QtCore.QFileInfo(url.toLocalFile())
 
-            # Import favourite archive
+            # Import favourites file
             if file_info.suffix() == common.FAVOURITE_FILE_FORMAT:
                 actions.import_favourites(source=file_info.filePath())
                 continue
 
-            k = _check_sequence(file_info.filePath())
-            common.FAVOURITES[k] = common.local_parent_paths()
+            source = _check_sequence(file_info.filePath())
 
-        common.FAVOURITES_SET = set(common.FAVOURITES)
-        settings.instance().set_favourites(common.FAVOURITES)
+            # Skip files saved already
+            if source in common.FAVOURITES_SET:
+                continue
+
+            # Add the dropped file with dummy server/job/root values
+            actions.add_favourite(
+                common.local_parent_paths(),
+                source,
+            )
 
     def get_hint_string(self):
         model = self.model().sourceModel()

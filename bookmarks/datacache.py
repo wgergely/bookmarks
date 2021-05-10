@@ -1,7 +1,4 @@
-"""Modules is used to store all file data loaded by
-various models across the app.
-
-All file data is cached in the `DATA` dictionary.
+"""Used to store all file item data loaded by models accross our app.
 
 """
 import weakref

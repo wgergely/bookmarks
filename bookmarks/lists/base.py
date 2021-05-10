@@ -53,11 +53,17 @@ from . import delegate
 
 BG_COLOR = QtGui.QColor(0, 0, 0, 50)
 MAX_HISTORY = 20
+DEFAULT_ITEM_FLAGS = (
+    QtCore.Qt.ItemNeverHasChildren |
+    QtCore.Qt.ItemIsEnabled |
+    QtCore.Qt.ItemIsSelectable
+)
 
 
 def validate_index(func):
     """Decorator function to ensure `QModelIndexes` passed to worker threads
     are in a valid state.
+
     """
     @functools.wraps(func)
     def func_wrapper(*args, **kwargs):
@@ -696,7 +702,7 @@ class BaseModel(QtCore.QAbstractListModel):
     @common.debug
     @common.error
     def init_sort_values(self, *args, **kwargs):
-        """Loads the saved sorting values from the local preferences.
+        """Load the current sort role from the local preferences.
 
         """
         val = self.get_local_setting(
@@ -704,8 +710,11 @@ class BaseModel(QtCore.QAbstractListModel):
             key=self.__class__.__name__,
             section=settings.UIStateSection
         )
-        if val not in (common.SortByNameRole, common.SortBySizeRole, common.SortByLastModifiedRole):
+
+        # Set default if an invalid value is encountered
+        if val not in common.DEFAULT_SORT_VALUES:
             val = common.SortByNameRole
+
         self._sortrole = val
 
         val = self.get_local_setting(
@@ -746,8 +755,6 @@ class BaseModel(QtCore.QAbstractListModel):
         self._generate_thumbnails_enabled = v
 
     def sort_role(self):
-        """The item role used to sort the model data, eg. `common.SortByNameRole`"""
-
         return self._sortrole
 
     @common.debug
@@ -1411,6 +1418,9 @@ class BaseListWidget(QtWidgets.QListView):
         def save_active(k, mode, flag):
             pass
 
+        p = index.data(common.ParentPathRole)
+        if not p:
+            return
         server, job, root = index.data(common.ParentPathRole)[0:3]
 
         if flag == common.MarkedAsArchived:

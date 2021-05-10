@@ -307,9 +307,10 @@ class TaskFolderModel(base.BaseModel):
                 #
                 common.TypeRole: common.FileItem,
                 #
-                common.SortByNameRole: entry.name,
+                common.SortByNameRole: entry.name.lower(),
                 common.SortByLastModifiedRole: 0,
                 common.SortBySizeRole: 0,
+                common.SortByTypeRole: entry.name,
                 #
                 common.IdRole: idx,
                 #

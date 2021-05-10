@@ -97,14 +97,6 @@ class AssetModel(base.BaseModel):
             hence the model does not have any threads associated with it.
 
         """
-        def dflags():
-            """The default flags to apply to the item."""
-            return (
-                QtCore.Qt.ItemNeverHasChildren |
-                QtCore.Qt.ItemIsEnabled |
-                QtCore.Qt.ItemIsSelectable
-            )
-
         settings.instance().verify_active()
 
         parent_path = self.parent_path()
@@ -149,7 +141,7 @@ class AssetModel(base.BaseModel):
                 QtWidgets.QApplication.instance().processEvents()
 
             filename = entry.name
-            flags = dflags()
+            flags = base.DEFAULT_ITEM_FLAGS
 
             if filepath in common.FAVOURITES_SET:
                 flags = flags | common.MarkedAsFavourite
@@ -195,6 +187,7 @@ class AssetModel(base.BaseModel):
                 common.SortByNameRole: name.lower(),
                 common.SortByLastModifiedRole: 0,
                 common.SortBySizeRole: 0,
+                common.SortByTypeRole: name,
                 #
                 common.IdRole: idx,
                 #

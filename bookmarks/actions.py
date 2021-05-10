@@ -1056,6 +1056,7 @@ def toggle_favourite(index):
 def toggle_archived(index):
     # Ignore persistent items
     if index.data(common.FlagsRole) & common.MarkedAsPersistent:
+        from . import ui
         ui.MessageBox(u'Persistent items cannot be archived.').open()
         return
 

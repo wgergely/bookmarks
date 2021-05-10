@@ -2152,7 +2152,7 @@ class BaseListWidget(QtWidgets.QListView):
             return
 
         if rectangles[delegate.ThumbnailRect].contains(cursor_position):
-            images.pick(index)
+            actions.pick_thumbnail_from_file()
             return
 
         clickable_rectangles = self.itemDelegate().get_clickable_rectangles(index)

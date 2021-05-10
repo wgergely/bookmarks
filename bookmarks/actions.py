@@ -1054,6 +1054,11 @@ def toggle_favourite(index):
 @common.error
 @selection
 def toggle_archived(index):
+    # Ignore persistent items
+    if index.data(common.FlagsRole) & common.MarkedAsPersistent:
+        ui.MessageBox(u'Persistent items cannot be archived.').open()
+        return
+
     instance().widget().save_selection()
     instance().widget().toggle_item_flag(index, common.MarkedAsArchived)
     instance().widget().update(index)

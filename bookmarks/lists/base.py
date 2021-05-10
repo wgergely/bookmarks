@@ -1423,6 +1423,10 @@ class BaseListWidget(QtWidgets.QListView):
             return
         server, job, root = index.data(common.ParentPathRole)[0:3]
 
+        # Ignore persistent items
+        if flag == common.MarkedAsArchived and index.data(common.FlagsRole) & common.MarkedAsPersistent:
+            return
+
         if flag == common.MarkedAsArchived:
             save_func = save_to_db
         elif flag == common.MarkedAsFavourite:

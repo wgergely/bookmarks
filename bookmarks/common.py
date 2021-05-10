@@ -42,9 +42,10 @@ FileTab = 2
 FavouriteTab = 3
 
 # Flags
-MarkedAsArchived = 0b1000000000
-MarkedAsFavourite = 0b10000000000
-MarkedAsActive = 0b100000000000
+MarkedAsArchived =   0b1000000000
+MarkedAsFavourite =  0b10000000000
+MarkedAsActive =     0b100000000000
+MarkedAsPersistent = 0b1000000000000
 
 InfoThread = 0
 ThumbnailThread = 1
@@ -62,6 +63,7 @@ FAVOURITE_FILE_FORMAT = u'bfav'
 
 # Private caches used to store
 SERVERS = []
+PERSISTENT_BOOKMARKS = {}
 BOOKMARKS = {}
 FAVOURITES = {}
 FAVOURITES_SET = set()

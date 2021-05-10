@@ -243,7 +243,7 @@ class Settings(QtCore.QSettings):
 
         """
         v = self.value(CurrentUserPicksSection, FavouritesKey)
-        
+
         if not v:
             common.FAVOURITES = {}
             common.FAVOURITES_SET = set()
@@ -287,6 +287,9 @@ class Settings(QtCore.QSettings):
         """
         _persistent = self.persistent_bookmarks()
         _persistent = _persistent if _persistent else {}
+        
+        # Save persistent items to cache
+        common.PERSISTENT_BOOKMARKS = _persistent
 
         _custom = self.value(CurrentUserPicksSection, BookmarksKey)
         _custom = _custom if _custom else {}

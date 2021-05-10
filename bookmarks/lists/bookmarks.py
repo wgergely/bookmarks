@@ -16,6 +16,9 @@ from . import base
 from . import delegate
 
 
+DEFAULT_ITEM_FLAGS = base.DEFAULT_ITEM_FLAGS | QtCore.Qt.ItemIsDropEnabled
+
+
 class BookmarksWidgetContextMenu(contextmenu.BaseContextMenu):
     """Context menu associated with the BookmarksWidget.
 
@@ -92,23 +95,7 @@ class BookmarksModel(base.BaseModel):
     def __initdata__(self):
         """Collects the data needed to populate the bookmarks model.
 
-        Bookmarks are made up of a tuple of ``(server, job, root)`` values and
-        are stored in the local user system settings, eg. the Registry
-        in under windows. Each bookmarks can be associated with a thumbnail,
-        custom description and a list of comments, todo items.
-
-        Note:
-            This model does not have threads associated with it as fetching
-            necessary data is relatively inexpensive.
-
         """
-        def dflags():
-            """The default flags to apply to the item."""
-            return (
-                QtCore.Qt.ItemIsDropEnabled |
-                QtCore.Qt.ItemNeverHasChildren |
-                QtCore.Qt.ItemIsEnabled |
-                QtCore.Qt.ItemIsSelectable)
 
         p = self.parent_path()
         _k = self.task()
@@ -131,9 +118,9 @@ class BookmarksModel(base.BaseModel):
             # We'll mark the item archived if the saved bookmark does not refer
             # to an existing file
             if exists:
-                flags = dflags()
+                flags = DEFAULT_ITEM_FLAGS
             else:
-                flags = dflags() | common.MarkedAsArchived
+                flags = DEFAULT_ITEM_FLAGS | common.MarkedAsArchived
 
             filepath = file_info.filePath()
 
@@ -188,6 +175,7 @@ class BookmarksModel(base.BaseModel):
                 common.SortByNameRole: text.lower(),
                 common.SortByLastModifiedRole: file_info.lastModified().toMSecsSinceEpoch(),
                 common.SortBySizeRole: file_info.size(),
+                common.SortByTypeRole: text,
                 #
                 common.IdRole: idx,
                 #
@@ -205,7 +193,7 @@ class BookmarksModel(base.BaseModel):
 
     def save_active(self):
         index = self.active_index()
-        
+
         if not index.isValid():
             return
         if not index.data(QtCore.Qt.StatusTipRole):

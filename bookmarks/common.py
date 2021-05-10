@@ -24,7 +24,7 @@ from PySide2 import QtGui, QtCore, QtWidgets
 from . import __name__ as module_name
 
 STANDALONE = True  # The current mode of bookmarks
-PRODUCT = module_name.title()
+PRODUCT = unicode(module_name.title())
 ABOUT_URL = ur'https://github.com/wgergely/bookmarks'
 BOOKMARK_ROOT_DIR = u'.bookmark'
 BOOKMARK_ROOT_KEY = '{}_ROOT'.format(module_name.upper())
@@ -91,12 +91,21 @@ DataTypeRole = QtCore.Qt.ItemDataRole(QueueRole + 1)
 SortByNameRole = QtCore.Qt.ItemDataRole(DataTypeRole + 1)
 SortByLastModifiedRole = QtCore.Qt.ItemDataRole(SortByNameRole + 1)
 SortBySizeRole = QtCore.Qt.ItemDataRole(SortByLastModifiedRole + 1)
-ShotgunLinkedRole = QtCore.Qt.ItemDataRole(SortBySizeRole + 1)
+SortByTypeRole = QtCore.Qt.ItemDataRole(SortBySizeRole + 1)
+ShotgunLinkedRole = QtCore.Qt.ItemDataRole(SortByTypeRole + 1)
 
 FileItem = 1100
 SequenceItem = 1200
 
 SORT_WITH_BASENAME = False
+DEFAULT_SORT_VALUES = {
+    SortByNameRole: u'Name',
+    SortBySizeRole: u'Date Modified',
+    SortByLastModifiedRole: u'Size',
+    SortByTypeRole: u'Type',
+}
+
+
 
 IsSequenceRegex = re.compile(
     ur'^(.+?)(\{}.*\{})(.*)$'.format(SEQSTART, SEQEND),

@@ -781,12 +781,9 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         if rect.contains(cursor_position) or favourite:
             painter.setOpacity(1.0)
 
-        sunken = option.state & QtWidgets.QStyle.State_Sunken
-
         color = QtGui.QColor(255, 255, 255, 150) if rect.contains(
             cursor_position) else common.SEPARATOR
         color = common.SELECTED_TEXT if favourite else color
-        color = QtGui.QColor(0, 0, 0, 150) if sunken else color
         pixmap = images.ImageCache.get_rsc_pixmap(
             u'favourite', color, common.MARGIN())
         painter.drawPixmap(rect, pixmap)
@@ -1751,3 +1748,20 @@ class FavouritesWidgetDelegate(FilesWidgetDelegate):
     @paintmethod
     def paint_inline_background(self, *args):
         return
+
+    @paintmethod
+    def _paint_inline_archived(self, *args):
+        return
+
+    @paintmethod
+    def _paint_inline_favourite(self, *args):
+        rectangles, painter, option, index, selected, focused, active, archived, favourite, hover, font, metrics, cursor_position = args
+        rect = rectangles[FavouriteRect]
+        if not rect or archived:
+            return
+
+        painter.setOpacity(0.5)
+        color = common.GREEN
+        pixmap = images.ImageCache.get_rsc_pixmap(
+            u'favourite', color, common.MARGIN())
+        painter.drawPixmap(rect, pixmap)

@@ -229,29 +229,55 @@ class ProgressWidget(QtWidgets.QWidget):
 
 
 class FilterOnOverlayWidget(ProgressWidget):
-    """Adds a bottom and top bar to indicate the list has hidden items.
+    """An indicator widget drawn on top of the list widgets to signal
+    if a model has filters set or if it requires a refresh.
 
     """
-
     def paintEvent(self, event):
-        """Custom message painted here."""
+        painter = QtGui.QPainter()
+        painter.begin(self)
+
+        self.paint_filter_indicator(painter)
+        self.paint_needs_refresh(painter)
+
+        painter.end()
+
+    def paint_needs_refresh(self, painter):
+        model = self.parent().model().sourceModel()
+        if not hasattr(model, 'refresh_needed') or not model.refresh_needed():
+            return
+
+        painter.save()
+
+        o = common.ROW_SEPARATOR()
+        rect = self.rect().adjusted(o, o, -o, -o)
+        painter.setBrush(QtCore.Qt.NoBrush)
+        pen = QtGui.QPen(common.BLUE)
+        pen.setWidth(common.ROW_SEPARATOR() * 2.0)
+        painter.setPen(pen)
+
+        painter.drawRect(rect)
+
+        painter.restore()
+
+    def paint_filter_indicator(self, painter):
         model = self.parent().model()
         if model.rowCount() == model.sourceModel().rowCount():
             return
 
-        painter = QtGui.QPainter()
-        painter.begin(self)
-        rect = self.rect()
-        rect.setHeight(common.ROW_SEPARATOR() * 2.0)
-        painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform)
-        painter.setOpacity(0.8)
+        painter.save()
+
         painter.setPen(QtCore.Qt.NoPen)
         painter.setBrush(common.RED)
+        painter.setOpacity(0.8)
+
+        rect = self.rect()
+        rect.setHeight(common.ROW_SEPARATOR() * 2.0)
         painter.drawRect(rect)
         rect.moveBottom(self.rect().bottom())
         painter.drawRect(rect)
-        painter.end()
+
+        painter.restore()
 
     def showEvent(self, event):
         self.repaint()

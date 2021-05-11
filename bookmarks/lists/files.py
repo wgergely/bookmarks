@@ -578,7 +578,8 @@ class FilesModel(base.BaseModel):
             data[idx][common.DataTypeRole] = common.SequenceItem
 
         self.set_watchdirs(list(set(WATCHDIRS)))
-
+        self.set_refresh_needed(False)
+        
     def disable_filter(self):
         """Overrides the asset config and disables file filters."""
         return False

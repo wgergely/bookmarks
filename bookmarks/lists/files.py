@@ -317,6 +317,7 @@ class FilesModel(base.BaseModel):
         # If the dataset is small we can safely reload the model
         if len(data) < 1999:
             self.__resetdata__(force=True)
+            return
 
         # Otherwise, we won't reload but indicate that the model needs
         # refreshing
@@ -579,7 +580,7 @@ class FilesModel(base.BaseModel):
 
         self.set_watchdirs(list(set(WATCHDIRS)))
         self.set_refresh_needed(False)
-        
+
     def disable_filter(self):
         """Overrides the asset config and disables file filters."""
         return False

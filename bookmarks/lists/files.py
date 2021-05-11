@@ -273,34 +273,69 @@ class FilesModel(base.BaseModel):
 
     def __init__(self, parent=None):
         super(FilesModel, self).__init__(parent=parent)
+
+        self._refresh_needed = False
+        self._watcher = QtCore.QFileSystemWatcher(parent=self)
+        self._watcher.directoryChanged.connect(self.dir_changed)
+
         self.taskFolderChanged.connect(self.set_task)
         self.dataTypeChanged.connect(self.set_data_type)
         self.dataTypeChanged.connect(common.signals.updateButtons)
 
+    def refresh_needed(self):
+        return self._refresh_needed
+
+    def set_refresh_needed(self, v):
+        self._refresh_needed = v
+
+    def watcher(self):
+        """The file system monitor used to check for file changes."""
+        return self._watcher
+
+    def clear_watchdirs(self):
+        self.set_refresh_needed(False)
+        v = self._watcher.directories()
+        if not v:
+            return
+        self._watcher.removePaths(v)
+
+    def set_watchdirs(self, v):
+        self._watcher.addPaths(v[0:128])
+
+    @QtCore.Slot(unicode)
+    def dir_changed(self, path):
+        """Slot called when a watched directory changes.
+
+        """
+        p = self.parent_path()
+        k = self.task()
+        if not k:
+            return
+        t = common.FileItem
+        data = datacache.get_data(p, k, t)
+
+        # If the dataset is small we can safely reload the model
+        if len(data) < 1999:
+            self.__resetdata__(force=True)
+
+        # Otherwise, we won't reload but indicate that the model needs
+        # refreshing
+        self.set_refresh_needed(True)
+
     @common.status_bar_message(u'Loading Files...')
     @base.initdata
     def __initdata__(self):
-        """The method is responsible for getting the bare-bones file and
-        sequence definitions by running a file-iterator stemming from
-        ``self.parent_path()``.
+        """The method is responsible for getting the bare-bones file items by
+        running a file-iterator stemming from ``self.parent_path()``.
 
-        Additional information, like description, item flags, thumbnails are
-        fetched by addittional thread workers.
+        Additional information, like description, item flags or thumbnails are
+        fetched by thread workers.
 
-        The method will iterate through all files in every subfolder and will
-         populate both individual ``FileItems`` and collapsed
-        ``SequenceItems`` data sets. Switching between the two datasets is done
-        by emitting the ``dataTypeChanged`` signal with the data type.
-
-        Note:
-            Experiencing performance issues with the built-in `QDirIterator` on
-            Mac OS X Samba shares and the performance isn't great on Windows
-            either. The implemented workaround is to use Python 3+'s ``scandir``
-            module. Both on Windows and Mac OS X the performance seems to be
-            great.
-
-        Internally, the actual files are returned by `self.item_iterator()`,
-        the method where scandir is evoked.
+        The method will iterate through all items returned by
+        ``self.item_iterator()`` and will gather information for both individual
+        ``FileItems`` and collapsed ``SequenceItems`` (switch between the two
+        datasets using the ``dataTypeChanged`` signal with the desired data
+        type).
 
         """
         p = self.parent_path()
@@ -311,6 +346,10 @@ class FilesModel(base.BaseModel):
         data = datacache.get_data(p, k, t)
 
         SEQUENCE_DATA = common.DataDict()  # temporary dict for temp data
+
+        # Reset file system watcher
+        self.clear_watchdirs()
+        WATCHDIRS = []
 
         _parent_path = u'/'.join(p + (k,))
         if not QtCore.QFileInfo(_parent_path).exists():
@@ -333,7 +372,7 @@ class FilesModel(base.BaseModel):
             if self._interrupt_requested:
                 break
 
-            # skipping directories
+            # Skipping directories
             if entry.is_dir():
                 continue
             filename = entry.name
@@ -345,8 +384,6 @@ class FilesModel(base.BaseModel):
                 continue
 
             filepath = entry.path.replace(u'\\', u'/')
-
-            # File format filter
 
             # Skip items without file extension
             if u'.' not in filename:
@@ -367,13 +404,18 @@ class FilesModel(base.BaseModel):
                     u'Loading files (found ' + unicode(c) + u' items)...')
                 QtWidgets.QApplication.instance().processEvents()
 
-            # Getting the fileroot
-            fileroot = filepath.replace(_parent_path, u'').strip('/')
+            # Getting the file's relative root folder
+            # This data is used to display the clickable subfolders relative
+            # to the current task folder
+            fileroot = filepath.replace(_parent_path, u'').strip(u'/')
             fileroot = u'/'.join(fileroot.split(u'/')[:-1])
 
-            # To sort by subfolders correctly, we'll have to populate a list
-            # with all subfolders and file names. The list must be of fixed
-            # length and we'll do case insensitive comparisons:
+            # Save the file's parent folder for the file system watcher
+            WATCHDIRS.append(_parent_path + u'/' + fileroot)
+
+            # To sort by subfolders correctly, we'll a populate a fixed length
+            # list with the subfolders and file names. Sorting is do case
+            # insensitive:
             sort_by_name_role = [0, 0, 0, 0, 0, 0, 0, 0]
             if fileroot:
                 _fileroot = fileroot.lower().split(u'/')
@@ -383,6 +425,8 @@ class FilesModel(base.BaseModel):
                         break
             sort_by_name_role[7] = filename.lower()
 
+            # If the file is named using our sequence denominators,
+            # we can't use and must skip it
             try:
                 seq = common.get_sequence(filepath)
             except RuntimeError:
@@ -532,6 +576,8 @@ class FilesModel(base.BaseModel):
             data[idx] = v
             data[idx][common.IdRole] = idx
             data[idx][common.DataTypeRole] = common.SequenceItem
+
+        self.set_watchdirs(list(set(WATCHDIRS)))
 
     def disable_filter(self):
         """Overrides the asset config and disables file filters."""

@@ -274,7 +274,6 @@ class FilesModel(base.BaseModel):
     def __init__(self, parent=None):
         super(FilesModel, self).__init__(parent=parent)
 
-        self._refresh_needed = False
         self._watcher = QtCore.QFileSystemWatcher(parent=self)
         self._watcher.directoryChanged.connect(self.dir_changed)
 
@@ -283,10 +282,22 @@ class FilesModel(base.BaseModel):
         self.dataTypeChanged.connect(common.signals.updateButtons)
 
     def refresh_needed(self):
-        return self._refresh_needed
+        p = self.parent_path()
+        k = self.task()
+        if not k:
+            return
+        t = common.FileItem
+        data = datacache.get_data(p, k, t)
+        return data.refresh_needed
 
     def set_refresh_needed(self, v):
-        self._refresh_needed = v
+        p = self.parent_path()
+        k = self.task()
+        if not k:
+            return
+        t = common.FileItem
+        data = datacache.get_data(p, k, t)
+        data.refresh_needed = v
 
     def watcher(self):
         """The file system monitor used to check for file changes."""

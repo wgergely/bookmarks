@@ -1417,29 +1417,40 @@ def import_asset_properties_from_json():
     from . import main
     from . import ui
 
+    # Load config values from JSON
     with open(source, 'r') as f:
         v = f.read()
-
     import_data = json.loads(v)
 
-
+    # Progress bar
     mbox = ui.MessageBox(u'Applying properties...', no_buttons=True)
     mbox.open()
+
     try:
         w = main.instance().stackedwidget.widget(common.AssetTab)
+        proxy = w.model()
         model = w.model().sourceModel()
         data = model.model_data()
 
-        # Iterate over shots and assets and apply properties to any partial matches
         for k in import_data:
+            # Progress update
             mbox_title = u'Applying properties ({})...'
             mbox.set_labels(mbox_title)
             QtWidgets.QApplication.instance().processEvents()
 
-            for idx in data:
+            # Iterate over visible items
+            for proxy_idx in proxy.rowCount():
+                index = proxy.index(proxy_idx, 0)
+                source_index = proxy.mapToSource(index)
+                idx = source_index.row()
+
+                # Check for any partial matches and omit items if not found
                 if k.lower() not in data[idx][QtCore.Qt.StatusTipRole].lower():
                     continue
+                if not data[idx][common.ParentPathRole]:
+                    continue
 
+                # Update progress bar
                 mbox.set_labels((mbox_title, data[idx][QtCore.Qt.DisplayRole]))
                 QtWidgets.QApplication.instance().processEvents()
 

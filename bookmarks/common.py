@@ -1090,6 +1090,7 @@ class DataDict(dict):
     def __init__(self, *args, **kwargs):
         super(DataDict, self).__init__(*args, **kwargs)
         self._loaded = False
+        self._refresh_needed = False
         self._data_type = None
 
     @property
@@ -1099,6 +1100,14 @@ class DataDict(dict):
     @loaded.setter
     def loaded(self, v):
         self._loaded = v
+
+    @property
+    def refresh_needed(self):
+        return self._refresh_needed
+
+    @refresh_needed.setter
+    def refresh_needed(self, v):
+        self._refresh_needed = v
 
     @property
     def data_type(self):

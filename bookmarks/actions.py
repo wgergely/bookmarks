@@ -1439,7 +1439,7 @@ def import_asset_properties_from_json():
             QtWidgets.QApplication.instance().processEvents()
 
             # Iterate over visible items
-            for proxy_idx in proxy.rowCount():
+            for proxy_idx in xrange(proxy.rowCount()):
                 index = proxy.index(proxy_idx, 0)
                 source_index = proxy.mapToSource(index)
                 idx = source_index.row()

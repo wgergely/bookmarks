@@ -494,7 +494,7 @@ class AssetConfig(QtCore.QObject):
 
         def _get(k):
             if k not in kwargs or not kwargs[k]:
-                v = db.value(source, k, table=bookmark_db.BookmarkTable)
+                v = db.value(db.source(), k, table=bookmark_db.BookmarkTable)
                 v = v if v else INVALID_TOKEN
                 tokens[k] = v
 

@@ -10,7 +10,9 @@ column as encoded JSON data.
 The asset config values can be used as tokens for generating file names.
 See `AssetConfig.expand_tokens()`.
 
-To instances are backed by a cache and should be created using the `get(*arg)` method.
+Asset Config instances are backed by a cache and should be retrieved using
+`asset_confiig.get(*args)`.
+
 Example:
 
     code-block:: python
@@ -68,6 +70,12 @@ __INSTANCES = {}
 
 INVALID_TOKEN = u'{invalid_token}'
 
+SceneDir = u'scene'
+ExportDir = u'export'
+DataDir = u'data'
+ReferenceDir = u'reference'
+RenderDir = u'render'
+
 
 def _sort(s):
     return u', '.join(sorted(re.findall(r"[\w']+", s)))
@@ -77,7 +85,7 @@ def _get_key(*args):
     return u'/'.join(args)
 
 
-def get(server, job, root):
+def get(server, job, root, force=False):
     """Returns an AssetConfig instance associated with the current bookmark.
 
     Args:
@@ -98,13 +106,16 @@ def get(server, job, root):
     key = _get_key(server, job, root)
     global __INSTANCES
     if key in __INSTANCES:
+        if force:
+            __INSTANCES[key].data(force=True)
         return __INSTANCES[key]
 
     try:
-        asset_config = AssetConfig(server, job, root)
         # Fetch the currently stored data from the database
-        asset_config.data(force=True)
-        __INSTANCES[key] = asset_config
+        v = AssetConfig(server, job, root)
+        v.data(force=True)
+
+        __INSTANCES[key] = v
         return __INSTANCES[key]
     except:
         __INSTANCES[key] = None
@@ -174,8 +185,8 @@ DEFAULT_ASSET_CONFIG = {
     },
     AssetFolderConfig: {
         0: {
-            'name': u'export',
-            'value': 'export',
+            'name': ExportDir,
+            'value': ExportDir,
             'description': u'Alembic, FBX, OBJ and other CG caches',
             'filter': SceneFormat | ImageFormat | CacheFormat,
             'subfolders': {
@@ -205,38 +216,33 @@ DEFAULT_ASSET_CONFIG = {
                     'description': u'Folder used to store USD files.'
                 },
                 5: {
-                    'name': 'geo',
-                    'value': 'geo',
+                    'name': 'bgeo',
+                    'value': 'bgeo',
                     'description': u'Folder used to store Houdini geometry caches.'
-                },
-                6: {
-                    'name': 'sc',
-                    'value': 'sc',
-                    'description': 'Folder used to store Houdini geometry caches.'
                 }
             }
         },
         1: {
-            'name': u'data',
-            'value': u'data',
+            'name': DataDir,
+            'value': DataDir,
             'description': u'Folder used to store temporary cache files, or other generated content.',
             'filter': SceneFormat | ImageFormat | CacheFormat | MiscFormat
         },
         2: {
-            'name': 'reference',
-            'value': 'reference',
+            'name': ReferenceDir,
+            'value': ReferenceDir,
             'description': u'Folder used to store visual references, images and videos and sound files.',
             'filter': ImageFormat | MiscFormat
         },
         3: {
-            'name': 'render',
-            'value': 'render',
+            'name': RenderDir,
+            'value': RenderDir,
             'description': u'Folder used to store 2D and 3D renders.',
             'filter': ImageFormat,
         },
         4: {
-            'name': 'scene',
-            'value': 'scene',
+            'name': SceneDir,
+            'value': SceneDir,
             'description': u'Folder used to store scene files.',
             'filter': SceneFormat,
             'subfolders': {

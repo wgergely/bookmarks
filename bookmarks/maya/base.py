@@ -118,7 +118,7 @@ CaptureOptions = {
 DefaultPadding = 4
 
 CACHE_PATH = u'{workspace}/{exportdir}/{set}/{set}_v001.{ext}'
-DEFAULT_CACHE_DIR = u'export/abc'
+DEFAULT_CACHE_DIR = u'{exportdir}/{ext}'
 DEFAULT_CAPTURE_DIR = u'capture'
 CACHE_LAYER_PATH = u'{workspace}/{exportdir}/{set}/{set}_{layer}_v001.{ext}'
 CAPTURE_DESTINATION = u'{workspace}/{capture_folder}/{scene}/{scene}'
@@ -126,6 +126,24 @@ CAPTURE_FILE = u'{workspace}/{capture_folder}/{scene}/{scene}.{frame}.{ext}'
 CAPTURE_PUBLISH_DIR = u'{workspace}/{capture_folder}/latest'
 AGNOSTIC_CAPTURE_FILE = u'{workspace}/{capture_folder}/latest/{asset}_capture_{frame}.{ext}'
 
+EXPORT_FILE_RULES = {
+    'ass export': u'ass',
+    'alembicexport': u'abc',
+    'alembic export': u'abc',
+    'objexport': u'obj',
+    'obj export': u'obj',
+    'fbxexport': u'fbx',
+    'fbx export': u'fbx',
+    'ass import': u'ass',
+    'alembicimport': u'abc',
+    'alembic import': u'abc',
+    'objimport': u'obj',
+    'obj import': u'obj',
+    'fbximport': u'fbx',
+    'fbx import': u'fbx',
+}
+
+RENDER_NAME_TEMPLATE = u'<RenderLayer>/<Version>/<RenderPass>/<RenderLayer>_<RenderPass>_<Version>'
 
 SUFFIX_LABEL = u'Select a suffix for this import.\n\n\
 Suffixes are always unique and help differentiate imports when the same file \
@@ -146,6 +164,54 @@ DB_KEYS = {
         'cut_in'
     ),
 }
+
+
+def get_export_dir():
+    """Find the name of the export folder.
+
+    """
+    from ..properties import asset_config
+
+    server = settings.active(settings.ServerKey)
+    job = settings.active(settings.JobKey)
+    root = settings.active(settings.RootKey)
+
+    if not all((server, job, root)):
+        raise RuntimeError('No active bookmark item found.')
+
+    config = asset_config.get(server, job, root)
+    return config.get_export_dir()
+
+
+def get_export_subdir(v):
+    """Find the name of the export folder.
+
+    """
+    from ..properties import asset_config
+
+    server = settings.active(settings.ServerKey)
+    job = settings.active(settings.JobKey)
+    root = settings.active(settings.RootKey)
+
+    if not all((server, job, root)):
+        raise RuntimeError('No active bookmark item found.')
+
+    config = asset_config.get(server, job, root)
+    return config.get_export_subdir(v)
+
+
+def patch_workspace_file_rules():
+    """Patches the current maya project to use the export directories defined
+    in the asset config.
+
+    """
+    exportdir = get_export_dir()
+    for rule, ext in EXPORT_FILE_RULES.iteritems():
+        v = DEFAULT_CACHE_DIR.format(
+            exportdir=exportdir,
+            ext=get_export_subdir(ext)
+        )
+        cmds.workspace(fr=(rule, v))
 
 
 def set_startframe(frame):
@@ -187,6 +253,21 @@ def set_endframe(frame):
 
 
 def apply_default_render_values():
+    cmds.setAttr('perspShape.renderable', 0)
+
+    # Enable versioned outputs
+    cmds.setAttr(
+        'defaultRenderGlobals.imageFilePrefix',
+        RENDER_NAME_TEMPLATE,
+        type='string'
+    )
+    if not cmds.getAttr(u'defaultRenderGlobals.renderVersion'):
+        cmds.setAttr(
+            u'defaultRenderGlobals.renderVersion',
+            u'v001',
+            type='string',
+        )
+
     cmds.setAttr('defaultRenderGlobals.extensionPadding', 4)
     cmds.setAttr('defaultRenderGlobals.animation', 1)
     cmds.setAttr('defaultRenderGlobals.putFrameBeforeExt', 1)
@@ -194,6 +275,12 @@ def apply_default_render_values():
     cmds.setAttr('defaultRenderGlobals.useFrameExt', 0)
     cmds.setAttr('defaultRenderGlobals.outFormatControl', 0)
     cmds.setAttr('defaultRenderGlobals.imageFormat', 8)
+
+    # Mostly because of After Effects
+    try:
+        cmds.setAttr('defaultArnoldDriver.mergeAOVs', 0)
+    except:
+        pass
 
 
 def set_render_resolution(width, height):

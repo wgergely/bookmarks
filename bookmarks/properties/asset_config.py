@@ -588,3 +588,37 @@ class AssetConfig(QtCore.QObject):
                 continue
             return set(self.get_extensions(v['filter']))
         return set()
+
+    def get_asset_folder_name(self, k, force=False):
+        """Return the name of an asset folder based on the current asset config
+        values.
+
+        """
+        data = self.data(force=force)
+        if not data:
+            return None
+
+        for v in data[AssetFolderConfig].itervalues():
+            if v['name'] == k:
+                return v['value']
+        return None
+
+    def get_export_subdir(self, v, force=False):
+        data = self.data(force=force)
+        if not data:
+            return v
+
+        for _v in data[AssetFolderConfig].itervalues():
+            if _v['name'] == ExportDir:
+                if 'subfolders' not in _v:
+                    return None
+                for v_ in _v['subfolders'].itervalues():
+                    if v_['name'] == v:
+                        return v_['value']
+        return v
+
+    def get_export_dir(self):
+        v = self.get_asset_folder_name(ExportDir)
+        if not v:
+            return u'export'
+        return v

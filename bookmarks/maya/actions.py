@@ -79,6 +79,7 @@ def apply_settings(*args, **kwargs):
     if res == QtWidgets.QDialog.Rejected:
         return
 
+    mbase.patch_workspace_file_rules()
     mbase.set_framerate(props.framerate)
     mbase.set_startframe(props.startframe)
     mbase.set_endframe(props.endframe)
@@ -154,19 +155,21 @@ def export_set_to_ass(set_name, set_members, frame=True):
     try:
         if not cmds.pluginInfo(u'mtoa.mll', loaded=True, q=True):
             cmds.loadPlugin(u'mtoa.mll', quiet=True)
-    except Exception as e:
+    except Exception:
         raise
 
     # We want to handle the exact name of the file
     # We'll remove the namespace, strip underscores
     set_name = set_name.replace(u':', u'_').strip(u'_')
     set_name = re.sub(ur'[0-9]*$', u'', set_name)
-    ext = u'ass'
-
-    exportdir = mbase.find_project_folder(u'ass export')
-    exportdir = exportdir if exportdir else u'export/ass'
     layer = cmds.editRenderLayerGlobals(
         query=True, currentRenderLayer=True)
+    ext = u'ass'
+
+    exportdir = mbase.DEFAULT_CACHE_DIR.format(
+        exportdir=mbase.get_export_dir(),
+        ext=mbase.get_export_subdir(ext)
+    )
 
     file_path = mbase.CACHE_LAYER_PATH.format(
         workspace=cmds.workspace(q=True, fn=True),
@@ -280,9 +283,11 @@ def export_set_to_abc(set_name, set_members, frame=False):
     set_name = re.sub(ur'[0-9]*$', u'', set_name)
     ext = u'abc'
 
-    # Let's get the cache folder root location by querrying
-    exportdir = mbase.find_project_folder(u'alembic export')
-    exportdir = exportdir if exportdir else mbase.DEFAULT_CACHE_DIR
+    exportdir = mbase.DEFAULT_CACHE_DIR.format(
+        exportdir=mbase.get_export_dir(),
+        ext=mbase.get_export_subdir(ext)
+    )
+
     file_path = mbase.CACHE_PATH.format(
         workspace=cmds.workspace(q=True, fn=True),
         exportdir=exportdir,
@@ -380,8 +385,10 @@ def export_set_to_obj(set_name, set_members, frame=False):
     set_name = re.sub(ur'[0-9]*$', u'', set_name)
     ext = u'obj'
 
-    exportdir = mbase.find_project_folder(u'objexport')
-    exportdir = exportdir if exportdir else u'export/obj'
+    exportdir = mbase.DEFAULT_CACHE_DIR.format(
+        exportdir=mbase.get_export_dir(),
+        ext=mbase.get_export_subdir(ext)
+    )
 
     file_path = mbase.CACHE_PATH.format(
         workspace=cmds.workspace(q=True, fn=True),

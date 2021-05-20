@@ -98,8 +98,10 @@ def initdata(func):
 
         self.beginResetModel()
         self._interrupt_requested = False
+        self._load_in_progress = True
         func(self, *args, **kwargs)
         self._interrupt_requested = False
+        self._load_in_progress = False
         self.endResetModel()
 
         # Emit  references to the just loaded core data
@@ -622,6 +624,10 @@ class BaseModel(QtCore.QAbstractListModel):
 
         # Custom data type for weakref compatibility
         self._interrupt_requested = False
+
+        self._load_in_progress = False
+        self._load_message = u''
+
         self._generate_thumbnails_enabled = True
         self._task = None
         self._sortrole = None
@@ -1689,6 +1695,13 @@ class BaseListWidget(QtWidgets.QListView):
         text = self.get_hint_string()
         self._paint_message(text, color=common.GREEN)
 
+    def paint_loading(self, widget, event):
+        """Paints the hint message.
+
+        """
+        text = u'Loading items. Please wait...'
+        self._paint_message(text, color=common.TEXT)
+
     def paint_status_message(self, widget, event):
         """Displays a visual hint for the user to indicate if the list
         has hidden items.
@@ -1949,7 +1962,10 @@ class BaseListWidget(QtWidgets.QListView):
             return False
         if event.type() == QtCore.QEvent.Paint:
             self.paint_background_icon(widget, event)
-            if self.model().sourceModel().rowCount() == 0:
+
+            if self.model().sourceModel()._load_in_progress:
+                self.paint_loading(widget, event)
+            elif self.model().sourceModel().rowCount() == 0:
                 self.paint_hint(widget, event)
             else:
                 self.paint_status_message(widget, event)

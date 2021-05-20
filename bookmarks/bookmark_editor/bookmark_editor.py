@@ -270,6 +270,8 @@ class BookmarkListWidget(ui.ListWidget):
         inside the given path.
 
         """
+        QtWidgets.QApplication.instance().processEvents()
+        
         if self._interrupt_requested:
             return arr
 

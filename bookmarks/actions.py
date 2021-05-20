@@ -18,12 +18,22 @@ from . import images
 
 
 def add_server(v):
+    # Disallow adding persistent servers
+    for k in common.PERSISTENT_BOOKMARKS:
+        if common.PERSISTENT_BOOKMARKS[k][settings.ServerKey] == v:
+            return
+
     servers = tuple(common.SERVERS) + (v,)
     settings.instance().set_servers(servers)
     common.signals.serversChanged.emit()
 
 
 def remove_server(v):
+    # Disallow removing persistent servers
+    for k in common.PERSISTENT_BOOKMARKS:
+        if common.PERSISTENT_BOOKMARKS[k][settings.ServerKey] == v:
+            return
+
     servers = list(common.SERVERS)
     if v in servers:
         servers.remove(v)

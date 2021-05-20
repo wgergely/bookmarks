@@ -215,7 +215,7 @@ class Settings(QtCore.QSettings):
             common.SERVERS = []
             return common.SERVERS
 
-        # Make sure we alwways return a list, even if there's only one items
+        # Make sure we always return a list, even if there's only one items
         # saved
         if isinstance(val, (str, unicode)):
             common.SERVERS = [strip(val), ]
@@ -287,7 +287,7 @@ class Settings(QtCore.QSettings):
         """
         _persistent = self.persistent_bookmarks()
         _persistent = _persistent if _persistent else {}
-        
+
         # Save persistent items to cache
         common.PERSISTENT_BOOKMARKS = _persistent
 
@@ -304,6 +304,10 @@ class Settings(QtCore.QSettings):
                 or RootKey not in v[k]
             ):
                 del v[k]
+            # Add server from bookmarks
+            common.SERVERS.append(v[k][ServerKey])
+            
+        common.SERVERS = sorted(set(common.SERVERS))
         common.BOOKMARKS = v
         return v
 

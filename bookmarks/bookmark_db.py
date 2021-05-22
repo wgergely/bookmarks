@@ -212,6 +212,10 @@ TABLES = {
         'asset_config': {
             'sql': u'TEXT',
             'type': dict
+        },
+        'applications': {
+            'sql': u'TEXT',
+            'type': dict,
         }
     }
 }

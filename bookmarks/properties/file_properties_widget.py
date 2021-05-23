@@ -40,12 +40,11 @@ from .. import ui
 from .. import common
 from .. import settings
 from .. import bookmark_db
-from .. import log
 from .. import actions
 
 from . import base
-from . import asset_config
 from . import file_properties_widgets
+from ..asset_config import asset_config
 
 
 instance = None

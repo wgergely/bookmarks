@@ -4,6 +4,7 @@
 """
 import _scandir
 import functools
+
 from PySide2 import QtWidgets, QtCore, QtGui
 
 from .. import contextmenu
@@ -14,7 +15,7 @@ from .. import settings
 from .. import images
 from .. import actions
 from .. import datacache
-from ..properties import asset_config
+from ..asset_config import asset_config
 
 from . import base
 from . import delegate

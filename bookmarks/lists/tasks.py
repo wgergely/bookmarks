@@ -17,10 +17,9 @@ from .. import common
 from .. import contextmenu
 from .. import images
 from .. import settings
-from .. import actions
 
 from ..threads import threads
-from ..properties import asset_config
+from ..asset_config import asset_config
 
 from . import base
 from . import delegate

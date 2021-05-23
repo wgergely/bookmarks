@@ -13,7 +13,7 @@ from .. import common
 from .. import ui
 from .. import settings
 from .. import images
-from . import asset_config
+from ..asset_config import asset_config
 from . import base
 
 NoMode = u'invalid'

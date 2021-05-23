@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-"""
+"""Common widgets used accross all property editors.
 
 """
 import uuid
-import functools
-import datetime
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
@@ -12,9 +10,7 @@ from .. import log
 from .. import common
 from .. import ui
 from .. import images
-from .. import bookmark_db
 from .. import contextmenu
-from ..shotgun import shotgun
 
 
 THUMBNAIL_EDITOR_SIZE = common.MARGIN() * 10

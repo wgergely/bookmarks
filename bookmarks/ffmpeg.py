@@ -162,13 +162,13 @@ def convert_progress(func):
         w.open()
         QtWidgets.QApplication.instance().processEvents()
 
-
         try:
             output = func(*args, **kwargs)
             if output:
                 log.success(u'Successfully saved {}'.format(output))
                 ui.OkBox(u'Finished converting', u'Saved to {}'.format(output)).open()
                 common.signals.fileAdded.emit(output)
+                return output
         except:
             raise
         finally:
@@ -196,9 +196,9 @@ def launch_ffmpeg_command(input, preset, server=None, job=None, root=None, asset
     """
     FFMPEG_BIN = common.get_path_to_executable(settings.FFMpegKey)
     if not FFMPEG_BIN:
-        return None
+        raise RuntimeError('FFMPEG not set or found.')
     if not QtCore.QFileInfo(FFMPEG_BIN).exists():
-        return None
+        raise RuntimeError('FFMPEG set but not found.')
 
     server = server if server else settings.active(settings.ServerKey)
     job = job if job else settings.active(settings.JobKey)
@@ -277,4 +277,4 @@ def launch_ffmpeg_command(input, preset, server=None, job=None, root=None, asset
         LABEL=label,
     )
     subprocess.check_output(cmd, shell=True)
-    return output
+    return os.path.normpath(output)

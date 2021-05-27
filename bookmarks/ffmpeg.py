@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Common FFMpeg functionality."""
-
+import re
 import os
 from datetime import datetime
 import subprocess
@@ -87,26 +87,17 @@ PRESETS = {
 
 
 def convert_progress(func):
-    """Decorator to create a menu set."""
     @functools.wraps(func)
     def func_wrapper(*args, **kwargs):
-
-        # Open progress popup
-        w = ui.MessageBox(u'Converting...', u'Should not take too long, please wait.', no_buttons=True)
-        w.open()
-        QtWidgets.QApplication.instance().processEvents()
-
         try:
             output = func(*args, **kwargs)
             if output:
                 log.success(u'Successfully saved {}'.format(output))
-                ui.OkBox(u'Finished converting', u'Saved to {}'.format(output)).open()
+                ui.OkBox(u'Finished converting.', u'The converted file was saved here:\n{}'.format(output)).open()
                 common.signals.fileAdded.emit(output)
                 return output
         except:
             raise
-        finally:
-            w.close()
 
     return func_wrapper
 
@@ -216,6 +207,42 @@ def launch_ffmpeg_command(input, preset, server=None, job=None, root=None, asset
         FONT=get_font_path(),
         LABEL=label,
     )
-    print cmd
-    subprocess.check_output(cmd, shell=True)
+
+    pbar = QtWidgets.QProgressDialog()
+    common.set_custom_stylesheet(pbar)
+    pbar.setFixedWidth(common.WIDTH())
+    pbar.setLabelText(u'FFMpeg is converting, please wait...')
+    pbar.setMinimum(int(startframe))
+    pbar.setMaximum(int(endframe))
+    pbar.setRange(int(startframe), int(endframe))
+    pbar.setWindowTitle('FFMpeg Convert Progress')
+    pbar.open()
+
+    cmatch = re.compile(r'frame=.+?([0-9]+).+?fps.*')
+    proc = subprocess.Popen(
+        cmd,
+        bufsize=1,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        universal_newlines=True
+    )
+
+    while proc.poll() is None:
+        QtWidgets.QApplication.instance().processEvents()
+
+        if pbar.wasCanceled():
+            proc.kill()
+            pbar.close()
+            break
+
+        line = proc.stdout.readline()
+        if not line:
+            continue
+
+        match = cmatch.match(line)
+        if not match:
+            continue
+
+        pbar.setValue(int(match.group(1)))
+
     return os.path.normpath(output)

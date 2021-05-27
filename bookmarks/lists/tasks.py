@@ -17,7 +17,7 @@ from .. import common
 from .. import contextmenu
 from .. import images
 from .. import settings
-from .. import actions
+from .. import datacache
 
 from ..threads import threads
 from ..properties import asset_config
@@ -197,6 +197,12 @@ class TaskFolderModel(base.BaseModel):
         common.signals.tabChanged.connect(self.check_task)
 
         self.init_monitor()
+
+    def __resetdata__(self, force=False):
+        p = self.parent_path()
+        k = self.task()
+        datacache.reset_data(p, k)
+        self.__initdata__()
 
     @QtCore.Slot()
     def init_monitor(self):

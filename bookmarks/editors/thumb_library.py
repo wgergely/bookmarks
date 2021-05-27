@@ -14,7 +14,7 @@ instance = None
 
 
 COLUMNS = 5
-RSC_DIR = u'{}/../../rsc/'.format(__file__)
+RSC_DIR = u'{}/../../rsc'.format(__file__)
 
 
 def close():
@@ -43,14 +43,14 @@ def show(server=None, job=None, root=None, source=None):
     return instance
 
 
-class ThumbnailLibraryItem(QtWidgets.QLabel):
+class ClickableItem(QtWidgets.QLabel):
     """Custom QLabel ssed by the ThumbnailLibraryWidget to display an image.
 
     """
     clicked = QtCore.Signal(unicode)
 
     def __init__(self, path, parent=None):
-        super(ThumbnailLibraryItem, self).__init__(parent=parent)
+        super(ClickableItem, self).__init__(parent=parent)
         self._path = path
         self._pixmap = None
 
@@ -60,8 +60,9 @@ class ThumbnailLibraryItem(QtWidgets.QLabel):
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding,
         )
-        self.setMinimumSize(QtCore.QSize(
-            common.ROW_HEIGHT() * 2, common.ROW_HEIGHT() * 2))
+
+        h = common.ROW_HEIGHT() * 2
+        self.setMinimumSize(QtCore.QSize(h, h))
 
     def enterEvent(self, event):
         self.update()
@@ -142,7 +143,7 @@ class ThumbnailLibraryItem(QtWidgets.QLabel):
 
 
 class ThumbnailLibraryWidget(QtWidgets.QDialog):
-    """The widget used to browser and select a thumbnai from a set of
+    """The widget used to browser and select a thumbnail from a set of
     predefined thumbnails.
 
     The thumbnail files are stored in the ./rsc folder and are prefixed by
@@ -208,6 +209,7 @@ class ThumbnailLibraryWidget(QtWidgets.QDialog):
         self.scrollarea = QtWidgets.QScrollArea(parent=self)
         self.scrollarea.setWidgetResizable(True)
         self.scrollarea.setWidget(widget)
+        
         self.layout().addWidget(self.scrollarea, 1)
 
     def _add_thumbnails(self):
@@ -220,7 +222,7 @@ class ThumbnailLibraryWidget(QtWidgets.QDialog):
 
         idx = 0
         for entry in _scandir.scandir(path):
-            label = ThumbnailLibraryItem(
+            label = ClickableItem(
                 entry.path.replace(u'\\', u'/'),
                 parent=self
             )

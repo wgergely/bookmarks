@@ -158,11 +158,11 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
 
     """
 
-    def __init__(self, server, job, root, source=None, fallback_thumb=u'placeholder', parent=None):
+    def __init__(self, server, job, root, size=THUMBNAIL_EDITOR_SIZE, source=None, fallback_thumb=u'placeholder', parent=None):
         super(ThumbnailEditorWidget, self).__init__(
             u'pick_image',
             (common.BLUE, common.DARK_BG),
-            size=THUMBNAIL_EDITOR_SIZE,
+            size=size,
             description=u'Drag-and-drop an image to add, click to capture, or right-click to pick a custom thumbnail...',
             parent=parent
         )

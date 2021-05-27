@@ -204,7 +204,7 @@ def launch_ffmpeg_command(input, preset, server=None, job=None, root=None, asset
     vseq = common.get_sequence(output)
     if vseq:
         label += 'v' + vseq.group(2) + u' '
-        label += datetime.now().strftime('(%a %d/%m/%Y %H:%M) \\| ')
+        label += datetime.now().strftime('(%a %d/%m/%Y %H\\:%M) \\| ')
     label += u'{}-{} \\| '.format(startframe, endframe)
 
     cmd = preset.format(

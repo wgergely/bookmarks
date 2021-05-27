@@ -172,19 +172,23 @@ class BaseContextMenu(QtWidgets.QMenu):
                 else:
                     action.setVisible(True)
 
-    def get_icon(self, name, color=common.SECONDARY_TEXT, size=common.ROW_HEIGHT(), opacity=1.0):
+    def get_icon(self, name, color=common.SECONDARY_TEXT, size=common.ROW_HEIGHT(), opacity=1.0, resource=images.GuiResource):
         icon = QtGui.QIcon()
 
         pixmap = images.ImageCache.get_rsc_pixmap(
             name, color, size, opacity=opacity)
         icon.addPixmap(pixmap, mode=QtGui.QIcon.Normal)
+
+        _c = common.SELECTED_TEXT if color else None
         pixmap = images.ImageCache.get_rsc_pixmap(
-            name, common.SELECTED_TEXT, size, opacity=opacity)
+            name, _c, size, opacity=opacity, resource=resource)
         icon.addPixmap(pixmap, mode=QtGui.QIcon.Active)
         icon.addPixmap(pixmap, mode=QtGui.QIcon.Selected)
 
+        _c = common.SEPARATOR if color else None
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'close', common.SEPARATOR, size, opacity=0.5)
+            u'close', _c, size, opacity=0.5, resource=resource)
+            
         icon.addPixmap(pixmap, mode=QtGui.QIcon.Disabled)
 
         return icon
@@ -408,10 +412,15 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         path = self.index.data(QtCore.Qt.StatusTipRole)
         for mode in (common.WindowsPath, common.MacOSPath, common.UnixPath, common.SlackPath):
-            m = u'{}'.format(mode)
+            m = key()
+            n = actions.copy_path(path, mode=mode, copy=False)
+
+            if len(n) > 25:
+                metrics = QtGui.QFontMetrics(self.font())
+                n = metrics.elidedText(n, QtCore.Qt.ElideMiddle, common.WIDTH() * 0.6)
 
             self.menu[k][m] = {
-                'text': actions.copy_path(path, mode=mode, copy=False),
+                'text': n,
                 'icon': self.get_icon(u'copy', color=common.SEPARATOR),
                 'action': functools.partial(actions.copy_path, path, mode=mode),
             }
@@ -427,6 +436,23 @@ class BaseContextMenu(QtWidgets.QMenu):
                     shortcuts.MainWidgetShortcuts, shortcuts.CopyAltItemPath).key()
                 self.menu[k][m]['description'] = shortcuts.hint(
                     shortcuts.MainWidgetShortcuts, shortcuts.CopyAltItemPath)
+
+        self.separator(self.menu[k])
+
+        p = u'/'.join(self.index.data(common.ParentPathRole)[0:4])
+        path = u'$JOB/{}'.format(path.replace(p, u'').strip(u'/'))
+        if len(path) > 25:
+            metrics = QtGui.QFontMetrics(self.font())
+            n = metrics.elidedText(path, QtCore.Qt.ElideMiddle, common.WIDTH() * 0.6)
+
+        self.menu[k][m] = {
+            'text': actions.copy_path(path, mode=None, copy=False),
+            'icon': self.get_icon(u'hip', color=None, resource=images.FormatResource),
+            'action': functools.partial(actions.copy_path, path, mode=None),
+        }
+
+
+
 
     def toggle_item_flags_menu(self):
         if not self.index.isValid():

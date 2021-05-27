@@ -1141,6 +1141,12 @@ def copy_path(path, mode=common.WindowsPath, first=True, copy=True):
     else:
         path = common.get_sequence_endpath(path)
 
+    if mode is None and copy:
+        QtGui.QClipboard().setText(path)
+        return path
+    elif mode is None and not copy:
+        return path
+
     # Normalise path
     path = re.sub(ur'[\/\\]', ur'/', path,
                   flags=re.IGNORECASE | re.UNICODE).strip(u'/')
@@ -1156,10 +1162,15 @@ def copy_path(path, mode=common.WindowsPath, first=True, copy=True):
         path = path.replace(u':', u'')
     else:
         prefix = u''
+        
     path = prefix + path
     if mode == common.WindowsPath:
-        path = re.sub(ur'[\/\\]', ur'\\', path,
-                      flags=re.IGNORECASE | re.UNICODE)
+        path = re.sub(
+            ur'[\/\\]',
+            ur'\\',
+            path,
+            flags=re.IGNORECASE | re.UNICODE
+        )
 
     if copy:
         QtGui.QClipboard().setText(path)

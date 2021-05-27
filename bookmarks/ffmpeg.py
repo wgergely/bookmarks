@@ -82,7 +82,6 @@ PRESET3 = '\
 "{BIN}" \
 -y \
 -hwaccel auto \
--probesize 5000000 \
 -framerate {FRAMERATE} \
 -start_number {STARTFRAME} \
 -gamma 2.2  \
@@ -91,15 +90,12 @@ PRESET3 = '\
 -c:v libx264 \
 -preset slow \
 -b:v 25000K \
--g 1  \
--tune stillimage  \
 -x264-params "colormatrix=bt709" \
 -pix_fmt yuv420p \
 -colorspace bt709 \
 -color_primaries bt709 \
 -color_trc gamma22 \
 -map 0:v:0? \
--map_chapters 0 \
 -c:s mov_text \
 -map 0:s? \
 -an \

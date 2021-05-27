@@ -26,7 +26,7 @@ def _format(s, **kwargs):
     return string.Formatter().vformat(s, (), SafeDict(**kwargs))
 
 
-VIDEOFILTER = '-vf "pad=ceil(iw/2)*2:ceil(ih/2)*2, drawtext=fontfile={FONT}: text=\'{LABEL}%{{frame_num}}\': start_number={STARTFRAME}: x=10: y=h-lh-10: fontcolor=white: fontsize=ceil(h/40): box=1: boxcolor=black: boxborderw=10" '
+VIDEOFILTER = '-vf "pad=ceil(iw/2)*2:ceil(ih/2)*2, drawtext=fontfile={FONT}: text=\'{LABEL} %{{frame_num}}\': start_number={STARTFRAME}: x=10: y=h-lh-10: fontcolor=white: fontsize=ceil(h/40): box=1: boxcolor=black: boxborderw=10" '
 
 BASE_H264_PRESET = '\
 "{BIN}" \

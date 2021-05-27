@@ -561,3 +561,16 @@ PluginWidget {{
 QWidget#mainRow {{
 	background-color: {DARK_BG};
 }}
+
+QProgressBar {{
+	border: {ROW_SEPARATOR}px solid {SEPARATOR};
+	border-radius: {RADIUS}px;
+	background-color: {DARK_BG};
+	text-align: center;
+}}
+
+QProgressBar::chunk {{
+    background-color: {GREEN};
+    width: {INDICATOR_WIDTH}px;
+		margin: 0;
+}}

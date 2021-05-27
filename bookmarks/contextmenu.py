@@ -1179,12 +1179,13 @@ class BaseContextMenu(QtWidgets.QMenu):
             return
 
         pixmap = self.get_icon(u'file')
-        for preset in ffmpeg.PRESETS:
+
+        for _k in ffmpeg.PRESETS:
             func = functools.partial(
-                ffmpeg.launch_ffmpeg_command, path, ffmpeg.PRESETS[preset]
+                ffmpeg.launch_ffmpeg_command, path, ffmpeg.PRESETS[_k]['preset']
             )
             self.menu[k][key()] = {
-                'text': preset,
+                'text': ffmpeg.PRESETS[_k]['name'],
                 'icon': pixmap,
                 'action': func,
                 'disabled': disabled,

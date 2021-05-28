@@ -171,9 +171,11 @@ class FilterHistoryMenu(contextmenu.BaseContextMenu):
             u'text': u'Clear History',
             u'action': (
                 functools.partial(proxy.set_filter_text, u''),
-                lambda: model.set_local_setting(settings.TextFilterKeyHistory, u'')
+                lambda: model.set_local_setting(
+                    settings.TextFilterKeyHistory, u'')
             ),
         }
+
 
 class BaseControlButton(ui.ClickableIconButton):
     """Base-class used for control buttons on the top bar."""
@@ -400,27 +402,26 @@ class SlackButton(BaseControlButton):
         return True
 
 
-class GenerateThumbnailsButton(BaseControlButton):
+class RefreshButton(BaseControlButton):
     def __init__(self, parent=None):
-        super(GenerateThumbnailsButton, self).__init__(
-            u'spinner',
-            u'Enable/Disable Generating Thumbnails  -  {}'.format(shortcuts.string(
-                shortcuts.MainWidgetShortcuts, shortcuts.ToggleGenerateThumbnails)),
+        super(RefreshButton, self).__init__(
+            u'refresh',
+            u'Refresh items  -  {}'.format(shortcuts.string(
+                shortcuts.MainWidgetShortcuts, shortcuts.Refresh)),
             parent=parent
         )
-        self.clicked.connect(common.signals.toggleMakeThumbnailsButton)
-        common.signals.toggleMakeThumbnailsButton.connect(self.update)
+        self.clicked.connect(actions.refresh)
+        self.clicked.connect(self.update)
 
     def state(self):
         """The state of the auto-thumbnails"""
         if not current_widget():
-            return
-        model = current_widget().model().sourceModel()
-        return model.generate_thumbnails_enabled()
+            return False
 
-    @QtCore.Slot()
-    def action(self):
-        """Toggles thumbnail generation."""
+        model = current_widget().model().sourceModel()
+        if not hasattr(model, 'refresh_needed'):
+            return False
+        return model.refresh_needed()
 
 
 class CollapseSequenceMenu(contextmenu.BaseContextMenu):
@@ -818,7 +819,7 @@ class ListControlWidget(QtWidgets.QWidget):
         self.files_button = FilesTabButton(parent=self)
         self.favourites_button = FavouritesTabButton(parent=self)
 
-        self.generate_thumbnails_button = GenerateThumbnailsButton(parent=self)
+        self.refresh_button = RefreshButton(parent=self)
         self.filter_button = FilterButton(parent=self)
         self.collapse_button = ToggleSequenceButton(parent=self)
         self.archived_button = ToggleArchivedButton(parent=self)
@@ -833,17 +834,17 @@ class ListControlWidget(QtWidgets.QWidget):
 
         self.layout().addStretch()
 
-        self.layout().addWidget(self.inline_icons_button)
-        self.layout().addSpacing(common.INDICATOR_WIDTH())
-        self.layout().addWidget(self.generate_thumbnails_button)
-        self.layout().addSpacing(common.INDICATOR_WIDTH())
         self.layout().addWidget(self.filter_button)
+        self.layout().addSpacing(common.INDICATOR_WIDTH())
+        self.layout().addWidget(self.refresh_button)
         self.layout().addSpacing(common.INDICATOR_WIDTH())
         self.layout().addWidget(self.collapse_button)
         self.layout().addSpacing(common.INDICATOR_WIDTH())
         self.layout().addWidget(self.archived_button)
         self.layout().addSpacing(common.INDICATOR_WIDTH())
         self.layout().addWidget(self.favourite_button)
+        self.layout().addSpacing(common.INDICATOR_WIDTH())
+        self.layout().addWidget(self.inline_icons_button)
         self.layout().addSpacing(common.INDICATOR_WIDTH())
         self.layout().addWidget(self.slack_button)
 

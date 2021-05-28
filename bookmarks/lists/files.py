@@ -285,7 +285,7 @@ class FilesModel(base.BaseModel):
         p = self.parent_path()
         k = self.task()
         if not k:
-            return
+            return None
         t = common.FileItem
         data = datacache.get_data(p, k, t)
         return data.refresh_needed

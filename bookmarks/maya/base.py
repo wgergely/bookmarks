@@ -7,9 +7,12 @@ import time
 import string
 
 from PySide2 import QtWidgets, QtCore, QtGui
+
 import maya.cmds as cmds  # pylint: disable=E0401
+
 from .. import bookmark_db
 from .. import settings
+from ..asset_config import asset_config
 
 
 MAYA_FPS = {
@@ -170,8 +173,6 @@ def get_export_dir():
     """Find the name of the export folder.
 
     """
-    from ..properties import asset_config
-
     server = settings.active(settings.ServerKey)
     job = settings.active(settings.JobKey)
     root = settings.active(settings.RootKey)
@@ -187,7 +188,7 @@ def get_export_subdir(v):
     """Find the name of the export folder.
 
     """
-    from ..properties import asset_config
+
 
     server = settings.active(settings.ServerKey)
     job = settings.active(settings.JobKey)

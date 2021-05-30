@@ -571,7 +571,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def refresh_menu(self):
-        self.menu[u'RefreshMenu'] = {
+        self.menu[key()] = {
             'text': u'Refresh List',
             'action': actions.refresh,
             'icon': self.get_icon(u'refresh'),
@@ -580,7 +580,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def preferences_menu(self):
-        self.menu[u'OpenPreferencesMenu'] = {
+        self.menu[key()] = {
             'text': u'Preferences...',
             'action': actions.show_preferences,
             'icon': self.get_icon(u'settings'),
@@ -591,7 +591,7 @@ class BaseContextMenu(QtWidgets.QMenu):
     def quit_menu(self):
         if not common.STANDALONE:
             return
-        self.menu[u'QuitMenu'] = {
+        self.menu[key()] = {
             'text': u'Quit {}'.format(common.PRODUCT),
             'action': actions.quit,
             'icon': self.get_icon(u'close'),
@@ -606,7 +606,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         model = self.parent().model().sourceModel()
         enabled = model.generate_thumbnails_enabled()
 
-        self.menu['generate'] = {
+        self.menu[key()] = {
             'text': u'Make Thumbnails',
             'icon': item_on_icon if enabled else item_off_icon,
             'action': common.signals.toggleMakeThumbnailsButton,
@@ -618,7 +618,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         if not self.index.isValid():
             return
         title = self.index.data(QtCore.Qt.StatusTipRole).split(u'/')[-1]
-        self.menu[u'item'] = {
+        self.menu[key()] = {
             'text': title,
             'disabled': True,
         }
@@ -627,7 +627,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         if not self.index.isValid():
             return
 
-        self.menu[u'header'] = {
+        self.menu[key()] = {
             'text': u'Thumbnail',
             'disabled': True,
         }
@@ -994,13 +994,50 @@ class BaseContextMenu(QtWidgets.QMenu):
 
     def show_addasset_menu(self):
         add_pixmap = self.get_icon(u'add', color=common.GREEN)
-        self.menu[u'add_asset'] = {
+        self.menu[key()] = {
             'icon': add_pixmap,
             'text': u'Add Asset...',
             'action': actions.show_add_asset,
             'shortcut': shortcuts.get(shortcuts.MainWidgetShortcuts, shortcuts.AddItem).key(),
             'description': shortcuts.hint(shortcuts.MainWidgetShortcuts, shortcuts.AddItem),
         }
+
+    def launcher_menu(self):
+        if not self.index.isValid():
+            server = settings.active(settings.ServerKey)
+            job = settings.active(settings.JobKey)
+            root = settings.active(settings.RootKey)
+        else:
+            server, job, root = self.index.data(common.ParentPathRole)[0:3]
+
+        if not all((server, job, root)):
+            return
+
+        db = bookmark_db.get_db(server, job, root)
+        with db.connection():
+            v = db.value(
+                db.source(),
+                u'applications',
+                table=bookmark_db.BookmarkTable
+            )
+
+        if not isinstance(v, dict) or not v:
+            return
+
+        k = u'Launcher'
+        if k not in self.menu:
+            self.menu[k] = collections.OrderedDict()
+            self.menu['{}:icon'.format(k)] = self.get_icon('icon_bw')
+
+        for _k in v:
+            pixmap = QtGui.QPixmap(v[_k]['thumbnail'])
+
+            self.menu[k][key()] = {
+                'icon': pixmap,
+                'text': u'Launch {}'.format(v[_k]['name']),
+                'action': functools.partial(actions.execute, v[_k]['path']),
+            }
+
 
     def sg_thumbnail_menu(self):
         if not self.index.isValid():
@@ -1218,11 +1255,11 @@ class BaseContextMenu(QtWidgets.QMenu):
             }
 
     def import_json_menu(self):
-        k = u'Import Asset Properties'
+        k = u'Properties'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
 
         self.menu[k][key()] = {
-            'text': u'Import data from JSON',
+            'text': u'Apply data from JSON to Visible Items',
             'action': actions.import_asset_properties_from_json,
         }

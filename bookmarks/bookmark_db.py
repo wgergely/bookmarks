@@ -20,7 +20,6 @@ visibility flags, cut information and Shotgun data here.
 The `info` and `properties` tables are linked to the bookmark.
 
 """
-import contextlib
 import time
 import platform
 import sqlite3
@@ -212,6 +211,10 @@ TABLES = {
         'asset_config': {
             'sql': u'TEXT',
             'type': dict
+        },
+        'applications': {
+            'sql': u'TEXT',
+            'type': dict,
         }
     }
 }
@@ -509,7 +512,6 @@ class BookmarkDB(QtCore.QObject):
         )
         self.connection().execute(sql)
 
-
     def _patch_table(self, table):
         """For backwards compatibility, we will ALTER the database if any of the
         required columns are missing.
@@ -579,7 +581,6 @@ class BookmarkDB(QtCore.QObject):
                     self.connection().rollback()
                     raise
                 sleep()
-
 
     def _verify_args(self, source, key, table, value=None):
         if not isinstance(source, unicode):

@@ -1173,6 +1173,11 @@ def execute(index, first=False):
     `QDesktopServices`.
 
     """
+    if isinstance(index, unicode):
+        url = QtCore.QUrl.fromLocalFile(path)
+        QtGui.QDesktopServices.openUrl(url)
+        return
+
     if not index.isValid():
         return
     path = index.data(QtCore.Qt.StatusTipRole)

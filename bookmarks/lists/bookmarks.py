@@ -33,6 +33,10 @@ class BookmarksWidgetContextMenu(contextmenu.BaseContextMenu):
         self.title()
 
         self.bookmark_editor_menu()
+        
+        self.separator()
+
+        self.launcher_menu()
 
         self.separator()
 

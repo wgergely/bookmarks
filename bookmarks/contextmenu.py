@@ -188,7 +188,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         _c = common.SEPARATOR if color else None
         pixmap = images.ImageCache.get_rsc_pixmap(
             u'close', _c, size, opacity=0.5, resource=resource)
-            
+
         icon.addPixmap(pixmap, mode=QtGui.QIcon.Disabled)
 
         return icon
@@ -1030,10 +1030,15 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu['{}:icon'.format(k)] = self.get_icon('icon_bw')
 
         for _k in v:
-            pixmap = QtGui.QPixmap(v[_k]['thumbnail'])
+            try:
+                pixmap = QtGui.QPixmap(v[_k]['thumbnail'])
+                pixmap.setDevicePixelRatio(images.pixel_ratio)
+                icon = QtGui.QIcon(pixmap)
+            except:
+                icon = QtGui.QIcon()
 
             self.menu[k][key()] = {
-                'icon': pixmap,
+                'icon': icon,
                 'text': u'Launch {}'.format(v[_k]['name']),
                 'action': functools.partial(actions.execute, v[_k]['path']),
             }

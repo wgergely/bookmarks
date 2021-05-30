@@ -1162,7 +1162,7 @@ def copy_path(path, mode=common.WindowsPath, first=True, copy=True):
         path = path.replace(u':', u'')
     else:
         prefix = u''
-        
+
     path = prefix + path
     if mode == common.WindowsPath:
         path = re.sub(
@@ -1185,7 +1185,7 @@ def execute(index, first=False):
 
     """
     if isinstance(index, unicode):
-        url = QtCore.QUrl.fromLocalFile(path)
+        url = QtCore.QUrl.fromLocalFile(index)
         QtGui.QDesktopServices.openUrl(url)
         return
 

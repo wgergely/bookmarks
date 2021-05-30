@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-"""
+"""Common widgets used accross all property editors.
 
 """
 import uuid
-import functools
-import datetime
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
@@ -12,9 +10,7 @@ from .. import log
 from .. import common
 from .. import ui
 from .. import images
-from .. import bookmark_db
 from .. import contextmenu
-from ..shotgun import shotgun
 
 
 THUMBNAIL_EDITOR_SIZE = common.MARGIN() * 10
@@ -162,11 +158,11 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
 
     """
 
-    def __init__(self, server, job, root, source=None, fallback_thumb=u'placeholder', parent=None):
+    def __init__(self, server, job, root, size=THUMBNAIL_EDITOR_SIZE, source=None, fallback_thumb=u'placeholder', parent=None):
         super(ThumbnailEditorWidget, self).__init__(
             u'pick_image',
             (common.BLUE, common.DARK_BG),
-            size=THUMBNAIL_EDITOR_SIZE,
+            size=size,
             description=u'Drag-and-drop an image to add, click to capture, or right-click to pick a custom thumbnail...',
             parent=parent
         )

@@ -15,6 +15,7 @@ from .. import bookmark_db
 from .. import settings
 from .. import images
 from ..properties import base
+from ..asset_config import asset_config
 
 from . import shotgun
 from . import actions as sg_actions
@@ -370,7 +371,6 @@ class PublishWidget(base.PropertiesWidget):
             return False
         v = self.file_editor.path()
 
-        from ..properties import asset_config
         config = asset_config.get(
             settings.active(settings.ServerKey),
             settings.active(settings.JobKey),

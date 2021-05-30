@@ -1,13 +1,7 @@
 # -*- coding: utf-8 -*-
-"""Defines the widget used to edit a bookmark's default asset properties.
+"""Defines the widget used to edit a bookmark item's asset_config.
 
-The asset properties allows for setting basic information about the
-asset folder structures and the format types. The settings are predominantly
-used to control what extension types are visible in the FileList widget, and
-when saving files to help set the destination folders.
-
-The data is stored in the bookmark database and getting and saving the data
-is handled by the `asset_config.py` module.
+See the `:mod:asset_config` module for more information.
 
 """
 import functools
@@ -19,7 +13,7 @@ from .. import common
 from .. import log
 from .. import ui
 from .. import images
-from . import base
+from ..properties import base
 
 
 SECTIONS = (
@@ -174,7 +168,7 @@ class FormatEditor(QtWidgets.QDialog):
 class SubfolderEditor(QtWidgets.QDialog):
     """A popup editor used to edit the subfolders of a task folder.
 
-    s"""
+    """
 
     def __init__(self, section, k, v, data, parent=None):
         super(SubfolderEditor, self).__init__(parent=parent)

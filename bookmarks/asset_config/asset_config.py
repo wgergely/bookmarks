@@ -1,28 +1,28 @@
 # -*- coding: utf-8 -*-
-"""`Asset config` describes the folder structure, and accepted file-types of
-assets.
+"""The asset config module allows basic folder and file-type definitions of
+asset items.
 
-The default values are stored in `DEFAULT_ASSET_CONFIG` but each bookmark can be
-configured independently using the `asset_config_editor` widget. The custom
-configuration values are stored in the bookmark's database using `ASSET_CONFIG_KEY`
-column as encoded JSON data.
+This information can be used to suggest default paths in DCCs (eg. what the
+default scene folder is called), to filter file-types when browsing task folders
+(eg. hide cache files when browsing the scenes folder), and to define the token
+values for generating templated file names (see `AssetConfig.expand_tokens()`).
 
-The asset config values can be used as tokens for generating file names.
-See `AssetConfig.expand_tokens()`.
+The default values are stored in `asset_config.DEFAULT_ASSET_CONFIG` but each
+bookmark item can be configured independently using the
+`asset_config.asset_config_editor` widget. The custom configuration values are
+stored in the bookmark's database using `ASSET_CONFIG_KEY` column as encoded
+JSON data.
 
-Asset Config instances are backed by a cache and should be retrieved using
-`asset_confiig.get(*args)`.
+The module is backed by a cache. Use `asset_config.get(server, job, root)` to
+retrieve asset_config instances.
+
 
 Example:
 
     code-block:: python
 
-        asset_config = get(
-            u'//gw-workstation/jobs',
-            u'myjob',
-            u'data/assets'
-        )
-        asset_config.set_data(
+        config = asset_config.get(server, job, root)
+        config.set_data(
             {
                 'custom_data': {
                     'value': u'hello_world',
@@ -30,9 +30,9 @@ Example:
                 }
             }
         )
-        data = asset_config.data()
-        asset_config.get_description(u'geo')
-        asset_config.dump_json(u'C:/temp/data.json')
+        data = config.data()
+        config.get_description(u'geo')
+        config.dump_json(u'C:/temp/data.json')
 
         s = asset_info.expand_tokens(u'{asset_root}/{scene}/{prefix}_{asset}_{task}_{user}_{version}.{ext}', ext='exr')
 
@@ -390,7 +390,7 @@ class AssetConfig(QtCore.QObject):
 
         db = bookmark_db.get_db(self.server, self.job, self.root)
         with db.connection():
-            db.setValue(
+            bookmark_db.setValue(
                 db.source(),
                 ASSET_CONFIG_KEY,
                 data,

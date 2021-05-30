@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 """Settings window for editing bookmark properties.
 
-Used to edit data in the bookmark database (see \'bookmark_db.py\'). The database
-stores information about the bookmark's default \'width\', \'height\', \'frame rate\'
-and connectivity information, such as \'Slack\' and \'Shotgun\' tokens.
+Used to edit data in the bookmark database (see 'bookmark_db.py'). The
+database stores information about the bookmark's default 'width', 'height',
+'frame rate' and connectivity information, such as 'Slack' and 'Shotgun'
+tokens.
 
 Usage:
 
@@ -25,7 +26,8 @@ from ..shotgun import shotgun
 
 from . import base
 from . import base_widgets
-from . import asset_config_widget
+from ..asset_config import asset_config_widget
+from ..launcher import launcher
 
 
 SLACK_API_URL = u'https://api.slack.com/apps'
@@ -267,6 +269,23 @@ SECTIONS = {
         }
     },
     5: {
+        'name': u'Launcher',
+        'icon': u'',
+        'color': common.DARK_BG,
+        'groups': {
+            0: {
+                0: {
+                    'name': u'Applications',
+                    'key': u'applications',
+                    'validator': None,
+                    'widget': launcher.LauncherListWidget,
+                    'placeholder': None,
+                    'description': u'Edit the list of applications (DCCs) this bookmark item uses.',
+                },
+            }
+        }
+    },
+    6: {
         'name': u'Database',
         'icon': u'',
         'color': common.DARK_BG,

@@ -27,8 +27,8 @@ from ..shotgun import shotgun
 from . import base
 from . import base_widgets
 from ..asset_config import asset_config_widget
-from . import application_properties_widget
- 
+from ..launcher import launcher
+
 
 SLACK_API_URL = u'https://api.slack.com/apps'
 
@@ -269,16 +269,16 @@ SECTIONS = {
         }
     },
     5: {
-        'name': u'Applications',
+        'name': u'Launcher',
         'icon': u'',
         'color': common.DARK_BG,
         'groups': {
             0: {
                 0: {
-                    'name': u'Edit Applications',
+                    'name': u'Applications',
                     'key': u'applications',
                     'validator': None,
-                    'widget': application_properties_widget.ApplicationPropertiesWidget,
+                    'widget': launcher.LauncherListWidget,
                     'placeholder': None,
                     'description': u'Edit the list of applications (DCCs) this bookmark item uses.',
                 },

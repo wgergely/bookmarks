@@ -32,6 +32,10 @@ class AssetsWidgetContextMenu(contextmenu.BaseContextMenu):
         self.add_file_to_asset_menu()
 
         self.separator()
+        
+        self.launcher_menu()
+
+        self.separator()
 
         self.sg_link_assets_menu()
         self.sg_link_asset_menu()

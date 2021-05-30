@@ -10,7 +10,6 @@ from PySide2 import QtWidgets, QtGui, QtCore
 from .. import common
 from .. import ui
 from .. import bookmark_db
-from .. import actions
 
 from ..templates import templates
 from ..shotgun import shotgun

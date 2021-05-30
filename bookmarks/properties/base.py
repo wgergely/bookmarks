@@ -215,7 +215,7 @@ class PropertiesWidget(QtWidgets.QDialog):
             self.server,
             self.job,
             self.root,
-            source,
+            source=source,
             fallback_thumb=self._fallback_thumb,
             parent=self
         )
@@ -400,10 +400,19 @@ class PropertiesWidget(QtWidgets.QDialog):
                         row.layout().addWidget(button2, 0)
 
     def _connect_editor(self, key, _type, editor):
-        if hasattr(editor, 'textChanged'):
+        if hasattr(editor, 'dataUpdated'):
+            editor.dataUpdated.connect(
+                functools.partial(
+                    self.data_changed,
+                    key,
+                    _type,
+                    editor
+                )
+            )
+        elif hasattr(editor, 'textChanged'):
             editor.textChanged.connect(
                 functools.partial(
-                    self.text_changed,
+                    self.data_changed,
                     key,
                     _type,
                     editor
@@ -412,7 +421,7 @@ class PropertiesWidget(QtWidgets.QDialog):
         elif hasattr(editor, 'currentTextChanged'):
             editor.currentTextChanged.connect(
                 functools.partial(
-                    self.text_changed,
+                    self.data_changed,
                     key,
                     _type,
                     editor
@@ -421,7 +430,7 @@ class PropertiesWidget(QtWidgets.QDialog):
         elif hasattr(editor, 'stateChanged'):
             editor.stateChanged.connect(
                 functools.partial(
-                    self.text_changed,
+                    self.data_changed,
                     key,
                     _type,
                     editor
@@ -506,9 +515,12 @@ class PropertiesWidget(QtWidgets.QDialog):
             if k not in self.current_data:
                 self.current_data[k] = v
 
-            if v is not None and not isinstance(v, unicode):
-                v = u'{}'.format(v)
             if v is not None:
+                if hasattr(editor, 'setValue'):
+                    editor.setValue(v)
+
+                if not isinstance(v, unicode):
+                    v = u'{}'.format(v)
                 if hasattr(editor, 'setText'):
                     editor.setText(v)
                 if hasattr(editor, 'setCurrentText'):
@@ -557,7 +569,7 @@ class PropertiesWidget(QtWidgets.QDialog):
     @QtCore.Slot(type)
     @QtCore.Slot(QtWidgets.QWidget)
     @QtCore.Slot(unicode)
-    def text_changed(self, key, _type, editor, v):
+    def data_changed(self, key, _type, editor, v):
         """Signal called when the user changes a value in the editor.
 
         Args:
@@ -566,10 +578,9 @@ class PropertiesWidget(QtWidgets.QDialog):
             editor (QWidget):       The editor widget.
 
         """
-        if _type is not None:
+        if _type is not None and v is not isinstance(v, _type) and v != u'':
             try:
-                if v != u'':
-                    v = _type(v)
+                v = _type(v)
             except:
                 log.error('Type conversion failed.')
 

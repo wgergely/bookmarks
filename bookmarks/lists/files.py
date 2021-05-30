@@ -192,11 +192,15 @@ class FilesWidgetContextMenu(contextmenu.BaseContextMenu):
     @common.error
     @common.debug
     def setup(self):
+        self.title()
+        self.task_toggles_menu()
+        self.separator()
+
         self.window_menu()
 
         self.separator()
 
-        self.task_toggles_menu()
+        self.launcher_menu()
 
         self.separator()
 
@@ -206,7 +210,6 @@ class FilesWidgetContextMenu(contextmenu.BaseContextMenu):
 
         self.convert_menu()
 
-        self.title()
 
         self.add_file_menu()
 

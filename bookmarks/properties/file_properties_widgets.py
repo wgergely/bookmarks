@@ -234,6 +234,10 @@ class AssetsModel(BaseModel):
                 QtCore.Qt.ToolTipRole: filepath,
             }
 
+    def display_name(self, v):
+        k = active_bookmark()
+        return v.replace(k, u'').strip(u'/').split(u'/')[0]
+
 
 class AssetComboBox(QtWidgets.QComboBox):
     def __init__(self, parent=None):

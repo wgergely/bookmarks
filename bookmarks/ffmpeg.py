@@ -67,7 +67,7 @@ BASE_H264_PRESET = '\
 
 PRESETS = {
     0: {
-        'name': u'Image Sequence to mp4 with Timecode',
+        'name': u'Image Sequence to MP4 (with timecode)',
         'preset': _format(
                 BASE_H264_PRESET,
                 VIDEOFILTER=VIDEOFILTER,
@@ -75,7 +75,7 @@ PRESETS = {
             )
         },
     1: {
-        'name': u'Image Sequence to mp4',
+        'name': u'Image Sequence to MP4',
         'preset': _format(
                 BASE_H264_PRESET,
                 VIDEOFILTER='',
@@ -83,23 +83,6 @@ PRESETS = {
             )
     },
 }
-
-
-
-def convert_progress(func):
-    @functools.wraps(func)
-    def func_wrapper(*args, **kwargs):
-        try:
-            output = func(*args, **kwargs)
-            if output:
-                log.success(u'Successfully saved {}'.format(output))
-                ui.OkBox(u'Finished converting.', u'The converted file was saved here:\n{}'.format(output)).open()
-                common.signals.fileAdded.emit(output)
-                return output
-        except:
-            raise
-
-    return func_wrapper
 
 
 
@@ -115,7 +98,6 @@ def get_font_path(name='bmRobotoMedium'):
 
 @common.error
 @common.debug
-@convert_progress
 def launch_ffmpeg_command(input, preset, server=None, job=None, root=None, asset=None, task=None):
     """Calls FFMpeg to process an input using the given preset.
 

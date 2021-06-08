@@ -48,7 +48,7 @@ def get_template_folder(mode):
     """
     if not isinstance(mode, unicode):
         raise TypeError(
-            'Invalid type. Expected <type \'unicode\'>, got {}'.format(type(mode)))
+            u'Invalid type. Expected {}, got {}'.format(unicode, type(mode)))
 
     data_location = QtCore.QStandardPaths.writableLocation(
         QtCore.QStandardPaths.GenericDataLocation
@@ -87,25 +87,25 @@ class TemplateContextMenu(contextmenu.BaseContextMenu):
                 template_actions.pick_template,
                 self.parent().mode()
             ),
-            u'icon': self.get_icon('add', color=common.GREEN)
+            u'icon': self.get_icon(u'add', color=common.GREEN)
         }
 
     def remove_menu(self):
         source = self.index.data(TemplatePathRole)
         self.menu[contextmenu.key()] = {
-            'text': u'Delete',
+            u'text': u'Delete',
             u'action': functools.partial(
                 template_actions.remove_zip_template,
                 source
             ),
-            u'icon': self.get_icon('close', color=common.RED)
+            u'icon': self.get_icon(u'close', color=common.RED)
         }
 
     def refresh_menu(self):
         self.menu[contextmenu.key()] = {
-            'text': u'Refresh',
-            'action': self.parent().init_data,
-            'icon': self.get_icon('refresh')
+            u'text': u'Refresh',
+            u'action': self.parent().init_data,
+            u'icon': self.get_icon(u'refresh')
         }
 
     def reveal_menu(self):
@@ -113,8 +113,8 @@ class TemplateContextMenu(contextmenu.BaseContextMenu):
             actions.reveal(self.index.data(TemplatePathRole))
 
         self.menu[contextmenu.key()] = {
-            'text': u'Show in file explorer...',
-            u'icon': self.get_icon('folder'),
+            u'text': u'Show in file explorer...',
+            u'icon': self.get_icon(u'folder'),
             u'action': reveal,
         }
 
@@ -129,7 +129,7 @@ class TemplateListDelegate(ui.ListWidgetDelegate):
         editor.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         editor.setStyleSheet(u'padding: 0px; margin: 0px; border-radius: 0px;')
         validator = QtGui.QRegExpValidator(parent=editor)
-        validator.setRegExp(QtCore.QRegExp(ur'[\_\-a-zA-z0-9]+'))
+        validator.setRegExp(QtCore.QRegExp(r'[\_\-a-zA-z0-9]+'))
         editor.setValidator(validator)
         return editor
 

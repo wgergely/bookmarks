@@ -358,7 +358,7 @@ class AlembicPreviewWidget(QtWidgets.QWidget):
         super(AlembicPreviewWidget, self).__init__(parent=parent)
         if not isinstance(path, unicode):
             raise ValueError(
-                u'Expected <type \'unicode\'>, got {}'.format(type(path)))
+                u'Expected {}, got {}'.format(unicode, type(path)))
 
         if not self.parent():
             common.set_custom_stylesheet(self)

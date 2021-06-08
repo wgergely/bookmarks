@@ -120,7 +120,7 @@ SGTypeKey = u'SGType'
 
 def strip(s):
     return re.sub(
-        ur'\\', u'/',
+        r'\\', u'/',
         s,
         flags=re.UNICODE | re.IGNORECASE
     ).strip().rstrip(u'/')
@@ -306,7 +306,7 @@ class Settings(QtCore.QSettings):
                 del v[k]
             # Add server from bookmarks
             common.SERVERS.append(v[k][ServerKey])
-            
+
         common.SERVERS = sorted(set(common.SERVERS))
         common.BOOKMARKS = v
         return v

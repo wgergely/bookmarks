@@ -32,7 +32,7 @@ class AssetsWidgetContextMenu(contextmenu.BaseContextMenu):
         self.add_file_to_asset_menu()
 
         self.separator()
-        
+
         self.launcher_menu()
 
         self.separator()
@@ -157,7 +157,7 @@ class AssetModel(base.BaseModel):
                     flags = flags | common.MarkedAsActive
 
             # Beautify the name
-            name = re.sub(ur'[_]{1,}', u' ', filename).strip(u'_').strip('')
+            name = re.sub(r'[_]{1,}', u' ', filename).strip(u'_').strip('')
 
             idx = len(data)
             if idx >= common.MAXITEMS:

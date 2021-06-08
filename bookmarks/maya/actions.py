@@ -161,7 +161,7 @@ def export_set_to_ass(set_name, set_members, frame=True):
     # We want to handle the exact name of the file
     # We'll remove the namespace, strip underscores
     set_name = set_name.replace(u':', u'_').strip(u'_')
-    set_name = re.sub(ur'[0-9]*$', u'', set_name)
+    set_name = re.sub(r'[0-9]*$', u'', set_name)
     layer = cmds.editRenderLayerGlobals(
         query=True, currentRenderLayer=True)
     ext = u'ass'
@@ -280,7 +280,7 @@ def export_set_to_abc(set_name, set_members, frame=False):
     # We want to handle the exact name of the file
     # We'll remove the namespace, strip underscores
     set_name = set_name.replace(u':', u'_').strip(u'_')
-    set_name = re.sub(ur'[0-9]*$', u'', set_name)
+    set_name = re.sub(r'[0-9]*$', u'', set_name)
     ext = u'abc'
 
     exportdir = mbase.DEFAULT_CACHE_DIR.format(
@@ -382,7 +382,7 @@ def export_set_to_obj(set_name, set_members, frame=False):
     # We want to handle the exact name of the file
     # We'll remove the namespace, strip underscores
     set_name = set_name.replace(u':', u'_').strip(u'_')
-    set_name = re.sub(ur'[0-9]*$', u'', set_name)
+    set_name = re.sub(r'[0-9]*$', u'', set_name)
     ext = u'obj'
 
     exportdir = mbase.DEFAULT_CACHE_DIR.format(
@@ -650,11 +650,11 @@ def import_scene(path, reference=False):
         raise RuntimeError(s)
 
     if cmds.file(q=True, sn=True).lower() == file_info.filePath().lower() and reference:
-        raise RuntimeError('Can\'t reference itself.')
+        raise RuntimeError(u'Can\'t reference itself.')
 
     match = common.get_sequence(file_info.fileName())
     basename = match.group(1) if match else file_info.baseName()
-    basename = re.sub(ur'_v$', u'', basename, flags=re.IGNORECASE)
+    basename = re.sub(r'_v$', u'', basename, flags=re.IGNORECASE)
 
     alphabet = mbase._get_available_suffixes(basename)
     if not alphabet:  # no more suffixes to assign
@@ -1174,5 +1174,5 @@ def quit():
     # maya_widget._instance.hide()
 
     for widget in QtWidgets.QApplication.instance().allWidgets():
-        if re.match(ur'PluginWidget.*WorkspaceControl', widget.objectName()):
+        if re.match(u'PluginWidget.*WorkspaceControl', widget.objectName()):
             remove_workspace_control(widget.objectName())

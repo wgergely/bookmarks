@@ -1148,8 +1148,12 @@ def copy_path(path, mode=common.WindowsPath, first=True, copy=True):
         return path
 
     # Normalise path
-    path = re.sub(ur'[\/\\]', ur'/', path,
-                  flags=re.IGNORECASE | re.UNICODE).strip(u'/')
+    path = re.sub(
+        r'[\/\\]',
+        r'/',
+        path,
+        flags=re.IGNORECASE | re.UNICODE
+    ).strip(u'/')
 
     if mode == common.WindowsPath:
         prefix = u'//' if u':' not in path else u''
@@ -1166,8 +1170,8 @@ def copy_path(path, mode=common.WindowsPath, first=True, copy=True):
     path = prefix + path
     if mode == common.WindowsPath:
         path = re.sub(
-            ur'[\/\\]',
-            ur'\\',
+            r'[\/\\]',
+            r'\\',
             path,
             flags=re.IGNORECASE | re.UNICODE
         )
@@ -1212,7 +1216,7 @@ def test_slack_token(token):
 @common.debug
 @common.error
 def suggest_prefix(job):
-    substrings = re.sub(ur'[\_\-\s]+', u';', job).split(u';')
+    substrings = re.sub(r'[\_\-\s]+', u';', job).split(u';')
     if (not substrings or len(substrings) < 2) and len(job) > 3:
         prefix = job[0:3].upper()
     else:

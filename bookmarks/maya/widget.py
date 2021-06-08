@@ -101,10 +101,10 @@ def show():
     for widget in app.allWidgets():
         # Skipping workspaceControls objects, just in case there's a name conflict
         # between what the parent().objectName() and this method yields
-        if re.match(ur'{}.*WorkspaceControl'.format(common.PRODUCT), widget.objectName()):
+        if re.match(u'{}.*WorkspaceControl'.format(common.PRODUCT), widget.objectName()):
             continue
 
-        match = re.match(ur'{}.*'.format(common.PRODUCT), widget.objectName())
+        match = re.match(u'{}.*'.format(common.PRODUCT), widget.objectName())
 
         # Skip invalid matches
         if not match:
@@ -166,7 +166,7 @@ def show():
     # By default, the tab is docked just next to the attribute editor
     for widget in app.allWidgets():
         match = re.match(
-            ur'{}.*WorkspaceControl'.format(common.PRODUCT), widget.objectName())
+            u'{}.*WorkspaceControl'.format(common.PRODUCT), widget.objectName())
 
         if not match:
             continue

@@ -551,12 +551,12 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         """
         _filtertext = filtertext
         it = re.finditer(
-            ur'(--[^\"\'\[\]\*\s]+)',
+            r'(--[^\"\'\[\]\*\s]+)',
             filtertext,
             flags=re.IGNORECASE | re.MULTILINE
         )
         it_quoted = re.finditer(
-            ur'(--".*?")',
+            r'(--".*?")',
             filtertext,
             flags=re.IGNORECASE | re.MULTILINE
         )
@@ -574,12 +574,12 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
     def filter_excludes_row(self, filtertext, searchable):
         it = re.finditer(
-            ur'--([^\"\'\[\]\*\s]+)',
+            r'--([^\"\'\[\]\*\s]+)',
             filtertext,
             flags=re.IGNORECASE | re.MULTILINE
         )
         it_quoted = re.finditer(
-            ur'--"(.*?)"',
+            r'--"(.*?)"',
             filtertext,
             flags=re.IGNORECASE | re.MULTILINE
         )

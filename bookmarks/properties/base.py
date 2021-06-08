@@ -59,19 +59,19 @@ from . import base_widgets
 
 
 floatvalidator = QtGui.QRegExpValidator()
-floatvalidator.setRegExp(QtCore.QRegExp(ur'[0-9]+[\.]?[0-9]*'))
+floatvalidator.setRegExp(QtCore.QRegExp(r'[0-9]+[\.]?[0-9]*'))
 intvalidator = QtGui.QRegExpValidator()
-intvalidator.setRegExp(QtCore.QRegExp(ur'[0-9]+'))
+intvalidator.setRegExp(QtCore.QRegExp(r'[0-9]+'))
 textvalidator = QtGui.QRegExpValidator()
-textvalidator.setRegExp(QtCore.QRegExp(ur'[a-zA-Z0-9]+'))
+textvalidator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9]+'))
 namevalidator = QtGui.QRegExpValidator()
-namevalidator.setRegExp(QtCore.QRegExp(ur'[a-zA-Z0-9\-\_]+'))
+namevalidator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9\-\_]+'))
 domainvalidator = QtGui.QRegExpValidator()
-domainvalidator.setRegExp(QtCore.QRegExp(ur'[a-zA-Z0-9/:\.]+'))
+domainvalidator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9/:\.]+'))
 versionvalidator = QtGui.QRegExpValidator()
-versionvalidator.setRegExp(QtCore.QRegExp(ur'[v]?[0-9]{1,4}'))
+versionvalidator.setRegExp(QtCore.QRegExp(r'[v]?[0-9]{1,4}'))
 tokenvalidator = QtGui.QRegExpValidator()
-tokenvalidator.setRegExp(QtCore.QRegExp(ur'[0-0a-zA-Z\_\-\.\{\}]*'))
+tokenvalidator.setRegExp(QtCore.QRegExp(r'[0-0a-zA-Z\_\-\.\{\}]*'))
 
 
 span = {

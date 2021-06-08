@@ -19,11 +19,11 @@ from .. import images
 
 
 regex_remove_version = re.compile(
-    ur'(.*)(v)([\{}0-9\-\{}]+.*)'.format(common.SEQSTART, common.SEQEND),
+    r'(.*)(v)([\{}0-9\-\{}]+.*)'.format(common.SEQSTART, common.SEQEND),
     flags=re.IGNORECASE | re.UNICODE
 )
 regex_remove_seq_marker = re.compile(
-    ur'[\{}\{}]*'.format(common.SEQSTART, common.SEQEND),
+    r'[\{}\{}]*'.format(common.SEQSTART, common.SEQEND),
     flags=re.IGNORECASE | re.UNICODE
 )
 
@@ -1618,7 +1618,7 @@ class FilesWidgetDelegate(BaseDelegate):
         if k in TEXT_SEGMENT_CACHE:
             return TEXT_SEGMENT_CACHE[k]
 
-        s = regex_remove_version.sub(ur'\1\3', s)
+        s = regex_remove_version.sub(r'\1\3', s)
         d = {}
         # Item is a collapsed sequence
         match = common.is_collapsed(s)

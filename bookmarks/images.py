@@ -146,7 +146,7 @@ def check_for_thumbnail_image(source):
 
 
 def get_thumbnail(server, job, root, source, size=THUMBNAIL_IMAGE_SIZE, fallback_thumb=u'placeholder', get_path=False):
-    """Loads a thumbnail for a given item.
+    """Get the thumbnail of a given item.
 
     When an item is missing a bespoke cached thumbnail file, we will try to load
     a fallback image instead. For files, this will be an image associated with
@@ -168,8 +168,8 @@ def get_thumbnail(server, job, root, source, size=THUMBNAIL_IMAGE_SIZE, fallback
         get_path (bool):         Returns a path instead of a QPixmap if set to `True`.
 
     Returns:
-        tuple:                   QPixmap and QColor, or (`None`, `None)`.
-        unicode:                 Path to the thumbnail file when `get_path` is `True`.
+        tuple:                   `(QPixmap, QColor)`, or `(None, None)`.
+        unicode:                 Path to the thumbnail file when `get_path=True`.
 
 
     """

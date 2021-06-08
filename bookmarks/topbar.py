@@ -39,7 +39,7 @@ def current_index():
     return main.instance().stackedwidget.currentIndex()
 
 
-class QuickSwitchMenu(contextmenu.BaseContextMenu):
+class QuickSwitchMenu(contextmenu.BaseContextMenu):    
     def stacked_widget(self):
         return self.parent().parent().parent().stackedwidget
 
@@ -54,7 +54,7 @@ class QuickSwitchMenu(contextmenu.BaseContextMenu):
     def add_switch_menu(self, widget, label):
         """Adds the items needed to quickly change bookmarks or assets."""
         off_pixmap = images.ImageCache.get_rsc_pixmap(
-            u'folder', common.SECONDARY_TEXT, common.MARGIN())
+            u'icon_bw', common.SECONDARY_TEXT, common.MARGIN())
         on_pixmap = images.ImageCache.get_rsc_pixmap(
             u'check', common.GREEN, common.MARGIN())
 
@@ -72,14 +72,14 @@ class QuickSwitchMenu(contextmenu.BaseContextMenu):
                 n = active_index.data(QtCore.Qt.DisplayRole)
                 active = n.lower() == name.lower()
 
-            thumbnail_path = images.get_cached_thumbnail_path(
+            pixmap, _ = images.get_thumbnail(
                 index.data(common.ParentPathRole)[0],
                 index.data(common.ParentPathRole)[1],
                 index.data(common.ParentPathRole)[2],
                 index.data(QtCore.Qt.StatusTipRole),
+                size=common.MARGIN() * 4,
+                fallback_thumb='icon_bw'
             )
-            pixmap = images.ImageCache.get_pixmap(
-                thumbnail_path, common.MARGIN() * 2)
             pixmap = pixmap if pixmap else off_pixmap
             pixmap = on_pixmap if active else pixmap
             icon = QtGui.QIcon(pixmap)

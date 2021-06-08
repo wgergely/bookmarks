@@ -51,7 +51,7 @@ def prune():
         product=common.PRODUCT,
     )
 
-    r = ur'{prefix}_([0-9]+)\.{ext}'.format(
+    r = r'{prefix}_([0-9]+)\.{ext}'.format(
         prefix=PREFIX,
         ext=FORMAT
     )

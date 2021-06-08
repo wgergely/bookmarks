@@ -371,7 +371,7 @@ def oiio_get_buf(source, hash=None, force=False):
     """
     if not isinstance(source, unicode):
         raise TypeError(
-            u'Expected <type \'unicode\'>, got {}'.format(type(source)))
+            u'Expected {}, got {}'.format(unicode, type(source)))
     if hash is None:
         hash = common.get_hash(source)
 
@@ -655,10 +655,8 @@ class ImageCache(QtCore.QObject):
 
     @classmethod
     def get_color(cls, source, force=False):
-        """Get a color
-        """
         if not isinstance(source, unicode):
-            raise TypeError(u'Invalid type. Expected <type \'unicode\'>')
+            raise TypeError(u'Invalid type. Expected {}, got {}.'.format(unicode, type(source)))
 
         # Check the cache and return the previously stored value if exists
         _hash = common.get_hash(source)
@@ -673,7 +671,7 @@ class ImageCache(QtCore.QObject):
 
     @classmethod
     def make_color(cls, source):
-        """Caluclate the average color of a source image."""
+        """Calculate the average color of a source image."""
         locker = QtCore.QMutexLocker(mutex)
 
         buf = oiio_get_buf(source)

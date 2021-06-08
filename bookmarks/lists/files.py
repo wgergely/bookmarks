@@ -761,8 +761,7 @@ class FilesModel(base.BaseModel):
         def add_path_to_mime(mime, path):
             """Adds the given path to the mime data."""
             if not isinstance(path, unicode):
-                s = u'Expected <type \'unicode\'>, got {}'.format(type(str))
-                log.error(s)
+                s = u'Expected {}, got {}'.format(unicode, type(path))
                 raise TypeError(s)
 
             path = QtCore.QFileInfo(path).absoluteFilePath()

@@ -101,7 +101,7 @@ def get(server, job, root, force=False):
         if isinstance(arg, unicode):
             continue
         raise TypeError(
-            u'Invalid type, expected <type \'unicode\'>, got {}'.format(type(arg)))
+            u'Invalid type, expected {}, got {}'.format(unicode, type(arg)))
 
     key = _get_key(server, job, root)
     global __INSTANCES
@@ -552,7 +552,7 @@ class AssetConfig(QtCore.QObject):
     def check_task(self, task, force=False):
         if not isinstance(task, (str, unicode)):
             raise TypeError(
-                u'Expected <type \'unicode\'>, got {}'.format(type(task)))
+                u'Expected {}, got {}'.format(unicode, type(task)))
 
         data = self.data(force=force)
         if AssetFolderConfig not in data:
@@ -575,7 +575,7 @@ class AssetConfig(QtCore.QObject):
         """
         if not isinstance(task, (str, unicode)):
             raise TypeError(
-                u'Expected <type \'unicode\'>, got {}'.format(type(task)))
+                u'Expected {}, got {}'.format(unicode, type(task)))
 
         data = self.data(force=force)
         if AssetFolderConfig not in data:

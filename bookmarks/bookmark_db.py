@@ -391,7 +391,7 @@ def remove_db(server, job, root):
 
 
 def _get_thread_key(*args):
-    t = unicode(repr(QtCore.QThread.currentThread()))
+    t = repr(QtCore.QThread.currentThread())
     return u'/'.join(args) + t
 
 

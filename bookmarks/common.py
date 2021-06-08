@@ -25,7 +25,7 @@ from . import __name__ as module_name
 
 STANDALONE = True  # The current mode of bookmarks
 PRODUCT = unicode(module_name.title())
-ABOUT_URL = ur'https://github.com/wgergely/bookmarks'
+ABOUT_URL = u'https://github.com/wgergely/bookmarks'
 BOOKMARK_ROOT_DIR = u'.bookmark'
 BOOKMARK_ROOT_KEY = '{}_ROOT'.format(module_name.upper())
 
@@ -110,19 +110,19 @@ DEFAULT_SORT_VALUES = {
 
 
 IsSequenceRegex = re.compile(
-    ur'^(.+?)(\{}.*\{})(.*)$'.format(SEQSTART, SEQEND),
+    r'^(.+?)(\{}.*\{})(.*)$'.format(SEQSTART, SEQEND),
     flags=re.IGNORECASE | re.UNICODE
 )
 SequenceStartRegex = re.compile(
-    ur'^(.*)\{}([0-9]+).*\{}(.*)$'.format(SEQSTART, SEQEND),
+    r'^(.*)\{}([0-9]+).*\{}(.*)$'.format(SEQSTART, SEQEND),
     flags=re.IGNORECASE | re.UNICODE
 )
 SequenceEndRegex = re.compile(
-    ur'^(.*)\{}.*?([0-9]+)\{}(.*)$'.format(SEQSTART, SEQEND),
+    r'^(.*)\{}.*?([0-9]+)\{}(.*)$'.format(SEQSTART, SEQEND),
     flags=re.IGNORECASE | re.UNICODE
 )
 GetSequenceRegex = re.compile(
-    ur'^(.*?)([0-9]+)([0-9\\/]*|[^0-9\\/]*(?=.+?))\.([^\.]{1,})$',
+    r'^(.*?)([0-9]+)([0-9\\/]*|[^0-9\\/]*(?=.+?))\.([^\.]{1,})$',
     flags=re.IGNORECASE | re.UNICODE)
 
 PlatformWindows = 0
@@ -568,7 +568,7 @@ def get_username():
 
     """
     n = QtCore.QFileInfo(os.path.expanduser(u'~')).fileName()
-    n = re.sub(ur'[^a-zA-Z0-9]*', u'', n, flags=re.IGNORECASE | re.UNICODE)
+    n = re.sub(r'[^a-zA-Z0-9]*', u'', n, flags=re.IGNORECASE | re.UNICODE)
     return n
 
 
@@ -606,7 +606,7 @@ def is_collapsed(s):
     """
     if not isinstance(s, unicode):
         raise TypeError(
-            u'Expected <type \'unicode\'>, got {}'.format(type(s)))
+            u'Expected {}, got {}'.format(unicode, type(s)))
     return IsSequenceRegex.search(s)
 
 
@@ -706,14 +706,14 @@ def get_sequence_startpath(path):
     """
     if not isinstance(path, unicode):
         raise ValueError(
-            u'Expected <type \'unicode\'>, got {}'.format(type(path)))
+            u'Expected {}, got {}'.format(unicode, type(path)))
 
     if not is_collapsed(path):
         return path
 
     match = SequenceStartRegex.search(path)
     if match:
-        path = SequenceStartRegex.sub(ur'\1\2\3', path)
+        path = SequenceStartRegex.sub(r'\1\2\3', path)
     return path
 
 
@@ -730,14 +730,14 @@ def get_sequence_endpath(path):
     """
     if not isinstance(path, unicode):
         raise ValueError(
-            u'Expected <type \'unicode\'>, got {}'.format(type(path)))
+            u'Expected {}, got {}'.format(unicode, type(path)))
 
     if not is_collapsed(path):
         return path
 
     match = SequenceEndRegex.search(path)
     if match:
-        path = SequenceEndRegex.sub(ur'\1\2\3', path)
+        path = SequenceEndRegex.sub(r'\1\2\3', path)
     return path
 
 

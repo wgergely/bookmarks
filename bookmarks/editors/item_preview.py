@@ -206,7 +206,7 @@ class ImageViewer(QtWidgets.QDialog):
         if not isinstance(path, unicode):
             self.done(QtWidgets.QDialog.Rejected)
             raise ValueError(
-                u'Expected <type \'unicode\'>, got {}'.format(type(path)))
+                u'Expected {}, got {}'.format(unicode, type(path)))
 
         self.path = path
 

@@ -30,44 +30,44 @@ PathHighlight = 0b100000
 HIGHLIGHT_RULES = {
     u'url': {
         u're': re.compile(
-            ur'((?:rvlink|file|http)[s]?:[/\\][/\\](?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
+            r'((?:rvlink|file|http)[s]?:[/\\][/\\](?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
             flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
         u'flag': PathHighlight
     },
     u'drivepath': {
         u're': re.compile(
-            ur'((?:[a-zA-Z]{1})[s]?:[/\\](?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
+            r'((?:[a-zA-Z]{1})[s]?:[/\\](?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
             flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
         u'flag': PathHighlight
     },
     u'uncpath': {
         u're': re.compile(
-            ur'([/\\]{1,2}(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
+            r'([/\\]{1,2}(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
             flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
         u'flag': PathHighlight
     },
     u'heading': {
         u're': re.compile(
-            ur'^(?<!#)#{1,2}(?!#)',
+            r'^(?<!#)#{1,2}(?!#)',
             flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
         u'flag': HeadingHighlight
     },
     u'quotes': {
         u're': re.compile(
             # Group(2) captures the contents
-            ur'([\"\'])((?:(?=(\\?))\3.)*?)\1',
+            r'([\"\'])((?:(?=(\\?))\3.)*?)\1',
             flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
         u'flag': QuoteHighlight
     },
     u'italics': {
         u're': re.compile(
-            ur'([\_])((?:(?=(\\?))\3.)*?)\1',  # Group(2) captures the contents
+            r'([\_])((?:(?=(\\?))\3.)*?)\1',  # Group(2) captures the contents
             flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
         u'flag': ItalicsHighlight
     },
     u'bold': {
         u're': re.compile(
-            ur'([\*])((?:(?=(\\?))\3.)*?)\1',  # Group(2) captures the contents
+            r'([\*])((?:(?=(\\?))\3.)*?)\1',  # Group(2) captures the contents
             flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
         u'flag': BoldHighlight
     },

@@ -1029,7 +1029,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[k] = collections.OrderedDict()
             self.menu['{}:icon'.format(k)] = self.get_icon('icon_bw')
 
-        for _k in v:
+        for _k in sorted(v, key=lambda k: v[k]['name']):
             try:
                 pixmap = QtGui.QPixmap(v[_k]['thumbnail'])
                 pixmap.setDevicePixelRatio(images.pixel_ratio)
@@ -1039,7 +1039,7 @@ class BaseContextMenu(QtWidgets.QMenu):
 
             self.menu[k][key()] = {
                 'icon': icon,
-                'text': u'Launch {}'.format(v[_k]['name']),
+                'text': v[_k]['name'],
                 'action': functools.partial(actions.execute, v[_k]['path']),
             }
 

@@ -15,6 +15,7 @@ from .. import bookmark_db
 from .. import settings
 from .. import actions
 from .. import datacache
+from .. import log
 
 from . import delegate
 from . import base
@@ -218,7 +219,13 @@ class AssetModel(base.BaseModel):
         """Yields DirEntry instances to be processed in __initdata__.
 
         """
-        for entry in _scandir.scandir(path):
+        try:
+            it = _scandir.scandir(path)
+        except OSError as e:
+            log.error(e)
+            return
+
+        for entry in it:
             if entry.name.startswith(u'.'):
                 continue
             if not entry.is_dir():

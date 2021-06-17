@@ -618,7 +618,13 @@ class FilesModel(base.BaseModel):
         """Recursive iterator for retrieving files from all subfolders.
 
         """
-        for entry in _scandir.scandir(path):
+        try:
+            it = _scandir.scandir(path)
+        except OSError as e:
+            log.error(e)
+            return
+
+        for entry in it:
             if entry.is_dir():
                 for _entry in self.item_iterator(entry.path):
                     yield _entry

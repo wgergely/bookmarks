@@ -5,9 +5,6 @@
 ![alt text](https://img.shields.io/badge/Python-2.7-lightgrey.svg "Python 2.7") ![alt text](https://img.shields.io/badge/Qt-5.6%2B-lightgrey.svg "Qt 5.6+") ![alt text](https://img.shields.io/badge/platform-windows-lightgray.svg "Windows")
 <br>
 
-
-### [Download installer (Windows only)](https://github.com/wgergely/bookmarks/releases)
-
 ***
 
 <br>

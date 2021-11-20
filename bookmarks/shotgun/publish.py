@@ -11,7 +11,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 
 from .. import common
 from .. import ui
-from .. import bookmark_db
+from .. import database
 from .. import settings
 from .. import images
 from ..properties import base
@@ -26,12 +26,12 @@ instance = None
 
 
 MOV_FORMATS = (
-    u'mp4',
-    u'mov'
+    'mp4',
+    'mov'
 )
 SEQ_FORMATS = (
-    u'jpg',
-    u'png'
+    'jpg',
+    'png'
 )
 
 
@@ -57,118 +57,118 @@ def show():
 
 
 def basename(v):
-    return v.strip(u'.').strip(u'-').strip(u'_')
+    return v.strip('.').strip('-').strip('_')
 
 
 SECTIONS = {
     0: {
-        'name': u'Publish File',
-        'icon': u'',
+        'name': 'Publish File',
+        'icon': '',
         'color': common.DARK_BG,
         'groups': {
             0: {
                 0: {
-                    'name': u'Shotgun Project',
-                    'key': u'project_entity',
+                    'name': 'Shotgun Project',
+                    'key': 'project_entity',
                     'validator': None,
                     'widget': publish_widgets.ProjectEntityEditor,
-                    'placeholder': u'',
-                    'description': u'The current bookmark\'s linked Shotgun Project.',
-                    'button': u'Visit',
+                    'placeholder': '',
+                    'description': 'The current bookmark\'s linked Shotgun Project.',
+                    'button': 'Visit',
                 },
                 1: {
-                    'name': u'Shotgun Asset',
-                    'key': u'asset_entity',
+                    'name': 'Shotgun Asset',
+                    'key': 'asset_entity',
                     'validator': None,
                     'widget': publish_widgets.AssetEntityEditor,
-                    'placeholder': u'',
-                    'description': u'The current bookmark\'s linked Shotgun Project.',
-                    'button': u'Visit',
+                    'placeholder': '',
+                    'description': 'The current bookmark\'s linked Shotgun Project.',
+                    'button': 'Visit',
                 },
             },
             1: {
                 0: {
-                    'name': u'My Task',
-                    'key': u'task_entity',
+                    'name': 'My Task',
+                    'key': 'task_entity',
                     'validator': None,
                     'widget': publish_widgets.TaskEditor,
-                    'placeholder': u'',
-                    'description': u'Select a Shotgun Task.',
-                    'button': u'Visit',
+                    'placeholder': '',
+                    'description': 'Select a Shotgun Task.',
+                    'button': 'Visit',
                 },
                 1: {
-                    'name': u'Publish Status',
-                    'key': u'status',
+                    'name': 'Publish Status',
+                    'key': 'status',
                     'validator': None,
                     'widget': publish_widgets.StatusEditor,
-                    'placeholder': u'',
-                    'description': u'Select a Shotgun Status.',
+                    'placeholder': '',
+                    'description': 'Select a Shotgun Status.',
                 },
             },
             2: {
                 0: {
-                    'name': u'Shotgun Storage',
-                    'key': u'storage',
+                    'name': 'Shotgun Storage',
+                    'key': 'storage',
                     'validator': None,
                     'widget': publish_widgets.LocalStorageEditor,
-                    'placeholder': u'',
-                    'description': u'Select a Shotgun Storage.',
+                    'placeholder': '',
+                    'description': 'Select a Shotgun Storage.',
                 },
                 1: {
-                    'name': u'Shotgun File Type',
-                    'key': u'file_type',
+                    'name': 'Shotgun File Type',
+                    'key': 'file_type',
                     'validator': None,
                     'widget': publish_widgets.PublishedFileTypeEditor,
-                    'placeholder': u'',
-                    'description': u'Select a Shotgun Published File Type.',
+                    'placeholder': '',
+                    'description': 'Select a Shotgun Published File Type.',
                 },
             },
             3: {
                 0: {
-                    'name': u'Description',
-                    'key': u'description',
+                    'name': 'Description',
+                    'key': 'description',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Enter a description...',
-                    'description': u'The item\'s description.',
+                    'placeholder': 'Enter a description...',
+                    'description': 'The item\'s description.',
                 },
             },
             4: {
                 0: {
                     'name': None,
-                    'key': u'file',
+                    'key': 'file',
                     'validator': None,
                     'widget': publish_widgets.DropWidget,
                     'no_group': True,
-                    'placeholder': u'Drop a file here, or click to select...',
-                    'description': u'Drag-and-drop, or click, to add a file to publish to Shotgun.',
+                    'placeholder': 'Drop a file here, or click to select...',
+                    'description': 'Drag-and-drop, or click, to add a file to publish to Shotgun.',
                 },
                 1: {
-                    'name': u'Image Sequence',
-                    'key': u'version_sequence',
+                    'name': 'Image Sequence',
+                    'key': 'version_sequence',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Enter a path to your image sequence',
-                    'description': u'Enter the path to the first image of an image sequence.',
-                    'button': u'Pick',
+                    'placeholder': 'Enter a path to your image sequence',
+                    'description': 'Enter the path to the first image of an image sequence.',
+                    'button': 'Pick',
                 },
                 2: {
-                    'name': u'Movie File',
-                    'key': u'version_movie',
+                    'name': 'Movie File',
+                    'key': 'version_movie',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Enter a path to your movie',
-                    'description': u'Path to an *.mp4 movie file to upload as a reviewable version.',
-                    'button': u'Pick',
+                    'placeholder': 'Enter a path to your movie',
+                    'description': 'Path to an *.mp4 movie file to upload as a reviewable version.',
+                    'button': 'Pick',
                 },
                 3: {
-                    'name': u'Cache File',
-                    'key': u'version_cache',
+                    'name': 'Cache File',
+                    'key': 'version_cache',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Enter a path to your geometry cache',
-                    'description': u'Path to a File Cache to publish.',
-                    'button': u'Pick',
+                    'placeholder': 'Enter a path to your geometry cache',
+                    'description': 'Path to a File Cache to publish.',
+                    'button': 'Pick',
                 },
             },
         },
@@ -184,10 +184,10 @@ class PublishWidget(base.PropertiesWidget):
             None,
             None,
             asset=None,
-            db_table=bookmark_db.AssetTable,
-            buttons=(u'Publish', 'Cancel'),
+            db_table=database.AssetTable,
+            buttons=('Publish', 'Cancel'),
             alignment=QtCore.Qt.AlignLeft,
-            fallback_thumb=u'placeholder',
+            fallback_thumb='placeholder',
             parent=parent
         )
 
@@ -230,7 +230,7 @@ class PublishWidget(base.PropertiesWidget):
         """Sets the path of the file to publish.
 
         Args:
-            v (unicode): Path to a file.
+            v (str): Path to a file.
 
         """
         file_info = QtCore.QFileInfo(v)
@@ -269,7 +269,7 @@ class PublishWidget(base.PropertiesWidget):
         b0 = file_info.baseName()
 
         def p(*args):
-            return u'/'.join(args)
+            return '/'.join(args)
 
         s = common.get_sequence(file_info.fileName())
         paths = []
@@ -291,7 +291,7 @@ class PublishWidget(base.PropertiesWidget):
 
         for path in paths:
             for ext in MOV_FORMATS:
-                _path = path + u'.' + ext
+                _path = path + '.' + ext
                 if QtCore.QFileInfo(_path).exists():
                     self.version_movie_editor.setText(_path)
                     return path
@@ -311,7 +311,7 @@ class PublishWidget(base.PropertiesWidget):
         b0 = file_info.dir().dirName()
 
         def p(*args):
-            return u'/'.join(args)
+            return '/'.join(args)
 
         s = common.get_sequence(file_info.fileName())
         paths = []
@@ -351,9 +351,9 @@ class PublishWidget(base.PropertiesWidget):
                     # an fprint style sequence notation
                     _file_info = QtCore.QFileInfo(entry.path)
                     seq = common.get_sequence(_file_info.filePath())
-                    fprint_path = u'{}{}{}.{}'.format(
+                    fprint_path = '{}{}{}.{}'.format(
                         seq.group(1),
-                        u'%0{}d'.format(len(seq.group(2))),
+                        '%0{}d'.format(len(seq.group(2))),
                         seq.group(3),
                         seq.group(4)
                     )
@@ -434,8 +434,8 @@ class PublishWidget(base.PropertiesWidget):
         """
         if not self.file_editor.path():
             ui.MessageBox(
-                u'File not selected.',
-                u'Drag-and-drop a file to the top bar before continuing.'
+                'File not selected.',
+                'Drag-and-drop a file to the top bar before continuing.'
             ).open()
             return False
 
@@ -452,7 +452,7 @@ class PublishWidget(base.PropertiesWidget):
             kwargs['sg'] = sg
 
             mbox = ui.MessageBox(
-                u'Checking for existing publish...', no_buttons=True)
+                'Checking for existing publish...', no_buttons=True)
             try:
                 mbox.open()
                 QtWidgets.QApplication.instance().processEvents()
@@ -464,7 +464,7 @@ class PublishWidget(base.PropertiesWidget):
             finally:
                 mbox.close()
 
-            mbox = ui.MessageBox(u'Creating Version...', no_buttons=True)
+            mbox = ui.MessageBox('Creating Version...', no_buttons=True)
             try:
                 mbox.open()
                 QtWidgets.QApplication.instance().processEvents()
@@ -475,7 +475,7 @@ class PublishWidget(base.PropertiesWidget):
             finally:
                 mbox.close()
 
-            mbox = ui.MessageBox(u'Uploading movie...', no_buttons=True)
+            mbox = ui.MessageBox('Uploading movie...', no_buttons=True)
             try:
                 mbox.open()
                 QtWidgets.QApplication.instance().processEvents()
@@ -485,7 +485,7 @@ class PublishWidget(base.PropertiesWidget):
             finally:
                 mbox.close()
 
-            mbox = ui.MessageBox(u'Publishing File...', no_buttons=True)
+            mbox = ui.MessageBox('Publishing File...', no_buttons=True)
             try:
                 mbox.open()
                 QtWidgets.QApplication.instance().processEvents()
@@ -503,8 +503,8 @@ class PublishWidget(base.PropertiesWidget):
             }
 
             mbox = ui.MessageBox(
-                u'Success.',
-                u'{} was published successfully as:\n\n{}'.format(
+                'Success.',
+                '{} was published successfully as:\n\n{}'.format(
                     published_file_entity['code'],
                     pprint.pformat(info, indent=1, depth=3, width=2)
                 )
@@ -526,7 +526,7 @@ class PublishWidget(base.PropertiesWidget):
         seq = common.get_sequence(file_path)
         if seq:
             version = int(seq.group(2))
-            name = u'{}{}.{}'.format(
+            name = '{}{}.{}'.format(
                 seq.group(1).rstrip('_v').strip('-v').strip('.v').strip(),
                 seq.group(3),
                 seq.group(4),
@@ -553,7 +553,7 @@ class PublishWidget(base.PropertiesWidget):
                              for f in task_entity[k]]
                     item = QtWidgets.QInputDialog.getItems(
                         self,
-                        u'Select User',
+                        'Select User',
                         'Users:',
                         items,
                         current=0,
@@ -658,7 +658,7 @@ class PublishWidget(base.PropertiesWidget):
             self.server, self.job, self.root, self.asset)
         sg_properties.init()
         if not sg_properties.verify(connection=True):
-            raise ValueError(u'Bookmark not configured.')
+            raise ValueError('Bookmark not configured.')
 
         url = shotgun.ENTITY_URL.format(
             domain=sg_properties.domain,
@@ -715,14 +715,14 @@ class PublishWidget(base.PropertiesWidget):
     def version_sequence_button_clicked(self):
         args = (self.server, self.job, self.root, self.asset)
         if all(args):
-            _dir = u'/'.join(args)
+            _dir = '/'.join(args)
         args = (self.server, self.job, self.root, self.asset, self.task)
         if all(args):
-            _dir = u'/'.join(args)
+            _dir = '/'.join(args)
 
         file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
             parent=self,
-            caption=u'Select an image sequence to include',
+            caption='Select an image sequence to include',
             dir=_dir,
             filter=images.get_oiio_namefilters()
         )
@@ -731,11 +731,11 @@ class PublishWidget(base.PropertiesWidget):
         seq = common.get_sequence(file_path)
         if not seq:
             raise ValueError(
-                u'The selected file does not seem like an image sequence.')
+                'The selected file does not seem like an image sequence.')
 
-        v = u'{}{}{}.{}'.format(
+        v = '{}{}{}.{}'.format(
             seq.group(1),
-            u'%0{}d'.format(len(seq.group(2))),
+            '%0{}d'.format(len(seq.group(2))),
             seq.group(3),
             seq.group(4)
         )
@@ -747,16 +747,16 @@ class PublishWidget(base.PropertiesWidget):
     def version_movie_button_clicked(self):
         args = (self.server, self.job, self.root, self.asset)
         if all(args):
-            _dir = u'/'.join(args)
+            _dir = '/'.join(args)
         args = (self.server, self.job, self.root, self.asset, self.task)
         if all(args):
-            _dir = u'/'.join(args)
+            _dir = '/'.join(args)
 
         file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
             parent=self,
-            caption=u'Select a movie to include',
+            caption='Select a movie to include',
             dir=_dir,
-            filter=u'Movie Files (*.mov *.mp4)',
+            filter='Movie Files (*.mov *.mp4)',
         )
         if not file_path:
             return
@@ -768,14 +768,14 @@ class PublishWidget(base.PropertiesWidget):
     def version_cache_button_clicked(self):
         args = (self.server, self.job, self.root, self.asset)
         if all(args):
-            _dir = u'/'.join(args)
+            _dir = '/'.join(args)
         args = (self.server, self.job, self.root, self.asset, self.task)
         if all(args):
-            _dir = u'/'.join(args)
+            _dir = '/'.join(args)
 
         file_path, _ = QtWidgets.QFileDialog.getOpenFileName(
             parent=self,
-            caption=u'Select a cache to include',
+            caption='Select a cache to include',
             dir=_dir,
         )
         if not file_path:

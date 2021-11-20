@@ -47,11 +47,11 @@ def init_maya_standalone():
     maya.cmds.playbackOptions(animationEndTime=10.0)
 
     meshes = []
-    for _ in xrange(10):
-        s = maya.cmds.polyCube(name=u'testMesh#')
+    for _ in range(10):
+        s = maya.cmds.polyCube(name='testMesh#')
         meshes.append(s[0])
-    maya.cmds.sets(meshes, name=u'testMesh_geo_set')
-    maya.cmds.sets([], name=u'emptyTestMesh_geo_set')
+    maya.cmds.sets(meshes, name='testMesh_geo_set')
+    maya.cmds.sets([], name='emptyTestMesh_geo_set')
 
 
 def load_plugin():
@@ -59,7 +59,7 @@ def load_plugin():
     if not os.path.isfile(plugin):
         raise RuntimeError('Could not find `plugin.py`')
 
-    name = u'BookmarksMayaPlugin'
+    name = 'BookmarksMayaPlugin'
     maya.cmds.loadPlugin(plugin, name=name)
     if maya.cmds.pluginInfo(name, query=True, loaded=True):
         print('{} loaded.'.format(name))
@@ -70,7 +70,7 @@ def unload_plugin():
     if not os.path.isfile(plugin):
         raise RuntimeError('Could not find `plugin.py`')
 
-    name = u'BookmarksMayaPlugin'
+    name = 'BookmarksMayaPlugin'
     maya.cmds.unloadPlugin(name)
     if not maya.cmds.pluginInfo(name, query=True, loaded=True):
         print('{} unloaded.'.format(name))

@@ -8,7 +8,7 @@ from PySide2 import QtWidgets, QtCore, QtGui
 
 from .. import common
 from .. import ui
-from .. import bookmark_db
+from .. import database
 from .. import images
 from ..shotgun import actions as sg_actions
 from .. import settings
@@ -18,11 +18,11 @@ from . import shotgun
 
 instance = None
 
-NOT_LINKED = u'Not linked'
-CURRENT_VALUES = u'Linked (keep current values)'
+NOT_LINKED = 'Not linked'
+CURRENT_VALUES = 'Linked (keep current values)'
 
 ROW_HEIGHT = common.ROW_HEIGHT()
-ENTITY_TYPES = (u'Asset', u'Shot', u'Sequence')
+ENTITY_TYPES = ('Asset', 'Shot', 'Sequence')
 
 
 def close():
@@ -51,7 +51,7 @@ class TableWidget(QtWidgets.QTableWidget):
 
     """
     createEntity = QtCore.Signal(
-        unicode, QtWidgets.QWidget, QtWidgets.QWidget)  # Name
+        str, QtWidgets.QWidget, QtWidgets.QWidget)  # Name
 
     def __init__(self, parent=None):
         super(TableWidget, self).__init__(parent=parent)
@@ -60,7 +60,7 @@ class TableWidget(QtWidgets.QTableWidget):
 
         self.setColumnCount(4)
         self.setHorizontalHeaderLabels(
-            (u'Local Assets', u'', u'Shotgun Entity', u'Create Entity'))
+            ('Local Assets', '', 'Shotgun Entity', 'Create Entity'))
         self.verticalHeader().setVisible(False)
 
         header = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, parent=self)
@@ -78,7 +78,7 @@ class TableWidget(QtWidgets.QTableWidget):
 
         self.setShowGrid(False)
 
-        item = QtWidgets.QTableWidgetItem(u'>')
+        item = QtWidgets.QTableWidgetItem('>')
         item.setFlags(QtCore.Qt.NoItemFlags)
         item.setTextAlignment(QtCore.Qt.AlignCenter)
         self.setItemPrototype(item)
@@ -98,7 +98,7 @@ class TableWidget(QtWidgets.QTableWidget):
         _item.setIcon(icon)
         self.setItem(row, 0, _item)
 
-        item = QtWidgets.QTableWidgetItem(u'')
+        item = QtWidgets.QTableWidgetItem('')
         item.setFlags(QtCore.Qt.NoItemFlags)
         item.setTextAlignment(QtCore.Qt.AlignCenter)
         self.setItem(row, 1, item)
@@ -108,17 +108,17 @@ class TableWidget(QtWidgets.QTableWidget):
         label.setPixmap(pixmap)
         self.setCellWidget(row, 1, label)
 
-        item = QtWidgets.QTableWidgetItem(u'')
+        item = QtWidgets.QTableWidgetItem('')
         item.setFlags(QtCore.Qt.NoItemFlags)
         item.setTextAlignment(QtCore.Qt.AlignCenter)
         self.setItem(row, 2, item)
         self.setCellWidget(row, 2, editor)
 
-        item = QtWidgets.QTableWidgetItem(u'')
+        item = QtWidgets.QTableWidgetItem('')
         item.setFlags(QtCore.Qt.NoItemFlags)
         item.setTextAlignment(QtCore.Qt.AlignCenter)
         self.setItem(row, 3, item)
-        button = ui.PaintedButton(u'Create', height=None)
+        button = ui.PaintedButton('Create', height=None)
         button.clicked.connect(
             functools.partial(self.createEntity.emit, name, editor, button)
         )
@@ -141,7 +141,7 @@ class LinkMultiple(QtWidgets.QDialog):
 
     """
     assetsLinked = QtCore.Signal()
-    entityTypeFilterChanged = QtCore.Signal(unicode)
+    entityTypeFilterChanged = QtCore.Signal(str)
 
     def __init__(self, parent=None):
         super(LinkMultiple, self).__init__(parent=parent)
@@ -152,7 +152,7 @@ class LinkMultiple(QtWidgets.QDialog):
 
         self.model = None
 
-        self.setWindowTitle(u'Link Local Assets with Shotgun')
+        self.setWindowTitle('Link Local Assets with Shotgun')
 
         self._create_ui()
         self._connect_signals()
@@ -170,15 +170,15 @@ class LinkMultiple(QtWidgets.QDialog):
         # Init the type filter
         self.entity_type_filter = shotgun.EntityComboBox(
             ENTITY_TYPES, parent=self)
-        row = ui.add_row(u'Select Entity Type', parent=self)
+        row = ui.add_row('Select Entity Type', parent=self)
         row.layout().addWidget(self.entity_type_filter, 1)
 
         self.table = TableWidget(parent=None)
         self.layout().addWidget(self.table, 1)
 
         row = ui.add_row(None, parent=self)
-        self.ok_button = ui.PaintedButton(u'Done', parent=self)
-        self.cancel_button = ui.PaintedButton(u'Cancel', parent=self)
+        self.ok_button = ui.PaintedButton('Done', parent=self)
+        self.cancel_button = ui.PaintedButton('Cancel', parent=self)
         row.layout().addWidget(self.ok_button, 1)
         row.layout().addWidget(self.cancel_button, 0)
 
@@ -227,7 +227,7 @@ class LinkMultiple(QtWidgets.QDialog):
         if not all((server, job, root)):
             return None
 
-        return u'/'.join((server, job, root))
+        return '/'.join((server, job, root))
 
     @common.error
     @common.debug
@@ -237,7 +237,7 @@ class LinkMultiple(QtWidgets.QDialog):
 
         sg_properties = shotgun.ShotgunProperties(active=True)
 
-        db = bookmark_db.get_db(
+        db = database.get_db(
             sg_properties.server,
             sg_properties.job,
             sg_properties.root
@@ -247,12 +247,12 @@ class LinkMultiple(QtWidgets.QDialog):
         identifier = db.value(
             db.source(),
             'identifier',
-            table=bookmark_db.BookmarkTable
+            table=database.BookmarkTable
         )
 
         if not sg_properties.verify(connection=True):
             raise RuntimeError(
-                u'Bookmark is not configured to use Shotgun.')
+                'Bookmark is not configured to use Shotgun.')
 
         self.emit_request(sg_properties)
 
@@ -261,7 +261,7 @@ class LinkMultiple(QtWidgets.QDialog):
             flags = db.value(
                 db.source(entry.name),
                 'flags',
-                table=bookmark_db.AssetTable
+                table=database.AssetTable
             )
             if flags and flags & common.MarkedAsArchived:
                 continue
@@ -273,13 +273,13 @@ class LinkMultiple(QtWidgets.QDialog):
                 continue
 
             # Skip if identifier is set but missing
-            p = u'{}/{}'.format(entry.path, identifier)
+            p = '{}/{}'.format(entry.path, identifier)
             if identifier and not QtCore.QFileInfo(p).exists():
                 continue
 
             # Manually create an entity based on the current db values
             s = db.source(entry.name)
-            t = bookmark_db.AssetTable
+            t = database.AssetTable
             entity = {
                 'id': db.value(s, 'shotgun_id', table=t),
                 'code': db.value(s, 'shotgun_name', table=t),
@@ -414,7 +414,7 @@ class LinkMultiple(QtWidgets.QDialog):
                     continue
 
             asset = data['item'].text()
-            source = u'/'.join((server, job, root, asset))
+            source = '/'.join((server, job, root, asset))
 
             from . import link_asset
             sg_actions.save_entity_data_to_db(
@@ -422,7 +422,7 @@ class LinkMultiple(QtWidgets.QDialog):
                 job,
                 root,
                 source,
-                bookmark_db.AssetTable,
+                database.AssetTable,
                 entity,
                 link_asset.value_map
             )

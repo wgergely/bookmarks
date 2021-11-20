@@ -73,14 +73,14 @@ class Viewer(QtWidgets.QGraphicsView):
 
         text = index.data(common.DescriptionRole)
         if text:
-            text = text if text else u''
+            text = text if text else ''
             common.draw_aliased_text(painter, font, QtCore.QRect(
                 rect), text, QtCore.Qt.AlignLeft, common.BLUE)
             rect.moveTop(rect.center().y() + metrics.lineSpacing())
         text = index.data(common.FileDetailsRole)
         if text:
-            text = u'{}'.format(text)
-            text = u'   |   '.join(text.split(u';')) if text else u'-'
+            text = '{}'.format(text)
+            text = '   |   '.join(text.split(';')) if text else '-'
             common.draw_aliased_text(painter, font, QtCore.QRect(
                 rect), text, QtCore.Qt.AlignLeft, common.TEXT)
             rect.moveTop(rect.center().y() + metrics.lineSpacing())
@@ -203,10 +203,11 @@ class ImageViewer(QtWidgets.QDialog):
         self.load_timer.setInterval(10)
         self.load_timer.timeout.connect(self.load_timer.deleteLater)
 
-        if not isinstance(path, unicode):
+        try:
+            common.check_type(path, str)
+        except Exception as e:
             self.done(QtWidgets.QDialog.Rejected)
-            raise ValueError(
-                u'Expected {}, got {}'.format(unicode, type(path)))
+            raise e
 
         self.path = path
 
@@ -215,17 +216,17 @@ class ImageViewer(QtWidgets.QDialog):
 
         file_info = QtCore.QFileInfo(path)
         if not file_info.exists():
-            s = u'{} does not exists.'.format(path)
+            s = '{} does not exists.'.format(path)
             ui.ErrorBox(
-                u'Error previewing image.', s).open()
+                'Error previewing image.', s).open()
             log.error(s)
             self.done(QtWidgets.QDialog.Rejected)
             raise RuntimeError(s)
 
         if not images.oiio_get_buf(path, force=True):
-            s = u'{} seems invalid.'.format(path)
+            s = '{} seems invalid.'.format(path)
             ui.ErrorBox(
-                u'Error previewing image.', s).open()
+                'Error previewing image.', s).open()
             log.error(s)
             self.done(QtWidgets.QDialog.Rejected)
             raise RuntimeError(s)

@@ -35,10 +35,10 @@ from . import settings
 from . import images
 
 
-FORMAT = u'lock'
-PREFIX = u'session_lock'
-LOCK_PATH = u'{root}/{product}/{prefix}_{pid}.{ext}'
-LOCK_DIR = u'{root}/{product}'
+FORMAT = 'lock'
+PREFIX = 'session_lock'
+LOCK_PATH = '{root}/{product}/{prefix}_{pid}.{ext}'
+LOCK_DIR = '{root}/{product}'
 
 
 def prune():
@@ -65,7 +65,7 @@ def prune():
             continue
 
         pid = int(match.group(1))
-        path = entry.path.replace(u'\\', u'/')
+        path = entry.path.replace('\\', '/')
         if pid not in pids:
             if not QtCore.QFile(path).remove():
                 raise RuntimeError('Failed to remove a lockfile.')
@@ -97,7 +97,7 @@ def init(pid=None):
         if entry.is_dir():
             continue
 
-        if not entry.name.endswith(u'.lock'):
+        if not entry.name.endswith('.lock'):
             continue
 
         # Read the contents
@@ -145,7 +145,7 @@ def write_current_mode_to_lock(pid):
 
     # Write current mode to the lockfile
     with open(path, 'w+') as f:
-        f.write(u'{}'.format(common.SESSION_MODE))
+        f.write('{}'.format(common.SESSION_MODE))
 
     return path
 
@@ -158,10 +158,10 @@ class ToggleSessionModeButton(ui.ClickableIconButton):
 
     def __init__(self, parent=None):
         super(ToggleSessionModeButton, self).__init__(
-            u'check',
+            'check',
             (common.GREEN, common.RED),
             common.MARGIN(),
-            description=u'Click to toggle {}.'.format(
+            description='Click to toggle {}.'.format(
                 common.PRODUCT),
             parent=parent
         )
@@ -178,18 +178,18 @@ class ToggleSessionModeButton(ui.ClickableIconButton):
 
     def statusTip(self):
         if common.SESSION_MODE == common.SyncronisedActivePaths:
-            return u'This session sets active paths. Click to toggle.'
+            return 'This session sets active paths. Click to toggle.'
 
         if common.SESSION_MODE == common.PrivateActivePaths:
-            return u'This session does not modify active paths. Click to toggle.'
+            return 'This session does not modify active paths. Click to toggle.'
 
-        return u'Invalid session lock.'
+        return 'Invalid session lock.'
 
     def toolTip(self):
         return self.whatsThis()
 
     def whatsThis(self):
-        return u'Private Active Paths:\n{}\n{}\n{}\n{}\n{}\n\n{}\n{}\n{}\n{}\n{}'.format(
+        return 'Private Active Paths:\n{}\n{}\n{}\n{}\n{}\n\n{}\n{}\n{}\n{}\n{}'.format(
             settings.instance(
             ).PRIVATE_SESSION_MODE_VALUES[settings.ServerKey],
             settings.instance().PRIVATE_SESSION_MODE_VALUES[settings.JobKey],

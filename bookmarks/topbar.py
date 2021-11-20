@@ -11,7 +11,7 @@ from . import ui
 from . import contextmenu
 from . import images
 from . import settings
-from . import bookmark_db
+from . import database
 from . import actions
 from . import shortcuts
 
@@ -39,7 +39,7 @@ def current_index():
     return main.instance().stackedwidget.currentIndex()
 
 
-class QuickSwitchMenu(contextmenu.BaseContextMenu):    
+class QuickSwitchMenu(contextmenu.BaseContextMenu):
     def stacked_widget(self):
         return self.parent().parent().parent().stackedwidget
 
@@ -54,16 +54,16 @@ class QuickSwitchMenu(contextmenu.BaseContextMenu):
     def add_switch_menu(self, widget, label):
         """Adds the items needed to quickly change bookmarks or assets."""
         off_pixmap = images.ImageCache.get_rsc_pixmap(
-            u'icon_bw', common.SECONDARY_TEXT, common.MARGIN())
+            'icon_bw', common.SECONDARY_TEXT, common.MARGIN())
         on_pixmap = images.ImageCache.get_rsc_pixmap(
-            u'check', common.GREEN, common.MARGIN())
+            'check', common.GREEN, common.MARGIN())
 
         self.menu[label] = {
-            u'disabled': True
+            'disabled': True
         }
 
         active_index = widget.model().sourceModel().active_index()
-        for n in xrange(widget.model().rowCount()):
+        for n in range(widget.model().rowCount()):
             index = widget.model().index(n, 0)
 
             name = index.data(QtCore.Qt.DisplayRole)
@@ -84,8 +84,8 @@ class QuickSwitchMenu(contextmenu.BaseContextMenu):
             pixmap = on_pixmap if active else pixmap
             icon = QtGui.QIcon(pixmap)
             self.menu[name.upper()] = {
-                u'icon': icon,
-                u'action': functools.partial(widget.activate, index)
+                'icon': icon,
+                'action': functools.partial(widget.activate, index)
             }
         return
 
@@ -98,14 +98,14 @@ class SwitchBookmarkMenu(QuickSwitchMenu):
         self.separator()
         self.add_switch_menu(
             stacked_widget().widget(common.BookmarkTab),
-            u'Change Bookmark'
+            'Change Bookmark'
         )
 
     def add_menu(self):
-        self.menu[u'add'] = {
-            u'icon': self.get_icon(u'add', color=common.GREEN),
-            u'text': u'Add Bookmark...',
-            u'action': actions.show_add_bookmark,
+        self.menu['add'] = {
+            'icon': self.get_icon('add', color=common.GREEN),
+            'text': 'Add Bookmark...',
+            'action': actions.show_add_bookmark,
             'shortcut': shortcuts.string(shortcuts.MainWidgetShortcuts, shortcuts.AddItem),
             'description': shortcuts.hint(shortcuts.MainWidgetShortcuts, shortcuts.AddItem),
         }
@@ -119,14 +119,14 @@ class SwitchAssetMenu(QuickSwitchMenu):
         self.separator()
         self.add_switch_menu(
             stacked_widget().widget(common.AssetTab),
-            u'Change Asset'
+            'Change Asset'
         )
 
     def add_menu(self):
-        self.menu[u'add'] = {
-            u'icon': self.get_icon(u'add', color=common.GREEN),
-            u'text': u'Add Asset...',
-            u'action': actions.show_add_asset,
+        self.menu['add'] = {
+            'icon': self.get_icon('add', color=common.GREEN),
+            'text': 'Add Asset...',
+            'action': actions.show_add_asset,
             'shortcut': shortcuts.string(shortcuts.MainWidgetShortcuts, shortcuts.AddItem),
             'description': shortcuts.hint(shortcuts.MainWidgetShortcuts, shortcuts.AddItem),
         }
@@ -148,8 +148,8 @@ class FilterHistoryMenu(contextmenu.BaseContextMenu):
         v.reverse()
 
         self.menu[contextmenu.key()] = {
-            u'text': u'Show All Items  (alt + click)',
-            u'action': functools.partial(proxy.set_filter_text, u''),
+            'text': 'Show All Items  (alt + click)',
+            'action': functools.partial(proxy.set_filter_text, ''),
         }
 
         self.separator()
@@ -159,20 +159,20 @@ class FilterHistoryMenu(contextmenu.BaseContextMenu):
                 continue
 
             self.menu[contextmenu.key()] = {
-                u'icon': self.get_icon(u'filter'),
-                u'text': t,
-                u'action': functools.partial(proxy.set_filter_text, t),
+                'icon': self.get_icon('filter'),
+                'text': t,
+                'action': functools.partial(proxy.set_filter_text, t),
             }
 
         self.separator()
 
         self.menu[contextmenu.key()] = {
-            u'icon': self.get_icon(u'close', color=common.RED),
-            u'text': u'Clear History',
-            u'action': (
-                functools.partial(proxy.set_filter_text, u''),
+            'icon': self.get_icon('close', color=common.RED),
+            'text': 'Clear History',
+            'action': (
+                functools.partial(proxy.set_filter_text, ''),
                 lambda: model.set_local_setting(
-                    settings.TextFilterKeyHistory, u'')
+                    settings.TextFilterKeyHistory, '')
             ),
         }
 
@@ -194,8 +194,8 @@ class BaseControlButton(ui.ClickableIconButton):
 class FilterButton(BaseControlButton):
     def __init__(self, parent=None):
         super(FilterButton, self).__init__(
-            u'filter',
-            u'Set Filter  -  {}'.format(shortcuts.string(
+            'filter',
+            'Set Filter  -  {}'.format(shortcuts.string(
                 shortcuts.MainWidgetShortcuts, shortcuts.ToggleSearch)),
             parent=parent
         )
@@ -209,7 +209,7 @@ class FilterButton(BaseControlButton):
         filter_text = current_widget().model().filter_text()
         if not filter_text:
             return False
-        if filter_text == u'/':
+        if filter_text == '/':
             return False
         return True
 
@@ -226,8 +226,8 @@ class FilterButton(BaseControlButton):
         control_modifier = modifiers & QtCore.Qt.ControlModifier
 
         if alt_modifier or shift_modifier or control_modifier:
-            current_widget().model().set_filter_text(u'')
-            current_widget().model().filterTextChanged.emit(u'')
+            current_widget().model().set_filter_text('')
+            current_widget().model().filterTextChanged.emit('')
             return
 
         super(FilterButton, self).mouseReleaseEvent(event)
@@ -236,8 +236,8 @@ class FilterButton(BaseControlButton):
 class ToggleSequenceButton(BaseControlButton):
     def __init__(self, parent=None):
         super(ToggleSequenceButton, self).__init__(
-            u'collapse',
-            u'Show Files or Sequences  -  {}'.format(shortcuts.string(
+            'collapse',
+            'Show Files or Sequences  -  {}'.format(shortcuts.string(
                 shortcuts.MainWidgetShortcuts, shortcuts.ToggleSequence)),
             parent=parent
         )
@@ -247,8 +247,8 @@ class ToggleSequenceButton(BaseControlButton):
 
     def pixmap(self):
         if self.state():
-            return images.ImageCache.get_rsc_pixmap(u'collapse', self._on_color, common.MARGIN())
-        return images.ImageCache.get_rsc_pixmap(u'expand', self._off_color, common.MARGIN())
+            return images.ImageCache.get_rsc_pixmap('collapse', self._on_color, common.MARGIN())
+        return images.ImageCache.get_rsc_pixmap('expand', self._off_color, common.MARGIN())
 
     def state(self):
         if not current_widget():
@@ -271,8 +271,8 @@ class ToggleSequenceButton(BaseControlButton):
 class ToggleArchivedButton(BaseControlButton):
     def __init__(self, parent=None):
         super(ToggleArchivedButton, self).__init__(
-            u'archivedVisible',
-            u'Show/Hide Archived Items  -  {}'.format(shortcuts.string(
+            'archivedVisible',
+            'Show/Hide Archived Items  -  {}'.format(shortcuts.string(
                 shortcuts.MainWidgetShortcuts, shortcuts.ToggleArchived)),
             parent=parent
         )
@@ -282,8 +282,8 @@ class ToggleArchivedButton(BaseControlButton):
 
     def pixmap(self):
         if self.state():
-            return images.ImageCache.get_rsc_pixmap(u'archivedVisible', self._on_color, common.MARGIN())
-        return images.ImageCache.get_rsc_pixmap(u'archivedHidden', self._off_color, common.MARGIN())
+            return images.ImageCache.get_rsc_pixmap('archivedVisible', self._on_color, common.MARGIN())
+        return images.ImageCache.get_rsc_pixmap('archivedHidden', self._off_color, common.MARGIN())
 
     def state(self):
         if not current_widget():
@@ -301,8 +301,8 @@ class ToggleArchivedButton(BaseControlButton):
 class ToggleInlineIcons(BaseControlButton):
     def __init__(self, parent=None):
         super(ToggleInlineIcons, self).__init__(
-            u'showbuttons',
-            u'Show/Hide List Buttons  -  {}'.format(shortcuts.string(
+            'showbuttons',
+            'Show/Hide List Buttons  -  {}'.format(shortcuts.string(
                 shortcuts.MainWidgetShortcuts, shortcuts.HideInlineButtons)),
             parent=parent
         )
@@ -323,8 +323,8 @@ class ToggleInlineIcons(BaseControlButton):
 class ToggleFavouriteButton(BaseControlButton):
     def __init__(self, parent=None):
         super(ToggleFavouriteButton, self).__init__(
-            u'favourite',
-            u'Show/Hide My Files Only  -  {}'.format(shortcuts.string(
+            'favourite',
+            'Show/Hide My Files Only  -  {}'.format(shortcuts.string(
                 shortcuts.MainWidgetShortcuts, shortcuts.ToggleFavourite)),
             parent=parent
         )
@@ -348,8 +348,8 @@ class ToggleFavouriteButton(BaseControlButton):
 class SlackButton(BaseControlButton):
     def __init__(self, parent=None):
         super(SlackButton, self).__init__(
-            u'slack',
-            u'Slack Massenger',
+            'slack',
+            'Slack Massenger',
             parent=parent
         )
         common.signals.databaseValueUpdated.connect(self.check_updated_value)
@@ -364,7 +364,7 @@ class SlackButton(BaseControlButton):
 
     @QtCore.Slot()
     def check_updated_value(self, table, source, key, value):
-        if table != bookmark_db.BookmarkTable:
+        if table != database.BookmarkTable:
             return
         if key != 'slacktoken':
             return
@@ -387,11 +387,11 @@ class SlackButton(BaseControlButton):
             self.setHidden(True)
             return False
 
-        db = bookmark_db.get_db(*args)
+        db = database.get_db(*args)
         slacktoken = db.value(
             db.source(),
-            u'slacktoken',
-            table=bookmark_db.BookmarkTable
+            'slacktoken',
+            table=database.BookmarkTable
         )
 
         if not slacktoken:
@@ -405,8 +405,8 @@ class SlackButton(BaseControlButton):
 class RefreshButton(BaseControlButton):
     def __init__(self, parent=None):
         super(RefreshButton, self).__init__(
-            u'refresh',
-            u'Refresh items  -  {}'.format(shortcuts.string(
+            'refresh',
+            'Refresh items  -  {}'.format(shortcuts.string(
                 shortcuts.MainWidgetShortcuts, shortcuts.Refresh)),
             parent=parent
         )
@@ -487,7 +487,7 @@ class BaseTabButton(QtWidgets.QLabel):
     def get_width(self):
         o = common.INDICATOR_WIDTH() * 6
         _, metrics = common.font_db.primary_font(common.MEDIUM_FONT_SIZE())
-        return metrics.width(self.text()) + o
+        return metrics.horizontalAdvance(self.text()) + o
 
     @QtCore.Slot()
     def adjust_size(self):
@@ -542,9 +542,9 @@ class BaseTabButton(QtWidgets.QLabel):
                 pixmap.rect()
             )
         else:
-            if (metrics.width(self.text()) + (common.MARGIN() * 0.5)) < self.rect().width():
+            if (metrics.horizontalAdvance(self.text()) + (common.MARGIN() * 0.5)) < self.rect().width():
                 # Draw label
-                width = metrics.width(self.text())
+                width = metrics.horizontalAdvance(self.text())
                 x = (self.width() / 2.0) - (width / 2.0)
                 y = self.rect().center().y() + (metrics.ascent() * 0.5)
                 path = delegate.get_painter_path(x, y, font, self.text())
@@ -583,13 +583,13 @@ class BaseTabButton(QtWidgets.QLabel):
 
 class BookmarksTabButton(BaseTabButton):
     """The button responsible for revealing the ``BookmarksWidget``"""
-    icon = u'bookmark'
+    icon = 'bookmark'
 
     def __init__(self, parent=None):
         super(BookmarksTabButton, self).__init__(
-            u'Bookmarks',
+            'Bookmarks',
             common.BookmarkTab,
-            u'Click to see the list of added bookmarks',
+            'Click to see the list of added bookmarks',
             parent=parent
         )
 
@@ -606,16 +606,16 @@ class AssetsTabButton(BaseTabButton):
 
     def __init__(self, parent=None):
         super(AssetsTabButton, self).__init__(
-            u'Assets',
+            'Assets',
             common.AssetTab,
-            u'Click to see the list of available assets',
+            'Click to see the list of available assets',
             parent=parent
         )
 
     def text(self):
         widget = stacked_widget().widget(common.BookmarkTab)
         if not widget.model().sourceModel().active_index().isValid():
-            return u'-'
+            return '-'
         return super(AssetsTabButton, self).text()
 
     def contextMenuEvent(self, event):
@@ -628,13 +628,13 @@ class AssetsTabButton(BaseTabButton):
 class FilesTabButton(BaseTabButton):
     """The buttons responsible for swtiching the the FilesWidget and showing
     the switch to change the data-key."""
-    icon = u'file'
+    icon = 'file'
 
     def __init__(self, parent=None):
         super(FilesTabButton, self).__init__(
-            u'Files',
+            'Files',
             common.FileTab,
-            u'Click to see or change the current task folder',
+            'Click to see or change the current task folder',
             parent=parent)
 
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
@@ -643,7 +643,7 @@ class FilesTabButton(BaseTabButton):
     def text(self):
         widget = stacked_widget().widget(common.AssetTab)
         if not widget.model().sourceModel().active_index().isValid():
-            return u'-'
+            return '-'
         return super(FilesTabButton, self).text()
 
     def view(self):
@@ -687,13 +687,13 @@ class FilesTabButton(BaseTabButton):
 
 class FavouritesTabButton(BaseTabButton):
     """Drop-down widget to switch between the list"""
-    icon = u'favourite'
+    icon = 'favourite'
 
     def __init__(self, parent=None):
         super(FavouritesTabButton, self).__init__(
-            u'My Files',
+            'My Files',
             common.FavouriteTab,
-            u'Click to see your saved favourites',
+            'Click to see your saved favourites',
             parent=parent
         )
 
@@ -726,7 +726,7 @@ class SlackDropOverlayWidget(QtWidgets.QWidget):
             self.rect(), common.INDICATOR_WIDTH(), common.INDICATOR_WIDTH())
 
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'slack', common.GREEN, self.rect().height() - (common.INDICATOR_WIDTH() * 1.5))
+            'slack', common.GREEN, self.rect().height() - (common.INDICATOR_WIDTH() * 1.5))
         rect = QtCore.QRect(0, 0, common.MARGIN(), common.MARGIN())
         rect.moveCenter(self.rect().center())
         painter.drawPixmap(rect, pixmap, pixmap.rect())
@@ -750,8 +750,8 @@ class SlackDropOverlayWidget(QtWidgets.QWidget):
             from . import slack
         except ImportError as err:
             ui.ErrorBox(
-                u'Could not import SlackClient',
-                u'The Slack API python module was not loaded:\n{}'.format(err),
+                'Could not import SlackClient',
+                'The Slack API python module was not loaded:\n{}'.format(err),
             ).open()
             log.error('Slack import error.')
             return
@@ -768,10 +768,10 @@ class SlackDropOverlayWidget(QtWidgets.QWidget):
         message = []
         for f in mime.urls():
             file_info = QtCore.QFileInfo(f.toLocalFile())
-            line = u'```{}```'.format(file_info.filePath())
+            line = '```{}```'.format(file_info.filePath())
             message.append(line)
 
-        message = u'\n'.join(message)
+        message = '\n'.join(message)
         parent = self.parent().parent().stackedwidget
         index = parent.widget(
             common.BookmarkTab).model().sourceModel().active_index()
@@ -865,7 +865,7 @@ class ListControlWidget(QtWidgets.QWidget):
         if not model.parent_path():
             return
 
-        parent_path = u'/'.join(model.parent_path())
+        parent_path = '/'.join(model.parent_path())
 
         # Check if the aded asset has been added to the currently active bookmark
         if parent_path not in path:
@@ -881,7 +881,7 @@ class ListControlWidget(QtWidgets.QWidget):
         painter.setPen(QtCore.Qt.NoPen)
 
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'gradient', None, self.height())
+            'gradient', None, self.height())
         t = QtGui.QTransform()
         t.rotate(90)
         pixmap = pixmap.transformed(t)

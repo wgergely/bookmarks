@@ -39,136 +39,136 @@ def show():
 
 SECTIONS = {
     0: {
-        'name': u'Basic Settings',
-        'icon': u'icon',
+        'name': 'Basic Settings',
+        'icon': 'icon',
         'color': None,
         'groups': {
             0: {
                 0: {
-                    'name': u'Interface Scale',
+                    'name': 'Interface Scale',
                     'key': settings.UIScaleKey,
                     'validator': None,
                     'widget': preference_properties_widgets.ScaleWidget,
-                    'placeholder': u'',
-                    'description': u'Scales Bookmark\'s interface by the specified amount.\nUseful for high-dpi displays if the text is too small to read.\n\nTakes effect the next time Bookmarks is launched.',
+                    'placeholder': '',
+                    'description': 'Scales Bookmark\'s interface by the specified amount.\nUseful for high-dpi displays if the text is too small to read.\n\nTakes effect the next time Bookmarks is launched.',
                 },
                 1: {
-                    'name': u'Show Menu Icons',
+                    'name': 'Show Menu Icons',
                     'key': settings.ShowMenuIconsKey,
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Hide Menu Icons'),
-                    'placeholder': u'Check to hide menu icons',
-                    'description': u'Check to hide menu icons',
+                    'placeholder': 'Check to hide menu icons',
+                    'description': 'Check to hide menu icons',
                 },
             },
             1: {
                 0: {
-                    'name': u'Shotgun RV',
+                    'name': 'Shotgun RV',
                     'key': settings.RVKey,
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Path to RV, eg. "C:/apps/rv.exe"',
-                    'description': u'Path to the RV executable.\n\nIf specified compatible media can be previewed in RV.',
-                    'button': u'Pick',
-                    'button2': u'Reveal'
+                    'placeholder': 'Path to RV, eg. "C:/apps/rv.exe"',
+                    'description': 'Path to the RV executable.\n\nIf specified compatible media can be previewed in RV.',
+                    'button': 'Pick',
+                    'button2': 'Reveal'
                 },
                 1: {
-                    'name': u'FFMpeg',
+                    'name': 'FFMpeg',
                     'key': settings.FFMpegKey,
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Path to FFMpeg, eg. "C:/apps/ffmpeg.exe"',
-                    'description': u'Path to the FFMpeg executable.\n\nIf specified, bookmarks can convert images sequences using FFMpeg.',
-                    'button': u'Pick',
-                    'button2': u'Reveal'
+                    'placeholder': 'Path to FFMpeg, eg. "C:/apps/ffmpeg.exe"',
+                    'description': 'Path to the FFMpeg executable.\n\nIf specified, bookmarks can convert images sequences using FFMpeg.',
+                    'button': 'Pick',
+                    'button2': 'Reveal'
                 },
             },
         },
     },
     1: {
-        'name': u'Maya',
-        'icon': u'maya',
+        'name': 'Maya',
+        'icon': 'maya',
         'color': None,
         'groups': {
             0: {
                 0: {
-                    'name': u'Set Workspace',
+                    'name': 'Set Workspace',
                     'key': settings.WorkspaceSyncKey,
                     'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, u'Disable'),
+                    'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
-                    'description': u'By default, {} always sets the Maya Workspace to the currently active asset item. Check here to disable this behaviour.'.format(common.PRODUCT),
+                    'description': 'By default, {} always sets the Maya Workspace to the currently active asset item. Check here to disable this behaviour.'.format(common.PRODUCT),
                 },
             },
             1: {
                 0: {
-                    'name': u'Warn Workspace',
+                    'name': 'Warn Workspace',
                     'key': settings.WorksapceWarningsKey,
                     'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, u'Disable'),
+                    'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
-                    'description': u'Disabled warnings when the\ncurrent Workspace is changed by {}.'.format(common.PRODUCT),
+                    'description': 'Disabled warnings when the\ncurrent Workspace is changed by {}.'.format(common.PRODUCT),
                 },
                 1: {
-                    'name': u'Warning on Save',
+                    'name': 'Warning on Save',
                     'key': settings.SaveWarningsKey,
                     'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, u'Disable'),
+                    'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
-                    'description': u'Bookmarks will show a warning when a file is saved outside the current Workspace. Check the box above to disable.',
+                    'description': 'Bookmarks will show a warning when a file is saved outside the current Workspace. Check the box above to disable.',
                 },
             },
             2: {
                 0: {
-                    'name': u'Push Capture',
+                    'name': 'Push Capture',
                     'key': settings.PushCaptureToRVKey,
                     'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, u'Disable'),
+                    'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
-                    'description': u'When Shotgun RV is available the latest capture will automatically be pushed to RV for viewing. Check the box above to disable.',
+                    'description': 'When Shotgun RV is available the latest capture will automatically be pushed to RV for viewing. Check the box above to disable.',
                 },
                 1: {
-                    'name': u'Reveal Capture',
+                    'name': 'Reveal Capture',
                     'key': settings.RevealCaptureKey,
                     'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, u'Disable'),
+                    'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
-                    'description': u'Check the box above to disable showing captures in the file explorer.',
+                    'description': 'Check the box above to disable showing captures in the file explorer.',
                 },
                 2: {
-                    'name': u'Publish Capture',
+                    'name': 'Publish Capture',
                     'key': settings.PublishCaptureKey,
                     'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, u'Disable'),
+                    'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
-                    'description': u'The latest capture by default will be published into a "Latest" folder with using a generic filename.\nThis can be useful for creating quick edits with RV. Check the box above to disable.',
+                    'description': 'The latest capture by default will be published into a "Latest" folder with using a generic filename.\nThis can be useful for creating quick edits with RV. Check the box above to disable.',
                 },
             },
         },
     },
     2: {
-        'name': u'About',
+        'name': 'About',
         'icon': None,
         'color': common.SECONDARY_TEXT,
         'groups': {
             0: {
                 0: {
-                    'name': u'Info',
+                    'name': 'Info',
                     'key': None,
                     'validator': None,
                     'widget': None,
-                    'placeholder': u'',
-                    'description': u'Check for new versions.',
-                    'button': u'Check for Updates',
-                    'button2': u'Build Info',
+                    'placeholder': '',
+                    'description': 'Check for new versions.',
+                    'button': 'Check for Updates',
+                    'button2': 'Build Info',
                 },
                 1: {
-                    'name': u'Debug',
+                    'name': 'Debug',
                     'key': None,
                     'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, u'Enable Debug'),
-                    'placeholder': u'',
-                    'description': u'Enable Debug Messages.',
+                    'widget': functools.partial(QtWidgets.QCheckBox, 'Enable Debug'),
+                    'placeholder': '',
+                    'description': 'Enable Debug Messages.',
                 },
             },
         },
@@ -184,7 +184,7 @@ class PreferencesWidget(base.PropertiesWidget):
             None,
             None,
             db_table=None,
-            fallback_thumb=u'settings_sm',
+            fallback_thumb='settings_sm',
             parent=parent
         )
 
@@ -198,14 +198,14 @@ class PreferencesWidget(base.PropertiesWidget):
     def init_data(self, *args, **kwargs):
         self.thumbnail_editor.setDisabled(True)
 
-        for section in SECTIONS.itervalues():
-            for _section in section.itervalues():
+        for section in SECTIONS.values():
+            for _section in section.values():
                 if not isinstance(_section, dict):
                     continue
-                for group in _section.itervalues():
+                for group in _section.values():
                     if not isinstance(group, dict):
                         continue
-                    for row in group.itervalues():
+                    for row in group.values():
                         if 'key' not in row or not row['key']:
                             continue
                         if not hasattr(self, row['key'] + '_editor'):
@@ -237,7 +237,7 @@ class PreferencesWidget(base.PropertiesWidget):
     @common.error
     @common.debug
     def save_changes(self, *args, **kwargs):
-        for k, v in self.changed_data.iteritems():
+        for k, v in self.changed_data.items():
             settings.instance().setValue(settings.SettingsSection, k, v)
         return True
 
@@ -287,13 +287,13 @@ class PreferencesWidget(base.PropertiesWidget):
 
     def _pick_file(self, k):
         editor = getattr(self, k + '_editor')
-        _bin = k.replace(u'Path', u'')
-        _filter = u'{}.exe'.format(
-            _bin) if common.get_platform() == common.PlatformWindows else u'*.*'
+        _bin = k.replace('Path', '')
+        _filter = '{}.exe'.format(
+            _bin) if common.get_platform() == common.PlatformWindows else '*.*'
         res = QtWidgets.QFileDialog.getOpenFileName(
-            caption=u'Select {} Executable...'.format(_bin),
+            caption='Select {} Executable...'.format(_bin),
             filter=_filter,
-            dir=u'/'
+            dir='/'
         )
         path, _ = res
         if not path:

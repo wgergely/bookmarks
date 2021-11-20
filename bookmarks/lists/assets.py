@@ -11,7 +11,7 @@ from PySide2 import QtCore, QtWidgets, QtGui
 from .. import common
 from ..threads import threads
 from .. import contextmenu
-from .. import bookmark_db
+from .. import database
 from .. import settings
 from .. import actions
 from .. import datacache
@@ -91,7 +91,7 @@ class AssetModel(base.BaseModel):
             lambda: self.blockSignals(False))
         common.signals.assetsLinked.connect(self.sort_data)
 
-    @common.status_bar_message(u'Assets Bookmarks...')
+    @common.status_bar_message('Assets Bookmarks...')
     @base.initdata
     def __initdata__(self):
         """Collects the data needed to populate the bookmarks model by querrying
@@ -113,14 +113,14 @@ class AssetModel(base.BaseModel):
         t = self.data_type()
         data = datacache.get_data(p, k, t)
 
-        source = u'/'.join(parent_path)
+        source = '/'.join(parent_path)
 
         # Let's get the identifier from the bookmark database
-        db = bookmark_db.get_db(*parent_path)
+        db = database.get_db(*parent_path)
         ASSET_IDENTIFIER = db.value(
             source,
-            u'identifier',
-            table=bookmark_db.BookmarkTable
+            'identifier',
+            table=database.BookmarkTable
         )
 
         nth = 1
@@ -130,10 +130,10 @@ class AssetModel(base.BaseModel):
             if self._interrupt_requested:
                 break
 
-            filepath = entry.path.replace(u'\\', u'/')
+            filepath = entry.path.replace('\\', '/')
 
             if ASSET_IDENTIFIER:
-                identifier = u'{}/{}'.format(
+                identifier = '{}/{}'.format(
                     filepath, ASSET_IDENTIFIER)
                 if not QtCore.QFileInfo(identifier).exists():
                     continue
@@ -142,7 +142,7 @@ class AssetModel(base.BaseModel):
             c += 1
             if not c % nth:
                 common.signals.showStatusBarMessage.emit(
-                    u'Loading assets ({} found)...'.format(c))
+                    'Loading assets ({} found)...'.format(c))
                 QtWidgets.QApplication.instance().processEvents()
 
             filename = entry.name
@@ -158,7 +158,7 @@ class AssetModel(base.BaseModel):
                     flags = flags | common.MarkedAsActive
 
             # Beautify the name
-            name = re.sub(r'[_]{1,}', u' ', filename).strip(u'_').strip('')
+            name = re.sub(r'[_]{1,}', ' ', filename).strip('_').strip('')
 
             idx = len(data)
             if idx >= common.MAXITEMS:
@@ -176,9 +176,9 @@ class AssetModel(base.BaseModel):
                 common.EntryRole: [entry, ],
                 common.FlagsRole: flags,
                 common.ParentPathRole: parent_path + (filename,),
-                common.DescriptionRole: u'',
+                common.DescriptionRole: '',
                 common.TodoCountRole: 0,
-                common.FileDetailsRole: u'',
+                common.FileDetailsRole: '',
                 common.SequenceRole: None,
                 common.FramesRole: [],
                 common.StartpathRole: None,
@@ -226,7 +226,7 @@ class AssetModel(base.BaseModel):
             return
 
         for entry in it:
-            if entry.name.startswith(u'.'):
+            if entry.name.startswith('.'):
                 continue
             if not entry.is_dir():
                 continue
@@ -254,7 +254,7 @@ class AssetModel(base.BaseModel):
         v = [settings.active(k) for k in (settings.JobKey, settings.RootKey)]
         if not all(v):
             return None
-        return u'/'.join(v)
+        return '/'.join(v)
 
     def default_row_size(self):
         return QtCore.QSize(1, common.ASSET_ROW_HEIGHT())
@@ -291,7 +291,7 @@ class AssetsWidget(base.ThreadedBaseWidget):
         return 6
 
     def get_hint_string(self):
-        return u'No assets. Select right-click -> Add Asset to create a new one.'
+        return 'No assets. Select right-click -> Add Asset to create a new one.'
 
     def mouseReleaseEvent(self, event):
         if not isinstance(event, QtGui.QMouseEvent):

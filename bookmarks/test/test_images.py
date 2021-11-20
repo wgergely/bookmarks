@@ -18,7 +18,8 @@ class Test(base.BaseApplicationTest):
 
         if not os.path.exists(common.temp_path()):
             os.makedirs(common.temp_path())
-        open(common.temp_path() + u'/' + u'thumbnail.png', 'a').close()
+        assert os.path.isdir(common.temp_path())
+        open(common.temp_path() + '/' + 'thumbnail.png', 'a').close()
 
         root = __file__ + os.sep + os.pardir + os.sep + \
             os.pardir + os.sep + 'rsc' + os.sep + 'gui'
@@ -34,32 +35,32 @@ class Test(base.BaseApplicationTest):
     def test_get_oiio_namefilters(self):
         v = images.get_oiio_namefilters()
         self.assertIsNotNone(v)
-        self.assertIsInstance(v, unicode)
-        self.assertIn(u'png', v)
-        self.assertIn(u'jpg', v)
+        self.assertIsInstance(v, str)
+        self.assertIn('png', v)
+        self.assertIn('jpg', v)
 
     def test_get_oiio_extensions(self):
         v = images.get_oiio_extensions()
         self.assertIsNotNone(v)
         self.assertIsInstance(v, list)
-        self.assertIn(u'png', v)
-        self.assertIn(u'jpg', v)
+        self.assertIn('png', v)
+        self.assertIn('jpg', v)
 
     def test_check_for_thumbnail_image(self):
         v = images.check_for_thumbnail_image(common.temp_path())
         self.assertIsNotNone(v)
-        self.assertIsInstance(v, unicode)
-        self.assertIsInstance(v, unicode)
+        self.assertIsInstance(v, str)
+        self.assertIsInstance(v, str)
 
-        v = images.check_for_thumbnail_image(common.temp_path() + u'1')
+        v = images.check_for_thumbnail_image(common.temp_path() + '1')
         self.assertIsNone(v)
 
     def test_get_placeholder_path(self):
-        for ext in (u'ma', 'aep'):
-            p = base.random_unicode(32) + '.' + ext
+        for ext in ('ma', 'aep'):
+            p = base.random_str(32) + '.' + ext
 
             v = images.get_placeholder_path(p)
-            self.assertIsInstance(v, unicode)
+            self.assertIsInstance(v, str)
             self.assertTrue(os.path.isfile(v))
 
     def test_oiio_make_thumbnail(self):
@@ -77,7 +78,7 @@ class Test(base.BaseApplicationTest):
             self.assertTrue(os.path.isfile(source))
 
             dest = images.get_cached_thumbnail_path(server, job, root, source)
-            self.assertIsInstance(dest, unicode)
+            self.assertIsInstance(dest, str)
 
             d = QtCore.QFileInfo(dest).dir()
             d.mkpath('.')
@@ -89,13 +90,9 @@ class Test(base.BaseApplicationTest):
 
     def test_get_thumbnail(self):
         server, job, root = common.local_parent_paths()
-
-        source = 'str.png'
-        with self.assertRaises(TypeError):
-            v = images.get_thumbnail(server, job, root, source)
-
+        
         # Invalid
-        source = u'/'.join((server, job, root, u'thumbnail.png'))
+        source = '/'.join((server, job, root, 'thumbnail.png'))
         self.assertTrue(os.path.isfile(source))
 
         # Invalid
@@ -135,7 +132,7 @@ class Test(base.BaseApplicationTest):
                 root,
                 source,
                 size=images.THUMBNAIL_IMAGE_SIZE,
-                fallback_thumb=u'bogusfallback'
+                fallback_thumb='bogusfallback'
             )
             self.assertIsInstance(v, tuple)
 
@@ -151,28 +148,22 @@ class Test(base.BaseApplicationTest):
         server, job, root = common.local_parent_paths()
         arr = []
 
-        with self.assertRaises(TypeError):
-            images.get_cached_thumbnail_path(
-                server, job, root,
-                'str'
-            )
-
-        for _ in xrange(999):
+        for _ in range(999):
             v = images.get_cached_thumbnail_path(
                 server, job, root,
-                base.random_unicode(16)
+                base.random_str(16)
             )
             arr.append(v)
-            self.assertIsInstance(v, unicode)
+            self.assertIsInstance(v, str)
         self.assertEqual(len(arr), len(set(arr)))
 
     def test_test_image_cache(self):
         for f in os.listdir(common.temp_path()):
             if f == 'thumbnail.png':
                 continue
-            if u'png' not in f:
+            if 'png' not in f:
                 continue
-            p = common.temp_path() + u'/' + f
+            p = common.temp_path() + '/' + f
             from .. import actions
             self.assertTrue(os.path.isfile(p))
 

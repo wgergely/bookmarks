@@ -10,11 +10,11 @@ import string
 import _scandir
 from PySide2 import QtCore, QtWidgets
 
-from . import log
-from . import common
-from . import ui
-from . import settings
-from . import bookmark_db
+from .. import log
+from .. import common
+from .. import ui
+from .. import settings
+from .. import database
 
 
 class SafeDict(dict):
@@ -67,19 +67,19 @@ BASE_H264_PRESET = '\
 
 PRESETS = {
     0: {
-        'name': u'Image Sequence to MP4 (with timecode)',
+        'name': 'Image Sequence to MP4 (with timecode)',
         'preset': _format(
                 BASE_H264_PRESET,
                 VIDEOFILTER=VIDEOFILTER,
-                BITRATE=u'25000k',
+                BITRATE='25000k',
             )
         },
     1: {
-        'name': u'Image Sequence to MP4',
+        'name': 'Image Sequence to MP4',
         'preset': _format(
                 BASE_H264_PRESET,
                 VIDEOFILTER='',
-                BITRATE=u'25000k',
+                BITRATE='25000k',
             )
     },
 }
@@ -92,7 +92,7 @@ def get_font_path(name='bmRobotoMedium'):
         'rsc' + os.path.sep + 'fonts' + os.path.sep + '{}.ttf'.format(name)
     font_file = os.path.abspath(os.path.normpath(font_file))
     # needed for ffmpeg
-    font_file = font_file.replace(u':', u'\\:').replace(u'\\', u'\\\\').replace(u'\\\\:', u'\\:')
+    font_file = font_file.replace(':', '\\:').replace('\\', '\\\\').replace('\\\\:', '\\:')
     return '\'{}\''.format(font_file)
 
 
@@ -114,7 +114,7 @@ def launch_ffmpeg_command(input, preset, server=None, job=None, root=None, asset
     asset = asset if asset else settings.active(settings.AssetKey)
     task = task if task else settings.active(settings.TaskKey)
 
-    input = input.replace(u'\\', u'/')
+    input = input.replace('\\', '/')
 
     # We want to get the first item  of any sequence
     if common.is_collapsed(input):
@@ -122,14 +122,14 @@ def launch_ffmpeg_command(input, preset, server=None, job=None, root=None, asset
     else:
         seq = common.get_sequence(input)
         if not seq:
-            raise RuntimeError(u'{} is not a sequence.'.format(input))
+            raise RuntimeError('{} is not a sequence.'.format(input))
         _dir = QtCore.QFileInfo(input).dir()
         if not _dir.exists():
-            raise RuntimeError(u'{} does not exists.'.format(_dir))
+            raise RuntimeError('{} does not exists.'.format(_dir))
 
         f = []
         for entry in _scandir.scandir(_dir.path()):
-            _path = entry.path.replace(u'\\', u'/')
+            _path = entry.path.replace('\\', '/')
             if not seq.group(1) in _path:
                 continue
             _seq = common.get_sequence(_path)
@@ -138,17 +138,17 @@ def launch_ffmpeg_command(input, preset, server=None, job=None, root=None, asset
             f.append(int(_seq.group(2)))
         if not f:
             raise RuntimeError(
-                u'Could not find the first frame of the sequence.')
+                'Could not find the first frame of the sequence.')
 
     startframe = min(f)
     endframe = max(f)
 
     # Framerate
-    db = bookmark_db.get_db(server, job, root)
+    db = database.get_db(server, job, root)
     framerate = db.value(
         db.source(),
-        u'framerate',
-        table=bookmark_db.BookmarkTable
+        'framerate',
+        table=database.BookmarkTable
     )
 
     if not framerate:
@@ -156,29 +156,29 @@ def launch_ffmpeg_command(input, preset, server=None, job=None, root=None, asset
 
     input = (
         seq.group(1) +
-        u'%0{}d'.format(len(seq.group(2))) +
+        '%0{}d'.format(len(seq.group(2))) +
         seq.group(3) +
-        u'.' +
+        '.' +
         seq.group(4)
     )
-    output = seq.group(1).rstrip(u'.').rstrip(u'_').rstrip() + u'.mp4'
+    output = seq.group(1).rstrip('.').rstrip('_').rstrip() + '.mp4'
 
     # Add informative label
-    label = u''
+    label = ''
     if job:
         label += job
-        label += u'_'
+        label += '_'
     if asset:
         label += asset
-        label += u'_'
+        label += '_'
     if task:
         label += task
-        label += u' \\| '
+        label += ' \\| '
     vseq = common.get_sequence(output)
     if vseq:
-        label += 'v' + vseq.group(2) + u' '
+        label += 'v' + vseq.group(2) + ' '
         label += datetime.now().strftime('(%a %d/%m/%Y %H\\:%M) \\| ')
-    label += u'{}-{} \\| '.format(startframe, endframe)
+    label += '{}-{} \\| '.format(startframe, endframe)
 
     cmd = preset.format(
         BIN=FFMPEG_BIN,
@@ -193,7 +193,7 @@ def launch_ffmpeg_command(input, preset, server=None, job=None, root=None, asset
     pbar = QtWidgets.QProgressDialog()
     common.set_custom_stylesheet(pbar)
     pbar.setFixedWidth(common.WIDTH())
-    pbar.setLabelText(u'FFMpeg is converting, please wait...')
+    pbar.setLabelText('FFMpeg is converting, please wait...')
     pbar.setMinimum(int(startframe))
     pbar.setMaximum(int(endframe))
     pbar.setRange(int(startframe), int(endframe))

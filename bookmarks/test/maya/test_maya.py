@@ -4,7 +4,7 @@
 
 import unittest
 
-
+@unittest.skip('Skipping Maya tests.')
 class Test(unittest.TestCase):
 
     @classmethod
@@ -20,10 +20,10 @@ class Test(unittest.TestCase):
         p = os.path.normpath(p)
         sys.path.insert(0, p)
 
-        k = u'BOOKMARKS_ROOT'
+        k = 'BOOKMARKS_ROOT'
         if k not in os.environ:
             raise EnvironmentError(
-                u'Is Bookmarks installed? Could not find BOOKMARKS_ROOT environment variable')
+                'Is Bookmarks installed? Could not find BOOKMARKS_ROOT environment variable')
 
         shared = os.environ[k] + os.path.sep + 'shared'
         sys.path.insert(1, shared)
@@ -84,11 +84,11 @@ class Test(unittest.TestCase):
         import maya.cmds as cmds
 
         meshes = []
-        for n in xrange(10):
-            s = cmds.polyCube(name=u'testMesh#')
+        for n in range(10):
+            s = cmds.polyCube(name='testMesh#')
             meshes.append(s[0])
-        cmds.sets(meshes, name=u'testMesh_geo_set')
-        cmds.sets([], name=u'emptyTestMesh_geo_set')
+        cmds.sets(meshes, name='testMesh_geo_set')
+        cmds.sets([], name='emptyTestMesh_geo_set')
 
     def tearDown(self):
         from maya import cmds as cmds
@@ -129,32 +129,32 @@ class Test(unittest.TestCase):
         maya.widget.show()
 
         r = maya.widget._instance.save_scene()
-        r = self.assertIsInstance(r, unicode)
+        r = self.assertIsInstance(r, str)
 
         r = maya.widget._instance.save_scene(increment=True)
-        r = self.assertIsInstance(r, unicode)
+        r = self.assertIsInstance(r, str)
         new_scene = maya.widget._instance.save_scene(increment=True, modal=False)
-        self.assertIsInstance(new_scene, unicode)
+        self.assertIsInstance(new_scene, str)
         self.assertEqual(os.path.isfile(new_scene), True)
 
         r = maya.widget._instance.open_scene(new_scene)
-        self.assertIsInstance(r, unicode)
+        self.assertIsInstance(r, str)
         with self.assertRaises(RuntimeError):
-            r = maya.widget._instance.open_scene(u'BOGUS/SCENE/null.ma')
+            r = maya.widget._instance.open_scene('BOGUS/SCENE/null.ma')
 
         cmds.file(newFile=True, force=True)
 
         r = maya.widget._instance.import_scene(new_scene)
-        self.assertIsInstance(r, unicode)
+        self.assertIsInstance(r, str)
         with self.assertRaises(RuntimeError):
-            r = maya.widget._instance.import_scene(u'BOGUS/SCENE/null.ma')
+            r = maya.widget._instance.import_scene('BOGUS/SCENE/null.ma')
 
         cmds.file(newFile=True, force=True)
 
         r = maya.widget._instance.import_referenced_scene(new_scene)
-        self.assertIsInstance(r, unicode)
+        self.assertIsInstance(r, str)
         with self.assertRaises(RuntimeError):
-            r = maya.widget._instance.import_scene(u'BOGUS/SCENE/null.ma')
+            r = maya.widget._instance.import_scene('BOGUS/SCENE/null.ma')
 
 
     def test_outliner_sets(self):
@@ -165,7 +165,7 @@ class Test(unittest.TestCase):
 
         sets = maya.widget.outliner_sets()
         self.assertIsInstance(sets, dict)
-        self.assertIn(u'testMesh_geo_set', sets)
+        self.assertIn('testMesh_geo_set', sets)
 
     def test_alembic(self):
         try:
@@ -177,10 +177,10 @@ class Test(unittest.TestCase):
             raise
 
         sets = maya.widget.outliner_sets()
-        k = u'testMesh_geo_set'
+        k = 'testMesh_geo_set'
         dest = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.TempLocation)
         dest = dest + os.path.sep + '{}.abc'.format(k)
-        bogus_destination = u'INVALID_PATH/TO/NOWHERE/alembic.abc'
+        bogus_destination = 'INVALID_PATH/TO/NOWHERE/alembic.abc'
 
         with self.assertRaises(TypeError):
             maya.widget.export_alembic(dest, k, 1.0, 10.0, step=1.0)
@@ -192,21 +192,21 @@ class Test(unittest.TestCase):
         self.assertTrue(os.path.isfile(dest))
 
         r = maya.widget._instance.open_alembic(dest)
-        self.assertIsInstance(r, unicode)
+        self.assertIsInstance(r, str)
         with self.assertRaises(RuntimeError):
-            r = maya.widget._instance.open_alembic(u'BOGUS/SCENE/null.ma')
+            r = maya.widget._instance.open_alembic('BOGUS/SCENE/null.ma')
 
         cmds.file(newFile=True, force=True)
 
         r = maya.widget._instance.import_alembic(dest)
-        self.assertIsInstance(r, unicode)
+        self.assertIsInstance(r, str)
         with self.assertRaises(RuntimeError):
-            r = maya.widget._instance.import_alembic(u'BOGUS/SCENE/null.ma')
+            r = maya.widget._instance.import_alembic('BOGUS/SCENE/null.ma')
 
         r = maya.widget._instance.import_referenced_alembic(dest)
-        self.assertIsInstance(r, unicode)
+        self.assertIsInstance(r, str)
         with self.assertRaises(RuntimeError):
-            r = maya.widget._instance.import_referenced_alembic(u'BOGUS/SCENE/null.ma')
+            r = maya.widget._instance.import_referenced_alembic('BOGUS/SCENE/null.ma')
 
         os.remove(dest)
 
@@ -220,10 +220,10 @@ class Test(unittest.TestCase):
             raise
 
         sets = maya.widget.outliner_sets()
-        k = u'testMesh_geo_set'
+        k = 'testMesh_geo_set'
 
         r = maya.widget._instance.export_set_to_abc(k, sets[k], frame=False)
-        self.assertIsInstance(r, unicode)
+        self.assertIsInstance(r, str)
         os.remove(r)
 
     def test_capture_viewport_destination(self):
@@ -236,9 +236,9 @@ class Test(unittest.TestCase):
             raise
 
         capture_folder, workspace, dest = maya.widget.capture_viewport_destination()
-        self.assertIsInstance(capture_folder, unicode)
-        self.assertIsInstance(workspace, unicode)
-        self.assertIsInstance(dest, unicode)
+        self.assertIsInstance(capture_folder, str)
+        self.assertIsInstance(workspace, str)
+        self.assertIsInstance(dest, str)
 
     def test_capture_viewport(self):
         try:

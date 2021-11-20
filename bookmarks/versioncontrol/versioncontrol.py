@@ -22,7 +22,8 @@ this program.  If not, see <https://www.gnu.org/licenses/>.
 from __future__ import absolute_import, division
 import subprocess
 import os
-import urllib2
+import urllib.request
+import urllib.error
 import json
 import socket
 
@@ -36,7 +37,7 @@ from .. import actions
 from .. import __version__ as package_version
 
 
-URL = u'https://api.github.com/repos/wgergely/bookmarks/releases'
+URL = 'https://api.github.com/repos/wgergely/bookmarks/releases'
 socket.setdefaulttimeout(5)
 
 responses = {
@@ -117,16 +118,16 @@ def check():
 
     # First let's check if there's a valid internet connection
     try:
-        r = urllib2.urlopen(u'http://google.com', timeout=5)
-    except urllib2.URLError:
+        r = urllib.request.urlopen('http://google.com', timeout=5)
+    except urllib.error.URLError:
         raise
     except socket.timeout:
         raise
 
     try:
-        r = urllib2.urlopen(URL, timeout=5)
+        r = urllib.request.urlopen(URL, timeout=5)
         data = r.read()
-    except urllib2.URLError as err:
+    except urllib.error.URLError as err:
         raise
     except socket.timeout as err:
         raise
@@ -135,7 +136,7 @@ def check():
 
     code = r.getcode()
     if not (200 <= code <= 300):
-        s = u'# Error {}. "{}" {}'.format(
+        s = '# Error {}. "{}" {}'.format(
             code, URL, responses[code])
         raise RuntimeError(s)
 
@@ -143,38 +144,38 @@ def check():
     try:
         data = json.loads(data)
     except Exception as err:
-        s = u'Error occured loading the server response: {} "{}" {}'.format(
+        s = 'Error occured loading the server response: {} "{}" {}'.format(
             code, URL, responses[code])
         raise RuntimeError(s)
 
-    tags = [(version.parse(f[u'tag_name']).release, f) for f in data]
+    tags = [(version.parse(f['tag_name']).release, f) for f in data]
     if not tags:
         ui.MessageBox(
-            u'No versions are available',
-            u'Could not find any releases. Maybe no release has been published yet for this product?'
+            'No versions are available',
+            'Could not find any releases. Maybe no release has been published yet for this product?'
         ).open()
         return
 
     # Getting the latest version
     latest = max(tags, key=lambda x: x[0])
     current_version = version.parse(package_version)
-    latest_version = version.parse(latest[1][u'tag_name'])
+    latest_version = version.parse(latest[1]['tag_name'])
 
     # We're good and there's not need to update
     if current_version >= latest_version:
         ui.OkBox(
-            u'You\'re running the latest version of {}'.format(common.PRODUCT),
+            'You\'re running the latest version of {}'.format(common.PRODUCT),
         ).open()
         return
 
     mbox = QtWidgets.QMessageBox()
-    mbox.setWindowTitle(u'A new update is available')
+    mbox.setWindowTitle('A new update is available')
     mbox.setWindowFlags(QtCore.Qt.FramelessWindowHint)
     mbox.setStandardButtons(
         QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
-    mbox.setText(u'There is a new version of Bookmarks available.')
+    mbox.setText('There is a new version of Bookmarks available.')
     mbox.setText(
-        u'Your current version is {} and the latest available version is {}.\nDo you want to download the new version?'.format(current_version, latest_version))
+        'Your current version is {} and the latest available version is {}.\nDo you want to download the new version?'.format(current_version, latest_version))
     res = mbox.exec_()
 
     if res == QtWidgets.QMessageBox.No:
@@ -185,17 +186,17 @@ def check():
         QtCore.QStandardPaths.DownloadLocation)
 
     progress_widget = QtWidgets.QProgressDialog(
-        u'Downloading installer...', u'Cancel download', 0, 0)
-    progress_widget.setWindowTitle(u'Downloading...')
+        'Downloading installer...', 'Cancel download', 0, 0)
+    progress_widget.setWindowTitle('Downloading...')
     progress_widget.setWindowFlags(QtCore.Qt.FramelessWindowHint)
 
     # On windows, we will download the asset to the user downloads folder
     if common.get_platform() == common.PlatformWindows:
         asset = next(
-            (f for f in latest[1][u'assets'] if f[u'name'].endswith(u'exe')), None)
+            (f for f in latest[1]['assets'] if f['name'].endswith('exe')), None)
     elif common.get_platform() == common.PlatformMacOS:
         asset = next(
-            (f for f in latest[1][u'assets'] if f[u'name'].endswith(u'zip')), None)
+            (f for f in latest[1]['assets'] if f['name'].endswith('zip')), None)
     elif common.get_platform() == common.PlatformUnsupported:
         raise NotImplementedError('Not yet implemented on this platform.')
     else:
@@ -203,7 +204,7 @@ def check():
 
     # We will check if a file exists already...
     file_info = QtCore.QFileInfo(
-        u'{}/{}'.format(downloads_folder, asset['name']))
+        '{}/{}'.format(downloads_folder, asset['name']))
     _file_info = file_info
 
     # Rename our download if the file exists already
@@ -211,7 +212,7 @@ def check():
     while _file_info.exists():
         idx += 1
         _file_info = QtCore.QFileInfo(
-            u'{}/{} ({}).{}'.format(
+            '{}/{} ({}).{}'.format(
                 file_info.path(),
                 file_info.completeBaseName(),
                 idx,
@@ -222,7 +223,7 @@ def check():
     file_path = os.path.abspath(os.path.normpath(file_info.absoluteFilePath()))
 
     with open(file_path, 'wb') as f:
-        response = urllib2.urlopen(asset[u'browser_download_url'], timeout=5)
+        response = urllib.request.urlopen(asset['browser_download_url'], timeout=5)
         total_length = response.headers['content-length']
 
         if total_length is None:  # no content length header
@@ -254,7 +255,7 @@ def check():
                     os.remove(file_path)
 
     if not progress_widget.wasCanceled():
-        cmd = u'"{}"'.format(file_path)
+        cmd = '"{}"'.format(file_path)
         subprocess.Popen(cmd)
         actions.reveal(file_path)
 

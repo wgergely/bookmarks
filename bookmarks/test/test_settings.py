@@ -15,7 +15,7 @@ class Test(base.BaseApplicationTest):
     @classmethod
     def setUpClass(cls):
         super(Test, cls).setUpClass()
-        
+
         if not os.path.exists(common.temp_path()):
             os.makedirs(common.temp_path())
 
@@ -27,8 +27,8 @@ class Test(base.BaseApplicationTest):
         self.assertIsNone(v)
 
 
-        for _ in xrange(100):
-            v = base.random_unicode(128)
+        for _ in range(100):
+            v = base.random_str(128)
             settings.instance().setValue(
                 settings.UIStateSection,
                 settings.CurrentList,
@@ -40,7 +40,7 @@ class Test(base.BaseApplicationTest):
             )
             self.assertEqual(v, _v)
 
-        for _ in xrange(100):
+        for _ in range(100):
             v = base.random_ascii(128)
             settings.instance().setValue(
                 settings.UIStateSection,
@@ -53,8 +53,8 @@ class Test(base.BaseApplicationTest):
             )
             self.assertEqual(v, _v)
 
-        for _ in xrange(100):
-            v = {0: base.random_ascii(128), 1: base.random_unicode(128)}
+        for _ in range(100):
+            v = {0: base.random_ascii(128), 1: base.random_str(128)}
             settings.instance().setValue(
                 settings.UIStateSection,
                 settings.CurrentList,
@@ -66,7 +66,7 @@ class Test(base.BaseApplicationTest):
             )
             self.assertEqual(v, _v)
 
-        for _ in xrange(100):
+        for _ in range(100):
             v = random.randrange(99999)
             settings.instance().setValue(
                 settings.UIStateSection,

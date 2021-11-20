@@ -2,6 +2,7 @@
 """Widgets required to run Bookmarks in standalone-mode.
 
 """
+import ctypes
 from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import common
@@ -71,7 +72,7 @@ class TrayMenu(contextmenu.BaseContextMenu):
 
     def tray_menu(self):
         """Actions associated with the visibility of the widget."""
-        self.menu[u'Quit'] = {
+        self.menu['Quit'] = {
             'action': actions.quit,
         }
         return
@@ -82,10 +83,10 @@ class MinimizeButton(ui.ClickableIconButton):
 
     def __init__(self, parent=None):
         super(MinimizeButton, self).__init__(
-            u'minimize',
+            'minimize',
             (common.RED, common.SECONDARY_TEXT),
             common.MARGIN() - common.INDICATOR_WIDTH(),
-            description=u'Click to minimize the window...',
+            description='Click to minimize the window...',
             parent=parent
         )
 
@@ -95,10 +96,10 @@ class CloseButton(ui.ClickableIconButton):
 
     def __init__(self, parent=None):
         super(CloseButton, self).__init__(
-            u'close',
+            'close',
             (common.RED, common.SECONDARY_TEXT),
             common.MARGIN() - common.INDICATOR_WIDTH(),
-            description=u'Click to close the window...',
+            description='Click to close the window...',
             parent=parent
         )
 
@@ -138,7 +139,7 @@ class HeaderWidget(QtWidgets.QWidget):
         menu_bar.hide()
         menu = menu_bar.addMenu(common.PRODUCT)
 
-        action = menu.addAction(u'Quit')
+        action = menu.addAction('Quit')
         action.triggered.connect(actions.quit)
 
         self.layout().addStretch()
@@ -220,7 +221,7 @@ class StandaloneMainWidget(main.MainWidget):
         global _instance
         if _instance is not None:
             raise RuntimeError(
-                u'{} cannot be initialised more than once.'.format(self.__class__.__name__))
+                '{} cannot be initialised more than once.'.format(self.__class__.__name__))
         _instance = self
 
         super(StandaloneMainWidget, self).__init__(parent=None)
@@ -299,7 +300,7 @@ class StandaloneMainWidget(main.MainWidget):
 
     def init_tray(self):
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'icon_bw', None, common.ROW_HEIGHT() * 7.0)
+            'icon_bw', None, common.ROW_HEIGHT() * 7.0)
         icon = QtGui.QIcon(pixmap)
 
         self.tray = QtWidgets.QSystemTrayIcon(parent=self)
@@ -426,7 +427,7 @@ class StandaloneMainWidget(main.MainWidget):
         }
 
         # We check if the cursor is currently inside one of the corners or edges
-        if any([f.contains(p) for f in corner_hotspots.itervalues()]):
+        if any([f.contains(p) for f in corner_hotspots.values()]):
             return max(corner_hotspots, key=lambda k: corner_hotspots[k].contains(p))
         return min(edge_hotspots, key=lambda k: (p - edge_hotspots[k]).manhattanLength())
 
@@ -469,8 +470,8 @@ class StandaloneMainWidget(main.MainWidget):
         event.ignore()
         self.hide()
         self.tray.showMessage(
-            u'Bookmarks',
-            u'Bookmarks will continue running in the background, you can use this icon to restore it\'s visibility.',
+            'Bookmarks',
+            'Bookmarks will continue running in the background, you can use this icon to restore it\'s visibility.',
             QtWidgets.QSystemTrayIcon.Information,
             3000
         )
@@ -569,7 +570,7 @@ class StandaloneMainWidget(main.MainWidget):
 
 class StandaloneApp(QtWidgets.QApplication):
     """This is the app used to run the browser as a standalone widget."""
-    MODEL_ID = u'{}App'.format(common.PRODUCT)
+    MODEL_ID = '{}App'.format(common.PRODUCT)
 
     def __init__(self, args):
         super(StandaloneApp, self).__init__(args)
@@ -597,7 +598,7 @@ class StandaloneApp(QtWidgets.QApplication):
 
     def set_window_icon(self):
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'icon', None, common.ROW_HEIGHT() * 7.0)
+            'icon', None, common.ROW_HEIGHT() * 7.0)
         icon = QtGui.QIcon(pixmap)
         self.setWindowIcon(icon)
 
@@ -607,15 +608,9 @@ class StandaloneApp(QtWidgets.QApplication):
         https://github.com/cztomczak/cefpython/issues/395
 
         """
-        if QtCore.QSysInfo().productType() in (u'windows', u'winrt'):
-            import ctypes
-            from ctypes.wintypes import HRESULT
-            PCWSTR = ctypes.c_wchar_p
-            AppUserModelID = ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID
-            AppUserModelID.argtypes = [PCWSTR]
-            AppUserModelID.restype = HRESULT
+        if QtCore.QSysInfo().productType() in ('windows', 'winrt'):
+            hresult = ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(self.MODEL_ID)
             # An identifier that is globally unique for all apps running on Windows
-            hresult = AppUserModelID(self.MODEL_ID)
             assert hresult == 0, "SetCurrentProcessExplicitAppUserModelID failed"
 
     def eventFilter(self, widget, event):

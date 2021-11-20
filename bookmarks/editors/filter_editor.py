@@ -10,10 +10,10 @@ from .. import settings
 
 
 class FilterEditor(QtWidgets.QDialog):
-    """Editor widget used to set a model's persistent text filter.
+    """Editor widget used to set a list model's persistent text filter.
 
     """
-    finished = QtCore.Signal(unicode)
+    finished = QtCore.Signal(str)
 
     def __init__(self, parent=None):
         super(FilterEditor, self).__init__(parent=parent)
@@ -45,7 +45,7 @@ class FilterEditor(QtWidgets.QDialog):
         )
 
         self.history_button = ui.ClickableIconButton(
-            u'filter',
+            'filter',
             (common.SECONDARY_TEXT, common.SECONDARY_TEXT),
             common.MARGIN()
         )
@@ -56,7 +56,7 @@ class FilterEditor(QtWidgets.QDialog):
         self.editor.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         row.layout().addWidget(self.editor, 1)
 
-        self.ok_button = ui.PaintedButton(u'Set Filter', parent=self)
+        self.ok_button = ui.PaintedButton('Set Filter', parent=self)
         row.layout().addWidget(self.ok_button, 0)
 
         self.layout().addStretch(1)
@@ -83,14 +83,14 @@ class FilterEditor(QtWidgets.QDialog):
         self.history_button.clicked.connect(self.show_history)
 
     def show_history(self):
-        self.editor.completer().setCompletionPrefix(u'')
+        self.editor.completer().setCompletionPrefix('')
         self.editor.completer().complete()
 
     def init_text(self):
         proxy = self.parent().model()
         text = proxy.filter_text()
-        text = text.lower() if text else u''
-        text = u'' if text == u'/' else text
+        text = text.lower() if text else ''
+        text = '' if text == '/' else text
         self.editor.setText(text)
 
     @QtCore.Slot()

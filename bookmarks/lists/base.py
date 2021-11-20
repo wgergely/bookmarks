@@ -37,7 +37,7 @@ from PySide2 import QtWidgets, QtGui, QtCore
 from .. import log
 from .. import common
 from .. import ui
-from .. import bookmark_db
+from .. import database
 from .. import contextmenu
 from .. import settings
 from .. import images
@@ -135,7 +135,7 @@ class StackedWidget(QtWidgets.QStackedWidget):
 
     def __init__(self, parent=None):
         super(StackedWidget, self).__init__(parent=parent)
-        self.setObjectName(u'BrowserStackedWidget')
+        self.setObjectName('BrowserStackedWidget')
         common.signals.tabChanged.connect(self.setCurrentIndex)
 
     def setCurrentIndex(self, idx):
@@ -194,12 +194,12 @@ class ProgressWidget(QtWidgets.QWidget):
         self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
         self.setFocusPolicy(QtCore.Qt.NoFocus)
         self.setWindowFlags(QtCore.Qt.Widget)
-        self._message = u'Loading...'
+        self._message = 'Loading...'
 
     def showEvent(self, event):
         self.setGeometry(self.parent().geometry())
 
-    @QtCore.Slot(unicode)
+    @QtCore.Slot(str)
     def set_message(self, text):
         """Sets the message to be displayed when saving the widget."""
         self._message = text
@@ -302,7 +302,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
     """
     filterFlagChanged = QtCore.Signal(int, bool)  # FilterFlag, value
-    filterTextChanged = QtCore.Signal(unicode)
+    filterTextChanged = QtCore.Signal(str)
     invalidated = QtCore.Signal()
 
     def __init__(self, parent=None):
@@ -315,7 +315,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         self.setFilterCaseSensitivity(QtCore.Qt.CaseSensitive)
 
         self.verify_items = common.Timer(parent=self)
-        self.verify_items.setObjectName(u'VerifyVisibleItemsTimer')
+        self.verify_items.setObjectName('VerifyVisibleItemsTimer')
         self.verify_items.setSingleShot(False)
         self.verify_items.setInterval(10)
         self.verify_items.timeout.connect(self.verify)
@@ -360,7 +360,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
         is_archived_visible = self.filter_flag(common.MarkedAsArchived)
         is_favourite_visible = self.filter_flag(common.MarkedAsFavourite)
-        for n in xrange(self.rowCount()):
+        for n in range(self.rowCount()):
             index = self.index(n, 0)
             is_archived = index.flags() & common.MarkedAsArchived
             if is_archived and not is_archived_visible:
@@ -413,7 +413,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         model = self.sourceModel()
         self._filter_text = model.get_local_setting(settings.TextFilterKey)
         if self._filter_text is None:
-            self._filter_text = u''
+            self._filter_text = ''
 
         v = model.get_local_setting(settings.ActiveFlagFilterKey)
         self._filter_flags[common.MarkedAsActive] = v if v is not None else False
@@ -425,17 +425,17 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
     def filter_text(self):
         """Filters the list of items containing this path segment."""
         if self._filter_text is None:
-            return u''
+            return ''
         return self._filter_text
 
-    @QtCore.Slot(unicode)
+    @QtCore.Slot(str)
     def set_filter_text(self, v):
         """Slot called when a filter text has been set by the filter text editor
         widget.
 
         """
-        v = v if v is not None else u''
-        v = unicode(v).strip()
+        v = v if v is not None else ''
+        v = str(v).strip()
 
         # Save the set text in the model
         self._filter_text = v
@@ -450,7 +450,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
             return
 
         _v = self.sourceModel().get_local_setting(settings.TextFilterKeyHistory)
-        _v = _v.split(u';') if _v else []
+        _v = _v.split(';') if _v else []
 
         if v.lower() in [f.lower() for f in _v]:
             return
@@ -458,7 +458,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         _v.append(v)
         self.sourceModel().set_local_setting(
             settings.TextFilterKeyHistory,
-            u';'.join(_v[0:MAX_HISTORY])
+            ';'.join(_v[0:MAX_HISTORY])
         )
 
     def filter_flag(self, flag):
@@ -514,17 +514,17 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
             if not ref():
                 return False
             d = ref()[idx][common.DescriptionRole]
-            d = d.strip().lower() if d else u''
+            d = d.strip().lower() if d else ''
 
             if not ref():
                 return False
             f = ref()[idx][common.FileDetailsRole]
-            f = f.strip().lower() if f else u''
+            f = f.strip().lower() if f else ''
 
             if not ref():
                 return False
-            searchable = ref()[idx][QtCore.Qt.StatusTipRole].lower() + u'\n' + \
-                d.strip().lower() + u'\n' + \
+            searchable = ref()[idx][QtCore.Qt.StatusTipRole].lower() + '\n' + \
+                d.strip().lower() + '\n' + \
                 f.strip().lower()
 
             if not self.filter_includes_row(filtertext, searchable):
@@ -562,12 +562,12 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         )
 
         for match in it:
-            _filtertext = re.sub(match.group(1), u'', _filtertext)
+            _filtertext = re.sub(match.group(1), '', _filtertext)
         for match in it_quoted:
-            _filtertext = re.sub(match.group(1), u'', _filtertext)
+            _filtertext = re.sub(match.group(1), '', _filtertext)
 
         for text in _filtertext.split():
-            text = text.strip(u'"')
+            text = text.strip('"')
             if text not in searchable:
                 return False
         return True
@@ -608,7 +608,7 @@ class BaseModel(QtCore.QAbstractListModel):
     dataTypeSorted = QtCore.Signal(int)
 
     activeChanged = QtCore.Signal(QtCore.QModelIndex)
-    taskFolderChanged = QtCore.Signal(unicode)
+    taskFolderChanged = QtCore.Signal(str)
     dataTypeChanged = QtCore.Signal(int)
 
     sortingChanged = QtCore.Signal(int, bool)  # (SortRole, SortOrder)
@@ -626,7 +626,7 @@ class BaseModel(QtCore.QAbstractListModel):
         self._interrupt_requested = False
 
         self._load_in_progress = False
-        self._load_message = u''
+        self._load_message = ''
 
         self._generate_thumbnails_enabled = True
         self._task = None
@@ -827,7 +827,7 @@ class BaseModel(QtCore.QAbstractListModel):
 
     @common.debug
     @common.error
-    @common.status_bar_message(u'Sorting items...')
+    @common.status_bar_message('Sorting items...')
     @QtCore.Slot()
     def sort_data(self, *args, **kwargs):
         """Sorts the current data set using current `sort_role` and
@@ -953,7 +953,7 @@ class BaseModel(QtCore.QAbstractListModel):
         return common.FileItem
 
     def task(self):
-        return u'default'
+        return 'default'
 
     def set_task(self, v):
         pass
@@ -963,19 +963,19 @@ class BaseModel(QtCore.QAbstractListModel):
         selections when storing them in the the `local_settings`.
 
         Returns:
-            unicode: A local_settings key value.
+            str: A local_settings key value.
 
         """
         raise NotImplementedError(
-            u'Abstract class "local_settings_key" has to be implemented in the subclasses.')
+            'Abstract class "local_settings_key" has to be implemented in the subclasses.')
 
     def get_local_setting(self, key_type, key=None, section=settings.ListFilterSection):
         """Get a value stored in the local_settings.
 
         Args:
-            key_type (unicode): A filter key type.
-            key (unicode): A key the value is associated with.
-            section (unicode): A settings `section`. Defaults to `settings.ListFilterSection`.
+            key_type (str): A filter key type.
+            key (str): A key the value is associated with.
+            section (str): A settings `section`. Defaults to `settings.ListFilterSection`.
 
         Returns:
             The value saved in `local_settings`, or `None` if not found.
@@ -984,9 +984,9 @@ class BaseModel(QtCore.QAbstractListModel):
         key = key if key else self.local_settings_key()
         if not key:
             return None
-        if not isinstance(key, unicode):
+        if not isinstance(key, str):
             key = key.decode('utf-8')
-        k = u'{}/{}'.format(key_type, common.get_hash(key))
+        k = '{}/{}'.format(key_type, common.get_hash(key))
         return settings.instance().value(section, k)
 
     @common.error
@@ -995,7 +995,7 @@ class BaseModel(QtCore.QAbstractListModel):
         """Set a value to store in `local_settings`.
 
         Args:
-            key_type (unicode): A filter key type.
+            key_type (str): A filter key type.
             v (any):    A value to store.
             key (type): A key the value is associated with.
             section (type): A settings `section`. Defaults to `settings.ListFilterSection`.
@@ -1004,9 +1004,9 @@ class BaseModel(QtCore.QAbstractListModel):
         key = key if key else self.local_settings_key()
         if not key:
             return None
-        if not isinstance(key, unicode):
+        if not isinstance(key, str):
             key = key.decode('utf-8')
-        k = u'{}/{}'.format(key_type, common.get_hash(key))
+        k = '{}/{}'.format(key_type, common.get_hash(key))
         v = settings.instance().setValue(section, k, v)
 
     def setData(self, index, data, role=QtCore.Qt.DisplayRole):
@@ -1152,7 +1152,7 @@ class BaseListWidget(QtWidgets.QListView):
         self.timer.setInterval(
             QtWidgets.QApplication.instance().keyboardInputInterval())
         self.timer.setSingleShot(True)
-        self.timed_search_string = u''
+        self.timed_search_string = ''
 
         self.delayed_save_selection_timer = common.Timer()
         self.delayed_save_selection_timer.setSingleShot(True)
@@ -1238,9 +1238,7 @@ class BaseListWidget(QtWidgets.QListView):
         and the view to communicate are made here.
 
         """
-        if not isinstance(model, BaseModel):
-            raise TypeError(
-                u'Must provide a BaseModel instance, got {}'.format(type(model)))
+        common.check_type(model, BaseModel)
 
         proxy = FilterProxyModel(parent=self)
 
@@ -1282,7 +1280,7 @@ class BaseListWidget(QtWidgets.QListView):
         """
         if not index.isValid():
             return
-        if not hasattr(index.model(), u'sourceModel'):
+        if not hasattr(index.model(), 'sourceModel'):
             index = self.model().mapFromSource(index)
         super(BaseListWidget, self).update(index)
 
@@ -1378,7 +1376,7 @@ class BaseListWidget(QtWidgets.QListView):
 
         # Restore previously saved selection
         if previous:
-            for n in xrange(proxy.rowCount()):
+            for n in range(proxy.rowCount()):
                 index = proxy.index(n, 0)
 
                 if not index.isValid():
@@ -1431,7 +1429,7 @@ class BaseListWidget(QtWidgets.QListView):
             state (type): Description of parameter `state`. Defaults to None.
 
         Returns:
-            unicode: The key used to find and match items.
+            str: The key used to find and match items.
 
         """
         def save_to_db(k, mode, flag):
@@ -1439,7 +1437,7 @@ class BaseListWidget(QtWidgets.QListView):
                 threads.queue_database_transaction(
                     server, job, root, k, mode, flag)
                 return
-            bookmark_db.set_flag(server, job, root, k, mode, flag)
+            database.set_flag(server, job, root, k, mode, flag)
 
         def save_to_local_settings(k, mode, flag):
             if mode:
@@ -1479,7 +1477,7 @@ class BaseListWidget(QtWidgets.QListView):
 
         def _set_flags(DATA, k, mode, flag, commit=False, proxy=False):
             """Sets flags for multiple items."""
-            for item in DATA.itervalues():
+            for item in DATA.values():
                 if proxy:
                     _k = common.proxy_path(item[QtCore.Qt.StatusTipRole])
                 else:
@@ -1495,11 +1493,11 @@ class BaseListWidget(QtWidgets.QListView):
             if flag == common.MarkedAsActive:
                 pass
             elif flag == common.MarkedAsArchived:
-                db = bookmark_db.get_db(*index.data(common.ParentPathRole)[0:3])
+                db = database.get_db(*index.data(common.ParentPathRole)[0:3])
                 flags = db.value(
                     proxy_k,
-                    u'flags',
-                    table=bookmark_db.AssetTable
+                    'flags',
+                    table=database.AssetTable
                 )
                 if not flags:
                     return True
@@ -1555,8 +1553,8 @@ class BaseListWidget(QtWidgets.QListView):
             k = data[QtCore.Qt.StatusTipRole]
             if not can_toggle_flag(k, mode, data, flag):
                 ui.MessageBox(
-                    u'Looks like this item belongs to a sequence that has a flag set already.',
-                    u'To modify individual sequence items, remove the flag from the sequence first and try again.'
+                    'Looks like this item belongs to a sequence that has a flag set already.',
+                    'To modify individual sequence items, remove the flag from the sequence first and try again.'
                 ).open()
                 self.reset_multitoggle()
                 return
@@ -1662,31 +1660,31 @@ class BaseListWidget(QtWidgets.QListView):
 
         # Model is empty
         if model.rowCount() == 0:
-            return u'No items to display'
+            return 'No items to display'
 
         # All items are visible, we don't have to display anything
         if proxy.rowCount() == model.rowCount():
-            return u''
+            return ''
 
         # Let's figure out the reason why the list has hidden items
-        reason = u''
+        reason = ''
         if proxy.filter_text():
-            reason = u'a search filter is applied'
+            reason = 'a search filter is applied'
         elif proxy.filter_flag(common.MarkedAsFavourite):
-            reason = u'showing favourites only'
+            reason = 'showing favourites only'
         elif proxy.filter_flag(common.MarkedAsActive):
-            reason = u'showing active item only'
+            reason = 'showing active item only'
         elif not proxy.filter_flag(common.MarkedAsArchived):
-            reason = u'archived items are hidden'
+            reason = 'archived items are hidden'
 
         # Items are hidden...
         count = model.rowCount() - proxy.rowCount()
         if count == 1:
-            return u'{} item is hidden ({})'.format(count, reason)
-        return u'{} items are hidden ({})'.format(count, reason)
+            return '{} item is hidden ({})'.format(count, reason)
+        return '{} items are hidden ({})'.format(count, reason)
 
     def get_hint_string(self):
-        return u'No items to display'
+        return 'No items to display'
 
     def paint_hint(self, widget, event):
         """Paints the hint message.
@@ -1699,7 +1697,7 @@ class BaseListWidget(QtWidgets.QListView):
         """Paints the hint message.
 
         """
-        text = u'Loading items. Please wait...'
+        text = 'Loading items. Please wait...'
         self._paint_message(text, color=common.TEXT)
 
     def paint_status_message(self, widget, event):
@@ -1757,7 +1755,7 @@ class BaseListWidget(QtWidgets.QListView):
             rect.width()
         )
 
-        x = rect.center().x() - (metrics.width(text) / 2.0)
+        x = rect.center().x() - (metrics.horizontalAdvance(text) / 2.0)
         y = rect.center().y() + (metrics.ascent() / 2.0)
 
         painter.setPen(QtCore.Qt.NoPen)
@@ -1843,7 +1841,7 @@ class BaseListWidget(QtWidgets.QListView):
 
     @common.error
     @common.debug
-    @QtCore.Slot(unicode)
+    @QtCore.Slot(str)
     def show_item(self, v, role=QtCore.Qt.DisplayRole, update=True, limit=10000):
         """Show an item in the viewer.
 
@@ -1989,7 +1987,7 @@ class BaseListWidget(QtWidgets.QListView):
 
         if no_modifier or numpad_modifier:
             if not self.timer.isActive():
-                self.timed_search_string = u''
+                self.timed_search_string = ''
             self.timer.start()
 
             if event.key() == QtCore.Qt.Key_Escape:
@@ -2055,7 +2053,7 @@ class BaseListWidget(QtWidgets.QListView):
             self.timed_search_string += event.text()
 
             sel = self.selectionModel()
-            for n in xrange(self.model().rowCount()):
+            for n in range(self.model().rowCount()):
                 index = self.model().index(n, 0, parent=QtCore.QModelIndex())
                 # When only one key is pressed we want to cycle through
                 # only items starting with that letter:
@@ -2214,9 +2212,9 @@ class BaseListWidget(QtWidgets.QListView):
                     elif len(p) == 3:
                         p = [p[0], ]
 
-                    path = u'/'.join(p).rstrip(u'/')
-                    root_path = u'/'.join(root_dir).strip(u'/')
-                    path = path + u'/' + root_path
+                    path = '/'.join(p).rstrip('/')
+                    root_path = '/'.join(root_dir).strip('/')
+                    path = path + '/' + root_path
                     actions.reveal(path)
                     return
 
@@ -2300,32 +2298,32 @@ class BaseInlineIconWidget(BaseListWidget):
 
             if rect.contains(cursor_position):
                 filter_text = self.model().filter_text()
-                filter_text = filter_text.lower() if filter_text else u''
+                filter_text = filter_text.lower() if filter_text else ''
 
                 if shift_modifier:
                     # Shift modifier will add a "positive" filter and hide all items
                     # that does not contain the given text.
-                    folder_filter = u'"/' + text + u'/"'
+                    folder_filter = '"/' + text + '/"'
 
                     if folder_filter in filter_text:
-                        filter_text = filter_text.replace(folder_filter, u'')
+                        filter_text = filter_text.replace(folder_filter, '')
                     else:
-                        filter_text = filter_text + u' ' + folder_filter
+                        filter_text = filter_text + ' ' + folder_filter
 
                     self.model().set_filter_text(filter_text)
                     self.repaint(self.rect())
                 elif alt_modifier or control_modifier:
                     # The alt or control modifiers will add a "negative filter"
                     # and hide the selected subfolder from the view
-                    folder_filter = u'--"/' + text + u'/"'
-                    _folder_filter = u'"/' + text + u'/"'
+                    folder_filter = '--"/' + text + '/"'
+                    _folder_filter = '"/' + text + '/"'
 
                     if filter_text:
                         if _folder_filter in filter_text:
                             filter_text = filter_text.replace(
-                                _folder_filter, u'')
+                                _folder_filter, '')
                         if folder_filter not in filter_text:
-                            folder_filter = filter_text + u' ' + folder_filter
+                            folder_filter = filter_text + ' ' + folder_filter
 
                     self.model().set_filter_text(folder_filter)
                     self.repaint(self.rect())
@@ -2466,28 +2464,28 @@ class BaseInlineIconWidget(BaseListWidget):
                 if rectangles[k].contains(cursor_position):
                     if k == delegate.PropertiesRect:
                         common.signals.showStatusTipMessage.emit(
-                            u'Edit item properties...')
+                            'Edit item properties...')
                     elif k == delegate.AddAssetRect:
                         common.signals.showStatusTipMessage.emit(
-                            u'Add new item...')
+                            'Add new item...')
                     elif k == delegate.DataRect:
                         common.signals.showStatusTipMessage.emit(
                             index.data(QtCore.Qt.StatusTipRole))
                     elif k == delegate.TodoRect:
                         common.signals.showStatusTipMessage.emit(
-                            u'Edit Notes...')
+                            'Edit Notes...')
                     elif k == delegate.RevealRect:
                         common.signals.showStatusTipMessage.emit(
-                            u'Show item in File Explorer...')
+                            'Show item in File Explorer...')
                     elif k == delegate.ArchiveRect:
                         common.signals.showStatusTipMessage.emit(
-                            u'Archive item...')
+                            'Archive item...')
                     elif k == delegate.FavouriteRect:
                         common.signals.showStatusTipMessage.emit(
-                            u'Save item to My Files...')
+                            'Save item to My Files...')
                     elif k == delegate.ThumbnailRect:
                         common.signals.showStatusTipMessage.emit(
-                            u'Drag and drop an image, or right-click to edit the thumbnail...')
+                            'Drag and drop an image, or right-click to edit the thumbnail...')
                     self.update(index)
 
             rect = self.itemDelegate().get_description_rect(rectangles, index)
@@ -2547,7 +2545,7 @@ class ThreadedBaseWidget(BaseInlineIconWidget):
     """Extends the base-class with the methods used to interface with threads.
 
     """
-    workerInitialized = QtCore.Signal(unicode)
+    workerInitialized = QtCore.Signal(str)
     updateRow = QtCore.Signal(weakref.ref)
     queueItems = QtCore.Signal(list)
 
@@ -2598,7 +2596,7 @@ class ThreadedBaseWidget(BaseInlineIconWidget):
     def delay_queue_visible_indexes(self, *args, **kwargs):
         self.delayed_queue_timer.start(self.delayed_queue_timer.interval())
 
-    @common.status_bar_message(u'Updating items...')
+    @common.status_bar_message('Updating items...')
     def queue_visible_indexes(self, *args, **kwargs):
         """This method will send all currently visible items to the worker
         threads for processing.

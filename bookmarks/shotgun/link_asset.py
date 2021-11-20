@@ -7,7 +7,7 @@ The widets are used to link a Shotgun entity with a local item.
 from PySide2 import QtWidgets, QtCore, QtGui
 
 from .. import common
-from .. import bookmark_db
+from .. import database
 from . import shotgun
 from . import link
 from . import actions as sg_actions
@@ -40,37 +40,37 @@ value_map = {
     'shotgun_id': {
         'column': 'id',
         'overwrite': True,
-        'type': bookmark_db.TABLES[bookmark_db.AssetTable]['shotgun_id']['type'],
+        'type': database.TABLES[database.AssetTable]['shotgun_id']['type'],
     },
     'shotgun_name': {
         'column': 'code',
         'overwrite': True,
-        'type': bookmark_db.TABLES[bookmark_db.AssetTable]['shotgun_name']['type'],
+        'type': database.TABLES[database.AssetTable]['shotgun_name']['type'],
     },
     'shotgun_type': {
         'column': 'type',
         'overwrite': True,
-        'type': bookmark_db.TABLES[bookmark_db.AssetTable]['shotgun_type']['type'],
+        'type': database.TABLES[database.AssetTable]['shotgun_type']['type'],
     },
     'description': {
         'column': 'description',
         'overwrite': False,
-        'type': bookmark_db.TABLES[bookmark_db.AssetTable]['description']['type'],
+        'type': database.TABLES[database.AssetTable]['description']['type'],
     },
     'cut_in': {
         'column': 'cut_in',
         'overwrite': False,
-        'type': bookmark_db.TABLES[bookmark_db.AssetTable]['cut_in']['type'],
+        'type': database.TABLES[database.AssetTable]['cut_in']['type'],
     },
     'cut_out': {
         'column': 'cut_out',
         'overwrite': False,
-        'type': bookmark_db.TABLES[bookmark_db.AssetTable]['cut_out']['type'],
+        'type': database.TABLES[database.AssetTable]['cut_out']['type'],
     },
     'cut_duration': {
         'column': 'cut_duration',
         'overwrite': False,
-        'type': bookmark_db.TABLES[bookmark_db.AssetTable]['cut_duration']['type'],
+        'type': database.TABLES[database.AssetTable]['cut_duration']['type'],
     },
 }
 
@@ -83,10 +83,10 @@ class LinkAssetWidget(link.BaseLinkWidget):
     def db_source(self):
         if not all((self.server, self.job, self.root, self.asset)):
             return None
-        return u'/'.join((self.server, self.job, self.root, self.asset))
+        return '/'.join((self.server, self.job, self.root, self.asset))
 
     def db_table(self):
-        return bookmark_db.AssetTable
+        return database.AssetTable
 
     def candidate(self):
         from .. import main

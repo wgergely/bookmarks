@@ -18,7 +18,7 @@ from ..properties import base
 
 
 instance = None
-NoStepName = u'(Tasks without Step)'
+NoStepName = '(Tasks without Step)'
 
 
 def close():
@@ -67,7 +67,7 @@ class TaskViewContextMenu(contextmenu.BaseContextMenu):
             entity_id=entity['id'],
         )
         self.menu['visit'] = {
-            'text': u'View Online...',
+            'text': 'View Online...',
             'action': functools.partial(QtGui.QDesktopServices.openUrl, QtCore.QUrl(url))
         }
 
@@ -213,9 +213,9 @@ class TaskModel(QtCore.QAbstractItemModel):
     @common.debug
     def init_icons(self):
         pixmap1 = images.ImageCache.get_rsc_pixmap(
-            u'shotgun', common.GREEN, common.MARGIN())
+            'shotgun', common.GREEN, common.MARGIN())
         pixmap2 = images.ImageCache.get_rsc_pixmap(
-            u'check', common.SELECTED_TEXT, common.MARGIN())
+            'check', common.SELECTED_TEXT, common.MARGIN())
         icon = QtGui.QIcon()
         icon.addPixmap(pixmap1, mode=QtGui.QIcon.Normal)
         icon.addPixmap(pixmap2, mode=QtGui.QIcon.Active)
@@ -223,7 +223,7 @@ class TaskModel(QtCore.QAbstractItemModel):
         self.task_icon = icon
 
         self.step_icon = QtGui.QIcon(images.ImageCache.get_rsc_pixmap(
-            u'shotgun', common.BLUE, common.MARGIN()))
+            'shotgun', common.BLUE, common.MARGIN()))
 
     def entities_to_nodes(self):
         """Builds the internal node hierarchy base on the given entity data.
@@ -323,7 +323,7 @@ class TaskModel(QtCore.QAbstractItemModel):
         if role == QtCore.Qt.DisplayRole and column == 1:
             if 'entity' in entity and entity['entity']:
                 return entity['entity']['name']
-            return u''
+            return ''
 
         if role == QtCore.Qt.DisplayRole and column == 2:
             if 'task_assignees' in entity and entity['task_assignees']:
@@ -331,17 +331,17 @@ class TaskModel(QtCore.QAbstractItemModel):
                 for user in entity['task_assignees']:
                     names.append(user['name'])
                 return '; '.join(names)
-            return u''
+            return ''
 
         if role == QtCore.Qt.DisplayRole and column == 3:
             if 'start_date' in entity and entity['start_date']:
                 return entity['start_date']
-            return u''
+            return ''
 
         if role == QtCore.Qt.DisplayRole and column == 4:
             if 'due_date' in entity and entity['due_date']:
                 return entity['due_date']
-            return u''
+            return ''
 
         if role == QtCore.Qt.ForegroundRole and column == 0:
             return common.TEXT
@@ -409,15 +409,15 @@ class TaskModel(QtCore.QAbstractItemModel):
             return None
 
         if section == 0:
-            return u'Task'
+            return 'Task'
         if section == 1:
-            return u'Asset'
+            return 'Asset'
         if section == 2:
-            return u'Artist'
+            return 'Artist'
         if section == 3:
-            return u'Start'
+            return 'Start'
         if section == 4:
-            return u'Due'
+            return 'Due'
         return None
 
     def createIndexFromNode(self, node):
@@ -498,7 +498,7 @@ class TaskView(QtWidgets.QTreeView):
         fixed = common.WIDTH() * 0.3
         w = (self.rect().width() - fixed) / \
             (self.model().columnCount(QtCore.QModelIndex()) - 1)
-        for x in xrange(self.model().columnCount(QtCore.QModelIndex())):
+        for x in range(self.model().columnCount(QtCore.QModelIndex())):
             if x == 0:
                 self.setColumnWidth(x, fixed)
                 continue
@@ -553,7 +553,7 @@ class TaskPicker(QtWidgets.QDialog):
 
         self.ok_button = None
 
-        self._message = u'No task was found.'
+        self._message = 'No task was found.'
         self.installEventFilter(self)
         self._create_ui()
 
@@ -564,7 +564,7 @@ class TaskPicker(QtWidgets.QDialog):
         self.layout().setSpacing(o)
 
         grp = base.add_section(
-            'shotgun', u'Select Task', self, color=None
+            'shotgun', 'Select Task', self, color=None
         )
 
         self.user_editor = base_widgets.BaseComboBox(parent=self)
@@ -574,20 +574,20 @@ class TaskPicker(QtWidgets.QDialog):
 
         filter_row = ui.add_row(None, parent=grp)
 
-        label = ui.PaintedLabel(u'Filter by User')
+        label = ui.PaintedLabel('Filter by User')
         filter_row.layout().addWidget(label, 0)
         filter_row.layout().addWidget(self.user_editor, 1)
 
         filter_row.layout().addSpacing(o)
 
-        label = ui.PaintedLabel(u'Filter by Asset')
+        label = ui.PaintedLabel('Filter by Asset')
         filter_row.layout().addWidget(label, 0)
         filter_row.layout().addWidget(self.asset_editor, 1)
 
         self.task_editor = TaskView(parent=self)
         grp.layout().addWidget(self.task_editor)
 
-        self.ok_button = ui.PaintedButton(u'Done')
+        self.ok_button = ui.PaintedButton('Done')
         grp.layout().addWidget(self.ok_button, 1)
 
     def _connect_signals(self):
@@ -620,7 +620,7 @@ class TaskPicker(QtWidgets.QDialog):
         sg_properties = shotgun.ShotgunProperties(active=True)
         sg_properties.init()
         if not sg_properties.verify(bookmark=True):
-            raise ValueError(u'Bookmark not configured.')
+            raise ValueError('Bookmark not configured.')
 
         self.sg_properties = sg_properties
 
@@ -655,8 +655,8 @@ class TaskPicker(QtWidgets.QDialog):
     def init_users(self, entities):
         self.user_editor.clear()
 
-        self.user_editor.addItem(u'Show All', userData=-1)
-        self.user_editor.addItem(u'Show Unassigned', userData=-2)
+        self.user_editor.addItem('Show All', userData=-1)
+        self.user_editor.addItem('Show Unassigned', userData=-2)
         self.user_editor.insertSeparator(self.user_editor.count())
 
         for entity in entities:
@@ -671,7 +671,7 @@ class TaskPicker(QtWidgets.QDialog):
     def init_assets(self, entities):
         self.asset_editor.clear()
 
-        self.asset_editor.addItem(u'Show All', userData=-1)
+        self.asset_editor.addItem('Show All', userData=-1)
         self.asset_editor.insertSeparator(self.asset_editor.count())
 
         for entity in entities:
@@ -722,7 +722,7 @@ class TaskPicker(QtWidgets.QDialog):
             settings.PublishVersionSection,
             k,
         )
-        if isinstance(v, unicode):
+        if isinstance(v, str):
             self.setCurrentText(v)
 
     def double_clicked(self, index):

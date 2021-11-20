@@ -31,7 +31,7 @@ def _check_sequence(path):
     file_info = QtCore.QFileInfo(path)
     frames = 0
     for entry in _scandir.scandir(file_info.dir().path()):
-        p = entry.path.replace(u'\\', u'/')
+        p = entry.path.replace('\\', '/')
         if seq.group(1) in p and seq.group(3) in p:
             frames += 1
         if frames >= 2:
@@ -85,7 +85,7 @@ class FavouritesModel(files.FilesModel):
         self.reset_timer.start(self.reset_timer.interval())
 
     @common.error
-    @common.status_bar_message(u'Loading My Files...')
+    @common.status_bar_message('Loading My Files...')
     @base.initdata
     def __initdata__(self):
         p = self.parent_path()
@@ -100,12 +100,12 @@ class FavouritesModel(files.FilesModel):
         nth = 1
         c = 0
         for entry, parent_paths in self.item_iterator():
-            _parent_path = u'/'.join(parent_paths)
+            _parent_path = '/'.join(parent_paths)
 
             if self._interrupt_requested:
                 break
 
-            if u'.' in entry.name:
+            if '.' in entry.name:
                 ext = entry.name.split('.')[-1]
             else:
                 ext = '0'
@@ -113,31 +113,31 @@ class FavouritesModel(files.FilesModel):
             filename = entry.name
 
             # Skipping common hidden files
-            if filename[0] == u'.':
+            if filename[0] == '.':
                 continue
-            if u'thumbs.db' in filename:
+            if 'thumbs.db' in filename:
                 continue
 
-            filepath = entry.path.replace(u'\\', u'/')
+            filepath = entry.path.replace('\\', '/')
 
             # Progress bar
             c += 1
             if not c % nth:
                 common.signals.showStatusBarMessage.emit(
-                    u'Loading files (found ' + unicode(c) + u' items)...')
+                    'Loading files (found ' + str(c) + ' items)...')
                 QtWidgets.QApplication.instance().processEvents()
 
             # Getting the fileroot
-            fileroot = filepath.replace(_parent_path, u'').strip('/')
-            fileroot = u'/'.join(fileroot.split(u'/')[:-1])
+            fileroot = filepath.replace(_parent_path, '').strip('/')
+            fileroot = '/'.join(fileroot.split('/')[:-1])
 
             # To sort by subfolders correctly, we'll have to populate a list
             # with all subfolders and file names. The list must be of fixed
             # length and we'll do case insensitive comparisons:
             sort_by_name_role = [0, 0, 0, 0, 0, 0, 0, 0]
             if fileroot:
-                _fileroot = fileroot.lower().split(u'/')
-                for idx in xrange(len(_fileroot)):
+                _fileroot = fileroot.lower().split('/')
+                for idx in range(len(_fileroot)):
                     sort_by_name_role[idx] = _fileroot[idx]
                     if idx == 6:
                         break
@@ -146,14 +146,14 @@ class FavouritesModel(files.FilesModel):
             try:
                 seq = common.get_sequence(filepath)
             except RuntimeError:
-                log.error(u'"' + filename + u'" named incorrectly. Skipping.')
+                log.error('"' + filename + '" named incorrectly. Skipping.')
                 continue
 
             flags = base.DEFAULT_ITEM_FLAGS
 
             if seq:
                 seqpath = seq.group(1) + common.SEQPROXY + \
-                    seq.group(3) + u'.' + seq.group(4)
+                    seq.group(3) + '.' + seq.group(4)
             if (seq and (seqpath in common.FAVOURITES_SET or filepath in common.FAVOURITES_SET)) or (filepath in common.FAVOURITES_SET):
                 flags = flags | common.MarkedAsFavourite
 
@@ -174,9 +174,9 @@ class FavouritesModel(files.FilesModel):
                 common.EntryRole: [entry, ],
                 common.FlagsRole: flags,
                 common.ParentPathRole: parent_paths,
-                common.DescriptionRole: u'',
+                common.DescriptionRole: '',
                 common.TodoCountRole: 0,
-                common.FileDetailsRole: u'',
+                common.FileDetailsRole: '',
                 common.SequenceRole: seq,
                 common.FramesRole: [],
                 common.FileInfoLoaded: False,
@@ -203,7 +203,7 @@ class FavouritesModel(files.FilesModel):
                 # If the sequence has not yet been added to our dictionary
                 # of seqeunces we add it here
                 if seqpath not in SEQUENCE_DATA:  # ... and create it if it doesn't exist
-                    seqname = seqpath.split(u'/')[-1]
+                    seqname = seqpath.split('/')[-1]
                     flags = base.DEFAULT_ITEM_FLAGS
 
                     if seqpath in common.FAVOURITES_SET:
@@ -223,9 +223,9 @@ class FavouritesModel(files.FilesModel):
                         common.EntryRole: [],
                         common.FlagsRole: flags,
                         common.ParentPathRole: parent_paths,
-                        common.DescriptionRole: u'',
+                        common.DescriptionRole: '',
                         common.TodoCountRole: 0,
-                        common.FileDetailsRole: u'',
+                        common.FileDetailsRole: '',
                         common.SequenceRole: seq,
                         common.FramesRole: [],
                         common.FileInfoLoaded: False,
@@ -258,7 +258,7 @@ class FavouritesModel(files.FilesModel):
         data = datacache.get_data(p, k, t)
 
         # Casting the sequence data back onto the model
-        for idx, v in enumerate(SEQUENCE_DATA.itervalues()):
+        for idx, v in enumerate(SEQUENCE_DATA.values()):
             if idx >= common.MAXITEMS:
                 break  # Let's limit the maximum number of items we load
 
@@ -269,9 +269,9 @@ class FavouritesModel(files.FilesModel):
                     _seq.group(1) +
                     v[common.FramesRole][0] +
                     _seq.group(3) +
-                    u'.' + _seq.group(4)
+                    '.' + _seq.group(4)
                 )
-                filename = filepath.split(u'/')[-1]
+                filename = filepath.split('/')[-1]
                 v[QtCore.Qt.DisplayRole] = filename
                 v[QtCore.Qt.EditRole] = filename
                 v[QtCore.Qt.StatusTipRole] = filepath
@@ -316,7 +316,7 @@ class FavouritesModel(files.FilesModel):
 
             parent_paths = common.FAVOURITES[k]
             for entry in _scandir.scandir(_path):
-                path = entry.path.replace(u'\\', u'/')
+                path = entry.path.replace('\\', '/')
                 if path == k:
                     entries.append((entry, parent_paths))
                     continue
@@ -328,7 +328,7 @@ class FavouritesModel(files.FilesModel):
             yield args
 
     def task(self):
-        return u'favourites'
+        return 'favourites'
 
     def set_task(self, v):
         pass
@@ -421,4 +421,4 @@ class FavouritesWidget(files.FilesWidget):
     def get_hint_string(self):
         model = self.model().sourceModel()
         if not model.rowCount():
-            return u'You didn\'t add any files yet.'
+            return 'You didn\'t add any files yet.'

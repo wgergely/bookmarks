@@ -20,29 +20,29 @@ from ..properties import base
 
 SECTIONS = {
     0: {
-        'name': u'Add Job',
-        'icon': u'',
+        'name': 'Add Job',
+        'icon': '',
         'color': common.DARK_BG,
         'groups': {
             0: {
                 0: {
-                    'name': u'Name',
+                    'name': 'Name',
                     'key': None,
                     'validator': base.namevalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Name, eg. `MY_NEW_JOB`',
-                    'description': u'The job\'s name, eg. `MY_NEW_JOB`.',
+                    'placeholder': 'Name, eg. `MY_NEW_JOB`',
+                    'description': 'The job\'s name, eg. `MY_NEW_JOB`.',
                 },
             },
             1: {
                 0: {
-                    'name': u'Template',
+                    'name': 'Template',
                     'key': None,
                     'validator': None,
                     'widget': functools.partial(
                         templates.TemplatesWidget, templates.JobTemplateMode),
                     'placeholder': None,
-                    'description': u'Select a folder template to create this asset.',
+                    'description': 'Select a folder template to create this asset.',
                 },
             },
         },
@@ -62,7 +62,7 @@ def get_job_thumbnail(path):
         if entry.is_dir():
             continue
 
-        if u'thumbnail' not in entry.name.lower():
+        if 'thumbnail' not in entry.name.lower():
             continue
 
         pixmap = QtGui.QPixmap(entry.path)
@@ -77,7 +77,7 @@ class AddJobWidget(base.PropertiesWidget):
     """A custom `PropertiesWidget` used to add new jobs on a server.
 
     """
-    buttons = (u'Create', u'Cancel')
+    buttons = ('Create', 'Cancel')
 
     def __init__(self, server, parent=None):
         super(AddJobWidget, self).__init__(
@@ -87,12 +87,12 @@ class AddJobWidget(base.PropertiesWidget):
             None,
             asset=None,
             db_table=None,
-            fallback_thumb=u'folder_sm',
+            fallback_thumb='folder_sm',
             buttons=self.buttons,
             parent=parent
         )
 
-        self.setWindowTitle(u'{}: Add Job'.format(self.server))
+        self.setWindowTitle('{}: Add Job'.format(self.server))
         self.setFixedHeight(common.HEIGHT() * 0.66)
 
     def init_data(self):
@@ -114,21 +114,21 @@ class AddJobWidget(base.PropertiesWidget):
             return super(base.PropertiesWidget, self).done(result)  # pylint: disable=E1003
 
         if not self.name_editor.text():
-            raise ValueError(u'Must enter a name to create a job.')
+            raise ValueError('Must enter a name to create a job.')
 
         # Create template and signal
         name = self.name_editor.text()
         self.template_editor.template_list_widget.create(name, self.server)
-        path = u'{}/{}'.format(self.server, name)
+        path = '{}/{}'.format(self.server, name)
 
         if not QtCore.QFileInfo(path).exists():
             raise RuntimeError('Unknown error, could not find the new job.')
 
-        path += u'/thumbnail.{}'.format(images.THUMBNAIL_FORMAT)
+        path += '/thumbnail.{}'.format(images.THUMBNAIL_FORMAT)
         self.thumbnail_editor.save_image(destination=path)
 
         ui.MessageBox(
-            u'{} was successfully created.'.format(name),
+            '{} was successfully created.'.format(name),
         ).open()
 
         super(base.PropertiesWidget, self).done(
@@ -149,24 +149,24 @@ class JobContextMenu(contextmenu.BaseContextMenu):
         self.refresh_menu()
 
     def add_menu(self):
-        self.menu[u'Add Job...'] = {
-            u'action': self.parent().add,
-            u'icon': self.get_icon(u'add', color=common.GREEN)
+        self.menu['Add Job...'] = {
+            'action': self.parent().add,
+            'icon': self.get_icon('add', color=common.GREEN)
         }
 
     def reveal_menu(self):
-        self.menu[u'Reveal...'] = {
-            u'action': lambda: actions.reveal(self.index.data(QtCore.Qt.UserRole) + u'/.'),
-            u'icon': self.get_icon(u'folder')
+        self.menu['Reveal...'] = {
+            'action': lambda: actions.reveal(self.index.data(QtCore.Qt.UserRole) + '/.'),
+            'icon': self.get_icon('folder')
         }
 
     def add_refresh_menu(self):
-        self.menu[u'Refresh'] = {
-            u'action': (
+        self.menu['Refresh'] = {
+            'action': (
                 self.parent().init_data,
                 self.parent().restore_current
             ),
-            u'icon': self.get_icon(u'refresh')
+            'icon': self.get_icon('refresh')
         }
 
 
@@ -178,16 +178,16 @@ class JobListWidget(ui.ListWidget):
         jobChanged(server, job):    Emitted when the current job selection changedes.
 
     """
-    jobChanged = QtCore.Signal(unicode, unicode)
+    jobChanged = QtCore.Signal(str, str)
 
     def __init__(self, parent=None):
         super(JobListWidget, self).__init__(
-            default_message=u'No jobs found.',
+            default_message='No jobs found.',
             parent=parent
         )
 
-        self.setWindowTitle(u'Job Editor')
-        self.setObjectName(u'JobEditor')
+        self.setWindowTitle('Job Editor')
+        self.setObjectName('JobEditor')
 
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
@@ -224,7 +224,7 @@ class JobListWidget(ui.ListWidget):
         jobs = [f for f in common.BOOKMARKS.values()]
         jobs = [f[settings.JobKey] for f in jobs]
 
-        for n in xrange(self.model().rowCount()):
+        for n in range(self.model().rowCount()):
             item = self.item(n)
             if item.data(QtCore.Qt.DisplayRole) in jobs:
                 item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
@@ -281,7 +281,7 @@ class JobListWidget(ui.ListWidget):
         if not v:
             return
 
-        for n in xrange(self.count()):
+        for n in range(self.count()):
             if not v == self.item(n).text():
                 continue
             index = self.indexFromItem(self.item(n))
@@ -300,7 +300,7 @@ class JobListWidget(ui.ListWidget):
         menu.move(pos)
         menu.exec_()
 
-    @QtCore.Slot(unicode)
+    @QtCore.Slot(str)
     def server_changed(self, server):
         if server is None:
             self.jobChanged.emit(None, None)
@@ -358,11 +358,11 @@ class JobListWidget(ui.ListWidget):
         pixmap = get_job_thumbnail(item.data(QtCore.Qt.UserRole))
         if pixmap.isNull():
             pixmap = images.ImageCache.get_rsc_pixmap(
-                u'logo', common.DARK_BG, common.ROW_HEIGHT() * 0.8)
+                'logo', common.DARK_BG, common.ROW_HEIGHT() * 0.8)
             pixmap_selected = images.ImageCache.get_rsc_pixmap(
-                u'logo', common.SELECTED_TEXT, common.ROW_HEIGHT() * 0.8)
+                'logo', common.SELECTED_TEXT, common.ROW_HEIGHT() * 0.8)
             pixmap_disabled = images.ImageCache.get_rsc_pixmap(
-                u'close', common.RED, common.ROW_HEIGHT() * 0.8)
+                'close', common.RED, common.ROW_HEIGHT() * 0.8)
         else:
             pixmap_selected = pixmap
             pixmap_disabled = pixmap

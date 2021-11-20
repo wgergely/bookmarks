@@ -59,13 +59,13 @@ def init_tool_button(*args, **kwargs):
 
     """
     global _button_instance
-    ptr = OpenMayaUI.MQtUtil.findControl(u'ToolBox')
+    ptr = OpenMayaUI.MQtUtil.findControl('ToolBox')
     if ptr is None:
         _button_instance = ToolButton(common.ASSET_ROW_HEIGHT())
         _button_instance.show()
         return
 
-    widget = shiboken2.wrapInstance(long(ptr), QtWidgets.QWidget)
+    widget = shiboken2.wrapInstance(int(ptr), QtWidgets.QWidget)
     if not widget:
         return
 
@@ -101,10 +101,10 @@ def show():
     for widget in app.allWidgets():
         # Skipping workspaceControls objects, just in case there's a name conflict
         # between what the parent().objectName() and this method yields
-        if re.match(u'{}.*WorkspaceControl'.format(common.PRODUCT), widget.objectName()):
+        if re.match('{}.*WorkspaceControl'.format(common.PRODUCT), widget.objectName()):
             continue
 
-        match = re.match(u'{}.*'.format(common.PRODUCT), widget.objectName())
+        match = re.match('{}.*'.format(common.PRODUCT), widget.objectName())
 
         # Skip invalid matches
         if not match:
@@ -131,7 +131,7 @@ def show():
                 workspace_control, q=True, collapse=True)
             if state is None:
                 cmds.workspaceControl(
-                    workspace_control, e=True, tabToControl=(u'AttributeEditor', -1))
+                    workspace_control, e=True, tabToControl=('AttributeEditor', -1))
                 cmds.workspaceControl(workspace_control, e=True, visible=True)
                 cmds.workspaceControl(
                     workspace_control, e=True, collapse=False)
@@ -166,7 +166,7 @@ def show():
     # By default, the tab is docked just next to the attribute editor
     for widget in app.allWidgets():
         match = re.match(
-            u'{}.*WorkspaceControl'.format(common.PRODUCT), widget.objectName())
+            '{}.*WorkspaceControl'.format(common.PRODUCT), widget.objectName())
 
         if not match:
             continue
@@ -176,7 +176,7 @@ def show():
             cmds.workspaceControl,
             widget.objectName(),
             e=True,
-            tabToControl=(u'AttributeEditor', -1)
+            tabToControl=('AttributeEditor', -1)
         )
         cmds.evalDeferred(func)
         cmds.evalDeferred(widget.raise_)
@@ -212,25 +212,25 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         if not all((server, job, root, asset)):
             return
 
-        self.menu[u'apply_settings'] = {
-            u'text': u'Apply scene settings...',
-            u'icon': self.get_icon('check', color=common.GREEN),
-            u'action': maya_actions.apply_settings
+        self.menu['apply_settings'] = {
+            'text': 'Apply scene settings...',
+            'icon': self.get_icon('check', color=common.GREEN),
+            'action': maya_actions.apply_settings
         }
 
     def save_menu(self):
         scene = QtCore.QFileInfo(cmds.file(query=True, expandName=True))
 
         self.menu[contextmenu.key()] = {
-            u'text': u'Save Scene...',
-            u'icon': self.get_icon('add_file', color=common.GREEN),
-            u'action': lambda: maya_actions.save_scene(increment=False)
+            'text': 'Save Scene...',
+            'icon': self.get_icon('add_file', color=common.GREEN),
+            'action': lambda: maya_actions.save_scene(increment=False)
         }
         if common.get_sequence(scene.fileName()):
             self.menu[contextmenu.key()] = {
-                u'text': u'Incremental Save...',
-                u'icon': self.get_icon('add_file'),
-                u'action': lambda: maya_actions.save_scene(increment=True)
+                'text': 'Incremental Save...',
+                'icon': self.get_icon('add_file'),
+                'action': lambda: maya_actions.save_scene(increment=True)
             }
 
     def open_import_scene_menu(self):
@@ -242,32 +242,32 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         file_info = QtCore.QFileInfo(path)
 
         _s = file_info.suffix().lower()
-        if _s not in (u'ma', u'mb', u'abc'):
+        if _s not in ('ma', 'mb', 'abc'):
             return
 
-        maya_pixmap = self.get_icon(u'maya', color=None)
-        maya_reference_pixmap = self.get_icon(u'maya_reference', color=None)
+        maya_pixmap = self.get_icon('maya', color=None)
+        maya_reference_pixmap = self.get_icon('maya_reference', color=None)
 
         self.menu[contextmenu.key()] = {
-            u'text': u'Open',
-            u'icon': maya_pixmap,
-            u'action': functools.partial(
+            'text': 'Open',
+            'icon': maya_pixmap,
+            'action': functools.partial(
                 maya_actions.open_scene,
                 file_info.filePath())
         }
         self.menu[contextmenu.key()] = {
-            u'text': u'Import',
-            u'icon': maya_pixmap,
-            u'action': functools.partial(
+            'text': 'Import',
+            'icon': maya_pixmap,
+            'action': functools.partial(
                 maya_actions.import_scene,
                 file_info.filePath(),
                 reference=False
             )
         }
         self.menu[contextmenu.key()] = {
-            u'text': u'Reference',
-            u'icon': maya_reference_pixmap,
-            u'action': functools.partial(
+            'text': 'Reference',
+            'icon': maya_reference_pixmap,
+            'action': functools.partial(
                 maya_actions.import_scene,
                 file_info.filePath(),
                 reference=True
@@ -287,7 +287,7 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
             },
         }
 
-        icon = self.get_icon(u'set', color=None)
+        icon = self.get_icon('set', color=None)
         sets = maya_base.outliner_sets()
         keys = sorted(set(sets))
 
@@ -295,18 +295,18 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         kk = contextmenu.key()
         self.menu[kk] = collections.OrderedDict()
         self.menu[kk + ':icon'] = icon
-        self.menu[kk + ':text'] = u'Export'
+        self.menu[kk + ':text'] = 'Export'
 
         for e in formats:
             k = contextmenu.key()
             self.menu[kk][k] = collections.OrderedDict()
-            self.menu[kk][k + ':text'] = u'*.{}: Export Timeline'.format(e.upper())
+            self.menu[kk][k + ':text'] = '*.{}: Export Timeline'.format(e.upper())
             for _k in keys:
-                s = _k.replace(u':', u' - ')
+                s = _k.replace(':', ' - ')
                 self.menu[kk][k][contextmenu.key()] = {
-                    u'text': u'{} ({} items)'.format(s, len(sets[_k])),
-                    u'icon': icon,
-                    u'action': functools.partial(
+                    'text': '{} ({} items)'.format(s, len(sets[_k])),
+                    'icon': icon,
+                    'action': functools.partial(
                         formats[e]['action'],
                         _k,
                         sets[_k],
@@ -317,13 +317,13 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
             k = contextmenu.key()
             self.menu[kk][k] = collections.OrderedDict()
             self.menu[kk][k + ':icon'] = icon
-            self.menu[kk][k + ':text'] = u'*.{}: Export Current Frame'.format(e.upper())
+            self.menu[kk][k + ':text'] = '*.{}: Export Current Frame'.format(e.upper())
             for _k in keys:
-                s = _k.replace(u':', u' - ')
+                s = _k.replace(':', ' - ')
                 self.menu[kk][k][contextmenu.key()] = {
-                    u'text': u'{} ({} items)'.format(s, len(sets[_k])),
-                    u'icon': icon,
-                    u'action': functools.partial(
+                    'text': '{} ({} items)'.format(s, len(sets[_k])),
+                    'icon': icon,
+                    'action': functools.partial(
                         formats[e]['action'],
                         _k,
                         sets[_k],
@@ -332,9 +332,9 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
                 }
 
     def capture_menu(self):
-        k = u'Capture Viewport'
+        k = 'Capture Viewport'
         self.menu[k] = collections.OrderedDict()
-        self.menu[u'{}:icon'.format(k)] = self.get_icon('capture_thumbnail')
+        self.menu['{}:icon'.format(k)] = self.get_icon('capture_thumbnail')
 
         width = cmds.getAttr("defaultResolution.width")
         height = cmds.getAttr("defaultResolution.height")
@@ -342,19 +342,19 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         def size(n): return (int(int(width) * n), int(int(height) * n))
 
         for n in (1.0, 0.5, 0.25, 1.5, 2.0):
-            self.menu[k][u'capture{}'.format(n)] = {
-                u'text': u'Capture  |  @{}  |  {}x{}px'.format(n, *size(n)),
-                u'action': functools.partial(maya_actions.capture_viewport, size=n),
+            self.menu[k]['capture{}'.format(n)] = {
+                'text': 'Capture  |  @{}  |  {}x{}px'.format(n, *size(n)),
+                'action': functools.partial(maya_actions.capture_viewport, size=n),
                 'icon': self.get_icon('capture_thumbnail'),
             }
 
     def show_window_menu(self):
         if not hasattr(self.parent(), 'clicked'):
             return
-        self.menu[u'show'] = {
-            u'icon': self.get_icon(u'icon_bw', color=None),
-            u'text': u'Toggle {}'.format(common.PRODUCT),
-            u'action': self.parent().clicked.emit
+        self.menu['show'] = {
+            'icon': self.get_icon('icon_bw', color=None),
+            'text': 'Toggle {}'.format(common.PRODUCT),
+            'action': self.parent().clicked.emit
         }
         return
 
@@ -401,7 +401,10 @@ class PanelPicker(QtWidgets.QDialog):
         effect = QtWidgets.QGraphicsOpacityEffect(self)
         self.setGraphicsEffect(effect)
 
-        self.fade_in = QtCore.QPropertyAnimation(effect, 'opacity')
+        self.fade_in = QtCore.QPropertyAnimation(
+            effect,
+            QtCore.QByteArray('opacity'.encode('utf-8'))
+        )
         self.fade_in.setStartValue(0.0)
         self.fade_in.setEndValue(0.5)
         self.fade_in.setDuration(500)
@@ -437,7 +440,7 @@ class PanelPicker(QtWidgets.QDialog):
             ptr = OpenMayaUI.MQtUtil.findControl(panel)
             if not ptr:
                 continue
-            widget = shiboken2.wrapInstance(long(ptr), QtWidgets.QWidget)
+            widget = shiboken2.wrapInstance(int(ptr), QtWidgets.QWidget)
             if not widget:
                 continue
             if not widget.isVisible():
@@ -523,7 +526,7 @@ class PanelPicker(QtWidgets.QDialog):
         if not isinstance(event, QtGui.QMouseEvent):
             return
 
-        for panel, widget in self.panels.iteritems():
+        for panel, widget in self.panels.items():
             mouse_pos = widget.mapFromGlobal(common.cursor.pos())
             if widget.rect().contains(mouse_pos):
                 self.panel = panel
@@ -551,10 +554,10 @@ class ToolButton(ui.ClickableIconButton):
 
     def __init__(self, size, parent=None):
         super(ToolButton, self).__init__(
-            u'icon_maya',
+            'icon_maya',
             (None, None),
             size,
-            description=u'Click to toggle {}.'.format(
+            description='Click to toggle {}.'.format(
                 common.PRODUCT),
             parent=parent
         )
@@ -565,7 +568,7 @@ class ToolButton(ui.ClickableIconButton):
         self.setFocusPolicy(QtCore.Qt.NoFocus)
 
         shortcut = QtWidgets.QShortcut(
-            QtGui.QKeySequence(u'Ctrl+Alt+Shift+B'), self)
+            QtGui.QKeySequence('Ctrl+Alt+Shift+B'), self)
         shortcut.setAutoRepeat(False)
         shortcut.setContext(QtCore.Qt.ApplicationShortcut)
         shortcut.activated.connect(show)
@@ -588,11 +591,11 @@ class ToolButton(ui.ClickableIconButton):
 
         if hover:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                u'icon', None, self.width())
+                'icon', None, self.width())
             painter.setOpacity(1.0)
         else:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                u'icon_bw', None, self.width())
+                'icon_bw', None, self.width())
             painter.setOpacity(0.80)
 
         rect = self.rect()
@@ -689,9 +692,9 @@ class PluginWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
             cmds.workspace(q=True, expandName=True))
 
         ui.MessageBox(
-            u'Workspace changed\n The new workspace is {}'.format(
+            'Workspace changed\n The new workspace is {}'.format(
                 workspace_info.path()),
-            u'If you didn\'t expect this message, it is possible your current project was changed by Bookmarks, perhaps in another instance of Maya.'
+            'If you didn\'t expect this message, it is possible your current project was changed by Bookmarks, perhaps in another instance of Maya.'
         ).open()
 
     def _add_shortcuts(self):
@@ -796,11 +799,11 @@ class PluginWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
     @common.debug
     def show(self, *args, **kwargs):
         kwargs = {
-            u'dockable': True,
-            u'allowedArea': None,
-            u'retain': True,
-            u'width': common.WIDTH() * 0.5,
-            u'height': common.HEIGHT() * 0.5
+            'dockable': True,
+            'allowedArea': None,
+            'retain': True,
+            'width': common.WIDTH() * 0.5,
+            'height': common.HEIGHT() * 0.5
         }
 
         try:

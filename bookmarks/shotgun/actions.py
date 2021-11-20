@@ -7,7 +7,7 @@ import os
 from PySide2 import QtCore, QtWidgets, QtGui
 
 from .. import settings
-from .. import bookmark_db
+from .. import database
 from .. import common
 from . import shotgun
 
@@ -80,7 +80,7 @@ def upload_thumbnail(sg_properties, thumbnail_path):
         )
 
     from .. import ui
-    ui.OkBox(u'Shotgun thumbnail updated.').open()
+    ui.OkBox('Shotgun thumbnail updated.').open()
 
 
 @common.debug
@@ -97,16 +97,16 @@ def test_shotgun_connection(sg_properties):
     with shotgun.connection(sg_properties) as sg:
         if not sg.find('Project', []):
             raise ValueError(
-                u'Could not find any projects. Are you sure the script has all the needed permissions to run?')
+                'Could not find any projects. Are you sure the script has all the needed permissions to run?')
 
-        info = u''
-        for k, v in sg.info().iteritems():
-            info += u'{}: {}'.format(k, v)
-            info += u'\n'
+        info = ''
+        for k, v in sg.info().items():
+            info += '{}: {}'.format(k, v)
+            info += '\n'
 
     from .. import ui
     ui.MessageBox(
-        u'Successfully connected to Shotgun.',
+        'Successfully connected to Shotgun.',
         info
     ).open()
     return True
@@ -160,7 +160,7 @@ def create_entity(entity_type, entity_name, request_data=None, create_data=None,
 
             # Check for duplicates
             if has('name') or has('code') or has('contents'):
-                raise ValueError(u'{} exists already.'.format(entity_name))
+                raise ValueError('{} exists already.'.format(entity_name))
 
         # We're in the clear, let's create the entity
         entity = sg.create(
@@ -206,7 +206,7 @@ def create_project(server, job, root, entity_name):
 
             # Check for duplicates
             if has('name'):
-                raise ValueError(u'{} exists already.'.format(entity_name))
+                raise ValueError('{} exists already.'.format(entity_name))
 
         # We're in the clear, let's create the entity
         entity = sg.create(
@@ -234,12 +234,12 @@ def save_entity_data_to_db(server, job, root, source, table, entity, value_map):
 
     s = source
     t = table
-    db = bookmark_db.get_db(server, job, root)
+    db = database.get_db(server, job, root)
     with db.connection():
 
         # Let's iterate over the value map dictionary to extract data from the
         # entity and save it into our bookmark database
-        for k, v in value_map.iteritems():
+        for k, v in value_map.items():
             # Just in case the value map describes a column the entity is
             # missing, let's skip it alltogether
             if v['column'] not in entity:
@@ -367,14 +367,14 @@ def create_published_file(
             'link_type': 'local',
             # OS native path separators
             'local_path': os.path.normpath(os.path.abspath(file_path)),
-            'local_path_linux': shotgun.sanitize_path(file_path, u'/'),
-            'local_path_mac': shotgun.sanitize_path(file_path, u'/'),
-            'local_path_windows': shotgun.sanitize_path(file_path, u'\\'),
+            'local_path_linux': shotgun.sanitize_path(file_path, '/'),
+            'local_path_mac': shotgun.sanitize_path(file_path, '/'),
+            'local_path_windows': shotgun.sanitize_path(file_path, '\\'),
             'local_storage': local_storage_entity,
             'name': file_name,
             'url': QtCore.QUrl.fromLocalFile(file_path).toString(options=QtCore.QUrl.FullyEncoded)
         },
-        'path_cache': file_path.replace(settings.active(settings.ServerKey), u'').strip(u'/'),
+        'path_cache': file_path.replace(settings.active(settings.ServerKey), '').strip('/'),
     }
 
     entity = sg.create(
@@ -409,8 +409,8 @@ def verify_published_file_version(
 
     from .. import ui
     mbox = ui.MessageBox(
-        u'This version is already published.',
-        u'Looks like version {} has already been published. Are you sure you want to publish it again?'.format(
+        'This version is already published.',
+        'Looks like version {} has already been published. Are you sure you want to publish it again?'.format(
             version),
         buttons=[ui.CancelButton, ui.YesButton]
     )

@@ -27,7 +27,7 @@ class AddServerEditor(QtWidgets.QDialog):
         self.pick_button = None
         self.editor = None
 
-        self.setWindowTitle(u'Add New Server')
+        self.setWindowTitle('Add New Server')
 
         self._create_ui()
         self._connect_signals()
@@ -43,13 +43,13 @@ class AddServerEditor(QtWidgets.QDialog):
         self.layout().setSpacing(o)
         self.layout().setContentsMargins(o, o, o, o)
 
-        self.ok_button = ui.PaintedButton(u'Done', parent=self)
+        self.ok_button = ui.PaintedButton('Done', parent=self)
         self.ok_button.setFixedHeight(common.ROW_HEIGHT())
-        self.pick_button = ui.PaintedButton(u'Pick', parent=self)
+        self.pick_button = ui.PaintedButton('Pick', parent=self)
 
         self.editor = ui.LineEdit(parent=self)
         self.editor.setPlaceholderText(
-            u'Enter the path to a server, eg. \'//my_server/jobs\'')
+            'Enter the path to a server, eg. \'//my_server/jobs\'')
         self.setFocusProxy(self.editor)
         self.editor.setFocusPolicy(QtCore.Qt.StrongFocus)
 
@@ -116,7 +116,7 @@ class AddServerEditor(QtWidgets.QDialog):
 
     def text(self):
         v = self.editor.text()
-        return settings.strip(v) if v else u''
+        return settings.strip(v) if v else ''
 
     def showEvent(self, event):
         self.editor.setFocus()
@@ -143,27 +143,27 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
         self.refresh_menu()
 
     def add_menu(self):
-        self.menu[u'Add server...'] = {
-            u'action': self.parent().add,
-            u'icon': self.get_icon(u'add', color=common.GREEN)
+        self.menu['Add server...'] = {
+            'action': self.parent().add,
+            'icon': self.get_icon('add', color=common.GREEN)
         }
 
     def reveal_menu(self):
-        self.menu[u'Reveal...'] = {
-            u'action': lambda: actions.reveal(self.index.text() + '/.'),
-            u'icon': self.get_icon(u'folder'),
+        self.menu['Reveal...'] = {
+            'action': lambda: actions.reveal(self.index.text() + '/.'),
+            'icon': self.get_icon('folder'),
         }
 
     def remove_menu(self):
-        self.menu[u'Remove'] = {
-            u'action': self.parent().remove,
-            u'icon': self.get_icon(u'close', color=common.RED)
+        self.menu['Remove'] = {
+            'action': self.parent().remove,
+            'icon': self.get_icon('close', color=common.RED)
         }
 
     def refresh_menu(self):
-        self.menu[u'Refresh'] = {
-            u'action': (self.parent().init_data, self.parent().restore_current),
-            u'icon': self.get_icon(u'refresh')
+        self.menu['Refresh'] = {
+            'action': (self.parent().init_data, self.parent().restore_current),
+            'icon': self.get_icon('refresh')
         }
 
 
@@ -172,17 +172,17 @@ class ServerListWidget(ui.ListWidget):
     settings.
 
     """
-    serverChanged = QtCore.Signal(unicode)
+    serverChanged = QtCore.Signal(str)
 
     def __init__(self, parent=None):
         super(ServerListWidget, self).__init__(
-            default_message=u'No servers found.',
+            default_message='No servers found.',
             parent=parent
         )
 
         self.setItemDelegate(ui.ListWidgetDelegate(parent=self))
-        self.setWindowTitle(u'Server Editor')
-        self.setObjectName(u'ServerEditor')
+        self.setWindowTitle('Server Editor')
+        self.setObjectName('ServerEditor')
 
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
@@ -287,7 +287,7 @@ class ServerListWidget(ui.ListWidget):
             self.serverChanged.emit(None)
             return
 
-        for n in xrange(self.count()):
+        for n in range(self.count()):
             if not current == self.item(n).text():
                 continue
             index = self.indexFromItem(self.item(n))
@@ -341,11 +341,11 @@ class ServerListWidget(ui.ListWidget):
         self.blockSignals(True)
 
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'server', common.TEXT, common.ROW_HEIGHT() * 0.8)
+            'server', common.TEXT, common.ROW_HEIGHT() * 0.8)
         pixmap_selected = images.ImageCache.get_rsc_pixmap(
-            u'server', common.SELECTED_TEXT, common.ROW_HEIGHT() * 0.8)
+            'server', common.SELECTED_TEXT, common.ROW_HEIGHT() * 0.8)
         pixmap_disabled = images.ImageCache.get_rsc_pixmap(
-            u'close', common.RED, common.ROW_HEIGHT() * 0.8)
+            'close', common.RED, common.ROW_HEIGHT() * 0.8)
         icon = QtGui.QIcon()
 
         file_info = QtCore.QFileInfo(item.text())

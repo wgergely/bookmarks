@@ -45,10 +45,10 @@ class ScreenCapture(QtWidgets.QDialog):
     """Screen capture widget.
 
     Signals:
-        captureFinished (unicode): Emited with a filepath to the captured image.
+        captureFinished (str): Emited with a filepath to the captured image.
 
     """
-    captureFinished = QtCore.Signal(unicode)
+    captureFinished = QtCore.Signal(str)
 
     def __init__(self, server, job, root, source, proxy, parent=None):
         super(ScreenCapture, self).__init__(parent=parent)
@@ -64,7 +64,10 @@ class ScreenCapture(QtWidgets.QDialog):
         effect = QtWidgets.QGraphicsOpacityEffect(self)
         self.setGraphicsEffect(effect)
 
-        self.fade_in = QtCore.QPropertyAnimation(effect, 'opacity')
+        self.fade_in = QtCore.QPropertyAnimation(
+            effect,
+            QtCore.QByteArray('opacity'.encode('utf-8'))
+        )
         self.fade_in.setStartValue(0.0)
         self.fade_in.setEndValue(0.5)
         self.fade_in.setDuration(500)
@@ -109,7 +112,7 @@ class ScreenCapture(QtWidgets.QDialog):
 
         screen = app.screenAt(self._capture_rect.topLeft())
         if not screen:
-            raise RuntimeError(u'Unable to find screen.')
+            raise RuntimeError('Unable to find screen.')
 
         geo = screen.geometry()
         pixmap = screen.grabWindow(
@@ -120,20 +123,20 @@ class ScreenCapture(QtWidgets.QDialog):
             self._capture_rect.height()
         )
         if pixmap.isNull():
-            raise RuntimeError(u'Unknown error occured capturing the pixmap.')
+            raise RuntimeError('Unknown error occured capturing the pixmap.')
 
-        temp_image_path = u'{}/{}.{}'.format(
+        temp_image_path = '{}/{}.{}'.format(
             common.temp_path(),
-            uuid.uuid1().get_hex(),
+            uuid.uuid1().hex,
             images.THUMBNAIL_FORMAT
         )
         f = QtCore.QFileInfo(temp_image_path)
         if not f.dir().exists():
-            if not f.dir().mkpath(u'.'):
-                raise RuntimeError(u'Could not create temp folder.')
+            if not f.dir().mkpath('.'):
+                raise RuntimeError('Could not create temp folder.')
 
         if not pixmap.save(temp_image_path, format='png', quality=100):
-            raise RuntimeError(u'Could not save the capture.')
+            raise RuntimeError('Could not save the capture.')
 
         self.captureFinished.emit(temp_image_path)
 

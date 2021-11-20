@@ -47,12 +47,12 @@ QPushButton:pressed {{
 }}"""
 
 
-OkButton = u'Ok'
-YesButton = u'Yes'
-SaveButton = u'Save'
+OkButton = 'Ok'
+YesButton = 'Yes'
+SaveButton = 'Save'
 
-CancelButton = u'Cancel'
-NoButton = u'No'
+CancelButton = 'Cancel'
+NoButton = 'No'
 
 buttons = (
     OkButton,
@@ -198,7 +198,7 @@ class Label(QtWidgets.QLabel):
         self._set_stylesheet(False)
 
 
-def add_description(text, label=u' ', color=common.SECONDARY_TEXT, padding=common.MARGIN(), parent=None):
+def add_description(text, label=' ', color=common.SECONDARY_TEXT, padding=common.MARGIN(), parent=None):
     """Utility method for adding a description field.
 
     Returns:
@@ -304,7 +304,7 @@ class PaintedLabel(QtWidgets.QLabel):
     def update_size(self):
         font, metrics = common.font_db.primary_font(font_size=self._size)
         self.setFixedHeight(metrics.height())
-        self.setFixedWidth(metrics.width(self._text) +
+        self.setFixedWidth(metrics.horizontalAdvance(self._text) +
                            common.INDICATOR_WIDTH() * 2)
 
     def paintEvent(self, event):
@@ -347,16 +347,16 @@ class ClickableIconButton(QtWidgets.QLabel):
     """A utility class for creating a square icon button.
 
     Args:
-        pixmap (unicode): The name of the resource file without the extension.
+        pixmap (str): The name of the resource file without the extension.
         colors (tuple(QColor, QColor)): A tuple of QColors, for enabled and disabled states.
         size (int): The value for width and height.
-        description (unicode): A user readable description of the action the button performs.
+        description (str): A user readable description of the action the button performs.
         parent (QObject): The widget's parent.
 
     Signals:
         clicked (QtCore.Signal()):
         doubleClicked (QtCore.Signal()):
-        message (QtCore.Signal(unicode)):
+        message (QtCore.Signal(str)):
 
     Returns:
         type: Description of returned object.
@@ -365,7 +365,7 @@ class ClickableIconButton(QtWidgets.QLabel):
     clicked = QtCore.Signal()
     doubleClicked = QtCore.Signal()
 
-    def __init__(self, pixmap, colors, size, description=u'', state=False, parent=None):
+    def __init__(self, pixmap, colors, size, description='', state=False, parent=None):
         super(ClickableIconButton, self).__init__(parent=parent)
 
         self._pixmap = pixmap
@@ -451,9 +451,9 @@ class MessageBox(QtWidgets.QDialog):
     """
     primary_color = QtGui.QColor(50, 50, 190, 180)
     secondary_color = common.BLUE.lighter(120)
-    icon = u'icon_bw'
+    icon = 'icon_bw'
 
-    buttonClicked = QtCore.Signal(unicode)
+    buttonClicked = QtCore.Signal(str)
 
     def __init__(self, *args, **kwargs):
 
@@ -502,13 +502,19 @@ class MessageBox(QtWidgets.QDialog):
         self.setGraphicsEffect(effect)
 
         self._opacity = 1.0
-        self.fade_in = QtCore.QPropertyAnimation(effect, 'opacity')
+        self.fade_in = QtCore.QPropertyAnimation(
+            effect,
+            QtCore.QByteArray('opacity'.encode('utf-8'))
+        )
         self.fade_in.setStartValue(0.0)
         self.fade_in.setEndValue(1.0)
         self.fade_in.setDuration(200)
         self.fade_in.setEasingCurve(QtCore.QEasingCurve.InOutQuad)
 
-        self.fade_out = QtCore.QPropertyAnimation(effect, 'opacity')
+        self.fade_out = QtCore.QPropertyAnimation(
+            effect,
+            QtCore.QByteArray('opacity'.encode('utf-8'))
+        )
         self.fade_out.setStartValue(1.0)
         self.fade_out.setEndValue(0.0)
         self.fade_out.setDuration(200)
@@ -547,7 +553,7 @@ class MessageBox(QtWidgets.QDialog):
         )
         label.setMinimumWidth(common.WIDTH() * 0.66)
         label.setMaximumWidth(common.WIDTH())
-        label.setStyleSheet(u'font-size: {}px;'.format(size))
+        label.setStyleSheet('font-size: {}px;'.format(size))
         return label
 
     def _get_row(self, vertical=False, parent=None):
@@ -638,12 +644,12 @@ class MessageBox(QtWidgets.QDialog):
         self.buttonClicked.connect(self.set_clicked_button)
 
     def set_labels(self, args):
-        if len(args) >= 1 and isinstance(args[0], unicode):
+        if len(args) >= 1 and isinstance(args[0], str):
             self.primary_label = self._get_label(
                 parent=self, size=common.LARGE_FONT_SIZE() - 2)
             self.primary_label.setText(args[0])
         else:
-            raise ValueError(u'Primary Label must be {}'.format(unicode))
+            raise ValueError('Primary Label must be {}'.format(str))
         if len(args) >= 2:
             self.secondary_label = self._get_label(parent=self)
             self.secondary_label.setText(args[1])
@@ -751,7 +757,7 @@ class ErrorBox(MessageBox):
     """
     primary_color = QtGui.QColor(190, 50, 50, 180)
     secondary_color = common.RED
-    icon = u'close'
+    icon = 'close'
 
 
 class OkBox(MessageBox):
@@ -760,7 +766,7 @@ class OkBox(MessageBox):
     """
     primary_color = QtGui.QColor(80, 150, 100, 180)
     secondary_color = QtGui.QColor(110, 190, 160, 255)  # 90, 200, 155)
-    icon = u'check'
+    icon = 'check'
 
 
 
@@ -771,7 +777,7 @@ class ListOverlayWidget(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
         super(ListOverlayWidget, self).__init__(parent=parent)
-        self._message = u''
+        self._message = ''
 
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
@@ -781,7 +787,7 @@ class ListOverlayWidget(QtWidgets.QWidget):
             QtWidgets.QSizePolicy.MinimumExpanding,
         )
 
-    @QtCore.Slot(unicode)
+    @QtCore.Slot(str)
     def set_message(self, message):
         if message == self._message:
             return
@@ -880,11 +886,11 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
 
         if checkable and checked:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                u'check', common.GREEN, rect.height())
+                'check', common.GREEN, rect.height())
             painter.drawPixmap(rect, pixmap)
         elif checkable and not checked:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                u'close', common.RED, rect.height())
+                'close', common.RED, rect.height())
             painter.drawPixmap(rect, pixmap)
         elif not checkable and decoration and isinstance(decoration, QtGui.QPixmap):
             painter.drawPixmap(rect, decoration)
@@ -932,10 +938,10 @@ class ListWidget(QtWidgets.QListWidget):
     """A custom list widget used to display selectable item.
 
     """
-    progressUpdate = QtCore.Signal(unicode)
+    progressUpdate = QtCore.Signal(str)
     resized = QtCore.Signal(QtCore.QSize)
 
-    def __init__(self, default_message=u'No items', parent=None):
+    def __init__(self, default_message='No items', parent=None):
         super(ListWidget, self).__init__(parent=parent)
         if not self.parent():
             common.set_custom_stylesheet(self)
@@ -985,7 +991,7 @@ class ListWidget(QtWidgets.QListWidget):
 
         _, metrics = common.font_db.primary_font(
             font_size=common.SMALL_FONT_SIZE())
-        width = metrics.width(label) + common.ROW_HEIGHT() + common.MARGIN()
+        width = metrics.horizontalAdvance(label) + common.ROW_HEIGHT() + common.MARGIN()
         item = QtWidgets.QListWidgetItem(label)
 
         size = QtCore.QSize(width, common.ROW_HEIGHT())

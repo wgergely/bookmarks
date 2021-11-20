@@ -11,8 +11,8 @@ from . import shotgun
 from . import actions as sg_actions
 
 
-NOT_SELECTED = u'Not selected...'
-NOT_CONFIGURED = u'Not configured'
+NOT_SELECTED = 'Not selected...'
+NOT_CONFIGURED = 'Not configured'
 
 
 class DropWidget(QtWidgets.QWidget):
@@ -20,7 +20,7 @@ class DropWidget(QtWidgets.QWidget):
 
     """
     clicked = QtCore.Signal()
-    fileSelected = QtCore.Signal(unicode)
+    fileSelected = QtCore.Signal(str)
 
     def __init__(self, parent=None):
         super(DropWidget, self).__init__(parent=parent)
@@ -117,7 +117,7 @@ class DropWidget(QtWidgets.QWidget):
 
         v = QtCore.QFileInfo(self._placeholder_text).fileName()
         if self._drag_in_progress:
-            v = u'Drop here to add file'
+            v = 'Drop here to add file'
 
         painter.setOpacity(1.0 if hover else 0.8)
 
@@ -312,7 +312,7 @@ class StatusEditor(shotgun.EntityComboBox):
             settings.active(settings.JobKey),
             settings.active(settings.RootKey),
             None,
-            u'Status',
+            'Status',
             [],
             [],
         )
@@ -322,7 +322,7 @@ class StatusEditor(shotgun.EntityComboBox):
         the entity list.
 
         """
-        for idx in xrange(self.count()):
+        for idx in range(self.count()):
             entity = self.itemData(idx, role=shotgun.EntityRole)
             if not entity:
                 continue
@@ -338,7 +338,7 @@ class TaskEditor(shotgun.EntityComboBox):
 
     def __init__(self, parent=None):
         super(TaskEditor, self).__init__(
-            [NOT_SELECTED, u'Open Task Browser...', ], parent=parent)
+            [NOT_SELECTED, 'Open Task Browser...', ], parent=parent)
         self.init_data()
 
         self.model().sourceModel().entityDataReceived.connect(self.restore_selection)
@@ -409,7 +409,7 @@ class TaskEditor(shotgun.EntityComboBox):
             self.setCurrentIndex(0)
             return
 
-        for idx in xrange(self.count()):
+        for idx in range(self.count()):
             entity = self.itemData(idx, role=shotgun.EntityRole)
             if not entity:
                 continue
@@ -427,7 +427,7 @@ class TaskEditor(shotgun.EntityComboBox):
         if not entity:
             return
 
-        for idx in xrange(self.count()):
+        for idx in range(self.count()):
             _entity = self.itemData(idx, role=shotgun.EntityRole)
             if not _entity:
                 continue
@@ -483,7 +483,7 @@ class LocalStorageEditor(shotgun.EntityComboBox):
         file_info = QtCore.QFileInfo(server)
         apath = file_info.absoluteFilePath()
 
-        for idx in xrange(self.count()):
+        for idx in range(self.count()):
             entity = self.itemData(idx, role=shotgun.EntityRole)
             if not entity:
                 continue
@@ -580,7 +580,7 @@ class PublishedFileTypeEditor(shotgun.EntityComboBox):
             self.setCurrentIndex(0)
             return
 
-        for idx in xrange(self.count()):
+        for idx in range(self.count()):
             entity = self.itemData(idx, role=shotgun.EntityRole)
             if not entity:
                 continue
@@ -598,7 +598,7 @@ class PublishedFileTypeEditor(shotgun.EntityComboBox):
         if not entity:
             return
 
-        for idx in xrange(self.count()):
+        for idx in range(self.count()):
             _entity = self.itemData(idx, role=shotgun.EntityRole)
             if not _entity:
                 continue
@@ -626,7 +626,7 @@ class PickFile(QtWidgets.QFileDialog):
         )
         self.setLabelText(
             QtWidgets.QFileDialog.Accept,
-            u'Pick a file to publish'
+            'Pick a file to publish'
         )
 
         args = (
@@ -645,7 +645,7 @@ class PickFile(QtWidgets.QFileDialog):
             )
         if not all(args):
             return
-        path = u'/'.join(args)
+        path = '/'.join(args)
         self.setDirectory(path)
 
     def _connect_signals(self):

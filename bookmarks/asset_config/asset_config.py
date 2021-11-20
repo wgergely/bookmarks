@@ -25,16 +25,16 @@ Example:
         config.set_data(
             {
                 'custom_data': {
-                    'value': u'hello_world',
-                    'description': u'A test description to say hi.'
+                    'value': 'hello_world',
+                    'description': 'A test description to say hi.'
                 }
             }
         )
         data = config.data()
-        config.get_description(u'geo')
-        config.dump_json(u'C:/temp/data.json')
+        config.get_description('geo')
+        config.dump_json('C:/temp/data.json')
 
-        s = asset_info.expand_tokens(u'{asset_root}/{scene}/{prefix}_{asset}_{task}_{user}_{version}.{ext}', ext='exr')
+        s = asset_info.expand_tokens('{asset_root}/{scene}/{prefix}_{asset}_{task}_{user}_{version}.{ext}', ext='exr')
 
 """
 import re
@@ -48,16 +48,17 @@ from PySide2 import QtCore
 
 import OpenImageIO
 
+from .. import common
 from .. import log
-from .. import bookmark_db
+from .. import database
 from .. import images
 
 
-ASSET_CONFIG_KEY = u'asset_config'
+ASSET_CONFIG_KEY = 'asset_config'
 
-FileFormatConfig = u'FileFormatConfig'
-FileNameConfig = u'FileNameConfig'
-AssetFolderConfig = u'AssetFolderConfig'
+FileFormatConfig = 'FileFormatConfig'
+FileNameConfig = 'FileNameConfig'
+AssetFolderConfig = 'AssetFolderConfig'
 
 NoFormat = 0
 SceneFormat = 0b100000
@@ -68,21 +69,21 @@ AllFormat = SceneFormat | ImageFormat | CacheFormat | MiscFormat
 
 __INSTANCES = {}
 
-INVALID_TOKEN = u'{invalid_token}'
+INVALID_TOKEN = '{invalid_token}'
 
-SceneDir = u'scene'
-ExportDir = u'export'
-DataDir = u'data'
-ReferenceDir = u'reference'
-RenderDir = u'render'
+SceneDir = 'scene'
+ExportDir = 'export'
+DataDir = 'data'
+ReferenceDir = 'reference'
+RenderDir = 'render'
 
 
 def _sort(s):
-    return u', '.join(sorted(re.findall(r"[\w']+", s)))
+    return ', '.join(sorted(re.findall(r"[\w']+", s)))
 
 
 def _get_key(*args):
-    return u'/'.join(args)
+    return '/'.join(args)
 
 
 def get(server, job, root, force=False):
@@ -98,10 +99,7 @@ def get(server, job, root, force=False):
 
     """
     for arg in (server, job, root):
-        if isinstance(arg, unicode):
-            continue
-        raise TypeError(
-            u'Invalid type, expected {}, got {}'.format(unicode, type(arg)))
+        common.check_type(arg, str)
 
     key = _get_key(server, job, root)
     global __INSTANCES
@@ -127,59 +125,59 @@ def get(server, job, root, force=False):
 DEFAULT_ASSET_CONFIG = {
     FileFormatConfig: {
         0: {
-            'name': u'Scene Formats',
+            'name': 'Scene Formats',
             'flag': SceneFormat,
-            'value': _sort(u'aep, ai, eps, fla, ppj, prproj, psb, psd, psq, xfl, c4d, hud, hip, hiplc, hipnc, ma, mb, nk, nk~,spm, mocha, rv'),
+            'value': _sort('aep, ai, eps, fla, ppj, prproj, psb, psd, psq, xfl, c4d, hud, hip, hiplc, hipnc, ma, mb, nk, nk~,spm, mocha, rv'),
             'description': 'Scene file formats'
         },
         1: {
-            'name': u'Image Formats',
+            'name': 'Image Formats',
             'flag': ImageFormat,
-            'value': _sort(OpenImageIO.get_string_attribute(u'extension_list')),
+            'value': _sort(OpenImageIO.get_string_attribute('extension_list')),
             'description': 'Image formats understood by OpenImageIO'
         },
         2: {
-            'name': u'Cache Formats',
+            'name': 'Cache Formats',
             'flag': CacheFormat,
-            'value': _sort(u'abc, ass, bgeo, fbx, geo, ifd, obj, rs, sc, sim, vdb, usd, usda, usdc, usdz'),
+            'value': _sort('abc, ass, bgeo, fbx, geo, ifd, obj, rs, sc, sim, vdb, usd, usda, usdc, usdz'),
             'description': 'CG cache formats'
         },
         3: {
             'name': 'Miscellaneous Formats',
             'flag': MiscFormat,
-            'value': _sort(u'txt, pdf, zip, rar, exe, app, m4v, m4a, mov, mp4'),
+            'value': _sort('txt, pdf, zip, rar, exe, app, m4v, m4a, mov, mp4'),
             'description': 'Miscellaneous file formats'
         },
     },
     FileNameConfig: {
         0: {
-            'name': u'Default',
-            'value': u'{prefix}_{asset}_{mode}_{element}_{user}_{version}.{ext}',
+            'name': 'Default',
+            'value': '{prefix}_{asset}_{mode}_{element}_{user}_{version}.{ext}',
             'description': 'File name with prefix, asset, mode, user name and version number.'
         },
         1: {
-            'name': u'Versioned Element with User Name',
-            'value': u'{element}_{user}_{version}.{ext}',
+            'name': 'Versioned Element with User Name',
+            'value': '{element}_{user}_{version}.{ext}',
             'description': 'File name with element name, user name and version number.'
         },
         2: {
-            'name': u'Versioned Element',
-            'value': u'{element}_{version}.{ext}',
+            'name': 'Versioned Element',
+            'value': '{element}_{version}.{ext}',
             'description': 'File name with element name and version number.'
         },
         4: {
-            'name': u'Element Only',
-            'value': u'{element}.{ext}',
+            'name': 'Element Only',
+            'value': '{element}.{ext}',
             'description': 'File name with the element name.'
         },
         5: {
-            'name': u'Custom 1',
-            'value': u'MyCustomFile.ma',
+            'name': 'Custom 1',
+            'value': 'MyCustomFile.ma',
             'description': 'A custom file name'
         },
         6: {
-            'name': u'Custom 2',
-            'value': u'MyCustomFile.ma',
+            'name': 'Custom 2',
+            'value': 'MyCustomFile.ma',
             'description': 'A custom file name'
         }
     },
@@ -187,137 +185,137 @@ DEFAULT_ASSET_CONFIG = {
         0: {
             'name': ExportDir,
             'value': ExportDir,
-            'description': u'Alembic, FBX, OBJ and other CG caches',
+            'description': 'Alembic, FBX, OBJ and other CG caches',
             'filter': SceneFormat | ImageFormat | CacheFormat,
             'subfolders': {
                 0: {
-                    'name': u'abc',
+                    'name': 'abc',
                     'value': 'abc',
-                    'description': u'Folder used to store Alembic caches.'
+                    'description': 'Folder used to store Alembic caches.'
                 },
                 1: {
-                    'name': u'obj',
+                    'name': 'obj',
                     'value': 'obj',
-                    'description': u'Folder used to store Waveform OBJ files.'
+                    'description': 'Folder used to store Waveform OBJ files.'
                 },
                 2: {
-                    'name': u'fbx',
+                    'name': 'fbx',
                     'value': 'fbx',
-                    'description': u'Folder used to store Autodesk FBX exports.'
+                    'description': 'Folder used to store Autodesk FBX exports.'
                 },
                 3: {
-                    'name': u'ass',
+                    'name': 'ass',
                     'value': 'ass',
-                    'description': u'Folder used to store Arnold ASS exports.'
+                    'description': 'Folder used to store Arnold ASS exports.'
                 },
                 4: {
                     'name': 'usd',
                     'value': 'usd',
-                    'description': u'Folder used to store USD files.'
+                    'description': 'Folder used to store USD files.'
                 },
                 5: {
                     'name': 'bgeo',
                     'value': 'bgeo',
-                    'description': u'Folder used to store Houdini geometry caches.'
+                    'description': 'Folder used to store Houdini geometry caches.'
                 }
             }
         },
         1: {
             'name': DataDir,
             'value': DataDir,
-            'description': u'Folder used to store temporary cache files, or other generated content.',
+            'description': 'Folder used to store temporary cache files, or other generated content.',
             'filter': SceneFormat | ImageFormat | CacheFormat | MiscFormat
         },
         2: {
             'name': ReferenceDir,
             'value': ReferenceDir,
-            'description': u'Folder used to store visual references, images and videos and sound files.',
+            'description': 'Folder used to store visual references, images and videos and sound files.',
             'filter': ImageFormat | MiscFormat
         },
         3: {
             'name': RenderDir,
             'value': RenderDir,
-            'description': u'Folder used to store 2D and 3D renders.',
+            'description': 'Folder used to store 2D and 3D renders.',
             'filter': ImageFormat,
         },
         4: {
             'name': SceneDir,
             'value': SceneDir,
-            'description': u'Folder used to store scene files.',
+            'description': 'Folder used to store scene files.',
             'filter': SceneFormat,
             'subfolders': {
                 0: {
                     'name': 'anim',
                     'value': 'anim',
-                    'description': u'Folder used to store 2D and 3D animation scene files.'
+                    'description': 'Folder used to store 2D and 3D animation scene files.'
                 },
                 1: {
                     'name': 'fx',
                     'value': 'fx',
-                    'description': u'Folder used to store FX scene files.'
+                    'description': 'Folder used to store FX scene files.'
                 },
                 2: {
                     'name': 'audio',
                     'value': 'audio',
-                    'description': u'Folder used to store sound and music project files.'
+                    'description': 'Folder used to store sound and music project files.'
                 },
                 3: {
                     'name': 'comp',
                     'value': 'comp',
-                    'description': u'Folder used to store compositing project files.'
+                    'description': 'Folder used to store compositing project files.'
                 },
                 4: {
                     'name': 'block',
                     'value': 'block',
-                    'description': u'Folder used to store layout, animatic and blocking scenes.'
+                    'description': 'Folder used to store layout, animatic and blocking scenes.'
                 },
                 5: {
                     'name': 'layout',
                     'value': 'layout',
-                    'description': u'Folder used to store layout, animatic and blocking scenes.'
+                    'description': 'Folder used to store layout, animatic and blocking scenes.'
                 },
                 6: {
                     'name': 'tracking',
                     'value': 'tracking',
-                    'description': u'Folder used to store motion tracking project files.'
+                    'description': 'Folder used to store motion tracking project files.'
                 },
                 7: {
                     'name': 'look',
                     'value': 'look',
-                    'description': u'Folder used to store lighting & visual development scene files.'
+                    'description': 'Folder used to store lighting & visual development scene files.'
                 },
                 8: {
                     'name': 'model',
                     'value': 'model',
-                    'description': u'Folder used to store modeling & sculpting scene files.'
+                    'description': 'Folder used to store modeling & sculpting scene files.'
                 },
                 9: {
                     'name': 'rig',
                     'value': 'rig',
-                    'description': u'Folder used to store rigging and other technical scene files.'
+                    'description': 'Folder used to store rigging and other technical scene files.'
                 },
                 10: {
                     'name': 'render',
                     'value': 'render',
-                    'description': u'Folder used to store render scene files.'
+                    'description': 'Folder used to store render scene files.'
                 }
             },
             5: {
                 'name': 'final',
                 'value': 'final',
-                'description': u'Folder used to store final and approved render files.',
+                'description': 'Folder used to store final and approved render files.',
                 'filter': ImageFormat
             },
             6: {
                 'name': 'image',
                 'value': 'image',
-                'description': u'Folder used to store 2D and 3D texture files.',
+                'description': 'Folder used to store 2D and 3D texture files.',
                 'filter': ImageFormat
             },
             7: {
                 'name': 'other',
                 'value': 'other',
-                'description': u'Folder used to store miscellaneous files.',
+                'description': 'Folder used to store miscellaneous files.',
                 'filter': MiscFormat
             }
         }
@@ -355,11 +353,11 @@ class AssetConfig(QtCore.QObject):
             return self._data
 
         try:
-            db = bookmark_db.get_db(self.server, self.job, self.root)
+            db = database.get_db(self.server, self.job, self.root)
             v = db.value(
                 db.source(),
                 ASSET_CONFIG_KEY,
-                table=bookmark_db.BookmarkTable
+                table=database.BookmarkTable
             )
             # Let's do some very basic sanity check for the returned data
             if (
@@ -371,7 +369,7 @@ class AssetConfig(QtCore.QObject):
                 self._data = v
             return self._data
         except:
-            log.error(u'Failed to get asset config from the database.')
+            log.error('Failed to get asset config from the database.')
             return self._data
         finally:
             self._initialised = True
@@ -384,17 +382,15 @@ class AssetConfig(QtCore.QObject):
             data (dict):    A dictionary contaning new values.
 
         """
-        if not isinstance(data, dict):
-            raise TypeError(
-                u'Invalid type, expected <type \'dict\'>, got {}'.format(type(data)))
+        common.check_type(data, dict)
 
-        db = bookmark_db.get_db(self.server, self.job, self.root)
+        db = database.get_db(self.server, self.job, self.root)
         with db.connection():
-            bookmark_db.setValue(
+            database.setValue(
                 db.source(),
                 ASSET_CONFIG_KEY,
                 data,
-                table=bookmark_db.BookmarkTable
+                table=database.BookmarkTable
             )
 
         # Refetching the data from the database
@@ -414,47 +410,46 @@ class AssetConfig(QtCore.QObject):
         try:
             json_data = json.dumps(data, sort_keys=True, indent=4)
         except:
-            log.error(u'Failed to convert data to JSON.')
+            log.error('Failed to convert data to JSON.')
             raise
 
         with open(file_info.filePath(), 'w') as f:
             f.write(json_data)
-            log.success(u'Asset folder configuration saved to {}'.format(
+            log.success('Asset folder configuration saved to {}'.format(
                 file_info.filePath()))
 
     def get_description(self, item, force=False):
         """Utility method for returning a description of an item.
 
         Args:
-            item (unicode):    A value, eg. 'anim'.
+            item (str):    A value, eg. 'anim'.
 
         """
         data = self.data(force=force)
 
-        if not isinstance(item, (str, unicode)):
-            raise TypeError('value must be str or unicode.')
+        common.check_type(item, str)
 
-        for value in data.itervalues():
-            for v in value.itervalues():
+        for value in data.values():
+            for v in value.values():
                 if item.lower() == v['value'].lower():
                     return v['description']
 
                 if 'subfolders' not in v:
                     continue
 
-                for _v in v['subfolders'].itervalues():
+                for _v in v['subfolders'].values():
                     if item.lower() == _v['value'].lower():
                         return _v['description']
-        return u''
+        return ''
 
-    def expand_tokens(self, s, user=getpass.getuser(), version=u'v001', host=socket.gethostname(), task=u'anim', ext=images.THUMBNAIL_FORMAT, prefix=None, **_kwargs):
+    def expand_tokens(self, s, user=getpass.getuser(), version='v001', host=socket.gethostname(), task='anim', ext=images.THUMBNAIL_FORMAT, prefix=None, **_kwargs):
         """Expands all valid tokens in the given string, based on the current
         asset config values.
 
         Invalid tokens will be marked as `INVALID_TOKEN`.
 
         Args:
-            s (unicode):    The string containing tokens to be expanded.
+            s (str):    The string containing tokens to be expanded.
 
         """
         kwargs = self.get_tokens(
@@ -482,31 +477,31 @@ class AssetConfig(QtCore.QObject):
         """
         data = self.data(force=force)
         tokens = {}
-        for k, v in data[AssetFolderConfig].iteritems():
+        for k, v in data[AssetFolderConfig].items():
             tokens[v['name']] = v['value']
 
         tokens['server'] = self.server
         tokens['job'] = self.job
         tokens['root'] = self.root
 
-        tokens['bookmark'] = u'{}/{}/{}'.format(
+        tokens['bookmark'] = '{}/{}/{}'.format(
             self.server,
             self.job,
             self.root
         )
 
-        for k, v in kwargs.iteritems():
+        for k, v in kwargs.items():
             tokens[k] = v
 
         def _get(k):
             if k not in kwargs or not kwargs[k]:
-                v = db.value(db.source(), k, table=bookmark_db.BookmarkTable)
+                v = db.value(db.source(), k, table=database.BookmarkTable)
                 v = v if v else INVALID_TOKEN
                 tokens[k] = v
 
         # We can also use some of the bookmark properties as tokens.
         # Let's load the values from the database:
-        db = bookmark_db.get_db(self.server, self.job, self.root)
+        db = database.get_db(self.server, self.job, self.root)
         _get('width')
         _get('height')
         _get('framerate')
@@ -517,7 +512,7 @@ class AssetConfig(QtCore.QObject):
         # The asset root token will only be available when the asset is manually
         # specified
         if 'asset' in kwargs and kwargs['asset']:
-            tokens['asset_root'] = u'{}/{}/{}/{}'.format(
+            tokens['asset_root'] = '{}/{}/{}'.format(
                 self.server,
                 self.job,
                 self.root,
@@ -537,28 +532,26 @@ class AssetConfig(QtCore.QObject):
         """
         data = self.data(force=force)
         if FileFormatConfig not in data:
-            raise KeyError(u'Key section missing from data.')
+            raise KeyError('{}/{}/{}')
 
         extensions = []
-        for v in data[FileFormatConfig].itervalues():
+        for v in data[FileFormatConfig].values():
             if not (v['flag'] & flag):
                 continue
-            value = v[u'value']
-            if not isinstance(value, (str, unicode)):
+            value = v['{}/{}/{}']
+            if not isinstance(value, str):
                 continue
-            extensions += [f.strip() for f in value.split(u',')]
+            extensions += [f.strip() for f in value.split('{}/{}/{}')]
         return tuple(sorted(list(set(extensions))))
 
     def check_task(self, task, force=False):
-        if not isinstance(task, (str, unicode)):
-            raise TypeError(
-                u'Expected {}, got {}'.format(unicode, type(task)))
+        common.check_type(task, str)
 
         data = self.data(force=force)
         if AssetFolderConfig not in data:
-            raise KeyError(u'Data is missing a required key.')
+            raise KeyError('{}/{}/{}')
 
-        for v in data[AssetFolderConfig].itervalues():
+        for v in data[AssetFolderConfig].values():
             if v['value'].lower() == task.lower():
                 return True
         return False
@@ -567,21 +560,19 @@ class AssetConfig(QtCore.QObject):
         """Returns a list of allowed extensions for the given task folder.
 
         Args:
-            task (unicode): The name of a task folder.
+            task (str): The name of a task folder.
 
         Returns:
             set: A set of file format extensions.
 
         """
-        if not isinstance(task, (str, unicode)):
-            raise TypeError(
-                u'Expected {}, got {}'.format(unicode, type(task)))
+        common.check_type(task, str)
 
         data = self.data(force=force)
         if AssetFolderConfig not in data:
-            raise KeyError(u'Data is missing a required key.')
+            raise KeyError('{}/{}/{}')
 
-        for v in data[AssetFolderConfig].itervalues():
+        for v in data[AssetFolderConfig].values():
             if v['value'].lower() != task.lower():
                 continue
             if 'filter' not in v:
@@ -598,7 +589,7 @@ class AssetConfig(QtCore.QObject):
         if not data:
             return None
 
-        for v in data[AssetFolderConfig].itervalues():
+        for v in data[AssetFolderConfig].values():
             if v['name'] == k:
                 return v['value']
         return None
@@ -608,11 +599,11 @@ class AssetConfig(QtCore.QObject):
         if not data:
             return v
 
-        for _v in data[AssetFolderConfig].itervalues():
+        for _v in data[AssetFolderConfig].values():
             if _v['name'] == ExportDir:
                 if 'subfolders' not in _v:
                     return None
-                for v_ in _v['subfolders'].itervalues():
+                for v_ in _v['subfolders'].values():
                     if v_['name'] == v:
                         return v_['value']
         return v
@@ -620,5 +611,5 @@ class AssetConfig(QtCore.QObject):
     def get_export_dir(self):
         v = self.get_asset_folder_name(ExportDir)
         if not v:
-            return u'export'
+            return '{}/{}/{}'
         return v

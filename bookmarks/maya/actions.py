@@ -9,20 +9,20 @@ import os
 import re
 
 import shiboken2
-from PySide2 import QtWidgets, QtGui, QtCore
+from PySide2 import QtWidgets, QtCore
 
 import maya.OpenMayaUI as OpenMayaUI  # pylint: disable=E0401
 import maya.cmds as cmds  # pylint: disable=E0401
 
+from . import base as mbase
 from .. import log
-from .. import rv
 from .. import common
 from .. import ui
 from .. import settings
 from .. import main
 from .. import actions
 from .. import datacache
-from . import base as mbase
+from .. external import rv
 
 from .. import __path__ as package_path
 
@@ -71,7 +71,7 @@ def apply_settings(*args, **kwargs):
     """
     props = mbase.MayaProperties()
     mbox = ui.MessageBox(
-        u'Are you sure you want to apply the following settings?',
+        'Are you sure you want to apply the following settings?',
         props.get_info(),
         buttons=[ui.YesButton, ui.CancelButton],
     )
@@ -93,20 +93,20 @@ def save_scene(increment=False, type='mayaAscii'):
     """Save the current scene using our file saver.
 
     Returns:
-        unicode: Path to the saved scene file.
+        str: Path to the saved scene file.
 
     """
     if type == 'mayaAscii':
-        ext = u'ma'
+        ext = 'ma'
     else:
-        ext = u'mb'
+        ext = 'mb'
 
     if not increment:
         _file = None
     else:
         _file = cmds.file(query=True, expandName=True) if increment else None
-        if _file and not _file.lower().endswith(u'.' + ext):
-            _file = _file + u'.' + ext
+        if _file and not _file.lower().endswith('.' + ext):
+            _file = _file + '.' + ext
 
     widget = actions.show_add_file(
         extension=ext, file=_file, create_file=False, increment=increment)
@@ -114,20 +114,20 @@ def save_scene(increment=False, type='mayaAscii'):
     if file_path == QtWidgets.QDialog.Rejected:
         return
     if not file_path:
-        raise RuntimeError(u'Invalid destination path')
+        raise RuntimeError('Invalid destination path')
 
     file_info = QtCore.QFileInfo(file_path)
 
     # Let's make sure destination folder exists
     _dir = file_info.dir()
     if not _dir.exists():
-        if not _dir.mkpath(u'.'):
-            s = u'Could not create {}'.format(_dir.path())
+        if not _dir.mkpath('.'):
+            s = 'Could not create {}'.format(_dir.path())
             raise OSError(s)
 
     # Check to make sure we're not overwriting anything
     if file_info.exists():
-        s = u'Unable to save file because {} already exists.'.format(file_path)
+        s = 'Unable to save file because {} already exists.'.format(file_path)
         raise RuntimeError(s)
 
     cmds.file(rename=file_path)
@@ -137,7 +137,7 @@ def save_scene(increment=False, type='mayaAscii'):
     return file_path
 
 
-@QtCore.Slot(unicode)
+@QtCore.Slot(str)
 @QtCore.Slot(dict)
 @QtCore.Slot(bool)
 @common.error
@@ -153,18 +153,18 @@ def export_set_to_ass(set_name, set_members, frame=True):
     """
     # Ensure the plugin is loaded
     try:
-        if not cmds.pluginInfo(u'mtoa.mll', loaded=True, q=True):
-            cmds.loadPlugin(u'mtoa.mll', quiet=True)
+        if not cmds.pluginInfo('mtoa.mll', loaded=True, q=True):
+            cmds.loadPlugin('mtoa.mll', quiet=True)
     except Exception:
         raise
 
     # We want to handle the exact name of the file
     # We'll remove the namespace, strip underscores
-    set_name = set_name.replace(u':', u'_').strip(u'_')
-    set_name = re.sub(r'[0-9]*$', u'', set_name)
+    set_name = set_name.replace(':', '_').strip('_')
+    set_name = re.sub(r'[0-9]*$', '', set_name)
     layer = cmds.editRenderLayerGlobals(
         query=True, currentRenderLayer=True)
-    ext = u'ass'
+    ext = 'ass'
 
     exportdir = mbase.DEFAULT_CACHE_DIR.format(
         exportdir=mbase.get_export_dir(),
@@ -205,8 +205,8 @@ def export_set_to_ass(set_name, set_members, frame=True):
     # Let's make sure destination folder exists
     _dir = file_info.dir()
     if not _dir.exists():
-        if not _dir.mkpath(u'.'):
-            s = u'Could not create {}'.format(_dir.path())
+        if not _dir.mkpath('.'):
+            s = 'Could not create {}'.format(_dir.path())
             raise OSError(s)
 
     sel = cmds.ls(selection=True)
@@ -217,24 +217,24 @@ def export_set_to_ass(set_name, set_members, frame=True):
         cams = cmds.ls(cameras=True)
         cam = None
         for cam in cams:
-            if cmds.getAttr(u'{}.renderable'.format(cam)):
+            if cmds.getAttr('{}.renderable'.format(cam)):
                 break
 
         cmds.select(clear=True)
         cmds.select(set_members, replace=True)
 
         ext = file_path.split('.')[-1]
-        _file_path = unicode(file_path)
+        _file_path = str(file_path)
 
-        for fr in xrange(start, end + 1):
+        for fr in range(start, end + 1):
             if not frame:
                 # Create a mock version, if does not exist
                 open(file_path, 'a').close()
                 cmds.currentTime(fr, edit=True)
-                _file_path = file_path.replace(u'.{}'.format(ext), u'')
-                _file_path += u'_'
-                _file_path += u'{}'.format(fr).zfill(mbase.DefaultPadding)
-                _file_path += u'.'
+                _file_path = file_path.replace('.{}'.format(ext), '')
+                _file_path += '_'
+                _file_path += '{}'.format(fr).zfill(mbase.DefaultPadding)
+                _file_path += '.'
                 _file_path += ext
 
             cmds.arnoldExportAss(
@@ -258,7 +258,7 @@ def export_set_to_ass(set_name, set_members, frame=True):
         cmds.select(sel, replace=True)
 
 
-@QtCore.Slot(unicode)
+@QtCore.Slot(str)
 @QtCore.Slot(dict)
 @QtCore.Slot(bool)
 @common.error
@@ -273,15 +273,15 @@ def export_set_to_abc(set_name, set_members, frame=False):
 
     """
     # Ensure theAlembic plugin is loaded
-    if not cmds.pluginInfo(u'AbcExport.mll', loaded=True, q=True):
-        cmds.loadPlugin(u'AbcExport.mll', quiet=True)
-        cmds.loadPlugin(u'AbcImport.mll', quiet=True)
+    if not cmds.pluginInfo('AbcExport.mll', loaded=True, q=True):
+        cmds.loadPlugin('AbcExport.mll', quiet=True)
+        cmds.loadPlugin('AbcImport.mll', quiet=True)
 
     # We want to handle the exact name of the file
     # We'll remove the namespace, strip underscores
-    set_name = set_name.replace(u':', u'_').strip(u'_')
-    set_name = re.sub(r'[0-9]*$', u'', set_name)
-    ext = u'abc'
+    set_name = set_name.replace(':', '_').strip('_')
+    set_name = re.sub(r'[0-9]*$', '', set_name)
+    ext = 'abc'
 
     exportdir = mbase.DEFAULT_CACHE_DIR.format(
         exportdir=mbase.get_export_dir(),
@@ -299,8 +299,8 @@ def export_set_to_abc(set_name, set_members, frame=False):
     file_info = QtCore.QFileInfo(file_path)
     _dir = file_info.dir()
     if not _dir.exists():
-        if not _dir.mkpath(u'.'):
-            s = u'Could not create {}'.format(_dir.path())
+        if not _dir.mkpath('.'):
+            s = 'Could not create {}'.format(_dir.path())
             raise OSError(s)
 
     widget = actions.show_add_file(
@@ -321,13 +321,13 @@ def export_set_to_abc(set_name, set_members, frame=False):
     # Let's make sure destination folder exists
     _dir = file_info.dir()
     if not _dir.exists():
-        if not _dir.mkpath(u'.'):
-            s = u'Could not create {}'.format(_dir.path())
+        if not _dir.mkpath('.'):
+            s = 'Could not create {}'.format(_dir.path())
             raise OSError(s)
 
     # Check to make sure we're not overwriting anything...
     if file_info.exists():
-        s = u'Unable to save alembic: {} already exists.'.format(file_path)
+        s = 'Unable to save alembic: {} already exists.'.format(file_path)
         raise RuntimeError(s)
 
     if frame:
@@ -357,7 +357,7 @@ def export_set_to_abc(set_name, set_members, frame=False):
             cmds.ogs(pause=True)
 
 
-@QtCore.Slot(unicode)
+@QtCore.Slot(str)
 @QtCore.Slot(dict)
 @QtCore.Slot(bool)
 @common.error
@@ -373,17 +373,17 @@ def export_set_to_obj(set_name, set_members, frame=False):
     """
     # Ensure the plugin is loaded
     try:
-        if not cmds.pluginInfo(u'objExport.mll', loaded=True, q=True):
-            cmds.loadPlugin(u'objExport.mll', quiet=True)
+        if not cmds.pluginInfo('objExport.mll', loaded=True, q=True):
+            cmds.loadPlugin('objExport.mll', quiet=True)
     except:
-        s = u'Could not load the `objExport` plugin'
+        s = 'Could not load the `objExport` plugin'
         raise RuntimeError(s)
 
     # We want to handle the exact name of the file
     # We'll remove the namespace, strip underscores
-    set_name = set_name.replace(u':', u'_').strip(u'_')
-    set_name = re.sub(r'[0-9]*$', u'', set_name)
-    ext = u'obj'
+    set_name = set_name.replace(':', '_').strip('_')
+    set_name = re.sub(r'[0-9]*$', '', set_name)
+    ext = 'obj'
 
     exportdir = mbase.DEFAULT_CACHE_DIR.format(
         exportdir=mbase.get_export_dir(),
@@ -409,8 +409,8 @@ def export_set_to_obj(set_name, set_members, frame=False):
     file_info = QtCore.QFileInfo(file_path)
     _dir = file_info.dir()
     if not _dir.exists():
-        if not _dir.mkpath(u'.'):
-            s = u'Could not create {}'.format(_dir.path())
+        if not _dir.mkpath('.'):
+            s = 'Could not create {}'.format(_dir.path())
             raise OSError(s)
 
     widget = actions.show_add_file(
@@ -426,33 +426,33 @@ def export_set_to_obj(set_name, set_members, frame=False):
     # Let's make sure destination folder exists
     _dir = file_info.dir()
     if not _dir.exists():
-        if not _dir.mkpath(u'.'):
-            s = u'Could not create {}'.format(_dir.path())
+        if not _dir.mkpath('.'):
+            s = 'Could not create {}'.format(_dir.path())
             raise OSError(s)
 
     # Last-ditch check to make sure we're not overwriting anything...
     if file_info.exists():
-        s = u'Unable to save set: {} already exists.'.format(file_path)
+        s = 'Unable to save set: {} already exists.'.format(file_path)
         raise RuntimeError(s)
 
     sel = cmds.ls(selection=True)
     file_path = file_info.filePath()
     ext = file_path.split('.')[-1]
-    _file_path = unicode(file_path)
+    _file_path = str(file_path)
 
     try:
         cmds.select(clear=True)
         cmds.select(set_members, replace=True)
 
-        for fr in xrange(start, end + 1):
+        for fr in range(start, end + 1):
             if not frame:
                 # Create a mock version, if does not exist
                 open(file_path, 'a').close()
                 cmds.currentTime(fr, edit=True)
-                _file_path = file_path.replace(u'.{}'.format(ext), u'')
-                _file_path += u'_'
-                _file_path += u'{}'.format(fr).zfill(mbase.DefaultPadding)
-                _file_path += u'.'
+                _file_path = file_path.replace('.{}'.format(ext), '')
+                _file_path += '_'
+                _file_path += '{}'.format(fr).zfill(mbase.DefaultPadding)
+                _file_path += '.'
                 _file_path += ext
 
             cmds.file(
@@ -482,7 +482,7 @@ def execute(index):
     file_info = QtCore.QFileInfo(file_path)
 
     # Open alembic, and maya files:
-    if file_info.suffix().lower() in (u'ma', u'mb', u'abc'):
+    if file_info.suffix().lower() in ('ma', 'mb', 'abc'):
         open_scene(file_info.filePath())
         return
 
@@ -513,15 +513,15 @@ def save_warning(*args):
         cmds.workspace(q=True, expandName=True))
     scene_file = QtCore.QFileInfo(cmds.file(query=True, expandName=True))
 
-    if scene_file.baseName().lower() == u'untitled':
+    if scene_file.baseName().lower() == 'untitled':
         return
 
     if workspace_info.path().lower() not in scene_file.filePath().lower():
         ui.MessageBox(
-            u'Looks like you are saving "{}" outside the current project\nThe current project is "{}"'.format(
+            'Looks like you are saving "{}" outside the current project\nThe current project is "{}"'.format(
                 scene_file.fileName(),
                 workspace_info.path()),
-            u'If you didn\'t expect this message, is it possible the project was changed by {} from another instance of Maya?'.format(
+            'If you didn\'t expect this message, is it possible the project was changed by {} from another instance of Maya?'.format(
                 common.PRODUCT)
         ).open()
 
@@ -589,7 +589,7 @@ def open_scene(path):
     """Opens the given path using ``cmds.file``.
 
     Returns:
-        unicode: The name of the input scene if the load was successfull.
+        str: The name of the input scene if the load was successfull.
 
     Raises:
         RuntimeError: When and invalid scene file is passed.
@@ -599,8 +599,8 @@ def open_scene(path):
     file_info = QtCore.QFileInfo(p)
 
     _s = file_info.suffix().lower()
-    if _s not in (u'ma', u'mb', u'abc'):
-        s = u'{} is not a valid scene.'.format(p)
+    if _s not in ('ma', 'mb', 'abc'):
+        s = '{} is not a valid scene.'.format(p)
         raise RuntimeError(s)
 
     if _s == 'abc':
@@ -610,13 +610,13 @@ def open_scene(path):
             cmds.loadPlugin("AbcExport.mll", quiet=True)
 
     if not file_info.exists():
-        s = u'{} does not exist.'.format(p)
+        s = '{} does not exist.'.format(p)
         raise RuntimeError(s)
 
     if mbase.is_scene_modified() == QtWidgets.QMessageBox.Cancel:
         return
     cmds.file(file_info.filePath(), open=True, force=True)
-    s = u'Scene opened {}\n'.format(file_info.filePath())
+    s = 'Scene opened {}\n'.format(file_info.filePath())
     log.success(s)
     return file_info.filePath()
 
@@ -627,15 +627,15 @@ def import_scene(path, reference=False):
     """Imports a Maya or alembic file to the current Maya scene.
 
     Args:
-        path (unicode): Path to a Maya scene file.
+        path (str): Path to a Maya scene file.
         reference (bool): When `true` the import will be a reference.
 
     """
     p = common.get_sequence_endpath(path)
     file_info = QtCore.QFileInfo(p)
     _s = file_info.suffix().lower()
-    if _s not in (u'ma', u'mb', u'abc'):
-        s = u'{} is not a valid scene.'.format(p)
+    if _s not in ('ma', 'mb', 'abc'):
+        s = '{} is not a valid scene.'.format(p)
         raise RuntimeError(s)
 
     # Load the alembic plugin
@@ -646,35 +646,35 @@ def import_scene(path, reference=False):
             cmds.loadPlugin("AbcExport.mll", quiet=True)
 
     if not file_info.exists():
-        s = u'{} does not exist.'.format(p)
+        s = '{} does not exist.'.format(p)
         raise RuntimeError(s)
 
     if cmds.file(q=True, sn=True).lower() == file_info.filePath().lower() and reference:
-        raise RuntimeError(u'Can\'t reference itself.')
+        raise RuntimeError('Can\'t reference itself.')
 
     match = common.get_sequence(file_info.fileName())
     basename = match.group(1) if match else file_info.baseName()
-    basename = re.sub(r'_v$', u'', basename, flags=re.IGNORECASE)
+    basename = re.sub(r'_v$', '', basename, flags=re.IGNORECASE)
 
     alphabet = mbase._get_available_suffixes(basename)
     if not alphabet:  # no more suffixes to assign
         return None
 
     w = QtWidgets.QInputDialog()
-    w.setWindowTitle(u'Assign suffix')
+    w.setWindowTitle('Assign suffix')
     w.setLabelText(mbase.SUFFIX_LABEL)
     w.setComboBoxItems(alphabet)
-    w.setCancelButtonText(u'Cancel')
-    w.setOkButtonText(u'Import')
+    w.setCancelButtonText('Cancel')
+    w.setOkButtonText('Import')
     res = w.exec_()
     if not res:
         return None
     suffix = w.textValue()
 
-    id = u'{}'.format(uuid.uuid1()).replace(u'-', u'_')
+    id = '{}'.format(uuid.uuid1()).replace('-', '_')
     # This should always be a unique name in the maya scene
-    ns = u'{}_{}'.format(basename, suffix)
-    rfn = u'{}_RN_{}'.format(ns, id)
+    ns = '{}_{}'.format(basename, suffix)
+    rfn = '{}_RN_{}'.format(ns, id)
 
     if reference:
         cmds.file(
@@ -687,7 +687,7 @@ def import_scene(path, reference=False):
 
         # The reference node is locked by default
         cmds.lockNode(rfn, lock=False)
-        rfn = cmds.rename(rfn, u'{}_RN'.format(ns))
+        rfn = cmds.rename(rfn, '{}_RN'.format(ns))
         cmds.lockNode(rfn, lock=True)
     else:
         cmds.file(
@@ -697,7 +697,7 @@ def import_scene(path, reference=False):
         )
         mbase._add_suffix_attribute(ns, suffix, reference=reference)
 
-    s = u'{} was imported.'.format(file_info.filePath())
+    s = '{} was imported.'.format(file_info.filePath())
     log.success(s)
     return file_info.filePath()
 
@@ -710,46 +710,44 @@ def export_alembic(destination_path, outliner_set, startframe, endframe, step=1.
     the scene to avoid parenting issues.
 
     Args:
-        destination_path (unicode): Path to the output file.
+        destination_path (str): Path to the output file.
         outliner_set (tuple): A list of transforms contained in a geometry set.
 
     """
     # ======================================================
     # ERROR CHECKING
     # Check destination before proceeding
-    if not isinstance(outliner_set, (tuple, list)):
-        raise TypeError(
-            u'Expected <type \'list\'>, got {}'.format(type(outliner_set)))
+    common.check_type(outliner_set, (tuple, list))
 
     destination_info = QtCore.QFileInfo(destination_path)
     destination_dir = destination_info.dir()
     _destination_dir_info = QtCore.QFileInfo(destination_dir.path())
 
     if not _destination_dir_info.exists():
-        s = u'Unable to save the alembic file, {} does not exists.'.format(
+        s = 'Unable to save the alembic file, {} does not exists.'.format(
             _destination_dir_info.filePath())
         ui.ErrorBox(
-            u'Alembic export failed.',
+            'Alembic export failed.',
             s
         ).open()
         log.error('Unable to save the alembic file, {} does not exists.')
         raise OSError(s)
 
     if not _destination_dir_info.isReadable():
-        s = u'Unable to save the alembic file, {} is not readable.'.format(
+        s = 'Unable to save the alembic file, {} is not readable.'.format(
             _destination_dir_info.filePath())
         ui.ErrorBox(
-            u'Alembic export failed.',
+            'Alembic export failed.',
             s
         ).open()
         log.error('Unable to save the alembic file, {} does not exists.')
         raise OSError(s)
 
     if not _destination_dir_info.isWritable():
-        s = u'Unable to save the alembic file, {} is not writable.'.format(
+        s = 'Unable to save the alembic file, {} is not writable.'.format(
             _destination_dir_info.filePath())
         ui.ErrorBox(
-            u'Alembic export failed.',
+            'Alembic export failed.',
             s
         ).open()
         log.error('Unable to save the alembic file, {} does not exists.')
@@ -761,15 +759,15 @@ def export_alembic(destination_path, outliner_set, startframe, endframe, step=1.
 
     # If the extension is missing, we'll add it here
     if not destination_path.lower().endswith('.abc'):
-        destination_path = destination_path + u'.abc'
+        destination_path = destination_path + '.abc'
 
     def is_intermediate(s): return cmds.getAttr(
-        u'{}.intermediateObject'.format(s))
+        '{}.intermediateObject'.format(s))
 
     # We'll need to use the DecomposeMatrix Nodes, let's check if the plugin
     # is loaded and ready to use
-    if not cmds.pluginInfo(u'matrixNodes.mll', loaded=True, q=True):
-        cmds.loadPlugin(u'matrixNodes.mll', quiet=True)
+    if not cmds.pluginInfo('matrixNodes.mll', loaded=True, q=True):
+        cmds.loadPlugin('matrixNodes.mll', quiet=True)
 
     world_shapes = []
     valid_shapes = []
@@ -781,35 +779,35 @@ def export_alembic(destination_path, outliner_set, startframe, endframe, step=1.
             if is_intermediate(shape):
                 continue
 
-            basename = shape.split(u'|').pop()
+            basename = shape.split('|').pop()
             try:
                 # AbcExport will fail if a transform or a shape node's name is not unique
                 # This was suggested on a forum - listing the relatives for a
                 # an object without a unique name should raise a ValueError
                 cmds.listRelatives(basename)
             except ValueError as err:
-                s = u'"{shape}" does not have a unique name. This is not usually allowed for alembic exports and might cause the export to fail.\nError: {err}'.format(
+                s = '"{shape}" does not have a unique name. This is not usually allowed for alembic exports and might cause the export to fail.\nError: {err}'.format(
                     shape=shape, err=err)
                 log.error(s)
 
             # Camera's don't have mesh nodes but we still want to export them!
-            if cmds.nodeType(shape) != u'camera':
-                if not cmds.attributeQuery(u'outMesh', node=shape, exists=True):
+            if cmds.nodeType(shape) != 'camera':
+                if not cmds.attributeQuery('outMesh', node=shape, exists=True):
                     continue
             valid_shapes.append(shape)
 
     if not valid_shapes:
         raise RuntimeError(
-            u'# No valid shapes found in "{}" to export! Aborting...'.format(outliner_set))
+            '# No valid shapes found in "{}" to export! Aborting...'.format(outliner_set))
 
     cmds.select(clear=True)
 
     # Creating a temporary namespace to avoid name-clashes later when we duplicate
     # the meshes. We will delete this namespace, and it's contents after the export
-    if cmds.namespace(exists=u'mayaExport'):
-        cmds.namespace(removeNamespace=u'mayaExport',
+    if cmds.namespace(exists='mayaExport'):
+        cmds.namespace(removeNamespace='mayaExport',
                        deleteNamespaceContent=True)
-    ns = cmds.namespace(add=u'mayaExport')
+    ns = cmds.namespace(add='mayaExport')
 
     world_transforms = []
 
@@ -818,35 +816,35 @@ def export_alembic(destination_path, outliner_set, startframe, endframe, step=1.
         # UV attributes from our source.
         # We will also apply the source mesh's transform matrix to the newly created mesh
         for shape in valid_shapes:
-            basename = shape.split(u'|').pop()
-            if cmds.nodeType(shape) != u'camera':
+            basename = shape.split('|').pop()
+            if cmds.nodeType(shape) != 'camera':
                 # Create new empty shape node
                 world_shape = cmds.createNode(
-                    u'mesh', name=u'{}:{}'.format(ns, basename))
+                    'mesh', name='{}:{}'.format(ns, basename))
 
                 # outMesh -> inMesh
-                cmds.connectAttr(u'{}.outMesh'.format(
-                    shape), u'{}.inMesh'.format(world_shape), force=True)
+                cmds.connectAttr('{}.outMesh'.format(
+                    shape), '{}.inMesh'.format(world_shape), force=True)
                 # uvSet -> uvSet
-                cmds.connectAttr(u'{}.uvSet'.format(shape),
-                                 u'{}.uvSet'.format(world_shape), force=True)
+                cmds.connectAttr('{}.uvSet'.format(shape),
+                                 '{}.uvSet'.format(world_shape), force=True)
 
                 # worldMatrix -> transform
                 decompose_matrix = cmds.createNode(
-                    u'decomposeMatrix', name=u'{}:decomposeMatrix#'.format(ns))
+                    'decomposeMatrix', name='{}:decomposeMatrix#'.format(ns))
                 cmds.connectAttr(
-                    u'{}.worldMatrix[0]'.format(shape), u'{}.inputMatrix'.format(decompose_matrix), force=True)
+                    '{}.worldMatrix[0]'.format(shape), '{}.inputMatrix'.format(decompose_matrix), force=True)
                 #
                 transform = cmds.listRelatives(
                     world_shape, fullPath=True, type='transform', parent=True)[0]
                 world_transforms.append(transform)
                 #
                 cmds.connectAttr(
-                    u'{}.outputTranslate'.format(decompose_matrix), u'{}.translate'.format(transform), force=True)
+                    '{}.outputTranslate'.format(decompose_matrix), '{}.translate'.format(transform), force=True)
                 cmds.connectAttr(
-                    u'{}.outputRotate'.format(decompose_matrix), u'{}.rotate'.format(transform), force=True)
+                    '{}.outputRotate'.format(decompose_matrix), '{}.rotate'.format(transform), force=True)
                 cmds.connectAttr(
-                    u'{}.outputScale'.format(decompose_matrix), u'{}.scale'.format(transform), force=True)
+                    '{}.outputScale'.format(decompose_matrix), '{}.scale'.format(transform), force=True)
             else:
                 world_shape = shape
                 world_transforms.append(cmds.listRelatives(
@@ -854,36 +852,36 @@ def export_alembic(destination_path, outliner_set, startframe, endframe, step=1.
             world_shapes.append(world_shape)
 
         # Our custom progress callback
-        perframecallback = u'"import {}.maya.widget as w;w.report_export_progress({}, #FRAME#, {}, {})"'.format(
+        perframecallback = '"import {}.maya.widget as w;w.report_export_progress({}, #FRAME#, {}, {})"'.format(
             common.PRODUCT.lower(), startframe, endframe, time.time())
 
         # Let's build the export command
-        jobArg = u'{f} {fr} {s} {uv} {ws} {wv} {wuvs} {sn} {rt} {df} {pfc} {ro}'.format(
-            f=u'-file "{}"'.format(destination_path),
-            fr=u'-framerange {} {}'.format(startframe, endframe),
-            s=u'-step {}'.format(step),
-            uv=u'-uvWrite',
-            ws=u'-worldSpace',
-            wv=u'-writeVisibility',
+        jobArg = '{f} {fr} {s} {uv} {ws} {wv} {wuvs} {sn} {rt} {df} {pfc} {ro}'.format(
+            f='-file "{}"'.format(destination_path),
+            fr='-framerange {} {}'.format(startframe, endframe),
+            s='-step {}'.format(step),
+            uv='-uvWrite',
+            ws='-worldSpace',
+            wv='-writeVisibility',
             # eu='-eulerFilter',
-            wuvs=u'-writeuvsets',
-            sn=u'-stripNamespaces',
-            rt=u'-root {}'.format(u' -root '.join(world_transforms)),
-            df=u'-dataFormat {}'.format(u'ogawa'),
-            pfc=u'-pythonperframecallback {}'.format(perframecallback),
+            wuvs='-writeuvsets',
+            sn='-stripNamespaces',
+            rt='-root {}'.format(' -root '.join(world_transforms)),
+            df='-dataFormat {}'.format('ogawa'),
+            pfc='-pythonperframecallback {}'.format(perframecallback),
             ro='-renderableOnly'
         )
-        s = u'# jobArg: `{}`'.format(jobArg)
+        s = '# jobArg: `{}`'.format(jobArg)
 
         cmds.AbcExport(jobArg=jobArg)
         log.success(s)
 
     except Exception as err:
         ui.ErrorBox(
-            u'An error occured exporting Alembic cache',
-            u'{}'.format(err)
+            'An error occured exporting Alembic cache',
+            '{}'.format(err)
         ).open()
-        log.error(u'Could not open the plugin window.')
+        log.error('Could not open the plugin window.')
         raise
 
     finally:
@@ -893,7 +891,7 @@ def export_alembic(destination_path, outliner_set, startframe, endframe, step=1.
 
         def teardown():
             cmds.namespace(
-                removeNamespace=u'mayaExport', deleteNamespaceContent=True)
+                removeNamespace='mayaExport', deleteNamespaceContent=True)
         cmds.evalDeferred(teardown)
 
 
@@ -913,7 +911,7 @@ def capture_viewport(size=1.0):
 
 
     """
-    ext = u'png'
+    ext = 'png'
     scene_info = QtCore.QFileInfo(cmds.file(q=True, expandName=True))
 
     # CAPTURE_DESTINATION
@@ -921,7 +919,7 @@ def capture_viewport(size=1.0):
 
     _dir = QtCore.QFileInfo(base_destination_path).dir()
     if not _dir.exists():
-        _dir.mkpath(u'.')
+        _dir.mkpath('.')
 
     # Use our custom ModelPanel picker to select the viewport we want to
     # capture
@@ -936,8 +934,8 @@ def capture_viewport(size=1.0):
         return
 
     # Make sure we have selected a valid panel as not all panels are modelEditors
-    if panel is None or cmds.objectTypeUI(panel) != u'modelEditor':
-        s = u'Activate a viewport before starting a capture.'
+    if panel is None or cmds.objectTypeUI(panel) != 'modelEditor':
+        s = 'Activate a viewport before starting a capture.'
         raise RuntimeError(s)
 
     camera = cmds.modelPanel(panel, query=True, camera=True)
@@ -951,7 +949,7 @@ def capture_viewport(size=1.0):
 
     # Hide existing panels
     current_state = {}
-    for panel in cmds.getPanel(type=u'modelPanel'):
+    for panel in cmds.getPanel(type='modelPanel'):
         if not cmds.modelPanel(panel, exists=True):
             continue
 
@@ -959,7 +957,7 @@ def capture_viewport(size=1.0):
             ptr = OpenMayaUI.MQtUtil.findControl(panel)
             if not ptr:
                 continue
-            panel_widget = shiboken2.wrapInstance(long(ptr), QtWidgets.QWidget)
+            panel_widget = shiboken2.wrapInstance(int(ptr), QtWidgets.QWidget)
             current_state[panel] = panel_widget.isVisible()
             if panel_widget:
                 panel_widget.hide()
@@ -978,20 +976,20 @@ def capture_viewport(size=1.0):
             camera_options=mbase.CameraOptions,
             viewport2_options=options['viewport2_options'],
             viewport_options=options['viewport_options'],
-            format=u'image',
+            format='image',
             compression=ext,
             filename=base_destination_path,
             overwrite=True,
             viewer=False
         )
-        log.success(u'Capture saved to {}'.format(_dir.path()))
+        log.success('Capture saved to {}'.format(_dir.path()))
     except:
         raise
     finally:
         cmds.ogs(reset=True)
 
         # Show hidden panels
-        for panel in cmds.getPanel(type=u'modelPanel'):
+        for panel in cmds.getPanel(type='modelPanel'):
             if not cmds.modelPanel(panel, exists=True):
                 continue
             try:
@@ -999,14 +997,14 @@ def capture_viewport(size=1.0):
                 if not ptr:
                     continue
                 panel_widget = shiboken2.wrapInstance(
-                    long(ptr), QtWidgets.QWidget)
+                    int(ptr), QtWidgets.QWidget)
                 if panel_widget:
                     if panel in current_state:
                         panel_widget.setVisible(current_state[panel])
                     else:
                         panel_widget.setVisible(True)
             except:
-                print '# Could not restore {} after capture'.format(panel)
+                print(f'# Could not restore {panel} after capture')
 
 
     # Publish output
@@ -1017,7 +1015,7 @@ def capture_viewport(size=1.0):
         workspace=workspace,
         capture_folder=capture_folder,
         scene=scene_info.baseName(),
-        frame=u'{}'.format(int(cmds.playbackOptions(q=True, minTime=True))).zfill(mbase.DefaultPadding),
+        frame='{}'.format(int(cmds.playbackOptions(q=True, minTime=True))).zfill(mbase.DefaultPadding),
         ext=ext
     )
     push_capture(path)
@@ -1072,7 +1070,7 @@ def publish_capture(workspace, capture_folder, scene_info, ext):
     if v == QtCore.Qt.Checked:
         return
 
-    asset = workspace.split(u'/').pop()
+    asset = workspace.split('/').pop()
     start = int(cmds.playbackOptions(q=True, minTime=True))
     end = int(cmds.playbackOptions(q=True, maxTime=True))
     duration = (end - start) + 1
@@ -1089,7 +1087,7 @@ def publish_capture(workspace, capture_folder, scene_info, ext):
             raise OSError(s)
 
     if not QtCore.QFileInfo(publish_folder).isWritable():
-        s = u'{} is not writable.'.format(publish_folder)
+        s = '{} is not writable.'.format(publish_folder)
         raise OSError(s)
 
     import _scandir
@@ -1097,7 +1095,7 @@ def publish_capture(workspace, capture_folder, scene_info, ext):
         os.remove(entry.path)
 
     idx = 0
-    for n in xrange(int(duration)):
+    for n in range(int(duration)):
         frame = str(n + int(start)).zfill(mbase.DefaultPadding)
         source = mbase.CAPTURE_FILE.format(
             workspace=workspace,
@@ -1124,7 +1122,7 @@ def publish_capture(workspace, capture_folder, scene_info, ext):
 def remove_button():
     from . import widget as maya_widget
 
-    ptr = OpenMayaUI.MQtUtil.findControl(u'ToolBox')
+    ptr = OpenMayaUI.MQtUtil.findControl('ToolBox')
     if not ptr:
         widgets = QtWidgets.QApplication.instance().allWidgets()
         widget = [f for f in widgets if f.objectName() ==
@@ -1134,7 +1132,7 @@ def remove_button():
         widget = widget[0]
 
     else:
-        widget = shiboken2.wrapInstance(long(ptr), QtWidgets.QWidget)
+        widget = shiboken2.wrapInstance(int(ptr), QtWidgets.QWidget)
         if not widget:
             return
 
@@ -1153,13 +1151,13 @@ def remove_workspace_control(workspace_control):
             cmds.workspaceControlState(workspace_control, remove=True)
     try:
         for k in maya_widget.mayaMixin.mixinWorkspaceControls.items():
-            if u'PluginWidget' in k:
+            if 'PluginWidget' in k:
                 del maya_widget.mayaMixin.mixinWorkspaceControls[k]
     except:
-        print 'Could not remove workspace controls'
+        print('Couldn\'t remove workspace controls')
 
     sys.stdout.write(
-        u'# {}: UI deleted.\n'.format(common.PRODUCT))
+        '# {}: UI deleted.\n'.format(common.PRODUCT))
 
 
 def quit():
@@ -1174,5 +1172,5 @@ def quit():
     # maya_widget._instance.hide()
 
     for widget in QtWidgets.QApplication.instance().allWidgets():
-        if re.match(u'PluginWidget.*WorkspaceControl', widget.objectName()):
+        if re.match('PluginWidget.*WorkspaceControl', widget.objectName()):
             remove_workspace_control(widget.objectName())

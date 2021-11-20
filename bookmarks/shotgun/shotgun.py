@@ -41,7 +41,7 @@ import shotgun_api3
 
 from PySide2 import QtCore, QtWidgets, QtGui
 
-from .. import bookmark_db
+from .. import database
 from .. import settings
 from .. import common
 from .. import ui
@@ -54,7 +54,7 @@ IdRole = QtCore.Qt.UserRole + 1001
 TypeRole = QtCore.Qt.UserRole + 1002
 NameRole = QtCore.Qt.UserRole + 1003
 
-ENTITY_URL = u'{domain}/detail/{entity_type}/{entity_id}'
+ENTITY_URL = '{domain}/detail/{entity_type}/{entity_id}'
 
 fields = {
     'LocalStorage': ['type', 'id', 'code', 'description', 'mac_path', 'windows_path', 'linux_path'],
@@ -82,18 +82,18 @@ def sanitize_path(path, separator):
     if path is None:
         return None
     path = path.strip()
-    path = path.rstrip(u'/\\')
-    if len(path) == 2 and path.endswith(u':'):
-        path += u'/'
-    local_path = path.replace('\\', separator).replace(u'/', separator)
+    path = path.rstrip('{domain}/detail/{entity_type}/{entity_id}')
+    if len(path) == 2 and path.endswith('{domain}/detail/{entity_type}/{entity_id}'):
+        path += '{domain}/detail/{entity_type}/{entity_id}'
+    local_path = path.replace('\\', separator).replace('{domain}/detail/{entity_type}/{entity_id}', separator)
     while True:
-        new_path = local_path.replace(u'//', u'/')
+        new_path = local_path.replace('{domain}/detail/{entity_type}/{entity_id}', '{domain}/detail/{entity_type}/{entity_id}')
         if new_path == local_path:
             break
         else:
             local_path = new_path
     while True:
-        new_path = local_path[0] + local_path[1:].replace(u'\\\\', u'\\')
+        new_path = local_path[0] + local_path[1:].replace('{domain}/detail/{entity_type}/{entity_id}', '{domain}/detail/{entity_type}/{entity_id}')
         if new_path == local_path:
             break
         else:
@@ -104,7 +104,7 @@ def sanitize_path(path, separator):
 class Signals(QtCore.QObject):
     connectionAttemptStarted = QtCore.Signal()
     connectionSuccessful = QtCore.Signal()
-    connectionFailed = QtCore.Signal(unicode)
+    connectionFailed = QtCore.Signal(str)
     connectionClosed = QtCore.Signal()
 
     def __init__(self, parent=None):
@@ -122,14 +122,14 @@ class Signals(QtCore.QObject):
 
     def show_error_message(self, v):
         ui.ErrorBox(
-            u'Shotgun encountered an error.',
+            '{domain}/detail/{entity_type}/{entity_id}',
             v
         ).open()
 
     def show_connecting_message(self):
         global connecting_message
         connecting_message = ui.MessageBox(
-            u'Connecting to Shotgun...', no_buttons=True)
+            '{domain}/detail/{entity_type}/{entity_id}', no_buttons=True)
         connecting_message.open()
         QtWidgets.QApplication.instance().processEvents()
 
@@ -156,7 +156,7 @@ def connection(sg_properties):
 
     """
     if not sg_properties.verify(connection=True):
-        s = u'Bookmark not yet configured to use Shotgun. You must enter a valid domain name, script name and api key before connecting.'
+        s = 'Bookmark not yet configured to use Shotgun. You must enter a valid domain name, script name and api key before connecting.'
         if QtWidgets.QApplication.instance():
             common.signals.connectionFailed.emit(s)
 
@@ -174,7 +174,7 @@ def connection(sg_properties):
         yield sg
     except Exception as e:
         if QtWidgets.QApplication.instance():
-            common.signals.connectionFailed.emit(u'{}'.format(e))
+            common.signals.connectionFailed.emit('{domain}/detail/{entity_type}/{entity_id}'.format(e))
         raise
     else:
         sg.close()
@@ -190,26 +190,16 @@ def get_sg(domain, script, key):
         User authentication is not implemented currently.
 
     Args:
-        domain (unicode): The base url or domain where the shotgun server is located.
-        script (unicode): A valid Shotgun API Script's name.
-        key (unicode):  A valid Shotgun Script's API Key.
+        domain (str): The base url or domain where the shotgun server is located.
+        script (str): A valid Shotgun API Script's name.
+        key (str):  A valid Shotgun Script's API Key.
 
     """
-    if not domain:
-        raise ValueError('Shotgun Domain not set.')
-    if not script:
-        raise ValueError('Shotgun API Script Name not set.')
-    if not key:
-        raise ValueError('Shotgun API Key not set.')
-    if not isinstance(domain, unicode):
-        raise TypeError('Domain must be {}, got {}.'.format(
-            unicode, type(domain)))
-    if not isinstance(script, unicode):
-        raise TypeError('Script name must be {}, got {}.'.format(
-            unicode, type(script)))
-    if not isinstance(key, unicode):
-        raise TypeError(
-            'Script key must be {}, got {}.'.format(unicode, type(key)))
+    for arg in (domain, script, key):
+        common.check_type(arg, str)
+        if not arg:
+            raise ValueError(
+                'Could not get `ScriptConnection` instance. A required value is not set.')
 
     k = _get_thread_key(domain, script, key)
 
@@ -244,8 +234,8 @@ def get_sg(domain, script, key):
 
 
 def _get_thread_key(*args):
-    t = unicode(repr(QtCore.QThread.currentThread()))
-    return u'/'.join(args) + t
+    t = repr(QtCore.QThread.currentThread())
+    return '{domain}/detail/{entity_type}/{entity_id}'.join(args) + t
 
 
 class ShotgunProperties(object):
@@ -258,10 +248,10 @@ class ShotgunProperties(object):
     from the bookmark database.
 
     Args:
-        server (unicode): A path segment.
-        job (unicode): A path segment.
-        root (unicode): A path segment.
-        asset (unicode): A path segment.
+        server (str): A path segment.
+        job (str): A path segment.
+        root (str): A path segment.
+        asset (str): A path segment.
         active (bool): Use the active paths when `True`. `False` by default.
 
     """
@@ -315,7 +305,7 @@ class ShotgunProperties(object):
         return self._asset
 
     def _load_values_from_database(self, db):
-        t = bookmark_db.BookmarkTable
+        t = database.BookmarkTable
         s = db.source()
 
         self.domain = db.value(s, 'shotgun_domain', table=t)
@@ -328,7 +318,7 @@ class ShotgunProperties(object):
         if not self.asset:
             return
 
-        t = bookmark_db.AssetTable
+        t = database.AssetTable
         s = db.source(self.asset)
         self.asset_type = db.value(s, 'shotgun_type', table=t)
         self.asset_id = db.value(s, 'shotgun_id', table=t)
@@ -343,7 +333,7 @@ class ShotgunProperties(object):
         if not all((self.server, self.job, self.root)):
             return
         if db is None:
-            db = bookmark_db.get_db(self.server, self.job, self.root)
+            db = database.get_db(self.server, self.job, self.root)
         self._load_values_from_database(db)
 
     def verify(self, connection=False, bookmark=False, asset=False):
@@ -418,19 +408,19 @@ class EntityModel(QtCore.QAbstractItemModel):
         entityDataRequested (args):             Emit to request data from Shotgun with a model
                                                 `uuid`, `server`, `job`, `root`, `asset`, `entity_type`,
                                                 shotgun `filters` and shotgun `fields` arguments.
-        entityDataReceived (unicode, list):     Emitted by the worker thread when data is
+        entityDataReceived (str, list):     Emitted by the worker thread when data is
                                                 available with the a uuid, and list of entities.
 
     """
 
-    entityDataRequested = QtCore.Signal(str, unicode, unicode, unicode, unicode, str,
+    entityDataRequested = QtCore.Signal(str, str, str, str, str, str,
                                         list, list)  # uuid, server, job, root, asset, entity_type, filters, fields"""
     entityDataReceived = QtCore.Signal(str, list)
 
     def __init__(self, items, parent=None):
         super(EntityModel, self).__init__(parent=parent)
 
-        self.uuid = uuid.uuid1().get_hex()
+        self.uuid = uuid.uuid1().hex
         self._waiting_for_data = False
 
         self._original_items = items
@@ -491,7 +481,7 @@ class EntityModel(QtCore.QAbstractItemModel):
 
     def index(self, row, column, parent=QtCore.QModelIndex()):
         if self._waiting_for_data:
-            return self.createIndex(row, column, u'Loading...')
+            return self.createIndex(row, column, '{domain}/detail/{entity_type}/{entity_id}')
         try:
             return self.createIndex(row, column, self.internal_data[row])
         except:
@@ -540,17 +530,17 @@ class EntityModel(QtCore.QAbstractItemModel):
         return None
 
     def _description(self, v):
-        if isinstance(v, (str, unicode)):
+        if isinstance(v, str):
             return v
         if not isinstance(v, dict):
             return None
         return pprint.pformat(v, indent=1, depth=3, width=2)
 
     def _name(self, v):
-        if isinstance(v, (str, unicode)):
+        if isinstance(v, str):
             return v
         if not isinstance(v, dict):
-            return u'Invalid Entity'
+            return '{domain}/detail/{entity_type}/{entity_id}'
         if 'name' in v:
             return v['name']
         if 'code' in v:
@@ -559,12 +549,12 @@ class EntityModel(QtCore.QAbstractItemModel):
             return v['content']
         if 'type' in v and 'id' in v:
             return '{}{}'.format(v['type'], v['id'])
-        return u'Unknown Entity'
+        return '{domain}/detail/{entity_type}/{entity_id}'
 
     def _icon(self, v):
         if self._waiting_for_data:
             return self.spinner_icon
-        if isinstance(v, (str, unicode)):
+        if isinstance(v, str):
             return None
 
         # In case the entity contains color information we can set
@@ -641,7 +631,7 @@ class EntityComboBox(QtWidgets.QComboBox):
 
         """
         if not isinstance(model, EntityModel):
-            raise ValueError(u'Invalid type. Expected {}, got {}.'.format(
+            raise ValueError('{domain}/detail/{entity_type}/{entity_id}'.format(
                 EntityModel, type(model)))
 
         self.setModel(EntityFilterModel(model))

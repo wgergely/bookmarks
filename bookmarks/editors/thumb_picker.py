@@ -56,7 +56,7 @@ class PickThumbnail(QtWidgets.QFileDialog):
         )
         self.setLabelText(
             QtWidgets.QFileDialog.Accept,
-            u'Pick thumbnail'
+            'Pick thumbnail'
         )
 
     def _connect_signals(self):

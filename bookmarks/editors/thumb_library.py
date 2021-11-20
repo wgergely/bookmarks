@@ -14,7 +14,7 @@ instance = None
 
 
 COLUMNS = 5
-RSC_DIR = u'{}/../../rsc'.format(__file__)
+RSC_DIR = '{}/../../rsc'.format(__file__)
 
 
 def close():
@@ -47,7 +47,7 @@ class ClickableItem(QtWidgets.QLabel):
     """Custom QLabel ssed by the ThumbnailLibraryWidget to display an image.
 
     """
-    clicked = QtCore.Signal(unicode)
+    clicked = QtCore.Signal(str)
 
     def __init__(self, path, parent=None):
         super(ClickableItem, self).__init__(parent=parent)
@@ -117,8 +117,8 @@ class ClickableItem(QtWidgets.QLabel):
         rect = self.rect()
         rect.moveTopLeft(rect.topLeft() + QtCore.QPoint(1, 1))
 
-        text = self._path.split(u'/').pop()
-        text = text.replace(u'thumb_', u'')
+        text = self._path.split('/').pop()
+        text = text.replace('thumb_', '')
         font, _ = common.font_db.primary_font(common.MEDIUM_FONT_SIZE())
 
         common.draw_aliased_text(
@@ -150,7 +150,7 @@ class ThumbnailLibraryWidget(QtWidgets.QDialog):
     `thumb_*`.
 
     """
-    thumbnailSelected = QtCore.Signal(unicode)
+    thumbnailSelected = QtCore.Signal(str)
     label_size = common.ASSET_ROW_HEIGHT()
 
     def __init__(self, server, job, root, source, parent=None):
@@ -167,7 +167,7 @@ class ThumbnailLibraryWidget(QtWidgets.QDialog):
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self.setWindowTitle(u'Select thumbnail')
+        self.setWindowTitle('Select thumbnail')
 
         self._create_ui()
         self._add_thumbnails()
@@ -186,7 +186,7 @@ class ThumbnailLibraryWidget(QtWidgets.QDialog):
         row = ui.add_row(
             None, height=common.ROW_HEIGHT(), padding=None, parent=self)
         label = ui.PaintedLabel(
-            u'Select a thumbnail',
+            'Select a thumbnail',
             color=common.TEXT,
             size=common.LARGE_FONT_SIZE(),
             parent=self
@@ -195,7 +195,7 @@ class ThumbnailLibraryWidget(QtWidgets.QDialog):
 
         widget = QtWidgets.QWidget(parent=self)
         widget.setStyleSheet(
-            u'background-color: {}'.format(common.rgb(common.SEPARATOR)))
+            'background-color: {}'.format(common.rgb(common.SEPARATOR)))
 
         QtWidgets.QGridLayout(widget)
         widget.layout().setAlignment(QtCore.Qt.AlignCenter)
@@ -209,12 +209,12 @@ class ThumbnailLibraryWidget(QtWidgets.QDialog):
         self.scrollarea = QtWidgets.QScrollArea(parent=self)
         self.scrollarea.setWidgetResizable(True)
         self.scrollarea.setWidget(widget)
-        
+
         self.layout().addWidget(self.scrollarea, 1)
 
     def _add_thumbnails(self):
         row = 0
-        path = u'{root}/{resource}'.format(
+        path = '{root}/{resource}'.format(
             root=RSC_DIR,
             resource=images.ThumbnailResource
         )
@@ -223,7 +223,7 @@ class ThumbnailLibraryWidget(QtWidgets.QDialog):
         idx = 0
         for entry in _scandir.scandir(path):
             label = ClickableItem(
-                entry.path.replace(u'\\', u'/'),
+                entry.path.replace('\\', '/'),
                 parent=self
             )
 

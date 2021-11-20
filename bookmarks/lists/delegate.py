@@ -74,16 +74,16 @@ def reset():
 
 
 def subdir_rects_key(index, option):
-    return index.data(QtCore.Qt.StatusTipRole) + u'{}'.format(option.rect.height())
+    return index.data(QtCore.Qt.StatusTipRole) + '{}'.format(option.rect.height())
 
 
 def subdir_bg_rect_key(index, option):
-    return index.data(QtCore.Qt.StatusTipRole) + u'{}'.format(option.rect.size())
+    return index.data(QtCore.Qt.StatusTipRole) + '{}'.format(option.rect.size())
 
 
 def get_painter_path(x, y, font, text):
     """Creates, populates and caches a QPainterPath instance."""
-    k = u'{}{}{}{}'.format(x, y, font, text)
+    k = '{}{}{}{}'.format(x, y, font, text)
     if k not in PATH_CACHE:
         path = QtGui.QPainterPath()
         path.addText(x, y, font, text)
@@ -134,7 +134,7 @@ def get_rectangles(rectangle, count):
     inline_icon_rect.moveRight(rectangle.right() - spacing)
 
     offset = 0
-    for _ in xrange(count):
+    for _ in range(count):
         r = inline_icon_rect.translated(offset, 0)
         inline_icon_rects.append(r)
         offset -= inline_icon_rect.width() + spacing
@@ -176,7 +176,7 @@ def draw_segments(it, font, metrics, offset, *args):
         color = common.SELECTED_TEXT if selected else color
         color = common.TEXT if hover else color
 
-        width = metrics.width(text)
+        width = metrics.horizontalAdvance(text)
         rect.setLeft(rect.right() - width)
 
         if (rectangles[DataRect].left()) >= rect.left():
@@ -187,7 +187,7 @@ def draw_segments(it, font, metrics, offset, *args):
                 QtCore.Qt.ElideLeft,
                 rect.width()
             )
-            width = metrics.width(text)
+            width = metrics.horizontalAdvance(text)
             rect.setLeft(rect.right() - width)
 
         x = rect.center().x() - (width / 2.0) + common.ROW_SEPARATOR()
@@ -249,7 +249,7 @@ def draw_subdirs(bg_rect, clickable_rectangles, filter_text, text_edge, *args):
         color = common.DARK_BG
 
         # Green the subfolder is set as a text filter
-        ftext = u'"/' + text + u'/"'
+        ftext = '"/' + text + '/"'
         if (filter_text and ftext.lower() in filter_text.lower()):
             color = common.GREEN
 
@@ -272,14 +272,14 @@ def draw_subdirs(bg_rect, clickable_rectangles, filter_text, text_edge, *args):
         painter.setPen(pen)
         painter.drawRoundedRect(rect, o, o)
 
-        if metrics.width(text) > rect.width():
+        if metrics.horizontalAdvance(text) > rect.width():
             text = metrics.elidedText(
                 text,
                 QtCore.Qt.ElideRight,
                 rect.width() - (common.INDICATOR_WIDTH() * 2)
             )
 
-        x = rect.center().x() - (metrics.width(text) / 2.0)
+        x = rect.center().x() - (metrics.horizontalAdvance(text) / 2.0)
         y = option.rect.center().y() + (metrics.ascent() / 2.0)
 
         color = color.lighter(250)
@@ -413,7 +413,7 @@ def draw_description(clickable_rectangles, left_limit, right_limit, offset, *arg
         QtCore.Qt.ElideLeft,
         right_limit - left_limit
     )
-    width = metrics.width(text)
+    width = metrics.horizontalAdvance(text)
 
     x = right_limit - width
     y = rectangles[DataRect].center().y() + offset
@@ -462,7 +462,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
     """The main delegate used to represent lists derived from `base.BaseListWidget`.
 
     """
-    fallback_thumb = u'placeholder'
+    fallback_thumb = 'placeholder'
 
     def __init__(self, parent=None):
         super(BaseDelegate, self).__init__(parent=parent)
@@ -643,7 +643,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
                 common.SMALL_FONT_SIZE())
             painter.setFont(font)
 
-            text = u'Drop image to add as thumbnail'
+            text = 'Drop image to add as thumbnail'
             painter.drawText(
                 option.rect.adjusted(common.MARGIN(), 0, -common.MARGIN(), 0),
                 QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter | QtCore.Qt.TextWordWrap,
@@ -661,7 +661,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
             painter.setBrush(common.GREEN)
             painter.setOpacity(0.5)
             pixmap = images.ImageCache.get_rsc_pixmap(
-                u'add', common.GREEN, rect.height() * 0.5)
+                'add', common.GREEN, rect.height() * 0.5)
             painter.drawRect(rect)
             irect = pixmap.rect()
             irect.moveCenter(rect.center())
@@ -785,7 +785,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
             cursor_position) else common.SEPARATOR
         color = common.SELECTED_TEXT if favourite else color
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'favourite', color, common.MARGIN())
+            'favourite', color, common.MARGIN())
         painter.drawPixmap(rect, pixmap)
 
     @paintmethod
@@ -803,10 +803,10 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
             cursor_position) else common.SEPARATOR
         if archived:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                u'check', common.GREEN, common.MARGIN())
+                'check', common.GREEN, common.MARGIN())
         else:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                u'archive', color, common.MARGIN())
+                'archive', color, common.MARGIN())
         painter.drawPixmap(rect, pixmap)
 
     @paintmethod
@@ -820,7 +820,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         color = common.SELECTED_TEXT if rect.contains(
             cursor_position) else common.SEPARATOR
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'folder', color, common.MARGIN())
+            'folder', color, common.MARGIN())
         painter.drawPixmap(rect, pixmap)
 
     @paintmethod
@@ -836,11 +836,11 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         color = common.SELECTED_TEXT if rect.contains(
             cursor_position) else common.SEPARATOR
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'todo', color, common.MARGIN())
+            'todo', color, common.MARGIN())
         painter.drawPixmap(rect, pixmap)
 
         count = index.data(common.TodoCountRole)
-        self.draw_count(painter, rect, cursor_position, count, u'add')
+        self.draw_count(painter, rect, cursor_position, count, 'add')
 
     @paintmethod
     def _paint_inline_add(self, *args):
@@ -855,7 +855,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         color = common.SELECTED_TEXT if rect.contains(
             cursor_position) else common.SEPARATOR
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'add_circle', color, common.MARGIN())
+            'add_circle', color, common.MARGIN())
         painter.drawPixmap(rect, pixmap)
 
         if len(index.data(common.ParentPathRole)) == 3:
@@ -875,11 +875,11 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         color = common.SELECTED_TEXT if rect.contains(
             cursor_position) else common.SEPARATOR
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'settings', color, common.MARGIN())
+            'settings', color, common.MARGIN())
         painter.drawPixmap(rect, pixmap)
 
     def draw_count(self, painter, rect, cursor_position, count, icon):
-        if not isinstance(count, (int, float, long)):
+        if not isinstance(count, (loat, int)):
             return
 
         size = common.LARGE_FONT_SIZE()
@@ -901,10 +901,10 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         painter.drawRoundedRect(
             count_rect, count_rect.width() / 2.0, count_rect.height() / 2.0)
 
-        text = u'{}'.format(count)
+        text = '{}'.format(count)
         _font, _metrics = common.font_db.primary_font(
             font_size=common.SMALL_FONT_SIZE())
-        x = count_rect.center().x() - (_metrics.width(text) / 2.0) + common.ROW_SEPARATOR()
+        x = count_rect.center().x() - (_metrics.horizontalAdvance(text) / 2.0) + common.ROW_SEPARATOR()
         y = count_rect.center().y() + (_metrics.ascent() / 2.0)
 
         painter.setBrush(common.TEXT)
@@ -930,7 +930,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         rect.setWidth(common.MARGIN())
 
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'gradient', None, rect.height())
+            'gradient', None, rect.height())
         painter.drawPixmap(rect, pixmap, pixmap.rect())
 
     @paintmethod
@@ -949,7 +949,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
             rect.setLeft(rect.right() - (common.MARGIN() * 0.5))
             rect.setWidth(common.MARGIN())
             pixmap = images.ImageCache.get_rsc_pixmap(
-                u'gradient', None, rect.height())
+                'gradient', None, rect.height())
             painter.setOpacity(1.0)
             painter.drawPixmap(rect, pixmap, pixmap.rect())
 
@@ -957,14 +957,14 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         rect.setWidth(common.MARGIN())
         rect.moveRight(thumb_rect.right())
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'gradient3', None, rect.height())
+            'gradient3', None, rect.height())
         painter.setOpacity(0.5)
         painter.drawPixmap(rect, pixmap, pixmap.rect())
 
         rect.setWidth(common.MARGIN() * 0.5)
         rect.moveRight(thumb_rect.right())
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'gradient3', None, rect.height())
+            'gradient3', None, rect.height())
         painter.setOpacity(0.5)
         painter.drawPixmap(rect, pixmap, pixmap.rect())
 
@@ -1014,7 +1014,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
 
 class BookmarksWidgetDelegate(BaseDelegate):
     """The delegate used to paint the bookmark items."""
-    fallback_thumb = u'thumb_bookmark_gray'
+    fallback_thumb = 'thumb_bookmark_gray'
 
     def paint(self, painter, option, index):
         """Defines how the ``BookmarksWidget`` should be painted."""
@@ -1049,18 +1049,18 @@ class BookmarksWidgetDelegate(BaseDelegate):
         if not text:
             return {}
         description = index.data(common.DescriptionRole)
-        description = description if description else u''
+        description = description if description else ''
 
         k = text + description
         if k in TEXT_SEGMENT_CACHE:
             return TEXT_SEGMENT_CACHE[k]
 
-        text = text.strip().strip(u'/').strip(u'\\')
+        text = text.strip().strip('/').strip('\\')
         if not text:
             return {}
 
         d = {}
-        v = text.split(u'|')
+        v = text.split('|')
 
         s_color = common.BLUE.darker(250)
 
@@ -1070,17 +1070,17 @@ class BookmarksWidgetDelegate(BaseDelegate):
             else:
                 c = common.TEXT
 
-            _v = s.split(u'/')
+            _v = s.split('/')
             for _i, _s in enumerate(_v):
                 _s = _s.strip()
                 d[len(d)] = (_s, c)
                 if _i < (len(_v) - 1):
-                    d[len(d)] = (u' / ', s_color)
+                    d[len(d)] = (' / ', s_color)
             if i < (len(v) - 1):
-                d[len(d)] = (u'   |    ', s_color)
+                d[len(d)] = ('   |    ', s_color)
 
         if description:
-            d[len(d)] = (u'   |   ', s_color)
+            d[len(d)] = ('   |   ', s_color)
             d[len(d)] = (description, s_color)
 
         TEXT_SEGMENT_CACHE[k] = d
@@ -1118,7 +1118,7 @@ class BookmarksWidgetDelegate(BaseDelegate):
 
         # If the text segments role has not yet been set, we'll set it here
         text_segments = self.get_text_segments(index)
-        text = u''.join([text_segments[f][0] for f in text_segments])
+        text = ''.join([text_segments[f][0] for f in text_segments])
 
         rect = rectangles[DataRect]
         rect.setLeft(rect.left() + common.MARGIN())
@@ -1126,7 +1126,7 @@ class BookmarksWidgetDelegate(BaseDelegate):
         # First let's paint the background rectangle
         o = common.INDICATOR_WIDTH()
 
-        text_width = metrics.width(text)
+        text_width = metrics.horizontalAdvance(text)
         r = QtCore.QRect(rect)
         r.setWidth(text_width)
         center = r.center()
@@ -1140,7 +1140,7 @@ class BookmarksWidgetDelegate(BaseDelegate):
             120) if active else common.BLUE.darker(120)
         color = common.GREEN.darker(150) if r.contains(
             cursor_position) else color
-        f_subpath = u'"/' + index.data(common.ParentPathRole)[1] + u'/"'
+        f_subpath = '"/' + index.data(common.ParentPathRole)[1] + '/"'
 
         filter_text = self.parent().model().filter_text()
         if filter_text:
@@ -1162,9 +1162,9 @@ class BookmarksWidgetDelegate(BaseDelegate):
 
         offset = 0
         painter.setPen(QtCore.Qt.NoPen)
-        for segment in text_segments.itervalues():
+        for segment in text_segments.values():
             text, color = segment
-            width = metrics.width(text)
+            width = metrics.horizontalAdvance(text)
             _r = QtCore.QRect(rect)
             _r.setWidth(width)
             center = _r.center()
@@ -1199,7 +1199,7 @@ class BookmarksWidgetDelegate(BaseDelegate):
 
 class AssetsWidgetDelegate(BaseDelegate):
     """Delegate used by the ``AssetsWidget`` to display the collecteds assets."""
-    fallback_thumb = u'thumb_item_gray'
+    fallback_thumb = 'thumb_item_gray'
 
     def paint(self, painter, option, index):
         """Defines how the ``AssetsWidget``'s' items should be painted."""
@@ -1308,7 +1308,7 @@ class AssetsWidgetDelegate(BaseDelegate):
         painter.setBrush(color)
 
         text = index.data(common.DescriptionRole)
-        text = text if text else u''
+        text = text if text else ''
         font, _metrics = common.font_db.primary_font(
             font_size=common.MEDIUM_FONT_SIZE())
         painter.setFont(font)
@@ -1332,7 +1332,7 @@ class AssetsWidgetDelegate(BaseDelegate):
                 painter.setBrush(common.SECONDARY_TEXT)
             else:
                 painter.setBrush(color)
-            text = u'Double-click to edit...' if not text else text
+            text = 'Double-click to edit...' if not text else text
 
         x = description_rect.left()
         y = description_rect.center().y() + (metrics.ascent() / 2.0)
@@ -1416,7 +1416,7 @@ class FilesWidgetDelegate(BaseDelegate):
         self.get_subdir_rectangles(option, index, rectangles, metrics)
 
         painter.save()
-        it = self.get_text_segments(index).itervalues()
+        it = self.get_text_segments(index).values()
         left = draw_segments(it, font, metrics, offset, *args)
         painter.restore()
 
@@ -1429,7 +1429,7 @@ class FilesWidgetDelegate(BaseDelegate):
         painter.restore()
 
         painter.save()
-        it = self.get_filedetail_text_segments(index).itervalues()
+        it = self.get_filedetail_text_segments(index).values()
         offset = metrics.ascent()
         font, metrics = common.font_db.primary_font(
             font_size=common.SMALL_FONT_SIZE() * 0.95)
@@ -1475,7 +1475,7 @@ class FilesWidgetDelegate(BaseDelegate):
             _text_segments[idx] = text_segments[(len(text_segments) - 1) - idx]
 
         if index.data(common.DescriptionRole):
-            _text_segments[len(_text_segments)] = (u'  |  ', common.SEPARATOR)
+            _text_segments[len(_text_segments)] = ('  |  ', common.SEPARATOR)
             _text_segments[len(_text_segments)] = (
                 index.data(common.DescriptionRole),
                 common.GREEN
@@ -1496,7 +1496,7 @@ class FilesWidgetDelegate(BaseDelegate):
         for k in _text_segments:
             text, color = _text_segments[k]
             r = QtCore.QRect(name_rect)
-            width = metrics.width(text)
+            width = metrics.horizontalAdvance(text)
             r.setWidth(width)
             r.moveLeft(rect.left() + offset)
             offset += width
@@ -1511,7 +1511,7 @@ class FilesWidgetDelegate(BaseDelegate):
                     r.width() - 6
                 )
 
-            x = r.center().x() - (metrics.width(text) / 2.0)
+            x = r.center().x() - (metrics.horizontalAdvance(text) / 2.0)
             y = r.center().y() + (metrics.ascent() / 2.0)
 
             painter.setBrush(color)
@@ -1573,7 +1573,7 @@ class FilesWidgetDelegate(BaseDelegate):
         for k in sorted(text_segments, reverse=True):
             text, _ = text_segments[k]
             r = QtCore.QRect(name_rect)
-            width = metrics.width(text)
+            width = metrics.horizontalAdvance(text)
             r.setWidth(width)
             r.moveLeft(rect.left() + offset)
             offset += width
@@ -1605,7 +1605,7 @@ class FilesWidgetDelegate(BaseDelegate):
             index (QModelIndex): The index currently being painted.
 
         Returns:
-            dict: A dictionary of tuples. (unicode, QtGui.QColor)
+            dict: A dictionary of tuples. (str, QtGui.QColor)
 
         """
         if not index.isValid():
@@ -1624,15 +1624,15 @@ class FilesWidgetDelegate(BaseDelegate):
         match = common.is_collapsed(s)
         if match:
             # Suffix + extension
-            s = match.group(3).split(u'.')
-            s = u'.'.join(s[:-1]).upper() + u'.' + s[-1].lower()
+            s = match.group(3).split('.')
+            s = '.'.join(s[:-1]).upper() + '.' + s[-1].lower()
             d[len(d)] = (s, common.TEXT)
 
             # Frame-range without the "[]" characters
             s = match.group(2)
-            s = regex_remove_seq_marker.sub(u'', s)
+            s = regex_remove_seq_marker.sub('', s)
             if len(s) > 17:
-                s = s[0:8] + u'...' + s[-8:]
+                s = s[0:8] + '...' + s[-8:]
             if index.data(common.FramesRole) > 1:
                 d[len(d)] = (s, common.RED)
             else:
@@ -1649,7 +1649,7 @@ class FilesWidgetDelegate(BaseDelegate):
         if match:
             # The extension and the suffix
             if match.group(4):
-                s = match.group(3).upper() + u'.' + match.group(4).lower()
+                s = match.group(3).upper() + '.' + match.group(4).lower()
             else:
                 s = match.group(3).upper()
             d[len(d)] = (s, common.SELECTED_TEXT)
@@ -1665,9 +1665,9 @@ class FilesWidgetDelegate(BaseDelegate):
             return d
 
         # Items is not collapsed and it isn't a sequence either
-        s = s.split(u'.')
+        s = s.split('.')
         if len(s) > 1:
-            s = u'.'.join(s[:-1]).upper() + u'.' + s[-1].lower()
+            s = '.'.join(s[:-1]).upper() + '.' + s[-1].lower()
         else:
             s = s[0].upper()
         d[len(d)] = (s, common.SELECTED_TEXT)
@@ -1682,7 +1682,7 @@ class FilesWidgetDelegate(BaseDelegate):
             index (QModelIndex): The index currently being painted.
 
         Returns:
-            dict: A dictionary of tuples "{0: (unicode, QtGui.QColor)}".
+            dict: A dictionary of tuples "{0: (str, QtGui.QColor)}".
 
         """
         k = index.data(common.FileDetailsRole)
@@ -1692,16 +1692,16 @@ class FilesWidgetDelegate(BaseDelegate):
         d = {}
 
         if not index.data(common.FileInfoLoaded):
-            d[len(d)] = (u'...', common.SECONDARY_TEXT)
+            d[len(d)] = ('...', common.SECONDARY_TEXT)
             return d
 
         text = index.data(common.FileDetailsRole)
-        texts = text.split(u';')
+        texts = text.split(';')
         for n, text in enumerate(reversed(texts)):
             d[len(d)] = (text, common.SECONDARY_TEXT)
             if n == (len(texts) - 1) and not index.data(common.DescriptionRole):
                 break
-            d[len(d)] = (u'  |  ', common.DARK_BG)
+            d[len(d)] = ('  |  ', common.DARK_BG)
 
         TEXT_SEGMENT_CACHE[k] = d
         return TEXT_SEGMENT_CACHE[k]
@@ -1725,16 +1725,16 @@ class FilesWidgetDelegate(BaseDelegate):
             metrics.height() + (padding * 2),
         )
 
-        for n, text in enumerate(subdirs[-1].upper().split(u'/')):
+        for n, text in enumerate(subdirs[-1].upper().split('/')):
             if not text:
                 continue
             if n >= self.MAX_SUBDIRS:
                 break
             if len(text) > 24:
-                _text = text[0:11] + u'...' + text[-11:]
-                width = metrics.width(_text) + (padding * 4)
+                _text = text[0:11] + '...' + text[-11:]
+                width = metrics.horizontalAdvance(_text) + (padding * 4)
             else:
-                width = metrics.width(text) + (padding * 4)
+                width = metrics.horizontalAdvance(text) + (padding * 4)
 
             rect.setWidth(width)
 
@@ -1774,5 +1774,5 @@ class FavouritesWidgetDelegate(FilesWidgetDelegate):
         painter.setOpacity(0.5)
         color = common.GREEN
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'favourite', color, common.MARGIN())
+            'favourite', color, common.MARGIN())
         painter.drawPixmap(rect, pixmap)

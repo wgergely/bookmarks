@@ -8,7 +8,7 @@ from PySide2 import QtCore, QtWidgets, QtGui
 
 import _scandir
 
-from .. import bookmark_db
+from .. import database
 from .. import common
 from .. import ui
 from .. import settings
@@ -16,9 +16,9 @@ from .. import images
 from ..asset_config import asset_config
 from . import base
 
-NoMode = u'invalid'
-SceneMode = u'scene'
-CacheMode = u'export'
+NoMode = 'invalid'
+SceneMode = 'scene'
+CacheMode = 'export'
 
 ROW_SIZE = QtCore.QSize(1, common.ROW_HEIGHT())
 
@@ -29,7 +29,7 @@ def active_icon():
     """
     return QtGui.QIcon(
         images.ImageCache.get_rsc_pixmap(
-            u'check',
+            'check',
             common.GREEN,
             common.MARGIN() * 2
         )
@@ -50,7 +50,7 @@ def _active(n, join=True):
     if not all(v):
         return None
     if join:
-        return u'/'.join(v)
+        return '/'.join(v)
     return v
 
 
@@ -96,11 +96,11 @@ class BaseModel(QtCore.QAbstractListModel):
         return len(self._data)
 
     def display_name(self, v):
-        return v.split(u'/')[-1]
+        return v.split('/')[-1]
 
     @init_data
     def init_data(self, source, server, job, root):
-        raise NotImplementedError(u'Must be overriden in subclass.')
+        raise NotImplementedError('Must be overriden in subclass.')
 
     def index(self, row, column, parent=QtCore.QModelIndex()):
         return self.createIndex(row, 0, parent=parent)
@@ -133,7 +133,7 @@ class BookmarksModel(BaseModel):
             return
 
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'bookmark',
+            'bookmark',
             common.SEPARATOR,
             common.MARGIN() * 2
         )
@@ -202,22 +202,22 @@ class AssetsModel(BaseModel):
             return
 
         # Let's get the identifier from the bookmark database
-        db = bookmark_db.get_db(*_active(3, join=False))
+        db = database.get_db(*_active(3, join=False))
         ASSET_IDENTIFIER = db.value(
             db.source(),
-            u'identifier',
-            table=bookmark_db.BookmarkTable
+            'identifier',
+            table=database.BookmarkTable
         )
 
         for entry in _scandir.scandir(db.source()):
-            if entry.name.startswith(u'.'):
+            if entry.name.startswith('.'):
                 continue
             if not entry.is_dir():
                 continue
-            filepath = entry.path.replace(u'\\', u'/')
+            filepath = entry.path.replace('\\', '/')
 
             if ASSET_IDENTIFIER:
-                identifier = u'{}/{}'.format(
+                identifier = '{}/{}'.format(
                     filepath, ASSET_IDENTIFIER)
                 if not QtCore.QFileInfo(identifier).exists():
                     continue
@@ -236,7 +236,7 @@ class AssetsModel(BaseModel):
 
     def display_name(self, v):
         k = active_bookmark()
-        return v.replace(k, u'').strip(u'/').split(u'/')[0]
+        return v.replace(k, '').strip('/').split('/')[0]
 
 
 class AssetComboBox(QtWidgets.QComboBox):
@@ -286,7 +286,7 @@ class TaskModel(BaseModel):
         for v in sorted(data[asset_config.AssetFolderConfig].values(), key=lambda x: x['value']):
             if v['name'] != self._mode:
                 continue
-            if u'subfolders' not in v:
+            if 'subfolders' not in v:
                 continue
 
             current_folder = settings.instance().value(
@@ -296,13 +296,13 @@ class TaskModel(BaseModel):
             for _v in sorted(v['subfolders'].values(), key=lambda x: x['value']):
                 if current_folder == _v['value']:
                     pixmap = images.ImageCache.get_rsc_pixmap(
-                        u'check', common.GREEN, common.MARGIN() * 2)
+                        'check', common.GREEN, common.MARGIN() * 2)
                 else:
                     pixmap = images.ImageCache.get_rsc_pixmap(
-                        u'icon_bw', None, common.MARGIN() * 2)
+                        'icon_bw', None, common.MARGIN() * 2)
                 icon = QtGui.QIcon(pixmap)
 
-                name = u'{}/{}'.format(v['value'], _v['value'])
+                name = '{}/{}'.format(v['value'], _v['value'])
                 self._data[len(self._data)] = {
                     QtCore.Qt.DisplayRole: self.display_name(name),
                     QtCore.Qt.DecorationRole: icon,
@@ -318,8 +318,8 @@ class TaskModel(BaseModel):
             k = active_task()
             if not k:
                 return
-            name = k.replace(active_asset(), u'').strip(u'/')
-            description = u'Active task folder'
+            name = k.replace(active_asset(), '').strip('/')
+            description = 'Active task folder'
             if not [f for f in self._data if self._data[f][QtCore.Qt.DisplayRole] == name]:
                 self._data[len(self._data)] = {
                     QtCore.Qt.DisplayRole: self.display_name(name),
@@ -339,9 +339,9 @@ class TaskModel(BaseModel):
         self.beginResetModel()
 
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'folder', common.SEPARATOR, common.MARGIN() * 2)
+            'folder', common.SEPARATOR, common.MARGIN() * 2)
         self._data[len(self._data)] = {
-            QtCore.Qt.DisplayRole: path.split(u'/').pop(),
+            QtCore.Qt.DisplayRole: path.split('/').pop(),
             QtCore.Qt.DecorationRole: QtGui.QIcon(pixmap),
             QtCore.Qt.ForegroundRole: common.TEXT,
             QtCore.Qt.SizeHintRole: ROW_SIZE,
@@ -372,10 +372,10 @@ class TemplateModel(BaseModel):
         for v in data[asset_config.FileNameConfig].values():
             if template == v['name']:
                 pixmap = images.ImageCache.get_rsc_pixmap(
-                    u'check', common.GREEN, common.MARGIN() * 2)
+                    'check', common.GREEN, common.MARGIN() * 2)
             else:
                 pixmap = images.ImageCache.get_rsc_pixmap(
-                    u'file', common.SEPARATOR, common.MARGIN() * 2)
+                    'file', common.SEPARATOR, common.MARGIN() * 2)
             icon = QtGui.QIcon(pixmap)
 
             self._data[len(self._data)] = {
@@ -413,12 +413,12 @@ class ExtensionModel(BaseModel):
         for v in data[asset_config.FileFormatConfig].values():
             if v['flag'] == asset_config.ImageFormat:
                 continue
-            for ext in [f.lower().strip() for f in v['value'].split(u',')]:
+            for ext in [f.lower().strip() for f in v['value'].split(',')]:
                 pixmap = images.ImageCache.get_rsc_pixmap(
                     ext, None, common.MARGIN() * 2, resource=images.FormatResource)
                 if not pixmap or pixmap.isNull():
                     pixmap = images.ImageCache.get_rsc_pixmap(
-                        u'placeholder', common.SEPARATOR, common.MARGIN() * 2)
+                        'placeholder', common.SEPARATOR, common.MARGIN() * 2)
 
                 icon = QtGui.QIcon(pixmap)
                 self._data[len(self._data)] = {
@@ -482,18 +482,18 @@ class PrefixEditor(QtWidgets.QDialog):
         QtWidgets.QHBoxLayout(self)
 
         self.editor = ui.LineEdit(parent=self)
-        self.editor.setPlaceholderText(u'Enter a prefix, eg. \'MYB\'')
+        self.editor.setPlaceholderText('Enter a prefix, eg. \'MYB\'')
         self.editor.setValidator(base.textvalidator)
         self.setFocusProxy(self.editor)
         self.editor.setFocusPolicy(QtCore.Qt.StrongFocus)
-        self.ok_button = ui.PaintedButton(u'Save')
+        self.ok_button = ui.PaintedButton('Save')
 
         self.ok_button.clicked.connect(
             lambda: self.done(QtWidgets.QDialog.Accepted))
         self.editor.returnPressed.connect(
             lambda: self.done(QtWidgets.QDialog.Accepted))
 
-        self.setWindowTitle(u'Edit Prefix')
+        self.setWindowTitle('Edit Prefix')
         self.layout().addWidget(self.editor, 1)
         self.layout().addWidget(self.ok_button, 0)
 
@@ -503,12 +503,12 @@ class PrefixEditor(QtWidgets.QDialog):
         self.parent().prefix_editor.setText(self.editor.text())
 
         p = self.parent()
-        db = bookmark_db.get_db(p.server, p.job, p.root)
+        db = database.get_db(p.server, p.job, p.root)
 
         v = db.value(
             db.source(),
-            u'prefix',
-            table=bookmark_db.BookmarkTable
+            'prefix',
+            table=database.BookmarkTable
         )
 
         if not v:
@@ -524,13 +524,13 @@ class PrefixEditor(QtWidgets.QDialog):
         p = self.parent()
         p.prefix_editor.setText(self.editor.text())
 
-        db = bookmark_db.get_db(p.server, p.job, p.root)
+        db = database.get_db(p.server, p.job, p.root)
         with db.connection():
             db.setValue(
                 db.source(),
-                u'prefix',
+                'prefix',
                 self.editor.text(),
-                table=bookmark_db.BookmarkTable
+                table=database.BookmarkTable
             )
 
         super(PrefixEditor, self).done(result)

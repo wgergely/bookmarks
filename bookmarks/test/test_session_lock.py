@@ -18,7 +18,7 @@ class Test(base.BaseApplicationTest):
     def test_init(self):
         path = session_lock.init()
         self.assertIsNotNone(path)
-        self.assertIsInstance(path, unicode)
+        self.assertIsInstance(path, str)
         self.assertTrue(os.path.isfile(path))
         with open(path, 'r') as f:
             v = f.read()
@@ -28,14 +28,14 @@ class Test(base.BaseApplicationTest):
         pid = random.randrange(9999)
         _path = session_lock.init(pid=pid)
         self.assertIsNotNone(_path)
-        self.assertIsInstance(_path, unicode)
+        self.assertIsInstance(_path, str)
         self.assertTrue(os.path.isfile(_path))
         self.assertNotEqual(_path, path)
 
         # Mode should be private since there's already a Syncronised lock
         path_ = session_lock.init()
         self.assertIsNotNone(path_)
-        self.assertIsInstance(path_, unicode)
+        self.assertIsInstance(path_, str)
         self.assertTrue(os.path.isfile(path_))
         with open(path, 'r') as f:
             v = f.read()
@@ -43,11 +43,11 @@ class Test(base.BaseApplicationTest):
 
     def test_prune(self):
         paths = []
-        for _ in xrange(99):
+        for _ in range(99):
             pid = random.randrange(999999)
             path = session_lock.init(pid=pid)
             self.assertIsNotNone(path)
-            self.assertIsInstance(path, unicode)
+            self.assertIsInstance(path, str)
             self.assertTrue(os.path.isfile(path))
             paths.append(path)
 

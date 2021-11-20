@@ -25,7 +25,7 @@ Example
                 job,
                 root,
                 asset=asset,
-                extension=u'fbx'
+                extension='fbx'
             ).open()
 
 """
@@ -39,7 +39,7 @@ from PySide2 import QtWidgets, QtGui, QtCore
 from .. import ui
 from .. import common
 from .. import settings
-from .. import bookmark_db
+from .. import database
 from .. import actions
 
 from . import base
@@ -81,135 +81,135 @@ def show(server, job, root, asset, extension=None, file=None, create_file=True, 
 
 
 LOCAL_KEYS = (
-    u'folder',
-    u'element',
-    u'version',
-    u'extension',
-    u'user',
-    u'template'
+    'folder',
+    'element',
+    'version',
+    'extension',
+    'user',
+    'template'
 )
 
 INACTIVE_KEYS = (
-    u'bookmark',
-    u'asset',
-    u'folder',
-    u'prefix',
-    u'element',
-    u'version',
-    u'extension',
-    u'user',
-    u'template',
+    'bookmark',
+    'asset',
+    'folder',
+    'prefix',
+    'element',
+    'version',
+    'extension',
+    'user',
+    'template',
 )
 
 
 SECTIONS = {
     0: {
-        'name': u'Save File',
-        'icon': u'',
+        'name': 'Save File',
+        'icon': '',
         'color': common.DARK_BG,
         'groups': {
             0: {
                 0: {
-                    'name': u'Bookmark',
-                    'key': u'bookmark',
+                    'name': 'Bookmark',
+                    'key': 'bookmark',
                     'validator': None,
                     'widget': file_properties_widgets.BookmarkComboBox,
                     'placeholder': None,
-                    'description': u'The job\'s name, eg. \'MY_NEW_JOB\'.',
+                    'description': 'The job\'s name, eg. \'MY_NEW_JOB\'.',
                 },
                 1: {
-                    'name': u'Asset',
-                    'key': u'asset',
+                    'name': 'Asset',
+                    'key': 'asset',
                     'validator': None,
                     'widget': file_properties_widgets.AssetComboBox,
                     'placeholder': None,
-                    'description': u'The job\'s name, eg. \'MY_NEW_JOB\'.',
+                    'description': 'The job\'s name, eg. \'MY_NEW_JOB\'.',
                 },
                 2: {
-                    'name': u'Task',
-                    'key': u'folder',
+                    'name': 'Task',
+                    'key': 'folder',
                     'validator': None,
                     'widget': file_properties_widgets.TaskComboBox,
                     'placeholder': None,
-                    'description': u'The job\'s name, eg. \'MY_NEW_JOB\'.',
+                    'description': 'The job\'s name, eg. \'MY_NEW_JOB\'.',
                     'button': 'Pick'
                 },
             },
             1: {
                 0: {
-                    'name': u'Description',
+                    'name': 'Description',
                     'key': 'description',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': u'A short description, eg. \'My animation re-take\'',
-                    'description': u'A short description of the file\'s contents.\nIndicate significant changes and notes here.',
+                    'placeholder': 'A short description, eg. \'My animation re-take\'',
+                    'description': 'A short description of the file\'s contents.\nIndicate significant changes and notes here.',
                 },
             },
             2: {
                 0: {
-                    'name': u'Prefix',
+                    'name': 'Prefix',
                     'key': 'prefix',
                     'validator': base.textvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Prefix not yet set!',
-                    'description': u'A short prefix used to identify the job eg.\'MYB\'.',
-                    'button': u'Edit'
+                    'placeholder': 'Prefix not yet set!',
+                    'description': 'A short prefix used to identify the job eg.\'MYB\'.',
+                    'button': 'Edit'
                 },
                 1: {
-                    'name': u'Element',
+                    'name': 'Element',
                     'key': 'element',
                     'validator': base.textvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Element being saved, eg. \'Tower\'',
-                    'description': u'The name of the element being saved. Eg., \'ForegroundTower\', or \'Precomp\'',
+                    'placeholder': 'Element being saved, eg. \'Tower\'',
+                    'description': 'The name of the element being saved. Eg., \'ForegroundTower\', or \'Precomp\'',
                 },
                 2: {
-                    'name': u'Version',
+                    'name': 'Version',
                     'key': 'version',
                     'validator': base.versionvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': u'A version number, eg. \'v001\'',
-                    'description': u'A version number with, or without, a preceeding \'v\'. Eg. \'v001\'.',
-                    'button': u'+',
-                    'button2': u'-',
+                    'placeholder': 'A version number, eg. \'v001\'',
+                    'description': 'A version number with, or without, a preceeding \'v\'. Eg. \'v001\'.',
+                    'button': '+',
+                    'button2': '-',
                 },
                 3: {
-                    'name': u'User',
+                    'name': 'User',
                     'key': 'user',
                     'validator': base.textvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Your name, eg. \'JohnDoe\'',
-                    'description': u'The name of the current user, eg. \'JohnDoe\', or \'JD\'',
+                    'placeholder': 'Your name, eg. \'JohnDoe\'',
+                    'description': 'The name of the current user, eg. \'JohnDoe\', or \'JD\'',
                 },
                 4: {
-                    'name': u'Format',
+                    'name': 'Format',
                     'key': 'extension',
                     'validator': None,
                     'widget': file_properties_widgets.ExtensionComboBox,
-                    'placeholder': u'File extension, eg. \'exr\'',
-                    'description': u'A file extension, without the leading dot. Eg. \'ma\'',
+                    'placeholder': 'File extension, eg. \'exr\'',
+                    'description': 'A file extension, without the leading dot. Eg. \'ma\'',
                 },
             },
             3: {
                 0: {
-                    'name': u'Template',
+                    'name': 'Template',
                     'key': 'template',
                     'validator': base.textvalidator,
                     'widget': file_properties_widgets.TemplateComboBox,
-                    'placeholder': u'Custom prefix, eg. \'MYB\'',
-                    'description': u'A short name of the bookmark (or job) used when saving files.\n\nEg. \'MYB_sh0010_anim_v001.ma\' where \'MYB\' is the prefix specified here.',
-                    'button': u'Edit'
+                    'placeholder': 'Custom prefix, eg. \'MYB\'',
+                    'description': 'A short name of the bookmark (or job) used when saving files.\n\nEg. \'MYB_sh0010_anim_v001.ma\' where \'MYB\' is the prefix specified here.',
+                    'button': 'Edit'
                 },
             },
             4: {
                 0: {
-                    'name': u' ',
-                    'key': u'filename',
+                    'name': ' ',
+                    'key': 'filename',
                     'validator': None,
                     'widget': QtWidgets.QLabel,
                     # 'widget': ui.LineEdit,
-                    'placeholder': u'Invalid file name...',
-                    'description': u'The file name, based on the current template.',
+                    'placeholder': 'Invalid file name...',
+                    'description': 'The file name, based on the current template.',
                     'button': 'Reveal'
                 },
             },
@@ -231,8 +231,8 @@ class FilePropertiesWidget(base.PropertiesWidget):
             root,
             asset=asset,
             alignment=QtCore.Qt.AlignLeft,
-            fallback_thumb=u'file_sm',
-            db_table=bookmark_db.AssetTable,
+            fallback_thumb='file_sm',
+            db_table=database.AssetTable,
             parent=parent
         )
 
@@ -266,7 +266,7 @@ class FilePropertiesWidget(base.PropertiesWidget):
     def set_file(self, file):
         self._file = file
 
-        self.version_editor.setText(u'')
+        self.version_editor.setText('')
 
         if not common.is_collapsed(file):
             seq = common.get_sequence(file)
@@ -285,9 +285,9 @@ class FilePropertiesWidget(base.PropertiesWidget):
                         v, self.parent_folder(), name, max, 1)
                     self.version_editor.setText(v)
                     file = seq.group(1) + v + seq.group(3) + \
-                        u'.' + seq.group(4)
+                        '.' + seq.group(4)
             else:
-                self.version_editor.setText(u'')
+                self.version_editor.setText('')
 
         else:
             # The item is collapsed
@@ -334,8 +334,8 @@ class FilePropertiesWidget(base.PropertiesWidget):
         file name.
 
         """
-        bookmark = u'/'.join((self.server, self.job, self.root))
-        asset_root = u'/'.join((self.server, self.job, self.root, self.asset))
+        bookmark = '/'.join((self.server, self.job, self.root))
+        asset_root = '/'.join((self.server, self.job, self.root, self.asset))
 
         template = self.template_editor.currentData(QtCore.Qt.UserRole)
         config = asset_config.get(self.server, self.job, self.root)
@@ -343,23 +343,23 @@ class FilePropertiesWidget(base.PropertiesWidget):
         def _strip(s):
             return (
                 s.
-                strip(u'-').
-                strip(u'_').
+                strip('-').
+                strip('_').
                 strip().
-                replace(u'__', u'_').
-                replace(u'_.', u'.')
+                replace('__', '_').
+                replace('_.', '.')
             )
 
         def _get(k):
             if not hasattr(self, k + '_editor'):
-                return u''
+                return ''
             editor = getattr(self, k + '_editor')
             if hasattr(editor, 'currentText'):
                 v = editor.currentText()
             elif hasattr(editor, 'text'):
                 v = editor.text()
             else:
-                v = u''
+                v = ''
 
             return _strip(v)
 
@@ -369,13 +369,13 @@ class FilePropertiesWidget(base.PropertiesWidget):
             self.parent_folder(),
             re.IGNORECASE
         )
-        seq = match.group(1) if match else u'###'
+        seq = match.group(1) if match else '###'
         match = re.match(
             r'.*(?:SH|SHOT)([0-9]+).*',
             self.parent_folder(),
             re.IGNORECASE
         )
-        shot = match.group(1) if match else u'###'
+        shot = match.group(1) if match else '###'
 
         v = config.expand_tokens(
             template,
@@ -395,7 +395,7 @@ class FilePropertiesWidget(base.PropertiesWidget):
         )
         v = _strip(v)
         v = v.replace(
-            u'{invalid_token}', u'<span style="color:{}">{{invalid_token}}</span>'.format(common.rgb(common.RED)))
+            '{invalid_token}', '<span style="color:{}">{{invalid_token}}</span>'.format(common.rgb(common.RED)))
 
         self.filename_editor.setText(v)
 
@@ -411,10 +411,10 @@ class FilePropertiesWidget(base.PropertiesWidget):
 
         if self._filelist[self.db_source()]:
             self.filename_editor.setStyleSheet(
-                u'color:{};'.format(common.rgb(common.RED)))
+                'color:{};'.format(common.rgb(common.RED)))
         else:
             self.filename_editor.setStyleSheet(
-                u'color:{};'.format(common.rgb(common.GREEN)))
+                'color:{};'.format(common.rgb(common.GREEN)))
 
     def parent_folder(self):
         """The folder where the new file is about to be saved.
@@ -426,7 +426,7 @@ class FilePropertiesWidget(base.PropertiesWidget):
         folder = self.folder_editor.currentData(QtCore.Qt.UserRole)
         if not folder:
             return None
-        return u'/'.join((self.server, self.job, self.root, self.asset, folder))
+        return '/'.join((self.server, self.job, self.root, self.asset, folder))
 
     def db_source(self):
         """The final file path."""
@@ -437,14 +437,14 @@ class FilePropertiesWidget(base.PropertiesWidget):
 
         if not self.parent_folder():
             return None
-        return self.parent_folder() + u'/' + self.name()
+        return self.parent_folder() + '/' + self.name()
 
     def _set_local_value(self, k):
         v = settings.instance().value(
             settings.CurrentUserPicksSection,
             k
         )
-        if not isinstance(v, unicode):
+        if not isinstance(v, str):
             return
         if not v:
             return
@@ -455,7 +455,7 @@ class FilePropertiesWidget(base.PropertiesWidget):
             editor.blockSignals(True)
             editor.setCurrentText(v)
             editor.blockSignals(False)
-        elif hasattr(editor, u'setText'):
+        elif hasattr(editor, 'setText'):
             editor.blockSignals(True)
             editor.setText(v)
             editor.blockSignals(False)
@@ -473,14 +473,14 @@ class FilePropertiesWidget(base.PropertiesWidget):
 
         """
         if all((self.server, self.job, self.root)):
-            bookmark = u'/'.join((self.server, self.job, self.root))
+            bookmark = '/'.join((self.server, self.job, self.root))
             self.bookmark_editor.setCurrentText(bookmark)
         if self.asset:
             self.asset_editor.setCurrentText(self.asset)
 
         self.user_editor.blockSignals(True)
         if self._file is not None:
-            self.user_editor.setText(u'-')
+            self.user_editor.setText('-')
         else:
             self.user_editor.setText(common.get_username())
         self.user_editor.blockSignals(False)
@@ -492,11 +492,11 @@ class FilePropertiesWidget(base.PropertiesWidget):
         # Prefix
         self.prefix_editor.setReadOnly(True)
         if self._file is None:
-            db = bookmark_db.get_db(self.server, self.job, self.root)
+            db = database.get_db(self.server, self.job, self.root)
             prefix = db.value(
                 db.source(),
-                u'prefix',
-                table=bookmark_db.BookmarkTable
+                'prefix',
+                table=database.BookmarkTable
             )
             if prefix:
                 self.prefix_editor.setText(prefix)
@@ -513,13 +513,13 @@ class FilePropertiesWidget(base.PropertiesWidget):
 
         # Description
         if self._file is not None:
-            db = bookmark_db.get_db(self.server, self.job, self.root)
+            db = database.get_db(self.server, self.job, self.root)
             v = db.value(
                 self.db_source(),
-                u'description',
-                table=bookmark_db.AssetTable
+                'description',
+                table=database.AssetTable
             )
-            v = v if v else u''
+            v = v if v else ''
             self.description_editor.setText(v)
             self.description_editor.setFocus()
             return
@@ -530,7 +530,7 @@ class FilePropertiesWidget(base.PropertiesWidget):
         # Set the version string
         # We'll increment the version by one if the file already exists
         if not self.version_editor.text():
-            self.version_editor.setText(u'v001')
+            self.version_editor.setText('v001')
         if QtCore.QFileInfo(self.db_source()).exists():
             v = self.version_editor.text()
             v = self.increment_version(
@@ -539,9 +539,11 @@ class FilePropertiesWidget(base.PropertiesWidget):
 
         self.update_timer.start()
 
-    @QtCore.Slot(unicode)
+    @QtCore.Slot(str)
     def update_tasks(self, ext):
-        """Update the available task folder options based on the given file extension."""
+        """Update the available task folder options based on the given file extension.
+
+        """
         ext = ext.lower()
         config = asset_config.get(self.server, self.job, self.root)
         if ext in config.get_extensions(asset_config.CacheFormat):
@@ -586,17 +588,17 @@ class FilePropertiesWidget(base.PropertiesWidget):
         _dir = self.parent_folder()
 
         name = self.name()
-        if not name or not _dir or u'{invalid_token}' in name:
+        if not name or not _dir or '{invalid_token}' in name:
             raise RuntimeError('Invalid token in output name')
 
         _dir = QtCore.QDir(_dir)
-        if not _dir.mkpath(u'.'):
+        if not _dir.mkpath('.'):
             raise RuntimeError('Could name create folder.')
 
         file_info = QtCore.QFileInfo(self.db_source())
         if file_info.exists():
             raise RuntimeError(
-                u'{} already exists. Try incrementing the version number.'.format(name))
+                '{} already exists. Try incrementing the version number.'.format(name))
 
         path = file_info.absoluteFilePath()
         open(os.path.normpath(path), 'a').close()
@@ -618,10 +620,10 @@ class FilePropertiesWidget(base.PropertiesWidget):
         options, it will be added as a new option.
 
         """
-        source = u'/'.join((self.server, self.job, self.root, self.asset))
+        source = '/'.join((self.server, self.job, self.root, self.asset))
         _dir = QtWidgets.QFileDialog.getExistingDirectory(
             parent=self,
-            caption=u'Select a folder...',
+            caption='Select a folder...',
             dir=source,
             options=QtWidgets.QFileDialog.ShowDirsOnly | QtWidgets.QFileDialog.DontResolveSymlinks | QtWidgets.QFileDialog.DontUseCustomDirectoryIcons
         )
@@ -630,19 +632,19 @@ class FilePropertiesWidget(base.PropertiesWidget):
 
         if source not in _dir:
             ui.ErrorBox(
-                u'Invalid selection',
-                u'Make sure to select a folder inside the current asset.'
+                'Invalid selection',
+                'Make sure to select a folder inside the current asset.'
             ).open()
             return
 
-        relative_path = _dir.replace(source, u'').strip(u'/')
+        relative_path = _dir.replace(source, '').strip('/')
         self.add_task(relative_path)
 
     def add_task(self, relative_path):
         """Adds a task folder to the folder editor.
 
         """
-        for n in xrange(self.folder_editor.count()):
+        for n in range(self.folder_editor.count()):
             v = self.folder_editor.itemData(n, role=QtCore.Qt.UserRole)
             if v == relative_path:
                 self.folder_editor.setCurrentIndex(n)
@@ -669,21 +671,21 @@ class FilePropertiesWidget(base.PropertiesWidget):
 
         if not _dir.exists():
             mbox = QtWidgets.QMessageBox(parent=self)
-            mbox.setWindowTitle(u'Folder does not yet exist')
+            mbox.setWindowTitle('Folder does not yet exist')
             mbox.setIcon(QtWidgets.QMessageBox.Warning)
-            mbox.setText(u'Destination folder does not exist.')
+            mbox.setText('Destination folder does not exist.')
             mbox.setInformativeText(
-                u'The destination folder does not yet exist. Do you want to create it now?')
+                'The destination folder does not yet exist. Do you want to create it now?')
             button = mbox.addButton(
-                u'Create folder', QtWidgets.QMessageBox.AcceptRole)
+                'Create folder', QtWidgets.QMessageBox.AcceptRole)
             mbox.setDefaultButton(button)
-            mbox.addButton(u'Cancel', QtWidgets.QMessageBox.RejectRole)
+            mbox.addButton('Cancel', QtWidgets.QMessageBox.RejectRole)
 
             if mbox.exec_() == QtWidgets.QMessageBox.RejectRole:
                 return
-            if not _dir.mkpath(u'.'):
+            if not _dir.mkpath('.'):
                 ui.ErrorBox(
-                    u'Could not create destination folder.').open()
+                    'Could not create destination folder.').open()
                 return
 
         actions.reveal(_dir.path())
@@ -722,10 +724,10 @@ class FilePropertiesWidget(base.PropertiesWidget):
         if not v:
             v = 'v001'
 
-        prefix = u'v' if v.startswith(u'v') else u''
-        padding = len(v.replace(u'v', u''))
+        prefix = 'v' if v.startswith('v') else ''
+        padding = len(v.replace('v', ''))
         try:
-            n = int(v.replace(u'v', u''))
+            n = int(v.replace('v', ''))
         except:
             return 'v001'
 
@@ -740,7 +742,7 @@ class FilePropertiesWidget(base.PropertiesWidget):
                 n = 0
             if n > 999:
                 n = 999
-            return u'{}{}'.format(prefix, u'{}'.format(n).zfill(padding))
+            return '{}{}'.format(prefix, '{}'.format(n).zfill(padding))
 
         # Let's scan the destination directory for existing versions to make
         # sure we're only suggesting valid versions
@@ -756,10 +758,10 @@ class FilePropertiesWidget(base.PropertiesWidget):
                 continue
 
             _v = entry.name[idx:idx + len(v)]
-            _prefix = u'v' if _v.startswith(u'v') else u''
-            _padding = len(_v.replace(u'v', u''))
+            _prefix = 'v' if _v.startswith('v') else ''
+            _padding = len(_v.replace('v', ''))
             try:
-                _n = int(_v.replace(u'v', u''))
+                _n = int(_v.replace('v', ''))
             except ValueError:
                 continue
             _arr.append(_n)
@@ -770,7 +772,7 @@ class FilePropertiesWidget(base.PropertiesWidget):
                 n = 0
             if n > 999:
                 n = 999
-            return u'{}{}'.format(prefix, u'{}'.format(n).zfill(padding))
+            return '{}{}'.format(prefix, '{}'.format(n).zfill(padding))
 
         _n = func(_arr)
         _n += increment
@@ -784,4 +786,4 @@ class FilePropertiesWidget(base.PropertiesWidget):
         if _n > 999:
             _n = 999
 
-        return u'{}{}'.format(_prefix, u'{}'.format(_n).zfill(_padding))
+        return '{}{}'.format(_prefix, '{}'.format(_n).zfill(_padding))

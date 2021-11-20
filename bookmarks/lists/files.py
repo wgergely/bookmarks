@@ -48,7 +48,7 @@ class DropIndicatorWidget(QtWidgets.QWidget):
             painter,
             common.font_db.primary_font(common.MEDIUM_FONT_SIZE())[0],
             self.rect(),
-            u'Drop to add bookmark',
+            'Drop to add bookmark',
             QtCore.Qt.AlignCenter,
             common.BLUE
         )
@@ -97,16 +97,16 @@ class ItemDrag(QtGui.QDrag):
             )
         elif alt_modifier and shift_modifier:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                u'folder', common.SECONDARY_TEXT, common.ROW_HEIGHT())
+                'folder', common.SECONDARY_TEXT, common.ROW_HEIGHT())
             source = QtCore.QFileInfo(source).dir().path()
         elif alt_modifier:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                u'file', common.SECONDARY_TEXT, common.ROW_HEIGHT())
+                'file', common.SECONDARY_TEXT, common.ROW_HEIGHT())
             source = common.get_sequence_startpath(source)
         elif shift_modifier:
-            source = common.get_sequence_startpath(source) + u', ++'
+            source = common.get_sequence_startpath(source) + ', ++'
             pixmap = images.ImageCache.get_rsc_pixmap(
-                u'multiples_files', common.SECONDARY_TEXT, common.ROW_HEIGHT())
+                'multiples_files', common.SECONDARY_TEXT, common.ROW_HEIGHT())
         else:
             return
 
@@ -124,7 +124,7 @@ class DragPixmapFactory(QtWidgets.QWidget):
         self._text = text
 
         _, metrics = common.font_db.primary_font(common.MEDIUM_FONT_SIZE())
-        self._text_width = metrics.width(text)
+        self._text_width = metrics.horizontalAdvance(text)
 
         width = self._text_width + common.MARGIN()
         width = common.WIDTH() + common.MARGIN() if width > common.WIDTH() else width
@@ -317,7 +317,7 @@ class FilesModel(base.BaseModel):
     def set_watchdirs(self, v):
         self._watcher.addPaths(v[0:128])
 
-    @QtCore.Slot(unicode)
+    @QtCore.Slot(str)
     def dir_changed(self, path):
         """Slot called when a watched directory changes.
 
@@ -338,7 +338,7 @@ class FilesModel(base.BaseModel):
         # refreshing
         self.set_refresh_needed(True)
 
-    @common.status_bar_message(u'Loading Files...')
+    @common.status_bar_message('Loading Files...')
     @base.initdata
     def __initdata__(self):
         """The method is responsible for getting the bare-bones file items by
@@ -367,7 +367,7 @@ class FilesModel(base.BaseModel):
         self.clear_watchdirs()
         WATCHDIRS = []
 
-        _parent_path = u'/'.join(p + (k,))
+        _parent_path = '/'.join(p + (k,))
         if not QtCore.QFileInfo(_parent_path).exists():
             return
 
@@ -394,18 +394,18 @@ class FilesModel(base.BaseModel):
             filename = entry.name
 
             # Skipping common hidden files
-            if filename[0] == u'.':
+            if filename[0] == '.':
                 continue
-            if u'thumbs.db' in filename:
+            if 'thumbs.db' in filename:
                 continue
 
-            filepath = entry.path.replace(u'\\', u'/')
+            filepath = entry.path.replace('\\', '/')
 
             # Skip items without file extension
-            if u'.' not in filename:
+            if '.' not in filename:
                 continue
 
-            ext = filename.split(u'.')[-1]
+            ext = filename.split('.')[-1]
 
             # We'll check against the current file extension against the allowed
             # extensions. If the task folder is not defined in the asset config,
@@ -417,25 +417,25 @@ class FilesModel(base.BaseModel):
             c += 1
             if not c % nth:
                 common.signals.showStatusBarMessage.emit(
-                    u'Loading files (found ' + unicode(c) + u' items)...')
+                    'Loading files (found ' + str(c) + ' items)...')
                 QtWidgets.QApplication.instance().processEvents()
 
             # Getting the file's relative root folder
             # This data is used to display the clickable subfolders relative
             # to the current task folder
-            fileroot = filepath.replace(_parent_path, u'').strip(u'/')
-            fileroot = u'/'.join(fileroot.split(u'/')[:-1])
+            fileroot = filepath.replace(_parent_path, '').strip('/')
+            fileroot = '/'.join(fileroot.split('/')[:-1])
 
             # Save the file's parent folder for the file system watcher
-            WATCHDIRS.append(_parent_path + u'/' + fileroot)
+            WATCHDIRS.append(_parent_path + '/' + fileroot)
 
             # To sort by subfolders correctly, we'll a populate a fixed length
             # list with the subfolders and file names. Sorting is do case
             # insensitive:
             sort_by_name_role = [0, 0, 0, 0, 0, 0, 0, 0]
             if fileroot:
-                _fileroot = fileroot.lower().split(u'/')
-                for idx in xrange(len(_fileroot)):
+                _fileroot = fileroot.lower().split('/')
+                for idx in range(len(_fileroot)):
                     sort_by_name_role[idx] = _fileroot[idx]
                     if idx == 6:
                         break
@@ -446,14 +446,14 @@ class FilesModel(base.BaseModel):
             try:
                 seq = common.get_sequence(filepath)
             except RuntimeError:
-                log.error(u'"' + filename + u'" named incorrectly. Skipping.')
+                log.error('"' + filename + '" named incorrectly. Skipping.')
                 continue
 
             flags = base.DEFAULT_ITEM_FLAGS
 
             if seq:
                 seqpath = seq.group(1) + common.SEQPROXY + \
-                    seq.group(3) + u'.' + seq.group(4)
+                    seq.group(3) + '.' + seq.group(4)
             if (seq and (seqpath in common.FAVOURITES_SET or filepath in common.FAVOURITES_SET)) or (filepath in common.FAVOURITES_SET):
                 flags = flags | common.MarkedAsFavourite
 
@@ -476,9 +476,9 @@ class FilesModel(base.BaseModel):
                 common.EntryRole: [entry, ],
                 common.FlagsRole: flags,
                 common.ParentPathRole: parent_path_role,
-                common.DescriptionRole: u'',
+                common.DescriptionRole: '',
                 common.TodoCountRole: 0,
-                common.FileDetailsRole: u'',
+                common.FileDetailsRole: '',
                 common.SequenceRole: seq,
                 common.FramesRole: [],
                 common.FileInfoLoaded: False,
@@ -505,7 +505,7 @@ class FilesModel(base.BaseModel):
                 # If the sequence has not yet been added to our dictionary
                 # of seqeunces we add it here
                 if seqpath not in SEQUENCE_DATA:  # ... and create it if it doesn't exist
-                    seqname = seqpath.split(u'/')[-1]
+                    seqname = seqpath.split('/')[-1]
                     flags = base.DEFAULT_ITEM_FLAGS
 
                     if seqpath in common.FAVOURITES_SET:
@@ -525,9 +525,9 @@ class FilesModel(base.BaseModel):
                         common.EntryRole: [],
                         common.FlagsRole: flags,
                         common.ParentPathRole: parent_path_role,
-                        common.DescriptionRole: u'',
+                        common.DescriptionRole: '',
                         common.TodoCountRole: 0,
-                        common.FileDetailsRole: u'',
+                        common.FileDetailsRole: '',
                         common.SequenceRole: seq,
                         common.FramesRole: [],
                         common.FileInfoLoaded: False,
@@ -559,7 +559,7 @@ class FilesModel(base.BaseModel):
         t = common.SequenceItem
         data = datacache.get_data(p, k, t)
 
-        for idx, v in enumerate(SEQUENCE_DATA.itervalues()):
+        for idx, v in enumerate(SEQUENCE_DATA.values()):
             if idx >= common.MAXITEMS:
                 break  # Let's limit the maximum number of items we load
 
@@ -571,9 +571,9 @@ class FilesModel(base.BaseModel):
                     _seq.group(1) +
                     v[common.FramesRole][0] +
                     _seq.group(3) +
-                    u'.' + _seq.group(4)
+                    '.' + _seq.group(4)
                 )
-                filename = filepath.split(u'/')[-1]
+                filename = filepath.split('/')[-1]
                 v[QtCore.Qt.DisplayRole] = filename
                 v[QtCore.Qt.EditRole] = filename
                 v[QtCore.Qt.StatusTipRole] = filepath
@@ -646,7 +646,7 @@ class FilesModel(base.BaseModel):
             return
 
         file_info = QtCore.QFileInfo(index.data(QtCore.Qt.StatusTipRole))
-        filepath = parent_role[5] + u'/' + \
+        filepath = parent_role[5] + '/' + \
             common.get_sequence_endpath(file_info.fileName())
 
         actions.set_active(settings.FileKey, filepath)
@@ -654,7 +654,7 @@ class FilesModel(base.BaseModel):
     def task(self):
         return settings.active(settings.TaskKey)
 
-    @QtCore.Slot(unicode)
+    @QtCore.Slot(str)
     def set_task(self, val):
         """Slot used to set the model's task folder.
 
@@ -687,7 +687,7 @@ class FilesModel(base.BaseModel):
         task = self.task()
 
         if task not in self._datatype:
-            key = u'{}/{}'.format(
+            key = '{}/{}'.format(
                 self.__class__.__name__,
                 task
             )
@@ -707,8 +707,7 @@ class FilesModel(base.BaseModel):
     @QtCore.Slot(int)
     def set_data_type(self, val):
         if val not in (common.FileItem, common.SequenceItem):
-            s = u'Invalid data type value.'
-            raise TypeError(s)
+            raise ValueError(f'{val} is not a valid `data_type`.')
 
         task = self.task()
         if task not in self._datatype:
@@ -719,7 +718,7 @@ class FilesModel(base.BaseModel):
             return
 
         # Set the data type to the local settings file
-        key = u'{}/{}'.format(
+        key = '{}/{}'.format(
             self.__class__.__name__,
             self.task()
         )
@@ -748,7 +747,7 @@ class FilesModel(base.BaseModel):
         if not all(v):
             return None
 
-        return u'/'.join(v)
+        return '/'.join(v)
 
     def mimeData(self, indexes):
         """The data necessary for supporting drag and drop operations are
@@ -766,19 +765,18 @@ class FilesModel(base.BaseModel):
         """
         def add_path_to_mime(mime, path):
             """Adds the given path to the mime data."""
-            if not isinstance(path, unicode):
-                s = u'Expected {}, got {}'.format(unicode, type(path))
-                raise TypeError(s)
+            common.check_type(path, str)
 
             path = QtCore.QFileInfo(path).absoluteFilePath()
             mime.setUrls(mime.urls() + [QtCore.QUrl.fromLocalFile(path), ])
 
-            path = QtCore.QDir.toNativeSeparators(path).encode('utf-8')
-            _bytes = QtCore.QByteArray(path)
+            path = QtCore.QDir.toNativeSeparators(path)
+            _bytes = QtCore.QByteArray(path.encode('utf-8'))
+
             mime.setData(
-                u'application/x-qt-windows-mime;value="FileName"', _bytes)
+                'application/x-qt-windows-mime;value="FileName"', _bytes)
             mime.setData(
-                u'application/x-qt-windows-mime;value="FileNameW"', _bytes)
+                'application/x-qt-windows-mime;value="FileNameW"', path)
 
             return mime
 
@@ -865,16 +863,16 @@ class FilesWidget(base.ThreadedBaseWidget):
         model = self.model().sourceModel()
         k = model.task()
         if not k:
-            return u'Click the File tab to select a folder.'
-        return u'No files found in {}.'.format(k)
+            return 'Click the File tab to select a folder.'
+        return 'No files found in {}.'.format(k)
 
-    @QtCore.Slot(unicode)
+    @QtCore.Slot(str)
     @QtCore.Slot(int)
     @QtCore.Slot(object)
     def update_model_value(self, source, role, v):
         model = self.model().sourceModel()
         data = model.model_data()
-        for idx in xrange(model.rowCount()):
+        for idx in range(model.rowCount()):
             if source != common.proxy_path(data[idx][QtCore.Qt.StatusTipRole]):
                 continue
             data[idx][role] = v
@@ -883,7 +881,7 @@ class FilesWidget(base.ThreadedBaseWidget):
 
     @common.error
     @common.debug
-    @QtCore.Slot(unicode)
+    @QtCore.Slot(str)
     def show_item(self, v, role=QtCore.Qt.DisplayRole, update=True, limit=10000):
         """This slot is called by the `itemAdded` signal.
 
@@ -897,7 +895,7 @@ class FilesWidget(base.ThreadedBaseWidget):
 
         if not all(model.parent_path()):
             return
-        parent_path = u'/'.join(model.parent_path())
+        parent_path = '/'.join(model.parent_path())
 
         # We probably saved outside the asset, we won't be showing the
         # file...
@@ -908,7 +906,7 @@ class FilesWidget(base.ThreadedBaseWidget):
         actions.change_tab(common.FileTab)
 
         # Change task folder
-        task = v.replace(parent_path, u'').strip(u'/').split(u'/')[0]
+        task = v.replace(parent_path, '').strip('/').split('/')[0]
         if k != task:
             model.set_task(task)
 

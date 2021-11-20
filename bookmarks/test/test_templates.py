@@ -34,39 +34,39 @@ class Test(base.BaseApplicationTest):
 
     def test_get_template_folder(self):
         with self.assertRaises(TypeError):
-            templates.get_template_folder('str')
+            templates.get_template_folder(1)
 
-        v = templates.get_template_folder(base.random_unicode(32))
+        v = templates.get_template_folder(base.random_str(32))
         self.assertIsNotNone(v)
-        self.assertIsInstance(v, unicode)
+        self.assertIsInstance(v, str)
         self.assertTrue(QtCore.QFileInfo(v).exists())
 
         v = templates.get_template_folder(templates.JobTemplateMode)
         self.assertIsNotNone(v)
-        self.assertIsInstance(v, unicode)
+        self.assertIsInstance(v, str)
         self.assertTrue(QtCore.QFileInfo(v).exists())
 
         v = templates.get_template_folder(templates.AssetTemplateMode)
         self.assertIsNotNone(v)
-        self.assertIsInstance(v, unicode)
+        self.assertIsInstance(v, str)
         self.assertTrue(QtCore.QFileInfo(v).exists())
 
     def test_add_zip_template(self):
         v = templates.get_template_folder(templates.JobTemplateMode)
         self.assertIsNotNone(v)
-        self.assertIsInstance(v, unicode)
+        self.assertIsInstance(v, str)
         self.assertTrue(os.path.isdir(v))
 
         v = [f for f in os.listdir(v) if '.zip' in f]
         self.assertFalse(v)
 
-        with self.assertRaises(TypeError):
+        with self.assertRaises(RuntimeError):
             template_actions.add_zip_template('str', 'str')
         with self.assertRaises(RuntimeError):
-            template_actions.add_zip_template(base.random_unicode(32), base.random_unicode(32))
+            template_actions.add_zip_template(base.random_str(32), base.random_str(32))
         with self.assertRaises(RuntimeError):
             template_actions.add_zip_template(
-                common.temp_path() + os.sep + u'invalid.zip',
+                common.temp_path() + os.sep + 'invalid.zip',
                 templates.JobTemplateMode
             )
 
@@ -81,7 +81,7 @@ class Test(base.BaseApplicationTest):
                 templates.JobTemplateMode
             )
             self.assertIsNotNone(v)
-            self.assertIsInstance(v, unicode)
+            self.assertIsInstance(v, str)
             self.assertTrue(os.path.isfile(v))
 
         # This should fail as it would override existing files
@@ -99,14 +99,14 @@ class Test(base.BaseApplicationTest):
                 )
 
     def test_extract_zip_template(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(RuntimeError):
             template_actions.extract_zip_template('str', 'str', 'str')
         with self.assertRaises(TypeError):
-            template_actions.extract_zip_template(base.random_unicode(32), None, None)
+            template_actions.extract_zip_template(base.random_str(32), None, None)
         with self.assertRaises(TypeError):
-            template_actions.extract_zip_template(base.random_unicode(32), base.random_unicode(32), None)
+            template_actions.extract_zip_template(base.random_str(32), base.random_str(32), None)
         with self.assertRaises(RuntimeError):
-            template_actions.extract_zip_template(base.random_unicode(32), base.random_unicode(32), base.random_unicode(32))
+            template_actions.extract_zip_template(base.random_str(32), base.random_str(32), base.random_str(32))
 
         for f in os.listdir(common.temp_path()):
             if '.zip' not in f:
@@ -117,18 +117,18 @@ class Test(base.BaseApplicationTest):
             v = template_actions.extract_zip_template(
                 common.temp_path() + os.sep + f,
                 common.temp_path(),
-                base.random_unicode(32)
+                base.random_str(32)
             )
             self.assertIsNotNone(v)
-            self.assertIsInstance(v, unicode)
+            self.assertIsInstance(v, str)
             self.assertTrue(QtCore.QFileInfo(v).exists())
 
 
     def test_remove_zip_template(self):
         with self.assertRaises(TypeError):
-            template_actions.remove_zip_template('str')
+            template_actions.remove_zip_template(1)
         with self.assertRaises(RuntimeError):
-            template_actions.remove_zip_template(base.random_unicode(32))
+            template_actions.remove_zip_template(base.random_str(32))
 
         for f in os.listdir(common.temp_path()):
             if '.zip' not in f:

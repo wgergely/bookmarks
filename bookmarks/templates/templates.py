@@ -24,15 +24,15 @@ from .. import actions
 from . import actions as template_actions
 
 
-JobTemplateMode = u'job'
-AssetTemplateMode = u'asset'
+JobTemplateMode = 'job'
+AssetTemplateMode = 'asset'
 
 TemplateContentsRole = QtCore.Qt.UserRole
 TemplatePathRole = TemplateContentsRole + 1
 
-TEMPLATES_DIR = u'{root}/{product}/{mode}_templates'
+TEMPLATES_DIR = '{root}/{product}/{mode}_templates'
 
-HINT_TEXT = u'Right-click or drag\'n\'drop to add ZIP template'
+HINT_TEXT = 'Right-click or drag\'n\'drop to add ZIP template'
 
 
 def get_template_folder(mode):
@@ -40,15 +40,13 @@ def get_template_folder(mode):
     the given `mode`.
 
     Args:
-        mode (unicode): A template mode, eg. `JobTemplateMode`.
+        mode (str): A template mode, eg. `JobTemplateMode`.
 
     Returns:
-        unicode: Path to the folder where the template zip files are stored.
+        str: Path to the folder where the template zip files are stored.
 
     """
-    if not isinstance(mode, unicode):
-        raise TypeError(
-            u'Invalid type. Expected {}, got {}'.format(unicode, type(mode)))
+    common.check_type(mode, str)
 
     data_location = QtCore.QStandardPaths.writableLocation(
         QtCore.QStandardPaths.GenericDataLocation
@@ -61,8 +59,8 @@ def get_template_folder(mode):
     _dir = QtCore.QDir(path)
     if _dir.exists():
         return path
-    if not _dir.mkpath(u'.'):
-        raise OSError(u'Failed to create template directory.')
+    if not _dir.mkpath('.'):
+        raise OSError('Failed to create template directory.')
     return path
 
 
@@ -82,30 +80,30 @@ class TemplateContextMenu(contextmenu.BaseContextMenu):
 
     def add_menu(self):
         self.menu[contextmenu.key()] = {
-            u'text': u'Add new {} template...'.format(self.parent().mode()),
-            u'action': functools.partial(
+            'text': 'Add new {} template...'.format(self.parent().mode()),
+            'action': functools.partial(
                 template_actions.pick_template,
                 self.parent().mode()
             ),
-            u'icon': self.get_icon(u'add', color=common.GREEN)
+            'icon': self.get_icon('add', color=common.GREEN)
         }
 
     def remove_menu(self):
         source = self.index.data(TemplatePathRole)
         self.menu[contextmenu.key()] = {
-            u'text': u'Delete',
-            u'action': functools.partial(
+            'text': 'Delete',
+            'action': functools.partial(
                 template_actions.remove_zip_template,
                 source
             ),
-            u'icon': self.get_icon(u'close', color=common.RED)
+            'icon': self.get_icon('close', color=common.RED)
         }
 
     def refresh_menu(self):
         self.menu[contextmenu.key()] = {
-            u'text': u'Refresh',
-            u'action': self.parent().init_data,
-            u'icon': self.get_icon(u'refresh')
+            'text': 'Refresh',
+            'action': self.parent().init_data,
+            'icon': self.get_icon('refresh')
         }
 
     def reveal_menu(self):
@@ -113,9 +111,9 @@ class TemplateContextMenu(contextmenu.BaseContextMenu):
             actions.reveal(self.index.data(TemplatePathRole))
 
         self.menu[contextmenu.key()] = {
-            u'text': u'Show in file explorer...',
-            u'icon': self.get_icon(u'folder'),
-            u'action': reveal,
+            'text': 'Show in file explorer...',
+            'icon': self.get_icon('folder'),
+            'action': reveal,
         }
 
 
@@ -127,7 +125,7 @@ class TemplateListDelegate(ui.ListWidgetDelegate):
         """Custom editor for editing the template's name."""
         editor = QtWidgets.QLineEdit(parent=parent)
         editor.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        editor.setStyleSheet(u'padding: 0px; margin: 0px; border-radius: 0px;')
+        editor.setStyleSheet('padding: 0px; margin: 0px; border-radius: 0px;')
         validator = QtGui.QRegExpValidator(parent=editor)
         validator.setRegExp(QtCore.QRegExp(r'[\_\-a-zA-z0-9]+'))
         editor.setValidator(validator)
@@ -174,15 +172,15 @@ class TemplateListWidget(ui.ListWidget):
         self.blockSignals(True)
 
         dir_ = QtCore.QDir(get_template_folder(self.mode()))
-        dir_.setNameFilters([u'*.zip', ])
+        dir_.setNameFilters(['*.zip', ])
 
         h = common.ROW_HEIGHT()
         size = QtCore.QSize(1, h)
 
         off_pixmap = images.ImageCache.get_rsc_pixmap(
-            u'close', common.SEPARATOR, h)
+            'close', common.SEPARATOR, h)
         on_pixmap = images.ImageCache.get_rsc_pixmap(
-            u'check', common.GREEN, h)
+            'check', common.GREEN, h)
 
         icon = QtGui.QIcon()
         icon.addPixmap(off_pixmap, QtGui.QIcon.Normal)
@@ -191,22 +189,22 @@ class TemplateListWidget(ui.ListWidget):
         height = self.contentsMargins().top() + self.contentsMargins().bottom()
 
         for f in dir_.entryList():
-            if u'.zip' not in f.lower():
+            if '.zip' not in f.lower():
                 continue
 
-            self.addItem(f, icon=u'icon')
+            self.addItem(f, icon='icon')
             height += size.height() + self.spacing()
 
             item = self.item(self.count() - 1)
-            item.setData(QtCore.Qt.DisplayRole, f.replace(u'.zip', u''))
+            item.setData(QtCore.Qt.DisplayRole, f.replace('.zip', ''))
             item.setData(QtCore.Qt.SizeHintRole, size)
             item.setData(QtCore.Qt.DecorationRole, icon)
 
-            path = u'{}/{}'.format(dir_.path(), f)
+            path = '{}/{}'.format(dir_.path(), f)
             with zipfile.ZipFile(path) as zip:
                 item.setData(TemplatePathRole, path)
                 item.setData(TemplateContentsRole, [f.strip(
-                    u'/') for f in sorted(zip.namelist())])
+                    '/') for f in sorted(zip.namelist())])
                 item.setFlags(item.flags() | QtCore.Qt.ItemIsEditable)
 
             self.addItem(item)
@@ -225,7 +223,7 @@ class TemplateListWidget(ui.ListWidget):
         idx = self.currentRow()
         settings.instance().setValue(
             settings.UIStateSection,
-            u'{}/{}'.format(self.__class__.__name__, self.mode()),
+            '{}/{}'.format(self.__class__.__name__, self.mode()),
             self.item(idx).data(QtCore.Qt.DisplayRole)
         )
 
@@ -236,11 +234,11 @@ class TemplateListWidget(ui.ListWidget):
         """
         v = settings.instance().value(
             settings.UIStateSection,
-            u'{}/{}'.format(self.__class__.__name__, self.mode())
+            '{}/{}'.format(self.__class__.__name__, self.mode())
         )
         if not v:
             return
-        for n in xrange(self.count()):
+        for n in range(self.count()):
             item = self.item(n)
             if v == item.data(QtCore.Qt.DisplayRole):
                 self.setCurrentItem(item)
@@ -250,7 +248,7 @@ class TemplateListWidget(ui.ListWidget):
         """The TemplateWidget's current mode.
 
         Returns:
-            unicode: A template mode, eg. `AssetTable` or `JobTemplateMode`.
+            str: A template mode, eg. `AssetTable` or `JobTemplateMode`.
 
         """
         return self._mode
@@ -262,18 +260,18 @@ class TemplateListWidget(ui.ListWidget):
         destination folder.
 
         Args:
-            name (unicode): The name of the folder the contents of the zip archive will be saved to.
-            destination (unicode): The destination folder where the new asset will be expanded to.
+            name (str): The name of the folder the contents of the zip archive will be saved to.
+            destination (str): The destination folder where the new asset will be expanded to.
 
         """
         model = self.selectionModel()
         if not model.hasSelection():
             raise RuntimeError(
-                u'Must select a template to create a new {}'.format(self.mode()))
+                'Must select a template to create a new {}'.format(self.mode()))
         index = next((f for f in model.selectedIndexes()),
                      QtCore.QModelIndex())
         if not index.isValid():
-            raise RuntimeError(u'Invalid template selection.')
+            raise RuntimeError('Invalid template selection.')
 
         template_actions.extract_zip_template(
             index.data(TemplatePathRole),
@@ -288,11 +286,11 @@ class TemplateListWidget(ui.ListWidget):
         oldname = QtCore.QFileInfo(oldpath).baseName()
 
         name = index.data(QtCore.Qt.DisplayRole)
-        name = name.replace(u'.zip', u'')
+        name = name.replace('.zip', '')
 
-        newpath = u'{}/{}.zip'.format(
+        newpath = '{}/{}.zip'.format(
             get_template_folder(self.mode()),
-            name.replace(u' ', u'_')
+            name.replace(' ', '_')
         )
         if QtCore.QFile.rename(oldpath, newpath):
             self.model().setData(index, name, QtCore.Qt.DisplayRole)
@@ -436,14 +434,14 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
         size = QtCore.QSize(0, common.ROW_HEIGHT() * 0.8)
 
         folder_pixmap = images.ImageCache.get_rsc_pixmap(
-            u'folder', common.SECONDARY_TEXT, common.MARGIN())
+            'folder', common.SECONDARY_TEXT, common.MARGIN())
         folder_icon = QtGui.QIcon()
         folder_icon.addPixmap(folder_pixmap, QtGui.QIcon.Normal)
         folder_icon.addPixmap(folder_pixmap, QtGui.QIcon.Selected)
         folder_icon.addPixmap(folder_pixmap, QtGui.QIcon.Disabled)
 
         file_pixmap = images.ImageCache.get_rsc_pixmap(
-            u'file', common.GREEN, common.MARGIN(), opacity=0.5)
+            'file', common.GREEN, common.MARGIN(), opacity=0.5)
         file_icon = QtGui.QIcon()
         file_icon.addPixmap(file_pixmap, QtGui.QIcon.Normal)
         file_icon.addPixmap(file_pixmap, QtGui.QIcon.Selected)
@@ -485,7 +483,7 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
             painter.drawText(
                 rect,
                 QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter | QtCore.Qt.TextWordWrap,
-                u'Template preview',
+                'Template preview',
                 boundingRect=self.rect(),
             )
             painter.end()

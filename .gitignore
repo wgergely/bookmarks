@@ -1,6 +1,7 @@
 # Byte-compiled / optimized / DLL files
 *.py[co]
 *$py.class
+__pycache__
 
 # Distribution / packaging
 build-scripts/win/bin/*.exe
@@ -9,6 +10,7 @@ build-scripts/win/bin/*.exe
 build/
 develop-eggs/
 dist/
+dest
 eggs/
 .eggs/
 lib/

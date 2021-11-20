@@ -62,7 +62,7 @@ class MainWidget(QtWidgets.QWidget):
         super(MainWidget, self).__init__(parent=parent)
 
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'icon', None, common.ASSET_ROW_HEIGHT())
+            'icon', None, common.ASSET_ROW_HEIGHT())
         self.setWindowIcon(QtGui.QIcon(pixmap))
 
         self._contextMenu = None
@@ -77,7 +77,7 @@ class MainWidget(QtWidgets.QWidget):
         self.taskswidget = None
         self.favouriteswidget = None
         self.statusbar = None
-        self.init_progress = u'Loading...'
+        self.init_progress = 'Loading...'
 
     @common.debug
     @common.error
@@ -200,7 +200,7 @@ class MainWidget(QtWidgets.QWidget):
         settings.instance().verify_active()
 
         # Update the window title to display the current active paths
-        for n in xrange(3):
+        for n in range(3):
             model = self.stackedwidget.widget(n).model().sourceModel()
             model.activeChanged.connect(self.update_window_title)
             model.modelReset.connect(self.update_window_title)
@@ -262,7 +262,7 @@ class MainWidget(QtWidgets.QWidget):
             settings.FileKey,
         )
         values = [settings.active(k) for k in keys if settings.active(k)]
-        self.setWindowTitle(u'/'.join(values))
+        self.setWindowTitle('/'.join(values))
 
     @common.debug
     @common.error
@@ -388,7 +388,7 @@ class MainWidget(QtWidgets.QWidget):
             o, o)
 
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'icon_bw', None, s)
+            'icon_bw', None, s)
         painter.setOpacity(0.5)
         painter.drawPixmap(pixmaprect, pixmap, pixmap.rect())
         painter.setOpacity(1.0)

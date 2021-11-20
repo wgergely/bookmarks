@@ -47,7 +47,7 @@ TREE_STYLESHEET = """QTreeView {{
 class BaseNode(QtCore.QObject):
     def __init__(self, iobject, parentNode=None, parent=None):
         super(BaseNode, self).__init__(parent=parent)
-        self._name = u'{}'.format(iobject)
+        self._name = '{}'.format(iobject)
         self.iobject = iobject
         self._children = []
         self._parentNode = parentNode
@@ -122,9 +122,9 @@ class AlembicNode(BaseNode):
         props = self.iobject.getProperties()
         props.getNumProperties()
         if not self.iobject:
-            return u'rootNode'
+            return 'rootNode'
         name = self.iobject.getName()
-        name = u'{}{}'.format(
+        name = '{}{}'.format(
             self.iobject.getName(), props.getPropertyHeader(0))
         return name
 
@@ -132,7 +132,7 @@ class AlembicNode(BaseNode):
     def fullname(self):
         """The name of this node."""
         if not self.iobject:
-            return u'rootNode'
+            return 'rootNode'
         return self.iobject.getFullName()
 
 
@@ -208,16 +208,16 @@ class AlembicModel(QtCore.QAbstractItemModel):
 
         node = index.internalPointer()
         if role == QtCore.Qt.DisplayRole:
-            if u'ABC.childBnds' in node.name:
-                return self._name + u'.childBnds'
+            if 'ABC.childBnds' in node.name:
+                return self._name + '.childBnds'
             return node.name
 
         if role == QtCore.Qt.DecorationRole:
-            if u'.childBnds' in node.name:
+            if '.childBnds' in node.name:
                 return images.ImageCache.get_rsc_pixmap('abc', None, common.MARGIN(), resource=images.FormatResource)
-            if u'.geom' in node.name:
+            if '.geom' in node.name:
                 return images.ImageCache.get_rsc_pixmap('mesh', None, common.MARGIN())
-            if u'.xform' in node.name:
+            if '.xform' in node.name:
                 return images.ImageCache.get_rsc_pixmap('loc', None, common.MARGIN())
 
         if role == QtCore.Qt.SizeHintRole:
@@ -255,8 +255,8 @@ class AlembicTree(QtWidgets.QTreeView):
             node = self.alembic_to_nodes()
             model = AlembicModel(file_info.fileName(), node)
         except Exception as e:
-            root_node = BaseNode(u'rootNode')
-            node = BaseNode(u'Error reading alembic: {}'.format(
+            root_node = BaseNode('rootNode')
+            node = BaseNode('Error reading alembic: {}'.format(
                 e), parentNode=root_node)
             model = AlembicModel(file_info.fileName(), root_node)
 
@@ -273,7 +273,7 @@ class AlembicTree(QtWidgets.QTreeView):
     def alembic_to_nodes(self):
         """Builds the internalPointer structure needed to represent the alembic archive."""
         def _get_children(node):
-            for idx in xrange(node.iobject.getNumChildren()):
+            for idx in range(node.iobject.getNumChildren()):
                 child = node.iobject.getChild(idx)
                 nnode = AlembicNode(child, parentNode=node)
                 _get_children(nnode)
@@ -318,26 +318,26 @@ class AlembicTree(QtWidgets.QTreeView):
             if not parent.valid():
                 return text
 
-            for idx in xrange(numchildren):
+            for idx in range(numchildren):
                 child = parent.getChild(idx)
                 childnumchildren = child.getNumChildren()
                 name = child.getName().split(':')[-1]
                 if idx != (numchildren - 1):
                     if childnumchildren:
-                        text += u'├── {}/\n|   '.format(name)
+                        text += '├── {}/\n|   '.format(name)
                     else:
-                        text += u' └── {}/\n'.format(name)
+                        text += ' └── {}/\n'.format(name)
                 else:
                     if childnumchildren:
-                        text += u'└── {}\n   '.format(name)
+                        text += '└── {}\n   '.format(name)
                     else:
-                        text += u' └── {}\n'.format(name)
+                        text += ' └── {}\n'.format(name)
                 text = _get_children(child, text, child.getNumChildren())
             return text
         if not abc.valid():
-            return u'{} is not valid.'.format(abc)
+            return '{} is not valid.'.format(abc)
 
-        text = u'{}/\n'.format(QtCore.QFileInfo(abc.getName()).fileName())
+        text = '{}/\n'.format(QtCore.QFileInfo(abc.getName()).fileName())
         text = _get_children(abc.getTop(), text,
                              abc.getTop().getNumChildren())
         return text.encode('utf-8')
@@ -347,7 +347,10 @@ class AlembicTree(QtWidgets.QTreeView):
 
 
 class AlembicPreviewWidget(QtWidgets.QWidget):
-    """Widget used  to display the contents of an alembic archive.
+    """Widget used to display the contents of an alembic archive.
+
+    Args:
+        path (str): The path to the Alembic archive.
 
     """
 
@@ -356,9 +359,7 @@ class AlembicPreviewWidget(QtWidgets.QWidget):
         instance = self
 
         super(AlembicPreviewWidget, self).__init__(parent=parent)
-        if not isinstance(path, unicode):
-            raise ValueError(
-                u'Expected {}, got {}'.format(unicode, type(path)))
+        common.check_type(path, str)
 
         if not self.parent():
             common.set_custom_stylesheet(self)

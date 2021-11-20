@@ -6,7 +6,7 @@ from PySide2 import QtCore
 
 from .. import common
 from .. import ui
-from .. import bookmark_db
+from .. import database
 
 from ..lists import delegate
 
@@ -18,7 +18,7 @@ class DescriptionEditorWidget(ui.LineEdit):
         super(DescriptionEditorWidget, self).__init__(parent=parent)
         self.installEventFilter(self)
         self.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
-        self.setPlaceholderText(u'Edit description...')
+        self.setPlaceholderText('Edit description...')
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
 
         self._connect_signals()
@@ -32,7 +32,7 @@ class DescriptionEditorWidget(ui.LineEdit):
 
     def action(self):
         index = self.parent().selectionModel().currentIndex()
-        text = u'{}'.format(index.data(common.DescriptionRole))
+        text = '{}'.format(index.data(common.DescriptionRole))
         if text.lower() == self.text().lower():
             self.hide()
             return
@@ -48,9 +48,9 @@ class DescriptionEditorWidget(ui.LineEdit):
         else:
             k = p
 
-        db = bookmark_db.get_db(*parent_path[0:3])
+        db = database.get_db(*parent_path[0:3])
         with db.connection():
-            db.setValue(k, u'description', self.text())
+            db.setValue(k, 'description', self.text())
 
         source_index = index.model().mapToSource(index)
         data = source_index.model().model_data()[source_index.row()]
@@ -87,7 +87,7 @@ class DescriptionEditorWidget(ui.LineEdit):
 
         # Set the text and select it
         v = index.data(common.DescriptionRole)
-        v = v if v else u''
+        v = v if v else ''
         self.setText(v)
         self.selectAll()
 

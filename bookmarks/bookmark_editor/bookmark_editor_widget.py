@@ -16,6 +16,7 @@ from PySide2 import QtCore, QtWidgets
 from .. import common
 from .. import ui
 from .. import images
+from .. import actions
 
 from . import server_editor
 from . import job_editor
@@ -54,7 +55,10 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(BookmarkEditorWidget, self).__init__(
             parent=parent,
-            f=QtCore.Qt.CustomizeWindowHint | QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowCloseButtonHint | QtCore.Qt.WindowMaximizeButtonHint
+            f=QtCore.Qt.CustomizeWindowHint |
+            QtCore.Qt.WindowTitleHint |
+            QtCore.Qt.WindowCloseButtonHint |
+            QtCore.Qt.WindowMaximizeButtonHint
         )
 
         self.server_editor = None
@@ -63,9 +67,10 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         self.job_add_button = None
         self.bookmark_editor = None
         self.bookmark_add_button = None
+        self.persistent_bookmarks_button = None
 
-        self.setObjectName(u'BookmarksEditorWidget')
-        self.setWindowTitle(u'Add Bookmarks')
+        self.setObjectName('BookmarksEditorWidget')
+        self.setWindowTitle('Add Bookmarks')
 
         self._create_ui()
         self._connect_signals()
@@ -85,19 +90,21 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
             'bookmark', common.SEPARATOR, h * 0.8)
         _label.setPixmap(pixmap)
         label = ui.PaintedLabel(
-            u'Add Bookmarks',
+            'Add Bookmarks',
             size=common.LARGE_FONT_SIZE(),
             color=common.TEXT,
             parent=self
         )
 
-        row = ui.add_row(u'', height=h, parent=self)
+        row = ui.add_row('', height=h, parent=self)
+        row.layout().addStretch(1)
         row.layout().setAlignment(QtCore.Qt.AlignCenter)
         row.layout().addWidget(_label, 0)
         row.layout().addWidget(label, 0)
+        row.layout().addStretch(1)
 
         # Separator
-        row = ui.add_row(u'', height=o, parent=self)
+        row = ui.add_row('', height=o, parent=self)
         label = QtWidgets.QLabel(parent=self)
         pixmap = images.ImageCache.get_rsc_pixmap(
             'gradient5', common.SEPARATOR, o)
@@ -111,7 +118,7 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         main_row = ui.add_row(None, height=None, parent=self)
         main_row.setAttribute(QtCore.Qt.WA_TranslucentBackground, False)
         main_row.setAttribute(QtCore.Qt.WA_NoSystemBackground, False)
-        main_row.setObjectName(u'mainRow')
+        main_row.setObjectName('mainRow')
         main_row.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
@@ -136,7 +143,7 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         )
 
         label = ui.PaintedLabel(
-            u'Servers',
+            'Servers',
             color=common.SECONDARY_TEXT
         )
         self.server_editor = server_editor.ServerListWidget(parent=grp)
@@ -144,7 +151,7 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
             'add_circle',
             (common.GREEN, common.SELECTED_TEXT),
             common.ROW_HEIGHT() * 0.66,
-            description=u'Add Server',
+            description='Add Server',
             state=True,
             parent=self
         )
@@ -171,7 +178,7 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         )
 
         label = ui.PaintedLabel(
-            u'Jobs',
+            'Jobs',
             color=common.SECONDARY_TEXT
         )
 
@@ -180,7 +187,7 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
             'add_circle',
             (common.GREEN, common.GREEN),
             common.ROW_HEIGHT() * 0.66,
-            description=u'Add Job',
+            description='Add Job',
             parent=self
         )
         _row.layout().addWidget(label, 0)
@@ -205,7 +212,7 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         )
 
         label = ui.PaintedLabel(
-            u'Bookmarks',
+            'Bookmarks',
             color=common.SECONDARY_TEXT
         )
 
@@ -214,7 +221,7 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
             'add_circle',
             (common.GREEN, common.GREEN),
             common.ROW_HEIGHT() * 0.66,
-            description=u'Add Bookmark',
+            description='Add Bookmark',
             parent=self
         )
 
@@ -225,7 +232,8 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
 
         # =====================================================
         # Separator
-        row = ui.add_row(u'', height=o, parent=self)
+        row = ui.add_row('', height=o, parent=self)
+
         label = QtWidgets.QLabel(parent=self)
         pixmap = images.ImageCache.get_rsc_pixmap(
             'gradient2', common.SEPARATOR, o)
@@ -240,10 +248,13 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         )
         row.layout().setContentsMargins(o, 0, o, 0)
         self.done_button = ui.PaintedButton(
-            u'Done',
+            'Done',
             parent=self
         )
         self.done_button.setFixedHeight(common.ROW_HEIGHT())
+
+        self.persistent_bookmarks_button = ui.PaintedButton('Edit Persistent Bookmarks')
+        row.layout().addWidget(self.persistent_bookmarks_button, 0)
         row.layout().addWidget(self.done_button, 1)
 
     def _connect_signals(self):
@@ -274,6 +285,8 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
 
         self.server_editor.serverChanged.connect(self.job_editor.update_status)
         self.job_editor.jobChanged.connect(self.job_editor.update_status)
+
+        self.persistent_bookmarks_button.clicked.connect(actions.edit_persistent_bookmarks)
 
     def init_data(self):
         self.server_editor.init_data()

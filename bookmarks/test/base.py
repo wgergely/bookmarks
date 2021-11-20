@@ -10,8 +10,8 @@ import random
 from PySide2 import QtCore, QtGui, QtWidgets
 
 
-PRODUCT = u'bookmarks_test_{}'.format(uuid.uuid1().get_hex())
-PRODUCT_ROOT = u'{}/{}'.format(
+PRODUCT = 'bookmarks_test_{}'.format(uuid.uuid1().hex)
+PRODUCT_ROOT = '{}/{}'.format(
     QtCore.QStandardPaths.writableLocation(
         QtCore.QStandardPaths.GenericDataLocation),
     PRODUCT
@@ -24,19 +24,19 @@ ranges = (
     (0x00C0, 0x0240),
 )
 
-def random_unicode(length):
-    r = u''
-    for _ in xrange(int(length / len(ranges))):
+def random_str(length):
+    r = str()
+    for _ in range(int(length / len(ranges))):
         for _range in ranges:
-             r += unichr(random.randrange(*_range))
+            r += chr(random.randrange(*_range))
     return r
 
 def random_ascii(length):
     latters = string.ascii_uppercase + string.ascii_lowercase + string.digits
-    # Create a list of unicode characters within the range 0000-D7FF
-    random_unicodes = [''.join(random.choice(latters))
-                       for _ in xrange(0, length)]
-    return u''.join(random_unicodes)
+    # Create a list of str characters within the range 0000-D7FF
+    random_strs = [''.join(random.choice(latters))
+                       for _ in range(0, length)]
+    return ''.join(random_strs)
 
 
 class BaseCase(unittest.TestCase):

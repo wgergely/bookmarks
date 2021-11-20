@@ -17,8 +17,8 @@ import maya.cmds as cmds
 
 
 k = 'BOOKMARKS_ROOT'
-PRODUCT = u'bookmarks'
-VENDOR = u'Gergely Wootsch'
+PRODUCT = 'bookmarks'
+VENDOR = 'Gergely Wootsch'
 
 maya_useNewAPI = True
 
@@ -115,8 +115,8 @@ def initializePlugin(name):
 
     def init():
         # Make sure docking is not locked when we're about to show our widget
-        currentval = cmds.optionVar(q=u'workspacesLockDocking')
-        cmds.optionVar(intValue=(u'workspacesLockDocking', False))
+        currentval = cmds.optionVar(q='workspacesLockDocking')
+        cmds.optionVar(intValue=('workspacesLockDocking', False))
 
         # Initialize widgets
         import_modules()
@@ -141,7 +141,7 @@ def initializePlugin(name):
         cmds.evalDeferred(
             functools.partial(
                 cmds.optionVar,
-                intValue=(u'workspacesLockDocking', currentval)
+                intValue=('workspacesLockDocking', currentval)
             )
         )
         cmds.evalDeferred(initialize)
@@ -155,8 +155,8 @@ def uninitializePlugin(name):
     import_modules()
     module = importlib.import_module(PRODUCT)
     res = module.ui.MessageBox(
-        u'Are you sure you want to disable Bookmarks?',
-        u'Reloading the plugin is not supported (sorry!) and will require a Maya restart to re-enable.',
+        'Are you sure you want to disable Bookmarks?',
+        'Reloading the plugin is not supported (sorry!) and will require a Maya restart to re-enable.',
         buttons=[module.ui.OkButton, module.ui.CancelButton]
     ).exec_()
     if res == QtWidgets.QDialog.Rejected:

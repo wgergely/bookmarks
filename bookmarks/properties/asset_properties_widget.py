@@ -9,7 +9,7 @@ from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
 from .. import ui
-from .. import bookmark_db
+from .. import database
 
 from ..templates import templates
 from ..shotgun import shotgun
@@ -50,43 +50,43 @@ def show(server, job, root, asset=None):
 
 SECTIONS = {
     0: {
-        'name': u'Basic Settings',
-        'icon': u'',
+        'name': 'Basic Settings',
+        'icon': '',
         'color': common.DARK_BG,
         'groups': {
             0: {
                 0: {
-                    'name': u'Name',
+                    'name': 'Name',
                     'key': None,
                     'validator': base.namevalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Name, eg. \'SH0010\'',
-                    'description': u'The asset\'s name, eg. \'SH0010\'.',
+                    'placeholder': 'Name, eg. \'SH0010\'',
+                    'description': 'The asset\'s name, eg. \'SH0010\'.',
                 },
                 1: {
-                    'name': u'Description',
-                    'key': u'description',
+                    'name': 'Description',
+                    'key': 'description',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': u'A description, eg. \'My first shot\'',
-                    'description': u'A short description of the asset, eg. \'My first shot.\'.',
+                    'placeholder': 'A description, eg. \'My first shot\'',
+                    'description': 'A short description of the asset, eg. \'My first shot.\'.',
                 },
             },
             1: {
                 0: {
-                    'name': u'Template',
+                    'name': 'Template',
                     'key': None,
                     'validator': None,
                     'widget': functools.partial(templates.TemplatesWidget, templates.AssetTemplateMode),
                     'placeholder': None,
-                    'description': u'Select a folder template to create this asset.',
+                    'description': 'Select a folder template to create this asset.',
                 },
             },
         },
     },
     1: {
-        'name': u'Shotgun Entity',
-        'icon': u'shotgun',
+        'name': 'Shotgun Entity',
+        'icon': 'shotgun',
         'color': None,
         'groups': {
             0: {
@@ -96,92 +96,92 @@ SECTIONS = {
                     'validator': None,
                     'widget': None,
                     'placeholder': None,
-                    'description': u'Link item with a Shotgun Entity',
-                    'button': u'Link with Shotgun Entity',
+                    'description': 'Link item with a Shotgun Entity',
+                    'button': 'Link with Shotgun Entity',
                 },
                 1: {
-                    'name': u'Type',
-                    'key': u'shotgun_type',
+                    'name': 'Type',
+                    'key': 'shotgun_type',
                     'validator': base.intvalidator,
                     'widget': base_widgets.AssetTypesWidget,
                     'placeholder': None,
-                    'description': u'Select the item\'s Shotgun type',
+                    'description': 'Select the item\'s Shotgun type',
                 },
                 2: {
-                    'name': u'ID',
-                    'key': u'shotgun_id',
+                    'name': 'ID',
+                    'key': 'shotgun_id',
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Shotgun Project ID, eg. \'123\'',
-                    'description': u'The Shotgun ID number this item is associated with. Eg. \'123\'.',
+                    'placeholder': 'Shotgun Project ID, eg. \'123\'',
+                    'description': 'The Shotgun ID number this item is associated with. Eg. \'123\'.',
                 },
                 3: {
-                    'name': u'Name',
-                    'key': u'shotgun_name',
+                    'name': 'Name',
+                    'key': 'shotgun_name',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Shotgun entity name, eg. \'MyProject\'',
-                    'description': u'The Shotgun entity name. The entity can be a shot, sequence or asset.\nClick "Link with Shotgun" to get the name and the id from the Shotgun server.',
+                    'placeholder': 'Shotgun entity name, eg. \'MyProject\'',
+                    'description': 'The Shotgun entity name. The entity can be a shot, sequence or asset.\nClick "Link with Shotgun" to get the name and the id from the Shotgun server.',
                 },
             }
         }
     },
     2: {
-        'name': u'Cut',
-        'icon': u'todo',
+        'name': 'Cut',
+        'icon': 'todo',
         'color': common.DARK_BG,
         'groups': {
             0: {
                 0: {
-                    'name': u'In Frame',
-                    'key': u'cut_in',
+                    'name': 'In Frame',
+                    'key': 'cut_in',
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': u'In frame, eg. \'1150\'',
-                    'description': u'The frame this asset starts at, eg. \'1150\'.',
+                    'placeholder': 'In frame, eg. \'1150\'',
+                    'description': 'The frame this asset starts at, eg. \'1150\'.',
                 },
                 1: {
-                    'name': u'Out Frame',
-                    'key': u'cut_out',
+                    'name': 'Out Frame',
+                    'key': 'cut_out',
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Out frame, eg. \'1575\'',
-                    'description': u'The frame this asset ends at, eg. \'1575\'.',
+                    'placeholder': 'Out frame, eg. \'1575\'',
+                    'description': 'The frame this asset ends at, eg. \'1575\'.',
                 },
                 2: {
-                    'name': u'Cut Duration',
-                    'key': u'cut_duration',
+                    'name': 'Cut Duration',
+                    'key': 'cut_duration',
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Duration in frames, eg. \'425\'',
-                    'description': u'The asset\'s duration in frames, eg. \'425\'.',
+                    'placeholder': 'Duration in frames, eg. \'425\'',
+                    'description': 'The asset\'s duration in frames, eg. \'425\'.',
                 },
             },
         },
     },
     3: {
-        'name': u'URLs',
-        'icon': u'',
+        'name': 'URLs',
+        'icon': '',
         'color': common.DARK_BG,
         'groups': {
             0: {
                 0: {
-                    'name': u'Primary',
-                    'key': u'url1',
+                    'name': 'Primary',
+                    'key': 'url1',
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'https://my.custom-url.com',
-                    'description': u'A custom url of the bookmarks, eg. https://sheets.google.com/123',
-                    'button': u'Visit',
+                    'description': 'A custom url of the bookmarks, eg. https://sheets.google.com/123',
+                    'button': 'Visit',
                 },
                 1: {
-                    'name': u'Scondary',
-                    'key': u'url2',
+                    'name': 'Scondary',
+                    'key': 'url2',
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'https://my.custom-url.com',
-                    'description': u'A custom url of the bookmarks, eg. https://sheets.google.com/123',
-                    'button': u'Visit',
+                    'description': 'A custom url of the bookmarks, eg. https://sheets.google.com/123',
+                    'button': 'Visit',
                 }
             }
         }
@@ -194,16 +194,16 @@ class AssetPropertiesWidget(base.PropertiesWidget):
     the optional `asset` argument is set, updates the asset properties.
 
     Args:
-        path (unicode): Destination path for the new assets.
+        path (str): Destination path for the new assets.
         update (bool=False): Enables the update mode, if the widget is used to edit an existing asset.
 
     """
 
     def __init__(self, server, job, root, asset=None, parent=None):
         if asset:
-            buttons = (u'Save', u'Cancel')
+            buttons = ('Save', 'Cancel')
         else:
-            buttons = (u'Create Asset', u'Cancel')
+            buttons = ('Create Asset', 'Cancel')
 
         super(AssetPropertiesWidget, self).__init__(
             SECTIONS,
@@ -211,8 +211,8 @@ class AssetPropertiesWidget(base.PropertiesWidget):
             job,
             root,
             asset=asset,
-            db_table=bookmark_db.AssetTable,
-            fallback_thumb=u'thumb_item_gray',
+            db_table=database.AssetTable,
+            fallback_thumb='thumb_item_gray',
             buttons=buttons,
             parent=parent
         )
@@ -223,10 +223,10 @@ class AssetPropertiesWidget(base.PropertiesWidget):
             self.name_editor.setText(asset)
             self.name_editor.setDisabled(True)
             self.template_editor.parent().parent().setHidden(True)
-            self.setWindowTitle(u'/'.join((server, job, root, asset)))
+            self.setWindowTitle('/'.join((server, job, root, asset)))
         else:
             self.setWindowTitle(
-                u'{}/{}/{}: Create Asset'.format(server, job, root))
+                '{}/{}/{}: Create Asset'.format(server, job, root))
             self.name_editor.setFocus()
 
     def _connect_signals(self):
@@ -248,7 +248,7 @@ class AssetPropertiesWidget(base.PropertiesWidget):
         """
         if not self.name():
             return None
-        return u'/'.join((
+        return '/'.join((
             self.server,
             self.job,
             self.root,
@@ -279,7 +279,7 @@ class AssetPropertiesWidget(base.PropertiesWidget):
         """Add the current list of assets to the name editor's completer.
 
         """
-        source = u'/'.join((self.server, self.job, self.root))
+        source = '/'.join((self.server, self.job, self.root))
         items = [f.name for f in _scandir.scandir(source) if f.is_dir()]
         completer = QtWidgets.QCompleter(items, parent=self)
         completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
@@ -327,11 +327,11 @@ class AssetPropertiesWidget(base.PropertiesWidget):
         editor = self.template_editor.template_list_widget
 
         if not name:
-            raise RuntimeError(u'Must enter a name to create asset.')
+            raise RuntimeError('Must enter a name to create asset.')
 
-        path = u'/'.join((self.server, self.job, self.root))
+        path = '/'.join((self.server, self.job, self.root))
         editor.create(name, path)
-        path = u'/'.join((self.server, self.job, self.root, name))
+        path = '/'.join((self.server, self.job, self.root, name))
         if not QtCore.QFileInfo(path).exists():
             raise RuntimeError('Failed to create asset.')
 
@@ -341,7 +341,7 @@ class AssetPropertiesWidget(base.PropertiesWidget):
     @QtCore.Slot()
     def link_button_clicked(self):
         if not self.shotgun_type_editor.currentText():
-            ui.MessageBox(u'Select an entity type before continuing').open()
+            ui.MessageBox('Select an entity type before continuing').open()
             return
 
         sg_actions.link_asset_entity(

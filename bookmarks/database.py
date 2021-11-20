@@ -6,12 +6,12 @@ This includes file descriptions, properties like `width`, `height`, asset
 configs, etc. The database file itself is stored in the given bookmark's root,
 at `//server/job/root/.bookmark/bookmark.db`
 
-The sqlite3 database table definitions are stored in `bookmark_db.json`.
+The sqlite3 database table definitions are stored in `database.json`.
 
 Usage
 -----
 
-    Use the thread-safe `bookmark_db.get_db()` to create thread-specific
+    Use the thread-safe `database.get_db()` to create thread-specific
     connections to a database
 
 The bookmark databases have currently 3 tables. The `data` table is used to
@@ -32,15 +32,15 @@ from . import log
 from . import common
 
 
-AssetTable = u'AssetData'
-BookmarkTable = u'BookmarkData'
-InfoTable = u'InfoData'
+AssetTable = 'AssetData'
+BookmarkTable = 'BookmarkData'
+InfoTable = 'InfoData'
 
 IdColumn = 'id'
 DescriptionColumn = 'description'
 NotesColumn = 'notes'
 
-DATABASE = u'bookmark.db'
+DATABASE = 'bookmark.db'
 
 database_connect_retries = 100
 
@@ -48,172 +48,172 @@ database_connect_retries = 100
 TABLES = {
     AssetTable: {
         IdColumn: {
-            'sql': u'TEXT PRIMARY KEY COLLATE NOCASE',
-            'type': unicode
+            'sql': 'TEXT PRIMARY KEY COLLATE NOCASE',
+            'type': str
         },
         'description': {
-            'sql': u'TEXT',
-            'type': unicode
+            'sql': 'TEXT',
+            'type': str
         },
         'notes': {
-            'sql': u'TEXT',
+            'sql': 'TEXT',
             'type': dict
         },
         'flags': {
-            'sql': u'INT DEFAULT 0',
+            'sql': 'INT DEFAULT 0',
             'type': int
         },
         'thumbnail_stamp': {
-            'sql': u'REAL',
+            'sql': 'REAL',
             'type': float
         },
         'user': {
-            'sql': u'TEXT',
-            'type': unicode
+            'sql': 'TEXT',
+            'type': str
         },
         'shotgun_id': {
-            'sql': u'INT',
+            'sql': 'INT',
             'type': int
         },
         'shotgun_name': {
-            'sql': u'TEXT',
-            'type': unicode
+            'sql': 'TEXT',
+            'type': str
         },
         'shotgun_type': {
-            'sql': u'TEXT',
-            'type': unicode
+            'sql': 'TEXT',
+            'type': str
         },
         'cut_duration': {
-            'sql': u'INT',
+            'sql': 'INT',
             'type': int
         },
         'cut_in': {
-            'sql': u'INT',
+            'sql': 'INT',
             'type': int,
         },
         'cut_out': {
-            'sql': u'INT',
+            'sql': 'INT',
             'type': int
         },
         'url1': {
-            'sql': u'TEXT',
-            'type': unicode
+            'sql': 'TEXT',
+            'type': str
         },
         'url2': {
-            'sql': u'TEXT',
-            'type': unicode
+            'sql': 'TEXT',
+            'type': str
 
         },
     },
     InfoTable: {
         IdColumn: {
-            'sql': u'TEXT PRIMARY KEY COLLATE NOCASE',
-            'type': unicode
+            'sql': 'TEXT PRIMARY KEY COLLATE NOCASE',
+            'type': str
         },
         'server': {
-            'sql': u'TEXT NOT NULL',
-            'type': unicode
+            'sql': 'TEXT NOT NULL',
+            'type': str
         },
         'job': {
-            'sql': u'TEXT NOT NULL',
-            'type': unicode,
+            'sql': 'TEXT NOT NULL',
+            'type': str,
         },
         'root': {
-            'sql': u'TEXT NOT NULL',
-            'type': unicode
+            'sql': 'TEXT NOT NULL',
+            'type': str
         },
         'user': {
-            'sql': u'TEXT NOT NULL',
-            'type': unicode,
+            'sql': 'TEXT NOT NULL',
+            'type': str,
         },
         'host': {
-            'sql': u'TEXT NOT NULL',
-            'type': unicode
+            'sql': 'TEXT NOT NULL',
+            'type': str
         },
         'created': {
-            'sql': u'REAL NOT NULL',
+            'sql': 'REAL NOT NULL',
             'type': float
         }
     },
     BookmarkTable: {
         IdColumn: {
-            'sql': u'TEXT PRIMARY KEY COLLATE NOCASE',
-            'type': unicode
+            'sql': 'TEXT PRIMARY KEY COLLATE NOCASE',
+            'type': str
         },
         'description': {
-            'sql': u'TEXT',
-            'type': unicode
+            'sql': 'TEXT',
+            'type': str
         },
         'width': {
-            'sql': u'INT',
+            'sql': 'INT',
             'type': int
         },
         'height': {
-            'sql': u'INT',
+            'sql': 'INT',
             'type': int
         },
         'framerate': {
-            'sql': u'REAL',
+            'sql': 'REAL',
             'type': float
         },
         'prefix': {
-            'sql': u'TEXT',
-            'type': unicode
+            'sql': 'TEXT',
+            'type': str
         },
         'startframe': {
-            'sql': u'INT',
+            'sql': 'INT',
             'type': int
         },
         'duration': {
-            'sql': u'INT',
+            'sql': 'INT',
             'type': int
         },
         'identifier': {
-            'sql': u'TEXT',
-            'type': unicode
+            'sql': 'TEXT',
+            'type': str
         },
         'slacktoken': {
-            'sql': u'TEXT',
-            'type': unicode
+            'sql': 'TEXT',
+            'type': str
         },
         'shotgun_domain': {
-            'sql': u'TEXT',
-            'type': unicode
+            'sql': 'TEXT',
+            'type': str
         },
         'shotgun_scriptname': {
-            'sql': u'TEXT',
-            'type': unicode
+            'sql': 'TEXT',
+            'type': str
         },
         'shotgun_api_key': {
-            'sql': u'TEXT',
-            'type': unicode
+            'sql': 'TEXT',
+            'type': str
         },
         'shotgun_id': {
-            'sql': u'INT',
+            'sql': 'INT',
             'type': int
         },
         'shotgun_name': {
-            'sql': u'TEXT',
-            'type': unicode
+            'sql': 'TEXT',
+            'type': str
         },
         'shotgun_type': {
-            'sql': u'TEXT',
-            'type': unicode
+            'sql': 'TEXT',
+            'type': str
         },
         'url1': {
-            'sql': u'TEXT',
-            'type': unicode,
+            'sql': 'TEXT',
+            'type': str,
         },
         'url2': {
-            'sql': u'TEXT',
-            'type': unicode
+            'sql': 'TEXT',
+            'type': str
         },
         'asset_config': {
-            'sql': u'TEXT',
+            'sql': 'TEXT',
             'type': dict
         },
         'applications': {
-            'sql': u'TEXT',
+            'sql': 'TEXT',
             'type': dict,
         }
     }
@@ -231,7 +231,7 @@ def close():
     """Closes and deletes all connections to the bookmark database files.
 
     """
-    for k in __DB_CONNECTIONS.keys():
+    for k in list(__DB_CONNECTIONS):
         __DB_CONNECTIONS[k].close()
         __DB_CONNECTIONS[k].deleteLater()
         del __DB_CONNECTIONS[k]
@@ -243,17 +243,17 @@ def copy_properties(server, job, root, asset=None, table=BookmarkTable):
     """Copies the given bookmark's properties from the database to `CLIPBOARD`.
 
     Args:
-        server (unicode):   The server's name.
-        job (unicode):   The job's name.
-        root (unicode):   The root's name.
+        server (str):   The server's name.
+        job (str):   The job's name.
+        root (str):   The root's name.
 
     """
     data = {}
 
     if asset:
-        source = u'/'.join((server, job, root, asset))
+        source = '/'.join((server, job, root, asset))
     else:
-        source = u'/'.join((server, job, root))
+        source = '/'.join((server, job, root))
 
     db = get_db(server, job, root)
     for k in TABLES[table]:
@@ -279,9 +279,9 @@ def paste_properties(server, job, root, asset=None, table=BookmarkTable):
         return
 
     if asset:
-        source = u'/'.join((server, job, root, asset))
+        source = '/'.join((server, job, root, asset))
     else:
-        source = u'/'.join((server, job, root))
+        source = '/'.join((server, job, root))
 
     db = get_db(server, job, root)
     with db.connection():
@@ -290,16 +290,12 @@ def paste_properties(server, job, root, asset=None, table=BookmarkTable):
 
 
 def b64encode(v):
-    if not isinstance(v, unicode):
-        raise TypeError(
-            u'Invalid type. Expected {}, got {}'.format(unicode, type(v)))
+    common.check_type(v, str)
     return base64.b64encode(v.encode('utf-8')).decode('utf-8')
 
 
 def b64decode(v):
-    if not isinstance(v, str):
-        raise TypeError(
-            u'Invalid type. Expected {}, got {}'.format(str, type(v)))
+    common.check_type(v, bytes)
     return base64.b64decode(v).decode('utf-8')
 
 
@@ -319,39 +315,36 @@ def set_flag(server, job, root, k, mode, flag):
 
     """
     db = get_db(server, job, root)
-    f = db.value(k, u'flags', table=AssetTable)
+    f = db.value(k, 'flags', table=AssetTable)
     f = 0 if f is None else f
     f = f | flag if mode else f & ~flag
     with db.connection():
-        db.setValue(k, u'flags', f, table=AssetTable)
+        db.setValue(k, 'flags', f, table=AssetTable)
 
 
 def get_db(server, job, root, force=False):
-    """Creates a database controller associated with a bookmark.
+    """Creates a database controller associated with a bookmark item.
 
     SQLite cannot share the same connection between different threads, hence we
     will create and cache controllers per thread. The cached entries are stored
     in `__DB_CONNECTIONS`.
 
     Args:
-        server (unicode): The name of the `server`.
-        job (unicode): The name of the `job`.
-        root (unicode): The name of the `root`.
+        server (str): The name of the `server`.
+        job (str): The name of the `job`.
+        root (str): The name of the `root`.
         force (bool): Force retry connecting to the database.
 
     Returns:
         BookmarkDB:     Database controller instance.
 
     Raises:
-        RuntimeError:   If the database is locked
-        OSError:        If the database is missing.
+        RuntimeError:   When the database is locked.
+        OSError:        When the database is missing.
 
     """
     for k in (server, job, root):
-        if isinstance(k, unicode):
-            continue
-        raise TypeError(
-            u'Expected {}, got {}'.format(unicode, type(k)))
+        common.check_type(k, str)
 
     key = _get_thread_key(server, job, root)
 
@@ -370,15 +363,15 @@ def remove_db(server, job, root):
     """Removes and closes a cached a bookmark database connection.
 
     Args:
-        server (unicode):   A server.
-        job (unicode):      A job.
-        root (unicode):     A root.
+        server (str):   A server.
+        job (str):      A job.
+        root (str):     A root.
 
     """
     global __DB_CONNECTIONS
-    key = u'/'.join((server, job, root))
+    key = '/'.join((server, job, root))
 
-    for k in __DB_CONNECTIONS.keys():
+    for k in list(__DB_CONNECTIONS):
         if key.lower() not in k.lower():
             continue
 
@@ -392,7 +385,7 @@ def remove_db(server, job, root):
 
 def _get_thread_key(*args):
     t = repr(QtCore.QThread.currentThread())
-    return u'/'.join(args) + t
+    return '/'.join(args) + t
 
 
 class BookmarkDB(QtCore.QObject):
@@ -404,28 +397,23 @@ class BookmarkDB(QtCore.QObject):
 
     def __init__(self, server, job, root, parent=None):
         super(BookmarkDB, self).__init__(parent=parent)
-        if not isinstance(server, unicode):
-            raise TypeError('Expected {}, got {}'.format(
-                unicode, type(server)))
-        if not isinstance(job, unicode):
-            raise TypeError('Expected {}, got {}'.format(unicode, type(job)))
-        if not isinstance(root, unicode):
-            raise TypeError('Expected {}, got {}'.format(unicode, type(root)))
+        for arg in (server, job, root):
+            common.check_type(arg, str)
 
         self._is_valid = False
         self._connection = None
 
-        self._server = server.encode(u'utf-8')
+        self._server = server.encode('utf-8')
         self._server_u = server
-        self._job = job.encode(u'utf-8')
+        self._job = job.encode('utf-8')
         self._job_u = job
-        self._root = root.encode(u'utf-8')
+        self._root = root.encode('utf-8')
         self._root_u = root
 
-        self._bookmark = u'/'.join((server, job, root))
-        self._bookmark_root = u'{}/{}'.format(
+        self._bookmark = '/'.join((server, job, root))
+        self._bookmark_root = '{}/{}'.format(
             self._bookmark, common.BOOKMARK_ROOT_DIR)
-        self._bookmark_db_path = u'{}/{}'.format(self._bookmark_root, DATABASE)
+        self._database_path = '{}/{}'.format(self._bookmark_root, DATABASE)
 
         if self._create_bookmark_dir():
             self._connect_with_retries()
@@ -465,7 +453,7 @@ class BookmarkDB(QtCore.QObject):
         while True:
             try:
                 self._connection = sqlite3.connect(
-                    self._bookmark_db_path,
+                    self._database_path,
                     isolation_level=None,
                     check_same_thread=False
                 )
@@ -478,7 +466,7 @@ class BookmarkDB(QtCore.QObject):
                 sleep()
                 n += 1
             except (RuntimeError, ValueError, TypeError, OSError):
-                log.error(u'Error.')
+                log.error('Error.')
                 raise
 
     def _create_bookmark_dir(self):
@@ -503,12 +491,12 @@ class BookmarkDB(QtCore.QObject):
         """
         args = []
 
-        for k, v in TABLES[table].iteritems():
-            args.append(u'{} {}'.format(k, v['sql']))
+        for k, v in TABLES[table].items():
+            args.append('{} {}'.format(k, v['sql']))
 
-        sql = u'CREATE TABLE IF NOT EXISTS {table} ({args})'.format(
+        sql = 'CREATE TABLE IF NOT EXISTS {table} ({args})'.format(
             table=table,
-            args=u','.join(args)
+            args=','.join(args)
         )
         self.connection().execute(sql)
 
@@ -517,7 +505,7 @@ class BookmarkDB(QtCore.QObject):
         required columns are missing.
 
         """
-        sql = u'PRAGMA table_info(\'{}\');'.format(table)
+        sql = 'PRAGMA table_info(\'{}\');'.format(table)
 
         table_info = self.connection().execute(sql).fetchall()
 
@@ -528,21 +516,21 @@ class BookmarkDB(QtCore.QObject):
             cmd = 'ALTER TABLE {} ADD COLUMN {};'.format(table, column)
             try:
                 self.connection().execute(cmd)
-                log.success(u'Added missing column {}'.format(missing))
+                log.success('Added missing column {}'.format(missing))
             except Exception as e:
                 log.error(
-                    u'Failed to add missing column {}\n{}'.format(column, e))
+                    'Failed to add missing column {}\n{}'.format(column, e))
                 raise
 
     def _add_info(self):
         """Adds information about who and when created the database.
 
         """
-        sql = u'INSERT OR IGNORE INTO {table} ({args}) VALUES ({kwargs});'.format(
+        sql = 'INSERT OR IGNORE INTO {table} ({args}) VALUES ({kwargs});'.format(
             table=InfoTable,
-            args=u','.join(sorted(TABLES[InfoTable])),
-            kwargs=u'\'{{{}}}\''.format(
-                u'}\', \'{'.join(
+            args=','.join(sorted(TABLES[InfoTable])),
+            kwargs='\'{{{}}}\''.format(
+                '}\', \'{'.join(
                     sorted(TABLES[InfoTable])
                 )
             )
@@ -552,10 +540,10 @@ class BookmarkDB(QtCore.QObject):
             job=b64encode(self._job_u),
             root=b64encode(self._root_u),
             user=b64encode(common.get_username()),
-            host=b64encode(platform.node().decode('utf-8')),
+            host=b64encode(platform.node()),
             created=time.time(),
         )
-        self.connection().execute(sql.encode('utf-8'))
+        self.connection().execute(sql)
 
     def _init_tables(self):
         """Initialises the database with the default tables.
@@ -583,17 +571,15 @@ class BookmarkDB(QtCore.QObject):
                 sleep()
 
     def _verify_args(self, source, key, table, value=None):
-        if not isinstance(source, unicode):
-            raise TypeError(
-                u'Invalid type. Expected {}, got {}'.format(unicode, type(source)))
+        common.check_type(source, str)
         if key not in TABLES[table]:
-            raise ValueError(u'Key "{}" is invalid. Expected one of {}'.format(
-                key, u', '.join(TABLES[table])))
-        if value and not isinstance(value, TABLES[table][key]['type']):
-            raise TypeError(u'Invalid data type. Expected {}, got {}'.format(
-                TABLES[table][key]['type'],
-                type(value)
-            ))
+            raise ValueError('Key "{}" is invalid. Expected one of {}'.format(
+                key, ', '.join(TABLES[table])))
+
+        # Check type
+        if value is None:
+            return
+        common.check_type(value, TABLES[table][key]['type'])
 
     def root(self):
         return self._bookmark_root
@@ -617,23 +603,23 @@ class BookmarkDB(QtCore.QObject):
 
     def source(self, *args):
         if args:
-            return self._bookmark + u'/' + u'/'.join(args)
+            return self._bookmark + '/' + '/'.join(args)
         return self._bookmark
 
     def value(self, source, key, table=AssetTable):
-        """Returns a value from the `bookmark_db`.
+        """Returns a value from the `database`.
 
         Example:
 
             .. code-block:: python
 
-                source = u'server/job/my/file.txt'
-                v = db.value(source, u'description')
+                source = 'server/job/my/file.txt'
+                v = db.value(source, 'description')
 
         Args:
-            source (unicode):       Path to a file or folder.
-            key (unicode):          A column name.
-            table (unicode):        Optional table parameter, defaults to `AssetTable`.
+            source (str):       Path to a file or folder.
+            key (str):          A column name.
+            table (str):        Optional table parameter, defaults to `AssetTable`.
 
         Returns:
             data:                   The requested value or `None`.
@@ -644,17 +630,17 @@ class BookmarkDB(QtCore.QObject):
 
         self._verify_args(source, key, table)
 
-        _hash = common.get_hash(source).encode('utf-8')
-        sql = u'SELECT {key} FROM {table} WHERE id=\'{id}\''.format(
+        _hash = common.get_hash(source)
+        sql = 'SELECT {key} FROM {table} WHERE id=\'{id}\''.format(
             table=table,
             key=key,
             id=_hash
         )
 
         try:
-            row = self.connection().execute(sql.encode('utf-8')).fetchone()
+            row = self.connection().execute(sql).fetchone()
         except Exception as e:
-            log.error(u'Failed to get value from database.\n{}'.format(e))
+            log.error('Failed to get value from database.\n{}'.format(e))
             raise
 
         if not row:
@@ -672,11 +658,10 @@ class BookmarkDB(QtCore.QObject):
                     b64decode(value.encode('utf-8')),
                     parse_int=int,
                     parse_float=float,
-                    encoding='utf-8'
                 )
             except Exception as e:
                 value = None
-        elif _type is unicode:
+        elif _type is str:
             value = b64decode(value.encode('utf-8'))
         elif _type is float:
             try:
@@ -702,12 +687,12 @@ class BookmarkDB(QtCore.QObject):
             .. code-block:: python
 
                 with db.transactions:
-                    source = u'//SERVER/MY_JOB/shots/sh0010/scenes/my_scene.ma'
-                    db.setValue(source, u'description', u'hello world')
+                    source = '//SERVER/MY_JOB/shots/sh0010/scenes/my_scene.ma'
+                    db.setValue(source, 'description', 'hello world')
 
         Args:
-            source (unicode):       A row id, usually a file or folder path.
-            key (unicode):          A database column name.
+            source (str):       A row id, usually a file or folder path.
+            key (str):          A database column name.
             value (*):              The value to set.
 
         """
@@ -718,23 +703,24 @@ class BookmarkDB(QtCore.QObject):
 
         if isinstance(value, dict):
             try:
-                value = json.dumps(value, ensure_ascii=False, encoding='utf-8')
-                if isinstance(value, str):
-                    value = value.decode('utf-8')
+                value = json.dumps(
+                    value,
+                    ensure_ascii=False,
+                )
                 value = b64encode(value)
             except Exception as e:
                 log.error(e)
                 value = None
-        elif isinstance(value, unicode):
+        elif isinstance(value, str):
             value = b64encode(value)
         elif isinstance(value, (float, int)):
             try:
-                value = unicode(value)
+                value = str(value)
             except Exception as e:
                 log.error(e)
                 value = None
 
-        _hash = common.get_hash(source).decode('utf-8')
+        _hash = common.get_hash(source)
         values = []
 
         # Earlier versions of the SQLITE library lack `UPSERT` or `WITH`
@@ -742,18 +728,18 @@ class BookmarkDB(QtCore.QObject):
         # https://stackoverflow.com/questions/418898/sqlite-upsert-not-insert-or-replace
         for k in TABLES[table]:
             if k == key:
-                v = u'\n null' if value is None else u'\n \'' + value + u'\''
+                v = '\n null' if value is None else '\n \'' + value + '\''
                 values.append(v)
                 continue
 
-            v = u'\n(SELECT ' + k + u' FROM ' + table + \
-                u' WHERE id =\'' + _hash + u'\')'
+            v = '\n(SELECT ' + k + ' FROM ' + table + \
+                ' WHERE id =\'' + _hash + '\')'
             values.append(v)
 
-        sql = u'INSERT OR REPLACE INTO {table} (id, {allkeys}) VALUES (\'{hash}\', {values});'.format(
+        sql = 'INSERT OR REPLACE INTO {table} (id, {allkeys}) VALUES (\'{hash}\', {values});'.format(
             hash=_hash,
-            allkeys=u', '.join(TABLES[table]),
-            values=u','.join(values),
+            allkeys=', '.join(TABLES[table]),
+            values=','.join(values),
             table=table
         )
 
@@ -766,4 +752,4 @@ class BookmarkDB(QtCore.QObject):
                 table, source, key, _value)
 
         except Exception as e:
-            log.error(u'Failed to set value.\n{}'.format(e))
+            log.error('Failed to set value.\n{}'.format(e))

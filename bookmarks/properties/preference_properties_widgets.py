@@ -19,7 +19,7 @@ class ScaleWidget(QtWidgets.QComboBox):
 
         self.blockSignals(True)
         for n in common.SCALE_FACTORS:
-            name = u'{}%'.format(int(n * 100))
+            name = '{}%'.format(int(n * 100))
             self.addItem(name)
 
             self.setItemData(
@@ -32,6 +32,7 @@ class ScaleWidget(QtWidgets.QComboBox):
                 size,
                 role=QtCore.Qt.SizeHintRole
             )
+        self.setCurrentText('100%')
         self.blockSignals(False)
 
 
@@ -40,7 +41,7 @@ class AboutLabel(QtWidgets.QLabel):
         super(AboutLabel, self).__init__(parent=parent)
         self.setAlignment(QtCore.Qt.AlignCenter)
         self.setStyleSheet(
-            u'background-color:{bg};border: {bd}px solid {bc};border-radius:{r}px;color:{c};padding: {r}px {r}px {r}px {r}px;'.format(
+            'background-color:{bg};border: {bd}px solid {bc};border-radius:{r}px;color:{c};padding: {r}px {r}px {r}px {r}px;'.format(
                 bg=common.rgb(common.DARK_BG),
                 bd=common.ROW_SEPARATOR(),
                 bc=common.rgb(common.SEPARATOR),
@@ -53,8 +54,7 @@ class AboutLabel(QtWidgets.QLabel):
     def init_data(self):
         import importlib
         mod = importlib.import_module(__name__.split('.')[0])
-        text = u'\n'.join(mod.get_info())
-        self.setText(text)
+        self.setText(mod.get_info())
 
     def mouseReleaseEvent(self, event):
         QtGui.QDesktopServices.openUrl(common.ABOUT_URL)
@@ -82,7 +82,7 @@ class AboutWidget(QtWidgets.QDialog):
         self.layout().setSpacing(o)
 
         self.label = AboutLabel(parent=self)
-        self.ok_button = ui.PaintedButton(u'Close', parent=self)
+        self.ok_button = ui.PaintedButton('Close', parent=self)
 
         self.layout().addWidget(self.label, 1)
         self.layout().addWidget(self.ok_button, 0)

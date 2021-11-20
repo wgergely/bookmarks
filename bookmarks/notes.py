@@ -14,7 +14,7 @@ from PySide2 import QtWidgets, QtGui, QtCore
 from . import log
 from . import common
 from . import ui
-from . import bookmark_db
+from . import database
 from . import images
 from . import actions
 
@@ -28,48 +28,48 @@ PathHighlight = 0b100000
 
 
 HIGHLIGHT_RULES = {
-    u'url': {
-        u're': re.compile(
+    'url': {
+        're': re.compile(
             r'((?:rvlink|file|http)[s]?:[/\\][/\\](?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
             flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
-        u'flag': PathHighlight
+        'flag': PathHighlight
     },
-    u'drivepath': {
-        u're': re.compile(
+    'drivepath': {
+        're': re.compile(
             r'((?:[a-zA-Z]{1})[s]?:[/\\](?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
             flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
-        u'flag': PathHighlight
+        'flag': PathHighlight
     },
-    u'uncpath': {
-        u're': re.compile(
+    'uncpath': {
+        're': re.compile(
             r'([/\\]{1,2}(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
             flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
-        u'flag': PathHighlight
+        'flag': PathHighlight
     },
-    u'heading': {
-        u're': re.compile(
+    'heading': {
+        're': re.compile(
             r'^(?<!#)#{1,2}(?!#)',
             flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
-        u'flag': HeadingHighlight
+        'flag': HeadingHighlight
     },
-    u'quotes': {
-        u're': re.compile(
+    'quotes': {
+        're': re.compile(
             # Group(2) captures the contents
             r'([\"\'])((?:(?=(\\?))\3.)*?)\1',
             flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
-        u'flag': QuoteHighlight
+        'flag': QuoteHighlight
     },
-    u'italics': {
-        u're': re.compile(
+    'italics': {
+        're': re.compile(
             r'([\_])((?:(?=(\\?))\3.)*?)\1',  # Group(2) captures the contents
             flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
-        u'flag': ItalicsHighlight
+        'flag': ItalicsHighlight
     },
-    u'bold': {
-        u're': re.compile(
+    'bold': {
+        're': re.compile(
             r'([\*])((?:(?=(\\?))\3.)*?)\1',  # Group(2) captures the contents
             flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
-        u'flag': BoldHighlight
+        'flag': BoldHighlight
     },
 }
 
@@ -82,9 +82,9 @@ class Lockfile(QtCore.QSettings):
 
     def __init__(self, index, parent=None):
         if index.isValid():
-            p = u'/'.join(index.data(common.ParentPathRole)[0:3])
+            p = '/'.join(index.data(common.ParentPathRole)[0:3])
             f = QtCore.QFileInfo(index.data(QtCore.Qt.StatusTipRole))
-            self.config_path = p + u'/.bookmark/' + f.baseName() + u'.lock'
+            self.config_path = p + '/.bookmark/' + f.baseName() + '.lock'
         else:
             self.config_path = '/'
 
@@ -123,11 +123,11 @@ class Highlighter(QtGui.QSyntaxHighlighter):
         _weight = char_format.fontWeight()
 
         flag = NoHighlightFlag
-        for case in HIGHLIGHT_RULES.itervalues():
-            flag = flag | case[u'flag']
+        for case in HIGHLIGHT_RULES.values():
+            flag = flag | case['flag']
 
-            if case[u'flag'] == HeadingHighlight:
-                match = case[u're'].match(text)
+            if case['flag'] == HeadingHighlight:
+                match = case['re'].match(text)
                 if match:
                     n = 3 - len(match.group(0))
                     font.setPixelSize(font.pixelSize() + (n * 4))
@@ -138,8 +138,8 @@ class Highlighter(QtGui.QSyntaxHighlighter):
                     self.setFormat(match.start(0), len(
                         match.group(0)), char_format)
 
-            if case[u'flag'] == PathHighlight:
-                it = case[u're'].finditer(text)
+            if case['flag'] == PathHighlight:
+                it = case['re'].finditer(text)
                 for match in it:
                     groups = match.groups()
                     if groups:
@@ -151,12 +151,12 @@ class Highlighter(QtGui.QSyntaxHighlighter):
                             self.setFormat(match.start(
                                 0), len(grp), char_format)
 
-            if case[u'flag'] == QuoteHighlight:
-                it = case[u're'].finditer(text)
+            if case['flag'] == QuoteHighlight:
+                it = case['re'].finditer(text)
                 for match in it:
                     groups = match.groups()
                     if groups:
-                        if match.group(1) in (u'\'', u'\"'):
+                        if match.group(1) in ('\'', '\"'):
                             grp = match.group(2)
                             if grp:
                                 char_format.setAnchor(True)
@@ -172,12 +172,12 @@ class Highlighter(QtGui.QSyntaxHighlighter):
                                 self.setFormat(match.start(
                                     2) + len(grp), 1, char_format)
 
-            if case[u'flag'] == ItalicsHighlight:
-                it = case[u're'].finditer(text)
+            if case['flag'] == ItalicsHighlight:
+                it = case['re'].finditer(text)
                 for match in it:
                     groups = match.groups()
                     if groups:
-                        if match.group(1) in u'_':
+                        if match.group(1) in '_':
                             grp = match.group(2)
                             if grp:
                                 flag == flag | ItalicsHighlight
@@ -192,12 +192,12 @@ class Highlighter(QtGui.QSyntaxHighlighter):
                                 self.setFormat(match.start(
                                     2) + len(grp), 1, char_format)
 
-            if case[u'flag'] == BoldHighlight:
-                it = case[u're'].finditer(text)
+            if case['flag'] == BoldHighlight:
+                it = case['re'].finditer(text)
                 for match in it:
                     groups = match.groups()
                     if groups:
-                        if match.group(1) in u'*':
+                        if match.group(1) in '*':
                             grp = match.group(2)
                             if grp:
                                 char_format.setFontWeight(QtGui.QFont.Bold)
@@ -364,10 +364,10 @@ class TodoItemEditor(QtWidgets.QTextBrowser):
 class RemoveNoteButton(ui.ClickableIconButton):
     def __init__(self, parent=None):
         super(RemoveNoteButton, self).__init__(
-            u'close',
+            'close',
             (common.RED, common.RED),
             common.MARGIN(),
-            description=u'Click to remove this note',
+            description='Click to remove this note',
             parent=parent
         )
         self.clicked.connect(self.remove_note)
@@ -375,7 +375,7 @@ class RemoveNoteButton(ui.ClickableIconButton):
     @QtCore.Slot()
     def remove_note(self):
         mbox = ui.MessageBox(
-            u'Remove note?',
+            'Remove note?',
             buttons=[ui.YesButton, ui.NoButton]
         )
         if mbox.exec_() == QtWidgets.QDialog.Rejected:
@@ -393,7 +393,7 @@ class DragIndicatorButton(QtWidgets.QLabel):
 
     The button is responsible for initiating a QDrag operation and setting the
     mime data. The data is populated with the `TodoEditor`'s text and the
-    custom mime type (u'bookmarks/todo-drag'). The latter is needed to accept the drag operation
+    custom mime type ('bookmarks/todo-drag'). The latter is needed to accept the drag operation
     in the target drop widet.
     """
 
@@ -405,7 +405,7 @@ class DragIndicatorButton(QtWidgets.QLabel):
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'drag_indicator', common.SECONDARY_TEXT, common.MARGIN())
+            'drag_indicator', common.SECONDARY_TEXT, common.MARGIN())
         self.setPixmap(pixmap)
 
     def mousePressEvent(self, event):
@@ -427,7 +427,7 @@ class DragIndicatorButton(QtWidgets.QLabel):
 
         # Setting Mime Data
         mime_data = QtCore.QMimeData()
-        mime_data.setData(u'bookmarks/todo-drag', QtCore.QByteArray(''))
+        mime_data.setData('bookmarks/todo-drag', QtCore.QByteArray(bytes()))
         drag.setMimeData(mime_data)
 
         # Drag pixmap
@@ -497,7 +497,7 @@ class Separator(QtWidgets.QLabel):
         self.setFixedWidth(common.ROW_SEPARATOR())
 
     def dragEnterEvent(self, event):
-        if event.mimeData().hasFormat(u'bookmarks/todo-drag'):
+        if event.mimeData().hasFormat('bookmarks/todo-drag'):
             event.acceptProposedAction()
 
     def dropEvent(self, event):
@@ -535,7 +535,7 @@ class TodoEditors(QtWidgets.QWidget):
 
     def dragEnterEvent(self, event):
         """Accepting the drag operation."""
-        if event.mimeData().hasFormat(u'bookmarks/todo-drag'):
+        if event.mimeData().hasFormat('bookmarks/todo-drag'):
             event.acceptProposedAction()
 
     def dragMoveEvent(self, event):
@@ -592,7 +592,7 @@ class TodoEditors(QtWidgets.QWidget):
 
         # Collecting the available hot-spots for the drag operation
         lines = []
-        for n in xrange(len(self.items)):
+        for n in range(len(self.items)):
             if n == 0:  # first
                 line = self.items[n].geometry().top()
                 lines.append(line)
@@ -689,7 +689,7 @@ class TodoEditorWidget(QtWidgets.QDialog):
         self.refresh_timer.setSingleShot(False)
         self.refresh_timer.timeout.connect(self.refresh)
 
-        self.setWindowTitle(u'Notes & Tasks')
+        self.setWindowTitle('Notes & Tasks')
         self.setWindowFlags(QtCore.Qt.Widget)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
@@ -724,34 +724,34 @@ class TodoEditorWidget(QtWidgets.QDialog):
         # row.paintEvent = paintEvent
         # Thumbnail
         self.add_button = ui.ClickableIconButton(
-            u'add',
+            'add',
             (common.GREEN, common.GREEN),
             height,
-            description=u'Click to add a new Todo item...',
+            description='Click to add a new Todo item...',
             parent=self
         )
         self.add_button.clicked.connect(lambda: self.add_item(idx=0))
 
         # Name label
-        text = u'Notes'
+        text = 'Notes'
         label = ui.PaintedLabel(
             text, color=common.SECONDARY_TEXT, size=common.LARGE_FONT_SIZE(), parent=self)
         label.setFixedHeight(height)
 
         self.refresh_button = ui.ClickableIconButton(
-            u'refresh',
+            'refresh',
             (QtGui.QColor(0, 0, 0, 255), QtGui.QColor(0, 0, 0, 255)),
             height,
-            description=u'Refresh...',
+            description='Refresh...',
             parent=self
         )
         self.refresh_button.clicked.connect(self.refresh)
 
         self.remove_button = ui.ClickableIconButton(
-            u'close',
+            'close',
             (QtGui.QColor(0, 0, 0, 255), QtGui.QColor(0, 0, 0, 255)),
             height,
-            description=u'Refresh...',
+            description='Refresh...',
             parent=self
         )
         self.remove_button.clicked.connect(self.close)
@@ -763,7 +763,7 @@ class TodoEditorWidget(QtWidgets.QDialog):
 
         row = ui.add_row(None, height=height, parent=self)
 
-        text = u'Add Note'
+        text = 'Add Note'
         self.add_label = ui.PaintedLabel(text, color=common.SECONDARY_TEXT, parent=row)
 
         row.layout().addWidget(self.add_button, 0)
@@ -784,7 +784,7 @@ class TodoEditorWidget(QtWidgets.QDialog):
         self.layout().addWidget(self.scrollarea)
 
     def clear(self):
-        for idx in reversed(xrange(len(list(self.todoeditors_widget.items)))):
+        for idx in reversed(range(len(list(self.todoeditors_widget.items)))):
             row = self.todoeditors_widget.items.pop(idx)
             for c in row.children():
                 c.deleteLater()
@@ -810,8 +810,8 @@ class TodoEditorWidget(QtWidgets.QDialog):
         elif self.index.data(common.TypeRole) == common.SequenceItem:
             source = common.proxy_path(self.index)
 
-        db = bookmark_db.get_db(*self.index.data(common.ParentPathRole)[0:3])
-        v = db.value(source, u'notes')
+        db = database.get_db(*self.index.data(common.ParentPathRole)[0:3])
+        v = db.value(source, 'notes')
         if not v:
             return
 
@@ -820,7 +820,7 @@ class TodoEditorWidget(QtWidgets.QDialog):
         keys = sorted(v.keys())
         for k in keys:
             self.add_item(
-                text=v[k][u'text']
+                text=v[k]['text']
             )
 
     @property
@@ -849,8 +849,8 @@ class TodoEditorWidget(QtWidgets.QDialog):
             rect.setHeight(rect.height() - common.MARGIN())
             rect.moveCenter(center)
 
-            text = u'Click the plus icon on the top to add a note'
-            text = text if not len(self.todoeditors_widget.items) else u''
+            text = 'Click the plus icon on the top to add a note'
+            text = text if not len(self.todoeditors_widget.items) else ''
             common.draw_aliased_text(
                 painter, font, rect, text, QtCore.Qt.AlignCenter, common.DARK_BG)
             painter.end()
@@ -858,7 +858,7 @@ class TodoEditorWidget(QtWidgets.QDialog):
 
     def _get_next_enabled(self, n):
         hasEnabled = False
-        for i in xrange(len(self.todoeditors_widget.items)):
+        for i in range(len(self.todoeditors_widget.items)):
             item = self.todoeditors_widget.items[i]
             editor = item.findChild(TodoItemEditor)
             if editor.isEnabled():
@@ -869,7 +869,7 @@ class TodoEditorWidget(QtWidgets.QDialog):
             return -1
 
         # Finding the next enabled editor
-        for _ in xrange(len(self.todoeditors_widget.items) - n):
+        for _ in range(len(self.todoeditors_widget.items) - n):
             n += 1
             if n >= len(self.todoeditors_widget.items):
                 return self._get_next_enabled(-1)
@@ -985,13 +985,13 @@ class TodoEditorWidget(QtWidgets.QDialog):
             return
 
         data = {}
-        for n in xrange(len(self.todoeditors_widget.items)):
+        for n in range(len(self.todoeditors_widget.items)):
             item = self.todoeditors_widget.items[n]
             editor = item.findChild(TodoItemEditor)
             if not editor.document().toPlainText():
                 continue
             data[n] = {
-                u'text': editor.document().toHtml(),
+                'text': editor.document().toHtml(),
             }
 
         if self.index.data(common.TypeRole) == common.FileItem:
@@ -999,9 +999,9 @@ class TodoEditorWidget(QtWidgets.QDialog):
         elif self.index.data(common.TypeRole) == common.SequenceItem:
             source = common.proxy_path(self.index)
 
-        db = bookmark_db.get_db(*self.index.data(common.ParentPathRole)[0:3])
+        db = database.get_db(*self.index.data(common.ParentPathRole)[0:3])
         with db.connection():
-            db.setValue(source, u'notes', data)
+            db.setValue(source, 'notes', data)
 
     def init_lock(self):
         """Creates a lock on the current file so it can't be edited by other users.
@@ -1012,13 +1012,13 @@ class TodoEditorWidget(QtWidgets.QDialog):
         if not self.index.isValid():
             return
 
-        v = self.lock.value(u'open')
+        v = self.lock.value('open')
         v = False if v is None else v
         v = v if isinstance(v, bool) else (
             False if v.lower() == 'false' else True)
         is_open = v
 
-        stamp = self.lock.value(u'stamp')
+        stamp = self.lock.value('stamp')
         if stamp is not None:
             stamp = int(stamp)
 
@@ -1030,8 +1030,8 @@ class TodoEditorWidget(QtWidgets.QDialog):
             self.save_timer.start()
             self.refresh_timer.stop()
 
-            self.lock.setValue(u'open', True)
-            self.lock.setValue(u'stamp', self.lockstamp)
+            self.lock.setValue('open', True)
+            self.lock.setValue('stamp', self.lockstamp)
             return
 
         if stamp == self.lockstamp:
@@ -1042,7 +1042,7 @@ class TodoEditorWidget(QtWidgets.QDialog):
             self.save_timer.start()
             self.refresh_timer.stop()
 
-            self.lock.setValue(u'stamp', self.lockstamp)
+            self.lock.setValue('stamp', self.lockstamp)
             return
 
         if stamp != self.lockstamp:
@@ -1061,19 +1061,19 @@ class TodoEditorWidget(QtWidgets.QDialog):
         if not self.index.isValid():
             return
 
-        v = self.lock.value(u'open')
+        v = self.lock.value('open')
         v = False if v is None else v
         v = v if isinstance(v, bool) else (
             False if v.lower() == 'false' else True)
         is_open = v
 
-        stamp = self.lock.value(u'stamp')
+        stamp = self.lock.value('stamp')
         if stamp is not None:
             stamp = int(stamp)
 
         if is_open and stamp == self.lockstamp:
-            self.lock.setValue(u'stamp', None)
-            self.lock.setValue(u'open', False)
+            self.lock.setValue('stamp', None)
+            self.lock.setValue('open', False)
 
     def showEvent(self, event):
         if self.parent():

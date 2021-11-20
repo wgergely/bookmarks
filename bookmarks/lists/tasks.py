@@ -110,10 +110,10 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
 
         if index.data(common.TodoCountRole) and index.data(common.TodoCountRole) > 0:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                u'folder', common.SEPARATOR, o)
+                'folder', common.SEPARATOR, o)
         else:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                u'folder', common.DARK_BG, o)
+                'folder', common.DARK_BG, o)
 
         _rect = QtCore.QRect(0, 0, o, o)
         _rect.moveCenter(option.rect.center())
@@ -133,9 +133,9 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
         # Adding an indicator for the number of items in the folder
         if index.data(common.TodoCountRole):
             if index.data(common.TodoCountRole) >= 999:
-                text = u'999+ items'
+                text = '999+ items'
             else:
-                text = u'{} items'.format(
+                text = '{} items'.format(
                     index.data(common.TodoCountRole))
             color = common.SELECTED_TEXT if selected else common.GREEN
             color = common.SELECTED_TEXT if hover else color
@@ -143,7 +143,7 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
         else:
             color = common.TEXT if selected else common.BG
             color = common.TEXT if hover else color
-            items.append((u'(empty)', color))
+            items.append(('(empty)', color))
 
         if index.data(QtCore.Qt.ToolTipRole):
             color = common.SELECTED_TEXT if selected else common.TEXT
@@ -158,7 +158,7 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
                 align = QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight
 
             width = common.draw_aliased_text(
-                painter, common.font_db.secondary_font(common.SMALL_FONT_SIZE())[0], rect, u'    |    ', align, common.SEPARATOR)
+                painter, common.font_db.secondary_font(common.SMALL_FONT_SIZE())[0], rect, '    |    ', align, common.SEPARATOR)
             rect.setLeft(rect.left() + width)
 
             width = common.draw_aliased_text(
@@ -254,11 +254,11 @@ class TaskFolderModel(base.BaseModel):
         parent_path = self.parent_path()
         if not parent_path or not all(parent_path):
             return
-        _parent_path = u'/'.join(parent_path)
+        _parent_path = '/'.join(parent_path)
 
         # Thumbnail image
         default_thumbnail = images.ImageCache.get_rsc_pixmap(
-            u'folder_sm',
+            'folder_sm',
             common.SECONDARY_TEXT,
             self.row_size().height()
         )
@@ -273,7 +273,7 @@ class TaskFolderModel(base.BaseModel):
             ([f for f in _scandir.scandir(_parent_path)]), key=lambda x: x.name)
 
         for entry in entries:
-            if entry.name.startswith(u'.'):
+            if entry.name.startswith('.'):
                 continue
             if not entry.is_dir():
                 continue
@@ -282,8 +282,8 @@ class TaskFolderModel(base.BaseModel):
             data[idx] = common.DataDict({
                 QtCore.Qt.DisplayRole: entry.name,
                 QtCore.Qt.EditRole: entry.name,
-                QtCore.Qt.StatusTipRole: entry.path.replace(u'\\', u'/'),
-                QtCore.Qt.ToolTipRole: u'',
+                QtCore.Qt.StatusTipRole: entry.path.replace('\\', '/'),
+                QtCore.Qt.ToolTipRole: '',
                 QtCore.Qt.ToolTipRole: config.get_description(entry.name),
                 QtCore.Qt.SizeHintRole: self.row_size(),
                 #
@@ -293,9 +293,9 @@ class TaskFolderModel(base.BaseModel):
                 common.EntryRole: [entry, ],
                 common.FlagsRole: flags,
                 common.ParentPathRole: parent_path,
-                common.DescriptionRole: u'',
+                common.DescriptionRole: '',
                 common.TodoCountRole: 0,
-                common.FileDetailsRole: u'',
+                common.FileDetailsRole: '',
                 common.SequenceRole: None,
                 common.FramesRole: [],
                 common.StartpathRole: None,
@@ -331,7 +331,7 @@ class TaskFolderModel(base.BaseModel):
             self.taskFolderChangeRequested.emit()
             return
 
-        if not QtCore.QFileInfo(u'/'.join(parent_path)).exists():
+        if not QtCore.QFileInfo('/'.join(parent_path)).exists():
             self.taskFolderChangeRequested.emit()
 
     def default_row_size(self):
@@ -405,7 +405,7 @@ class TaskFolderWidget(base.ThreadedBaseWidget):
         key = settings.ACTIVE[settings.TaskKey]
         if not key:
             return
-        for n in xrange(self.model().rowCount()):
+        for n in range(self.model().rowCount()):
             index = self.model().index(n, 0)
             if key == index.data(QtCore.Qt.DisplayRole):
                 self.selectionModel().setCurrentIndex(

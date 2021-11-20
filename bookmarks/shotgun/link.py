@@ -16,7 +16,7 @@ class BaseLinkWidget(QtWidgets.QDialog):
     """Widget used to link a Shotgun entity with a local item.
 
     Args:
-        entity_type (unicode): A shotgun entity type.
+        entity_type (str): A shotgun entity type.
 
     """
 
@@ -41,7 +41,7 @@ class BaseLinkWidget(QtWidgets.QDialog):
             common.set_custom_stylesheet(self)
 
         self.setWindowTitle(
-            u'Link {} with {} Entity'.format(self.db_source(), self.entity_type.title()))
+            'Link {} with {} Entity'.format(self.db_source(), self.entity_type.title()))
 
         self._create_ui()
         self._connect_signals()
@@ -53,19 +53,19 @@ class BaseLinkWidget(QtWidgets.QDialog):
         self.layout().setSpacing(o)
 
         row = ui.add_row(
-            u'Select {}'.format(self.entity_type.title()),
+            'Select {}'.format(self.entity_type.title()),
             height=common.ROW_HEIGHT(),
             parent=self
         )
 
         self.combobox = shotgun.EntityComboBox(
-            [u'Select entity...', ], parent=self)
+            ['Select entity...', ], parent=self)
         self.combobox.model().set_entity_type(self.entity_type)
         self.combobox.setMinimumWidth(common.WIDTH() * 0.5)
 
         self.create_button = ui.PaintedButton(
-            u'Create New', parent=self)
-        self.visit_button = ui.PaintedButton(u'Visit', parent=self)
+            'Create New', parent=self)
+        self.visit_button = ui.PaintedButton('Visit', parent=self)
 
         row.layout().addWidget(self.combobox, 1)
         row.layout().addWidget(self.visit_button, 0)
@@ -74,7 +74,7 @@ class BaseLinkWidget(QtWidgets.QDialog):
         row = ui.add_row(None, height=common.ROW_HEIGHT(), parent=self)
 
         self.link_button = ui.PaintedButton(
-            u'Link {} Entity'.format(self.entity_type.title()),
+            'Link {} Entity'.format(self.entity_type.title()),
             parent=self
         )
 
@@ -105,7 +105,7 @@ class BaseLinkWidget(QtWidgets.QDialog):
         super(BaseLinkWidget, self).done(result)
 
     def candidate(self):
-        return u'MyNewEntity'
+        return 'MyNewEntity'
 
     @QtCore.Slot()
     def select_candidate(self):
@@ -153,7 +153,7 @@ class BaseLinkWidget(QtWidgets.QDialog):
 
     @common.error
     @common.debug
-    @QtCore.Slot(unicode)
+    @QtCore.Slot(str)
     def create_entity(self, name):
         """Creates a new Shotgun entity.
 
@@ -198,7 +198,7 @@ class BaseLinkWidget(QtWidgets.QDialog):
 
 
 class EntityNameEditor(QtWidgets.QDialog):
-    nameSelected = QtCore.Signal(unicode)
+    nameSelected = QtCore.Signal(str)
 
     def __init__(self, parent=None):
         super(EntityNameEditor, self).__init__(parent=parent)
@@ -208,7 +208,7 @@ class EntityNameEditor(QtWidgets.QDialog):
         self.editor = None
         self.ok_button = None
 
-        self.setWindowTitle(u'Create a new Entity')
+        self.setWindowTitle('Create a new Entity')
 
         self._create_ui()
         self._connect_signals()
@@ -221,12 +221,12 @@ class EntityNameEditor(QtWidgets.QDialog):
 
         row = ui.add_row('Enter Entity Name', parent=self)
         self.editor = ui.LineEdit(parent=self)
-        self.editor.setPlaceholderText(u'Enter an entity name, eg. \'SH0010\'')
+        self.editor.setPlaceholderText('Enter an entity name, eg. \'SH0010\'')
         self.setFocusProxy(self.editor)
 
         row.layout().addWidget(self.editor, 1)
 
-        self.ok_button = ui.PaintedButton(u'Create', parent=self)
+        self.ok_button = ui.PaintedButton('Create', parent=self)
         self.layout().addWidget(self.ok_button, 1)
 
     def _connect_signals(self):

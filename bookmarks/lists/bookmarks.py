@@ -92,7 +92,7 @@ class BookmarksModel(base.BaseModel):
         common.signals.bookmarksChanged.connect(self.beginResetModel)
         common.signals.bookmarksChanged.connect(self.endResetModel)
 
-    @common.status_bar_message(u'Loading Bookmarks...')
+    @common.status_bar_message('Loading Bookmarks...')
     @base.initdata
     @common.error
     @common.debug
@@ -110,7 +110,7 @@ class BookmarksModel(base.BaseModel):
             if not all(v.values()):
                 continue
             if not len(v.values()) >= 3:
-                raise ValueError(u'Invalid bookmark value.')
+                raise ValueError('Invalid bookmark value.')
 
             server = v[settings.ServerKey]
             job = v[settings.JobKey]
@@ -143,7 +143,7 @@ class BookmarksModel(base.BaseModel):
             if filepath in common.FAVOURITES_SET and exists:
                 flags = flags | common.MarkedAsFavourite
 
-            text = u'{}  |  {}'.format(
+            text = '{}  |  {}'.format(
                 job,
                 root
             )
@@ -165,7 +165,7 @@ class BookmarksModel(base.BaseModel):
                 common.EntryRole: [],
                 common.FlagsRole: flags,
                 common.ParentPathRole: (server, job, root),
-                common.DescriptionRole: u'',
+                common.DescriptionRole: '',
                 common.TodoCountRole: 0,
                 common.AssetCountRole: 0,
                 common.FileDetailsRole: None,
@@ -195,7 +195,7 @@ class BookmarksModel(base.BaseModel):
         self.activeChanged.emit(self.active_index())
 
     def item_generator(self):
-        for item in common.BOOKMARKS.iteritems():
+        for item in common.BOOKMARKS.items():
             yield item
 
     def save_active(self):
@@ -214,7 +214,7 @@ class BookmarksModel(base.BaseModel):
         actions.set_active(settings.RootKey, root)
 
     def parent_path(self):
-        return (u'bookmarks',)
+        return ('bookmarks',)
 
     def data_type(self):
         return common.FileItem
@@ -343,4 +343,4 @@ class BookmarksWidget(base.ThreadedBaseWidget):
             index, flag, state=state, commit_now=commit_now)
 
     def get_hint_string(self):
-        return u'No bookmarks have been added yet. Select Right-Click - Add Bookmark... to add new items.'
+        return 'No bookmarks have been added yet. Select Right-Click - Add Bookmark... to add new items.'

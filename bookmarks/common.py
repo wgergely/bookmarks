@@ -24,12 +24,17 @@ from PySide2 import QtGui, QtCore, QtWidgets
 from . import __name__ as module_name
 
 STANDALONE = True  # The current mode of bookmarks
-PRODUCT = unicode(module_name.title())
-ABOUT_URL = u'https://github.com/wgergely/bookmarks'
-BOOKMARK_ROOT_DIR = u'.bookmark'
+PRODUCT = module_name.title()
+ABOUT_URL = 'https://github.com/wgergely/bookmarks'
+BOOKMARK_ROOT_DIR = '.bookmark'
 BOOKMARK_ROOT_KEY = '{}_ROOT'.format(module_name.upper())
 
 DEBUG = False
+
+# Templates
+PERSISTENT_BOOKMARKS_SOURCE = os.path.abspath(f'{__file__}{os.path.sep}{os.pardir}{os.path.sep}rsc{os.path.sep}templates{os.path.sep}persistent_bookmarks.json')
+DEFAULT_ASSET_SOURCE = os.path.abspath(f'{__file__}{os.path.sep}{os.pardir}{os.path.sep}rsc{os.path.sep}templates{os.path.sep}Bookmarks_Default_Job.zip')
+DEFAULT_JOB_SOURCE = os.path.abspath(f'{__file__}{os.path.sep}{os.pardir}{os.path.sep}rsc{os.path.sep}templates{os.path.sep}Bookmarks_Default_Asset.zip')
 
 SyncronisedActivePaths = 0
 PrivateActivePaths = 1
@@ -42,9 +47,9 @@ FileTab = 2
 FavouriteTab = 3
 
 # Flags
-MarkedAsArchived =   0b1000000000
-MarkedAsFavourite =  0b10000000000
-MarkedAsActive =     0b100000000000
+MarkedAsArchived = 0b1000000000
+MarkedAsFavourite = 0b10000000000
+MarkedAsActive = 0b100000000000
 MarkedAsPersistent = 0b1000000000000
 
 InfoThread = 0
@@ -52,14 +57,14 @@ ThumbnailThread = 1
 
 MAXITEMS = 999999
 
-SEQSTART = u'{'
-SEQEND = u'}'
-SEQPROXY = u'{SEQSTART}0{SEQEND}'.format(
+SEQSTART = '{'
+SEQEND = '}'
+SEQPROXY = '{SEQSTART}0{SEQEND}'.format(
     SEQSTART=SEQSTART,
     SEQEND=SEQEND
 )
 
-FAVOURITE_FILE_FORMAT = u'bfav'
+FAVOURITE_FILE_FORMAT = 'bfav'
 
 # Private caches used to store
 SERVERS = []
@@ -101,12 +106,11 @@ SequenceItem = 1200
 
 SORT_WITH_BASENAME = False
 DEFAULT_SORT_VALUES = {
-    SortByNameRole: u'Name',
-    SortBySizeRole: u'Date Modified',
-    SortByLastModifiedRole: u'Size',
-    SortByTypeRole: u'Type',
+    SortByNameRole: 'Name',
+    SortBySizeRole: 'Date Modified',
+    SortByLastModifiedRole: 'Size',
+    SortByTypeRole: 'Type',
 }
-
 
 
 IsSequenceRegex = re.compile(
@@ -156,21 +160,21 @@ class Signals(QtCore.QObject):
     checkSlackToken = QtCore.Signal()
 
     # Status Bar
-    showStatusTipMessage = QtCore.Signal(unicode)
-    showStatusBarMessage = QtCore.Signal(unicode)
+    showStatusTipMessage = QtCore.Signal(str)
+    showStatusBarMessage = QtCore.Signal(str)
     clearStatusBarMessage = QtCore.Signal()
 
-    thumbnailUpdated = QtCore.Signal(unicode)
+    thumbnailUpdated = QtCore.Signal(str)
 
     # Signal used to update elements after a value is updated in the bookmark database
-    databaseValueUpdated = QtCore.Signal(unicode, unicode, unicode, object)
+    databaseValueUpdated = QtCore.Signal(str, str, str, object)
 
     serversChanged = QtCore.Signal()
     bookmarksChanged = QtCore.Signal()
     favouritesChanged = QtCore.Signal()
 
-    assetAdded = QtCore.Signal(unicode)
-    fileAdded = QtCore.Signal(unicode)
+    assetAdded = QtCore.Signal(str)
+    fileAdded = QtCore.Signal(str)
 
     toggleFilterButton = QtCore.Signal()
     toggleSequenceButton = QtCore.Signal()
@@ -186,7 +190,7 @@ class Signals(QtCore.QObject):
 
     # Templates
     templatesChanged = QtCore.Signal()
-    templateExpanded = QtCore.Signal(unicode)
+    templateExpanded = QtCore.Signal(str)
 
     # Shotgun
     entitySelected = QtCore.Signal(dict)
@@ -194,9 +198,9 @@ class Signals(QtCore.QObject):
     shotgunEntityDataReady = QtCore.Signal(str, list)
 
     # General activation signals
-    bookmarkActivated = QtCore.Signal(unicode, unicode, unicode)
-    assetActivated = QtCore.Signal(unicode, unicode, unicode, unicode)
-    fileActivated = QtCore.Signal(unicode, unicode, unicode, unicode, unicode)
+    bookmarkActivated = QtCore.Signal(str, str, str)
+    assetActivated = QtCore.Signal(str, str, str, str)
+    fileActivated = QtCore.Signal(str, str, str, str, str)
 
     def __init__(self, parent=None):
         super(Signals, self).__init__(parent=parent)
@@ -215,9 +219,11 @@ def init_standalone():
     global STANDALONE
     STANDALONE = True
 
+
 def init_signals():
     global signals
     signals = Signals()
+
 
 def init_settings():
     """Initialises the user settings instance.
@@ -248,7 +254,7 @@ def init_ui_scale():
 
     if v is None:
         v = 1.0
-    elif isinstance(v, (str, unicode)):
+    elif isinstance(v, str):
         if '%' not in v:
             v = 1.0
         else:
@@ -352,9 +358,9 @@ def sort_data(ref, sortrole, sortorder):
 def get_platform():
     """Returns the current platform."""
     ptype = QtCore.QSysInfo().productType()
-    if ptype.lower() in (u'osx', u'macos'):
+    if ptype.lower() in ('osx', 'macos'):
         return PlatformMacOS
-    if u'win' in ptype.lower():
+    if 'win' in ptype.lower():
         return PlatformWindows
     return PlatformUnsupported
 
@@ -428,7 +434,7 @@ def status_bar_message(message):
                 log.debug(message)
             signals.showStatusBarMessage.emit(message)
             result = function(*args, **kwargs)
-            signals.showStatusBarMessage.emit(u'')
+            signals.showStatusBarMessage.emit('')
             return result
         return wrapper
     return decorator
@@ -441,15 +447,14 @@ def error(func):
         try:
             return func(*args, **kwargs)
         except:
-            from . import actions
             from . import ui
             from . import log
 
             info = sys.exc_info()
             if all(info):
-                e = u''.join(traceback.format_exception(*info))
+                e = ''.join(traceback.format_exception(*info))
             else:
-                e = u''
+                e = ''
 
             log.error('Error.')
 
@@ -457,9 +462,9 @@ def error(func):
             if QtCore.QThread.currentThread() == QtWidgets.QApplication.instance().thread():
                 try:
                     if QtWidgets.QApplication.instance():
-                        ui.ErrorBox(u'An error occured.', e).open()
+                        ui.ErrorBox('An error occured.', e).open()
                     signals.showStatusBarMessage.emit(
-                        u'An error occured. See log for more details.')
+                        'An error occured. See log for more details.')
                 except:
                     pass
             raise
@@ -468,7 +473,7 @@ def error(func):
 
 def debug(func):
     """Decorator to create a menu set."""
-    DEBUG_MESSAGE = u'{trace}(): Executed in {time} secs.'
+    DEBUG_MESSAGE = '{trace}(): Executed in {time} secs.'
     DEBUG_SEPARATOR = ' --> '
 
     @functools.wraps(func)
@@ -521,7 +526,7 @@ def psize(n):
 
 
 def get_hash(key):
-    """Calculates the md5 hash of a unicode string.
+    """Calculates the md5 hash of a str string.
 
     The resulting hash is used by the `ImageCache`, `local_settings` and
     `BookmarkDB` to associate data with file paths. The generated hashes are
@@ -529,21 +534,20 @@ def get_hash(key):
     we'll remove it before hashing.
 
     Args:
-        key (unicode): A unicode string to calculate the md5 hash for.
+        key (str): A str string to calculate the md5 hash for.
 
     Returns:
         str: Value of the calculated md5 hexadecimal digest as a `str`.
 
     """
-    if not key or not isinstance(key, unicode):
-        raise TypeError(u'Expected {}, got {}'.format(unicode, type(key)))
+    check_type(key, str)
 
     if key in HASH_DATA:
         return HASH_DATA[key]
 
     # Path must not contain backslashes
-    if u'\\' in key:
-        key = key.replace(u'\\', u'/')
+    if '\\' in key:
+        key = key.replace('\\', '/')
 
     # The hash key is server agnostic. We'll check the key against all saved
     # servers and remove it if found in the key.
@@ -567,8 +571,8 @@ def get_username():
     """Returns the name of the currently logged-in user.
 
     """
-    n = QtCore.QFileInfo(os.path.expanduser(u'~')).fileName()
-    n = re.sub(r'[^a-zA-Z0-9]*', u'', n, flags=re.IGNORECASE | re.UNICODE)
+    n = QtCore.QFileInfo(os.path.expanduser('~')).fileName()
+    n = re.sub(r'[^a-zA-Z0-9]*', '', n, flags=re.IGNORECASE | re.UNICODE)
     return n
 
 
@@ -584,7 +588,7 @@ def is_collapsed(s):
     enclosed in brackets. For instance: ``image_sequence_[001-233].png``
 
     Args:
-        s (unicode): A file path.
+        s (str): A file path.
 
     Returns:
         group 1 (SRE_Match):    All the characters **before** the sequence marker.
@@ -604,9 +608,7 @@ def is_collapsed(s):
         ``SRE_Match``: If the given name is indeed collpased it returns a ``SRE_Match`` object, otherwise ``None``.
 
     """
-    if not isinstance(s, unicode):
-        raise TypeError(
-            u'Expected {}, got {}'.format(unicode, type(s)))
+    check_type(s, str)
     return IsSequenceRegex.search(s)
 
 
@@ -619,10 +621,10 @@ def proxy_path(v):
     of their frame-range notation.
 
     Args:
-        v (QModelIndex, dict or unicode): Data dict, index or filepath string.
+        v (QModelIndex, dict or str): Data dict, index or filepath string.
 
     Returns:
-        unicode: The key used to store the items information in the local
+        str: The key used to store the items information in the local
         preferences and the bookmarks database.
 
     """
@@ -632,7 +634,7 @@ def proxy_path(v):
         v = v[QtCore.Qt.StatusTipRole]
     elif isinstance(v, QtCore.QModelIndex):
         v = v.data(QtCore.Qt.StatusTipRole)
-    elif isinstance(v, unicode):
+    elif isinstance(v, str):
         pass
     else:
         raise TypeError('Invalid type, expected one of {}, {}, {}, got {}'.format(
@@ -643,7 +645,7 @@ def proxy_path(v):
         return collapsed.group(1) + SEQPROXY + collapsed.group(3)
     seq = get_sequence(v)
     if seq:
-        return seq.group(1) + SEQPROXY + seq.group(3) + u'.' + seq.group(4)
+        return seq.group(1) + SEQPROXY + seq.group(3) + '.' + seq.group(4)
     return v
 
 
@@ -663,7 +665,7 @@ def get_sequence(s):
     be **0001**, and not 010 or 002.
 
     Args:
-        s (unicode): A file path.
+        s (str): A file path.
 
     Returns:
         group 1 (SRE_Match):    All the characters **before** the sequence number.
@@ -673,7 +675,7 @@ def get_sequence(s):
 
     .. code-block:: python
 
-       s = u'job_sh010_animation_v002_wgergely.c4d'
+       s = 'job_sh010_animation_v002_wgergely.c4d'
        m = get_sequence(s)
        if m:
            prefix = match.group(1)
@@ -685,8 +687,7 @@ def get_sequence(s):
         ``SRE_Match``: ``None`` if the text doesn't contain a number or an ``SRE_Match`` object.
 
     """
-    if not isinstance(s, unicode):
-        raise TypeError(u'Expected {}, got {}'.format(unicode, type(s)))
+    check_type(s, str)
     if is_collapsed(s):
         raise RuntimeError(
             'Cannot extract sequence numbers from collapsed items.')
@@ -698,15 +699,13 @@ def get_sequence_startpath(path):
     the first file.
 
     Args:
-        s (unicode): A collapsed sequence name.
+        s (str): A collapsed sequence name.
 
     Returns:
-        unicode: The path to the first file of the sequence.
+        str: The path to the first file of the sequence.
 
     """
-    if not isinstance(path, unicode):
-        raise ValueError(
-            u'Expected {}, got {}'.format(unicode, type(path)))
+    check_type(path, str)
 
     if not is_collapsed(path):
         return path
@@ -722,15 +721,15 @@ def get_sequence_endpath(path):
     the last file.
 
     Args:
-        s (unicode): A collapsed sequence name.
+        s (str): A collapsed sequence name.
 
     Returns:
-        unicode: The path to the last file of the sequence.
+        str: The path to the last file of the sequence.
 
     """
-    if not isinstance(path, unicode):
+    if not isinstance(path, str):
         raise ValueError(
-            u'Expected {}, got {}'.format(unicode, type(path)))
+            'Expected {}, got {}'.format(str, type(path)))
 
     if not is_collapsed(path):
         return path
@@ -756,7 +755,7 @@ def get_sequence_paths(index):
     sequence_paths = []
     for frame in index.data(FramesRole):
         seq = index.data(SequenceRole)
-        seq = seq.group(1) + frame + seq.group(3) + u'.' + seq.group(4)
+        seq = seq.group(1) + frame + seq.group(3) + '.' + seq.group(4)
         sequence_paths.append(seq)
     return sequence_paths
 
@@ -770,11 +769,11 @@ def temp_path():
     """An internal temp folder
 
     """
-    return u'{}/{}/{}'.format(
+    return '{}/{}/{}'.format(
         QtCore.QStandardPaths.writableLocation(
             QtCore.QStandardPaths.GenericDataLocation),
         PRODUCT,
-        u'temp',
+        'temp',
     )
 
 
@@ -786,7 +785,7 @@ def local_parent_paths():
         QtCore.QStandardPaths.writableLocation(
             QtCore.QStandardPaths.GenericDataLocation),
         PRODUCT,
-        u'temp',
+        'temp',
     )
 
 
@@ -857,7 +856,7 @@ def set_custom_stylesheet(widget):
         widget (QWidget): A widget t apply the stylesheet to.
 
     Returns:
-        unicode: The stylesheet applied to the widget.
+        str: The stylesheet applied to the widget.
 
     """
     global STYLESHEET
@@ -872,15 +871,14 @@ def set_custom_stylesheet(widget):
             os.path.join(
                 __file__,
                 os.pardir,
-                u'rsc',
-                u'stylesheet.qss'
+                'rsc',
+                'stylesheet.qss'
             )
         )
     )
-    with open(path, 'r') as f:
+    with open(path, 'r', encoding='utf-8') as f:
         f.seek(0)
         qss = f.read()
-        qss = qss.encode(encoding='UTF-8', errors='strict')
 
     try:
         from . import images
@@ -922,13 +920,13 @@ def set_custom_stylesheet(widget):
             BRANCH_OPEN=images.ImageCache.get_rsc_pixmap(
                 'branch_open', None, None, get_path=True),
             CHECKED=images.ImageCache.get_rsc_pixmap(
-                u'check', None, None, get_path=True),
+                'check', None, None, get_path=True),
             UNCHECKED=images.ImageCache.get_rsc_pixmap(
-                u'close', None, None, get_path=True),
+                'close', None, None, get_path=True),
         )
     except KeyError as err:
         from . import log
-        msg = u'Looks like there might be an error in the stylesheet file: {}'.format(
+        msg = 'Looks like there might be an error in the stylesheet file: {}'.format(
             err)
         log.error(msg)
         raise KeyError(msg)
@@ -945,10 +943,10 @@ def rgb(v):
         v (QColor): A color.
 
     Returns:
-        unicode: The string representation of the color.
+        str: The string representation of the color.
 
     """
-    return u'rgba({})'.format(u','.join([unicode(f) for f in v.getRgb()]))
+    return 'rgba({})'.format(','.join([str(f) for f in v.getRgb()]))
 
 
 def draw_aliased_text(painter, font, rect, text, align, color, elide=None):
@@ -962,7 +960,7 @@ def draw_aliased_text(painter, font, rect, text, align, color, elide=None):
         painter (QPainter):         The active painter.
         font (QFont):               The font to use to paint.
         rect (QRect):               The rectangle to fit the text in.
-        text (unicode):             The text to paint.
+        text (str):             The text to paint.
         align (Qt.AlignmentFlag):   The alignment flags.
         color (QColor):             The color to use.
 
@@ -988,10 +986,10 @@ def draw_aliased_text(painter, font, rect, text, align, color, elide=None):
             elide = QtCore.Qt.ElideMiddle
 
     text = metrics.elidedText(
-        u'{}'.format(text),
+        '{}'.format(text),
         elide,
         rect.width() * 1.01)
-    width = metrics.width(text)
+    width = metrics.horizontalAdvance(text)
 
     if QtCore.Qt.AlignLeft & align:
         x = rect.left()
@@ -1036,35 +1034,35 @@ class FontDatabase(QtGui.QFontDatabase):
         """Load the fonts used by Bookmarks to the font database.
 
         """
-        if u'bmRobotoMedium' in self.families():
+        if 'bmRobotoMedium' in self.families():
             return
 
-        p = u'{}/../rsc/fonts'.format(__file__)
+        p = '{}/../rsc/fonts'.format(__file__)
         p = os.path.normpath(os.path.abspath(p))
 
         if not os.path.isdir(p):
             raise OSError('{} could not be found'.format(p))
 
         for entry in _scandir.scandir(p):
-            if not entry.name.endswith(u'ttf'):
+            if not entry.name.endswith('ttf'):
                 continue
             idx = self.addApplicationFont(entry.path)
             if idx < 0:
                 raise RuntimeError(
-                    u'Failed to add required font to the application')
+                    'Failed to add required font to the application')
             family = self.applicationFontFamilies(idx)
             if not family:
                 raise RuntimeError(
-                    u'Failed to add required font to the application')
+                    'Failed to add required font to the application')
 
     def primary_font(self, font_size):
         """The primary font used by the application."""
         if font_size in self.CACHE[PrimaryFontRole]:
             return self.CACHE[PrimaryFontRole][font_size]
-        font = self.font(u'bmRobotoBold', u'Bold', font_size)
-        if font.family() != u'bmRobotoBold':
+        font = self.font('bmRobotoBold', 'Bold', font_size)
+        if font.family() != 'bmRobotoBold':
             raise RuntimeError(
-                u'Failed to add required font to the application')
+                'Failed to add required font to the application')
         font.setPixelSize(font_size)
         metrics = QtGui.QFontMetrics(font)
         self.CACHE[PrimaryFontRole][font_size] = (font, metrics)
@@ -1074,10 +1072,10 @@ class FontDatabase(QtGui.QFontDatabase):
         """The secondary font used by the application."""
         if font_size in self.CACHE[SecondaryFontRole]:
             return self.CACHE[SecondaryFontRole][font_size]
-        font = self.font(u'bmRobotoMedium', u'Medium', font_size)
-        if font.family() != u'bmRobotoMedium':
+        font = self.font('bmRobotoMedium', 'Medium', font_size)
+        if font.family() != 'bmRobotoMedium':
             raise RuntimeError(
-                u'Failed to add required font to the application')
+                'Failed to add required font to the application')
         font.setPixelSize(font_size)
         metrics = QtGui.QFontMetrics(font)
         self.CACHE[SecondaryFontRole][font_size] = (font, metrics)
@@ -1124,7 +1122,7 @@ class Timer(QtCore.QTimer):
         TIMERS[repr(self)] = self
 
     def setObjectName(self, v):
-        v = u'{}_{}'.format(v, uuid.uuid1().get_hex())
+        v = '{}_{}'.format(v, uuid.uuid1().hex)
         super(Timer, self).setObjectName(v)
 
 
@@ -1136,9 +1134,9 @@ def get_path_to_executable(key):
 
     # Only FFMpeg and RV are implemented at the moment
     if key == settings.FFMpegKey:
-        name = u'ffmpeg'
+        name = 'ffmpeg'
     elif key == settings.RVKey:
-        name = u'rv'
+        name = 'rv'
     else:
         raise ValueError('Invalid key.')
 
@@ -1153,7 +1151,8 @@ def get_path_to_executable(key):
 
         # Parse only valid and unique paths
         paths = os.environ['PATH'].split(';')
-        paths = list(set([os.path.normpath(f).rstrip('\\') for f in paths if os.path.isdir(f)]))
+        paths = list(set([os.path.normpath(f).rstrip('\\')
+                     for f in paths if os.path.isdir(f)]))
 
         for path in paths:
             for entry in _scandir.scandir(path):
@@ -1165,10 +1164,8 @@ def get_path_to_executable(key):
     return None
 
 
-
-
 def delete_timers():
-    for k in TIMERS.keys():
+    for k in list(TIMERS):
         try:
             TIMERS[k].isActive()
         except:
@@ -1202,7 +1199,7 @@ def quit():
     from . import standalone
     from . import settings
     from . import main
-    from . import bookmark_db
+    from . import database
     from . import images
     from . import ui
     from . import actions
@@ -1271,7 +1268,7 @@ def quit():
 
     # Signas teardown
     global signals
-    for k, v in Signals.__dict__.iteritems():
+    for k, v in Signals.__dict__.items():
         if not isinstance(v, QtCore.Signal):
             continue
         if not hasattr(signals, k):
@@ -1288,8 +1285,7 @@ def quit():
         pass
     signals = None
 
-
-    bookmark_db.close()
+    database.close()
     images.reset()
     settings.delete()
     ui.reset()
@@ -1315,3 +1311,36 @@ def quit():
 
     # Force garbage collection
     gc.collect()
+
+
+class InvalidTypeError(TypeError):
+    """ Raised when an invalid object type is encountered.
+
+    Args:
+        value (object): An object of invalid type.
+        valid_type (type): The valid type.
+
+    """
+
+    def __init__(self, value, valid_type):
+        super().__init__(
+            f'Invalid type. Expected {valid_type}, got {value}'
+        )
+
+
+def check_type(value, valid_type):
+    """Verify the type of an object.
+
+    Args:
+        value (object): An object of invalid type.
+        valid_type (type or tuple): The valid type.
+
+    """
+    try:
+        it = iter(valid_type)
+        for _type in it:
+            if not isinstance(value, _type):
+                raise InvalidTypeError(value, _type)
+    except:
+        if not isinstance(value, valid_type):
+            raise InvalidTypeError(value, valid_type)

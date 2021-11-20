@@ -25,17 +25,18 @@ from . import common
 
 
 THUMBNAIL_IMAGE_SIZE = 512.0
-THUMBNAIL_FORMAT = u'png'
-PLACEHOLDER_PATH = u'{}/../rsc/{}/{}.{}'
+THUMBNAIL_FORMAT = 'png'
+PLACEHOLDER_PATH = '{}/../rsc/{}/{}.{}'
+QT_IMAGE_FORMATS = list(set([f.data().decode('utf8') for f in QtGui.QImageReader.supportedImageFormats()]))
 
 mutex = QtCore.QMutex()
 
 pixel_ratio = None
 
 oiio_cache = OpenImageIO.ImageCache(shared=True)
-oiio_cache.attribute(u'max_memory_MB', 4096.0)
-oiio_cache.attribute(u'max_open_files', 0)
-oiio_cache.attribute(u'trust_file_extensions', 1)
+oiio_cache.attribute('max_memory_MB', 4096.0)
+oiio_cache.attribute('max_open_files', 0)
+oiio_cache.attribute('trust_file_extensions', 1)
 
 
 BufferType = QtCore.Qt.UserRole
@@ -49,12 +50,12 @@ _library_widget = None
 _filedialog_widget = None
 _viewer_widget = None
 
-accepted_codecs = (u'h.264', u'h264', u'mpeg-4', u'mpeg4')
+accepted_codecs = ('h.264', 'h264', 'mpeg-4', 'mpeg4')
 
 
-GuiResource = u'gui'
-ThumbnailResource = u'thumbnails'
-FormatResource = u'formats'
+GuiResource = 'gui'
+ThumbnailResource = 'thumbnails'
+FormatResource = 'formats'
 
 
 RESOURCES = {
@@ -85,9 +86,9 @@ def reset():
 
 def init_resources():
     global RESOURCES
-    for _source, k in ((os.path.normpath(os.path.abspath(u'{}/../rsc/{}'.format(__file__, f))), f) for f in (GuiResource, ThumbnailResource, FormatResource)):
+    for _source, k in ((os.path.normpath(os.path.abspath('{}/../rsc/{}'.format(__file__, f))), f) for f in (GuiResource, ThumbnailResource, FormatResource)):
         for _entry in _scandir.scandir(_source):
-            RESOURCES[k].append(_entry.name.split(u'.')[0])
+            RESOURCES[k].append(_entry.name.split('.')[0])
 
 
 def get_oiio_extensions():
@@ -109,20 +110,20 @@ def get_oiio_namefilters():
     extension_list = OpenImageIO.get_string_attribute('extension_list')
     namefilters = []
     arr = []
-    for exts in extension_list.split(u';'):
-        exts = exts.split(u':')
-        _exts = exts[1].split(u',')
-        e = [u'*.{}'.format(f) for f in _exts]
-        namefilter = u'{} files ({})'.format(exts[0].upper(), u' '.join(e))
+    for exts in extension_list.split(';'):
+        exts = exts.split(':')
+        _exts = exts[1].split(',')
+        e = ['*.{}'.format(f) for f in _exts]
+        namefilter = '{} files ({})'.format(exts[0].upper(), ' '.join(e))
         namefilters.append(namefilter)
         for _e in _exts:
             arr.append(_e)
 
-    allfiles = [u'*.{}'.format(f) for f in arr]
-    allfiles = u' '.join(allfiles)
-    allfiles = u'All files ({})'.format(allfiles)
+    allfiles = ['*.{}'.format(f) for f in arr]
+    allfiles = ' '.join(allfiles)
+    allfiles = 'All files ({})'.format(allfiles)
     namefilters.insert(0, allfiles)
-    return u';;'.join(namefilters)
+    return ';;'.join(namefilters)
 
 
 def check_for_thumbnail_image(source):
@@ -130,22 +131,22 @@ def check_for_thumbnail_image(source):
     in a source folder.
 
     Args:
-        source (unicode):   Path to folder.
+        source (str):   Path to folder.
 
     Returns:
-        unicode:    The path to the thumbnail file or `None` if not found.
+        str:    The path to the thumbnail file or `None` if not found.
 
     """
     # We'll rely on Qt5 to load the image without OpenImageIO so we'll query
     # supportedImageFormats() to get the list of valid image formats.
-    for ext in [f.data() for f in QtGui.QImageReader.supportedImageFormats()]:
-        file_info = QtCore.QFileInfo(u'{}/thumbnail.{}'.format(source, ext))
+    for ext in QT_IMAGE_FORMATS:
+        file_info = QtCore.QFileInfo(f'{source}/thumbnail.{ext}')
         if file_info.exists():
             return file_info.filePath()
     return None
 
 
-def get_thumbnail(server, job, root, source, size=THUMBNAIL_IMAGE_SIZE, fallback_thumb=u'placeholder', get_path=False):
+def get_thumbnail(server, job, root, source, size=THUMBNAIL_IMAGE_SIZE, fallback_thumb='placeholder', get_path=False):
     """Get the thumbnail of a given item.
 
     When an item is missing a bespoke cached thumbnail file, we will try to load
@@ -159,17 +160,17 @@ def get_thumbnail(server, job, root, source, size=THUMBNAIL_IMAGE_SIZE, fallback
     to find a cached image file.
 
     Args:
-        server (unicode):        A server name.
-        job (unicode):           A job name.
-        root (unicode):          A root folder name.
-        source (unicode):        Full file path of source item.
+        server (str):        A server name.
+        job (str):           A job name.
+        root (str):          A root folder name.
+        source (str):        Full file path of source item.
         size (int):              The size of the thumbnail image in pixels.
-        fallback_thumb(unicode): A fallback thumbnail image.
+        fallback_thumb(str): A fallback thumbnail image.
         get_path (bool):         Returns a path instead of a QPixmap if set to `True`.
 
     Returns:
         tuple:                   `(QPixmap, QColor)`, or `(None, None)`.
-        unicode:                 Path to the thumbnail file when `get_path=True`.
+        str:                 Path to the thumbnail file when `get_path=True`.
 
 
     """
@@ -192,8 +193,6 @@ def get_thumbnail(server, job, root, source, size=THUMBNAIL_IMAGE_SIZE, fallback
 
         return (thumbnail_path, pixmap, color)
 
-    # if isinstance(size, (long, float)):
-    #     size = int(round(size))
     size = int(round(size * pixel_ratio))
 
     args = (server, job, root)
@@ -221,9 +220,9 @@ def get_thumbnail(server, job, root, source, size=THUMBNAIL_IMAGE_SIZE, fallback
     if QtCore.QFileInfo(source).isDir():
         _hash = common.get_hash(source)
 
-        thumb_path = check_for_thumbnail_image(u'/'.join(args[0:3]))
+        thumb_path = check_for_thumbnail_image('/'.join(args[0:3]))
         if not thumb_path:
-            thumb_path = check_for_thumbnail_image(u'/'.join(args[0:2]))
+            thumb_path = check_for_thumbnail_image('/'.join(args[0:2]))
 
         if thumb_path:
             pixmap = ImageCache.get_pixmap(
@@ -266,7 +265,7 @@ def load_thumbnail_from_image(server, job, root, source, image, proxy=False):
         server, job, root, source, proxy=proxy)
     if QtCore.QFileInfo(thumbnail_path).exists():
         if not QtCore.QFile(thumbnail_path).remove():
-            s = u'Failed to remove existing thumbnail file.'
+            s = 'Failed to remove existing thumbnail file.'
             raise RuntimeError(s)
 
     res = ImageCache.oiio_make_thumbnail(
@@ -275,7 +274,7 @@ def load_thumbnail_from_image(server, job, root, source, image, proxy=False):
         THUMBNAIL_IMAGE_SIZE
     )
     if not res:
-        raise RuntimeError(u'Failed to make thumbnail.')
+        raise RuntimeError('Failed to make thumbnail.')
 
     ImageCache.flush(thumbnail_path)
 
@@ -287,42 +286,38 @@ def get_cached_thumbnail_path(server, job, root, source, proxy=False):
     the sequence's first item as our thumbnail source.
 
     Args:
-        server (unicode):       The `server` segment of the file path.
-        job (unicode):          The `job` segment of the file path.
-        root (unicode):         The `root` segment of the file path.
-        source (unicode):       The full file path.
+        server (str):       The `server` segment of the file path.
+        job (str):          The `job` segment of the file path.
+        root (str):         The `root` segment of the file path.
+        source (str):       The full file path.
 
     Returns:
-        unicode:                The resolved thumbnail path.
+        str:                The resolved thumbnail path.
 
     """
     for arg in (server, job, root, source):
-        if not isinstance(arg, unicode):
-            raise TypeError(
-                'Invalid type. Expected {}, got {}'.format(unicode, type(arg)))
+        common.check_type(arg, str)
 
     if proxy or common.is_collapsed(source):
         source = common.proxy_path(source)
-    name = common.get_hash(source) + u'.' + THUMBNAIL_FORMAT
-    return server + u'/' + job + u'/' + root + u'/' + common.BOOKMARK_ROOT_DIR + u'/' + name
+    name = common.get_hash(source) + '.' + THUMBNAIL_FORMAT
+    return server + '/' + job + '/' + root + '/' + common.BOOKMARK_ROOT_DIR + '/' + name
 
 
-def get_placeholder_path(file_path, fallback=u'placeholder'):
+def get_placeholder_path(file_path, fallback='placeholder'):
     """Returns an image path used to represent an item.
 
     In absense of a custom user-set thumbnail, we'll try and find one based on
     the file's format extension.
 
     Args:
-        file_path (unicode): Path to a file or folder.
+        file_path (str): Path to a file or folder.
 
     Returns:
-        unicode: Path to the placehoder image.
+        str: Path to the placehoder image.
 
     """
-    if not isinstance(file_path, unicode):
-        raise TypeError(
-            u'Invalid type. Expected {}, got {}'.format(unicode, type(file_path)))
+    common.check_type(file_path, str)
 
     def path(r, n):
         return PLACEHOLDER_PATH.format(
@@ -342,9 +337,9 @@ def get_placeholder_path(file_path, fallback=u'placeholder'):
         elif fallback in RESOURCES[GuiResource]:
             path = path(GuiResource, fallback)
         else:
-            path = path(GuiResource, u'placeholder')
+            path = path(GuiResource, 'placeholder')
 
-    return os.path.normpath(os.path.abspath(path)).replace(u'\\', u'/')
+    return os.path.normpath(os.path.abspath(path)).replace('\\', '/')
 
 
 def invalidate(func):
@@ -361,7 +356,7 @@ def oiio_get_buf(source, hash=None, force=False):
     """Check and load a source image with OpenImageIO's format reader.
 
     Args:
-        source (unicode):   Path to an OpenImageIO compatible image file.
+        source (str):   Path to an OpenImageIO compatible image file.
         hash (str):         Defaults to `None`.
         force (bool):       When true, forces the buffer to be re-cached.
 
@@ -369,9 +364,8 @@ def oiio_get_buf(source, hash=None, force=False):
         ImageBuf: An `ImageBuf` instance or `None` if the file is invalid.
 
     """
-    if not isinstance(source, unicode):
-        raise TypeError(
-            u'Expected {}, got {}'.format(unicode, type(source)))
+    common.check_type(source, str)
+
     if hash is None:
         hash = common.get_hash(source)
 
@@ -380,9 +374,9 @@ def oiio_get_buf(source, hash=None, force=False):
 
     # We use the extension to initiate an ImageInput with a format
     # which in turn is used to check the source's validity
-    if u'.' not in source:
+    if '.' not in source:
         return None
-    ext = source.split(u'.').pop().lower()
+    ext = source.split('.').pop().lower()
     i = OpenImageIO.ImageInput.create(ext)
     if not i:
         return None
@@ -406,7 +400,7 @@ def oiio_get_qimage(path, buf=None, force=True):
     `RGBA8888` / `RGB888` QImage.
 
     Args:
-        path (unicode):                 Path to an OpenImageIO readable image.
+        path (str):                 Path to an OpenImageIO readable image.
         buf (OpenImageIO.ImageBuf):     When buf is valid ImageBuf instance it will be used
                                         as the source instead of `path`. Defaults to `None`.
 
@@ -433,15 +427,15 @@ def oiio_get_qimage(path, buf=None, force=True):
         b = OpenImageIO.ImageBufAlgo.channels(
             buf,
             (spec.channelnames[0], spec.channelnames[0], spec.channelnames[0]),
-            (u'R', u'G', u'B')
+            ('R', 'G', 'B')
         )
     elif int(spec.nchannels) > 4:
-        if spec.channelindex(u'A') > -1:
+        if spec.channelindex('A') > -1:
             b = OpenImageIO.ImageBufAlgo.channels(
-                b, (u'R', u'G', u'B', u'A'), (u'R', u'G', u'B', u'A'))
+                b, ('R', 'G', 'B', 'A'), ('R', 'G', 'B', 'A'))
         else:
             b = OpenImageIO.ImageBufAlgo.channels(
-                b, (u'R', u'G', u'B'), (u'R', u'G', u'B'))
+                b, ('R', 'G', 'B'), ('R', 'G', 'B'))
 
     np_arr = buf.get_pixels(OpenImageIO.UINT8)
     # np_arr = (np_arr / (1.0 / 255.0)).astype(np.uint8)
@@ -540,19 +534,16 @@ class ImageCache(QtCore.QObject):
             cls.INTERNAL_DATA[cache_type][hash] = common.DataDict()
 
         if cache_type == BufferType:
-            if not isinstance(value, OpenImageIO.ImageBuf):
-                raise TypeError(
-                    u'Invalid type. Expected <type \'ImageBuf\'>, got {}'.format(type(value)))
+            common.check_type(value, OpenImageIO.ImageBuf)
 
             cls.INTERNAL_DATA[BufferType][hash] = value
             return cls.INTERNAL_DATA[BufferType][hash]
 
         elif cache_type == ImageType:
-            if not isinstance(value, QtGui.QImage):
-                raise TypeError(
-                    u'Invalid type. Expected {}, got {}'.format(QtGui.QImage, type(value)))
+            common.check_type(value, QtGui.QImage)
+
             if size is None:
-                raise ValueError(u'Invalid size')
+                raise ValueError('size cannot be `None`')
 
             if not isinstance(size, int):
                 size = int(size)
@@ -560,10 +551,8 @@ class ImageCache(QtCore.QObject):
             cls.INTERNAL_DATA[cache_type][hash][size] = value
             return cls.INTERNAL_DATA[cache_type][hash][size]
 
-        elif cache_type == PixmapType or cache_type == ResourcePixmapType:
-            if not isinstance(value, QtGui.QPixmap):
-                raise TypeError(
-                    u'Invalid type. Expected <type \'QPixmap\'>, got {}'.format(type(value)))
+        elif cache_type in (PixmapType, ResourcePixmapType):
+            common.check_type(value, QtGui.QPixmap)
 
             if not isinstance(size, int):
                 size = int(size)
@@ -572,14 +561,12 @@ class ImageCache(QtCore.QObject):
             return cls.INTERNAL_DATA[cache_type][hash][size]
 
         elif cache_type == ColorType:
-            if not isinstance(value, QtGui.QColor):
-                raise TypeError(
-                    u'Invalid type. Expected <type \'QColor\'>, got {}'.format(type(value)))
+            common.check_type(value, QtGui.QColor)
 
             cls.INTERNAL_DATA[ColorType][hash] = value
             return cls.INTERNAL_DATA[ColorType][hash]
-        else:
-            raise TypeError('Invalid cache type.')
+
+        raise TypeError('`cache_type` is invalid.')
 
     @classmethod
     def flush(cls, source):
@@ -606,7 +593,7 @@ class ImageCache(QtCore.QObject):
             anyway.
 
         Args:
-            source (unicode):   Path to an OpenImageIO compliant image file.
+            source (str):   Path to an OpenImageIO compliant image file.
             size (int):         The size of the requested image.
             hash (str):         Use this hash key instead of a source's hash value to store the data.
 
@@ -616,18 +603,16 @@ class ImageCache(QtCore.QObject):
         """
         if not QtGui.QGuiApplication.instance():
             raise RuntimeError(
-                u'Cannot create QPixmaps without a gui application.')
+                'Cannot create QPixmaps without a gui application.')
 
-        if not isinstance(source, unicode):
-            raise TypeError(u'Invalid type. Expected {}, got {}'.format(
-                unicode, type(source)))
+        common.check_type(source, str)
 
         app = QtWidgets.QApplication.instance()
         if app and app.thread() != QtCore.QThread.currentThread():
-            s = u'Pixmaps can only be initiated in the main gui thread.'
+            s = 'Pixmaps can only be initiated in the main gui thread.'
             raise RuntimeError(s)
 
-        if isinstance(size, (float, long)):
+        if isinstance(size, (float, int)):
             size = int(round(size))
 
         # Check the cache and return the previously stored value if exists
@@ -655,8 +640,7 @@ class ImageCache(QtCore.QObject):
 
     @classmethod
     def get_color(cls, source, force=False):
-        if not isinstance(source, unicode):
-            raise TypeError(u'Invalid type. Expected {}, got {}.'.format(unicode, type(source)))
+        common.check_type(source, str)
 
         # Check the cache and return the previously stored value if exists
         _hash = common.get_hash(source)
@@ -719,7 +703,7 @@ class ImageCache(QtCore.QObject):
         setting `hash`.
 
         Args:
-            source (unicode):   Path to an OpenImageIO compliant image file.
+            source (str):   Path to an OpenImageIO compliant image file.
             size (int):         The size of the requested image.
             hash (str):         Use this hash key instead source to store the data.
 
@@ -737,11 +721,9 @@ class ImageCache(QtCore.QObject):
             time.sleep(0.1)
             t += 0.1
 
-        if not isinstance(source, unicode):
-            raise TypeError(u'Invalid type. Expected {}, got {}.'.format(
-                unicode, type(source)))
+        common.check_type(source, str)
 
-        if isinstance(size, (float, long)):
+        if isinstance(size, (float, int)):
             size = int(round(size))
 
         if hash is None:
@@ -784,11 +766,8 @@ class ImageCache(QtCore.QObject):
             QImage: The resized copy of the original image.
 
         """
-        if not isinstance(size, (int, float)):
-            raise TypeError(u'Invalid size.')
-        if not isinstance(image, QtGui.QImage):
-            raise TypeError(
-                u'Expected a <type \'QtGui.QImage\'>, got {}.'.format(type(image)))
+        common.check_type(size, (int, float))
+        common.check_type(image, QtGui.QImage)
 
         w = image.width()
         h = image.height()
@@ -812,7 +791,7 @@ class ImageCache(QtCore.QObject):
             QPixmap: The loaded image.
 
         """
-        source = u'{}/../rsc/{}/{}.png'.format(__file__, resource, name)
+        source = '{}/../rsc/{}/{}.png'.format(__file__, resource, name)
         file_info = QtCore.QFileInfo(source)
 
         if get_path:
@@ -821,10 +800,10 @@ class ImageCache(QtCore.QObject):
         if not file_info.exists():
             return QtGui.QPixmap()
 
-        k = u'rsc:{name}:{size}:{color}'.format(
+        k = 'rsc:{name}:{size}:{color}'.format(
             name=name,
             size=int(size),
-            color=u'null' if not color else color.name()
+            color='null' if not color else color.name()
         )
 
         if k in cls.RESOURCE_DATA:
@@ -875,8 +854,8 @@ class ImageCache(QtCore.QObject):
         """Converts `source` to an sRGB image fitting the bounds of `size`.
 
         Args:
-            source (unicode): Source image's file path.
-            destination (unicode): Destination of the converted image.
+            source (str): Source image's file path.
+            destination (str): Destination of the converted image.
             size (int): The bounds to fit the converted image (in pixels).
             nthreads (int): Number of threads to use. Defaults to 4.
 
@@ -884,7 +863,7 @@ class ImageCache(QtCore.QObject):
             bool: True if successfully converted the image.
 
         """
-        log.debug(u'Converting {}...'.format(source), cls)
+        log.debug('Converting {}...'.format(source), cls)
 
         def get_scaled_spec(source_spec):
             w = source_spec.width
@@ -894,10 +873,10 @@ class ImageCache(QtCore.QObject):
             h *= factor
 
             s = OpenImageIO.ImageSpec(int(w), int(h), 4, OpenImageIO.UINT8)
-            s.channelnames = (u'R', u'G', u'B', u'A')
+            s.channelnames = ('R', 'G', 'B', 'A')
             s.alpha_channel = 3
-            s.attribute(u'oiio:ColorSpace', u'sRGB')
-            s.attribute(u'oiio:Gamma', u'0.454545')
+            s.attribute('oiio:ColorSpace', 'sRGB')
+            s.attribute('oiio:Gamma', '0.454545')
             return s
 
         def shuffle_channels(buf, source_spec):
@@ -906,15 +885,15 @@ class ImageCache(QtCore.QObject):
                     buf,
                     (source_spec.channelnames[0], source_spec.channelnames[0],
                      source_spec.channelnames[0]),
-                    (u'R', u'G', u'B')
+                    ('R', 'G', 'B')
                 )
             elif int(source_spec.nchannels) > 4:
-                if source_spec.channelindex(u'A') > -1:
+                if source_spec.channelindex('A') > -1:
                     buf = OpenImageIO.ImageBufAlgo.channels(
-                        buf, (u'R', u'G', u'B', u'A'), (u'R', u'G', u'B', u'A'))
+                        buf, ('R', 'G', 'B', 'A'), ('R', 'G', 'B', 'A'))
                 else:
                     buf = OpenImageIO.ImageBufAlgo.channels(
-                        buf, (u'R', u'G', u'B'), (u'R', u'G', u'B'))
+                        buf, ('R', 'G', 'B'), ('R', 'G', 'B'))
             return buf
 
         def resize(buf, source_spec):
@@ -928,31 +907,31 @@ class ImageCache(QtCore.QObject):
             return buf
 
         def colorconvert(buf, source_spec):
-            colorspace = source_spec.get_string_attribute(u'oiio:ColorSpace')
+            colorspace = source_spec.get_string_attribute('oiio:ColorSpace')
 
-            if source_spec.get_string_attribute(u'oiio:Movie') == 1:
+            if source_spec.get_string_attribute('oiio:Movie') == 1:
                 return
             try:
-                if colorspace != u'sRGB':
+                if colorspace != 'sRGB':
                     buf = OpenImageIO.ImageBufAlgo.colorconvert(
-                        buf, colorspace, u'sRGB')
+                        buf, colorspace, 'sRGB')
             except:
-                log.error(u'Could not convert the color profile')
+                log.error('Could not convert the color profile')
             return buf
 
         buf = oiio_get_buf(source)
         if not buf:
             return False
         source_spec = buf.spec()
-        if source_spec.get_int_attribute(u'oiio:Movie') == 1:
-            codec_name = source_spec.get_string_attribute(u'ffmpeg:codec_name')
+        if source_spec.get_int_attribute('oiio:Movie') == 1:
+            codec_name = source_spec.get_string_attribute('ffmpeg:codec_name')
             # [BUG] Not all codec formats are supported by ffmpeg. There does
             # not seem to be (?) error handling and an unsupported codec will
             # crash ffmpeg and the rest of the app.
             if codec_name:
                 if not [f for f in accepted_codecs if f.lower() in codec_name.lower()]:
                     log.debug(
-                        u'Unsupported movie format: {}'.format(codec_name))
+                        'Unsupported movie format: {}'.format(codec_name))
                     oiio_cache.invalidate(source, force=True)
                     return False
 
@@ -975,28 +954,15 @@ class ImageCache(QtCore.QObject):
         spec = buf.spec()
         buf.set_write_format(OpenImageIO.UINT8)
 
-        # There seems to be a problem with the ICC profile exported from Adobe
-        # applications and the PNG library. The sRGB profile seems to be out of
-        # date and pnglib crashes when encounters an invalid profile. Removing
-        # the ICC profile seems to fix the issue.
-        _spec = OpenImageIO.ImageSpec()
-        _spec.from_xml(spec.to_xml())  # this doesn't copy the extra attributes
-        for i in spec.extra_attribs:
-            # There's a strange bug I'm seeing with OIIO where python hits a
-            # buffer overrun, integer value is bigger than sys.maxsize, or
-            # something like that.
-            try:
-                if i.name.lower() == u'iccprofile':
-                    continue
-                _spec[i.name] = i.value
-            except:
-                continue
-        spec = _spec
+        # The libpng seems to fussy about corrupted and invalid ICC profiles and
+        # OpenImageIO seems to interpret warning about these as errors that
+        # bring python down. Removing the ICC profile seems to fix the issue.
+        spec.erase_attribute('.*icc||ccp.*', casesensitive=True)
 
         # On some dpx images I'm getting "GammaCorrectedinf"
-        if spec.get_string_attribute(u'oiio:ColorSpace') == u'GammaCorrectedinf':
-            spec[u'oiio:ColorSpace'] = u'sRGB'
-            spec[u'oiio:Gamma'] = u'0.454545'
+        if spec.get_string_attribute('oiio:ColorSpace') == 'GammaCorrectedinf':
+            spec['oiio:ColorSpace'] = 'sRGB'
+            spec['oiio:Gamma'] = '0.454545'
 
         # Initiating a new spec with the modified spec
         _buf = OpenImageIO.ImageBuf(spec)
@@ -1006,22 +972,24 @@ class ImageCache(QtCore.QObject):
         if not QtCore.QFileInfo(QtCore.QFileInfo(destination).path()).isWritable():
             oiio_cache.invalidate(source, force=True)
             oiio_cache.invalidate(destination, force=True)
-            log.error(u'Destination path is not writable')
+            log.error('Destination path is not writable')
             return False
 
         # Create a lock file before writing
-        open(destination + '.lock', 'w').close()
+        with open(destination + '.lock', 'w', encoding='utf8') as _f:
+            pass
+
         success = _buf.write(destination, dtype=OpenImageIO.UINT8)
         os.remove(destination + '.lock')
 
         if not success:
-            s = u'{}\n{}'.format(
+            s = '{}\n{}'.format(
                 buf.geterror(),
                 OpenImageIO.geterror())
             log.error(s)
 
             if not QtCore.QFile(destination).remove():
-                log.error(u'Cleanup failed.')
+                log.error('Cleanup failed.')
 
             oiio_cache.invalidate(source, force=True)
             oiio_cache.invalidate(destination, force=True)

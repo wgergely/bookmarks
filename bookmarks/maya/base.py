@@ -10,57 +10,57 @@ from PySide2 import QtWidgets, QtCore, QtGui
 
 import maya.cmds as cmds  # pylint: disable=E0401
 
-from .. import bookmark_db
+from .. import database
 from .. import settings
 from ..asset_config import asset_config
 
 
 MAYA_FPS = {
-    u'hour': 2.777777777777778e-4,
-    u'min': 0.0166667,
-    u'sec': 1.0,
-    u'millisec': 1000.0,
-    u'game': 15.0,
-    u'film': 24.0,
-    u'pal': 25.0,
-    u'ntsc': 30.0,
-    u'show': 48.0,
-    u'palf': 50.0,
-    u'ntscf': 60.0,
-    u'2fps': 2.0,
-    u'3fps': 3.0,
-    u'4fps': 4.0,
-    u'5fps': 5.0,
-    u'6fps': 6.0,
-    u'8fps': 8.0,
-    u'10fps': 10.0,
-    u'12fps': 12.0,
-    u'16fps': 16.0,
-    u'20fps': 20.0,
-    u'40fps': 40.0,
-    u'75fps': 75.0,
-    u'100fps': 100.0,
-    u'120fps': 120.0,
-    u'200fps': 200.0,
-    u'240fps': 240.0,
-    u'250fps': 250.0,
-    u'300fps': 300.0,
-    u'400fps': 400.0,
-    u'500fps': 500.0,
-    u'600fps': 600.0,
-    u'750fps': 750.0,
-    u'1200fps': 1200.0,
-    u'1500fps': 1500.0,
-    u'2000fps': 2000.0,
-    u'3000fps': 3000.0,
-    u'6000fps': 6000.0,
-    u'23.976fps': 23.976,
-    u'29.97fps': 29.976,
-    u'29.97df': 29.976,
-    u'47.952fps': 47.952,
-    u'59.94fps': 59.94,
-    u'44100fps': 44100.0,
-    u'48000fps': 48000.0,
+    'hour': 2.777777777777778e-4,
+    'min': 0.0166667,
+    'sec': 1.0,
+    'millisec': 1000.0,
+    'game': 15.0,
+    'film': 24.0,
+    'pal': 25.0,
+    'ntsc': 30.0,
+    'show': 48.0,
+    'palf': 50.0,
+    'ntscf': 60.0,
+    '2fps': 2.0,
+    '3fps': 3.0,
+    '4fps': 4.0,
+    '5fps': 5.0,
+    '6fps': 6.0,
+    '8fps': 8.0,
+    '10fps': 10.0,
+    '12fps': 12.0,
+    '16fps': 16.0,
+    '20fps': 20.0,
+    '40fps': 40.0,
+    '75fps': 75.0,
+    '100fps': 100.0,
+    '120fps': 120.0,
+    '200fps': 200.0,
+    '240fps': 240.0,
+    '250fps': 250.0,
+    '300fps': 300.0,
+    '400fps': 400.0,
+    '500fps': 500.0,
+    '600fps': 600.0,
+    '750fps': 750.0,
+    '1200fps': 1200.0,
+    '1500fps': 1500.0,
+    '2000fps': 2000.0,
+    '3000fps': 3000.0,
+    '6000fps': 6000.0,
+    '23.976fps': 23.976,
+    '29.97fps': 29.976,
+    '29.97df': 29.976,
+    '47.952fps': 47.952,
+    '59.94fps': 59.94,
+    '44100fps': 44100.0,
+    '48000fps': 48000.0,
 }
 
 
@@ -120,48 +120,48 @@ CaptureOptions = {
 
 DefaultPadding = 4
 
-CACHE_PATH = u'{workspace}/{exportdir}/{set}/{set}_v001.{ext}'
-DEFAULT_CACHE_DIR = u'{exportdir}/{ext}'
-DEFAULT_CAPTURE_DIR = u'capture'
-CACHE_LAYER_PATH = u'{workspace}/{exportdir}/{set}/{set}_{layer}_v001.{ext}'
-CAPTURE_DESTINATION = u'{workspace}/{capture_folder}/{scene}/{scene}'
-CAPTURE_FILE = u'{workspace}/{capture_folder}/{scene}/{scene}.{frame}.{ext}'
-CAPTURE_PUBLISH_DIR = u'{workspace}/{capture_folder}/latest'
-AGNOSTIC_CAPTURE_FILE = u'{workspace}/{capture_folder}/latest/{asset}_capture_{frame}.{ext}'
+CACHE_PATH = '{workspace}/{exportdir}/{set}/{set}_v001.{ext}'
+DEFAULT_CACHE_DIR = '{exportdir}/{ext}'
+DEFAULT_CAPTURE_DIR = 'capture'
+CACHE_LAYER_PATH = '{workspace}/{exportdir}/{set}/{set}_{layer}_v001.{ext}'
+CAPTURE_DESTINATION = '{workspace}/{capture_folder}/{scene}/{scene}'
+CAPTURE_FILE = '{workspace}/{capture_folder}/{scene}/{scene}.{frame}.{ext}'
+CAPTURE_PUBLISH_DIR = '{workspace}/{capture_folder}/latest'
+AGNOSTIC_CAPTURE_FILE = '{workspace}/{capture_folder}/latest/{asset}_capture_{frame}.{ext}'
 
 EXPORT_FILE_RULES = {
-    'ass export': u'ass',
-    'alembicexport': u'abc',
-    'alembic export': u'abc',
-    'objexport': u'obj',
-    'obj export': u'obj',
-    'fbxexport': u'fbx',
-    'fbx export': u'fbx',
-    'ass import': u'ass',
-    'alembicimport': u'abc',
-    'alembic import': u'abc',
-    'objimport': u'obj',
-    'obj import': u'obj',
-    'fbximport': u'fbx',
-    'fbx import': u'fbx',
+    'ass export': 'ass',
+    'alembicexport': 'abc',
+    'alembic export': 'abc',
+    'objexport': 'obj',
+    'obj export': 'obj',
+    'fbxexport': 'fbx',
+    'fbx export': 'fbx',
+    'ass import': 'ass',
+    'alembicimport': 'abc',
+    'alembic import': 'abc',
+    'objimport': 'obj',
+    'obj import': 'obj',
+    'fbximport': 'fbx',
+    'fbx import': 'fbx',
 }
 
-RENDER_NAME_TEMPLATE = u'<RenderLayer>/<Version>/<RenderPass>/<RenderLayer>_<RenderPass>_<Version>'
+RENDER_NAME_TEMPLATE = '<RenderLayer>/<Version>/<RenderPass>/<RenderLayer>_<RenderPass>_<Version>'
 
-SUFFIX_LABEL = u'Select a suffix for this import.\n\n\
+SUFFIX_LABEL = 'Select a suffix for this import.\n\n\
 Suffixes are always unique and help differentiate imports when the same file \
 is imported mutiple times.'
 
 
 DB_KEYS = {
-    bookmark_db.BookmarkTable: (
+    database.BookmarkTable: (
         'width',
         'height',
         'framerate',
         'startframe',
         'duration'
     ),
-    bookmark_db.AssetTable: (
+    database.AssetTable: (
         'cut_duration',
         'cut_out',
         'cut_in'
@@ -207,7 +207,7 @@ def patch_workspace_file_rules():
 
     """
     exportdir = get_export_dir()
-    for rule, ext in EXPORT_FILE_RULES.iteritems():
+    for rule, ext in EXPORT_FILE_RULES.items():
         v = DEFAULT_CACHE_DIR.format(
             exportdir=exportdir,
             ext=get_export_subdir(ext)
@@ -262,10 +262,10 @@ def apply_default_render_values():
         RENDER_NAME_TEMPLATE,
         type='string'
     )
-    if not cmds.getAttr(u'defaultRenderGlobals.renderVersion'):
+    if not cmds.getAttr('defaultRenderGlobals.renderVersion'):
         cmds.setAttr(
-            u'defaultRenderGlobals.renderVersion',
-            u'v001',
+            'defaultRenderGlobals.renderVersion',
+            'v001',
             type='string',
         )
 
@@ -309,13 +309,13 @@ def set_framerate(fps):
         data[k] = cmds.playbackOptions(**{k: True, 'query': True})
 
     # Set the frame range
-    for k, v in MAYA_FPS.iteritems():
+    for k, v in MAYA_FPS.items():
         if fps == v:
             cmds.currentUnit(time=k)
             break
 
     # Reapply original values
-    for k, v in data.iteritems():
+    for k, v in data.items():
         cmds.playbackOptions(**{k: v})
 
 
@@ -327,10 +327,10 @@ def find_project_folder(key):
     """Return the relative path of a project folder.
 
     Args:
-        key (unicode): The name of a Maya project folder name, eg. 'sourceImages'.
+        key (str): The name of a Maya project folder name, eg. 'sourceImages'.
 
     Return:
-        unicode: The name of the folder that corresponds with `key`.
+        str: The name of the folder that corresponds with `key`.
 
     """
     if not key:
@@ -361,14 +361,14 @@ def _get_available_suffixes(basename):
     of available ones.
 
     """
-    alphabet = unicode(string.ascii_uppercase)
+    alphabet = string.ascii_uppercase
     transforms = cmds.ls(transforms=True)
     for s in transforms:
         if basename not in s:
             continue
         if not cmds.attributeQuery('instance_suffix', node=s, exists=True):
             continue
-        suffix = cmds.getAttr('{}.instance_suffix'.format(s))
+        suffix = cmds.getAttr(f'{s}.instance_suffix')
         alphabet = alphabet.replace(string.ascii_uppercase[suffix], '')
     return alphabet
 
@@ -377,7 +377,7 @@ def _add_suffix_attribute(rfn, suffix, reference=True):
     """Adds a custom attribute to the imported scene.
 
     """
-    id = string.ascii_uppercase.index(suffix)
+    _id = string.ascii_uppercase.index(suffix)
 
     if reference:
         nodes = cmds.referenceQuery(rfn, nodes=True)
@@ -393,8 +393,8 @@ def _add_suffix_attribute(rfn, suffix, reference=True):
             if cmds.attributeQuery('instance_suffix', node=node, exists=True):
                 continue
             cmds.addAttr(_node, ln='instance_suffix', at='enum',
-                         en=u':'.join(string.ascii_uppercase))
-            cmds.setAttr('{}.instance_suffix'.format(_node), id)
+                         en=':'.join(string.ascii_uppercase))
+            cmds.setAttr('{}.instance_suffix'.format(_node), _id)
 
 
 def is_scene_modified():
@@ -407,9 +407,9 @@ def is_scene_modified():
 
     mbox = QtWidgets.QMessageBox()
     mbox.setText(
-        u'Current scene has unsaved changes.'
+        'Current scene has unsaved changes.'
     )
-    mbox.setInformativeText(u'Do you want to save before continuing?')
+    mbox.setInformativeText('Do you want to save before continuing?')
     mbox.setStandardButtons(
         QtWidgets.QMessageBox.Save
         | QtWidgets.QMessageBox.No
@@ -444,13 +444,13 @@ def report_export_progress(start, current, end, start_time):
     else:
         progress = float(_current) / float(_end) * 100
 
-    progress = u'[{}{}] {}%'.format(
-        u'#' * int(progress),
-        u' ' * (100 - int(progress)),
+    progress = '[{}{}] {}%'.format(
+        '#' * int(progress),
+        ' ' * (100 - int(progress)),
         int(progress)
     )
 
-    msg = u'# Exporting frame {current} of {end}\n# {progress}\n# Elapsed: {elapsed}\n'.format(
+    msg = '# Exporting frame {current} of {end}\n# {progress}\n# Elapsed: {elapsed}\n'.format(
         current=current,
         end=end,
         progress=progress,
@@ -525,10 +525,10 @@ def outliner_sets():
     sets_data = {}
     for s in sorted([k for k in cmds.ls(sets=True) if _is_set_created_by_user(k)]):
         # I added this because of the plethora of sets in complex animation scenes
-        if u'geo' not in s:
+        if 'geo' not in s:
             continue
 
-        dag_set_members = cmds.listConnections(u'{}.dagSetMembers'.format(s))
+        dag_set_members = cmds.listConnections('{}.dagSetMembers'.format(s))
         if not dag_set_members:
             continue
 
@@ -547,7 +547,7 @@ def capture_viewport_destination():
     # Note that CAPTURE_DESTINATION does not actually refer to the full filename
     # the padded frame numbers and the extensions are added to the base name
     # by `mCapture.py`
-    workspace = cmds.workspace(q=True, rootDirectory=True).rstrip(u'/')
+    workspace = cmds.workspace(q=True, rootDirectory=True).rstrip('/')
     scene = QtCore.QFileInfo(cmds.file(q=True, expandName=True))
     dest = CAPTURE_DESTINATION.format(
         workspace=workspace,
@@ -575,18 +575,18 @@ class MayaProperties(object):
 
     def init_data(self, server, job, root, asset):
         # Bookmark properties
-        db = bookmark_db.get_db(server, job, root)
-        for k in DB_KEYS[bookmark_db.BookmarkTable]:
+        db = database.get_db(server, job, root)
+        for k in DB_KEYS[database.BookmarkTable]:
             self.data[k] = db.value(
                 db.source(),
                 k,
-                table=bookmark_db.BookmarkTable
+                table=database.BookmarkTable
             )
-        for k in DB_KEYS[bookmark_db.AssetTable]:
+        for k in DB_KEYS[database.AssetTable]:
             self.data[k] = db.value(
                 db.source(asset),
                 k,
-                table=bookmark_db.AssetTable
+                table=database.AssetTable
             )
 
     @property
@@ -649,17 +649,17 @@ class MayaProperties(object):
 
     def get_info(self):
         duration = self.endframe - self.startframe
-        info = u'Resolution:  {w}{h}\nFramerate:  {fps}\nCut:  {start}{duration}'.format(
-            w=u'{}'.format(int(self.width)) if (
-                self.width and self.height) else u'',
-            h=u'x{}px'.format(int(self.height)) if (
-                self.width and self.height) else u'',
-            fps=u'{}fps'.format(
-                self.framerate) if self.framerate else u'',
-            start=u'{}'.format(
-                int(self.startframe)) if self.startframe else u'',
-            duration=u'-{} ({} frames)'.format(
+        info = 'Resolution:  {w}{h}\nFramerate:  {fps}\nCut:  {start}{duration}'.format(
+            w='{}'.format(int(self.width)) if (
+                self.width and self.height) else '',
+            h='x{}px'.format(int(self.height)) if (
+                self.width and self.height) else '',
+            fps='{}fps'.format(
+                self.framerate) if self.framerate else '',
+            start='{}'.format(
+                int(self.startframe)) if self.startframe else '',
+            duration='-{} ({} frames)'.format(
                 int(self.startframe) + int(duration),
-                int(duration) if duration else u'') if duration else u''
+                int(duration) if duration else '') if duration else ''
         )
         return info

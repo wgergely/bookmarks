@@ -12,9 +12,13 @@ import functools
 from PySide2 import QtCore, QtWidgets, QtGui
 
 from . import settings
-from . import bookmark_db
+from . import database
 from . import common
 from . import images
+
+
+def edit_persistent_bookmarks():
+    execute(common.PERSISTENT_BOOKMARKS_SOURCE)
 
 
 def add_server(v):
@@ -61,16 +65,14 @@ def add_bookmark(server, job, root, persistent=False):
     Saved bookmarks can be retrieved using `settings.instance().get_bookmarks`
 
     Args:
-        server (unicode): A path segment.
-        job (unicode): A path segment.
-        root (unicode): A path segment.
-        persistent (unicode): Adds the bookmark to our persistent bookmark list. Not implemented.
+        server (str): A path segment.
+        job (str): A path segment.
+        root (str): A path segment.
+        persistent (str): Adds the bookmark to our persistent bookmark list. Not implemented.
 
     """
     for arg in (server, job, root):
-        if not isinstance(arg, unicode):
-            raise TypeError(
-                'Invalid type, expected {}, got {}'.format(unicode, type(arg)))
+        common.check_type(arg, str)
 
     k = settings.bookmark_key(server, job, root)
     common.BOOKMARKS[k] = {
@@ -88,15 +90,13 @@ def remove_bookmark(server, job, root, prompt=True):
     Removing the bookmark will also close and delete the bookmarks' database.
 
     Args:
-        server (unicode): A path segment.
-        job (unicode): A path segment.
-        root (unicode): A path segment.
+        server (str): A path segment.
+        job (str): A path segment.
+        root (str): A path segment.
 
     """
     for arg in (server, job, root):
-        if not isinstance(arg, unicode):
-            raise TypeError(
-                'Invalid type, expected {}, got {}'.format(unicode, type(arg)))
+        common.check_type(arg, str)
 
     if (
         settings.active(settings.ServerKey) == server and
@@ -112,7 +112,7 @@ def remove_bookmark(server, job, root, prompt=True):
     ) and prompt:
         from . import ui
         mbox = ui.MessageBox(
-            u'Are you sure you want to remove the active bookmark?',
+            'Are you sure you want to remove the active bookmark?',
             buttons=[ui.OkButton, ui.CancelButton],
         )
         if mbox.exec_() == QtWidgets.QDialog.Rejected:
@@ -122,12 +122,12 @@ def remove_bookmark(server, job, root, prompt=True):
         change_tab(common.BookmarkTab)
 
     # Close, and delete all cached bookmark databases of this bookmark
-    bookmark_db.remove_db(server, job, root)
+    database.remove_db(server, job, root)
 
     k = settings.bookmark_key(server, job, root)
     if k not in common.BOOKMARKS:
-        raise RuntimeError(u'Could not remove bookmark.',
-                           u'Key does not seem to match any current bookmarks.')
+        raise RuntimeError('Could not remove bookmark.',
+                           'Key does not seem to match any current bookmarks.')
 
     del common.BOOKMARKS[k]
     settings.instance().set_bookmarks(common.BOOKMARKS)
@@ -135,12 +135,8 @@ def remove_bookmark(server, job, root, prompt=True):
 
 
 def add_favourite(parent_paths, source):
-    if not isinstance(parent_paths, (tuple, list)):
-        raise TypeError('Invalid type, expected {}, got {}'.format(
-            tuple, type(parent_paths)))
-    if not isinstance(source, unicode):
-        raise TypeError('Invalid type, expected {}, got {}'.format(
-            unicode, type(source)))
+    common.check_type(parent_paths, (tuple, list))
+    common.check_type(source, str)
 
     common.FAVOURITES[source] = parent_paths
     common.FAVOURITES_SET = set(common.FAVOURITES)
@@ -149,12 +145,8 @@ def add_favourite(parent_paths, source):
 
 
 def remove_favourite(parent_paths, source):
-    if not isinstance(parent_paths, (tuple, list)):
-        raise TypeError('Invalid type, expected {}, got {}'.format(
-            tuple, type(parent_paths)))
-    if not isinstance(source, unicode):
-        raise TypeError('Invalid type, expected {}, got {}'.format(
-            unicode, type(source)))
+    common.check_type(parent_paths, (tuple, list))
+    common.check_type(source, str)
 
     if source not in common.FAVOURITES:
         return
@@ -172,7 +164,7 @@ def clear_favourites(prompt=True):
     if prompt:
         from . import ui
         mbox = ui.MessageBox(
-            u'Ar you sure you want to clear My Files?',
+            'Ar you sure you want to clear My Files?',
             buttons=[ui.YesButton, ui.NoButton]
         )
         if mbox.exec_() == QtWidgets.QDialog.Rejected:
@@ -190,17 +182,15 @@ def export_favourites(destination=None):
     """
     if destination is None:
         destination, _ = QtWidgets.QFileDialog.getSaveFileName(
-            caption=u'Select where to save your favourites',
-            filter=u'*.{}'.format(common.FAVOURITE_FILE_FORMAT),
+            caption='Select where to save your favourites',
+            filter='*.{}'.format(common.FAVOURITE_FILE_FORMAT),
             dir=QtCore.QStandardPaths.writableLocation(
                 QtCore.QStandardPaths.HomeLocation),
         )
         if not destination:
             return
 
-    if not isinstance(destination, unicode):
-        raise TypeError('Invalid type, expected {}, got {}'.format(
-            unicode, type(destination)))
+    common.check_type(destination, str)
 
     data = common.FAVOURITES.copy()
 
@@ -208,7 +198,7 @@ def export_favourites(destination=None):
     with zipfile.ZipFile(destination, 'w') as _zip:
 
         # Add thumbnail to zip
-        for source, parent_paths in common.FAVOURITES.iteritems():
+        for source, parent_paths in common.FAVOURITES.items():
             server, job, root = parent_paths[0:3]
 
             thumbnail_path = images.get_cached_thumbnail_path(
@@ -224,24 +214,23 @@ def export_favourites(destination=None):
 
             # Add description
             k = 'description'
-            db = bookmark_db.get_db(server, job, root)
+            db = database.get_db(server, job, root)
             if source == db.source():
-                table = bookmark_db.BookmarkTable
+                table = database.BookmarkTable
             else:
-                table = bookmark_db.AssetTable
+                table = database.AssetTable
 
             v = db.value(source, k, table=table)
             if v:
                 _zip.writestr(
                     file_info.baseName() + k,
-                    bookmark_db.b64encode(v)
+                    database.b64encode(v)
                 )
 
         # Let's Save the current list favourites to the zip
         v = json.dumps(
             data,
             ensure_ascii=True,
-            encoding='utf-8'
         )
         _zip.writestr(common.FAVOURITE_FILE_FORMAT, v)
 
@@ -252,13 +241,13 @@ def import_favourites(source=None):
     """Import a previously exported favourites file.
 
     Args:
-        source (unicode): Path to a file. Defaults to `None`.
+        source (str): Path to a file. Defaults to `None`.
 
     """
     if source is None:
         source, _ = QtWidgets.QFileDialog.getOpenFileName(
-            caption=u'Select the favourites file to import',
-            filter=u'*.{}'.format(common.FAVOURITE_FILE_FORMAT)
+            caption='Select the favourites file to import',
+            filter='*.{}'.format(common.FAVOURITE_FILE_FORMAT)
         )
         if not source:
             return
@@ -267,15 +256,17 @@ def import_favourites(source=None):
         corrupt = _zip.testzip()
         if corrupt:
             raise RuntimeError(
-                u'This zip archive seem corrupted: {}.'.format(corrupt))
+                'This zip archive seem corrupted: {}.'.format(corrupt))
 
         if common.FAVOURITE_FILE_FORMAT not in _zip.namelist():
-            raise RuntimeError(u'Invalid file.')
-        v = _zip.open(common.FAVOURITE_FILE_FORMAT).read()
+            raise RuntimeError('Invalid file.')
 
-        data = json.loads(v, 'utf-8')
+        with _zip.open(common.FAVOURITE_FILE_FORMAT) as _f:
+            v = _f.read()
 
-        for _source, parent_paths in data.iteritems():
+        data = json.loads(v)
+
+        for _source, parent_paths in data.items():
             server, job, root = parent_paths[0:3]
 
             thumbnail_path = images.get_cached_thumbnail_path(
@@ -290,7 +281,7 @@ def import_favourites(source=None):
             if not file_info.exists():
                 # Let's write the thumbnails to disk
                 if file_info.fileName() in _zip.namelist():
-                    root = u'/'.join((server, job, root,
+                    root = '/'.join((server, job, root,
                                       common.BOOKMARK_ROOT_DIR))
                     _zip.extract(
                         file_info.fileName(),
@@ -307,13 +298,13 @@ def import_favourites(source=None):
             if not v:
                 continue
 
-            db = bookmark_db.get_db(server, job, root)
+            db = database.get_db(server, job, root)
             if source == db.source():
-                table = bookmark_db.BookmarkTable
+                table = database.BookmarkTable
             else:
-                table = bookmark_db.AssetTable
+                table = database.AssetTable
             with db.connection():
-                db.setValue(source, k, bookmark_db.b64decode(v), table=table)
+                db.setValue(source, k, database.b64decode(v), table=table)
 
     common.FAVOURITES = data
     common.FAVOURITES_SET = set(data)
@@ -328,7 +319,7 @@ def prune_bookmarks():
 
     _valid = {}
     _invalid = []
-    for k, v in common.BOOKMARKS.iteritems():
+    for k, v in common.BOOKMARKS.items():
         if not QtCore.QFileInfo(k).exists():
             _invalid.append(k)
             continue
@@ -347,8 +338,8 @@ def set_active(k, v):
     """Sets the given path as the active path segment for the given key.
 
     Args:
-        k (unicode): An active key, eg. `settings.ServerKey`.
-        v (unicode): A path segment, eg. '//myserver/jobs'.
+        k (str): An active key, eg. `settings.ServerKey`.
+        v (str): A path segment, eg. '//myserver/jobs'.
 
     """
     if k not in settings.ACTIVE_KEYS:
@@ -464,9 +455,9 @@ def toggle_filter_editor():
         w.filter_editor.done(QtWidgets.QDialog.Rejected)
 
 
-@QtCore.Slot(unicode)
-@QtCore.Slot(unicode)
-@QtCore.Slot(unicode)
+@QtCore.Slot(str)
+@QtCore.Slot(str)
+@QtCore.Slot(str)
 @QtCore.Slot(object)
 def asset_identifier_changed(table, source, key, value):
     """Refresh the assets model if the identifier changes.
@@ -475,7 +466,7 @@ def asset_identifier_changed(table, source, key, value):
     if instance() is None:
         return
     # All shotgun fields should be prefix by 'shotgun_'
-    if not (table == bookmark_db.BookmarkTable and key == 'identifier'):
+    if not (table == database.BookmarkTable and key == 'identifier'):
         return
     widget = instance().stackedwidget.widget(common.AssetTab)
     widget.model().sourceModel().modelDataResetRequested.emit()
@@ -679,7 +670,7 @@ def edit_file(f):
 @common.error
 @common.debug
 def edit_favourite(f):
-    raise NotImplementedError(u'Function not yet implemented.')
+    raise NotImplementedError('Function not yet implemented.')
 
 
 @common.error
@@ -704,14 +695,14 @@ def show_slack():
     if not all(args):
         return
 
-    db = bookmark_db.get_db(*args)
+    db = database.get_db(*args)
     token = db.value(
         db.source(),
-        u'slacktoken',
-        table=bookmark_db.BookmarkTable
+        'slacktoken',
+        table=database.BookmarkTable
     )
     if token is None:
-        raise RuntimeError(u'Slack is not yet configured.')
+        raise RuntimeError('Slack is not yet configured.')
 
     from . import slack
     widget = slack.show(token)
@@ -860,17 +851,17 @@ def toggle_frameless():
 def exec_instance():
     if common.get_platform() == common.PlatformWindows:
         if common.BOOKMARK_ROOT_KEY not in os.environ:
-            s = u'Bookmarks does not seem to be installed correctly:\n'
-            s += u'"{}" environment variable is not set'.format(
+            s = 'Bookmarks does not seem to be installed correctly:\n'
+            s += '"{}" environment variable is not set'.format(
                 common.BOOKMARK_ROOT_KEY)
             raise RuntimeError(s)
         p = os.environ[common.BOOKMARK_ROOT_KEY] + \
             os.path.sep + 'bookmarks.exe'
         subprocess.Popen(p)
     elif common.get_platform() == common.PlatformMacOS:
-        raise NotImplementedError(u'Not yet implemented.')
+        raise NotImplementedError('Not yet implemented.')
     elif common.get_platform() == common.PlatformUnsupported:
-        raise NotImplementedError(u'Not yet implemented.')
+        raise NotImplementedError('Not yet implemented.')
 
 
 @common.error
@@ -1037,12 +1028,12 @@ def reveal_selected(index):
 def reveal_url(index):
     parent_path = index.data(common.ParentPathRole)
     if len(parent_path) == 3:
-        table = bookmark_db.BookmarkTable
+        table = database.BookmarkTable
     else:
-        table = bookmark_db.AssetTable
+        table = database.AssetTable
 
-    source = u'/'.join(parent_path)
-    db = bookmark_db.get_db(*parent_path[0:3])
+    source = '/'.join(parent_path)
+    db = database.get_db(*parent_path[0:3])
     v = db.value(source, 'url1', table=table)
 
     if not v:
@@ -1067,7 +1058,7 @@ def toggle_archived(index):
     # Ignore persistent items
     if index.data(common.FlagsRole) & common.MarkedAsPersistent:
         from . import ui
-        ui.MessageBox(u'Persistent items cannot be archived.').open()
+        ui.MessageBox('Persistent items cannot be archived.').open()
         return
 
     instance().widget().save_selection()
@@ -1082,35 +1073,35 @@ def reveal(item):
     """Reveals an item in the file explorer.
 
     Args:
-        item(unicode or QModelIndex): The item to show in the file manager.
+        item(str or QModelIndex): The item to show in the file manager.
 
     """
     if isinstance(item, (QtCore.QModelIndex, QtWidgets.QListWidgetItem)):
         path = item.data(QtCore.Qt.StatusTipRole)
-    elif isinstance(item, unicode):
+    elif isinstance(item, str):
         path = item
 
     path = common.get_sequence_endpath(path)
     if common.get_platform() == common.PlatformWindows:
         if QtCore.QFileInfo(path).isFile():
-            args = [u'/select,', QtCore.QDir.toNativeSeparators(path)]
+            args = ['/select,', QtCore.QDir.toNativeSeparators(path)]
         elif QtCore.QFileInfo(path).isDir():
             path = os.path.normpath(os.path.abspath(path))
             args = [path, ]
         else:
-            args = [u'/select,', QtCore.QDir.toNativeSeparators(path)]
-        QtCore.QProcess.startDetached(u'explorer', args)
+            args = ['/select,', QtCore.QDir.toNativeSeparators(path)]
+        QtCore.QProcess.startDetached('explorer', args)
 
     elif common.get_platform() == common.PlatformMacOS:
         args = [
-            u'-e',
-            u'tell application "Finder"',
-            u'-e',
-            u'activate',
-            u'-e',
-            u'select POSIX file "{}"'.format(
-                QtCore.QDir.toNativeSeparators(path)), u'-e', u'end tell']
-        QtCore.QProcess.startDetached(u'osascript', args)
+            '-e',
+            'tell application "Finder"',
+            '-e',
+            'activate',
+            '-e',
+            'select POSIX file "{}"'.format(
+                QtCore.QDir.toNativeSeparators(path)), '-e', 'end tell']
+        QtCore.QProcess.startDetached('osascript', args)
     elif common.get_platform() == common.PlatformUnsupported:
         raise NotImplementedError('{} is unsupported.'.format(
             QtCore.QSysInfo().productType()))
@@ -1125,7 +1116,7 @@ def copy_path(path, mode=common.WindowsPath, first=True, copy=True):
     converted to back-slashes for `WindowsPath`).
 
     Args:
-        path (unicode): Description of parameter `path`.
+        path (str): Description of parameter `path`.
         mode (int):     Any of `WindowsPath`, `UnixPath`, `SlackPath` or
                         `MacOSPath`. Defaults to `WindowsPath`.
         first (bool):   If `True` copy the first item of a sequence.
@@ -1133,7 +1124,7 @@ def copy_path(path, mode=common.WindowsPath, first=True, copy=True):
                         the clipboard. Defaults to `True`.
 
     Returns:
-        unicode: The converted path.
+        str: The converted path.
 
     """
     if first:
@@ -1153,19 +1144,19 @@ def copy_path(path, mode=common.WindowsPath, first=True, copy=True):
         r'/',
         path,
         flags=re.IGNORECASE | re.UNICODE
-    ).strip(u'/')
+    ).strip('/')
 
     if mode == common.WindowsPath:
-        prefix = u'//' if u':' not in path else u''
+        prefix = '//' if ':' not in path else ''
     elif mode == common.UnixPath:
-        prefix = u'//' if u':' not in path else u''
+        prefix = '//' if ':' not in path else ''
     elif mode == common.SlackPath:
-        prefix = u'file://'
+        prefix = 'file://'
     elif mode == common.MacOSPath:
-        prefix = u'smb://'
-        path = path.replace(u':', u'')
+        prefix = 'smb://'
+        path = path.replace(':', '')
     else:
-        prefix = u''
+        prefix = ''
 
     path = prefix + path
     if mode == common.WindowsPath:
@@ -1187,8 +1178,13 @@ def execute(index, first=False):
     """Given the model index, executes the index's path using
     `QDesktopServices`.
 
+    Args:
+        index (QModelIndex or str): A list item index or a path to a file.
+
     """
-    if isinstance(index, unicode):
+    common.check_type(index, (QtCore.QModelIndex, str))
+
+    if isinstance(index, str):
         url = QtCore.QUrl.fromLocalFile(index)
         QtGui.QDesktopServices.openUrl(url)
         return
@@ -1216,11 +1212,11 @@ def test_slack_token(token):
 @common.debug
 @common.error
 def suggest_prefix(job):
-    substrings = re.sub(r'[\_\-\s]+', u';', job).split(u';')
+    substrings = re.sub(r'[\_\-\s]+', ';', job).split(';')
     if (not substrings or len(substrings) < 2) and len(job) > 3:
         prefix = job[0:3].upper()
     else:
-        prefix = u''.join([f[0] for f in substrings]).upper()
+        prefix = ''.join([f[0] for f in substrings]).upper()
     return prefix
 
 
@@ -1304,7 +1300,7 @@ def remove_thumbnail(index):
 
     if QtCore.QFile(thumbnail_path).exists():
         if not QtCore.QFile(thumbnail_path).remove():
-            raise RuntimeError(u'Could not remove the thumbnail')
+            raise RuntimeError('Could not remove the thumbnail')
 
     source_index = index.model().mapToSource(index)
     idx = source_index.row()
@@ -1343,12 +1339,12 @@ def paste_properties():
 @selection
 def copy_bookmark_properties(index):
     server, job, root = index.data(common.ParentPathRole)[0:3]
-    bookmark_db.copy_properties(
+    database.copy_properties(
         server,
         job,
         root,
         None,
-        table=bookmark_db.BookmarkTable
+        table=database.BookmarkTable
     )
 
 
@@ -1357,12 +1353,12 @@ def copy_bookmark_properties(index):
 @selection
 def paste_bookmark_properties(index):
     server, job, root = index.data(common.ParentPathRole)[0:3]
-    bookmark_db.paste_properties(
+    database.paste_properties(
         server,
         job,
         root,
         None,
-        table=bookmark_db.BookmarkTable
+        table=database.BookmarkTable
     )
 
 
@@ -1371,12 +1367,12 @@ def paste_bookmark_properties(index):
 @selection
 def copy_asset_properties(index):
     server, job, root, asset = index.data(common.ParentPathRole)[0:4]
-    bookmark_db.copy_properties(
+    database.copy_properties(
         server,
         job,
         root,
         asset,
-        table=bookmark_db.AssetTable
+        table=database.AssetTable
     )
 
 
@@ -1385,12 +1381,12 @@ def copy_asset_properties(index):
 @selection
 def paste_asset_properties(index):
     server, job, root, asset = index.data(common.ParentPathRole)[0:4]
-    bookmark_db.paste_properties(
+    database.paste_properties(
         server,
         job,
         root,
         asset,
-        table=bookmark_db.AssetTable
+        table=database.AssetTable
     )
 
 
@@ -1438,8 +1434,8 @@ def toggle_session_mode():
 @common.debug
 def import_asset_properties_from_json():
     source, _ = QtWidgets.QFileDialog.getOpenFileName(
-        caption=u'Select *.json file to import properties from',
-        filter=u'*.json'
+        caption='Select *.json file to import properties from',
+        filter='*.json'
     )
     if not source:
         return
@@ -1453,7 +1449,7 @@ def import_asset_properties_from_json():
     import_data = json.loads(v)
 
     # Progress bar
-    mbox = ui.MessageBox(u'Applying properties...', no_buttons=True)
+    mbox = ui.MessageBox('Applying properties...', no_buttons=True)
     mbox.open()
 
     try:
@@ -1464,12 +1460,12 @@ def import_asset_properties_from_json():
 
         for k in import_data:
             # Progress update
-            mbox_title = u'Applying properties ({})...'
+            mbox_title = 'Applying properties ({})...'
             mbox.set_labels(mbox_title)
             QtWidgets.QApplication.instance().processEvents()
 
             # Iterate over visible items
-            for proxy_idx in xrange(proxy.rowCount()):
+            for proxy_idx in range(proxy.rowCount()):
                 index = proxy.index(proxy_idx, 0)
                 source_index = proxy.mapToSource(index)
                 idx = source_index.row()
@@ -1488,11 +1484,11 @@ def import_asset_properties_from_json():
                 if not all((server, job, root)):
                     continue
 
-                db = bookmark_db.get_db(server, job, root)
+                db = database.get_db(server, job, root)
                 with db.connection():
                     # Iterate over all our implemented asset keys and check if
                     # we have any data to import
-                    for key in bookmark_db.TABLES[bookmark_db.AssetTable]:
+                    for key in database.TABLES[database.AssetTable]:
                         if key not in import_data[k]:
                             continue
 
@@ -1500,7 +1496,7 @@ def import_asset_properties_from_json():
                             data[idx][QtCore.Qt.StatusTipRole],
                             key,
                             import_data[k][key],
-                            table=bookmark_db.AssetTable,
+                            table=database.AssetTable,
                         )
     except:
         raise

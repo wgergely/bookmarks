@@ -71,34 +71,30 @@ class Test(base.NonInitializedAppTest):
         self.assertFalse(common.HASH_DATA)
 
         with self.assertRaises(TypeError):
-            common.get_hash('str')
-        with self.assertRaises(TypeError):
             common.get_hash(0)
         with self.assertRaises(TypeError):
             common.get_hash(1.0)
         with self.assertRaises(TypeError):
             common.get_hash({})
 
-        v = base.random_unicode(128)
+        v = base.random_str(128)
         _v = common.get_hash(v)
         self.assertIsInstance(_v, str)
         self.assertTrue(common.HASH_DATA)
         self.assertEqual(len(common.HASH_DATA), 1)
 
-        for _ in xrange(10):
+        for _ in range(10):
             _v = common.get_hash(v)
         self.assertEqual(len(common.HASH_DATA), 1)
 
     def test_proxy_path(self):
-        seq_path = u'{}/{}_v001.ext'.format(
-            base.random_unicode(16), base.random_unicode(16))
-        non_seq_path = u'{}/{}_abcd.ext'.format(
-            base.random_unicode(16), base.random_unicode(16))
+        seq_path = '{}/{}_v001.ext'.format(
+            base.random_str(16), base.random_str(16))
+        non_seq_path = '{}/{}_abcd.ext'.format(
+            base.random_str(16), base.random_str(16))
 
         self.assertNotEqual(seq_path, non_seq_path)
 
-        with self.assertRaises(TypeError):
-            common.proxy_path('str')
         with self.assertRaises(TypeError):
             common.proxy_path(0)
         with self.assertRaises(TypeError):
@@ -118,31 +114,29 @@ class Test(base.NonInitializedAppTest):
         with self.assertRaises(TypeError):
             common.is_collapsed(None)
         with self.assertRaises(TypeError):
-            common.is_collapsed('str')
-        with self.assertRaises(TypeError):
             common.is_collapsed(dict)
         with self.assertRaises(TypeError):
             common.is_collapsed(0)
         with self.assertRaises(TypeError):
             common.is_collapsed(0.0)
 
-        collapsed_path = u'{}/{}_{}_{}.ext'.format(
-            base.random_unicode(32),
-            base.random_unicode(32),
+        collapsed_path = '{}/{}_{}_{}.ext'.format(
+            base.random_str(32),
+            base.random_str(32),
             common.SEQPROXY,
-            base.random_unicode(32),
+            base.random_str(32),
         )
-        collapsed_path2 = u'{}/{}_{}1-10{}_{}.ext'.format(
-            base.random_unicode(32),
-            base.random_unicode(32),
+        collapsed_path2 = '{}/{}_{}1-10{}_{}.ext'.format(
+            base.random_str(32),
+            base.random_str(32),
             common.SEQSTART,
             common.SEQEND,
-            base.random_unicode(32),
+            base.random_str(32),
         )
-        noncollapsed_path = u'{}/{}_v001_{}.ext'.format(
-            base.random_unicode(32),
-            base.random_unicode(32),
-            base.random_unicode(32),
+        noncollapsed_path = '{}/{}_v001_{}.ext'.format(
+            base.random_str(32),
+            base.random_str(32),
+            base.random_str(32),
         )
 
         c = common.is_collapsed(collapsed_path)
@@ -153,27 +147,24 @@ class Test(base.NonInitializedAppTest):
         self.assertIsNone(c)
 
     def test_get_sequence(self):
-        seq_path = u'{}/{}_v001.ext'.format(
-            base.random_unicode(32), base.random_unicode(32))
-        non_seq_path = u'{}/{}_abcd.ext'.format(
-            base.random_unicode(32), base.random_unicode(32))
-
-        self.assertNotEqual(seq_path, non_seq_path)
-
-        with self.assertRaises(TypeError):
-            common.get_sequence('str')
         with self.assertRaises(TypeError):
             common.get_sequence(None)
         with self.assertRaises(TypeError):
             common.get_sequence(0)
 
+        seq_path = '{}/{}_v001.ext'.format(
+            base.random_str(32), base.random_str(32))
+        non_seq_path = '{}/{}_abcd.ext'.format(
+            base.random_str(32), base.random_str(32))
+        self.assertNotEqual(seq_path, non_seq_path)
+
+        collapsed_path = '{}/{}_{}_{}.ext'.format(
+            base.random_str(32),
+            base.random_str(32),
+            common.SEQPROXY,
+            base.random_str(32),
+        )
         with self.assertRaises(RuntimeError):
-            collapsed_path = u'{}/{}_{}_{}.ext'.format(
-                base.random_unicode(32),
-                base.random_unicode(32),
-                common.SEQPROXY,
-                base.random_unicode(32),
-            )
             common.get_sequence(collapsed_path)
 
         seq = common.get_sequence(non_seq_path)
@@ -183,4 +174,4 @@ class Test(base.NonInitializedAppTest):
         self.assertTrue(seq)
         self.assertEqual(len(seq.groups()), 4)
         for grp in seq.groups():
-            self.assertIsInstance(grp, unicode)
+            self.assertIsInstance(grp, str)

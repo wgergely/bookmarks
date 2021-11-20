@@ -63,7 +63,7 @@ class Test(base.BaseApplicationTest):
         #==============================================================
         # Testing servers
         servers = []
-        for n in xrange(50):
+        for n in range(50):
             server = common.temp_path() + os.sep + base.random_ascii(32)
             os.makedirs(server)
             servers.append(server)
@@ -74,7 +74,7 @@ class Test(base.BaseApplicationTest):
 
         return
         servers = []
-        for n in xrange(s.count()):
+        for n in range(s.count()):
             _v = s.item(n).data(QtCore.Qt.DisplayRole)
             self.assertTrue(os.path.isdir(_v))
             servers.append(_v)
@@ -86,7 +86,7 @@ class Test(base.BaseApplicationTest):
         self.assertEqual(s.count(), 0)
 
         # Add test server and select it
-        server = common.temp_path() + u'/' + base.random_unicode(32)
+        server = common.temp_path() + '/' + base.random_str(32)
         if not os.path.isdir(server):
             os.makedirs(server)
 
@@ -95,7 +95,7 @@ class Test(base.BaseApplicationTest):
         actions.add_server(server)
         self.assertIn(server, common.SERVERS)
 
-        for idx in xrange(s.count()):
+        for idx in range(s.count()):
             item = s.item(idx)
             if item.data(QtCore.Qt.DisplayRole) == server:
                 s.setCurrentItem(item)
@@ -107,9 +107,9 @@ class Test(base.BaseApplicationTest):
         # Test jobs
 
         # Add a series of folders to the root of the server
-        for idx in xrange(10):
-            job = base.random_unicode(16)
-            path = server + u'/' + job
+        for idx in range(10):
+            job = base.random_str(16)
+            path = server + '/' + job
 
             QtCore.QDir(path).mkpath('.')
             self.assertTrue(os.path.isdir(path))
@@ -134,7 +134,7 @@ class Test(base.BaseApplicationTest):
         self.assertEqual(b.count(), 0)
 
         # Add test server and select it
-        server = common.temp_path() + u'/' + base.random_unicode(48)
+        server = common.temp_path() + '/' + base.random_str(48)
         self.assertNotIn(server, common.SERVERS)
         actions.add_server(server)
         self.assertIn(server, common.SERVERS)
@@ -142,7 +142,7 @@ class Test(base.BaseApplicationTest):
         if not os.path.isdir(server):
             os.makedirs(server)
 
-        for idx in xrange(s.count()):
+        for idx in range(s.count()):
             item = s.item(idx)
             if item.data(QtCore.Qt.DisplayRole) == server:
                 s.setCurrentItem(item)
@@ -152,16 +152,16 @@ class Test(base.BaseApplicationTest):
         # Template path
         t = __file__ + os.sep + os.pardir + os.sep + os.pardir + os.sep + 'rsc' + os.sep + 'templates' + os.sep + 'Bookmarks_Default_Job.zip'
         t = os.path.normpath(t)
-        t = unicode(t)
+        t = str(t)
         self.assertTrue(os.path.isfile(t))
         self.assertTrue(os.path.isdir(server))
 
-        for _ in xrange(50):
+        for _ in range(50):
             job = base.random_ascii(32)
 
-            self.assertIsInstance(t, unicode)
-            self.assertIsInstance(server, unicode)
-            self.assertIsInstance(job, unicode)
+            self.assertIsInstance(t, str)
+            self.assertIsInstance(server, str)
+            self.assertIsInstance(job, str)
 
             # Will trigger an automatic reload and select
             v = template_actions.extract_zip_template(t, server, job)

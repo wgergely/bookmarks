@@ -28,18 +28,18 @@ class DataType(object):
         self.data_type = t
 
 
-FileThumbnail = u'FileThumbnail'
-FavouriteThumbnail = u'FavouriteThumbnail'
-AssetThumbnail = u'AssetThumbnail'
-BookmarkThumbnail = u'BookmarkThumbnail'
-FileInfo = u'FileInfo'
-FavouriteInfo = u'FavouriteInfo'
-AssetInfo = u'AssetInfo'
-BookmarkInfo = u'BookmarkInfo'
-TaskFolderInfo = u'TaskFolderInfo'
-QueuedDatabaseTransaction = u'QueuedDatabaseTransaction'
-QueuedSettingsTransaction = u'QueuedSettingsTransaction'
-QueuedShotgunQuery = u'QueuedShotgunQuery'
+FileThumbnail = 'FileThumbnail'
+FavouriteThumbnail = 'FavouriteThumbnail'
+AssetThumbnail = 'AssetThumbnail'
+BookmarkThumbnail = 'BookmarkThumbnail'
+FileInfo = 'FileInfo'
+FavouriteInfo = 'FavouriteInfo'
+AssetInfo = 'AssetInfo'
+BookmarkInfo = 'BookmarkInfo'
+TaskFolderInfo = 'TaskFolderInfo'
+QueuedDatabaseTransaction = 'QueuedDatabaseTransaction'
+QueuedSettingsTransaction = 'QueuedSettingsTransaction'
+QueuedShotgunQuery = 'QueuedShotgunQuery'
 
 
 controllers = {}
@@ -214,7 +214,7 @@ def get_thread(k):
     """
     if k not in THREADS:
         raise KeyError('{} is invalid. Must be one of {}'.format(
-            k, u'\n'.join(THREADS.keys())))
+            k, '\n'.join(THREADS.keys())))
 
     if k in controllers:
         return controllers[k]
@@ -238,8 +238,8 @@ def add_to_queue(k, ref):
         end (bool): Add to the end of the queue instead if `True`.
 
     """
-    if not isinstance(ref, weakref.ref):
-        raise TypeError(u'Invalid type. Expected <type \'weakref.ref\'>')
+    common.check_type(ref, weakref.ref)
+
     if ref not in queue(k) and ref():
         queue(k).append(ref)
 
@@ -257,8 +257,8 @@ class BaseThread(QtCore.QThread):
 
     def __init__(self, worker, parent=None):
         super(BaseThread, self).__init__(parent=parent)
-        self.setObjectName(u'{}Thread_{}'.format(
-            worker.queue, uuid.uuid1().get_hex()))
+        self.setObjectName('{}Thread_{}'.format(
+            worker.queue, uuid.uuid1().hex))
         self.setTerminationEnabled(True)
 
         self.worker = worker
@@ -289,5 +289,5 @@ class BaseThread(QtCore.QThread):
         self.initWorker.emit()
 
         if self.worker.thread() == QtWidgets.QApplication.instance().thread():
-            s = u'Could not move worker to thread.'
+            s = 'Could not move worker to thread.'
             raise RuntimeError(s)

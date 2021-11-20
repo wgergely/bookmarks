@@ -23,7 +23,7 @@ def get_thread_status():
                 items.append(repr(i))
         except RuntimeError:
             pass
-    return u'\n'.join(items)
+    return '\n'.join(items)
 
 
 class ThreadStatus(QtWidgets.QWidget):
@@ -35,7 +35,7 @@ class ThreadStatus(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super(ThreadStatus, self).__init__(parent=parent)
         self.update_timer = common.Timer(parent=self)
-        self.update_timer.setObjectName(u'ThreadStatusTimer')
+        self.update_timer.setObjectName('ThreadStatusTimer')
         self.update_timer.setInterval(500)
         self.update_timer.setSingleShot(False)
         self.update_timer.timeout.connect(self.update)
@@ -83,7 +83,7 @@ class ThreadStatus(QtWidgets.QWidget):
         painter.end()
 
     def update(self):
-        self.setFixedWidth(self.metrics.width(self.text()) + common.MARGIN())
+        self.setFixedWidth(self.metrics.horizontalAdvance(self.text()) + common.MARGIN())
         super(ThreadStatus, self).update()
 
     @staticmethod
@@ -92,8 +92,8 @@ class ThreadStatus(QtWidgets.QWidget):
         for k in threads.THREADS:
             c += len(threads.queue(k))
         if not c:
-            return u''
-        return u'Processing {} items'.format(c)
+            return ''
+        return 'Processing {} items'.format(c)
 
 class MessageWidget(QtWidgets.QStatusBar):
     """Bookmark's status bar, below the list widgets.
@@ -127,7 +127,7 @@ class MessageWidget(QtWidgets.QStatusBar):
             font,
             self.rect().marginsRemoved(QtCore.QMargins(
                 common.INDICATOR_WIDTH(), 0, common.INDICATOR_WIDTH(), 0)),
-            u'  {}  '.format(self.currentMessage()),
+            '  {}  '.format(self.currentMessage()),
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
             common.TEXT
         )

@@ -26,7 +26,7 @@ class Test(base.BaseApplicationTest):
 
     def test_import_slack(self):
         try:
-            import slackclient
+            import slack
         except ImportError as err:
             self.fail(err)
 

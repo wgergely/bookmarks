@@ -3,7 +3,7 @@
 Bookmarks.
 
 The editor widgets provide a unified approach for editing job, bookmark, asset
-and file properties. If the base-class is passed the optional `db_table`
+and file item properties. If the base-class is passed the optional `db_table`
 keyword, it will try to load/save/update data found in the bookmark database.
 
 
@@ -32,8 +32,8 @@ Example
             root,
             asset=asset,
             alignment=QtCore.Qt.AlignLeft,
-            fallback_thumb=u'file_sm',
-            db_table=bookmark_db.AssetTable,
+            fallback_thumb='file_sm',
+            db_table=database.AssetTable,
         )
         editor.open()
 
@@ -43,7 +43,6 @@ base class.
 
 
 """
-import uuid
 import functools
 import datetime
 
@@ -53,8 +52,7 @@ from .. import log
 from .. import common
 from .. import ui
 from .. import images
-from .. import bookmark_db
-from .. import actions
+from .. import database
 from . import base_widgets
 
 
@@ -84,7 +82,7 @@ def add_section(icon, label, parent, color=None):
     """Used to a new section with an icon and a title to a widget.
 
     Args:
-        icon (unicode):     The name of an rsc image.
+        icon (str):     The name of an rsc image.
         parent (QWidget):   A widget to add the section to.
         color (QColor):     The color of the icon. Defaults to `None`.
 
@@ -92,7 +90,7 @@ def add_section(icon, label, parent, color=None):
         QWidget:            A widget to add editors to.
 
     """
-    parent = ui.add_row(u'', height=None, vertical=True, parent=parent)
+    parent = ui.add_row('', height=None, vertical=True, parent=parent)
 
     h = common.ROW_HEIGHT()
 
@@ -106,7 +104,7 @@ def add_section(icon, label, parent, color=None):
         parent=parent
     )
 
-    row = ui.add_row(u'', height=h, parent=parent)
+    row = ui.add_row('', height=h, parent=parent)
     row.layout().setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft)
     row.layout().addWidget(_label, 0)
     row.layout().addWidget(label, 0)
@@ -121,21 +119,21 @@ class PropertiesWidget(QtWidgets.QDialog):
     Args:
         sections (dict):        The data needed to construct the ui layout.
         server (unciode):       A server.
-        job (unicode):          A job.
-        root (unicode):         A root folder.
-        asset (unicode):        An optional asset. Defaults to `None`.
-        db_table (unicode):     An optional name of a bookmark database table.
+        job (str):          A job.
+        root (str):         A root folder.
+        asset (str):        An optional asset. Defaults to `None`.
+        db_table (str):     An optional name of a bookmark database table.
                                 When `None`, the editor won't load or save data
                                 to the databse. Defaults to `None`.
         buttons (tuple):        Button labels. Defaults to `('Save', 'Cancel')`.
         alignment (int):        Text alignment. Defaults to `QtCore.Qt.AlignRight`.
-        fallback_thumb (unicode): An rsc image name. Defaults to `'placeholder'`.
+        fallback_thumb (str): An rsc image name. Defaults to `'placeholder'`.
 
     """
-    itemCreated = QtCore.Signal(unicode)
+    itemCreated = QtCore.Signal(str)
 
-    itemUpdated = QtCore.Signal(unicode)
-    thumbnailUpdated = QtCore.Signal(unicode)
+    itemUpdated = QtCore.Signal(str)
+    thumbnailUpdated = QtCore.Signal(str)
 
     def __init__(
         self,
@@ -145,13 +143,12 @@ class PropertiesWidget(QtWidgets.QDialog):
         root,
         asset=None,
         db_table=None,
-        buttons=(u'Save', 'Cancel'),
+        buttons=('Save', 'Cancel'),
         alignment=QtCore.Qt.AlignRight,
-        fallback_thumb=u'placeholder',
+        fallback_thumb='placeholder',
         parent=None
     ):
-        if not isinstance(sections, dict):
-            raise TypeError('Invalid section data.')
+        common.check_type(sections, dict)
 
         super(PropertiesWidget, self).__init__(
             parent=parent,
@@ -188,10 +185,10 @@ class PropertiesWidget(QtWidgets.QDialog):
 
         if all((server, job, root)):
             if not asset:
-                self.setWindowTitle(u'{}/{}/{}'.format(
+                self.setWindowTitle('{}/{}/{}'.format(
                     server, job, root))
             else:
-                self.setWindowTitle(u'{}/{}/{}/{}'.format(
+                self.setWindowTitle('{}/{}/{}/{}'.format(
                     server, job, root, asset))
 
         self._create_ui()
@@ -205,11 +202,11 @@ class PropertiesWidget(QtWidgets.QDialog):
         self.layout().setSpacing(0)
 
         if not self.server or not self.job or not self.root:
-            source = u''
+            source = ''
         elif not self.asset:
-            source = u'/'.join((self.server, self.job, self.root))
+            source = '/'.join((self.server, self.job, self.root))
         else:
-            source = u'/'.join((self.server, self.job, self.root, self.asset))
+            source = '/'.join((self.server, self.job, self.root, self.asset))
 
         self.thumbnail_editor = base_widgets.ThumbnailEditorWidget(
             self.server,
@@ -222,14 +219,14 @@ class PropertiesWidget(QtWidgets.QDialog):
 
         # Separator pixmap
         pixmap = images.ImageCache.get_rsc_pixmap(
-            u'gradient3', None, common.MARGIN(), opacity=0.5)
+            'gradient3', None, common.MARGIN(), opacity=0.5)
         separator = QtWidgets.QLabel(parent=self)
         separator.setScaledContents(True)
         separator.setPixmap(pixmap)
 
         self.left_row = QtWidgets.QWidget(parent=self)
         self.left_row.setStyleSheet(
-            u'background-color: {};'.format(common.rgb(common.SEPARATOR)))
+            'background-color: {};'.format(common.rgb(common.SEPARATOR)))
         QtWidgets.QHBoxLayout(self.left_row)
         self.left_row.layout().setSpacing(0)
         self.left_row.layout().setContentsMargins(0, 0, 0, 0)
@@ -277,7 +274,7 @@ class PropertiesWidget(QtWidgets.QDialog):
         """
         parent = self.scrollarea.widget()
 
-        for section in self._sections.itervalues():
+        for section in self._sections.values():
             grp = add_section(
                 section['icon'],
                 section['name'],
@@ -286,10 +283,10 @@ class PropertiesWidget(QtWidgets.QDialog):
             )
             self._section_widgets.append(grp)
 
-            for item in section['groups'].itervalues():
+            for item in section['groups'].values():
                 _grp = ui.get_group(parent=grp)
 
-                for v in item.itervalues():
+                for v in item.values():
                     row = ui.add_row(
                         v['name'], parent=_grp, height=None)
 
@@ -332,8 +329,8 @@ class PropertiesWidget(QtWidgets.QDialog):
                         if hasattr(editor, 'setAlignment'):
                             editor.setAlignment(self._alignment)
 
-                        if v['key'] is not None and self._db_table in bookmark_db.TABLES and v['key'] in bookmark_db.TABLES[self._db_table]:
-                            _type = bookmark_db.TABLES[self._db_table][v['key']]['type']
+                        if v['key'] is not None and self._db_table in database.TABLES and v['key'] in database.TABLES[self._db_table]:
+                            _type = database.TABLES[self._db_table][v['key']]['type']
                             self._connect_editor(v['key'], _type, editor)
 
                         if 'validator' in v and v['validator']:
@@ -480,11 +477,11 @@ class PropertiesWidget(QtWidgets.QDialog):
         """Loads the current values form the bookmark database.
 
         """
-        if self._db_table is None or self._db_table not in bookmark_db.TABLES:
-            raise RuntimeError(u'Invalid database table.')
+        if self._db_table is None or self._db_table not in database.TABLES:
+            raise RuntimeError('Invalid database table.')
 
-        db = bookmark_db.get_db(self.server, self.job, self.root)
-        for k in bookmark_db.TABLES[self._db_table]:
+        db = database.get_db(self.server, self.job, self.root)
+        for k in database.TABLES[self._db_table]:
             if not hasattr(self, k + '_editor'):
                 continue
 
@@ -500,12 +497,12 @@ class PropertiesWidget(QtWidgets.QDialog):
             if v is not None:
 
                 # Type verification
-                for section in self._sections.itervalues():
-                    for group in section['groups'].itervalues():
-                        for item in group.itervalues():
+                for section in self._sections.values():
+                    for group in section['groups'].values():
+                        for item in group.values():
                             if item['key'] != k:
                                 continue
-                            _type = bookmark_db.TABLES[self._db_table][item['key']]['type']
+                            _type = database.TABLES[self._db_table][item['key']]['type']
                             try:
                                 v = _type(v)
                             except Exception as e:
@@ -519,8 +516,8 @@ class PropertiesWidget(QtWidgets.QDialog):
                 if hasattr(editor, 'setValue'):
                     editor.setValue(v)
 
-                if not isinstance(v, unicode):
-                    v = u'{}'.format(v)
+                if not isinstance(v, str):
+                    v = '{}'.format(v)
                 if hasattr(editor, 'setText'):
                     editor.setText(v)
                 if hasattr(editor, 'setCurrentText'):
@@ -529,19 +526,19 @@ class PropertiesWidget(QtWidgets.QDialog):
                 if hasattr(editor, 'setCurrentText'):
                     editor.setCurrentIndex(-1)
 
-        for k in bookmark_db.TABLES[bookmark_db.InfoTable]:
-            if k == u'id':
+        for k in database.TABLES[database.InfoTable]:
+            if k == 'id':
                 continue
 
-            source = u'{}/{}/{}'.format(self.server, self.job, self.root)
-            v = db.value(source, k, table=bookmark_db.InfoTable)
+            source = '{}/{}/{}'.format(self.server, self.job, self.root)
+            v = db.value(source, k, table=database.InfoTable)
 
             if k == 'created':
                 try:
                     v = datetime.datetime.fromtimestamp(
                         float(v)).strftime('%Y-%m-%d %H:%M:%S')
                 except Exception as e:
-                    v = u'error'
+                    v = 'error'
 
             if hasattr(self, k + '_editor'):
                 editor = getattr(self, k + '_editor')
@@ -549,15 +546,15 @@ class PropertiesWidget(QtWidgets.QDialog):
                 editor.setText(v)
 
     def _save_db_data(self):
-        if self._db_table is None or self._db_table not in bookmark_db.TABLES:
-            raise RuntimeError(u'Invalid database table.')
+        if self._db_table is None or self._db_table not in database.TABLES:
+            raise RuntimeError('Invalid database table.')
 
         if self.db_source() is None:
             return
 
-        db = bookmark_db.get_db(self.server, self.job, self.root)
+        db = database.get_db(self.server, self.job, self.root)
         with db.connection():
-            for k, v in self.changed_data.copy().iteritems():
+            for k, v in self.changed_data.copy().items():
                 db.setValue(
                     self.db_source(),
                     k,
@@ -565,20 +562,20 @@ class PropertiesWidget(QtWidgets.QDialog):
                     table=self._db_table
                 )
 
-    @QtCore.Slot(unicode)
+    @QtCore.Slot(str)
     @QtCore.Slot(type)
     @QtCore.Slot(QtWidgets.QWidget)
-    @QtCore.Slot(unicode)
+    @QtCore.Slot(str)
     def data_changed(self, key, _type, editor, v):
         """Signal called when the user changes a value in the editor.
 
         Args:
-            key (unicode):          The database key.
+            key (str):          The database key.
             _type (type):           The data type.
             editor (QWidget):       The editor widget.
 
         """
-        if _type is not None and v is not isinstance(v, _type) and v != u'':
+        if _type is not None and v is not isinstance(v, _type) and v != '':
             try:
                 v = _type(v)
             except:
@@ -592,7 +589,7 @@ class PropertiesWidget(QtWidgets.QDialog):
 
             if not isinstance(editor, QtWidgets.QCheckBox):
                 editor.setStyleSheet(
-                    u'color: {};'.format(common.rgb(common.GREEN)))
+                    'color: {};'.format(common.rgb(common.GREEN)))
             return
 
         if key in self.changed_data:
@@ -600,7 +597,7 @@ class PropertiesWidget(QtWidgets.QDialog):
 
         if not isinstance(editor, QtWidgets.QCheckBox):
             editor.setStyleSheet(
-                u'color: {};'.format(common.rgb(common.TEXT)))
+                'color: {};'.format(common.rgb(common.TEXT)))
 
     def db_source(self):
         """The path of the file database values are associated with.
@@ -608,7 +605,7 @@ class PropertiesWidget(QtWidgets.QDialog):
         Eg. in the case of assets this is `server/job/root/asset`
 
         """
-        raise NotImplementedError(u'Must be overridden in subclass.')
+        raise NotImplementedError('Must be overridden in subclass.')
 
     @QtCore.Slot()
     def init_data(self):
@@ -630,8 +627,8 @@ class PropertiesWidget(QtWidgets.QDialog):
         if result == QtWidgets.QDialog.Rejected:
             if self.changed_data:
                 mbox = ui.MessageBox(
-                    u'Are you sure you want to close the editor?',
-                    u'Your changes will be lost.',
+                    'Are you sure you want to close the editor?',
+                    'Your changes will be lost.',
                     buttons=[ui.YesButton, ui.NoButton]
                 )
                 if mbox.exec_() == QtWidgets.QMessageBox.Rejected:
@@ -650,8 +647,8 @@ class PropertiesWidget(QtWidgets.QDialog):
     def sizeHint(self):
         return QtCore.QSize(common.WIDTH() * 1.33, common.HEIGHT() * 1.5)
 
-    @QtCore.Slot(unicode)
-    @QtCore.Slot(unicode)
+    @QtCore.Slot(str)
+    @QtCore.Slot(str)
     @QtCore.Slot(object)
     def update_changed_database_value(self, table, source, key, value):
         """Slot responsible updating the gui when  database value is updated.
@@ -668,9 +665,9 @@ class PropertiesWidget(QtWidgets.QDialog):
         self.changed_data[key] = value
 
         if value is None:
-            value = u''
-        elif not isinstance(value, unicode):
-            value = u'{}'.format(value)
+            value = ''
+        elif not isinstance(value, str):
+            value = '{}'.format(value)
 
         if hasattr(editor, 'setText'):
             editor.setText(value)

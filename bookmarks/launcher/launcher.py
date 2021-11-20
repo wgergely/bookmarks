@@ -12,31 +12,31 @@ from .. import contextmenu
 DEFAULT_ITEM = {
     0: {
         'key': 'name',
-        'placeholder': u'Name, eg. "Maya"',
+        'placeholder': 'Name, eg. "Maya"',
         'widget': ui.LineEdit,
-        'description': u'Enter the item\'s name, eg. Maya',
+        'description': 'Enter the item\'s name, eg. Maya',
         'button': None,
     },
     1: {
         'key': 'format',
-        'placeholder': u'Extensions, eg. "ma,mb"',
+        'placeholder': 'Extensions, eg. "ma,mb"',
         'widget': ui.LineEdit,
-        'description': u'Enter a coma-separated list of extensions to associate the item with',
+        'description': 'Enter a coma-separated list of extensions to associate the item with',
         'button': None,
     },
     2: {
         'key': 'path',
-        'placeholder': u'Path, eg. "C:/maya/maya.exe"',
+        'placeholder': 'Path, eg. "C:/maya/maya.exe"',
         'widget': ui.LineEdit,
-        'description': u'Path to the executable.',
-        'button': u'Pick',
+        'description': 'Path to the executable.',
+        'button': 'Pick',
     },
     4: {
         'key': 'thumbnail',
-        'placeholder': u'Path to an image, eg. "C:/images/maya.png"',
+        'placeholder': 'Path to an image, eg. "C:/images/maya.png"',
         'widget': ui.LineEdit,
-        'description': u'Path to an image file used to represent this item',
-        'button': u'Pick',
+        'description': 'Path to an image file used to represent this item',
+        'button': 'Pick',
     },
 }
 
@@ -57,7 +57,7 @@ class LauncherItemEditor(QtWidgets.QDialog):
         self.done_button = None
         self._data = data
 
-        self.setWindowTitle(u'Edit Launcher Item')
+        self.setWindowTitle('Edit Launcher Item')
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
         self._create_ui()
@@ -115,7 +115,7 @@ class LauncherItemEditor(QtWidgets.QDialog):
                 if hasattr(self, _k):
                     button.clicked.connect(getattr(self, _k))
 
-        self.done_button = ui.PaintedButton(u'Done', parent=self)
+        self.done_button = ui.PaintedButton('Done', parent=self)
         self.layout().addWidget(self.done_button, 1)
 
     def _connect_signals(self):
@@ -131,7 +131,7 @@ class LauncherItemEditor(QtWidgets.QDialog):
             editor = getattr(self, k + '_editor')
             editor.setText(item[k])
 
-    @QtCore.Slot(unicode)
+    @QtCore.Slot(str)
     def update_thumbnail_image(self, path):
         image = QtGui.QImage(path)
         if image.isNull():
@@ -149,17 +149,17 @@ class LauncherItemEditor(QtWidgets.QDialog):
     @common.debug
     def action(self):
         if not self.name_editor.text():
-            raise RuntimeError(u'Must enter a name.')
+            raise RuntimeError('Must enter a name.')
 
         if not self.format_editor.text():
             raise RuntimeError(
-                u'Must specify the extensions this item is associated with.')
+                'Must specify the extensions this item is associated with.')
 
         if not self.path_editor.text():
-            raise RuntimeError(u'Must specify a path to an executable.')
+            raise RuntimeError('Must specify a path to an executable.')
 
         if not self.thumbnail_editor.text():
-            raise RuntimeError(u'Must specify thumbnail image path.')
+            raise RuntimeError('Must specify thumbnail image path.')
 
         data = {}
         for idx in DEFAULT_ITEM:
@@ -177,13 +177,13 @@ class LauncherItemEditor(QtWidgets.QDialog):
 
     @QtCore.Slot()
     def path_button_clicked(self):
-        self._pick(self.path_editor, caption=u'Pick an Executable')
+        self._pick(self.path_editor, caption='Pick an Executable')
 
     @QtCore.Slot()
     def thumbnail_button_clicked(self):
         self._pick(
             self.thumbnail_editor,
-            caption=u'Pick a Thumbnail',
+            caption='Pick a Thumbnail',
             filter=images.get_oiio_namefilters(),
             dir=QtCore.QFileInfo(__file__ + os.path.sep + os.pardir + os.path.sep + os.pardir + os.path.sep + 'rsc' + os.path.sep + 'formats').filePath()
         )
@@ -218,25 +218,25 @@ class LauncherListContextMenu(contextmenu.BaseContextMenu):
 
     def setup(self):
         self.menu[contextmenu.key()] = {
-            'text': u'Add item...',
-            u'icon': self.get_icon(u'add', color=common.GREEN),
-            u'action': self.parent().add_new_item
+            'text': 'Add item...',
+            'icon': self.get_icon('add', color=common.GREEN),
+            'action': self.parent().add_new_item
         }
 
         if not self.index:
             return
 
         self.menu[contextmenu.key()] = {
-            'text': u'Edit item...',
-            u'action': functools.partial(self.parent().edit_item, self.index)
+            'text': 'Edit item...',
+            'action': functools.partial(self.parent().edit_item, self.index)
         }
 
         self.separator()
 
         self.menu[contextmenu.key()] = {
-            'text': u'Remove item',
-            u'icon': self.get_icon(u'close', color=common.RED),
-            u'action': functools.partial(self.parent().remove_item, self.index)
+            'text': 'Remove item',
+            'icon': self.get_icon('close', color=common.RED),
+            'action': functools.partial(self.parent().remove_item, self.index)
         }
 
 
@@ -307,16 +307,14 @@ class LauncherListWidget(ui.ListWidget):
 
     def data(self):
         v = {}
-        for idx in xrange(self.count()):
+        for idx in range(self.count()):
             v[idx] = self.item(idx).data(QtCore.Qt.UserRole)
         return v
 
     def init_data(self, data):
         self.clear()
 
-        if not isinstance(data, dict):
-            print type(data),
-            raise TypeError('Expected {}, got {}.'.format(dict, type(data)))
+        common.check_type(data, dict)
 
         for idx in data:
             self.add_item(data[idx])

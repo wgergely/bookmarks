@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Settings window for editing bookmark properties.
 
-Used to edit data in the bookmark database (see 'bookmark_db.py'). The
+Used to edit data in the bookmark database (see 'database.py'). The
 database stores information about the bookmark's default 'width', 'height',
 'frame rate' and connectivity information, such as 'Slack' and 'Shotgun'
 tokens.
@@ -9,7 +9,7 @@ tokens.
 Usage:
 
     widget = BookmarkPropertiesWidget(
-        u'//my_server/jobs', u'my_job', u'my/root/folder'
+        '//my_server/jobs', 'my_job', 'my/root/folder'
     ).open()
 
 
@@ -18,7 +18,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 
 from .. import common
 from .. import ui
-from .. import bookmark_db
+from .. import database
 from .. import actions
 
 from ..shotgun import actions as sg_actions
@@ -30,7 +30,7 @@ from ..asset_config import asset_config_widget
 from ..launcher import launcher
 
 
-SLACK_API_URL = u'https://api.slack.com/apps'
+SLACK_API_URL = 'https://api.slack.com/apps'
 
 instance = None
 
@@ -61,283 +61,283 @@ def show(server, job, root):
 
 SECTIONS = {
     0: {
-        'name': u'Basic Settings',
-        'icon': u'',
+        'name': 'Basic Settings',
+        'icon': '',
         'color': common.DARK_BG,
         'groups': {
             0: {
                 0: {
-                    'name': u'Prefix',
-                    'key': u'prefix',
+                    'name': 'Prefix',
+                    'key': 'prefix',
                     'validator': base.textvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Custom prefix, eg. \'MYB\'',
-                    'description': u'A short name of the bookmark (or job) used when saving files.\n\nEg. \'MYB_sh0010_anim_v001.ma\' where \'MYB\' is the prefix specified here.',
-                    'button': u'Suggest'
+                    'placeholder': 'Custom prefix, eg. \'MYB\'',
+                    'description': 'A short name of the bookmark (or job) used when saving files.\n\nEg. \'MYB_sh0010_anim_v001.ma\' where \'MYB\' is the prefix specified here.',
+                    'button': 'Suggest'
                 },
             },
             1: {
                 0: {
-                    'name': u'Description',
-                    'key': u'description',
+                    'name': 'Description',
+                    'key': 'description',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': u'A short description, eg. \'Character assets\'',
-                    'description': u'A description of this bookmark, eg. \'Character assets\'.',
+                    'placeholder': 'A short description, eg. \'Character assets\'',
+                    'description': 'A description of this bookmark, eg. \'Character assets\'.',
                 },
             },
             2: {
                 0: {
-                    'name': u'Framerate',
-                    'key': u'framerate',
+                    'name': 'Framerate',
+                    'key': 'framerate',
                     'validator': base.floatvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Framerate, eg. \'23.976\'',
-                    'description': u'The framerate of the bookmark, eg, \'25.0\'.\n\nUsed by Bookmarks to control the format of scenes inside hosts, eg. Maya.'
+                    'placeholder': 'Framerate, eg. \'23.976\'',
+                    'description': 'The framerate of the bookmark, eg, \'25.0\'.\n\nUsed by Bookmarks to control the format of scenes inside hosts, eg. Maya.'
                 },
                 1: {
-                    'name': u'Width',
+                    'name': 'Width',
                     'key': 'width',
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Width in pixels',
-                    'description': u'The output width in pixels, eg. \'1920\''
+                    'placeholder': 'Width in pixels',
+                    'description': 'The output width in pixels, eg. \'1920\''
                 },
                 2: {
-                    'name': u'Height',
-                    'key': u'height',
+                    'name': 'Height',
+                    'key': 'height',
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Height in pixels',
-                    'description': u'The output height in pixels, eg. \'1080\''
+                    'placeholder': 'Height in pixels',
+                    'description': 'The output height in pixels, eg. \'1080\''
                 },
                 3: {
-                    'name': u'Default Start Frame',
-                    'key': u'startframe',
+                    'name': 'Default Start Frame',
+                    'key': 'startframe',
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Start frame, eg. \'1001\'',
-                    'description': u'A default start frame for all subsequent assets.\n\nThis can be useful when the project has a custom start frame, eg. \'1001\' instead of \'1\' or \'0\'.',
+                    'placeholder': 'Start frame, eg. \'1001\'',
+                    'description': 'A default start frame for all subsequent assets.\n\nThis can be useful when the project has a custom start frame, eg. \'1001\' instead of \'1\' or \'0\'.',
                 },
                 4: {
-                    'name': u'Default Duration',
-                    'key': u'duration',
+                    'name': 'Default Duration',
+                    'key': 'duration',
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Duration, eg. \'150\'',
-                    'description': u'The default duration of an asset in frames, eg. \'150\'',
+                    'placeholder': 'Duration, eg. \'150\'',
+                    'description': 'The default duration of an asset in frames, eg. \'150\'',
                 },
             },
             3: {
                 'identifier': {
-                    'name': u'Asset Identifier',
-                    'key': u'identifier',
+                    'name': 'Asset Identifier',
+                    'key': 'identifier',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': u'A file name, eg. \'workspace.mel\'',
-                    'description': u'Only folders containing the file specified above will be read as assets.\n\nUsing the default Maya Workspace the identifier normally is \'workspace.mel\', however any other arbitary file can be used as long it is present in the root of an asset folder.\n\nWhen left empty all folders in the bookmark will be read.',
-                    'help': u'Only folders containing the file specified here will be read as assets.\nUsing the default Maya Workspace the identifier normally is \'workspace.mel\', however any other arbitary file can be used as long it is present in the root of an asset folder.\n\nWhen left empty, all folders in the bookmark will be interpeted as assets.',
+                    'placeholder': 'A file name, eg. \'workspace.mel\'',
+                    'description': 'Only folders containing the file specified above will be read as assets.\n\nUsing the default Maya Workspace the identifier normally is \'workspace.mel\', however any other arbitary file can be used as long it is present in the root of an asset folder.\n\nWhen left empty all folders in the bookmark will be read.',
+                    'help': 'Only folders containing the file specified here will be read as assets.\nUsing the default Maya Workspace the identifier normally is \'workspace.mel\', however any other arbitary file can be used as long it is present in the root of an asset folder.\n\nWhen left empty, all folders in the bookmark will be interpeted as assets.',
                 }
             }
         }
     },
     1: {
-        'name': u'Slack',
-        'icon': u'slack',
+        'name': 'Slack',
+        'icon': 'slack',
         'color': common.DARK_BG,
         'groups': {
             0: {
                 0: {
-                    'name': u'OAuth Token',
-                    'key': u'slacktoken',
+                    'name': 'OAuth Token',
+                    'key': 'slacktoken',
                     'validator': None,
                     'protect': True,
                     'widget': ui.LineEdit,
-                    'description': u'A valid Slack App OAuth token',
-                    'placeholder': u'xoxb-01234567890-0123456',
-                    'help':  u'Paste a valid <a href="{slack_api_url}">{start}Slack App OAuth token{end}</a> above (usually starting with {start}xoxb{end}).\n\nMake sure the app has {start}users:read{end} and {start}chat:write{end} scopes enabled. To send messages to channels the bot is not part of, add {start}chat:write.public{end}. Scopes {start}channels:read{end} and {start}groups:read{end} are needed to list available Slack Channels.\n\nSee <a href="{slack_api_url}">{start}Slack API{end}</a> for more information. '.format(slack_api_url=SLACK_API_URL, **base.span),
-                    'button': u'Visit',
-                    'button2': u'Verify',
+                    'description': 'A valid Slack App OAuth token',
+                    'placeholder': 'xoxb-01234567890-0123456',
+                    'help':  'Paste a valid <a href="{slack_api_url}">{start}Slack App OAuth token{end}</a> above (usually starting with {start}xoxb{end}).\n\nMake sure the app has {start}users:read{end} and {start}chat:write{end} scopes enabled. To send messages to channels the bot is not part of, add {start}chat:write.public{end}. Scopes {start}channels:read{end} and {start}groups:read{end} are needed to list available Slack Channels.\n\nSee <a href="{slack_api_url}">{start}Slack API{end}</a> for more information. '.format(slack_api_url=SLACK_API_URL, **base.span),
+                    'button': 'Visit',
+                    'button2': 'Verify',
                 }
             }
         }
     },
     2: {
-        'name': u'Shotgun Connection',
-        'icon': u'shotgun',
+        'name': 'Shotgun Connection',
+        'icon': 'shotgun',
         'color': None,
         'groups': {
             0: {
                 0: {
-                    'name': u'Domain',
-                    'key': u'shotgun_domain',
+                    'name': 'Domain',
+                    'key': 'shotgun_domain',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Domain, eg. https://mystudio.shotgunstudio.com',
-                    'description': u'The domain, including http:// or https://, used by shotgun. Eg. \'https://mystudio.shotgunstudio.com\'',
-                    'button': u'Visit',
-                    'button2': u'Verify'
+                    'placeholder': 'Domain, eg. https://mystudio.shotgunstudio.com',
+                    'description': 'The domain, including http:// or https://, used by shotgun. Eg. \'https://mystudio.shotgunstudio.com\'',
+                    'button': 'Visit',
+                    'button2': 'Verify'
                 },
                 1: {
-                    'name': u'Script Name',
-                    'key': u'shotgun_scriptname',
+                    'name': 'Script Name',
+                    'key': 'shotgun_scriptname',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': u'my-sg-script',
-                    'description': u'A name of a Shotgun Script.',
+                    'placeholder': 'my-sg-script',
+                    'description': 'A name of a Shotgun Script.',
                 },
                 2: {
-                    'name': u'API Key',
-                    'key': u'shotgun_api_key',
+                    'name': 'API Key',
+                    'key': 'shotgun_api_key',
                     'validator': None,
                     'protect': True,
                     'widget': ui.LineEdit,
-                    'placeholder': u'abcdefghijklmno3bqr*1',
-                    'description': u'A Shotgun Script API Key, eg. \'abcdefghijklmno3bqr*1\'.\n\nA valid script has to be set up for your ogranisation for Bookmarks to be able to connect to Shotgun. Consult the Shotgun documentation for details on how to set this up.',
-                    'help': u'Make sure Shotgun has a valid API Script set up. This can be done from the Shotgun Admin - Scripts option.',
+                    'placeholder': 'abcdefghijklmno3bqr*1',
+                    'description': 'A Shotgun Script API Key, eg. \'abcdefghijklmno3bqr*1\'.\n\nA valid script has to be set up for your ogranisation for Bookmarks to be able to connect to Shotgun. Consult the Shotgun documentation for details on how to set this up.',
+                    'help': 'Make sure Shotgun has a valid API Script set up. This can be done from the Shotgun Admin - Scripts option.',
                 },
             },
         },
     },
     3: {
-        'name': u'Shotgun Entity',
-        'icon': u'shotgun',
+        'name': 'Shotgun Entity',
+        'icon': 'shotgun',
         'color': None,
         'groups': {
             0: {
                 0: {
-                    'name': u'Link',
-                    'key': u'link',
+                    'name': 'Link',
+                    'key': 'link',
                     'validator': None,
                     'widget': None,
                     'placeholder': None,
-                    'description': u'Link item with a Shotgun Entity',
-                    'button': u'Link with Shotgun Entity',
+                    'description': 'Link item with a Shotgun Entity',
+                    'button': 'Link with Shotgun Entity',
                 },
                 1: {
-                    'name': u'Type',
-                    'key': u'shotgun_type',
+                    'name': 'Type',
+                    'key': 'shotgun_type',
                     'validator': base.intvalidator,
                     'widget': base_widgets.ProjectTypesWidget,
                     'placeholder': None,
-                    'description': u'Select the item\'s Shotgun type',
+                    'description': 'Select the item\'s Shotgun type',
                 },
                 2: {
-                    'name': u'ID',
-                    'key': u'shotgun_id',
+                    'name': 'ID',
+                    'key': 'shotgun_id',
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Shotgun Project ID, eg. \'123\'',
-                    'description': u'The Shotgun ID number this item is associated with. Eg. \'123\'.',
+                    'placeholder': 'Shotgun Project ID, eg. \'123\'',
+                    'description': 'The Shotgun ID number this item is associated with. Eg. \'123\'.',
                 },
                 3: {
-                    'name': u'Name',
-                    'key': u'shotgun_name',
+                    'name': 'Name',
+                    'key': 'shotgun_name',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': u'Shotgun project name, eg. \'MyProject\'',
-                    'description': u'The Shotgun project name',
+                    'placeholder': 'Shotgun project name, eg. \'MyProject\'',
+                    'description': 'The Shotgun project name',
                 },
             }
         }
     },
     4: {
-        'name': u'URLs',
-        'icon': u'',
+        'name': 'URLs',
+        'icon': '',
         'color': common.DARK_BG,
         'groups': {
             0: {
                 0: {
-                    'name': u'Primary',
-                    'key': u'url1',
+                    'name': 'Primary',
+                    'key': 'url1',
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'https://my.custom-url.com',
-                    'description': u'A custom url of the bookmarks, eg. https://sheets.google.com/123',
-                    'button': u'Visit',
+                    'description': 'A custom url of the bookmarks, eg. https://sheets.google.com/123',
+                    'button': 'Visit',
                 },
                 1: {
-                    'name': u'Secondary',
-                    'key': u'url2',
+                    'name': 'Secondary',
+                    'key': 'url2',
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'https://my.custom-url.com',
-                    'description': u'A custom url of the bookmarks, eg. https://sheets.google.com/123',
-                    'button': u'Visit',
+                    'description': 'A custom url of the bookmarks, eg. https://sheets.google.com/123',
+                    'button': 'Visit',
                 }
             }
         }
     },
     5: {
-        'name': u'Launcher',
-        'icon': u'',
+        'name': 'Launcher',
+        'icon': '',
         'color': common.DARK_BG,
         'groups': {
             0: {
                 0: {
-                    'name': u'Applications',
-                    'key': u'applications',
+                    'name': 'Applications',
+                    'key': 'applications',
                     'validator': None,
                     'widget': launcher.LauncherListWidget,
                     'placeholder': None,
-                    'description': u'Edit the list of applications (DCCs) this bookmark item uses.',
+                    'description': 'Edit the list of applications (DCCs) this bookmark item uses.',
                 },
             }
         }
     },
     6: {
-        'name': u'Database',
-        'icon': u'',
+        'name': 'Database',
+        'icon': '',
         'color': common.DARK_BG,
         'groups': {
             0: {
                 0: {
-                    'name': u'Created on:',
-                    'key': u'created',
+                    'name': 'Created on:',
+                    'key': 'created',
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'The time the database was created',
-                    'description': u'The time the database was created',
+                    'description': 'The time the database was created',
                 },
                 1: {
-                    'name': u'Created by user:',
-                    'key': u'user',
+                    'name': 'Created by user:',
+                    'key': 'user',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': u'The user the database was created by',
-                    'description': u'The user the database was created by',
+                    'placeholder': 'The user the database was created by',
+                    'description': 'The user the database was created by',
                 },
                 2: {
-                    'name': u'Created by host:',
-                    'key': u'host',
+                    'name': 'Created by host:',
+                    'key': 'host',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': u'The user the database was created by',
-                    'description': u'The user the database was created by',
+                    'placeholder': 'The user the database was created by',
+                    'description': 'The user the database was created by',
                 },
                 3: {
-                    'name': u'Bookmark Server:',
-                    'key': u'server',
+                    'name': 'Bookmark Server:',
+                    'key': 'server',
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'The bookmark\'s original server',
-                    'description': u'The bookmark\'s original server',
+                    'description': 'The bookmark\'s original server',
                 },
                 4: {
-                    'name': u'Bookmark Job:',
-                    'key': u'job',
+                    'name': 'Bookmark Job:',
+                    'key': 'job',
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'The bookmark\'s original job',
-                    'description': u'The bookmark\'s original job',
+                    'description': 'The bookmark\'s original job',
                 },
                 5: {
-                    'name': u'Bookmark Root:',
-                    'key': u'root',
+                    'name': 'Bookmark Root:',
+                    'key': 'root',
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'The bookmark\'s original job',
-                    'description': u'The bookmark\'s original job',
+                    'description': 'The bookmark\'s original job',
                 },
             }
         }
@@ -365,8 +365,8 @@ class BookmarkPropertiesWidget(base.PropertiesWidget):
             job,
             root,
             asset=None,
-            db_table=bookmark_db.BookmarkTable,
-            fallback_thumb=u'thumb_bookmark_gray',
+            db_table=database.BookmarkTable,
+            fallback_thumb='thumb_bookmark_gray',
             parent=parent
         )
 
@@ -378,7 +378,7 @@ class BookmarkPropertiesWidget(base.PropertiesWidget):
         self.thumbnailUpdated.connect(common.signals.thumbnailUpdated)
 
     def db_source(self):
-        return u'{}/{}/{}'.format(self.server, self.job, self.root)
+        return '{}/{}/{}'.format(self.server, self.job, self.root)
 
     def init_data(self):
         self._init_db_data()

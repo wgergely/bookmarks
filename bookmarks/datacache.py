@@ -1,4 +1,4 @@
-"""Used to store all file item data loaded by models accross our app.
+"""Used to store all file item data loaded by models across our app.
 
 """
 import weakref

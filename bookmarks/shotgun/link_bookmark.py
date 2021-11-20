@@ -7,7 +7,7 @@ The widets are used to link a Shotgun entity with a local item.
 from PySide2 import QtWidgets, QtCore, QtGui
 
 from .. import common
-from .. import bookmark_db
+from .. import database
 from . import shotgun
 from . import link
 from . import actions as sg_actions
@@ -40,17 +40,17 @@ value_map = {
     'shotgun_id': {
         'column': 'id',
         'overwrite': True,
-        'type': bookmark_db.TABLES[bookmark_db.BookmarkTable]['shotgun_id']['type'],
+        'type': database.TABLES[database.BookmarkTable]['shotgun_id']['type'],
     },
     'shotgun_name': {
         'column': 'name',
         'overwrite': True,
-        'type': bookmark_db.TABLES[bookmark_db.BookmarkTable]['shotgun_name']['type'],
+        'type': database.TABLES[database.BookmarkTable]['shotgun_name']['type'],
     },
     'shotgun_type': {
         'column': 'type',
         'overwrite': True,
-        'type': bookmark_db.TABLES[bookmark_db.BookmarkTable]['shotgun_type']['type'],
+        'type': database.TABLES[database.BookmarkTable]['shotgun_type']['type'],
     },
 }
 
@@ -63,10 +63,10 @@ class LinkBookmarkWidget(link.BaseLinkWidget):
     def db_source(self):
         if not all((self.server, self.job, self.root)):
             return None
-        return u'/'.join((self.server, self.job, self.root))
+        return '/'.join((self.server, self.job, self.root))
 
     def db_table(self):
-        return bookmark_db.BookmarkTable
+        return database.BookmarkTable
 
     def candidate(self):
         from .. import main

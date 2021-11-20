@@ -15,7 +15,7 @@ from .. import contextmenu
 
 THUMBNAIL_EDITOR_SIZE = common.MARGIN() * 10
 HEIGHT = common.ROW_HEIGHT() * 0.8
-TEMP_THUMBNAIL_PATH = u'{temp}/{product}/temp/{uuid}.{ext}'
+TEMP_THUMBNAIL_PATH = '{temp}/{product}/temp/{uuid}.{ext}'
 
 ProjectTypes = ('Project',)
 AssetTypes = ('Asset', 'Sequence', 'Shot')
@@ -27,7 +27,7 @@ def process_image(source):
     """Converts, resizes and loads an image file as a QImage.
 
     Args:
-        source (unicode): Path to an image file.
+        source (str): Path to an image file.
 
     Returns:
         QImage: The resized QImage, or `None` if the image was not processed successfully.
@@ -37,13 +37,13 @@ def process_image(source):
         temp=QtCore.QStandardPaths.writableLocation(
             QtCore.QStandardPaths.GenericDataLocation),
         product=common.PRODUCT,
-        uuid=uuid.uuid1().get_hex(),
+        uuid=uuid.uuid1().hex,
         ext=images.THUMBNAIL_FORMAT
     )
     f = QtCore.QFileInfo(destination)
     if not f.dir().exists():
-        if not f.dir().mkpath(u'.'):
-            raise RuntimeError(u'Could not create temp folder')
+        if not f.dir().mkpath('.'):
+            raise RuntimeError('Could not create temp folder')
 
     res = images.ImageCache.oiio_make_thumbnail(
         source,
@@ -52,7 +52,7 @@ def process_image(source):
     )
 
     if not res:
-        raise RuntimeError(u'Failed to convert the thumbnail')
+        raise RuntimeError('Failed to convert the thumbnail')
 
     images.ImageCache.flush(destination)
     image = images.ImageCache.get_image(
@@ -61,7 +61,7 @@ def process_image(source):
         force=True
     )
     if not image or image.isNull():
-        raise RuntimeError(u'Failed to load converted image')
+        raise RuntimeError('Failed to load converted image')
 
     if not QtCore.QFile(destination).remove():
         log.error('Could not remove temp image.')
@@ -87,11 +87,11 @@ class BaseComboBox(QtWidgets.QComboBox):
     def decorate_item(self, error=False):
         idx = self.count() - 1
         sg_pixmap = images.ImageCache.get_rsc_pixmap(
-            u'shotgun', common.SEPARATOR, common.MARGIN() * 2)
+            'shotgun', common.SEPARATOR, common.MARGIN() * 2)
         check_pixmap = images.ImageCache.get_rsc_pixmap(
-            u'check', common.GREEN, common.MARGIN() * 2)
+            'check', common.GREEN, common.MARGIN() * 2)
         error_pixmap = images.ImageCache.get_rsc_pixmap(
-            u'close', common.RED, common.MARGIN() * 2)
+            'close', common.RED, common.MARGIN() * 2)
 
         error_icon = QtGui.QIcon(error_pixmap)
 
@@ -132,24 +132,24 @@ class ThumbnailContextMenu(contextmenu.BaseContextMenu):
 
     def setup(self):
         add_pixmap = images.ImageCache.get_rsc_pixmap(
-            u'add', common.GREEN, common.MARGIN())
+            'add', common.GREEN, common.MARGIN())
         remove_pixmap = images.ImageCache.get_rsc_pixmap(
-            u'close', common.RED, common.MARGIN())
+            'close', common.RED, common.MARGIN())
 
-        self.menu[u'Capture...'] = {
-            u'icon': add_pixmap,
-            u'action': self.parent().capture
+        self.menu['Capture...'] = {
+            'icon': add_pixmap,
+            'action': self.parent().capture
         }
-        self.menu[u'Pick...'] = {
-            u'icon': add_pixmap,
-            u'action': self.parent().pick_image
+        self.menu['Pick...'] = {
+            'icon': add_pixmap,
+            'action': self.parent().pick_image
         }
 
         self.separator()
 
-        self.menu[u'Reset'] = {
-            u'icon': remove_pixmap,
-            u'action': self.parent().reset_image
+        self.menu['Reset'] = {
+            'icon': remove_pixmap,
+            'action': self.parent().reset_image
         }
 
 
@@ -158,12 +158,12 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
 
     """
 
-    def __init__(self, server, job, root, size=THUMBNAIL_EDITOR_SIZE, source=None, fallback_thumb=u'placeholder', parent=None):
+    def __init__(self, server, job, root, size=THUMBNAIL_EDITOR_SIZE, source=None, fallback_thumb='placeholder', parent=None):
         super(ThumbnailEditorWidget, self).__init__(
-            u'pick_image',
+            'pick_image',
             (common.BLUE, common.DARK_BG),
             size=size,
-            description=u'Drag-and-drop an image to add, click to capture, or right-click to pick a custom thumbnail...',
+            description='Drag-and-drop an image to add, click to capture, or right-click to pick a custom thumbnail...',
             parent=parent
         )
 
@@ -218,7 +218,7 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
             destination = images.get_cached_thumbnail_path(*args)
 
         if not self._image.save(destination):
-            raise RuntimeError(u'Failed to save thumbnail.')
+            raise RuntimeError('Failed to save thumbnail.')
 
         images.ImageCache.flush(destination)
 
@@ -301,10 +301,10 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
     def _paint_current_thumbnail(self, painter):
         if not all((self.server, self.job, self.root)):
             pixmap, color = images.get_thumbnail(
-                u'',
-                u'',
-                u'',
-                u'',
+                '',
+                '',
+                '',
+                '',
                 self.rect().height(),
                 fallback_thumb=self.fallback_thumb
             )
@@ -367,7 +367,7 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
             else:
                 self._paint_proposed_thumbnail(painter)
         except:
-            log.error(u'Error painting.')
+            log.error('Error painting.')
         finally:
             painter.end()
 

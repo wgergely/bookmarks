@@ -16,7 +16,7 @@ import _scandir
 from .. import log
 from .. import common
 from .. import images
-from .. import bookmark_db
+from .. import database
 from .. import datacache
 from ..shotgun import shotgun
 
@@ -59,7 +59,7 @@ def verify_thread_affinity():
 
     """
     if QtCore.QThread.currentThread() == QtWidgets.QApplication.instance().thread():
-        raise RuntimeError(u'Method cannot be called from the main gui thread')
+        raise RuntimeError('Method cannot be called from the main gui thread')
 
 
 def process(func):
@@ -104,10 +104,7 @@ def process(func):
 
             # Call process_data
             result = func(self, ref)
-
-            if not isinstance(result, bool):
-                raise TypeError(
-                    u'Invalid return value from process_data(). Expected <type \'bool\'>, got {}'.format(type(result)))
+            common.check_type(result, bool)
 
             # Let the models/views know the data has been processed ok and
             # and request a row repaint
@@ -150,15 +147,15 @@ class BaseWorker(QtCore.QObject):
     stopTimer = QtCore.Signal()
 
     updateRow = QtCore.Signal(weakref.ref)
-    databaseValueUpdated = QtCore.Signal(unicode, unicode, unicode, object)
+    databaseValueUpdated = QtCore.Signal(str, str, str, object)
 
-    shotgunEntityDataReady = QtCore.Signal(unicode, list)
+    shotgunEntityDataReady = QtCore.Signal(str, list)
 
     def __init__(self, queue, parent=None):
         super(BaseWorker, self).__init__(parent=parent)
 
-        self.setObjectName(u'{}Worker_{}'.format(
-            queue, uuid.uuid1().get_hex()))
+        self.setObjectName('{}Worker_{}'.format(
+            queue, uuid.uuid1().hex))
 
         self.interrupt = False
         self.queue_timer = None
@@ -179,7 +176,7 @@ class BaseWorker(QtCore.QObject):
 
         self.queue_timer = common.Timer(parent=self)
         self.queue_timer.setObjectName(
-            u'{}Timer_{}'.format(self.queue, uuid.uuid1().get_hex()))
+            '{}Timer_{}'.format(self.queue, uuid.uuid1().hex))
         self.queue_timer.setInterval(1)
 
         # Local direct worker signal connections
@@ -231,7 +228,7 @@ class BaseWorker(QtCore.QObject):
 
         Args:
             tab_type (idx): A tab type used to match the slot with the model type.
-            source (unicode): A file path.
+            source (str): A file path.
             role (int): An item role.
             v (object): The value to set.
 
@@ -430,13 +427,13 @@ class InfoWorker(BaseWorker):
                 k = ref()[QtCore.Qt.StatusTipRole]
 
             # Load values from the database
-            db = bookmark_db.get_db(pp[0], pp[1], pp[2])
+            db = database.get_db(pp[0], pp[1], pp[2])
             # Bookmark items
             if len(pp) == 3:
                 identifier = db.value(
                     db.source(),
-                    u'identifier',
-                    table=bookmark_db.BookmarkTable
+                    'identifier',
+                    table=database.BookmarkTable
                 )
                 count = self.count_assets(db.source(), identifier)
                 if not is_valid():
@@ -459,7 +456,7 @@ class InfoWorker(BaseWorker):
                 # the asset table. Well. This just means, I'll have to make
                 # sure I won't overwrite the previously retrieved bookmark
                 # description here.
-                v = db.value(k, u'description')
+                v = db.value(k, 'description')
                 if not is_valid():
                     return False
                 ref()[common.DescriptionRole] = v
@@ -478,10 +475,10 @@ class InfoWorker(BaseWorker):
             flags = ref()[
                 common.FlagsRole] | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsDragEnabled
 
-            v = db.value(k, u'flags', table=bookmark_db.AssetTable)
+            v = db.value(k, 'flags', table=database.AssetTable)
             if v:
                 flags = flags | v
-            v = db.value(proxy_k, u'flags', table=bookmark_db.AssetTable)
+            v = db.value(proxy_k, 'flags', table=database.AssetTable)
             if v:
                 flags = flags | v
 
@@ -506,23 +503,23 @@ class InfoWorker(BaseWorker):
                 seq = ref()[common.SequenceRole]
                 startpath = \
                     seq.group(1) + \
-                    unicode(min(intframes)).zfill(padding) + \
+                    str(min(intframes)).zfill(padding) + \
                     seq.group(3) + \
-                    u'.' + \
+                    '.' + \
                     seq.group(4)
                 endpath = \
                     seq.group(1) + \
-                    unicode(max(intframes)).zfill(padding) + \
+                    str(max(intframes)).zfill(padding) + \
                     seq.group(3) + \
-                    u'.' + \
+                    '.' + \
                     seq.group(4)
                 seqpath = \
                     seq.group(1) + \
                     common.SEQSTART + rangestring + common.SEQEND + \
                     seq.group(3) + \
-                    u'.' + \
+                    '.' + \
                     seq.group(4)
-                seqname = seqpath.split(u'/')[-1]
+                seqname = seqpath.split('/')[-1]
 
                 # Setting the path names
                 if not is_valid():
@@ -566,12 +563,12 @@ class InfoWorker(BaseWorker):
                     if not is_valid():
                         return False
                     info_string = \
-                        unicode(len(intframes)) + u'f;' + \
-                        mtime.toString(u'dd') + u'/' + \
-                        mtime.toString(u'MM') + u'/' + \
-                        mtime.toString(u'yyyy') + u' ' + \
-                        mtime.toString(u'hh') + u':' + \
-                        mtime.toString(u'mm') + u';' + \
+                        str(len(intframes)) + 'f;' + \
+                        mtime.toString('dd') + '/' + \
+                        mtime.toString('MM') + '/' + \
+                        mtime.toString('yyyy') + ' ' + \
+                        mtime.toString('hh') + ':' + \
+                        mtime.toString('mm') + ';' + \
                         self.byte_to_string(ref()[common.SortBySizeRole])
                     if not is_valid():
                         return False
@@ -590,11 +587,11 @@ class InfoWorker(BaseWorker):
                     mtime = common.qlast_modified(mtime)
                     ref()[common.SortBySizeRole] = stat.st_size
                     info_string = \
-                        mtime.toString(u'dd') + u'/' + \
-                        mtime.toString(u'MM') + u'/' + \
-                        mtime.toString(u'yyyy') + u' ' + \
-                        mtime.toString(u'hh') + u':' + \
-                        mtime.toString(u'mm') + u';' + \
+                        mtime.toString('dd') + '/' + \
+                        mtime.toString('MM') + '/' + \
+                        mtime.toString('yyyy') + ' ' + \
+                        mtime.toString('hh') + ':' + \
+                        mtime.toString('mm') + ';' + \
                         self.byte_to_string(ref()[common.SortBySizeRole])
                     if not is_valid():
                         return False
@@ -607,10 +604,10 @@ class InfoWorker(BaseWorker):
                 return False
             return True
         except OSError:
-            log.error(u'Failed to retrieve the bookmark.')
+            log.error('Failed to retrieve the bookmark.')
             return False
         except:
-            log.error(u'Error processing file info.')
+            log.error('Error processing file info.')
             return False
         finally:
             if ref():
@@ -618,7 +615,7 @@ class InfoWorker(BaseWorker):
 
 
     def count_todos(self, db, k):
-        v = db.value(k, u'notes')
+        v = db.value(k, 'notes')
         return len(v) if isinstance(v, dict) else 0
 
 
@@ -636,18 +633,18 @@ class InfoWorker(BaseWorker):
     def count_assets(path, ASSET_IDENTIFIER):
         n = 0
         for entry in _scandir.scandir(path):
-            if entry.name.startswith(u'.'):
+            if entry.name.startswith('.'):
                 continue
             if not entry.is_dir():
                 continue
 
-            filepath = entry.path.replace(u'\\', u'/')
+            filepath = entry.path.replace('\\', '/')
 
             if not ASSET_IDENTIFIER:
                 n += 1
                 continue
 
-            identifier = u'/'.join((filepath, ASSET_IDENTIFIER))
+            identifier = '/'.join((filepath, ASSET_IDENTIFIER))
             if not QtCore.QFileInfo(identifier).exists():
                 continue
             n += 1
@@ -661,30 +658,30 @@ class InfoWorker(BaseWorker):
         the bookmark.
 
         Args:
-            server (unicode):   Server name.
-            job (unicode):   Job name.
-            root (unicode):   Root folder name.
+            server (str):   Server name.
+            job (str):   Job name.
+            root (str):   Root folder name.
 
         Returns:
-            unicode:    The description of the bookmark.
+            str:    The description of the bookmark.
 
         """
-        BOOKMARK_DESCRIPTION = u'{description}{width}{height}{framerate}{prefix}'
-        sep = u'  |  '
+        BOOKMARK_DESCRIPTION = '{description}{width}{height}{framerate}{prefix}'
+        sep = '  |  '
         try:
             v = {}
             for k in ('description', 'width', 'height', 'framerate', 'prefix'):
-                _v = db.value(db.source(), k, table=bookmark_db.BookmarkTable)
+                _v = db.value(db.source(), k, table=database.BookmarkTable)
                 _v = _v if _v else None
                 v[k] = _v
 
-            description = v['description'] + sep if v['description'] else u''
-            width = v['width'] if (v['width'] and v['height']) else u''
-            height = u'x{}px'.format(v['height']) if (
-                v['width'] and v['height']) else u''
-            framerate = u'{}{}fps'.format(
-                sep, v['framerate']) if v['framerate'] else u''
-            prefix = u'{}{}'.format(sep, v['prefix']) if v['prefix'] else u''
+            description = v['description'] + sep if v['description'] else ''
+            width = v['width'] if (v['width'] and v['height']) else ''
+            height = 'x{}px'.format(v['height']) if (
+                v['width'] and v['height']) else ''
+            framerate = '{}{}fps'.format(
+                sep, v['framerate']) if v['framerate'] else ''
+            prefix = '{}{}'.format(sep, v['prefix']) if v['prefix'] else ''
 
             s = BOOKMARK_DESCRIPTION.format(
                 description=description,
@@ -697,26 +694,26 @@ class InfoWorker(BaseWorker):
             s = s.strip(sep).strip()  # pylint: disable=E1310
             return s
         except:
-            log.error(u'Error constructing description.')
-            return u''
+            log.error('Error constructing description.')
+            return ''
 
     @staticmethod
-    def byte_to_string(num, suffix=u'B'):
+    def byte_to_string(num, suffix='B'):
         """Converts a numeric byte value to a human readable string.
 
         Args:
             num (int):          The number of bytes.
-            suffix (unicode):   A custom suffix.
+            suffix (str):   A custom suffix.
 
         Returns:
-            unicode:            Human readable byte value.
+            str:            Human readable byte value.
 
         """
-        for unit in [u'', u'K', u'M', u'G', u'T', u'P', u'E', u'Z']:
+        for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
             if abs(num) < 1024.0:
                 return u"%3.1f%s%s" % (num, unit, suffix)
             num /= 1024.0
-        return u"%.1f%s%s" % (num, u'Yi', suffix)
+        return u"%.1f%s%s" % (num, 'Yi', suffix)
 
     @staticmethod
     def get_ranges(arr, padding):
@@ -728,14 +725,14 @@ class InfoWorker(BaseWorker):
             padding(int):    The number of leading zeros before the number.
 
         Returns:
-            unicode: A string representation of the given array.
+            str: A string representation of the given array.
 
         """
         arr = sorted(list(set(arr)))
         blocks = {}
         k = 0
         for idx, n in enumerate(arr):  # blocks
-            zfill = unicode(n).zfill(padding)
+            zfill = str(n).zfill(padding)
 
             if k not in blocks:
                 blocks[k] = []
@@ -744,7 +741,7 @@ class InfoWorker(BaseWorker):
             if idx + 1 != len(arr):
                 if arr[idx + 1] != n + 1:  # break coming up
                     k += 1
-        return u','.join([u'-'.join(sorted(list(set([blocks[k][0], blocks[k][-1]])))) for k in blocks])
+        return ','.join(['-'.join(sorted(list(set([blocks[k][0], blocks[k][-1]])))) for k in blocks])
 
 
 class ThumbnailWorker(BaseWorker):
@@ -817,7 +814,7 @@ class ThumbnailWorker(BaseWorker):
             if ref()[common.TypeRole] == common.SequenceItem:
                 if not is_valid():
                     return False
-                source = ref()[common.EntryRole][0].path.replace(u'\\', u'/')
+                source = ref()[common.EntryRole][0].path.replace('\\', '/')
 
             buf = images.oiio_get_buf(source)
             if not buf:
@@ -837,8 +834,8 @@ class ThumbnailWorker(BaseWorker):
 
             # We should never get here ideally, but if we do we'll mark the item
             # with a bespoke 'failed' thumbnail
-            fpath = u'{}/../rsc/{}/{}.{}'.format(
-                __file__, images.GuiResource, u'close_sm', images.THUMBNAIL_FORMAT)
+            fpath = '{}/../rsc/{}/{}.{}'.format(
+                __file__, images.GuiResource, 'close_sm', images.THUMBNAIL_FORMAT)
             res = images.ImageCache.oiio_make_thumbnail(
                 fpath,
                 destination,
@@ -852,7 +849,7 @@ class ThumbnailWorker(BaseWorker):
             return True
         except:
             ref()[common.ThumbnailLoaded] = True
-            log.error(u'Failed to generate thumbnail')
+            log.error('Failed to generate thumbnail')
             return False
 
 
@@ -895,7 +892,7 @@ class TaskFolderWorker(InfoWorker):
             except OSError:
                 is_dir = False
 
-            if entry.name.startswith(u'.'):
+            if entry.name.startswith('.'):
                 continue
 
             if not is_dir:
@@ -922,7 +919,7 @@ class TransactionsWorker(BaseWorker):
 
         try:
             args = threads.queue(self.queue).pop()
-            bookmark_db.set_flag(*args)
+            database.set_flag(*args)
         except IndexError:
             pass  # ignore index errors
 

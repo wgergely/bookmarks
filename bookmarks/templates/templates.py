@@ -139,7 +139,10 @@ class TemplateListWidget(ui.ListWidget):
     """
 
     def __init__(self, mode=JobTemplateMode, parent=None):
-        super(TemplateListWidget, self).__init__(parent=parent)
+        super(TemplateListWidget, self).__init__(
+            default_message='',
+            parent=parent
+        )
         self._mode = mode
 
         self._drag_in_progress = False
@@ -162,8 +165,7 @@ class TemplateListWidget(ui.ListWidget):
 
         common.signals.templatesChanged.connect(self.save_selected)
         common.signals.templatesChanged.connect(self.init_data)
-        common.signals.templatesChanged.connect(
-            self.restore_selected)
+        common.signals.templatesChanged.connect(self.restore_selected)
 
     @QtCore.Slot()
     def init_data(self):
@@ -217,14 +219,19 @@ class TemplateListWidget(ui.ListWidget):
 
     @QtCore.Slot()
     def save_selected(self):
-        """Save the current select to the local settings.
+        """Save the current selection to the local settings.
 
         """
         idx = self.currentRow()
+        if idx < 0:
+            return
+        item = self.item(idx)
+        if not item:
+            return
         settings.instance().setValue(
             settings.UIStateSection,
             '{}/{}'.format(self.__class__.__name__, self.mode()),
-            self.item(idx).data(QtCore.Qt.DisplayRole)
+            item.data(QtCore.Qt.DisplayRole)
         )
 
     @QtCore.Slot()

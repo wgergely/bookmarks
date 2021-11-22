@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-"""A list of common actions.
+"""Actions modules.
+
+A list common actions used across `Bookmarks`.
 
 """
 import re
@@ -18,48 +20,72 @@ from . import images
 
 
 def edit_persistent_bookmarks():
+    """Opens the `persistent_bookmarks.json`.
+
+    """
     execute(common.PERSISTENT_BOOKMARKS_SOURCE)
 
 
 def add_server(v):
+    """Add an item to the list of user specified servers.
+
+    Args:
+        v (str): A path to server, eg. `Q:/jobs`.
+
+    """
     # Disallow adding persistent servers
-    for k in common.PERSISTENT_BOOKMARKS:
-        if common.PERSISTENT_BOOKMARKS[k][settings.ServerKey] == v:
+    for bookmark in common.PERSISTENT_BOOKMARKS.values():
+        if bookmark[settings.ServerKey] == v:
             return
 
     servers = tuple(common.SERVERS) + (v,)
     settings.instance().set_servers(servers)
+
     common.signals.serversChanged.emit()
 
 
 def remove_server(v):
+    """Remove an item from the list of user specified servers.
+
+    Args:
+        v (str): A path to server, eg. `Q:/jobs`.
+
+    """
     # Disallow removing persistent servers
-    for k in common.PERSISTENT_BOOKMARKS:
-        if common.PERSISTENT_BOOKMARKS[k][settings.ServerKey] == v:
+    for bookmark in common.PERSISTENT_BOOKMARKS.values():
+        if bookmark[settings.ServerKey] == v:
             return
 
     servers = list(common.SERVERS)
     if v in servers:
         servers.remove(v)
     settings.instance().set_servers(servers)
+
     common.signals.serversChanged.emit()
 
 
-def add_bookmark(server, job, root, persistent=False):
+def add_bookmark(server, job, root):
     """Save the given bookmark in `local_settings`.
 
     Each bookmark is stored as dictionary entry:
 
     ..code-block:: python
 
-        {
-            '//server/jobs/Job1234/data/shots': {
+        bookmarks = {
+            '//server/jobs/MyFirstJob/data/shots': {
                 {
                     settings.ServerKey: '//server/jobs',
-                    settings.JobKey:  'Job1234',
+                    settings.JobKey:  'MyFirstJob',
                     settings.RootKey:  'data/shots'
                 }
             },
+            '//server/jobs/MySecondJob/data/shots': {
+                {
+                    settings.ServerKey: '//server/jobs',
+                    settings.JobKey:  'MySecondJob',
+                    settings.RootKey:  'data/shots'
+                }
+            }
         }
 
     Saved bookmarks can be retrieved using `settings.instance().get_bookmarks`
@@ -68,7 +94,6 @@ def add_bookmark(server, job, root, persistent=False):
         server (str): A path segment.
         job (str): A path segment.
         root (str): A path segment.
-        persistent (str): Adds the bookmark to our persistent bookmark list. Not implemented.
 
     """
     for arg in (server, job, root):
@@ -81,10 +106,10 @@ def add_bookmark(server, job, root, persistent=False):
         settings.RootKey: root
     }
     settings.instance().set_bookmarks(common.BOOKMARKS)
-    common.signals.bookmarksChanged.emit()
+    common.signals.bookmarkAdded.emit(server, job, root)
 
 
-def remove_bookmark(server, job, root, prompt=True):
+def remove_bookmark(server, job, root):
     """Remove the given bookmark from the settings file.
 
     Removing the bookmark will also close and delete the bookmarks' database.
@@ -98,26 +123,13 @@ def remove_bookmark(server, job, root, prompt=True):
     for arg in (server, job, root):
         common.check_type(arg, str)
 
+    # If the active bookmark is removed, make sure we're clearing the active
+    # bookmark. This will cause all models to reset so show the bookmark tab.
     if (
         settings.active(settings.ServerKey) == server and
         settings.active(settings.JobKey) == job and
         settings.active(settings.RootKey) == root
-    ) and not prompt:
-        return
-
-    if (
-        settings.active(settings.ServerKey) == server and
-        settings.active(settings.JobKey) == job and
-        settings.active(settings.RootKey) == root
-    ) and prompt:
-        from . import ui
-        mbox = ui.MessageBox(
-            'Are you sure you want to remove the active bookmark?',
-            buttons=[ui.OkButton, ui.CancelButton],
-        )
-        if mbox.exec_() == QtWidgets.QDialog.Rejected:
-            return
-
+    ):
         set_active(settings.ServerKey, None)
         change_tab(common.BookmarkTab)
 
@@ -126,12 +138,12 @@ def remove_bookmark(server, job, root, prompt=True):
 
     k = settings.bookmark_key(server, job, root)
     if k not in common.BOOKMARKS:
-        raise RuntimeError('Could not remove bookmark.',
-                           'Key does not seem to match any current bookmarks.')
+        raise RuntimeError(
+            'Key does not seem to match any current bookmarks.')
 
     del common.BOOKMARKS[k]
     settings.instance().set_bookmarks(common.BOOKMARKS)
-    common.signals.bookmarksChanged.emit()
+    common.signals.bookmarkRemoved.emit(server, job, root)
 
 
 def add_favourite(parent_paths, source):
@@ -282,7 +294,7 @@ def import_favourites(source=None):
                 # Let's write the thumbnails to disk
                 if file_info.fileName() in _zip.namelist():
                     root = '/'.join((server, job, root,
-                                      common.BOOKMARK_ROOT_DIR))
+                                     common.BOOKMARK_ROOT_DIR))
                     _zip.extract(
                         file_info.fileName(),
                         root
@@ -313,25 +325,19 @@ def import_favourites(source=None):
 
 
 def prune_bookmarks():
-    """Removes all invalid bookmarks from the current list."""
+    """Removes invalid bookmark items from the current set.
+
+    """
     if not common.BOOKMARKS:
         return
 
-    _valid = {}
-    _invalid = []
     for k, v in common.BOOKMARKS.items():
         if not QtCore.QFileInfo(k).exists():
-            _invalid.append(k)
-            continue
-        _valid[k] = v
-
-    # Nothing to do if all bookmarks are valid
-    if common.BOOKMARKS == _valid:
-        return
-
-    # Otherwise save the valid bookmarks and signal the changes
-    settings.instance().set_bookmarks(_valid)
-    common.signals.bookmarksChanged.emit()
+            remove_bookmark(
+                v[settings.ServerKey],
+                v[settings.JobKey],
+                v[settings.RootKey]
+            )
 
 
 def set_active(k, v):
@@ -1204,7 +1210,7 @@ def execute(index, first=False):
 @common.debug
 @common.error
 def test_slack_token(token):
-    from . import slack
+    from .external import slack
     client = slack.SlackClient(token)
     client.verify_token()
 
@@ -1502,3 +1508,11 @@ def import_asset_properties_from_json():
         raise
     finally:
         mbox.close()
+
+
+@common.debug
+@common.error
+@selection
+def convert_image_sequence(index):
+    from .external import ffmpeg_widget
+    ffmpeg_widget.show(index.data(QtCore.Qt.StatusTipRole))

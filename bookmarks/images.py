@@ -356,9 +356,9 @@ def oiio_get_buf(source, hash=None, force=False):
     """Check and load a source image with OpenImageIO's format reader.
 
     Args:
-        source (str):   Path to an OpenImageIO compatible image file.
-        hash (str):         Defaults to `None`.
-        force (bool):       When true, forces the buffer to be re-cached.
+        source (str):       Path to an OpenImageIO compatible image file.
+        hash (str):         Specify the hash manually, otherwise will be generated.
+        force (bool):       When `true`, forces the buffer to be re-cached.
 
     Returns:
         ImageBuf: An `ImageBuf` instance or `None` if the file is invalid.

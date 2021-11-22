@@ -80,7 +80,7 @@ class AddJobWidget(base.PropertiesWidget):
     buttons = ('Create', 'Cancel')
 
     def __init__(self, server, parent=None):
-        super(AddJobWidget, self).__init__(
+        super().__init__(
             SECTIONS,
             server,
             None,
@@ -89,6 +89,7 @@ class AddJobWidget(base.PropertiesWidget):
             db_table=None,
             fallback_thumb='folder_sm',
             buttons=self.buttons,
+            hide_thumbnail_editor=True,
             parent=parent
         )
 
@@ -119,20 +120,17 @@ class AddJobWidget(base.PropertiesWidget):
         # Create template and signal
         name = self.name_editor.text()
         self.template_editor.template_list_widget.create(name, self.server)
-        path = '{}/{}'.format(self.server, name)
+        path = f'{self.server}/{name}'
 
         if not QtCore.QFileInfo(path).exists():
             raise RuntimeError('Unknown error, could not find the new job.')
 
-        path += '/thumbnail.{}'.format(images.THUMBNAIL_FORMAT)
+        path += f'/thumbnail.{images.THUMBNAIL_FORMAT}'
         self.thumbnail_editor.save_image(destination=path)
 
-        ui.MessageBox(
-            '{} was successfully created.'.format(name),
-        ).open()
+        ui.MessageBox(f'{name} was successfully created.').open()
 
-        super(base.PropertiesWidget, self).done(
-            result)  # pylint: disable=E1003
+        return super(base.PropertiesWidget, self).done(result)  # pylint: disable=E1003
 
 
 class JobContextMenu(contextmenu.BaseContextMenu):
@@ -181,7 +179,7 @@ class JobListWidget(ui.ListWidget):
     jobChanged = QtCore.Signal(str, str)
 
     def __init__(self, parent=None):
-        super(JobListWidget, self).__init__(
+        super().__init__(
             default_message='No jobs found.',
             parent=parent
         )
@@ -210,19 +208,29 @@ class JobListWidget(ui.ListWidget):
         connect(shortcuts.AddItem, self.add)
 
     def _connect_signals(self):
-        super(JobListWidget, self)._connect_signals()
+        super()._connect_signals()
+
         self.selectionModel().selectionChanged.connect(self.save_current)
         self.selectionModel().selectionChanged.connect(self.emit_job_changed)
 
-        common.signals.bookmarksChanged.connect(self.update_status)
+        common.signals.bookmarkAdded.connect(self.update_status)
+        common.signals.bookmarkRemoved.connect(self.update_status)
+
         common.signals.templateExpanded.connect(self.init_data)
         common.signals.templateExpanded.connect(
             lambda x: self.restore_current(name=QtCore.QFileInfo(x).fileName())
         )
 
+    @QtCore.Slot()
     def update_status(self):
-        jobs = [f for f in common.BOOKMARKS.values()]
-        jobs = [f[settings.JobKey] for f in jobs]
+        """Checks each job to see if they have bookmarks added to the current bookmarks.
+        If so, we'll mark the item with a checkmark.
+
+        """
+        if not self.model():
+            return
+
+        jobs = [f[settings.JobKey] for f in common.BOOKMARKS.values()]
 
         for n in range(self.model().rowCount()):
             item = self.item(n)

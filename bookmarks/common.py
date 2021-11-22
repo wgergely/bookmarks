@@ -23,13 +23,17 @@ from PySide2 import QtGui, QtCore, QtWidgets
 
 from . import __name__ as module_name
 
-STANDALONE = True  # The current mode of bookmarks
+STANDALONE = True  # This must be set to `False` when Bookmarks runs embedded in a DCC.
 PRODUCT = module_name.title()
 ABOUT_URL = 'https://github.com/wgergely/bookmarks'
 BOOKMARK_ROOT_DIR = '.bookmark'
 BOOKMARK_ROOT_KEY = '{}_ROOT'.format(module_name.upper())
 
-DEBUG = False
+DEBUG = False # Print debug messages
+TYPECHECK = False # Check types
+
+DEFAULT_BOLD_FONT = 'bmRobotoBold'
+DEFAULT_MEDIUM_FONT = 'bmRobotoMedium'
 
 # Templates
 PERSISTENT_BOOKMARKS_SOURCE = os.path.abspath(f'{__file__}{os.path.sep}{os.pardir}{os.path.sep}rsc{os.path.sep}templates{os.path.sep}persistent_bookmarks.json')
@@ -170,7 +174,10 @@ class Signals(QtCore.QObject):
     databaseValueUpdated = QtCore.Signal(str, str, str, object)
 
     serversChanged = QtCore.Signal()
-    bookmarksChanged = QtCore.Signal()
+
+    bookmarkAdded = QtCore.Signal(str, str, str)
+    bookmarkRemoved = QtCore.Signal(str, str, str)
+
     favouritesChanged = QtCore.Signal()
 
     assetAdded = QtCore.Signal(str)
@@ -330,15 +337,18 @@ def get_visible_indexes(widget):
 
 
 def sort_data(ref, sortrole, sortorder):
+    check_type(sortrole, QtCore.Qt.ItemDataRole)
+    check_type(sortorder, bool)
+
     def sort_key(idx):
         # If SORT_WITH_BASENAME is `True` we'll use the base file name for sorting
-        if SORT_WITH_BASENAME and sortrole == SortByNameRole:
-            if isinstance(ref()[idx][sortrole], list):
-                return ref()[idx][sortrole][-1]
-        return ref()[idx][sortrole]
+        v = ref().__getitem__(idx)
+        if SORT_WITH_BASENAME and sortrole == SortByNameRole and isinstance(v[sortrole], list):
+            return v[sortrole][-1]
+        return v[sortrole]
 
     sorted_idxs = sorted(
-        ref(),
+        ref().keys(),
         key=sort_key,
         reverse=sortorder
     )
@@ -462,7 +472,7 @@ def error(func):
             if QtCore.QThread.currentThread() == QtWidgets.QApplication.instance().thread():
                 try:
                     if QtWidgets.QApplication.instance():
-                        ui.ErrorBox('An error occured.', e).open()
+                        ui.ErrorBox(info[1].__str__(), limit=1).open()
                     signals.showStatusBarMessage.emit(
                         'An error occured. See log for more details.')
                 except:
@@ -1025,7 +1035,8 @@ class FontDatabase(QtGui.QFontDatabase):
         if not QtWidgets.QApplication.instance():
             raise RuntimeError(
                 'FontDatabase must be created after a QApplication was initiated.')
-        super(FontDatabase, self).__init__(parent=parent)
+
+        super().__init__(parent=parent)
 
         self._metrics = {}
         self.add_custom_fonts()
@@ -1034,14 +1045,14 @@ class FontDatabase(QtGui.QFontDatabase):
         """Load the fonts used by Bookmarks to the font database.
 
         """
-        if 'bmRobotoMedium' in self.families():
+        if DEFAULT_MEDIUM_FONT in self.families():
             return
 
-        p = '{}/../rsc/fonts'.format(__file__)
+        p = f'{__file__}/../rsc/fonts'
         p = os.path.normpath(os.path.abspath(p))
 
         if not os.path.isdir(p):
-            raise OSError('{} could not be found'.format(p))
+            raise OSError(f'{p} could not be found')
 
         for entry in _scandir.scandir(p):
             if not entry.name.endswith('ttf'):
@@ -1056,26 +1067,34 @@ class FontDatabase(QtGui.QFontDatabase):
                     'Failed to add required font to the application')
 
     def primary_font(self, font_size):
-        """The primary font used by the application."""
+        """The primary font used by the application.
+
+        """
         if font_size in self.CACHE[PrimaryFontRole]:
             return self.CACHE[PrimaryFontRole][font_size]
-        font = self.font('bmRobotoBold', 'Bold', font_size)
-        if font.family() != 'bmRobotoBold':
+
+        font = self.font(DEFAULT_BOLD_FONT, 'Bold', font_size)
+        if font.family() != DEFAULT_BOLD_FONT:
             raise RuntimeError(
                 'Failed to add required font to the application')
+
         font.setPixelSize(font_size)
         metrics = QtGui.QFontMetrics(font)
         self.CACHE[PrimaryFontRole][font_size] = (font, metrics)
         return self.CACHE[PrimaryFontRole][font_size]
 
     def secondary_font(self, font_size=SMALL_FONT_SIZE()):
-        """The secondary font used by the application."""
+        """The secondary font used by the application.
+
+        """
         if font_size in self.CACHE[SecondaryFontRole]:
             return self.CACHE[SecondaryFontRole][font_size]
-        font = self.font('bmRobotoMedium', 'Medium', font_size)
-        if font.family() != 'bmRobotoMedium':
+
+        font = self.font(DEFAULT_MEDIUM_FONT, 'Medium', font_size)
+        if font.family() != DEFAULT_MEDIUM_FONT:
             raise RuntimeError(
                 'Failed to add required font to the application')
+
         font.setPixelSize(font_size)
         metrics = QtGui.QFontMetrics(font)
         self.CACHE[SecondaryFontRole][font_size] = (font, metrics)
@@ -1086,7 +1105,7 @@ class DataDict(dict):
     """Subclassed dict type for weakref compatibility."""
 
     def __init__(self, *args, **kwargs):
-        super(DataDict, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self._loaded = False
         self._refresh_needed = False
         self._data_type = None
@@ -1117,17 +1136,27 @@ class DataDict(dict):
 
 
 class Timer(QtCore.QTimer):
+    """A custom QTimer.
+
+    """
     def __init__(self, *args, **kwargs):
-        super(Timer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         TIMERS[repr(self)] = self
 
     def setObjectName(self, v):
         v = '{}_{}'.format(v, uuid.uuid1().hex)
-        super(Timer, self).setObjectName(v)
+        super().setObjectName(v)
 
 
 def get_path_to_executable(key):
-    """Get the path to an executable.
+    """Returns the path to an executable.
+
+    Args:
+        key (str):  The setting key to look up (one of setings.FFMpegKey, or
+                    settings.RVKey) or `None` if not found.
+
+    Returns:
+        str:        The path to the executable.
 
     """
     from . import settings
@@ -1138,29 +1167,24 @@ def get_path_to_executable(key):
     elif key == settings.RVKey:
         name = 'rv'
     else:
-        raise ValueError('Invalid key.')
+        raise ValueError('Unsupported key value.')
 
-    # First let's check if we have explicitly set a path to the executable
+    # First let's check if we have set explictily a path to an executable
     v = settings.instance().value(settings.SettingsSection, key)
-    if v is not None and QtCore.QFileInfo(v).exists():
+    if isinstance(v, str) and QtCore.QFileInfo(v).exists():
         return QtCore.QFileInfo(v).filePath()
 
-    # If we don't have any explicit paths, let's check our environment to see if
-    # we can find the executable there
+    # Otheriwse, let's check the environment
     if get_platform() == PlatformWindows:
-
-        # Parse only valid and unique paths
         paths = os.environ['PATH'].split(';')
-        paths = list(set([os.path.normpath(f).rstrip('\\')
-                     for f in paths if os.path.isdir(f)]))
+        paths = {os.path.normpath(f).rstrip('\\') for f in paths if os.path.isdir(f)}
 
         for path in paths:
             for entry in _scandir.scandir(path):
                 if entry.name.lower().startswith(name):
                     return QtCore.QFileInfo(entry.path).filePath()
 
-    # If the envinronment lookup fails there's nothing else to do, but to return
-    # nothing
+    # If the envinronment lookup fails too, we'll return nothing
     return None
 
 
@@ -1336,6 +1360,9 @@ def check_type(value, valid_type):
         valid_type (type or tuple): The valid type.
 
     """
+    if not TYPECHECK:
+        return
+
     try:
         it = iter(valid_type)
         for _type in it:

@@ -53,6 +53,7 @@ from .. import common
 from .. import ui
 from .. import images
 from .. import database
+from .. import settings
 from . import base_widgets
 
 
@@ -113,18 +114,26 @@ def add_section(icon, label, parent, color=None):
     return parent
 
 
+def _save_local_value(key, value):
+    settings.instance().setValue(
+        settings.CurrentUserPicksSection,
+        key,
+        value
+    )
+
+
 class PropertiesWidget(QtWidgets.QDialog):
-    """Base class for editing bookmark and asset properties.
+    """Base class for constructing a property editor widget.
 
     Args:
         sections (dict):        The data needed to construct the ui layout.
         server (unciode):       A server.
-        job (str):          A job.
-        root (str):         A root folder.
-        asset (str):        An optional asset. Defaults to `None`.
-        db_table (str):     An optional name of a bookmark database table.
-                                When `None`, the editor won't load or save data
-                                to the databse. Defaults to `None`.
+        job (str):              A job.
+        root (str):             A root folder.
+        asset (str):            An optional asset. Defaults to `None`.
+        db_table (str):         An optional name of a bookmark database table.
+                                When not `None`, the editor will load and save data
+                                to the database. Defaults to `None`.
         buttons (tuple):        Button labels. Defaults to `('Save', 'Cancel')`.
         alignment (int):        Text alignment. Defaults to `QtCore.Qt.AlignRight`.
         fallback_thumb (str): An rsc image name. Defaults to `'placeholder'`.
@@ -146,6 +155,7 @@ class PropertiesWidget(QtWidgets.QDialog):
         buttons=('Save', 'Cancel'),
         alignment=QtCore.Qt.AlignRight,
         fallback_thumb='placeholder',
+        hide_thumbnail_editor=False,
         parent=None
     ):
         common.check_type(sections, dict)
@@ -167,6 +177,7 @@ class PropertiesWidget(QtWidgets.QDialog):
         self.asset = asset
 
         self.thumbnail_editor = None
+        self._hide_thumbnail_editor = hide_thumbnail_editor
 
         if not self.parent():
             common.set_custom_stylesheet(self)
@@ -225,6 +236,9 @@ class PropertiesWidget(QtWidgets.QDialog):
         separator.setPixmap(pixmap)
 
         self.left_row = QtWidgets.QWidget(parent=self)
+        if self._hide_thumbnail_editor:
+            self.left_row.hide()
+
         self.left_row.setStyleSheet(
             'background-color: {};'.format(common.rgb(common.SEPARATOR)))
         QtWidgets.QHBoxLayout(self.left_row)
@@ -331,7 +345,8 @@ class PropertiesWidget(QtWidgets.QDialog):
 
                         if v['key'] is not None and self._db_table in database.TABLES and v['key'] in database.TABLES[self._db_table]:
                             _type = database.TABLES[self._db_table][v['key']]['type']
-                            self._connect_editor(v['key'], _type, editor)
+                            self._connect_editor_signals(
+                                v['key'], _type, editor)
 
                         if 'validator' in v and v['validator']:
                             if hasattr(editor, 'setValidator'):
@@ -396,7 +411,34 @@ class PropertiesWidget(QtWidgets.QDialog):
                                 )
                         row.layout().addWidget(button2, 0)
 
-    def _connect_editor(self, key, _type, editor):
+    def _add_buttons(self):
+        if not self._buttons:
+            return
+        h = common.ROW_HEIGHT()
+
+        self.save_button = ui.PaintedButton(
+            self._buttons[0], parent=self)
+        self.save_button.setFixedHeight(h)
+        self.cancel_button = ui.PaintedButton(
+            self._buttons[1], parent=self)
+        self.cancel_button.setFixedHeight(h)
+
+        row = ui.add_row(
+            None, padding=None, height=h * 2, parent=self.right_row)
+        row.layout().setAlignment(QtCore.Qt.AlignCenter)
+        row.layout().addSpacing(common.MARGIN())
+        row.layout().addWidget(self.save_button, 1)
+        row.layout().addWidget(self.cancel_button, 0)
+        row.layout().addSpacing(common.MARGIN())
+
+    def _connect_editor_signals(self, key, _type, editor):
+        """Utility method for connecting an editor's change signal to `data_changed`.
+
+        `data_changed` will save the changed current value internally. This data
+        later can be used, for instance, to save the changed values to the
+        database.
+
+        """
         if hasattr(editor, 'dataUpdated'):
             editor.dataUpdated.connect(
                 functools.partial(
@@ -434,31 +476,82 @@ class PropertiesWidget(QtWidgets.QDialog):
                 )
             )
 
-    def _add_buttons(self):
-        if not self._buttons:
-            return
-        h = common.ROW_HEIGHT()
-
-        self.save_button = ui.PaintedButton(
-            self._buttons[0], parent=self)
-        self.save_button.setFixedHeight(h)
-        self.cancel_button = ui.PaintedButton(
-            self._buttons[1], parent=self)
-        self.cancel_button.setFixedHeight(h)
-
-        row = ui.add_row(
-            None, padding=None, height=h * 2, parent=self.right_row)
-        row.layout().setAlignment(QtCore.Qt.AlignCenter)
-        row.layout().addSpacing(common.MARGIN())
-        row.layout().addWidget(self.save_button, 1)
-        row.layout().addWidget(self.cancel_button, 0)
-        row.layout().addSpacing(common.MARGIN())
-
     def _connect_signals(self):
         self.cancel_button.clicked.connect(
             lambda: self.done(QtWidgets.QDialog.Rejected))
         self.save_button.clicked.connect(
             lambda: self.done(QtWidgets.QDialog.Accepted))
+
+    def _connect_settings_save_signals(self, keys):
+        """Utility method for connecting editor signals to save their current
+        value in the user settings.
+
+        Args:
+            keys (tuple):   A list of editor keys that save their current value
+                            in the user settings.
+
+        """
+        for k in keys:
+            if not hasattr(self, k + '_editor'):
+                continue
+
+            editor = getattr(self, k + '_editor')
+
+            if hasattr(editor, 'currentTextChanged'):
+                signal = getattr(editor, 'currentTextChanged')
+            elif hasattr(editor, 'textChanged'):
+                signal = getattr(editor, 'textChanged')
+            elif hasattr(editor, 'stateChanged'):
+                signal = getattr(editor, 'stateChanged')
+            else:
+                continue
+
+            signal.connect(functools.partial(_save_local_value, k))
+
+    def _load_setting_values(self, keys):
+        """Utilty method will load values from the user setting  and apply
+        it to the corresponding editors.
+
+        Args:
+            keys (tuple):   A list of editor keys that save their current value
+                            in the user settings.
+
+        """
+        for k in keys:
+            if not hasattr(self, k + '_editor'):
+                continue
+
+            v = settings.instance().value(
+                settings.CurrentUserPicksSection,
+                k
+            )
+            if not v:
+                continue
+
+            editor = getattr(self, k + '_editor')
+
+            if hasattr(editor, 'setCurrentText'):
+                if not isinstance(v, str):
+                    continue
+                editor.blockSignals(True)
+                editor.setCurrentText(v)
+                editor.blockSignals(False)
+
+            if hasattr(editor, 'setText') and not hasattr(editor, 'setCheckState'):
+                if not isinstance(v, str):
+                    continue
+                editor.blockSignals(True)
+                editor.setText(v)
+                editor.blockSignals(False)
+
+            if hasattr(editor, 'setCheckState'):
+                if not isinstance(v, (int, QtCore.Qt.CheckState)):
+                    continue
+                editor.blockSignals(True)
+                editor.setCheckState(QtCore.Qt.CheckState(v))
+                editor.blockSignals(False)
+            else:
+                continue
 
     @QtCore.Slot()
     def set_thumbnail_source(self):
@@ -474,41 +567,57 @@ class PropertiesWidget(QtWidgets.QDialog):
             self.thumbnail_editor.update()
 
     def _init_db_data(self):
-        """Loads the current values form the bookmark database.
+        """Utility method will load data from the specified bookmark database.
+
+        To be able to load data, the `_db_table`, `server`, `job` and `root`
+        values must all be specified.
+
+        Call this method from `init_data()` when the editor is used to edit
+        database values.
 
         """
-        if self._db_table is None or self._db_table not in database.TABLES:
-            raise RuntimeError('Invalid database table.')
+        if not all((self._db_table, self.server, self.job, self.root)):
+            raise RuntimeError(
+                'To load data fomr the database, the `table`, `server`, `job`, `root` must all be specified.')
+        if self._db_table not in database.TABLES:
+            raise RuntimeError(
+                f'"{self._db_table}" is not a valid database table.')
 
         db = database.get_db(self.server, self.job, self.root)
         for k in database.TABLES[self._db_table]:
+            # Skip items that don't have editors
             if not hasattr(self, k + '_editor'):
                 continue
 
-            # If the source is not specified we won't be able to load data
-            # from the database
+            # If the source is not returning a valid value we won't  be able to
+            # load data from the database.
             if self.db_source() is None:
                 self.current_data[k] = None
                 continue
 
             editor = getattr(self, k + '_editor')
-
             v = db.value(self.db_source(), k, table=self._db_table)
             if v is not None:
 
-                # Type verification
+                # Make sure the type loaded from the database maches the required type
                 for section in self._sections.values():
                     for group in section['groups'].values():
                         for item in group.values():
                             if item['key'] != k:
                                 continue
+
+                            # Get the required type
                             _type = database.TABLES[self._db_table][item['key']]['type']
+
+                            if isinstance(v, _type):
+                                continue  # Nothing to do if already the right type
+
                             try:
                                 v = _type(v)
                             except Exception as e:
                                 log.error(e)
-                            break
 
+            # Add value to `current_data`
             if k not in self.current_data:
                 self.current_data[k] = v
 
@@ -546,9 +655,23 @@ class PropertiesWidget(QtWidgets.QDialog):
                 editor.setText(v)
 
     def _save_db_data(self):
-        if self._db_table is None or self._db_table not in database.TABLES:
-            raise RuntimeError('Invalid database table.')
+        """Utility method will save data to the specified bookmark database.
 
+        To be able to save data, the `_db_table`, `server`, `job` and `root`
+        values must all be specified.
+
+        Call this method from `save_data()` when the editor is used to edit
+        database values.
+
+        """
+        if not all((self._db_table, self.server, self.job, self.root)):
+            raise RuntimeError(
+                'To load data fomr the database, the `table`, `server`, `job`, `root` must all be specified.')
+        if self._db_table not in database.TABLES:
+            raise RuntimeError(
+                f'"{self._db_table}" is not a valid database table.')
+
+        # Can't save if db_source is not returning a valid value
         if self.db_source() is None:
             return
 
@@ -575,7 +698,9 @@ class PropertiesWidget(QtWidgets.QDialog):
             editor (QWidget):       The editor widget.
 
         """
-        if _type is not None and v is not isinstance(v, _type) and v != '':
+        if v == '':
+            v = None
+        elif _type is not None and v is not isinstance(v, _type) and v != '':
             try:
                 v = _type(v)
             except:

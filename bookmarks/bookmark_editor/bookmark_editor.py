@@ -31,7 +31,8 @@ class BookmarkContextMenu(contextmenu.BaseContextMenu):
         self.refresh_menu()
 
     def add_menu(self):
-        self.menu['Add Bookmark...'] = {
+        self.menu[contextmenu.key()] = {
+            'text': 'Pick a new folder to use as a Bookmark...',
             'action': self.parent().add,
             'icon': self.get_icon('add', color=common.GREEN)
         }
@@ -100,27 +101,46 @@ class BookmarkListWidget(ui.ListWidget):
         connect(shortcuts.AddItem, self.add)
 
     def _connect_signals(self):
-        super(BookmarkListWidget, self)._connect_signals()
-        self.itemClicked.connect(self.toggle_item_state)
+        super()._connect_signals()
         self.itemActivated.connect(self.toggle_item_state)
+        self.itemChanged.connect(self.item_changed)
 
     @QtCore.Slot(QtWidgets.QListWidgetItem)
-    def toggle_item_state(self, item):
+    def item_changed(self, item):
         if item.checkState() == QtCore.Qt.Checked:
-            item.setCheckState(QtCore.Qt.Unchecked)
+            actions.add_bookmark(
+                self.server,
+                self.job,
+                item.data(QtCore.Qt.DisplayRole)
+            )
+        elif item.checkState() == QtCore.Qt.Unchecked:
             actions.remove_bookmark(
                 self.server,
                 self.job,
                 item.data(QtCore.Qt.DisplayRole)
             )
 
+    @QtCore.Slot(QtWidgets.QListWidgetItem)
+    def toggle_item_state(self, item, onlyflag=False):
+        if item.checkState() == QtCore.Qt.Checked:
+            item.setCheckState(QtCore.Qt.Unchecked)
+
+            if onlyflag is False:
+                actions.remove_bookmark(
+                    self.server,
+                    self.job,
+                    item.data(QtCore.Qt.DisplayRole)
+                )
+
         elif item.checkState() == QtCore.Qt.Unchecked:
             item.setCheckState(QtCore.Qt.Checked)
-            actions.add_bookmark(
-                self.server,
-                self.job,
-                item.data(QtCore.Qt.DisplayRole)
-            )
+
+            if onlyflag is False:
+                actions.add_bookmark(
+                    self.server,
+                    self.job,
+                    item.data(QtCore.Qt.DisplayRole)
+                )
 
     @common.debug
     @common.error
@@ -165,8 +185,8 @@ class BookmarkListWidget(ui.ListWidget):
             common.MARGIN() * 2
         )
         item.setSizeHint(size)
-        self.insertItem(self.count(), item)
         self.set_item_state(item)
+        self.insertItem(self.count(), item)
         self.setCurrentItem(item)
 
     def contextMenuEvent(self, event):
@@ -210,10 +230,9 @@ class BookmarkListWidget(ui.ListWidget):
             item = QtWidgets.QListWidgetItem()
             item.setFlags(
                 QtCore.Qt.ItemIsEnabled |
-                # QtCore.Qt.ItemIsSelectable |
+                QtCore.Qt.ItemIsSelectable |
                 QtCore.Qt.ItemIsUserCheckable
             )
-            item.setCheckState(QtCore.Qt.Unchecked)
             name = d.split(self.job)[-1].strip('/').strip('\\')
             item.setData(QtCore.Qt.DisplayRole, name)
             item.setData(QtCore.Qt.UserRole, d)
@@ -222,8 +241,8 @@ class BookmarkListWidget(ui.ListWidget):
                 common.MARGIN() * 2
             )
             item.setSizeHint(size)
-            self.insertItem(self.count(), item)
             self.set_item_state(item)
+            self.insertItem(self.count(), item)
 
         self.loaded.emit()
 
@@ -236,30 +255,12 @@ class BookmarkListWidget(ui.ListWidget):
             item(QtWidgets.QListWidgetItem):    The item to check.
 
         """
-        from . import job_editor
-        pixmap = job_editor.get_job_thumbnail(self.server + '/' + self.job)
-
-        if item.data(QtCore.Qt.UserRole) in [f for f in common.BOOKMARKS]:
+        self.blockSignals(True)
+        if item.data(QtCore.Qt.UserRole) in list(common.BOOKMARKS):
             item.setCheckState(QtCore.Qt.Checked)
-
-            if pixmap.isNull():
-                pixmap = images.ImageCache.get_rsc_pixmap(
-                    'check', common.GREEN, common.ROW_HEIGHT() * 0.8)
-
         else:
             item.setCheckState(QtCore.Qt.Unchecked)
-
-            if pixmap.isNull():
-                pixmap = images.ImageCache.get_rsc_pixmap(
-                    'close', common.DARK_BG, common.ROW_HEIGHT() * 0.8)
-
-        icon = QtGui.QIcon()
-
-        icon.addPixmap(pixmap, QtGui.QIcon.Normal)
-        icon.addPixmap(pixmap, QtGui.QIcon.Selected)
-        icon.addPixmap(pixmap, QtGui.QIcon.Active)
-        icon.addPixmap(pixmap, QtGui.QIcon.Disabled)
-        item.setData(QtCore.Qt.DecorationRole, icon)
+        self.blockSignals(False)
 
     def keyPressEvent(self, event):
         if event.key() == QtCore.Qt.Key_Escape:

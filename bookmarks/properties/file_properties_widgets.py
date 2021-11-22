@@ -276,12 +276,16 @@ class TaskModel(BaseModel):
         if not k or not QtCore.QFileInfo(k).exists():
             return
 
-        # Load the available task folders from the active bookmark item's
-        # asset config.
+        # Load the available task folders from the active bookmark item's `asset_config`.
         config = asset_config.get(*_active(3, join=False))
         data = config.data()
         if not isinstance(data, dict):
             return
+
+        current_folder = settings.instance().value(
+            settings.CurrentUserPicksSection,
+            'task'
+        )
 
         for v in sorted(data[asset_config.AssetFolderConfig].values(), key=lambda x: x['value']):
             if v['name'] != self._mode:
@@ -289,10 +293,6 @@ class TaskModel(BaseModel):
             if 'subfolders' not in v:
                 continue
 
-            current_folder = settings.instance().value(
-                settings.FileSaverSection,
-                settings.CurrentFolderKey
-            )
             for _v in sorted(v['subfolders'].values(), key=lambda x: x['value']):
                 if current_folder == _v['value']:
                     pixmap = images.ImageCache.get_rsc_pixmap(
@@ -312,24 +312,6 @@ class TaskModel(BaseModel):
                     QtCore.Qt.AccessibleDescriptionRole: _v['description'],
                     QtCore.Qt.WhatsThisRole: _v['description'],
                     QtCore.Qt.ToolTipRole: _v['description'],
-                    QtCore.Qt.UserRole: name,
-                }
-
-            k = active_task()
-            if not k:
-                return
-            name = k.replace(active_asset(), '').strip('/')
-            description = 'Active task folder'
-            if not [f for f in self._data if self._data[f][QtCore.Qt.DisplayRole] == name]:
-                self._data[len(self._data)] = {
-                    QtCore.Qt.DisplayRole: self.display_name(name),
-                    QtCore.Qt.DecorationRole: active_icon(),
-                    QtCore.Qt.ForegroundRole: common.SELECTED_TEXT,
-                    QtCore.Qt.SizeHintRole: ROW_SIZE,
-                    QtCore.Qt.StatusTipRole: description,
-                    QtCore.Qt.AccessibleDescriptionRole: description,
-                    QtCore.Qt.WhatsThisRole: description,
-                    QtCore.Qt.ToolTipRole: description,
                     QtCore.Qt.UserRole: name,
                 }
 

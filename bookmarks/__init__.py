@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-"""Initilization script.
+"""Welcome to Bookmarks!
 
-Bookmarks is a simple asset manager used in VFX/Animation productions, intended
-to help to browse and annotate shots, assets and project files.
+Bookmarks is a simple asset manager designed to assist VFX/Animation productions.
+It can help you create, browse, annotate shot, assets and project files.
 
-It was written in Python and can run as a standalone PySide2 application or run
-embedded in a compatible host application (Note: only Maya has a plugin thus
-far).
+The project was written in Python and can run as a standalone PySide2
+application or run embedded in a compatible host application (note, only Maya
+has a plugin thus far).
 
 
 Requirements
@@ -30,6 +30,7 @@ import importlib
 import traceback
 import platform
 
+
 __author__ = 'Gergely Wootsch'
 __website__ = 'https://gergely-wootsch.com'
 __email__ = 'hello@gergely-wootsch.com'
@@ -46,12 +47,18 @@ __dependencies__ = (
 )
 
 
+# Python 2 support has been dropped and the code base only supports Python 3.
 if sys.version_info[0] < 3 and sys.version_info[1] < 6:
     raise RuntimeError('Bookmarks requires Python 3.6.0 or later.')
 
 
-
 def get_info():
+    """Returns an informative string about found library dependencies.
+
+    Returns:
+        str: An informative string of library versions.
+
+    """
     py_ver = platform.python_version()
     py_c = platform.python_compiler()
     oiio_ver = importlib.import_module('OpenImageIO').__version__
@@ -76,11 +83,18 @@ def get_info():
 
 
 def verify_dependecies():
+    """Checks the presence of all required python modules.
+
+    Raises:
+        ModuleNotFoundError: When a required python library was not found.
+
+    """
     for mod in __dependencies__:
         try:
             importlib.import_module(mod)
         except ModuleNotFoundError as e:
-            raise ModuleNotFoundError(f'Bookmarks cannot be run. A required dependency was not found\n>>   {mod}')
+            raise ModuleNotFoundError(
+                f'Bookmarks cannot be run. A required dependency was not found\n>> {mod}') from e
 
 
 def exec_():

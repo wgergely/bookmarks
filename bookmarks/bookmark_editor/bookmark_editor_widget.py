@@ -70,7 +70,7 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         self.persistent_bookmarks_button = None
 
         self.setObjectName('BookmarksEditorWidget')
-        self.setWindowTitle('Add Bookmarks')
+        self.setWindowTitle('Edit Bookmarks')
 
         self._create_ui()
         self._connect_signals()
@@ -79,18 +79,18 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         common.set_custom_stylesheet(self)
         QtWidgets.QVBoxLayout(self)
 
-        o = common.MARGIN()
+        o = common.MARGIN() * 0.66
         self.layout().setContentsMargins(0, o, 0, o)
         self.layout().setSpacing(0)
 
-        h = common.ROW_HEIGHT()
+        h = common.ROW_HEIGHT() * 0.66
 
         _label = QtWidgets.QLabel(parent=self)
         pixmap = images.ImageCache.get_rsc_pixmap(
             'bookmark', common.SEPARATOR, h * 0.8)
         _label.setPixmap(pixmap)
         label = ui.PaintedLabel(
-            'Add Bookmarks',
+            'Edit Bookmarks',
             size=common.LARGE_FONT_SIZE(),
             color=common.TEXT,
             parent=self
@@ -148,16 +148,16 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         )
         self.server_editor = server_editor.ServerListWidget(parent=grp)
         self.server_add_button = ui.ClickableIconButton(
-            'add_circle',
+            'CopyAction',
             (common.GREEN, common.SELECTED_TEXT),
             common.ROW_HEIGHT() * 0.66,
             description='Add Server',
             state=True,
             parent=self
         )
+        _row.layout().addWidget(self.server_add_button)
         _row.layout().addWidget(label, 0)
         _row.layout().addStretch(1)
-        _row.layout().addWidget(self.server_add_button)
         grp.layout().addWidget(self.server_editor, 1)
 
         # =====================================================
@@ -184,15 +184,16 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
 
         self.job_editor = job_editor.JobListWidget(parent=self)
         self.job_add_button = ui.ClickableIconButton(
-            'add_circle',
-            (common.GREEN, common.GREEN),
+            'CopyAction',
+            (common.GREEN, common.SELECTED_TEXT),
             common.ROW_HEIGHT() * 0.66,
-            description='Add Job',
+            description='Add Server',
+            state=True,
             parent=self
         )
+        _row.layout().addWidget(self.job_add_button)
         _row.layout().addWidget(label, 0)
         _row.layout().addStretch(1)
-        _row.layout().addWidget(self.job_add_button)
         grp.layout().addWidget(self.job_editor, 1)
 
         # =====================================================
@@ -218,16 +219,17 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
 
         self.bookmark_editor = bookmark_editor.BookmarkListWidget(parent=self)
         self.bookmark_add_button = ui.ClickableIconButton(
-            'add_circle',
-            (common.GREEN, common.GREEN),
+            'CopyAction',
+            (common.GREEN, common.SELECTED_TEXT),
             common.ROW_HEIGHT() * 0.66,
-            description='Add Bookmark',
+            description='Add Server',
+            state=True,
             parent=self
         )
 
+        _row.layout().addWidget(self.bookmark_add_button)
         _row.layout().addWidget(label, 0)
         _row.layout().addStretch(1)
-        _row.layout().addWidget(self.bookmark_add_button)
         grp.layout().addWidget(self.bookmark_editor, 1)
 
         # =====================================================
@@ -287,6 +289,8 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         self.job_editor.jobChanged.connect(self.job_editor.update_status)
 
         self.persistent_bookmarks_button.clicked.connect(actions.edit_persistent_bookmarks)
+
+        common.signals.bookmarkRemoved.connect(self.bookmark_editor.init_data)
 
     def init_data(self):
         self.server_editor.init_data()

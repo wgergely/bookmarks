@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """The module contains the definition of `FilePropertiesWidget`, the main
-widget used by Bookmarks to add template files.
+widget used by Bookmarks to create versioned template files.
 
 The suggested save destination will be partially dependent on the extension
 selected, the current asset config values as well as the active bookmark and
@@ -9,10 +9,12 @@ asset items.
 File Name
 ---------
 
-    The editor widgets defined in `file_properties.widget.py` are used to edit
-    values needed to expand the tokens of in the file name
-    templates. See the `asset_config.py` and `bookmark_properties_widget.py`
-    modules for more information.
+    The final file name is generated from a filename template. The editor
+    widgets defined in `file_properties_widgets.py` are used to edit the values
+    needed to expand the tokens of in the selected file name template.
+
+    See the `asset_config.py` and `bookmark_properties_widget.py` modules for
+    more information.
 
 
 Example
@@ -31,7 +33,6 @@ Example
 """
 import re
 import os
-import functools
 import _scandir
 
 from PySide2 import QtWidgets, QtGui, QtCore
@@ -80,10 +81,10 @@ def show(server, job, root, asset, extension=None, file=None, create_file=True, 
     return instance
 
 
-LOCAL_KEYS = (
-    'folder',
+SETTING_KEYS = (
+    'task',
     'element',
-    'version',
+    # 'version',
     'extension',
     'user',
     'template'
@@ -92,7 +93,7 @@ LOCAL_KEYS = (
 INACTIVE_KEYS = (
     'bookmark',
     'asset',
-    'folder',
+    'task',
     'prefix',
     'element',
     'version',
@@ -115,7 +116,7 @@ SECTIONS = {
                     'validator': None,
                     'widget': file_properties_widgets.BookmarkComboBox,
                     'placeholder': None,
-                    'description': 'The job\'s name, eg. \'MY_NEW_JOB\'.',
+                    'description': 'The current bookmark item.',
                 },
                 1: {
                     'name': 'Asset',
@@ -123,15 +124,15 @@ SECTIONS = {
                     'validator': None,
                     'widget': file_properties_widgets.AssetComboBox,
                     'placeholder': None,
-                    'description': 'The job\'s name, eg. \'MY_NEW_JOB\'.',
+                    'description': 'The current asset item.',
                 },
                 2: {
                     'name': 'Task',
-                    'key': 'folder',
+                    'key': 'task',
                     'validator': None,
                     'widget': file_properties_widgets.TaskComboBox,
                     'placeholder': None,
-                    'description': 'The job\'s name, eg. \'MY_NEW_JOB\'.',
+                    'description': 'The current task item.',
                     'button': 'Pick'
                 },
             },
@@ -141,7 +142,7 @@ SECTIONS = {
                     'key': 'description',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': 'A short description, eg. \'My animation re-take\'',
+                    'placeholder': 'A short description, eg. \'Compositing files\'',
                     'description': 'A short description of the file\'s contents.\nIndicate significant changes and notes here.',
                 },
             },
@@ -160,8 +161,8 @@ SECTIONS = {
                     'key': 'element',
                     'validator': base.textvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': 'Element being saved, eg. \'Tower\'',
-                    'description': 'The name of the element being saved. Eg., \'ForegroundTower\', or \'Precomp\'',
+                    'placeholder': 'The element being saved, eg. \'CastleInterior\'',
+                    'description': 'The name of the element being saved. Eg., \'ForegroundTower\', or \'BackgroundElements\'',
                 },
                 2: {
                     'name': 'Version',
@@ -219,19 +220,19 @@ SECTIONS = {
 
 
 class FilePropertiesWidget(base.PropertiesWidget):
-    """The widget used to create file name template compliant files.
+    """The main widget used to create template files.
 
     """
 
     def __init__(self, server, job, root, asset, extension=None, file=None, create_file=True, increment=False, parent=None):
-        super(FilePropertiesWidget, self).__init__(
+        super().__init__(
             SECTIONS,
             server,
             job,
             root,
             asset=asset,
             alignment=QtCore.Qt.AlignLeft,
-            fallback_thumb='file_sm',
+            fallback_thumb='file',
             db_table=database.AssetTable,
             parent=parent
         )
@@ -257,8 +258,8 @@ class FilePropertiesWidget(base.PropertiesWidget):
         self.update_timer.timeout.connect(self.set_name)
         self.update_timer.timeout.connect(self.set_thumbnail_source)
 
-        if settings.ACTIVE[settings.TaskKey] is not None:
-            self.add_task(settings.ACTIVE[settings.TaskKey])
+        # if settings.ACTIVE[settings.TaskKey] is not None:
+        #     self.add_task(settings.ACTIVE[settings.TaskKey])
 
     def file_path(self):
         return self._file_path
@@ -307,23 +308,9 @@ class FilePropertiesWidget(base.PropertiesWidget):
 
         self.filename_editor.setText(QtCore.QFileInfo(file).fileName())
 
-    def _connect(self, k):
-        if not hasattr(self, k + '_editor'):
-            return
-        editor = getattr(self, k + '_editor')
-        if hasattr(editor, 'currentTextChanged'):
-            signal = getattr(editor, 'currentTextChanged')
-        elif hasattr(editor, 'textChanged'):
-            signal = getattr(editor, 'textChanged')
-        else:
-            return
-        signal.connect(functools.partial(self.save_local_value, k))
-
     def _connect_signals(self):
         super(FilePropertiesWidget, self)._connect_signals()
-
-        for k in LOCAL_KEYS:
-            self._connect(k)
+        self._connect_settings_save_signals(SETTING_KEYS)
 
     def name(self):
         return self.filename_editor.text()
@@ -384,8 +371,8 @@ class FilePropertiesWidget(base.PropertiesWidget):
             asset=_get('asset'),
             user=_get('user'),
             version=_get('version').lower(),
-            task=_get('folder'),
-            mode=_get('folder'),
+            task=_get('task'),
+            mode=_get('task'),
             element=_get('element'),
             seq=seq,
             shot=shot,
@@ -423,7 +410,7 @@ class FilePropertiesWidget(base.PropertiesWidget):
         if self._file:
             return QtCore.QFileInfo(self._file).dir().path()
 
-        folder = self.folder_editor.currentData(QtCore.Qt.UserRole)
+        folder = self.task_editor.currentData(QtCore.Qt.UserRole)
         if not folder:
             return None
         return '/'.join((self.server, self.job, self.root, self.asset, folder))
@@ -439,36 +426,13 @@ class FilePropertiesWidget(base.PropertiesWidget):
             return None
         return self.parent_folder() + '/' + self.name()
 
-    def _set_local_value(self, k):
-        v = settings.instance().value(
-            settings.CurrentUserPicksSection,
-            k
-        )
-        if not isinstance(v, str):
-            return
-        if not v:
-            return
-        if not hasattr(self, k + '_editor'):
-            return
-        editor = getattr(self, k + '_editor')
-        if hasattr(editor, 'setCurrentText'):
-            editor.blockSignals(True)
-            editor.setCurrentText(v)
-            editor.blockSignals(False)
-        elif hasattr(editor, 'setText'):
-            editor.blockSignals(True)
-            editor.setText(v)
-            editor.blockSignals(False)
-        else:
-            return
-
     @common.error
     @common.debug
     def init_data(self):
-        """Initialises the default values of each editor.
+        """Initialises values of each editor.
 
-        Some values are retrieved by the context the widget was called, and some
-        are loaded from `local_settings` if the user has set a custom value
+        Some values are retrieved by the context the widget was called in, and
+        some are loaded from the user settings if the user saved a custom value
         previously.
 
         """
@@ -485,9 +449,9 @@ class FilePropertiesWidget(base.PropertiesWidget):
             self.user_editor.setText(common.get_username())
         self.user_editor.blockSignals(False)
 
+        # Load previously set values from the user settings file
         if self._file is None:
-            for k in LOCAL_KEYS:
-                self._set_local_value(k)
+            self._load_setting_values(SETTING_KEYS)
 
         # Prefix
         self.prefix_editor.setReadOnly(True)
@@ -504,12 +468,15 @@ class FilePropertiesWidget(base.PropertiesWidget):
         if self._extension and self._file is None:
             self.extension_editor.setCurrentText(self._extension.upper())
             self.extension_editor.setDisabled(True)
-            self.update_tasks(self._extension)
 
-            if self.folder_editor.findText(self._extension.upper()) > 0:
-                self.folder_editor.blockSignals(True)
-                self.folder_editor.setCurrentText(self._extension.upper())
-                self.folder_editor.blockSignals(False)
+            self.task_editor.blockSignals(True)
+            self.update_tasks(self._extension)
+            self.task_editor.blockSignals(False)
+
+            if self.task_editor.findText(self._extension.upper()) > 0:
+                self.task_editor.blockSignals(True)
+                self.task_editor.setCurrentText(self._extension.upper())
+                self.task_editor.blockSignals(False)
 
         # Description
         if self._file is not None:
@@ -527,10 +494,11 @@ class FilePropertiesWidget(base.PropertiesWidget):
         # Increment the version if the source already exists
         self.set_name()
 
-        # Set the version string
-        # We'll increment the version by one if the file already exists
+        # Set a default the version string if not set previously
         if not self.version_editor.text():
             self.version_editor.setText('v001')
+
+        # Increment the version by one if the file already exists
         if QtCore.QFileInfo(self.db_source()).exists():
             v = self.version_editor.text()
             v = self.increment_version(
@@ -546,12 +514,13 @@ class FilePropertiesWidget(base.PropertiesWidget):
         """
         ext = ext.lower()
         config = asset_config.get(self.server, self.job, self.root)
+
         if ext in config.get_extensions(asset_config.CacheFormat):
-            self.folder_editor.set_mode(file_properties_widgets.CacheMode)
+            self.task_editor.set_mode(file_properties_widgets.CacheMode)
         elif ext in config.get_extensions(asset_config.SceneFormat):
-            self.folder_editor.set_mode(file_properties_widgets.SceneMode)
+            self.task_editor.set_mode(file_properties_widgets.SceneMode)
         else:
-            self.folder_editor.set_mode(file_properties_widgets.NoMode)
+            self.task_editor.set_mode(file_properties_widgets.NoMode)
 
     def exec_(self):
         result = super(FilePropertiesWidget, self).exec_()
@@ -604,15 +573,8 @@ class FilePropertiesWidget(base.PropertiesWidget):
         open(os.path.normpath(path), 'a').close()
         self.itemCreated.emit(path)
 
-    def save_local_value(self, key, value):
-        settings.instance().setValue(
-            settings.CurrentUserPicksSection,
-            key,
-            value
-        )
-
     @QtCore.Slot()
-    def folder_button_clicked(self):
+    def task_button_clicked(self):
         """Lets the user select a custom save destination.
 
         The selection has to be inside the currently seleted asset, otherwise
@@ -644,16 +606,16 @@ class FilePropertiesWidget(base.PropertiesWidget):
         """Adds a task folder to the folder editor.
 
         """
-        for n in range(self.folder_editor.count()):
-            v = self.folder_editor.itemData(n, role=QtCore.Qt.UserRole)
+        for n in range(self.task_editor.count()):
+            v = self.task_editor.itemData(n, role=QtCore.Qt.UserRole)
             if v == relative_path:
-                self.folder_editor.setCurrentIndex(n)
+                self.task_editor.setCurrentIndex(n)
                 return
 
-        self.folder_editor.model().add_item(relative_path)
-        self.folder_editor.blockSignals(True)
-        self.folder_editor.setCurrentIndex(self.folder_editor.count() - 1)
-        self.folder_editor.blockSignals(False)
+        self.task_editor.model().add_item(relative_path)
+        self.task_editor.blockSignals(True)
+        self.task_editor.setCurrentIndex(self.task_editor.count() - 1)
+        self.task_editor.blockSignals(False)
 
     @QtCore.Slot()
     def filename_button_clicked(self):

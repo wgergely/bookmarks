@@ -185,10 +185,12 @@ class PreferencesWidget(base.PropertiesWidget):
             None,
             db_table=None,
             fallback_thumb='settings_sm',
+            hide_thumbnail_editor=True,
             parent=parent
         )
 
         self.debug_editor.stateChanged.connect(self.toggle_debug)
+        self.setWindowTitle('Preferences')
 
     def toggle_debug(self, state):
         common.DEBUG = self.debug_editor.isChecked()
@@ -222,7 +224,8 @@ class PreferencesWidget(base.PropertiesWidget):
                             editor.blockSignals(True)
                             try:
                                 if hasattr(editor, 'setCheckState') and v is not None:
-                                    editor.setCheckState(QtCore.Qt.CheckState(v))
+                                    editor.setCheckState(
+                                        QtCore.Qt.CheckState(v))
                                 elif hasattr(editor, 'setText') and v is not None:
                                     editor.setText(v)
                                 elif hasattr(editor, 'setCurrentText') and v is not None:
@@ -232,7 +235,7 @@ class PreferencesWidget(base.PropertiesWidget):
                             finally:
                                 editor.blockSignals(False)
 
-                        self._connect_editor(row['key'], None, editor)
+                        self._connect_editor_signals(row['key'], None, editor)
 
     @common.error
     @common.debug
@@ -299,3 +302,6 @@ class PreferencesWidget(base.PropertiesWidget):
         if not path:
             return
         editor.setText(path)
+
+    def sizeHint(self):
+        return QtCore.QSize(common.WIDTH(), common.HEIGHT() * 1.5)

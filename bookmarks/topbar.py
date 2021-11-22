@@ -615,7 +615,7 @@ class AssetsTabButton(BaseTabButton):
     def text(self):
         widget = stacked_widget().widget(common.BookmarkTab)
         if not widget.model().sourceModel().active_index().isValid():
-            return '-'
+            return ''
         return super(AssetsTabButton, self).text()
 
     def contextMenuEvent(self, event):
@@ -643,7 +643,7 @@ class FilesTabButton(BaseTabButton):
     def text(self):
         widget = stacked_widget().widget(common.AssetTab)
         if not widget.model().sourceModel().active_index().isValid():
-            return '-'
+            return ''
         return super(FilesTabButton, self).text()
 
     def view(self):
@@ -747,7 +747,7 @@ class SlackDropOverlayWidget(QtWidgets.QWidget):
     def dropEvent(self, event):
         """Slack drop event"""
         try:
-            from . import slack
+            from .external import slack
         except ImportError as err:
             ui.ErrorBox(
                 'Could not import SlackClient',

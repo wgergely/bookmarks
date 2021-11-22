@@ -408,7 +408,7 @@ class AssetConfigEditor(QtWidgets.QWidget):
         if not self.changed_data:
             return
         data = self.asset_config.data()
-        for keys, v in self.changed_data.items():
+        for keys, v in self.changed_data.copy().items():
             _set(data, keys, v)
             del self.changed_data[keys]
         self.asset_config.set_data(data)

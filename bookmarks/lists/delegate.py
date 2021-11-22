@@ -879,7 +879,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         painter.drawPixmap(rect, pixmap)
 
     def draw_count(self, painter, rect, cursor_position, count, icon):
-        if not isinstance(count, (loat, int)):
+        if not isinstance(count, (float, int)):
             return
 
         size = common.LARGE_FONT_SIZE()
@@ -1471,7 +1471,7 @@ class FilesWidgetDelegate(BaseDelegate):
 
         _text_segments = {}
         text_segments = self.get_text_segments(index)
-        for idx in sorted(text_segments, reverse=True):
+        for idx in text_segments:
             _text_segments[idx] = text_segments[(len(text_segments) - 1) - idx]
 
         if index.data(common.DescriptionRole):
@@ -1633,7 +1633,7 @@ class FilesWidgetDelegate(BaseDelegate):
             s = regex_remove_seq_marker.sub('', s)
             if len(s) > 17:
                 s = s[0:8] + '...' + s[-8:]
-            if index.data(common.FramesRole) > 1:
+            if len(index.data(common.FramesRole)) > 1:
                 d[len(d)] = (s, common.RED)
             else:
                 d[len(d)] = (s, common.TEXT)

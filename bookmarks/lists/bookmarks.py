@@ -33,7 +33,7 @@ class BookmarksWidgetContextMenu(contextmenu.BaseContextMenu):
         self.title()
 
         self.bookmark_editor_menu()
-        
+
         self.separator()
 
         self.launcher_menu()
@@ -60,7 +60,6 @@ class BookmarksWidgetContextMenu(contextmenu.BaseContextMenu):
 
         self.separator()
 
-        self.set_generate_thumbnails_menu()
         self.row_size_menu()
         self.sort_menu()
         self.list_filter_menu()
@@ -84,13 +83,21 @@ class BookmarksModel(base.BaseModel):
 
     def __init__(self, parent=None):
         super(BookmarksModel, self).__init__(parent=parent)
-        common.signals.bookmarksChanged.connect(
+        common.signals.bookmarkAdded.connect(
             lambda: self.blockSignals(True))
-        common.signals.bookmarksChanged.connect(self.__resetdata__)
-        common.signals.bookmarksChanged.connect(
+        common.signals.bookmarkAdded.connect(self.__resetdata__)
+        common.signals.bookmarkAdded.connect(
             lambda: self.blockSignals(False))
-        common.signals.bookmarksChanged.connect(self.beginResetModel)
-        common.signals.bookmarksChanged.connect(self.endResetModel)
+        common.signals.bookmarkAdded.connect(self.beginResetModel)
+        common.signals.bookmarkAdded.connect(self.endResetModel)
+
+        common.signals.bookmarkRemoved.connect(
+            lambda: self.blockSignals(True))
+        common.signals.bookmarkRemoved.connect(self.__resetdata__)
+        common.signals.bookmarkRemoved.connect(
+            lambda: self.blockSignals(False))
+        common.signals.bookmarkRemoved.connect(self.beginResetModel)
+        common.signals.bookmarkRemoved.connect(self.endResetModel)
 
     @common.status_bar_message('Loading Bookmarks...')
     @base.initdata
@@ -100,7 +107,6 @@ class BookmarksModel(base.BaseModel):
         """Collects the data needed to populate the bookmarks model.
 
         """
-
         p = self.parent_path()
         _k = self.task()
         t = self.data_type()
@@ -262,14 +268,10 @@ class BookmarksWidget(base.ThreadedBaseWidget):
                 self.remove_bookmark_timer.interval())
             return
 
-        for bookmark in [f for f in self.bookmarks_to_remove]:
+        for bookmark in list(self.bookmarks_to_remove):
             actions.remove_bookmark(*bookmark)
             del self.bookmarks_to_remove[self.bookmarks_to_remove.index(
                 bookmark)]
-
-        self.model().sourceModel().blockSignals(True)
-        self.model().sourceModel().__resetdata__()
-        self.model().sourceModel().blockSignals(False)
 
     def mouseReleaseEvent(self, event):
         if not isinstance(event, QtGui.QMouseEvent):
@@ -343,4 +345,4 @@ class BookmarksWidget(base.ThreadedBaseWidget):
             index, flag, state=state, commit_now=commit_now)
 
     def get_hint_string(self):
-        return 'No bookmarks have been added yet. Select Right-Click - Add Bookmark... to add new items.'
+        return 'No items. Select right-click - Edit Bookmarks to add new bookmarks.'

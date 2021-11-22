@@ -386,7 +386,7 @@ class AssetConfig(QtCore.QObject):
 
         db = database.get_db(self.server, self.job, self.root)
         with db.connection():
-            database.setValue(
+            db.setValue(
                 db.source(),
                 ASSET_CONFIG_KEY,
                 data,
@@ -484,11 +484,7 @@ class AssetConfig(QtCore.QObject):
         tokens['job'] = self.job
         tokens['root'] = self.root
 
-        tokens['bookmark'] = '{}/{}/{}'.format(
-            self.server,
-            self.job,
-            self.root
-        )
+        tokens['bookmark'] = f'{self.server}/{self.job}/{self.root}'
 
         for k, v in kwargs.items():
             tokens[k] = v
@@ -512,7 +508,7 @@ class AssetConfig(QtCore.QObject):
         # The asset root token will only be available when the asset is manually
         # specified
         if 'asset' in kwargs and kwargs['asset']:
-            tokens['asset_root'] = '{}/{}/{}'.format(
+            tokens['asset_root'] = '{}/{}/{}/{}'.format(
                 self.server,
                 self.job,
                 self.root,
@@ -532,16 +528,15 @@ class AssetConfig(QtCore.QObject):
         """
         data = self.data(force=force)
         if FileFormatConfig not in data:
-            raise KeyError('{}/{}/{}')
+            raise KeyError('Invalid data, `FileFormatConfig` not found.')
 
         extensions = []
         for v in data[FileFormatConfig].values():
             if not (v['flag'] & flag):
                 continue
-            value = v['{}/{}/{}']
-            if not isinstance(value, str):
+            if not isinstance(v['value'], str):
                 continue
-            extensions += [f.strip() for f in value.split('{}/{}/{}')]
+            extensions += [f.strip() for f in v['value'].split(',')]
         return tuple(sorted(list(set(extensions))))
 
     def check_task(self, task, force=False):

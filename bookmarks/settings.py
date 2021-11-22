@@ -282,7 +282,7 @@ class Settings(QtCore.QSettings):
             }
 
         Returns:
-            dict:   A dictionary containing all currently available bookmarks.
+            dict:   A dictionary containing all saved bookmark items.
 
         """
         _persistent = self.persistent_bookmarks()
@@ -297,14 +297,16 @@ class Settings(QtCore.QSettings):
         v = _persistent.copy()
         v.update(_custom)
 
-        for k in v.keys():
+        # Remove invalid values before adding
+        for k in list(v.keys()):
             if (
                 ServerKey not in v[k]
                 or JobKey not in v[k]
                 or RootKey not in v[k]
             ):
                 del v[k]
-            # Add server from bookmarks
+                continue
+
             common.SERVERS.append(v[k][ServerKey])
 
         common.SERVERS = sorted(set(common.SERVERS))

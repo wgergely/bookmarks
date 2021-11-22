@@ -291,7 +291,7 @@ class AssetsWidget(base.ThreadedBaseWidget):
         return 6
 
     def get_hint_string(self):
-        return 'No assets. Select right-click -> Add Asset to create a new one.'
+        return 'No items. Select right-click - Add Asset to add a new asset.'
 
     def mouseReleaseEvent(self, event):
         if not isinstance(event, QtGui.QMouseEvent):

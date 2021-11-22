@@ -852,7 +852,6 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
         rect = option.rect.adjusted(o * 0.5, o * 0.5, -o * 0.5, -o * 0.5)
 
         # Background
-
         _ = painter.setOpacity(0.8) if hover else painter.setOpacity(0.6)
         _ = painter.setOpacity(
             0.0) if disabled else painter.setOpacity(painter.opacity())
@@ -890,13 +889,13 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
             painter.drawPixmap(rect, pixmap)
         elif checkable and not checked:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'close', common.RED, rect.height())
+                'close_sm', common.BG, rect.height())
             painter.drawPixmap(rect, pixmap)
         elif not checkable and decoration and isinstance(decoration, QtGui.QPixmap):
             painter.drawPixmap(rect, decoration)
         elif not checkable and decoration and isinstance(decoration, QtGui.QIcon):
             mode = QtGui.QIcon.Normal
-            if not (option.state & QtWidgets.QStyle.State_Enabled):
+            if not option.state & QtWidgets.QStyle.State_Enabled:
                 mode = QtGui.QIcon.Disabled
             elif option.state & QtWidgets.QStyle.State_Selected:
                 mode = QtGui.QIcon.Selected
@@ -931,6 +930,9 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
 
         path = QtGui.QPainterPath()
         path.addText(x, y, font, text)
+
+        if checkable and not checked:
+            painter.setOpacity(0.5)
         painter.drawPath(path)
 
 

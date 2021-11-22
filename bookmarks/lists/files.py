@@ -22,6 +22,7 @@ from . import delegate
 
 
 FILTER_EXTENSIONS = False
+DEFAULT_SORT_BY_NAME_ROLE = [str()] * 8
 
 
 class DropIndicatorWidget(QtWidgets.QWidget):
@@ -432,7 +433,7 @@ class FilesModel(base.BaseModel):
             # To sort by subfolders correctly, we'll a populate a fixed length
             # list with the subfolders and file names. Sorting is do case
             # insensitive:
-            sort_by_name_role = [0, 0, 0, 0, 0, 0, 0, 0]
+            sort_by_name_role = DEFAULT_SORT_BY_NAME_ROLE.copy()
             if fileroot:
                 _fileroot = fileroot.lower().split('/')
                 for idx in range(len(_fileroot)):
@@ -776,7 +777,7 @@ class FilesModel(base.BaseModel):
             mime.setData(
                 'application/x-qt-windows-mime;value="FileName"', _bytes)
             mime.setData(
-                'application/x-qt-windows-mime;value="FileNameW"', path)
+                'application/x-qt-windows-mime;value="FileNameW"', _bytes)
 
             return mime
 

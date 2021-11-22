@@ -579,7 +579,7 @@ class BookmarkDB(QtCore.QObject):
         # Check type
         if value is None:
             return
-        common.check_type(value, TABLES[table][key]['type'])
+        common.check_type(value, (TABLES[table][key]['type']))
 
     def root(self):
         return self._bookmark_root

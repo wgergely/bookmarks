@@ -225,8 +225,7 @@ class AssetPropertiesWidget(base.PropertiesWidget):
             self.template_editor.parent().parent().setHidden(True)
             self.setWindowTitle('/'.join((server, job, root, asset)))
         else:
-            self.setWindowTitle(
-                '{}/{}/{}: Create Asset'.format(server, job, root))
+            self.setWindowTitle(f'{server}/{job}/{root}: Create Asset')
             self.name_editor.setFocus()
 
     def _connect_signals(self):

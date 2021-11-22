@@ -134,7 +134,7 @@ class FavouritesModel(files.FilesModel):
             # To sort by subfolders correctly, we'll have to populate a list
             # with all subfolders and file names. The list must be of fixed
             # length and we'll do case insensitive comparisons:
-            sort_by_name_role = [0, 0, 0, 0, 0, 0, 0, 0]
+            sort_by_name_role = files.DEFAULT_SORT_BY_NAME_ROLE.copy()
             if fileroot:
                 _fileroot = fileroot.lower().split('/')
                 for idx in range(len(_fileroot)):

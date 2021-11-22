@@ -746,6 +746,9 @@ class BaseModel(QtCore.QAbstractListModel):
         # Set default if an invalid value is encountered
         if val not in common.DEFAULT_SORT_VALUES:
             val = common.SortByNameRole
+        # Let's make sure the type is correct
+        if isinstance(val, int):
+            val = QtCore.Qt.ItemDataRole(val)
 
         self._sortrole = val
 

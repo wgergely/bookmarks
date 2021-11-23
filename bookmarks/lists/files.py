@@ -818,7 +818,7 @@ class FilesWidget(base.ThreadedBaseWidget):
 
     queues = (threads.FileInfo, threads.FileThumbnail)
 
-    def __init__(self, icon='files', parent=None):
+    def __init__(self, icon='file', parent=None):
         super(FilesWidget, self).__init__(
             icon=icon,
             parent=parent
@@ -907,7 +907,7 @@ class FilesWidget(base.ThreadedBaseWidget):
         actions.change_tab(common.FileTab)
 
         # Change task folder
-        task = v.replace(parent_path, '').strip('/').split('/')[0]
+        task = v.replace(parent_path, '').strip('/').split('/', maxsplit=1)[0]
         if k != task:
             model.set_task(task)
 

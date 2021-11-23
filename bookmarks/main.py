@@ -388,7 +388,7 @@ class MainWidget(QtWidgets.QWidget):
             o, o)
 
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'icon_bw', None, s)
+            'logo_bw', None, s)
         painter.setOpacity(0.5)
         painter.drawPixmap(pixmaprect, pixmap, pixmap.rect())
         painter.setOpacity(1.0)

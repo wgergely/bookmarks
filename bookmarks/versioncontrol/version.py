@@ -363,12 +363,11 @@ class Version(_BaseVersion):
     def local(self):
         if self._version.local:
             return ".".join(str(x) for x in self._version.local)
-        else:
-            return None
+        return None
 
     @property
     def public(self):
-        return str(self).split("+", 1)[0]
+        return str(self).split("+", maxsplit=1)[0]
 
     @property
     def base_version(self):

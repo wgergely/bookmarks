@@ -176,7 +176,7 @@ def clear_favourites(prompt=True):
     if prompt:
         from . import ui
         mbox = ui.MessageBox(
-            'Ar you sure you want to clear My Files?',
+            'Ar you sure you want to remove all starred items?',
             buttons=[ui.YesButton, ui.NoButton]
         )
         if mbox.exec_() == QtWidgets.QDialog.Rejected:
@@ -572,7 +572,7 @@ def show_add_asset(server=None, job=None, root=None):
     if not all((server, job, root)):
         return None
 
-    from .properties import asset_properties_widget as editor
+    from .property_editor import asset_editor as editor
     widget = editor.show(server, job, root)
     return widget
 
@@ -591,7 +591,7 @@ def show_add_file(asset=None, extension=None, file=None, create_file=True, incre
     if not all(args):
         return None
 
-    from .properties import file_properties_widget as editor
+    from .property_editor import file_editor as editor
     widget = editor.show(
         server,
         job,
@@ -623,7 +623,7 @@ def edit_bookmark(server=None, job=None, root=None):
     if not all((server, job, root)):
         return None
 
-    from .properties import bookmark_properties_widget as editor
+    from .property_editor import bookmark_editor as editor
     widget = editor.show(server, job, root)
 
     widget.open()
@@ -644,7 +644,7 @@ def edit_asset(asset=None):
     if asset is None:
         return
 
-    from .properties import asset_properties_widget as editor
+    from .property_editor import asset_editor as editor
 
     widget = editor.show(server, job, root, asset=asset)
     return widget
@@ -661,7 +661,7 @@ def edit_file(f):
     if not all((server, job, root, asset)):
         return
 
-    from .properties import file_properties_widget as editor
+    from .property_editor import file_editor as editor
     widget = editor.show(
         server,
         job,
@@ -682,7 +682,7 @@ def edit_favourite(f):
 @common.error
 @common.debug
 def show_preferences():
-    from .properties import preference_properties_widget as editor
+    from .property_editor import preference_editor as editor
     widget = editor.show()
     return widget
 
@@ -987,7 +987,7 @@ def preview(index):
     source = common.get_sequence_startpath(source)
 
     if '.abc' in source.lower():
-        from .editors import alembic_preview
+        from .lists import alembic_preview
         editor = alembic_preview.AlembicPreviewWidget(source)
         instance().widget().selectionModel().currentChanged.connect(editor.close)
         instance().widget().selectionModel().currentChanged.connect(editor.deleteLater)
@@ -1015,7 +1015,7 @@ def preview(index):
 
     # Finally, we'll create and show our widget, and destroy it when the
     # selection changes
-    from .editors import item_preview
+    from .lists import item_preview
     editor = item_preview.ImageViewer(thumb_path, parent=instance().widget())
     instance().widget().selectionModel().currentChanged.connect(editor.delete_timer.start)
     editor.open()
@@ -1233,7 +1233,7 @@ def capture_thumbnail(index):
     server, job, root = index.data(common.ParentPathRole)[0:3]
     source = index.data(QtCore.Qt.StatusTipRole)
 
-    from .editors import thumb_capture as editor
+    from .lists import thumb_capture as editor
     widget = editor.show(
         server=server,
         job=job,
@@ -1256,7 +1256,7 @@ def pick_thumbnail_from_file(index):
     server, job, root = index.data(common.ParentPathRole)[0:3]
     source = index.data(QtCore.Qt.StatusTipRole)
 
-    from .editors import thumb_picker as editor
+    from .lists import thumb_picker as editor
     widget = editor.show(
         server=server,
         job=job,
@@ -1276,7 +1276,7 @@ def pick_thumbnail_from_library(index):
     server, job, root = index.data(common.ParentPathRole)[0:3]
     source = index.data(QtCore.Qt.StatusTipRole)
 
-    from .editors import thumb_library as editor
+    from .lists import thumb_library as editor
     widget = editor.show(
         server=server,
         job=job,

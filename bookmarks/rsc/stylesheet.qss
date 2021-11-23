@@ -416,7 +416,7 @@ QMenu::item:disabled {{
 QMenu::right-arrow {{
   margin: 0;
 	padding-right: {MARGIN}px;
-  image: url({ARROW_RIGHT});
+  image: url({BRANCH_CLOSED});
   height: {MARGIN}px;
   width: {MARGIN}px;
 }}
@@ -538,11 +538,11 @@ LogView {{
 		border: {ROW_SEPARATOR}px solid {BLUE};
 }}
 
-PropertiesWidget,
-PropertiesWidget > QWidget,
-PropertiesWidget > QScrollArea,
-PropertiesWidget > QScrollArea > QWidget,
-PropertiesWidget > QScrollArea > QWidget > QWidget {{
+BasePropertyEditor,
+BasePropertyEditor > QWidget,
+BasePropertyEditor > QScrollArea,
+BasePropertyEditor > QScrollArea > QWidget,
+BasePropertyEditor > QScrollArea > QWidget > QWidget {{
 	background: {BG};
 	background-color: {BG};
 }}

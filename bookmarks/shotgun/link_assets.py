@@ -103,7 +103,7 @@ class TableWidget(QtWidgets.QTableWidget):
         item.setTextAlignment(QtCore.Qt.AlignCenter)
         self.setItem(row, 1, item)
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'arrow_right', common.DARK_BG, common.MARGIN())
+            'branch_closed', common.DARK_BG, common.MARGIN())
         label = QtWidgets.QLabel()
         label.setPixmap(pixmap)
         self.setCellWidget(row, 1, label)

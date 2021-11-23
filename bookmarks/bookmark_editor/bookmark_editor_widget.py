@@ -47,6 +47,12 @@ def show():
     return instance
 
 
+HELP = 'Add and remove bookmark items in this window. \
+Start by adding a server\
+\
+'
+
+
 class BookmarkEditorWidget(QtWidgets.QDialog):
     """The main editor used to add or remove bookmarks, jobs and servers.
 
@@ -129,14 +135,16 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         # =====================================================
 
         row = ui.add_row(None, vertical=True, height=None, parent=main_row)
-        row.layout().setSpacing(o)
+        row.layout().setSpacing(o * 0.5)
         row.layout().setContentsMargins(0, o, 0, o)
-        _row = ui.add_row(None, height=None, parent=row)
+
+        _grp = ui.get_group(parent=row, margin=common.INDICATOR_WIDTH() * 1.5)
+        _row = ui.add_row(None, height=None, parent=_grp)
         _row.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.Maximum
         )
-        grp = ui.get_group(parent=row, margin=common.INDICATOR_WIDTH())
+        grp = ui.get_group(parent=row, margin=common.INDICATOR_WIDTH() * 0.66)
         grp.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
@@ -148,30 +156,32 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         )
         self.server_editor = server_editor.ServerListWidget(parent=grp)
         self.server_add_button = ui.ClickableIconButton(
-            'CopyAction',
+            'add',
             (common.GREEN, common.SELECTED_TEXT),
-            common.ROW_HEIGHT() * 0.66,
+            common.ROW_HEIGHT() * 0.5,
             description='Add Server',
             state=True,
             parent=self
         )
-        _row.layout().addWidget(self.server_add_button)
         _row.layout().addWidget(label, 0)
         _row.layout().addStretch(1)
+        _row.layout().addWidget(self.server_add_button)
         grp.layout().addWidget(self.server_editor, 1)
 
         # =====================================================
 
         row = ui.add_row(None, vertical=True, height=None, parent=main_row)
-        row.layout().setSpacing(o)
+        row.layout().setSpacing(o * 0.5)
         row.layout().setContentsMargins(0, o, 0, o)
-        _row = ui.add_row(None, height=None, parent=row)
+
+        _grp = ui.get_group(parent=row, margin=common.INDICATOR_WIDTH() * 1.5)
+        _row = ui.add_row(None, height=None, parent=_grp)
         _row.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.Maximum
         )
 
-        grp = ui.get_group(parent=row, margin=common.INDICATOR_WIDTH())
+        grp = ui.get_group(parent=row, margin=common.INDICATOR_WIDTH() * 0.66)
         grp.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
@@ -184,29 +194,33 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
 
         self.job_editor = job_editor.JobListWidget(parent=self)
         self.job_add_button = ui.ClickableIconButton(
-            'CopyAction',
+            'add',
             (common.GREEN, common.SELECTED_TEXT),
-            common.ROW_HEIGHT() * 0.66,
-            description='Add Server',
+            common.ROW_HEIGHT() * 0.5,
+            description='Click to create a new job',
             state=True,
             parent=self
         )
-        _row.layout().addWidget(self.job_add_button)
+
         _row.layout().addWidget(label, 0)
         _row.layout().addStretch(1)
+        _row.layout().addWidget(self.job_add_button)
         grp.layout().addWidget(self.job_editor, 1)
 
         # =====================================================
 
         row = ui.add_row(None, vertical=True, height=None, parent=main_row)
-        row.layout().setSpacing(o)
+        row.layout().setSpacing(o * 0.5)
         row.layout().setContentsMargins(0, o, 0, o)
-        _row = ui.add_row(None, height=None, parent=row)
+
+        _grp = ui.get_group(parent=row, margin=common.INDICATOR_WIDTH() * 1.5)
+        _row = ui.add_row(None, height=None, parent=_grp)
+        _row.layout().setAlignment(QtCore.Qt.AlignCenter)
         _row.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.Maximum
         )
-        grp = ui.get_group(parent=row, margin=common.INDICATOR_WIDTH())
+        grp = ui.get_group(parent=row, margin=common.INDICATOR_WIDTH() * 0.66)
         grp.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
@@ -219,17 +233,17 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
 
         self.bookmark_editor = bookmark_editor.BookmarkListWidget(parent=self)
         self.bookmark_add_button = ui.ClickableIconButton(
-            'CopyAction',
+            'add',
             (common.GREEN, common.SELECTED_TEXT),
-            common.ROW_HEIGHT() * 0.66,
-            description='Add Server',
+            common.ROW_HEIGHT() * 0.5,
+            description='Click to select a folder and use it as a bookmark item.',
             state=True,
             parent=self
         )
 
-        _row.layout().addWidget(self.bookmark_add_button)
         _row.layout().addWidget(label, 0)
         _row.layout().addStretch(1)
+        _row.layout().addWidget(self.bookmark_add_button)
         grp.layout().addWidget(self.bookmark_editor, 1)
 
         # =====================================================
@@ -255,7 +269,8 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         )
         self.done_button.setFixedHeight(common.ROW_HEIGHT())
 
-        self.persistent_bookmarks_button = ui.PaintedButton('Edit Persistent Bookmarks')
+        self.persistent_bookmarks_button = ui.PaintedButton(
+            'Edit Persistent Bookmarks')
         row.layout().addWidget(self.persistent_bookmarks_button, 0)
         row.layout().addWidget(self.done_button, 1)
 
@@ -288,9 +303,8 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         self.server_editor.serverChanged.connect(self.job_editor.update_status)
         self.job_editor.jobChanged.connect(self.job_editor.update_status)
 
-        self.persistent_bookmarks_button.clicked.connect(actions.edit_persistent_bookmarks)
-
-        common.signals.bookmarkRemoved.connect(self.bookmark_editor.init_data)
+        self.persistent_bookmarks_button.clicked.connect(
+            actions.edit_persistent_bookmarks)
 
     def init_data(self):
         self.server_editor.init_data()
@@ -315,4 +329,4 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         super(BookmarkEditorWidget, self).showEvent(event)
 
     def sizeHint(self):
-        return QtCore.QSize(common.WIDTH(), common.HEIGHT() * 1.4)
+        return QtCore.QSize(common.WIDTH(), common.HEIGHT() * 1.33)

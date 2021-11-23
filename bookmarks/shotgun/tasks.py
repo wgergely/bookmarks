@@ -13,8 +13,8 @@ from .. import images
 from .. import contextmenu
 from . import shotgun
 
-from ..properties import base_widgets
-from ..properties import base
+from ..property_editor import base_widgets
+from ..property_editor import base
 
 
 instance = None
@@ -213,7 +213,7 @@ class TaskModel(QtCore.QAbstractItemModel):
     @common.debug
     def init_icons(self):
         pixmap1 = images.ImageCache.get_rsc_pixmap(
-            'shotgun', common.GREEN, common.MARGIN())
+            'sg', common.GREEN, common.MARGIN())
         pixmap2 = images.ImageCache.get_rsc_pixmap(
             'check', common.SELECTED_TEXT, common.MARGIN())
         icon = QtGui.QIcon()
@@ -223,7 +223,7 @@ class TaskModel(QtCore.QAbstractItemModel):
         self.task_icon = icon
 
         self.step_icon = QtGui.QIcon(images.ImageCache.get_rsc_pixmap(
-            'shotgun', common.BLUE, common.MARGIN()))
+            'sg', common.BLUE, common.MARGIN()))
 
     def entities_to_nodes(self):
         """Builds the internal node hierarchy base on the given entity data.
@@ -564,7 +564,7 @@ class TaskPicker(QtWidgets.QDialog):
         self.layout().setSpacing(o)
 
         grp = base.add_section(
-            'shotgun', 'Select Task', self, color=None
+            'sg', 'Select Task', self, color=None
         )
 
         self.user_editor = base_widgets.BaseComboBox(parent=self)

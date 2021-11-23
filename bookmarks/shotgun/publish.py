@@ -14,7 +14,7 @@ from .. import ui
 from .. import database
 from .. import settings
 from .. import images
-from ..properties import base
+from ..property_editor import base
 from ..asset_config import asset_config
 
 from . import shotgun
@@ -176,7 +176,7 @@ SECTIONS = {
 }
 
 
-class PublishWidget(base.PropertiesWidget):
+class PublishWidget(base.BasePropertyEditor):
     def __init__(self, parent=None):
         super(PublishWidget, self).__init__(
             SECTIONS,
@@ -252,7 +252,7 @@ class PublishWidget(base.PropertiesWidget):
         # The name should be a
         self.file_editor.set_path(file_info.filePath())
         self.set_thumbnail_source()
-        self._init_db_data()
+        self.init_db_data()
 
         self.find_movie()
         self.find_sequence()
@@ -424,7 +424,7 @@ class PublishWidget(base.PropertiesWidget):
         return p
 
     def init_data(self):
-        self._init_db_data()
+        self.init_db_data()
 
     @common.error
     @common.debug

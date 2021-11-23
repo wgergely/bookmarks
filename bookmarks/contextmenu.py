@@ -236,7 +236,7 @@ class BaseContextMenu(QtWidgets.QMenu):
     def get_icon(
         self,
         name,
-        color=common.BG,
+        color=common.DISABLED_TEXT,
         size=common.ROW_HEIGHT(),
         opacity=1.0,
         resource=images.GuiResource
@@ -291,7 +291,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         frameless_active = w.windowFlags() & QtCore.Qt.FramelessWindowHint
 
         on_icon = self.get_icon('check', color=common.GREEN)
-        logo_icon = self.get_icon('logo')
+        logo_icon = self.get_icon('icon')
 
         k = 'Window'
         self.menu[k] = collections.OrderedDict()
@@ -445,21 +445,21 @@ class BaseContextMenu(QtWidgets.QMenu):
         if not any((primary_url, secondary_url)):
             return
 
-        k = 'Open URL...'
+        k = 'Links'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
-            self.menu[f'{k}:icon'] = self.get_icon('bookmark')
+            self.menu[f'{k}:icon'] = self.get_icon('link')
 
         if primary_url:
             self.menu[k][key()] = {
                 'text': primary_url,
-                'icon': self.get_icon('bookmark'),
+                'icon': self.get_icon('link'),
                 'action': lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl(primary_url)),
             }
         if secondary_url:
             self.menu[k][key()] = {
                 'text': secondary_url,
-                'icon': self.get_icon('bookmark'),
+                'icon': self.get_icon('link'),
                 'action': lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl(secondary_url))
             }
 
@@ -483,21 +483,21 @@ class BaseContextMenu(QtWidgets.QMenu):
         if not any((primary_url, secondary_url)):
             return
 
-        k = 'Open URL...'
+        k = 'Links'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
-            self.menu[f'{k}:icon'] = self.get_icon('bookmark')
+            self.menu[f'{k}:icon'] = self.get_icon('link')
 
         if primary_url:
             self.menu[k][key()] = {
                 'text': primary_url,
-                'icon': self.get_icon('bookmark'),
+                'icon': self.get_icon('link'),
                 'action': lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl(primary_url)),
             }
         if secondary_url:
             self.menu[k][key()] = {
                 'text': secondary_url,
-                'icon': self.get_icon('bookmark'),
+                'icon': self.get_icon('link'),
                 'action': lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl(secondary_url))
             }
 
@@ -577,6 +577,7 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         k = 'Flags'
         self.menu[k] = collections.OrderedDict()
+        self.menu[f'{k}:icon'] = self.get_icon('flag')
 
         self.menu[k][key()] = {
             'text': text,
@@ -946,7 +947,7 @@ class BaseContextMenu(QtWidgets.QMenu):
 
     def remove_favourite_menu(self):
         self.menu[key()] = {
-            'text': 'Remove from My Files',
+            'text': 'Remove from starred...',
             'icon': self.get_icon('close', color=common.RED),
             'checkable': False,
             'action': actions.toggle_favourite
@@ -956,12 +957,12 @@ class BaseContextMenu(QtWidgets.QMenu):
         remove_icon = self.get_icon('close')
 
         self.menu[key()] = {
-            'text': 'Export My Files...',
+            'text': 'Export starred...',
             'checkable': False,
             'action': actions.export_favourites
         }
         self.menu[key()] = {
-            'text': 'Import My Files...',
+            'text': 'Import starred...',
             'checkable': False,
             'action': actions.import_favourites,
         }
@@ -969,7 +970,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.separator()
 
         self.menu[key()] = {
-            'text': 'Clear My Files',
+            'text': 'Clear starred',
             'icon': remove_icon,
             'checkable': False,
             'action': actions.clear_favourites
@@ -977,7 +978,7 @@ class BaseContextMenu(QtWidgets.QMenu):
 
     def add_file_menu(self):
         self.menu[key()] = {
-            'text': 'Add Template File...',
+            'text': 'Add File...',
             'icon': self.get_icon('add', color=common.GREEN),
             'action': actions.show_add_file,
             'shortcut': shortcuts.get(
@@ -1236,7 +1237,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         k = 'Launcher'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
-            self.menu['{}:icon'.format(k)] = self.get_icon('icon_bw')
+            self.menu['{}:icon'.format(k)] = self.get_icon('logo_bw')
 
         for _k in sorted(v, key=lambda k: v[k]['name']):
             try:
@@ -1281,12 +1282,12 @@ class BaseContextMenu(QtWidgets.QMenu):
         k = 'Shotgun'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
-            self.menu['{}:icon'.format(k)] = self.get_icon('shotgun')
+            self.menu['{}:icon'.format(k)] = self.get_icon('sg')
 
         self.menu[k][key()] = {
             'text': 'Upload Thumbnail to Shotgun...',
             'action': functools.partial(sg_actions.upload_thumbnail, sg_properties, thumbnail_path),
-            'icon': self.get_icon('shotgun', color=common.GREEN),
+            'icon': self.get_icon('sg', color=common.GREEN),
         }
 
     def sg_url_menu(self):
@@ -1309,13 +1310,13 @@ class BaseContextMenu(QtWidgets.QMenu):
         k = 'Shotgun'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
-            self.menu[f'{k}:icon'] = self.get_icon('shotgun')
+            self.menu[f'{k}:icon'] = self.get_icon('sg')
 
         self.separator(self.menu[k])
         for url in reversed(sg_properties.urls()):
             self.menu[k][key()] = {
                 'text': url,
-                'icon': self.get_icon('shotgun'),
+                'icon': self.get_icon('sg'),
                 'action': functools.partial(QtGui.QDesktopServices.openUrl, QtCore.QUrl(url))
             }
 
@@ -1333,11 +1334,11 @@ class BaseContextMenu(QtWidgets.QMenu):
         k = 'Shotgun'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
-            self.menu[f'{k}:icon'] = self.get_icon('shotgun')
+            self.menu[f'{k}:icon'] = self.get_icon('sg')
 
         self.menu[k][key()] = {
             'text': 'Link Bookmark with Shotgun...',
-            'icon': self.get_icon('shotgun'),
+            'icon': self.get_icon('sg'),
             'action': functools.partial(sg_actions.link_bookmark_entity, server, job, root),
         }
 
@@ -1355,13 +1356,13 @@ class BaseContextMenu(QtWidgets.QMenu):
         k = 'Shotgun'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
-            self.menu[f'{k}:icon'] = self.get_icon('shotgun')
+            self.menu[f'{k}:icon'] = self.get_icon('sg')
 
         server, job, root, asset = self.index.data(common.ParentPathRole)[0:4]
         for entity_type in ('Asset', 'Shot', 'Sequence'):
             self.menu[k][key()] = {
                 'text': 'Link item with Shotgun {}'.format(entity_type.title()),
-                'icon': self.get_icon('shotgun'),
+                'icon': self.get_icon('sg'),
                 'action': functools.partial(sg_actions.link_asset_entity, server, job, root, asset, entity_type),
             }
 
@@ -1374,12 +1375,12 @@ class BaseContextMenu(QtWidgets.QMenu):
         k = 'Shotgun'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
-            self.menu[f'{k}:icon'] = self.get_icon('shotgun')
+            self.menu[f'{k}:icon'] = self.get_icon('sg')
 
         self.separator(self.menu[k])
         self.menu[k][key()] = {
             'text': 'Link Assets with Shotgun',
-            'icon': self.get_icon('shotgun', color=common.GREEN),
+            'icon': self.get_icon('sg', color=common.GREEN),
             'action': sg_actions.link_assets,
         }
 
@@ -1395,14 +1396,14 @@ class BaseContextMenu(QtWidgets.QMenu):
         k = 'RV'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
-            self.menu[f'{k}:icon'] = self.get_icon('shotgun')
+            self.menu[f'{k}:icon'] = self.get_icon('sg')
 
         path = common.get_sequence_startpath(
             self.index.data(QtCore.Qt.StatusTipRole))
 
         self.menu[k][key()] = {
             'text': 'Push to RV',
-            'icon': self.get_icon('shotgun'),
+            'icon': self.get_icon('sg'),
             'action': functools.partial(rv.push, path),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
@@ -1425,11 +1426,11 @@ class BaseContextMenu(QtWidgets.QMenu):
         k = 'Shotgun'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
-            self.menu[f'{k}:icon'] = self.get_icon('shotgun')
+            self.menu[f'{k}:icon'] = self.get_icon('sg')
 
         self.menu[k][key()] = {
             'text': 'Publish',
-            'icon': self.get_icon('shotgun', color=common.GREEN),
+            'icon': self.get_icon('sg', color=common.GREEN),
             'action': sg_actions.publish,
         }
 
@@ -1437,7 +1438,7 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         self.menu[k][key()] = {
             'text': 'Browse Tasks',
-            'icon': self.get_icon('shotgun'),
+            'icon': self.get_icon('sg'),
             'action': sg_actions.show_task_picker,
         }
 
@@ -1467,7 +1468,7 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         self.menu[key()] = {
             'text': 'Convert Sequence',
-            'icon': self.get_icon('movie'),
+            'icon': self.get_icon('convert'),
             'action': actions.convert_image_sequence
         }
 
@@ -1480,7 +1481,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.menu[k][key()] = {
             'text': 'Apply JSON Data to Visible Items',
             'action': actions.import_asset_properties_from_json,
-            'icon': self.get_icon('arrow_right')
+            'icon': self.get_icon('branch_closed')
         }
 
         self.separator(menu=self.menu[k])

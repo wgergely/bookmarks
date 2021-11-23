@@ -331,7 +331,7 @@ class AssetConfig(QtCore.QObject):
     """
 
     def __init__(self, server, job, root, asset=None, parent=None):
-        super(AssetConfig, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
         self.server = server
         self.job = job

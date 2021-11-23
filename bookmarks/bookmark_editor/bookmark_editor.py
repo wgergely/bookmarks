@@ -9,7 +9,6 @@ import _scandir
 
 from .. import common
 from .. import log
-from .. import images
 from .. import contextmenu
 from .. import ui
 from .. import shortcuts
@@ -89,7 +88,7 @@ class BookmarkListWidget(ui.ListWidget):
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
         )
-        self.setMinimumWidth(common.WIDTH() * 0.33)
+        self.setMinimumWidth(common.WIDTH() * 0.2)
 
         self._connect_signals()
         self.init_shortcuts()

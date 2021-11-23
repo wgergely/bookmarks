@@ -54,7 +54,7 @@ class QuickSwitchMenu(contextmenu.BaseContextMenu):
     def add_switch_menu(self, widget, label):
         """Adds the items needed to quickly change bookmarks or assets."""
         off_pixmap = images.ImageCache.get_rsc_pixmap(
-            'icon_bw', common.SECONDARY_TEXT, common.MARGIN())
+            'logo_bw', common.SECONDARY_TEXT, common.MARGIN())
         on_pixmap = images.ImageCache.get_rsc_pixmap(
             'check', common.GREEN, common.MARGIN())
 
@@ -78,7 +78,7 @@ class QuickSwitchMenu(contextmenu.BaseContextMenu):
                 index.data(common.ParentPathRole)[2],
                 index.data(QtCore.Qt.StatusTipRole),
                 size=common.MARGIN() * 4,
-                fallback_thumb='icon_bw'
+                fallback_thumb='logo_bw'
             )
             pixmap = pixmap if pixmap else off_pixmap
             pixmap = on_pixmap if active else pixmap
@@ -301,7 +301,7 @@ class ToggleArchivedButton(BaseControlButton):
 class ToggleInlineIcons(BaseControlButton):
     def __init__(self, parent=None):
         super(ToggleInlineIcons, self).__init__(
-            'showbuttons',
+            'branch_closed',
             'Show/Hide List Buttons  -  {}'.format(shortcuts.string(
                 shortcuts.MainWidgetShortcuts, shortcuts.HideInlineButtons)),
             parent=parent
@@ -324,7 +324,7 @@ class ToggleFavouriteButton(BaseControlButton):
     def __init__(self, parent=None):
         super(ToggleFavouriteButton, self).__init__(
             'favourite',
-            'Show/Hide My Files Only  -  {}'.format(shortcuts.string(
+            'Show Starred Only  -  {}'.format(shortcuts.string(
                 shortcuts.MainWidgetShortcuts, shortcuts.ToggleFavourite)),
             parent=parent
         )
@@ -530,7 +530,7 @@ class BaseTabButton(QtWidgets.QLabel):
         if self.tab_idx == common.FileTab and current_index() == common.FileTab:
             # Draw icon
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'down',
+                'branch_open',
                 common.SELECTED_TEXT,
                 common.MARGIN()
             )
@@ -691,7 +691,7 @@ class FavouritesTabButton(BaseTabButton):
 
     def __init__(self, parent=None):
         super(FavouritesTabButton, self).__init__(
-            'My Files',
+            'Starred',
             common.FavouriteTab,
             'Click to see your saved favourites',
             parent=parent
@@ -831,6 +831,7 @@ class ListControlWidget(QtWidgets.QWidget):
         self.layout().addWidget(self.bookmarks_button, 1)
         self.layout().addWidget(self.assets_button, 1)
         self.layout().addWidget(self.files_button, 1)
+        self.layout().addWidget(self.favourites_button, 1)
 
         self.layout().addStretch()
 
@@ -848,8 +849,7 @@ class ListControlWidget(QtWidgets.QWidget):
         self.layout().addSpacing(common.INDICATOR_WIDTH())
         self.layout().addWidget(self.slack_button)
 
-        self.layout().addWidget(self.favourites_button, 1)
-        self.layout().addSpacing(common.INDICATOR_WIDTH() * 2)
+        self.layout().addSpacing(common.INDICATOR_WIDTH())
 
         self.drop_overlay = SlackDropOverlayWidget(parent=self)
         self.drop_overlay.setHidden(True)

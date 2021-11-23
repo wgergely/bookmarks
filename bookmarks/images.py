@@ -88,7 +88,7 @@ def init_resources():
     global RESOURCES
     for _source, k in ((os.path.normpath(os.path.abspath('{}/../rsc/{}'.format(__file__, f))), f) for f in (GuiResource, ThumbnailResource, FormatResource)):
         for _entry in _scandir.scandir(_source):
-            RESOURCES[k].append(_entry.name.split('.')[0])
+            RESOURCES[k].append(_entry.name.split('.', maxsplit=1)[0])
 
 
 def get_oiio_extensions():
@@ -711,6 +711,8 @@ class ImageCache(QtCore.QObject):
             QImage: The loaded and resized QImage, or `None` if loading fails.
 
         """
+        common.check_type(source, str)
+
         locker = QtCore.QMutexLocker(mutex)
 
         # The thumbnail might be being written by a thread worker
@@ -721,9 +723,8 @@ class ImageCache(QtCore.QObject):
             time.sleep(0.1)
             t += 0.1
 
-        common.check_type(source, str)
 
-        if isinstance(size, (float, int)):
+        if isinstance(size, float):
             size = int(round(size))
 
         if hash is None:
@@ -791,27 +792,21 @@ class ImageCache(QtCore.QObject):
             QPixmap: The loaded image.
 
         """
-        source = '{}/../rsc/{}/{}.png'.format(__file__, resource, name)
-        file_info = QtCore.QFileInfo(source)
+        source = f'{__file__}/../rsc/{resource}/{name}.png'
 
         if get_path:
+            file_info = QtCore.QFileInfo(source)
             return file_info.absoluteFilePath()
 
-        if not file_info.exists():
-            return QtGui.QPixmap()
-
-        k = 'rsc:{name}:{size}:{color}'.format(
-            name=name,
-            size=int(size),
-            color='null' if not color else color.name()
-        )
+        _color = color.name() if color else 'null'
+        k = f'rsc:{name}:{int(size)}:{_color}'
 
         if k in cls.RESOURCE_DATA:
             return cls.RESOURCE_DATA[k]
 
         image = QtGui.QImage()
         image.setDevicePixelRatio(pixel_ratio)
-        image.load(file_info.filePath())
+        image.load(source)
         if image.isNull():
             return QtGui.QPixmap()
 
@@ -941,15 +936,15 @@ class ImageCache(QtCore.QObject):
         # buf = colorconvert(buf, source_spec)
         buf = resize(buf, source_spec)
 
-        if buf.nchannels > 3:
-            background_buf = OpenImageIO.ImageBuf(destination_spec)
-            OpenImageIO.ImageBufAlgo.checker(
-                background_buf,
-                12, 12, 1,
-                (0.3, 0.3, 0.3),
-                (0.2, 0.2, 0.2)
-            )
-            buf = OpenImageIO.ImageBufAlgo.over(buf, background_buf)
+        # if buf.nchannels > 3:
+            # background_buf = OpenImageIO.ImageBuf(destination_spec)
+            # OpenImageIO.ImageBufAlgo.checker(
+            #     background_buf,
+            #     12, 12, 1,
+            #     (0.3, 0.3, 0.3),
+            #     (0.2, 0.2, 0.2)
+            # )
+            # buf = OpenImageIO.ImageBufAlgo.over(buf, background_buf)
 
         spec = buf.spec()
         buf.set_write_format(OpenImageIO.UINT8)

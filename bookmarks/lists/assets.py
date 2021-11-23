@@ -83,7 +83,7 @@ class AssetModel(base.BaseModel):
     queues = (threads.AssetInfo, threads.AssetThumbnail)
 
     def __init__(self, parent=None):
-        super(AssetModel, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         common.signals.assetsLinked.connect(
             lambda: self.blockSignals(True))
         common.signals.assetsLinked.connect(self.__resetdata__)
@@ -269,7 +269,7 @@ class AssetsWidget(base.ThreadedBaseWidget):
     queues = (threads.AssetInfo, threads.AssetThumbnail)
 
     def __init__(self, parent=None):
-        super(AssetsWidget, self).__init__(
+        super().__init__(
             icon='asset',
             parent=parent
         )
@@ -297,7 +297,7 @@ class AssetsWidget(base.ThreadedBaseWidget):
         if not isinstance(event, QtGui.QMouseEvent):
             return
 
-        super(AssetsWidget, self).mouseReleaseEvent(event)
+        super().mouseReleaseEvent(event)
 
         cursor_position = self.mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)
@@ -325,4 +325,4 @@ class AssetsWidget(base.ThreadedBaseWidget):
             self.scrollTo(index, QtWidgets.QAbstractItemView.PositionAtCenter)
             self.selectionModel().setCurrentIndex(
                 index, QtCore.QItemSelectionModel.ClearAndSelect)
-        return super(AssetsWidget, self).showEvent(event)
+        return super().showEvent(event)

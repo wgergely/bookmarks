@@ -421,4 +421,4 @@ class FavouritesWidget(files.FilesWidget):
     def get_hint_string(self):
         model = self.model().sourceModel()
         if not model.rowCount():
-            return 'You didn\'t add any files yet.'
+            return 'You didn\'t save any items yet.'

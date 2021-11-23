@@ -451,7 +451,7 @@ class MessageBox(QtWidgets.QDialog):
     """
     primary_color = QtGui.QColor(50, 50, 190, 180)
     secondary_color = common.BLUE.lighter(120)
-    icon = 'icon_bw'
+    icon = 'logo_bw'
 
     buttonClicked = QtCore.Signal(str)
 
@@ -889,7 +889,7 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
             painter.drawPixmap(rect, pixmap)
         elif checkable and not checked:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'close_sm', common.BG, rect.height())
+                'close', common.BG, rect.height())
             painter.drawPixmap(rect, pixmap)
         elif not checkable and decoration and isinstance(decoration, QtGui.QPixmap):
             painter.drawPixmap(rect, decoration)

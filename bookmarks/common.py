@@ -923,8 +923,6 @@ def set_custom_stylesheet(widget):
             TRANSPARENT=rgb(TRANSPARENT),
             TRANSPARENT_BLACK=rgb(TRANSPARENT_BLACK),
             LOG_BG=rgb(LOG_BG),
-            ARROW_RIGHT=images.ImageCache.get_rsc_pixmap(
-                'arrow_right', None, None, get_path=True),
             BRANCH_CLOSED=images.ImageCache.get_rsc_pixmap(
                 'branch_closed', None, None, get_path=True),
             BRANCH_OPEN=images.ImageCache.get_rsc_pixmap(
@@ -1211,14 +1209,14 @@ def quit():
     """
     import gc
 
-    from .editors import alembic_preview
-    from .editors import thumb_capture
-    from .editors import thumb_library
-    from .editors import thumb_picker
-    from .properties import asset_properties_widget
-    from .properties import bookmark_properties_widget
-    from .properties import file_properties_widget
-    from .properties import preference_properties_widget
+    from .lists import alembic_preview
+    from .lists import thumb_capture
+    from .lists import thumb_library
+    from .lists import thumb_picker
+    from .property_editor import asset_editor
+    from .property_editor import bookmark_editor
+    from .property_editor import file_editor
+    from .property_editor import preference_editor
 
     from . import standalone
     from . import settings
@@ -1319,10 +1317,10 @@ def quit():
     thumb_capture.close()
     thumb_library.close()
     thumb_picker.close()
-    asset_properties_widget.close()
-    bookmark_properties_widget.close()
-    file_properties_widget.close()
-    preference_properties_widget.close()
+    asset_editor.close()
+    bookmark_editor.close()
+    file_editor.close()
+    preference_editor.close()
 
     if main._instance:
         main._instance.deleteLater()

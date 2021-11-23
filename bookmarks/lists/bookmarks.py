@@ -246,62 +246,23 @@ class BookmarksWidget(base.ThreadedBaseWidget):
             parent=parent
         )
 
-        self.bookmarks_to_remove = []
-
-        self.remove_bookmark_timer = common.Timer(parent=self)
-        self.remove_bookmark_timer.setSingleShot(True)
-        self.remove_bookmark_timer.setInterval(10)
-        self.remove_bookmark_timer.timeout.connect(
-            self.remove_queued_bookmarks)
-
-    @QtCore.Slot()
-    def remove_queued_bookmarks(self):
-        """This slot is called by the `remove_bookmark_timer`'s timeout signal
-        and is used to remove bookmark items from the list.
-
-        We're using a timer mechanism, because otherwise a model refresh would
-        be triggered a mouseReleaseEvent, causing an app crash.
-
-        """
-        if self.multi_toggle_pos:
-            self.remove_bookmark_timer.start(
-                self.remove_bookmark_timer.interval())
-            return
-
-        for bookmark in list(self.bookmarks_to_remove):
-            actions.remove_bookmark(*bookmark)
-            del self.bookmarks_to_remove[self.bookmarks_to_remove.index(
-                bookmark)]
-
     def mouseReleaseEvent(self, event):
         if not isinstance(event, QtGui.QMouseEvent):
             return
 
+        super(BookmarksWidget, self).mouseReleaseEvent(event)
+
         cursor_position = self.mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)
+        
         if not index.isValid():
             return
-
-        if index.flags() & common.MarkedAsArchived:
-            super(BookmarksWidget, self).toggle_item_flag(
-                index,
-                common.MarkedAsArchived,
-                state=False,
-            )
-            self.update(index)
-            self.reset_multitoggle()
+        if not index.data(common.ParentPathRole):
             return
 
         rect = self.visualRect(index)
         rectangles = delegate.get_rectangles(
             rect, self.inline_icons_count())
-
-        super(BookmarksWidget, self).mouseReleaseEvent(event)
-
-        if not index.isValid():
-            return
-        if not index.data(common.ParentPathRole):
-            return
 
         server, job, root = index.data(common.ParentPathRole)[0:3]
         if rectangles[delegate.AddAssetRect].contains(cursor_position):
@@ -317,32 +278,6 @@ class BookmarksWidget(base.ThreadedBaseWidget):
         if self.buttons_hidden():
             return 0
         return 6
-
-    def toggle_item_flag(self, index, flag, state=None, commit_now=True):
-        """Overrides the base behaviour because bookmark items cannot be archived.
-
-        """
-        if flag == common.MarkedAsArchived:
-            if hasattr(index.model(), 'sourceModel'):
-                index = self.model().mapToSource(index)
-
-            # Set flags
-            idx = index.row()
-            data = index.model().model_data()
-            data[idx][common.FlagsRole] = data[idx][common.FlagsRole] | common.MarkedAsArchived
-            self.update(index)
-
-            # Do nothing else for now, instead, queue the bookmark item for
-            # later processing. The queued items will be removed when the user
-            # releases the mouse button and finishes the multi-toggle
-            # operation.
-            self.bookmarks_to_remove.append(index.data(common.ParentPathRole))
-            self.remove_bookmark_timer.start()
-            return
-
-        # Call the base behaviour for all other flags
-        super(BookmarksWidget, self).toggle_item_flag(
-            index, flag, state=state, commit_now=commit_now)
 
     def get_hint_string(self):
         return 'No items. Select right-click - Edit Bookmarks to add new bookmarks.'

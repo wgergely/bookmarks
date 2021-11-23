@@ -45,8 +45,8 @@ from .. import actions
 from .. import datacache
 from ..threads import threads
 
-from ..editors import filter_editor
-from ..editors import description_editor
+from ..lists import filter_editor
+from ..lists import description_editor
 
 from . import delegate
 
@@ -1007,10 +1007,8 @@ class BaseModel(QtCore.QAbstractListModel):
         key = key if key else self.local_settings_key()
         if not key:
             return None
-        if not isinstance(key, str):
-            key = key.decode('utf-8')
         k = '{}/{}'.format(key_type, common.get_hash(key))
-        v = settings.instance().setValue(section, k, v)
+        settings.instance().setValue(section, k, v)
 
     def setData(self, index, data, role=QtCore.Qt.DisplayRole):
         if not index.isValid():
@@ -1118,7 +1116,7 @@ class BaseListWidget(QtWidgets.QListView):
     ContextMenu = NotImplementedError
     ThumbnailContextMenu = ThumbnailsContextMenu
 
-    def __init__(self, icon='icon_bw', parent=None):
+    def __init__(self, icon='logo_bw', parent=None):
         super(BaseListWidget, self).__init__(parent=parent)
         self.setDragDropOverwriteMode(False)
         self.setDropIndicatorShown(True)
@@ -2485,7 +2483,7 @@ class BaseInlineIconWidget(BaseListWidget):
                             'Archive item...')
                     elif k == delegate.FavouriteRect:
                         common.signals.showStatusTipMessage.emit(
-                            'Save item to My Files...')
+                            'Star item...')
                     elif k == delegate.ThumbnailRect:
                         common.signals.showStatusTipMessage.emit(
                             'Drag and drop an image, or right-click to edit the thumbnail...')

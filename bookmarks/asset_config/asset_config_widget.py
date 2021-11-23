@@ -13,7 +13,7 @@ from .. import common
 from .. import log
 from .. import ui
 from .. import images
-from ..properties import base
+from ..property_editor import base
 
 
 SECTIONS = (

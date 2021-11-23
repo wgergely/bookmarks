@@ -835,7 +835,7 @@ class ThumbnailWorker(BaseWorker):
             # We should never get here ideally, but if we do we'll mark the item
             # with a bespoke 'failed' thumbnail
             fpath = '{}/../rsc/{}/{}.{}'.format(
-                __file__, images.GuiResource, 'close_sm', images.THUMBNAIL_FORMAT)
+                __file__, images.GuiResource, 'close', images.THUMBNAIL_FORMAT)
             res = images.ImageCache.oiio_make_thumbnail(
                 fpath,
                 destination,

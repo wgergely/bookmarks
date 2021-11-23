@@ -300,7 +300,7 @@ class StandaloneMainWidget(main.MainWidget):
 
     def init_tray(self):
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'icon_bw', None, common.ROW_HEIGHT() * 7.0)
+            'logo_bw', None, common.ROW_HEIGHT() * 7.0)
         icon = QtGui.QIcon(pixmap)
 
         self.tray = QtWidgets.QSystemTrayIcon(parent=self)

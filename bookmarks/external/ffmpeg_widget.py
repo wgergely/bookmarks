@@ -3,7 +3,7 @@ import functools
 from PySide2 import QtCore, QtWidgets, QtGui
 
 from .. import common
-from ..properties import base
+from ..property_editor import base
 from . import ffmpeg
 
 
@@ -104,7 +104,7 @@ SECTIONS = {
 
 
 
-class FFMpegWidget(base.PropertiesWidget):
+class FFMpegWidget(base.BasePropertyEditor):
     """Widget used to convert an image sequence to a video.
 
     """
@@ -126,10 +126,7 @@ class FFMpegWidget(base.PropertiesWidget):
     @common.error
     @common.debug
     def init_data(self):
-        """
-
-        """
-        self._load_setting_values(SETTING_KEYS)
+        self.load_saved_user_settings(SETTING_KEYS)
 
 
     @common.error

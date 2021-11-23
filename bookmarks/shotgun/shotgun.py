@@ -458,14 +458,14 @@ class EntityModel(QtCore.QAbstractItemModel):
     def get_sg_icon(self):
         icon = QtGui.QIcon()
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'shotgun', common.SEPARATOR, common.ROW_HEIGHT())
+            'sg', common.SEPARATOR, common.ROW_HEIGHT())
         icon.addPixmap(pixmap, QtGui.QIcon.Normal)
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'shotgun', common.SELECTED_TEXT, common.ROW_HEIGHT())
+            'sg', common.SELECTED_TEXT, common.ROW_HEIGHT())
         icon.addPixmap(pixmap, QtGui.QIcon.Active)
         icon.addPixmap(pixmap, QtGui.QIcon.Selected)
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'shotgun', common.DISABLED_TEXT, common.ROW_HEIGHT(), opacity=0.66)
+            'sg', common.DISABLED_TEXT, common.ROW_HEIGHT(), opacity=0.66)
         icon.addPixmap(pixmap, QtGui.QIcon.Disabled)
         return icon
 
@@ -564,7 +564,7 @@ class EntityModel(QtCore.QAbstractItemModel):
             args = [int(f) for f in v['bg_color'].split(',')]
             color = QtGui.QColor(*args)
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'shotgun', color, common.MARGIN())
+                'sg', color, common.MARGIN())
             return QtGui.QIcon(pixmap)
 
         # Otherwise return the standard shotgun icon

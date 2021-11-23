@@ -247,7 +247,7 @@ class LauncherListWidget(ui.ListWidget):
     dataUpdated = QtCore.Signal(dict)
 
     def __init__(self, parent=None):
-        super(LauncherListWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.itemActivated.connect(self.edit_item)
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.overlay.hide()

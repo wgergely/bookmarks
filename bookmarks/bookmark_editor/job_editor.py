@@ -15,7 +15,7 @@ from .. import contextmenu
 from .. import shortcuts
 from .. import actions
 from ..templates import templates
-from ..properties import base
+from ..property_editor import base
 
 
 SECTIONS = {
@@ -73,8 +73,8 @@ def get_job_thumbnail(path):
     return QtGui.QPixmap()
 
 
-class AddJobWidget(base.PropertiesWidget):
-    """A custom `PropertiesWidget` used to add new jobs on a server.
+class AddJobWidget(base.BasePropertyEditor):
+    """A custom `BasePropertyEditor` used to add new jobs on a server.
 
     """
     buttons = ('Create', 'Cancel')
@@ -112,7 +112,7 @@ class AddJobWidget(base.PropertiesWidget):
     @common.debug
     def done(self, result):
         if result == QtWidgets.QDialog.Rejected:
-            return super(base.PropertiesWidget, self).done(result)  # pylint: disable=E1003
+            return super(base.BasePropertyEditor, self).done(result)  # pylint: disable=E1003
 
         if not self.name_editor.text():
             raise ValueError('Must enter a name to create a job.')
@@ -130,7 +130,7 @@ class AddJobWidget(base.PropertiesWidget):
 
         ui.MessageBox(f'{name} was successfully created.').open()
 
-        return super(base.PropertiesWidget, self).done(result)  # pylint: disable=E1003
+        return super(base.BasePropertyEditor, self).done(result)  # pylint: disable=E1003
 
 
 class JobContextMenu(contextmenu.BaseContextMenu):
@@ -161,7 +161,7 @@ class JobContextMenu(contextmenu.BaseContextMenu):
     def add_refresh_menu(self):
         self.menu['Refresh'] = {
             'action': (
-                self.parent().init_data,
+                functools.partial(self.parent().init_data, reset=False),
                 self.parent().restore_current
             ),
             'icon': self.get_icon('refresh')
@@ -196,7 +196,7 @@ class JobListWidget(ui.ListWidget):
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
         )
-        self.setMinimumWidth(common.WIDTH() * 0.33)
+        self.setMinimumWidth(common.WIDTH() * 0.2)
 
         self._connect_signals()
         self.init_shortcuts()
@@ -216,7 +216,7 @@ class JobListWidget(ui.ListWidget):
         common.signals.bookmarkAdded.connect(self.update_status)
         common.signals.bookmarkRemoved.connect(self.update_status)
 
-        common.signals.templateExpanded.connect(self.init_data)
+        common.signals.templateExpanded.connect(lambda: self.init_data(reset=False))
         common.signals.templateExpanded.connect(
             lambda x: self.restore_current(name=QtCore.QFileInfo(x).fileName())
         )
@@ -322,8 +322,9 @@ class JobListWidget(ui.ListWidget):
         self.restore_current()
 
     @QtCore.Slot()
-    def init_data(self):
-        self.jobChanged.emit(None, None)
+    def init_data(self, reset=True):
+        if reset:
+            self.jobChanged.emit(None, None)
 
         self.blockSignals(True)
         self.clear()
@@ -366,9 +367,9 @@ class JobListWidget(ui.ListWidget):
         pixmap = get_job_thumbnail(item.data(QtCore.Qt.UserRole))
         if pixmap.isNull():
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'logo', common.DARK_BG, common.ROW_HEIGHT() * 0.8)
+                'icon', common.DARK_BG, common.ROW_HEIGHT() * 0.8)
             pixmap_selected = images.ImageCache.get_rsc_pixmap(
-                'logo', common.SELECTED_TEXT, common.ROW_HEIGHT() * 0.8)
+                'icon', common.SELECTED_TEXT, common.ROW_HEIGHT() * 0.8)
             pixmap_disabled = images.ImageCache.get_rsc_pixmap(
                 'close', common.RED, common.ROW_HEIGHT() * 0.8)
         else:

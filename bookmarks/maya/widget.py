@@ -352,7 +352,7 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         if not hasattr(self.parent(), 'clicked'):
             return
         self.menu['show'] = {
-            'icon': self.get_icon('icon_bw', color=None),
+            'icon': self.get_icon('logo_bw', color=None),
             'text': 'Toggle {}'.format(common.PRODUCT),
             'action': self.parent().clicked.emit
         }
@@ -554,7 +554,7 @@ class ToolButton(ui.ClickableIconButton):
 
     def __init__(self, size, parent=None):
         super(ToolButton, self).__init__(
-            'icon_maya',
+            'icon',
             (None, None),
             size,
             description='Click to toggle {}.'.format(
@@ -595,7 +595,7 @@ class ToolButton(ui.ClickableIconButton):
             painter.setOpacity(1.0)
         else:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'icon_bw', None, self.width())
+                'logo_bw', None, self.width())
             painter.setOpacity(0.80)
 
         rect = self.rect()

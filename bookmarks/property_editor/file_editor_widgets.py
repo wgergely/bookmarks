@@ -299,7 +299,7 @@ class TaskModel(BaseModel):
                         'check', common.GREEN, common.MARGIN() * 2)
                 else:
                     pixmap = images.ImageCache.get_rsc_pixmap(
-                        'logo_bw', None, common.MARGIN() * 2)
+                        'icon_bw', None, common.MARGIN() * 2)
                 icon = QtGui.QIcon(pixmap)
 
                 name = '{}/{}'.format(v['value'], _v['value'])

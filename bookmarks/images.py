@@ -27,7 +27,7 @@ from . import common
 THUMBNAIL_IMAGE_SIZE = 512.0
 THUMBNAIL_FORMAT = 'png'
 PLACEHOLDER_PATH = '{}/../rsc/{}/{}.{}'
-QT_IMAGE_FORMATS = list(set([f.data().decode('utf8') for f in QtGui.QImageReader.supportedImageFormats()]))
+QT_IMAGE_FORMATS = {f.data().decode('utf8') for f in QtGui.QImageReader.supportedImageFormats()}
 
 mutex = QtCore.QMutex()
 
@@ -63,6 +63,15 @@ RESOURCES = {
     ThumbnailResource: [],
     FormatResource: [],
 }
+
+
+def wait_for_lock(source):
+    t = 0.0
+    while os.path.isfile(source + '.lock'):
+        if t > 1.0:
+            break
+        time.sleep(0.1)
+        t += 0.1
 
 
 def reset():
@@ -395,30 +404,23 @@ def oiio_get_buf(source, hash=None, force=False):
     return buf
 
 
-def oiio_get_qimage(path, buf=None, force=True):
+def oiio_get_qimage(source, buf=None, force=True):
     """Load the pixel data using OpenImageIO and return it as a
     `RGBA8888` / `RGB888` QImage.
 
     Args:
-        path (str):                 Path to an OpenImageIO readable image.
+        source (str):                 Path to an OpenImageIO readable image.
         buf (OpenImageIO.ImageBuf):     When buf is valid ImageBuf instance it will be used
-                                        as the source instead of `path`. Defaults to `None`.
+                                        as the source instead of `source`. Defaults to `None`.
 
     Returns:
-        QImage: An QImage instance or `None` if the image/path is invalid.
+        QImage: An QImage instance or `None` if the image/source is invalid.
 
     """
     if buf is None:
-        buf = oiio_get_buf(path, force=force)
-        oiio_cache.invalidate(path, force=True)
+        buf = oiio_get_buf(source, force=force)
         if buf is None:
             return None
-
-    # Cache this would require some serious legwork
-    # Return the cached version if exists
-    # hash = common.get_hash(buf.name)
-    # if not force and hash in ImageCache.PIXEL_DATA:
-    #     return ImageCache.PIXEL_DATA[hash]
 
     spec = buf.spec()
     if not int(spec.nchannels):
@@ -458,11 +460,7 @@ def oiio_get_qimage(path, buf=None, force=True):
         spec.width * spec.nchannels,  # scanlines
         _format
     )
-
-    # The loaded pixel values are cached by OpenImageIO automatically.
-    # By invalidating the buf, we can ditch the cached data.
-    oiio_cache.invalidate(path, force=True)
-    oiio_cache.invalidate(buf.name, force=True)
+    image.setDevicePixelRatio(pixel_ratio)
 
     # As soon as the numpy array is garbage collected, the data for QImage becomes
     # unusable and Qt5 crashes. This could possibly be a bug, I would expect,
@@ -579,8 +577,10 @@ class ImageCache(QtCore.QObject):
                 del cls.INTERNAL_DATA[k][hash]
 
     @classmethod
-    def get_pixmap(cls, source, size, hash=None, force=False):
+    def get_pixmap(cls, source, size, hash=None, force=False, oiio=False):
         """Loads, resizes `source` as a QPixmap and stores it for later use.
+
+        When size is '-1' the full image will be loaded without resizing.
 
         The resource will be stored as a QPixmap instance in
         `INTERNAL_DATA[PixmapType][hash]`. The hash value is generated using
@@ -594,8 +594,9 @@ class ImageCache(QtCore.QObject):
 
         Args:
             source (str):   Path to an OpenImageIO compliant image file.
-            size (int):         The size of the requested image.
-            hash (str):         Use this hash key instead of a source's hash value to store the data.
+            size (int):     The size of the requested image.
+            hash (str):     Use this hash key instead of a source's hash value to store the data.
+            force (bool):   Force reload the pixmap.
 
         Returns:
             QPixmap: The loaded and resized QPixmap, or `None`.
@@ -612,8 +613,13 @@ class ImageCache(QtCore.QObject):
             s = 'Pixmaps can only be initiated in the main gui thread.'
             raise RuntimeError(s)
 
-        if isinstance(size, (float, int)):
+        if isinstance(size, float):
             size = int(round(size))
+
+        if size == -1:
+            buf = oiio_get_buf(source)
+            spec = buf.spec()
+            size = max((spec.width, spec.height))
 
         # Check the cache and return the previously stored value if exists
         hash = common.get_hash(source)
@@ -657,6 +663,7 @@ class ImageCache(QtCore.QObject):
     def make_color(cls, source):
         """Calculate the average color of a source image."""
         locker = QtCore.QMutexLocker(mutex)
+        wait_for_lock(source)
 
         buf = oiio_get_buf(source)
         if not buf:
@@ -691,11 +698,14 @@ class ImageCache(QtCore.QObject):
             return None
 
         cls.setValue(_hash, color, ColorType)
+
         return color
 
     @classmethod
-    def get_image(cls, source, size, hash=None, force=False):
+    def get_image(cls, source, size, hash=None, force=False, oiio=False):
         """Loads, resizes `source` as a QImage and stores it for later use.
+
+        When size is '-1' the full image will be loaded without resizing.
 
         The resource will be stored as QImage instance at
         `INTERNAL_DATA[ImageType][hash]`. The hash value is generated by default
@@ -703,9 +713,11 @@ class ImageCache(QtCore.QObject):
         setting `hash`.
 
         Args:
-            source (str):   Path to an OpenImageIO compliant image file.
+            source (str):       Path to an OpenImageIO compliant image file.
             size (int):         The size of the requested image.
             hash (str):         Use this hash key instead source to store the data.
+            force (bool):       Force reload the image from the source.
+            oiio (bool):        Use OpenImageIO to load the image data.
 
         Returns:
             QImage: The loaded and resized QImage, or `None` if loading fails.
@@ -713,19 +725,13 @@ class ImageCache(QtCore.QObject):
         """
         common.check_type(source, str)
 
-        locker = QtCore.QMutexLocker(mutex)
-
-        # The thumbnail might be being written by a thread worker
-        t = 0.0
-        while os.path.isfile(source + '.lock'):
-            if t > 1.0:
-                break
-            time.sleep(0.1)
-            t += 0.1
-
-
         if isinstance(size, float):
             size = int(round(size))
+
+        if size == -1:
+            buf = oiio_get_buf(source)
+            spec = buf.spec()
+            size = max((spec.width, spec.height))
 
         if hash is None:
             hash = common.get_hash(source)
@@ -737,22 +743,37 @@ class ImageCache(QtCore.QObject):
                 return data
 
         # If not yet stored, load and save the data
-        buf = oiio_get_buf(source, hash=hash, force=force)
+        if size != -1:
+            buf = oiio_get_buf(source, hash=hash, force=force)
         if not buf:
             return None
 
-        image = QtGui.QImage(source)
-        image.setDevicePixelRatio(pixel_ratio)
+        if oiio:
+            image = oiio_get_qimage(source)
+        else:
+            image = QtGui.QImage(source)
+            image.setDevicePixelRatio(pixel_ratio)
+
         if image.isNull():
             return None
 
-        # Let's resize...
-        image = cls.resize_image(image, size)
+        # Let's resize, but only if the source is bigger than the requested size
+        spec = buf.spec()
+        msize = max((spec.width, spec.height))
+
+        if size != -1 and size < msize:
+            image = cls.resize_image(image, size)
         if image.isNull():
             return None
 
         # ...and store
         cls.setValue(hash, image, ImageType, size=size)
+
+        # The loaded pixel values are cached by OpenImageIO automatically.
+        # By invalidating the buf, we can ditch the cached data.
+        oiio_cache.invalidate(source, force=True)
+        oiio_cache.invalidate(buf.name, force=True)
+
         return image
 
     @staticmethod
@@ -799,7 +820,7 @@ class ImageCache(QtCore.QObject):
             return file_info.absoluteFilePath()
 
         _color = color.name() if color else 'null'
-        k = f'rsc:{name}:{int(size)}:{_color}'
+        k = 'rsc:' + name + ':' + str(int(size)) + ':' + _color
 
         if k in cls.RESOURCE_DATA:
             return cls.RESOURCE_DATA[k]

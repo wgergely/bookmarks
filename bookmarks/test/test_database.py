@@ -31,13 +31,13 @@ class Test(base.BaseApplicationTest):
         db = database.BookmarkDB('invalid', 'path', 'root')
         self.assertFalse(db.is_valid())
 
-        server, job, root = common.local_parent_paths()
+        server, job, root = common.local_user_bookmark()
         db = database.BookmarkDB(server, job, root)
         self.assertTrue(db.is_valid())
 
     def test_value(self):
         from .. import database
-        db = database.BookmarkDB(*common.local_parent_paths())
+        db = database.BookmarkDB(*common.local_user_bookmark())
         self.assertTrue(db.is_valid())
 
         self.assertIn(database.AssetTable, database.TABLES)
@@ -86,7 +86,7 @@ class Test(base.BaseApplicationTest):
 
     def test_invalid(self):
         from .. import database
-        server, job, root = common.local_parent_paths()
+        server, job, root = common.local_user_bookmark()
         root += base.random_str(32)
 
         db = database.BookmarkDB(server, job, root)
@@ -119,7 +119,7 @@ class Test(base.BaseApplicationTest):
 
     def test_copy_paste(self):
         from .. import database
-        server, job, root = common.local_parent_paths()
+        server, job, root = common.local_user_bookmark()
         root += '2'
 
         db = database.BookmarkDB(server, job, root)

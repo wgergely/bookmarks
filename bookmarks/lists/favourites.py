@@ -298,7 +298,7 @@ class FavouritesModel(files.FilesModel):
             tuple: A tuple of path segments.
 
         """
-        return common.local_parent_paths()
+        return common.local_user_bookmark()
 
     def item_iterator(self):
         """We're using the saved keys to find and return the DirEntries
@@ -414,7 +414,7 @@ class FavouritesWidget(files.FilesWidget):
 
             # Add the dropped file with dummy server/job/root values
             actions.add_favourite(
-                common.local_parent_paths(),
+                common.local_user_bookmark(),
                 source,
             )
 

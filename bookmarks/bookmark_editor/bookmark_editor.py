@@ -15,6 +15,7 @@ from .. import shortcuts
 from .. import actions
 
 
+
 class BookmarkContextMenu(contextmenu.BaseContextMenu):
     """Custom context menu used to control the list of saved servers.
 
@@ -125,21 +126,27 @@ class BookmarkListWidget(ui.ListWidget):
             item.setCheckState(QtCore.Qt.Unchecked)
 
             if onlyflag is False:
-                actions.remove_bookmark(
-                    self.server,
-                    self.job,
-                    item.data(QtCore.Qt.DisplayRole)
-                )
+                try:
+                    actions.remove_bookmark(
+                        self.server,
+                        self.job,
+                        item.data(QtCore.Qt.DisplayRole)
+                    )
+                except:
+                    pass
 
         elif item.checkState() == QtCore.Qt.Unchecked:
             item.setCheckState(QtCore.Qt.Checked)
 
             if onlyflag is False:
-                actions.add_bookmark(
-                    self.server,
-                    self.job,
-                    item.data(QtCore.Qt.DisplayRole)
-                )
+                try:
+                    actions.add_bookmark(
+                        self.server,
+                        self.job,
+                        item.data(QtCore.Qt.DisplayRole)
+                    )
+                except:
+                    pass
 
     @common.debug
     @common.error

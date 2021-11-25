@@ -1116,7 +1116,7 @@ class BaseListWidget(QtWidgets.QListView):
     ContextMenu = NotImplementedError
     ThumbnailContextMenu = ThumbnailsContextMenu
 
-    def __init__(self, icon='logo_bw', parent=None):
+    def __init__(self, icon='icon_bw', parent=None):
         super(BaseListWidget, self).__init__(parent=parent)
         self.setDragDropOverwriteMode(False)
         self.setDropIndicatorShown(True)

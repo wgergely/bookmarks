@@ -25,6 +25,13 @@ from . import bookmark_editor
 
 instance = None
 
+HINT = "To start, add your server below. If the server does not have jobs, you \
+can add new ones using *.zip templates.\nAll job items will contain a series of \
+bookmark items - these are the folders used to store your project's files and \
+are usually called 'Shots', 'Assets', etc.\nYou can create new bookmark items \
+below or toggle existing ones by double-clicking their name (or clicking their \
+label)."
+
 
 def close():
     global instance
@@ -111,6 +118,18 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
 
         # Separator
         row = ui.add_row('', height=o, parent=self)
+
+        _row = ui.add_row('', height=None, parent=None)
+        self.layout().addWidget(_row, 0)
+        _row.layout().setSpacing(0)
+        label = ui.Label(HINT, color=common.SECONDARY_TEXT, parent=_row)
+        _row.layout().addWidget(label, 0)
+        label.setSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Maximum,
+        )
+        _row.layout().setContentsMargins(o, o, o, o)
+
         label = QtWidgets.QLabel(parent=self)
         pixmap = images.ImageCache.get_rsc_pixmap(
             'gradient5', common.SEPARATOR, o)

@@ -1237,7 +1237,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         k = 'Launcher'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
-            self.menu['{}:icon'.format(k)] = self.get_icon('logo_bw')
+            self.menu['{}:icon'.format(k)] = self.get_icon('icon_bw')
 
         for _k in sorted(v, key=lambda k: v[k]['name']):
             try:

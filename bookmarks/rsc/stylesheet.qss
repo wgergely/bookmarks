@@ -67,28 +67,28 @@ QStatusBar::item {{
 QCheckBox {{
 	font-family: "{PRIMARY_FONT}";
 	font-size: {MEDIUM_FONT_SIZE}px;
-	height: {MEDIUM_FONT_SIZE}px;
+	height: {LARGE_FONT_SIZE}px;
 	border-radius: {RADIUS}px;
 	background-color: {DARK_BG};
 	margin: 0;
-	padding: {RADIUS}px;
+	padding: {RADIUS_SM}px;
 	color: {SECONDARY_TEXT};
 }}
 QCheckBox::indicator {{
 	height: {MEDIUM_FONT_SIZE}px;
 	width: {MEDIUM_FONT_SIZE}px;
-	border: none;
 	border-radius: {RADIUS}px;
 }}
 QCheckBox::indicator:unchecked {{
-	image: url({UNCHECKED});
+	/* image: url({UNCHECKED}); */
+	background-color: {SEPARATOR};
 }}
 QCheckBox::indicator:checked  {{
-	image: url({CHECKED});
+	/* image: url({CHECKED}); */
+	background-color: {GREEN};
 }}
 QCheckBox:checked  {{
 	color: {SELECTED_TEXT};
-	background-color: {GREEN};
 }}
 
 

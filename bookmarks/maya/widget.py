@@ -352,7 +352,7 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         if not hasattr(self.parent(), 'clicked'):
             return
         self.menu['show'] = {
-            'icon': self.get_icon('logo_bw', color=None),
+            'icon': self.get_icon('icon_bw', color=None),
             'text': 'Toggle {}'.format(common.PRODUCT),
             'action': self.parent().clicked.emit
         }
@@ -595,7 +595,7 @@ class ToolButton(ui.ClickableIconButton):
             painter.setOpacity(1.0)
         else:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'logo_bw', None, self.width())
+                'icon_bw', None, self.width())
             painter.setOpacity(0.80)
 
         rect = self.rect()

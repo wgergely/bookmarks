@@ -54,7 +54,7 @@ class QuickSwitchMenu(contextmenu.BaseContextMenu):
     def add_switch_menu(self, widget, label):
         """Adds the items needed to quickly change bookmarks or assets."""
         off_pixmap = images.ImageCache.get_rsc_pixmap(
-            'logo_bw', common.SECONDARY_TEXT, common.MARGIN())
+            'icon_bw', common.SECONDARY_TEXT, common.MARGIN())
         on_pixmap = images.ImageCache.get_rsc_pixmap(
             'check', common.GREEN, common.MARGIN())
 
@@ -78,7 +78,7 @@ class QuickSwitchMenu(contextmenu.BaseContextMenu):
                 index.data(common.ParentPathRole)[2],
                 index.data(QtCore.Qt.StatusTipRole),
                 size=common.MARGIN() * 4,
-                fallback_thumb='logo_bw'
+                fallback_thumb='icon_bw'
             )
             pixmap = pixmap if pixmap else off_pixmap
             pixmap = on_pixmap if active else pixmap

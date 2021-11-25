@@ -50,7 +50,7 @@ class MainWidget(QtWidgets.QWidget):
 
     """
     initialized = QtCore.Signal()
-    connectExtraSignals = QtCore.Signal()
+    aboutToInitialize = QtCore.Signal()
 
     def __init__(self, parent=None):
         global _instance
@@ -194,7 +194,7 @@ class MainWidget(QtWidgets.QWidget):
         self._init_shortcuts()
         self._create_ui()
         self._connect_signals()
-        self.connectExtraSignals.emit()
+        self.aboutToInitialize.emit()
 
         # Load active paths from the local settings
         settings.instance().verify_active()
@@ -388,7 +388,7 @@ class MainWidget(QtWidgets.QWidget):
             o, o)
 
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'logo_bw', None, s)
+            'icon_bw', None, s)
         painter.setOpacity(0.5)
         painter.drawPixmap(pixmaprect, pixmap, pixmap.rect())
         painter.setOpacity(1.0)

@@ -1,27 +1,70 @@
 # -*- coding: utf-8 -*-
-"""Welcome to Bookmarks!
+"""Bookmarks is a simple an asset manager designed to help VFX/Animation
+productions. It can help you create, browse, annotate shots, assets and project
+files.
 
-Bookmarks is a simple asset manager designed to assist VFX/Animation productions.
-It can help you create, browse, annotate shot, assets and project files.
 
-The project was written in Python and can run as a standalone PySide2
-application or run embedded in a compatible host application (note, only Maya
-has a plugin thus far).
+Features
+--------
+
+I (Gergely, an animation director/CG generalist) started developing Bookmarks as
+a personal project to help manage in-house and freelance jobs. What can I say,
+I'm a digitally messy person!
+
+Bookmarks essentially is a file browser and strives to provide the tools needed
+to find and view items. It can link local assets with ``Autodesk ShotGrid`` and
+set project properties (like framerate and resolution) that we can use to set
+scenes up in DCCs.
+
+But for me, it helps me most to provide a quick access point to my project and
+to hop and jump between assets and shots quickly when working on a project with
+many different parts.
+
+I work on Windows with Maya, so that's where Bookmarks' focus lies. In theory,
+the codebase is largely platform-agnostic and should run on Linux or Mac OS
+(given that its dependencies are available) but I never tested these.
+
+
+
+Getting Bookmarks
+-----------------
+
+Bookmarks is open-source and the latest source can be downloaded from
+https://github.com/wgergely/bookmarks.
+
+To download the latest binary release for Windows visit:
+https://github.com/wgergely/bookmarks/releases
 
 
 Requirements
 ------------
 
-Bookmarks requires the following Python packages:
+Bookmarks requires Python 3.6.0 or later and the following Python packages:
 
-    `scandir`: Specifically, the '_scandir' library. See <https://github.com/benhoyt/scandir>
-    `slack: <https://pypi.org/project/slackclient>
-    `OpenImageIO`: <https://github.com/OpenImageIO/oiio>
-    `PySide2`: <https://pypi.org/project/PySide2>
-    `alembic`: <https://github.com/alembic/alembic>
-    `psutil`: <https://pypi.org/project/psutil>
-    `shotgun_api3`: ShotGrid's python API. See <https://github.com/shotgunsoftware/python-api>
+* ``scandir``: If your Python distribution is missing _scandir.pyd, you might have to build it from source. https://github.com/benhoyt/scandir.
+* ``PySide2``: Tested against Qt 5.15. https://pypi.org/project/PySide2
+* ``OpenImageIO``: We're using this brilliant library to generate thumbnails for image items. https://github.com/OpenImageIO/oiio
+* ``numpy``: https://pypi.org/project/numpy
+* ``slack``: https://pypi.org/project/slackclient
+* ``psutil``: https://pypi.org/project/psutil
+* ``shotgun_api3``: https://github.com/shotgunsoftware/python-api
+* ``alembic``: Alembic's Python library. https://github.com/alembic/alembic
 
+
+Running Bookmarks from Python
+-----------------------------
+
+To run bookmarks, make sure all the dependencies are available and simply call:
+
+.. code-block:: python
+    :linenos:
+
+    import bookmarks
+    bookmarks.exec_()
+
+This will initialize the PySide2 application and all the oebjects Bookmarks
+needs to run. See :doc:`bookmarks.standalone <./bookmarks.standalone>` for more
+information.
 
 """
 import sys
@@ -38,12 +81,13 @@ __version__ = '0.5.0'
 __copyright__ = f'Copyright (C) 2021  {__author__}'
 __dependencies__ = (
     '_scandir',
-    'slack',
-    'OpenImageIO',
     'PySide2',
+    'OpenImageIO',
     'alembic',
+    'numpy',
     'psutil',
-    'shotgun_api3'
+    'shotgun_api3',
+    'slack',
 )
 
 
@@ -53,10 +97,10 @@ if sys.version_info[0] < 3 and sys.version_info[1] < 6:
 
 
 def get_info():
-    """Returns an informative string about found library dependencies.
+    """Returns an informative string about the project environment and author.
 
     Returns:
-        str: An informative string of library versions.
+        str: An informative string.
 
     """
     py_ver = platform.python_version()
@@ -82,7 +126,8 @@ def get_info():
     ))
 
 
-def verify_dependecies():
+
+def _verify_dependecies():
     """Checks the presence of all required python modules.
 
     Raises:
@@ -98,21 +143,22 @@ def verify_dependecies():
 
 
 def exec_():
-    """Starts `Bookmarks` as a standalone PySide2 application.
+    """Opens the Bookmark application.
 
-    .. code-block:: python
+    The method creates :class:`bookmarks.standalone.BookmarksApp`,
+    and initializes all required submodules and data.
 
-        import bookmarks
-        bookmarks.exec_()
+    Make sure to check the :doc:`list of dependencies <index>` before running.
 
     """
     print(get_info())
 
     from . import standalone
 
-    app = standalone.StandaloneApp([])
+    app = standalone.BookmarksApp([])
     standalone.show()
     app.exec_()
 
 
-verify_dependecies()
+
+_verify_dependecies()

@@ -4,6 +4,7 @@
 A list common actions used across `Bookmarks`.
 
 """
+import weakref
 import re
 import json
 import zipfile
@@ -983,6 +984,9 @@ def preview(index):
     images.
 
     """
+    if not index.isValid():
+        return
+
     source = index.data(QtCore.Qt.StatusTipRole)
     source = common.get_sequence_startpath(source)
 
@@ -998,27 +1002,29 @@ def preview(index):
     # If this fails, we will try and look for a saved thumbnail image,
     # and if that fails too, we will display a general thumbnail.
 
-    # Not a readable image file...
-    if os.path.isfile(source) and images.oiio_get_buf(source):
-        thumb_path = source
-    else:
-        server, job, root = index.data(common.ParentPathRole)[0:3]
-        thumb_path = images.get_thumbnail(
-            server,
-            job,
-            root,
-            source,
-            get_path=True
-        )
-        if not thumb_path:
-            return
+    server, job, root = index.data(common.ParentPathRole)[0:3]
+    source = images.get_thumbnail(
+        server,
+        job,
+        root,
+        source,
+        get_path=True,
+        fallback_thumb=instance().widget().itemDelegate().fallback_thumb
+    )
+    if not source:
+        return
 
-    # Finally, we'll create and show our widget, and destroy it when the
-    # selection changes
-    from .lists import item_preview
-    editor = item_preview.ImageViewer(thumb_path, parent=instance().widget())
-    instance().widget().selectionModel().currentChanged.connect(editor.delete_timer.start)
-    editor.open()
+    # Let's get a weakref to the model data
+    model = index.model()
+    data = model.sourceModel().model_data()
+    idx = model.mapToSource(index).row()
+    ref = weakref.ref(data[idx])
+
+    from .lists import image_viewer
+    image_viewer.show(source, ref, instance().widget())
+
+    # ImageViewer(thumb_path, parent=instance().widget())
+    # editor.open()
 
 
 @common.debug

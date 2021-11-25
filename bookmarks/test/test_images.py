@@ -64,7 +64,7 @@ class Test(base.BaseApplicationTest):
             self.assertTrue(os.path.isfile(v))
 
     def test_oiio_make_thumbnail(self):
-        server, job, root = common.local_parent_paths()
+        server, job, root = common.local_user_bookmark()
         size = int(round(images.THUMBNAIL_IMAGE_SIZE * 0.5))
 
         for f in os.listdir(common.temp_path()):
@@ -89,7 +89,7 @@ class Test(base.BaseApplicationTest):
             self.assertTrue(os.path.isfile(dest))
 
     def test_get_thumbnail(self):
-        server, job, root = common.local_parent_paths()
+        server, job, root = common.local_user_bookmark()
         
         # Invalid
         source = '/'.join((server, job, root, 'thumbnail.png'))
@@ -145,7 +145,7 @@ class Test(base.BaseApplicationTest):
             self.assertEqual(m, s * images.pixel_ratio)
 
     def test_get_cached_thumbnail_path(self):
-        server, job, root = common.local_parent_paths()
+        server, job, root = common.local_user_bookmark()
         arr = []
 
         for _ in range(999):

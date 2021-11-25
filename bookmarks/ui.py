@@ -170,10 +170,12 @@ def add_line_edit(label, parent=None):
 
 class Label(QtWidgets.QLabel):
     def __init__(self, text, color=common.SECONDARY_TEXT, parent=None):
-        super(Label, self).__init__(text, parent=parent)
+        super().__init__(text, parent=parent)
+
         self.color = color
         self._color = QtGui.QColor(color)
         self._color.setAlpha(230)
+
         self.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignJustify)
         self.setWordWrap(True)
         self.setTextInteractionFlags(QtCore.Qt.TextBrowserInteraction)
@@ -181,11 +183,21 @@ class Label(QtWidgets.QLabel):
 
     def _set_stylesheet(self, isEnabled):
         if not isEnabled:
-            self.setStyleSheet('color: {}; font-size: {}px;'.format(
-                common.rgb(self._color), common.SMALL_FONT_SIZE()))
+            self.setStyleSheet(
+                'color: {}; font-size: {}px; font-family: "{}"'.format(
+                    common.rgb(self._color),
+                    common.SMALL_FONT_SIZE(),
+                    common.font_db.secondary_font()[0].family()
+                )
+            )
         else:
-            self.setStyleSheet('color: {}; font-size: {}px;'.format(
-                common.rgb(self.color), common.SMALL_FONT_SIZE()))
+            self.setStyleSheet(
+                'color: {}; font-size: {}px; font-family: "{}"'.format(
+                    common.rgb(self.color),
+                    common.SMALL_FONT_SIZE(),
+                    common.font_db.secondary_font()[0].family()
+                )
+            )
         self.update()
 
     def enterEvent(self, event):
@@ -451,7 +463,7 @@ class MessageBox(QtWidgets.QDialog):
     """
     primary_color = QtGui.QColor(50, 50, 190, 180)
     secondary_color = common.BLUE.lighter(120)
-    icon = 'logo_bw'
+    icon = 'icon_bw'
 
     buttonClicked = QtCore.Signal(str)
 

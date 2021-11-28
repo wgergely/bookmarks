@@ -1,13 +1,13 @@
 # Byte-compiled / optimized / DLL files
-*.py[co]
+*.py[c]
 *$py.class
 __pycache__
 
 # Distribution / packaging
-build-scripts/win/bin/*.exe
 .Python
 .DS_Store
 build/
+build
 develop-eggs/
 dist/
 dest

@@ -1,0 +1,21 @@
+bookmarks.standalone
+====================
+
+.. automodule:: bookmarks.standalone
+
+
+.. autoclass:: bookmarks.standalone.BookmarksApp
+  :members:
+  :exclude-members: eventFilter
+
+
+.. autoclass:: bookmarks.standalone.BookmarksAppWindow
+  :members:
+
+
+.. autoclass:: bookmarks.standalone.Tray
+  :members:
+
+
+.. autoclass:: bookmarks.standalone.TrayMenu
+  :members:

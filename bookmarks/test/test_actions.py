@@ -3,7 +3,7 @@ import os
 from PySide2 import QtCore, QtGui, QtWidgets
 
 from .. import common
-from .. import settings
+
 from .. import main
 from ..bookmark_editor import server_editor
 from ..bookmark_editor import job_editor
@@ -43,7 +43,7 @@ class Test(base.BaseApplicationTest):
         self.assertNotIn(v, common.SERVERS)
 
     def test_add_bookmark(self):
-        self.assertFalse(common.BOOKMARKS)
+        self.assertFalse(common.bookmarks)
 
         with self.assertRaises(TypeError):
             actions.add_bookmark(None, None, None)
@@ -51,25 +51,25 @@ class Test(base.BaseApplicationTest):
         server = base.random_str(32)
         job = base.random_str(32)
         root = base.random_str(32)
-        k = settings.bookmark_key(server, job, root)
+        k = common.bookmark_key(server, job, root)
 
         actions.add_bookmark(server, job, root)
 
-        self.assertIn(k, common.BOOKMARKS)
+        self.assertIn(k, common.bookmarks)
 
     def test_remove_bookmark(self):
         server = base.random_str(32)
         job = base.random_str(32)
         root = base.random_str(32)
-        k = settings.bookmark_key(server, job, root)
+        k = common.bookmark_key(server, job, root)
         actions.add_bookmark(server, job, root)
-        self.assertIn(k, common.BOOKMARKS)
+        self.assertIn(k, common.bookmarks)
 
         actions.remove_bookmark(server, job, root)
-        self.assertNotIn(k, common.BOOKMARKS)
+        self.assertNotIn(k, common.bookmarks)
 
     def test_add_favourite(self):
-        self.assertFalse(common.FAVOURITES)
+        self.assertFalse(common.favourites)
 
         with self.assertRaises(TypeError):
             actions.add_favourite(None, None)
@@ -78,23 +78,23 @@ class Test(base.BaseApplicationTest):
         job = base.random_str(32)
         root = base.random_str(32)
         parent_paths = (server, job, root)
-        source = settings.bookmark_key(server, job, root) + '/' + base.random_str(32)
+        source = common.bookmark_key(server, job, root) + '/' + base.random_str(32)
 
         actions.add_favourite(parent_paths, source)
-        self.assertIn(source, common.FAVOURITES)
+        self.assertIn(source, common.favourites)
 
     def test_remove_favourite(self):
         server = base.random_str(32)
         job = base.random_str(32)
         root = base.random_str(32)
         parent_paths = (server, job, root)
-        source = settings.bookmark_key(server, job, root) + '/' + base.random_str(32)
+        source = common.bookmark_key(server, job, root) + '/' + base.random_str(32)
 
         actions.add_favourite(parent_paths, source)
-        self.assertIn(source, common.FAVOURITES)
+        self.assertIn(source, common.favourites)
 
         actions.remove_favourite(parent_paths, source)
-        self.assertNotIn(source, common.FAVOURITES)
+        self.assertNotIn(source, common.favourites)
 
     def test_clear_favourites(self):
         for _ in range(999):
@@ -102,13 +102,13 @@ class Test(base.BaseApplicationTest):
             job = base.random_str(32)
             root = base.random_str(32)
             parent_paths = (server, job, root)
-            source = settings.bookmark_key(server, job, root) + '/' + base.random_str(32)
+            source = common.bookmark_key(server, job, root) + '/' + base.random_str(32)
 
             actions.add_favourite(parent_paths, source)
-            self.assertIn(source, common.FAVOURITES)
+            self.assertIn(source, common.favourites)
 
         actions.clear_favourites(prompt=False)
-        self.assertFalse(common.FAVOURITES)
+        self.assertFalse(common.favourites)
 
 
     def test_export_favourites(self):
@@ -117,13 +117,13 @@ class Test(base.BaseApplicationTest):
             job = base.random_str(32)
             root = base.random_str(32)
             parent_paths = (server, job, root)
-            source = settings.bookmark_key(server, job, root) + '/' + base.random_str(32)
+            source = common.bookmark_key(server, job, root) + '/' + base.random_str(32)
 
             actions.add_favourite(parent_paths, source)
-            self.assertIn(source, common.FAVOURITES)
+            self.assertIn(source, common.favourites)
 
         for _ in range(3):
-            self.assertTrue(common.FAVOURITES)
+            self.assertTrue(common.favourites)
             destination = common.temp_path()
             if not os.path.isdir(destination):
                 os.makedirs(destination)
@@ -137,7 +137,7 @@ class Test(base.BaseApplicationTest):
 
     def test_import_favourites(self):
         for _ in range(3):
-            self.assertTrue(common.FAVOURITES)
+            self.assertTrue(common.favourites)
             destination = common.temp_path()
             if not os.path.isdir(destination):
                 os.makedirs(destination)
@@ -156,15 +156,15 @@ class Test(base.BaseApplicationTest):
         with self.assertRaises(ValueError):
             actions.set_active(None, None)
 
-        for k in settings.ACTIVE_KEYS:
+        for k in common.ACTIVE_KEYS:
             actions.set_active(k, base.random_str(32))
 
         # Should reset and invalidate all active paths if they don't correspont
         # to real folders (the case here)
-        settings.instance().verify_active()
+        common.settings.verify_active()
 
-        for k in settings.ACTIVE_KEYS:
-            self.assertIsNone(settings.active(k))
+        for k in common.ACTIVE_KEYS:
+            self.assertIsNone(common.active(k))
 
 
 

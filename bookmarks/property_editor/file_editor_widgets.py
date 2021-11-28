@@ -11,7 +11,7 @@ import _scandir
 from .. import database
 from .. import common
 from .. import ui
-from .. import settings
+
 from .. import images
 from ..asset_config import asset_config
 from . import base
@@ -20,7 +20,7 @@ NoMode = 'invalid'
 SceneMode = 'scene'
 CacheMode = 'export'
 
-ROW_SIZE = QtCore.QSize(1, common.ROW_HEIGHT())
+ROW_SIZE = QtCore.QSize(1, common.size(common.HeightRow))
 
 
 def active_icon():
@@ -30,23 +30,23 @@ def active_icon():
     return QtGui.QIcon(
         images.ImageCache.get_rsc_pixmap(
             'check',
-            common.GREEN,
-            common.MARGIN() * 2
+            common.color(common.GreenColor),
+            common.size(common.WidthMargin) * 2
         )
     )
 
 
 _keys = (
-    settings.ServerKey,
-    settings.JobKey,
-    settings.RootKey,
-    settings.AssetKey,
-    settings.TaskKey,
+    common.ServerKey,
+    common.JobKey,
+    common.RootKey,
+    common.AssetKey,
+    common.TaskKey,
 )
 
 
 def _active(n, join=True):
-    v = [settings.ACTIVE[k] for k in _keys[0:n]]
+    v = [common.ACTIVE[k] for k in _keys[0:n]]
     if not all(v):
         return None
     if join:
@@ -70,12 +70,12 @@ def init_data(func):
     @functools.wraps(func)
     def func_wrapper(self, *args, **kwargs):
         keys = (
-            settings.ServerKey,
-            settings.JobKey,
-            settings.RootKey,
-            settings.AssetKey
+            common.ServerKey,
+            common.JobKey,
+            common.RootKey,
+            common.AssetKey
         )
-        args = [settings.ACTIVE[k] for k in keys]
+        args = [common.ACTIVE[k] for k in keys]
         return func(self, *args)
     return func_wrapper
 
@@ -134,8 +134,8 @@ class BookmarksModel(BaseModel):
 
         pixmap = images.ImageCache.get_rsc_pixmap(
             'bookmark',
-            common.SEPARATOR,
-            common.MARGIN() * 2
+            common.color(common.SeparatorColor),
+            common.size(common.WidthMargin) * 2
         )
         icon = QtGui.QIcon(pixmap)
 
@@ -143,7 +143,7 @@ class BookmarksModel(BaseModel):
             self._data[0] = {
                 QtCore.Qt.DisplayRole: self.display_name(k),
                 QtCore.Qt.DecorationRole: active_icon(),
-                QtCore.Qt.ForegroundRole: common.SELECTED_TEXT,
+                QtCore.Qt.ForegroundRole: common.color(common.TextSelectedColor),
                 QtCore.Qt.SizeHintRole: ROW_SIZE,
                 QtCore.Qt.StatusTipRole: k,
                 QtCore.Qt.AccessibleDescriptionRole: k,
@@ -152,15 +152,15 @@ class BookmarksModel(BaseModel):
             }
             return
 
-        if not common.BOOKMARKS:
+        if not common.bookmarks:
             return
 
-        for k in sorted(common.BOOKMARKS.keys()):
+        for k in sorted(common.bookmarks.keys()):
             active = active_bookmark() == k
             self._data[len(self._data)] = {
                 QtCore.Qt.DisplayRole: self.display_name(k),
                 QtCore.Qt.DecorationRole: active_icon() if active else icon,
-                QtCore.Qt.ForegroundRole: common.SELECTED_TEXT if active else common.SECONDARY_TEXT,
+                QtCore.Qt.ForegroundRole: common.color(common.TextSelectedColor) if active else common.color(common.TextSecondaryColor),
                 QtCore.Qt.SizeHintRole: ROW_SIZE,
                 QtCore.Qt.StatusTipRole: k,
                 QtCore.Qt.AccessibleDescriptionRole: k,
@@ -183,8 +183,8 @@ class AssetsModel(BaseModel):
 
         pixmap = images.ImageCache.get_rsc_pixmap(
             'asset',
-            common.SEPARATOR,
-            common.MARGIN() * 2
+            common.color(common.SeparatorColor),
+            common.size(common.WidthMargin) * 2
         )
         icon = QtGui.QIcon(pixmap)
 
@@ -192,7 +192,7 @@ class AssetsModel(BaseModel):
             self._data[0] = {
                 QtCore.Qt.DisplayRole: self.display_name(k),
                 QtCore.Qt.DecorationRole: active_icon(),
-                QtCore.Qt.ForegroundRole: common.SELECTED_TEXT,
+                QtCore.Qt.ForegroundRole: common.color(common.TextSelectedColor),
                 QtCore.Qt.SizeHintRole: ROW_SIZE,
                 QtCore.Qt.StatusTipRole: k,
                 QtCore.Qt.AccessibleDescriptionRole: k,
@@ -226,7 +226,7 @@ class AssetsModel(BaseModel):
             self._data[len(self._data)] = {
                 QtCore.Qt.DisplayRole: self.display_name(filepath),
                 QtCore.Qt.DecorationRole: active_icon() if active else icon,
-                QtCore.Qt.ForegroundRole: common.SELECTED_TEXT if active else common.SECONDARY_TEXT,
+                QtCore.Qt.ForegroundRole: common.color(common.TextSelectedColor) if active else common.color(common.TextSecondaryColor),
                 QtCore.Qt.SizeHintRole: ROW_SIZE,
                 QtCore.Qt.StatusTipRole: filepath,
                 QtCore.Qt.AccessibleDescriptionRole: filepath,
@@ -282,8 +282,8 @@ class TaskModel(BaseModel):
         if not isinstance(data, dict):
             return
 
-        current_folder = settings.instance().value(
-            settings.CurrentUserPicksSection,
+        current_folder = common.settings.value(
+            common.CurrentUserPicksSection,
             'task'
         )
 
@@ -296,17 +296,17 @@ class TaskModel(BaseModel):
             for _v in sorted(v['subfolders'].values(), key=lambda x: x['value']):
                 if current_folder == _v['value']:
                     pixmap = images.ImageCache.get_rsc_pixmap(
-                        'check', common.GREEN, common.MARGIN() * 2)
+                        'check', common.color(common.GreenColor), common.size(common.WidthMargin) * 2)
                 else:
                     pixmap = images.ImageCache.get_rsc_pixmap(
-                        'icon_bw', None, common.MARGIN() * 2)
+                        'icon_bw', None, common.size(common.WidthMargin) * 2)
                 icon = QtGui.QIcon(pixmap)
 
                 name = '{}/{}'.format(v['value'], _v['value'])
                 self._data[len(self._data)] = {
                     QtCore.Qt.DisplayRole: self.display_name(name),
                     QtCore.Qt.DecorationRole: icon,
-                    QtCore.Qt.ForegroundRole: common.TEXT if v['name'] == 'scene' else common.SECONDARY_TEXT,
+                    QtCore.Qt.ForegroundRole: common.color(common.TextColor) if v['name'] == 'scene' else common.color(common.TextSecondaryColor),
                     QtCore.Qt.SizeHintRole: ROW_SIZE,
                     QtCore.Qt.StatusTipRole: _v['description'],
                     QtCore.Qt.AccessibleDescriptionRole: _v['description'],
@@ -321,11 +321,11 @@ class TaskModel(BaseModel):
         self.beginResetModel()
 
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'folder', common.SEPARATOR, common.MARGIN() * 2)
+            'folder', common.color(common.SeparatorColor), common.size(common.WidthMargin) * 2)
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: path.split('/').pop(),
             QtCore.Qt.DecorationRole: QtGui.QIcon(pixmap),
-            QtCore.Qt.ForegroundRole: common.TEXT,
+            QtCore.Qt.ForegroundRole: common.color(common.TextColor),
             QtCore.Qt.SizeHintRole: ROW_SIZE,
             QtCore.Qt.UserRole: path,
         }
@@ -335,9 +335,9 @@ class TaskModel(BaseModel):
 
 class TemplateModel(BaseModel):
     def init_data(self):
-        server = settings.ACTIVE[settings.ServerKey]
-        job = settings.ACTIVE[settings.JobKey]
-        root = settings.ACTIVE[settings.RootKey]
+        server = common.ACTIVE[common.ServerKey]
+        job = common.ACTIVE[common.JobKey]
+        root = common.ACTIVE[common.RootKey]
 
         if not all((server, job, root)):
             return
@@ -347,17 +347,17 @@ class TemplateModel(BaseModel):
         if not isinstance(data, dict):
             return
 
-        template = settings.instance().value(
-            settings.FileSaverSection,
-            settings.CurrentTemplateKey
+        template = common.settings.value(
+            common.FileSaverSection,
+            common.CurrentTemplateKey
         )
         for v in data[asset_config.FileNameConfig].values():
             if template == v['name']:
                 pixmap = images.ImageCache.get_rsc_pixmap(
-                    'check', common.GREEN, common.MARGIN() * 2)
+                    'check', common.color(common.GreenColor), common.size(common.WidthMargin) * 2)
             else:
                 pixmap = images.ImageCache.get_rsc_pixmap(
-                    'file', common.SEPARATOR, common.MARGIN() * 2)
+                    'file', common.color(common.SeparatorColor), common.size(common.WidthMargin) * 2)
             icon = QtGui.QIcon(pixmap)
 
             self._data[len(self._data)] = {
@@ -380,9 +380,9 @@ class TemplateComboBox(QtWidgets.QComboBox):
 
 class ExtensionModel(BaseModel):
     def init_data(self):
-        server = settings.ACTIVE[settings.ServerKey]
-        job = settings.ACTIVE[settings.JobKey]
-        root = settings.ACTIVE[settings.RootKey]
+        server = common.ACTIVE[common.ServerKey]
+        job = common.ACTIVE[common.JobKey]
+        root = common.ACTIVE[common.RootKey]
 
         if not all((server, job, root)):
             return
@@ -397,10 +397,10 @@ class ExtensionModel(BaseModel):
                 continue
             for ext in [f.lower().strip() for f in v['value'].split(',')]:
                 pixmap = images.ImageCache.get_rsc_pixmap(
-                    ext, None, common.MARGIN() * 2, resource=images.FormatResource)
+                    ext, None, common.size(common.WidthMargin) * 2, resource=images.FormatResource)
                 if not pixmap or pixmap.isNull():
                     pixmap = images.ImageCache.get_rsc_pixmap(
-                        'placeholder', common.SEPARATOR, common.MARGIN() * 2)
+                        'placeholder', common.color(common.SeparatorColor), common.size(common.WidthMargin) * 2)
 
                 icon = QtGui.QIcon(pixmap)
                 self._data[len(self._data)] = {
@@ -428,7 +428,7 @@ class FileNamePreview(QtWidgets.QLabel):
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.Fixed
         )
-        self.setFixedHeight(common.ROW_HEIGHT())
+        self.setFixedHeight(common.size(common.HeightRow))
         self.setAlignment(QtCore.Qt.AlignCenter)
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
@@ -439,14 +439,14 @@ class FileNamePreview(QtWidgets.QLabel):
         painter = QtGui.QPainter()
         painter.begin(self)
 
-        o = common.ROW_SEPARATOR()
+        o = common.size(common.HeightSeparator)
         rect = self.rect().adjusted(o, o, -o, -o)
-        pen = QtGui.QPen(common.SEPARATOR)
-        pen.setWidthF(common.ROW_SEPARATOR())
+        pen = QtGui.QPen(common.color(common.SeparatorColor))
+        pen.setWidthF(common.size(common.HeightSeparator))
         painter.setPen(pen)
-        painter.setBrush(common.DARK_BG)
+        painter.setBrush(common.color(common.BackgroundDarkColor))
 
-        o = common.INDICATOR_WIDTH()
+        o = common.size(common.WidthIndicator)
         painter.drawRoundedRect(rect, o, o)
         painter.end()
 
@@ -518,7 +518,7 @@ class PrefixEditor(QtWidgets.QDialog):
         super(PrefixEditor, self).done(result)
 
     def sizeHint(self):
-        return QtCore.QSize(common.WIDTH() * 0.5, common.ROW_HEIGHT())
+        return QtCore.QSize(common.size(common.DefaultWidth) * 0.5, common.size(common.HeightRow))
 
 
 if __name__ == '__main__':

@@ -42,7 +42,7 @@ import shotgun_api3
 from PySide2 import QtCore, QtWidgets, QtGui
 
 from .. import database
-from .. import settings
+
 from .. import common
 from .. import ui
 from .. import images
@@ -283,25 +283,25 @@ class ShotgunProperties(object):
     @property
     def server(self):
         if self.active:
-            return settings.active(settings.ServerKey)
+            return common.active(common.ServerKey)
         return self._server
 
     @property
     def job(self):
         if self.active:
-            return settings.active(settings.JobKey)
+            return common.active(common.JobKey)
         return self._job
 
     @property
     def root(self):
         if self.active:
-            return settings.active(settings.RootKey)
+            return common.active(common.RootKey)
         return self._root
 
     @property
     def asset(self):
         if self.active:
-            return settings.active(settings.AssetKey)
+            return common.active(common.AssetKey)
         return self._asset
 
     def _load_values_from_database(self, db):
@@ -458,21 +458,21 @@ class EntityModel(QtCore.QAbstractItemModel):
     def get_sg_icon(self):
         icon = QtGui.QIcon()
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'sg', common.SEPARATOR, common.ROW_HEIGHT())
+            'sg', common.color(common.SeparatorColor), common.size(common.HeightRow))
         icon.addPixmap(pixmap, QtGui.QIcon.Normal)
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'sg', common.SELECTED_TEXT, common.ROW_HEIGHT())
+            'sg', common.color(common.TextSelectedColor), common.size(common.HeightRow))
         icon.addPixmap(pixmap, QtGui.QIcon.Active)
         icon.addPixmap(pixmap, QtGui.QIcon.Selected)
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'sg', common.DISABLED_TEXT, common.ROW_HEIGHT(), opacity=0.66)
+            'sg', common.color(common.TextDisabledColor), common.size(common.HeightRow), opacity=0.66)
         icon.addPixmap(pixmap, QtGui.QIcon.Disabled)
         return icon
 
     def get_spinner(self):
         icon = QtGui.QIcon()
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'spinner', common.TEXT, common.ROW_HEIGHT())
+            'spinner', common.color(common.TextColor), common.size(common.HeightRow))
         icon.addPixmap(pixmap, QtGui.QIcon.Normal)
         icon.addPixmap(pixmap, QtGui.QIcon.Active)
         icon.addPixmap(pixmap, QtGui.QIcon.Selected)
@@ -526,7 +526,7 @@ class EntityModel(QtCore.QAbstractItemModel):
         if role == QtCore.Qt.DecorationRole:
             return self._icon(data)
         if role == QtCore.Qt.SizeHintRole:
-            return QtCore.QSize(1, common.ROW_HEIGHT())
+            return QtCore.QSize(1, common.size(common.HeightRow))
         return None
 
     def _description(self, v):
@@ -564,7 +564,7 @@ class EntityModel(QtCore.QAbstractItemModel):
             args = [int(f) for f in v['bg_color'].split(',')]
             color = QtGui.QColor(*args)
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'sg', color, common.MARGIN())
+                'sg', color, common.size(common.WidthMargin))
             return QtGui.QIcon(pixmap)
 
         # Otherwise return the standard shotgun icon
@@ -616,7 +616,7 @@ class EntityComboBox(QtWidgets.QComboBox):
 
     """
 
-    def __init__(self, items, fixed_height=common.ROW_HEIGHT(), parent=None):
+    def __init__(self, items, fixed_height=common.size(common.HeightRow), parent=None):
         super(EntityComboBox, self).__init__(parent=parent)
 
         if not self.parent():

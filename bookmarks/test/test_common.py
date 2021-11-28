@@ -3,22 +3,20 @@
 from PySide2 import QtCore, QtWidgets
 
 from .. import common
-from .. import settings
-from . import base
 
+from . import base
 
 
 class Test(base.NonInitializedAppTest):
     def test_init_standalone(self):
-
         common.init_standalone()
-        self.assertTrue(common.STANDALONE)
+        self.assertTrue(common.get_init_mode() == common.StandaloneMode)
 
     def test_init_settings(self):
 
-        self.assertIsNone(settings._instance)
+        self.assertIsNone(common._instance)
         common.init_settings()
-        self.assertIsInstance(settings._instance, settings.Settings)
+        self.assertIsInstance(common._instance, common.Settings)
 
     def test_init_resources(self):
         from .. import images
@@ -28,17 +26,17 @@ class Test(base.NonInitializedAppTest):
 
     def test_init_ui_scale(self):
 
-        self.assertIsInstance(common.UI_SCALE, float)
+        self.assertIsInstance(common.ui_scale_factor, float)
         common.init_ui_scale()
-        self.assertIsInstance(common.UI_SCALE, float)
-        self.assertIn(common.UI_SCALE, common.SCALE_FACTORS)
+        self.assertIsInstance(common.ui_scale_factor, float)
+        self.assertIn(common.ui_scale_factor, common.scale_factors)
 
     def test_init_session_lock(self):
-        self.assertIsInstance(common.SESSION_MODE, int)
+        self.assertIsInstance(common.session_mode, int)
         common.init_session_lock()
-        self.assertIsInstance(common.SESSION_MODE, int)
+        self.assertIsInstance(common.session_mode, int)
         self.assertIn(
-            common.SESSION_MODE,
+            common.session_mode,
             (common.SyncronisedActivePaths, common.PrivateActivePaths)
         )
 
@@ -52,23 +50,23 @@ class Test(base.NonInitializedAppTest):
 
     def test_sizes(self):
 
-        self.assertIsInstance(common.SMALL_FONT_SIZE(), int)
-        self.assertIsInstance(common.MEDIUM_FONT_SIZE(), int)
-        self.assertIsInstance(common.LARGE_FONT_SIZE(), int)
+        self.assertIsInstance(common.size(common.FontSizeSmall), int)
+        self.assertIsInstance(common.size(common.FontSizeMedium), int)
+        self.assertIsInstance(common.size(common.FontSizeLarge), int)
 
-        self.assertIsInstance(common.ROW_HEIGHT(), int)
-        self.assertIsInstance(common.BOOKMARK_ROW_HEIGHT(), int)
-        self.assertIsInstance(common.ASSET_ROW_HEIGHT(), int)
-        self.assertIsInstance(common.ROW_SEPARATOR(), int)
-        self.assertIsInstance(common.MARGIN(), int)
-        self.assertIsInstance(common.INDICATOR_WIDTH(), int)
-        self.assertIsInstance(common.WIDTH(), int)
-        self.assertIsInstance(common.HEIGHT(), int)
+        self.assertIsInstance(common.size(common.HeightRow), int)
+        self.assertIsInstance(common.size(common.HeightBookmark), int)
+        self.assertIsInstance(common.size(common.HeightAsset), int)
+        self.assertIsInstance(common.size(common.HeightSeparator), int)
+        self.assertIsInstance(common.size(common.WidthMargin), int)
+        self.assertIsInstance(common.size(common.WidthIndicator), int)
+        self.assertIsInstance(common.size(common.DefaultWidth), int)
+        self.assertIsInstance(common.size(common.DefaultHeight), int)
 
     def test_hash(self):
 
-        self.assertIsInstance(common.HASH_DATA, dict)
-        self.assertFalse(common.HASH_DATA)
+        self.assertIsInstance(common.hashes, dict)
+        self.assertFalse(common.hashes)
 
         with self.assertRaises(TypeError):
             common.get_hash(0)
@@ -80,12 +78,12 @@ class Test(base.NonInitializedAppTest):
         v = base.random_str(128)
         _v = common.get_hash(v)
         self.assertIsInstance(_v, str)
-        self.assertTrue(common.HASH_DATA)
-        self.assertEqual(len(common.HASH_DATA), 1)
+        self.assertTrue(common.hashes)
+        self.assertEqual(len(common.hashes), 1)
 
         for _ in range(10):
             _v = common.get_hash(v)
-        self.assertEqual(len(common.HASH_DATA), 1)
+        self.assertEqual(len(common.hashes), 1)
 
     def test_proxy_path(self):
         seq_path = '{}/{}_v001.ext'.format(

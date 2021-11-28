@@ -6,7 +6,7 @@ import os
 
 from PySide2 import QtCore, QtWidgets, QtGui
 
-from .. import settings
+
 from .. import database
 from .. import common
 from . import shotgun
@@ -374,7 +374,7 @@ def create_published_file(
             'name': file_name,
             'url': QtCore.QUrl.fromLocalFile(file_path).toString(options=QtCore.QUrl.FullyEncoded)
         },
-        'path_cache': file_path.replace(settings.active(settings.ServerKey), '').strip('/'),
+        'path_cache': file_path.replace(common.active(common.ServerKey), '').strip('/'),
     }
 
     entity = sg.create(

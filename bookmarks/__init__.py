@@ -73,9 +73,8 @@ import importlib
 import traceback
 import platform
 
-
 __author__ = 'Gergely Wootsch'
-__website__ = 'https://gergely-wootsch.com'
+__website__ = 'https://github.com/wgergely/bookmarks'
 __email__ = 'hello@gergely-wootsch.com'
 __version__ = '0.5.0'
 __copyright__ = f'Copyright (C) 2021  {__author__}'
@@ -152,12 +151,8 @@ def exec_():
 
     """
     print(get_info())
-
-    from . import standalone
-
-    app = standalone.BookmarksApp([])
-    standalone.show()
-    app.exec_()
+    from . import common
+    common.initialize(common.StandaloneMode)
 
 
 

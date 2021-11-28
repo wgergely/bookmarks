@@ -13,10 +13,10 @@ from . import base
 
 class Test(base.BaseApplicationTest):
     def test_default_mode(self):
-        self.assertEqual(common.SESSION_MODE, common.SyncronisedActivePaths)
+        self.assertEqual(common.session_mode, common.SyncronisedActivePaths)
 
     def test_init(self):
-        path = session_lock.init()
+        path = common.init_lock()
         self.assertIsNotNone(path)
         self.assertIsInstance(path, str)
         self.assertTrue(os.path.isfile(path))
@@ -26,14 +26,14 @@ class Test(base.BaseApplicationTest):
 
         # init second lockfile
         pid = random.randrange(9999)
-        _path = session_lock.init(pid=pid)
+        _path = common.init_lock(pid=pid)
         self.assertIsNotNone(_path)
         self.assertIsInstance(_path, str)
         self.assertTrue(os.path.isfile(_path))
         self.assertNotEqual(_path, path)
 
         # Mode should be private since there's already a Syncronised lock
-        path_ = session_lock.init()
+        path_ = common.init_lock()
         self.assertIsNotNone(path_)
         self.assertIsInstance(path_, str)
         self.assertTrue(os.path.isfile(path_))
@@ -45,17 +45,17 @@ class Test(base.BaseApplicationTest):
         paths = []
         for _ in range(99):
             pid = random.randrange(999999)
-            path = session_lock.init(pid=pid)
+            path = common.init_lock(pid=pid)
             self.assertIsNotNone(path)
             self.assertIsInstance(path, str)
             self.assertTrue(os.path.isfile(path))
             paths.append(path)
 
-        session_lock.prune()
+        common.prune_lock()
         v = [f for f in paths if os.path.isfile(f)]
         self.assertFalse(v)
 
     def test_toggle_session_mode(self):
-        v = common.SESSION_MODE
+        v = common.session_mode
         actions.toggle_session_mode()
-        self.assertNotEqual(v, common.SESSION_MODE)
+        self.assertNotEqual(v, common.session_mode)

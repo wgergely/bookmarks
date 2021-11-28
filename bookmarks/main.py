@@ -9,7 +9,7 @@ from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import common
 from . import images
-from . import settings
+
 from .threads import threads
 from . import topbar
 from . import shortcuts
@@ -62,7 +62,7 @@ class MainWidget(QtWidgets.QWidget):
         super(MainWidget, self).__init__(parent=parent)
 
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'icon', None, common.ASSET_ROW_HEIGHT())
+            'icon', None, common.size(common.HeightAsset))
         self.setWindowIcon(QtGui.QIcon(pixmap))
 
         self._contextMenu = None
@@ -93,7 +93,7 @@ class MainWidget(QtWidgets.QWidget):
             QtWidgets.QSizePolicy.Minimum
         )
 
-        self.stackedwidget = base.StackedWidget(parent=self)
+        self.stackedwidget = base.TabsWidget(parent=self)
         self.bookmarkswidget = bookmarks.BookmarksWidget(parent=self)
         self.assetswidget = assets.AssetsWidget(parent=self)
         self.fileswidget = files.FilesWidget(parent=self)
@@ -107,9 +107,9 @@ class MainWidget(QtWidgets.QWidget):
         self.stackedwidget.addWidget(self.favouriteswidget)
 
         # Setting the tab now before we do any more initialisation
-        idx = settings.instance().value(
-            settings.UIStateSection,
-            settings.CurrentList
+        idx = common.settings.value(
+            common.UIStateSection,
+            common.CurrentList
         )
         idx = common.BookmarkTab if idx is None or False else idx
         idx = common.BookmarkTab if idx < common.BookmarkTab else idx
@@ -197,7 +197,7 @@ class MainWidget(QtWidgets.QWidget):
         self.aboutToInitialize.emit()
 
         # Load active paths from the local settings
-        settings.instance().verify_active()
+        common.settings.verify_active()
 
         # Update the window title to display the current active paths
         for n in range(3):
@@ -254,14 +254,14 @@ class MainWidget(QtWidgets.QWidget):
 
     def update_window_title(self):
         keys = (
-            settings.ServerKey,
-            settings.JobKey,
-            settings.RootKey,
-            settings.AssetKey,
-            settings.TaskKey,
-            settings.FileKey,
+            common.ServerKey,
+            common.JobKey,
+            common.RootKey,
+            common.AssetKey,
+            common.TaskKey,
+            common.FileKey,
         )
-        values = [settings.active(k) for k in keys if settings.active(k)]
+        values = [common.active(k) for k in keys if common.active(k)]
         self.setWindowTitle('/'.join(values))
 
     @common.debug
@@ -357,22 +357,22 @@ class MainWidget(QtWidgets.QWidget):
     def _paint_background(self, painter):
         rect = QtCore.QRect(self.rect())
         pen = QtGui.QPen(QtGui.QColor(35, 35, 35, 255))
-        pen.setWidth(common.ROW_SEPARATOR())
+        pen.setWidth(common.size(common.HeightSeparator))
         painter.setPen(pen)
-        painter.setBrush(common.SEPARATOR.darker(110))
+        painter.setBrush(common.color(common.SeparatorColor).darker(110))
         painter.drawRect(rect)
 
     def _paint_loading(self, painter):
         font, metrics = common.font_db.primary_font(
-            common.MEDIUM_FONT_SIZE())
+            common.size(common.FontSizeMedium))
         rect = QtCore.QRect(self.rect())
         align = QtCore.Qt.AlignCenter
         color = QtGui.QColor(255, 255, 255, 80)
 
         pixmaprect = QtCore.QRect(rect)
         center = pixmaprect.center()
-        s = common.ASSET_ROW_HEIGHT() * 1.5
-        o = common.MARGIN()
+        s = common.size(common.HeightAsset) * 1.5
+        o = common.size(common.WidthMargin)
 
         pixmaprect.setWidth(s)
         pixmaprect.setHeight(s)
@@ -400,4 +400,4 @@ class MainWidget(QtWidgets.QWidget):
 
     def sizeHint(self):
         """The widget's default size."""
-        return QtCore.QSize(common.WIDTH(), common.HEIGHT())
+        return QtCore.QSize(common.size(common.DefaultWidth), common.size(common.DefaultHeight))

@@ -1,10 +1,7 @@
-# -*- coding: utf-8 -*-
-"""Contains various UI definitions and methods used to construct, and
-define ui elements.
 
-"""
 import functools
-from PySide2 import QtWidgets, QtGui, QtCore
+
+from PySide2 import QtCore, QtGui, QtWidgets
 
 from . import common
 from . import images
@@ -12,15 +9,19 @@ from . import images
 
 _message_instance = None
 
+OkButton = 'Ok'
+YesButton = 'Yes'
+SaveButton = 'Save'
+CancelButton = 'Cancel'
+NoButton = 'No'
 
-def reset():
-    global _message_instance
-    try:
-        _message_instance.deleteLater()
-    except:
-        pass
-    _message_instance = None
-
+buttons = (
+    OkButton,
+    YesButton,
+    SaveButton,
+    CancelButton,
+    NoButton,
+)
 
 MESSAGE_BOX_STYLESHEET = """
 QWidget {{
@@ -47,129 +48,336 @@ QPushButton:pressed {{
 }}"""
 
 
-OkButton = 'Ok'
-YesButton = 'Yes'
-SaveButton = 'Save'
-
-CancelButton = 'Cancel'
-NoButton = 'No'
-
-buttons = (
-    OkButton,
-    CancelButton,
-    YesButton,
-    NoButton,
-    SaveButton,
-)
-
-
-def get_group(parent=None, vertical=True, margin=common.MARGIN()):
-    """Utility method for creating a group widget.
-
-    Returns:
-        QGroupBox: group widget.
+class MessageBox(QtWidgets.QDialog):
+    """Informative message box used for notifying the user of an event.
 
     """
-    grp = QtWidgets.QGroupBox(parent=parent)
-    grp.setMinimumWidth(common.WIDTH() * 0.3)
+    primary_color = common.color(common.BlueLightColor)
+    secondary_color = common.color(common.BlueColor).lighter(120)
+    icon = 'icon_bw'
 
-    if vertical:
-        QtWidgets.QVBoxLayout(grp)
-    else:
-        QtWidgets.QHBoxLayout(grp)
+    buttonClicked = QtCore.Signal(str)
 
-    grp.setSizePolicy(
-        QtWidgets.QSizePolicy.Minimum,
-        QtWidgets.QSizePolicy.Maximum,
-    )
+    def __init__(self, *args, **kwargs):
 
-    grp.layout().setContentsMargins(margin, margin, margin, margin)
-    grp.layout().setSpacing(margin * 0.5)
-    parent.layout().addWidget(grp, 1)
+        global _message_instance
+        try:
+            _message_instance.close()
+            _message_instance.deleteLater()
+        except:
+            pass
+        finally:
+            _message_instance = None
+        _message_instance = self
 
-    return grp
+        if 'parent' in kwargs:
+            parent = kwargs['parent']
+        else:
+            parent = None
 
+        super().__init__(parent=parent)
 
-def add_row(label, color=common.SECONDARY_TEXT, parent=None, padding=common.MARGIN(), height=common.ROW_HEIGHT(), cls=None, vertical=False):
-    """Utility method for creating a row widget.
+        if parent is None:
+            common.set_custom_stylesheet(self)
 
-    Returns:
-        QWidget:    The newly created row.
+        # labels
+        self.no_buttons = False
+        self.buttons = []
+        self.primary_label = None
+        self.secondary_label = None
 
-    """
-    if cls:
-        w = cls(parent=parent)
-    else:
-        w = QtWidgets.QWidget(parent=parent)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
 
-    if vertical:
-        QtWidgets.QVBoxLayout(w)
-    else:
-        QtWidgets.QHBoxLayout(w)
-
-    w.layout().setContentsMargins(0, 0, 0, 0)
-    w.layout().setSpacing(common.INDICATOR_WIDTH())
-    w.layout().setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
-
-    w.setSizePolicy(
-        QtWidgets.QSizePolicy.Expanding,
-        QtWidgets.QSizePolicy.Expanding,
-    )
-    if height:
-        w.setFixedHeight(height)
-
-    w.setAttribute(QtCore.Qt.WA_NoBackground)
-    w.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-
-    if label:
-        l = PaintedLabel(
-            label,
-            size=common.SMALL_FONT_SIZE(),
-            color=color,
-            parent=parent
+        self.setWindowFlags(
+            QtCore.Qt.Dialog |
+            QtCore.Qt.FramelessWindowHint |
+            QtCore.Qt.NoDropShadowWindowHint |
+            QtCore.Qt.WindowStaysOnTopHint
         )
-        l.setFixedWidth(common.MARGIN() * 8.6667)
-        w.layout().addWidget(l, 1)
+        self.installEventFilter(self)
+        self.setSizePolicy(
+            QtWidgets.QSizePolicy.Preferred,
+            QtWidgets.QSizePolicy.Preferred
+        )
 
-    if parent:
-        parent.layout().addWidget(w, 1)
+        effect = QtWidgets.QGraphicsOpacityEffect(self)
+        self.setGraphicsEffect(effect)
 
-    return w
+        self._opacity = 1.0
+        self.fade_in = QtCore.QPropertyAnimation(
+            effect,
+            QtCore.QByteArray('opacity'.encode('utf-8'))
+        )
+        self.fade_in.setStartValue(0.0)
+        self.fade_in.setEndValue(1.0)
+        self.fade_in.setDuration(200)
+        self.fade_in.setEasingCurve(QtCore.QEasingCurve.InOutQuad)
+
+        self.fade_out = QtCore.QPropertyAnimation(
+            effect,
+            QtCore.QByteArray('opacity'.encode('utf-8'))
+        )
+        self.fade_out.setStartValue(1.0)
+        self.fade_out.setEndValue(0.0)
+        self.fade_out.setDuration(200)
+        self.fade_out.setEasingCurve(QtCore.QEasingCurve.InOutQuad)
+
+        self._clicked_button = None
+
+        self.set_labels(args)
+        self.set_buttons(kwargs)
+
+        self._create_ui()
+        self._connect_signals()
+
+    def clicked_button(self):
+        return self._clicked_button
+
+    def set_clicked_button(self, v):
+        self._clicked_button = v
+
+    def _get_label(self, parent=None, size=common.size(common.FontSizeSmall)):
+        label = QtWidgets.QLabel(parent=parent)
+        label.setOpenExternalLinks(True)
+        label.setTextFormat(QtCore.Qt.RichText)
+        label.setTextInteractionFlags(
+            QtCore.Qt.LinksAccessibleByMouse |
+            QtCore.Qt.LinksAccessibleByKeyboard
+        )
+        label.setStyleSheet('padding: 0px;')
+        label.setMargin(0)
+        label.setIndent(0)
+        label.setWordWrap(True)
+        label.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
+        label.setSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding,
+            QtWidgets.QSizePolicy.MinimumExpanding,
+        )
+        label.setMinimumWidth(common.size(common.DefaultWidth) * 0.66)
+        label.setMaximumWidth(common.size(common.DefaultWidth))
+        label.setStyleSheet('font-size: {}px;'.format(size))
+        return label
+
+    def _get_row(self, vertical=False, parent=None):
+        row = QtWidgets.QWidget(parent=parent)
+        if vertical:
+            QtWidgets.QVBoxLayout(row)
+        else:
+            QtWidgets.QHBoxLayout(row)
+        row.layout().setAlignment(QtCore.Qt.AlignCenter)
+        row.layout().setContentsMargins(0, 0, 0, 0)
+        row.layout().setSpacing(0)
+        parent.layout().addWidget(row, 1)
+        return row
+
+    def _create_ui(self):
+        stylesheet = MESSAGE_BOX_STYLESHEET.format(
+            SIZE=common.size(common.FontSizeLarge),
+            FAMILY=common.font_db.primary_font(
+                common.size(common.FontSizeMedium))[0].family(),
+            TEXT=common.rgb(self.secondary_color.darker(255)),
+            TRANSPARENT=common.rgb(common.color(common.Transparent)),
+        )
+        self.setStyleSheet(stylesheet)
+
+        QtWidgets.QHBoxLayout(self)
+        o = common.size(common.WidthMargin)
+        self.layout().setContentsMargins(o, o, o, o)
+        self.layout().setSpacing(o)
+
+        # Main Row
+        main_row = self._get_row(parent=self)
+        main_row.layout().setSpacing(o)
+
+        label = self._get_label(parent=main_row)
+
+        pixmap = images.ImageCache.get_rsc_pixmap(
+            self.icon,
+            self.secondary_color.lighter(150),
+            common.size(common.HeightRow)
+        )
+        label.setPixmap(pixmap)
+        label.setFixedWidth(common.size(common.HeightRow))
+        label.setFixedHeight(common.size(common.HeightRow))
+        main_row.layout().addWidget(label, 0)
+
+        # Labels and buttons
+        columns = self._get_row(vertical=True, parent=main_row)
+        columns.layout().setSpacing(o)
+
+        primary_row = self._get_row(parent=columns)
+        columns.layout().addWidget(primary_row, 1)
+
+        if self.primary_label:
+            primary_row.layout().addWidget(self.primary_label)
+
+        if self.secondary_label:
+            secondary_row = self._get_row(parent=columns)
+            secondary_row.layout().addWidget(self.secondary_label)
+
+        if self.no_buttons is True:
+            return
+
+        if self.buttons:
+            buttons_row = self._get_row(parent=columns)
+            for idx, button in enumerate(self.buttons):
+                if idx == 0:
+                    buttons_row.layout().addWidget(button, 2)
+                else:
+                    buttons_row.layout().addWidget(button, 1)
+
+    def _connect_signals(self):
+        for button in buttons:
+            k = button.lower() + '_button'
+
+            if not hasattr(self, k):
+                continue
+
+            widget = getattr(self, k)
+            widget.clicked.connect(
+                functools.partial(self.buttonClicked.emit, button)
+            )
+
+            if button in (OkButton, YesButton, SaveButton):
+                widget.clicked.connect(
+                    lambda: self.done(QtWidgets.QDialog.Accepted)
+                )
+            if button in (CancelButton, NoButton):
+                widget.clicked.connect(
+                    lambda: self.done(QtWidgets.QDialog.Rejected)
+                )
+
+        self.buttonClicked.connect(self.set_clicked_button)
+
+    def set_labels(self, args):
+        if len(args) >= 1 and isinstance(args[0], str):
+            self.primary_label = self._get_label(
+                parent=self, size=common.size(common.FontSizeLarge) - 2)
+            self.primary_label.setText(args[0])
+        else:
+            raise ValueError('Primary Label must be {}'.format(str))
+        if len(args) >= 2:
+            self.secondary_label = self._get_label(parent=self)
+            self.secondary_label.setText(args[1])
+            self.secondary_label.setTextFormat(QtCore.Qt.PlainText)
+
+    def set_buttons(self, kwargs):
+        if 'no_buttons' in kwargs and kwargs['no_buttons'] is True:
+            self.no_buttons = kwargs['no_buttons']
+            self.buttons = []
+            return
+
+        color = QtGui.QColor(self.primary_color)
+        color.setAlphaF(0.5)
+
+        stylesheet = PUSH_BUTTON_STYLESHEET.format(
+            px=common.size(common.FontSizeSmall),
+            i=common.size(common.WidthIndicator),
+            s=common.size(common.HeightSeparator),
+            c=common.rgb(self.secondary_color.lighter(150)),
+            p=common.rgb(color),
+            pl=common.rgb(self.primary_color.lighter(120)),
+            pd=common.rgb(self.primary_color.darker(120)),
+            SELECTED_TEXT=common.rgb(common.color(common.TextSelectedColor)),
+        )
+        if 'buttons' in kwargs and isinstance(kwargs['buttons'], (tuple, list)) and kwargs['buttons']:
+            for k in kwargs['buttons']:
+                if k not in buttons:
+                    raise ValueError(f'{k} is an invalid button')
+                button = QtWidgets.QPushButton(k, parent=self)
+                button.setStyleSheet(stylesheet)
+                button.setFixedHeight(common.size(common.HeightRow))
+                self.buttons.append(button)
+                setattr(self, k.lower() + '_button', button)
+            return
+
+        button = QtWidgets.QPushButton(OkButton, parent=self)
+        button.setStyleSheet(stylesheet)
+        self.buttons = [button, ]
+        setattr(self, OkButton.lower() + '_button', button)
+
+    def sizeHint(self):
+        return QtCore.QSize(common.size(common.DefaultHeight), common.size(common.DefaultHeight) * 0.5)
+
+    def eventFilter(self, widget, event):
+        if widget != self:
+            return False
+        if event.type() == QtCore.QEvent.Paint:
+            painter = QtGui.QPainter()
+            painter.begin(self)
+            painter.setRenderHint(QtGui.QPainter.Antialiasing)
+
+            pen = QtGui.QPen(QtGui.QColor(self.secondary_color).darker(250))
+            pen.setWidthF(common.size(common.HeightSeparator))
+            painter.setPen(pen)
+
+            painter.setBrush(self.secondary_color)
+
+            o = common.size(common.HeightSeparator)
+            rect = self.rect().adjusted(o, o, -o, -o)
+            o = common.size(common.WidthIndicator) * 2
+            painter.setOpacity(0.90)
+            painter.drawRoundedRect(
+                rect,
+                o, o
+            )
+            painter.end()
+            return True
+        return False
+
+    def open(self):
+        common.center_window(self)
+        super().open()
+        if self.fade_in.state() != QtCore.QAbstractAnimation.Running:
+            self.fade_in.start()
+        while self.fade_in.state() != QtCore.QAbstractAnimation.Stopped:
+            QtCore.QCoreApplication.processEvents()
+
+    def exec_(self):
+        common.center_window(self)
+        self.show()
+        if self.fade_in.state() != QtCore.QAbstractAnimation.Running:
+            self.fade_in.start()
+        while self.fade_in.state() != QtCore.QAbstractAnimation.Stopped:
+            QtCore.QCoreApplication.processEvents()
+        return super().exec_()
+
+    def done(self, result):
+        if self.fade_out.state() != QtCore.QAbstractAnimation.Running:
+            self.fade_out.start()
+        while self.fade_out.state() != QtCore.QAbstractAnimation.Stopped:
+            QtCore.QCoreApplication.processEvents()
+        return super().done(result)
+
+    def hide(self):
+        if self.fade_out.state() != QtCore.QAbstractAnimation.Running:
+            self.fade_out.start()
+        while self.fade_out.state() != QtCore.QAbstractAnimation.Stopped:
+            QtCore.QCoreApplication.processEvents()
+        super().hide()
 
 
-def add_label(text, parent=None):
-    """Utility method for creating a label.
-
-    Returns:
-        QLabel: label widget.
+class ErrorBox(MessageBox):
+    """Informative message box used for notifying the user of an error.
 
     """
-    label = QtWidgets.QLabel(text, parent=parent)
-    label.setFixedHeight(common.ROW_HEIGHT())
-    label.setSizePolicy(
-        QtWidgets.QSizePolicy.Expanding,
-        QtWidgets.QSizePolicy.Expanding
-    )
-    label.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
-    parent.layout().addWidget(label, 0)
+    primary_color = common.color(common.RedLightColor)
+    secondary_color = common.color(common.RedColor)
+    icon = 'close'
 
 
-def add_line_edit(label, parent=None):
-    """Utility method for adding a line editor.
-
-    Returns:
-        QLineEdit: line editor widget.
+class OkBox(MessageBox):
+    """Informative message box used for notifying the user of success.
 
     """
-    w = LineEdit(parent=parent)
-    w.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight)
-    w.setPlaceholderText(label)
-    parent.layout().addWidget(w, 1)
-    return w
+    primary_color = common.color(common.GreenLightColor)
+    secondary_color = common.color(common.GreenAltColor)
+    icon = 'check'
 
 
 class Label(QtWidgets.QLabel):
-    def __init__(self, text, color=common.SECONDARY_TEXT, parent=None):
+    def __init__(self, text, color=common.color(common.TextSecondaryColor), parent=None):
         super().__init__(text, parent=parent)
 
         self.color = color
@@ -186,7 +394,7 @@ class Label(QtWidgets.QLabel):
             self.setStyleSheet(
                 'color: {}; font-size: {}px; font-family: "{}"'.format(
                     common.rgb(self._color),
-                    common.SMALL_FONT_SIZE(),
+                    common.size(common.FontSizeSmall),
                     common.font_db.secondary_font()[0].family()
                 )
             )
@@ -194,7 +402,7 @@ class Label(QtWidgets.QLabel):
             self.setStyleSheet(
                 'color: {}; font-size: {}px; font-family: "{}"'.format(
                     common.rgb(self.color),
-                    common.SMALL_FONT_SIZE(),
+                    common.size(common.FontSizeSmall),
                     common.font_db.secondary_font()[0].family()
                 )
             )
@@ -208,22 +416,6 @@ class Label(QtWidgets.QLabel):
 
     def showEvent(self, event):
         self._set_stylesheet(False)
-
-
-def add_description(text, label=' ', color=common.SECONDARY_TEXT, padding=common.MARGIN(), parent=None):
-    """Utility method for adding a description field.
-
-    Returns:
-        QLabel: the added QLabel.
-
-    """
-    row = add_row(label, padding=padding, height=None, parent=parent)
-    row.layout().setSpacing(0)
-
-    label = Label(text, color=color, parent=parent)
-    row.layout().addWidget(label, 1)
-    parent.layout().addWidget(row, 1)
-    return row
 
 
 class LineEdit(QtWidgets.QLineEdit):
@@ -241,7 +433,7 @@ class LineEdit(QtWidgets.QLineEdit):
 class PaintedButton(QtWidgets.QPushButton):
     """Custom button class."""
 
-    def __init__(self, text, height=common.ROW_HEIGHT(), width=None, parent=None):
+    def __init__(self, text, height=common.size(common.HeightRow), width=None, parent=None):
         super(PaintedButton, self).__init__(text, parent=parent)
         if height:
             self.setFixedHeight(height)
@@ -266,38 +458,38 @@ class PaintedButton(QtWidgets.QPushButton):
         o = 0.3 if disabled else o
         painter.setOpacity(o)
 
-        painter.setBrush(common.DARK_BG)
-        _color = QtGui.QColor(common.SEPARATOR)
+        painter.setBrush(common.color(common.BackgroundDarkColor))
+        _color = QtGui.QColor(common.color(common.SeparatorColor))
         _color.setAlpha(150)
         pen = QtGui.QPen(_color)
-        pen.setWidthF(common.ROW_SEPARATOR())
+        pen.setWidthF(common.size(common.HeightSeparator))
         painter.setPen(pen)
 
-        o = common.ROW_SEPARATOR()
+        o = common.size(common.HeightSeparator)
         rect = self.rect().adjusted(o, o, -o, -o)
 
-        o = common.INDICATOR_WIDTH() * 1.5
+        o = common.size(common.WidthIndicator) * 1.5
         painter.drawRoundedRect(rect, o, o)
 
         if focus:
             painter.setBrush(QtCore.Qt.NoBrush)
-            pen = QtGui.QPen(common.BLUE)
-            pen.setWidthF(common.ROW_SEPARATOR())
+            pen = QtGui.QPen(common.color(common.BlueColor))
+            pen.setWidthF(common.size(common.HeightSeparator))
             painter.setPen(pen)
             painter.drawRoundedRect(rect, o, o)
 
         rect = QtCore.QRect(self.rect())
         center = rect.center()
-        rect.setWidth(rect.width() - (common.INDICATOR_WIDTH() * 2))
+        rect.setWidth(rect.width() - (common.size(common.WidthIndicator) * 2))
         rect.moveCenter(center)
 
         common.draw_aliased_text(
             painter,
-            common.font_db.primary_font(common.MEDIUM_FONT_SIZE())[0],
+            common.font_db.primary_font(common.size(common.FontSizeMedium))[0],
             rect,
             self.text(),
             QtCore.Qt.AlignCenter,
-            common.TEXT
+            common.color(common.TextColor)
         )
 
         painter.end()
@@ -306,7 +498,7 @@ class PaintedButton(QtWidgets.QPushButton):
 class PaintedLabel(QtWidgets.QLabel):
     """QLabel used for static aliased label."""
 
-    def __init__(self, text, color=common.TEXT, size=common.MEDIUM_FONT_SIZE(), parent=None):
+    def __init__(self, text, color=common.color(common.TextColor), size=common.size(common.FontSizeMedium), parent=None):
         super(PaintedLabel, self).__init__(text, parent=parent)
         self._size = size
         self._color = color
@@ -317,7 +509,7 @@ class PaintedLabel(QtWidgets.QLabel):
         font, metrics = common.font_db.primary_font(font_size=self._size)
         self.setFixedHeight(metrics.height())
         self.setFixedWidth(metrics.horizontalAdvance(self._text) +
-                           common.INDICATOR_WIDTH() * 2)
+                           common.size(common.WidthIndicator) * 2)
 
     def paintEvent(self, event):
         """Custom paint event to use the aliased paint method."""
@@ -337,7 +529,7 @@ class PaintedLabel(QtWidgets.QLabel):
         painter.setOpacity(o)
 
         rect = self.rect()
-        rect.setLeft(rect.left() + common.INDICATOR_WIDTH())
+        rect.setLeft(rect.left() + common.size(common.WidthIndicator))
         common.draw_aliased_text(
             painter,
             common.font_db.primary_font(font_size=self._size)[0],
@@ -444,7 +636,6 @@ class ClickableIconButton(QtWidgets.QLabel):
         painter = QtGui.QPainter()
         painter.begin(self)
 
-
         painter.setOpacity(0.8)
         if hover:
             painter.setOpacity(1.0)
@@ -455,331 +646,6 @@ class ClickableIconButton(QtWidgets.QLabel):
         pixmap = self.pixmap()
         painter.drawPixmap(self.rect(), pixmap, pixmap.rect())
         painter.end()
-
-
-class MessageBox(QtWidgets.QDialog):
-    """Informative message box used for notifying the user of an event.
-
-    """
-    primary_color = QtGui.QColor(50, 50, 190, 180)
-    secondary_color = common.BLUE.lighter(120)
-    icon = 'icon_bw'
-
-    buttonClicked = QtCore.Signal(str)
-
-    def __init__(self, *args, **kwargs):
-
-        global _message_instance
-        try:
-            _message_instance.close()
-            _message_instance.deleteLater()
-        except:
-            pass
-        finally:
-            _message_instance = None
-        _message_instance = self
-
-        if 'parent' in kwargs:
-            parent = kwargs['parent']
-        else:
-            parent = None
-
-        super(MessageBox, self).__init__(parent=parent)
-
-        if parent is None:
-            common.set_custom_stylesheet(self)
-
-        # labels
-        self.no_buttons = False
-        self.buttons = []
-        self.primary_label = None
-        self.secondary_label = None
-
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
-
-        self.setWindowFlags(
-            QtCore.Qt.Dialog |
-            QtCore.Qt.FramelessWindowHint |
-            QtCore.Qt.NoDropShadowWindowHint |
-            QtCore.Qt.WindowStaysOnTopHint
-        )
-        self.installEventFilter(self)
-        self.setSizePolicy(
-            QtWidgets.QSizePolicy.Preferred,
-            QtWidgets.QSizePolicy.Preferred
-        )
-
-        effect = QtWidgets.QGraphicsOpacityEffect(self)
-        self.setGraphicsEffect(effect)
-
-        self._opacity = 1.0
-        self.fade_in = QtCore.QPropertyAnimation(
-            effect,
-            QtCore.QByteArray('opacity'.encode('utf-8'))
-        )
-        self.fade_in.setStartValue(0.0)
-        self.fade_in.setEndValue(1.0)
-        self.fade_in.setDuration(200)
-        self.fade_in.setEasingCurve(QtCore.QEasingCurve.InOutQuad)
-
-        self.fade_out = QtCore.QPropertyAnimation(
-            effect,
-            QtCore.QByteArray('opacity'.encode('utf-8'))
-        )
-        self.fade_out.setStartValue(1.0)
-        self.fade_out.setEndValue(0.0)
-        self.fade_out.setDuration(200)
-        self.fade_out.setEasingCurve(QtCore.QEasingCurve.InOutQuad)
-
-        self._clicked_button = None
-
-        self.set_labels(args)
-        self.set_buttons(kwargs)
-
-        self._create_ui()
-        self._connect_signals()
-
-    def clicked_button(self):
-        return self._clicked_button
-
-    def set_clicked_button(self, v):
-        self._clicked_button = v
-
-    def _get_label(self, parent=None, size=common.SMALL_FONT_SIZE()):
-        label = QtWidgets.QLabel(parent=parent)
-        label.setOpenExternalLinks(True)
-        label.setTextFormat(QtCore.Qt.RichText)
-        label.setTextInteractionFlags(
-            QtCore.Qt.LinksAccessibleByMouse |
-            QtCore.Qt.LinksAccessibleByKeyboard
-        )
-        label.setStyleSheet('padding: 0px;')
-        label.setMargin(0)
-        label.setIndent(0)
-        label.setWordWrap(True)
-        label.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
-        label.setSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding,
-            QtWidgets.QSizePolicy.MinimumExpanding,
-        )
-        label.setMinimumWidth(common.WIDTH() * 0.66)
-        label.setMaximumWidth(common.WIDTH())
-        label.setStyleSheet('font-size: {}px;'.format(size))
-        return label
-
-    def _get_row(self, vertical=False, parent=None):
-        row = QtWidgets.QWidget(parent=parent)
-        if vertical:
-            QtWidgets.QVBoxLayout(row)
-        else:
-            QtWidgets.QHBoxLayout(row)
-        row.layout().setAlignment(QtCore.Qt.AlignCenter)
-        row.layout().setContentsMargins(0, 0, 0, 0)
-        row.layout().setSpacing(0)
-        parent.layout().addWidget(row, 1)
-        return row
-
-    def _create_ui(self):
-        stylesheet = MESSAGE_BOX_STYLESHEET.format(
-            SIZE=common.LARGE_FONT_SIZE(),
-            FAMILY=common.font_db.primary_font(
-                common.MEDIUM_FONT_SIZE())[0].family(),
-            TEXT=common.rgb(self.secondary_color.darker(255)),
-            TRANSPARENT=common.rgb(common.TRANSPARENT),
-        )
-        self.setStyleSheet(stylesheet)
-
-        QtWidgets.QHBoxLayout(self)
-        o = common.MARGIN()
-        self.layout().setContentsMargins(o, o, o, o)
-        self.layout().setSpacing(o)
-
-        # Main Row
-        main_row = self._get_row(parent=self)
-        main_row.layout().setSpacing(o)
-
-        label = self._get_label(parent=main_row)
-        pixmap = images.ImageCache.get_rsc_pixmap(
-            self.icon, self.secondary_color.lighter(150), common.ROW_HEIGHT())
-        label.setPixmap(pixmap)
-        label.setFixedWidth(common.ROW_HEIGHT())
-        label.setFixedHeight(common.ROW_HEIGHT())
-        main_row.layout().addWidget(label, 0)
-
-        # Labels and buttons
-        columns = self._get_row(vertical=True, parent=main_row)
-        columns.layout().setSpacing(o)
-
-        primary_row = self._get_row(parent=columns)
-        columns.layout().addWidget(primary_row, 1)
-
-        if self.primary_label:
-            primary_row.layout().addWidget(self.primary_label)
-
-        if self.secondary_label:
-            secondary_row = self._get_row(parent=columns)
-            secondary_row.layout().addWidget(self.secondary_label)
-
-        if self.no_buttons is True:
-            return
-
-        if self.buttons:
-            buttons_row = self._get_row(parent=columns)
-            for idx, button in enumerate(self.buttons):
-                if idx == 0:
-                    buttons_row.layout().addWidget(button, 2)
-                else:
-                    buttons_row.layout().addWidget(button, 1)
-
-    def _connect_signals(self):
-        for button in buttons:
-            k = button.lower() + '_button'
-
-            if not hasattr(self, k):
-                continue
-
-            widget = getattr(self, k)
-            widget.clicked.connect(
-                functools.partial(self.buttonClicked.emit, button)
-            )
-
-            if button in (OkButton, YesButton, SaveButton):
-                widget.clicked.connect(
-                    lambda: self.done(QtWidgets.QDialog.Accepted)
-                )
-            if button in (CancelButton, NoButton):
-                widget.clicked.connect(
-                    lambda: self.done(QtWidgets.QDialog.Rejected)
-                )
-
-        self.buttonClicked.connect(self.set_clicked_button)
-
-    def set_labels(self, args):
-        if len(args) >= 1 and isinstance(args[0], str):
-            self.primary_label = self._get_label(
-                parent=self, size=common.LARGE_FONT_SIZE() - 2)
-            self.primary_label.setText(args[0])
-        else:
-            raise ValueError('Primary Label must be {}'.format(str))
-        if len(args) >= 2:
-            self.secondary_label = self._get_label(parent=self)
-            self.secondary_label.setText(args[1])
-            self.secondary_label.setTextFormat(QtCore.Qt.PlainText)
-
-    def set_buttons(self, kwargs):
-        if 'no_buttons' in kwargs and kwargs['no_buttons'] is True:
-            self.no_buttons = kwargs['no_buttons']
-            self.buttons = []
-            return
-
-        color = QtGui.QColor(self.primary_color)
-        color.setAlphaF(0.5)
-
-        stylesheet = PUSH_BUTTON_STYLESHEET.format(
-            px=common.SMALL_FONT_SIZE(),
-            i=common.INDICATOR_WIDTH(),
-            s=common.ROW_SEPARATOR(),
-            c=common.rgb(self.secondary_color.lighter(150)),
-            p=common.rgb(color),
-            pl=common.rgb(self.primary_color.lighter(120)),
-            pd=common.rgb(self.primary_color.darker(120)),
-            SELECTED_TEXT=common.rgb(common.SELECTED_TEXT),
-        )
-        if 'buttons' in kwargs and isinstance(kwargs['buttons'], (tuple, list)) and kwargs['buttons']:
-            for k in kwargs['buttons']:
-                if k not in buttons:
-                    raise ValueError('{} is an invalid button'.format(k))
-                button = QtWidgets.QPushButton(k, parent=self)
-                button.setStyleSheet(stylesheet)
-                button.setFixedHeight(common.ROW_HEIGHT())
-                self.buttons.append(button)
-                setattr(self, k.lower() + '_button', button)
-            return
-
-        button = QtWidgets.QPushButton(OkButton, parent=self)
-        button.setStyleSheet(stylesheet)
-        self.buttons = [button, ]
-        setattr(self, OkButton.lower() + '_button', button)
-
-    def sizeHint(self):
-        return QtCore.QSize(common.HEIGHT(), common.HEIGHT() * 0.5)
-
-    def eventFilter(self, widget, event):
-        if widget != self:
-            return False
-        if event.type() == QtCore.QEvent.Paint:
-            painter = QtGui.QPainter()
-            painter.begin(self)
-            painter.setRenderHint(QtGui.QPainter.Antialiasing)
-
-            pen = QtGui.QPen(QtGui.QColor(self.secondary_color).darker(250))
-            pen.setWidthF(common.ROW_SEPARATOR())
-            painter.setPen(pen)
-
-            painter.setBrush(self.secondary_color)
-
-            o = common.ROW_SEPARATOR()
-            rect = self.rect().adjusted(o, o, -o, -o)
-            o = common.INDICATOR_WIDTH() * 2
-            painter.setOpacity(0.90)
-            painter.drawRoundedRect(
-                rect,
-                o, o
-            )
-            painter.end()
-            return True
-        return False
-
-    def open(self):
-        common.center_window(self)
-        super(MessageBox, self).open()
-        if self.fade_in.state() != QtCore.QAbstractAnimation.Running:
-            self.fade_in.start()
-        while self.fade_in.state() != QtCore.QAbstractAnimation.Stopped:
-            QtCore.QCoreApplication.processEvents()
-
-    def exec_(self):
-        common.center_window(self)
-        self.show()
-        if self.fade_in.state() != QtCore.QAbstractAnimation.Running:
-            self.fade_in.start()
-        while self.fade_in.state() != QtCore.QAbstractAnimation.Stopped:
-            QtCore.QCoreApplication.processEvents()
-        return super(MessageBox, self).exec_()
-
-    def done(self, result):
-        if self.fade_out.state() != QtCore.QAbstractAnimation.Running:
-            self.fade_out.start()
-        while self.fade_out.state() != QtCore.QAbstractAnimation.Stopped:
-            QtCore.QCoreApplication.processEvents()
-        return super(MessageBox, self).done(result)
-
-    def hide(self):
-        if self.fade_out.state() != QtCore.QAbstractAnimation.Running:
-            self.fade_out.start()
-        while self.fade_out.state() != QtCore.QAbstractAnimation.Stopped:
-            QtCore.QCoreApplication.processEvents()
-        super(MessageBox, self).hide()
-
-
-class ErrorBox(MessageBox):
-    """Informative message box used for notifying the user of an error.
-
-    """
-    primary_color = QtGui.QColor(190, 50, 50, 180)
-    secondary_color = common.RED
-    icon = 'close'
-
-
-class OkBox(MessageBox):
-    """Informative message box used for notifying the user of success.
-
-    """
-    primary_color = QtGui.QColor(80, 150, 100, 180)
-    secondary_color = QtGui.QColor(110, 190, 160, 255)  # 90, 200, 155)
-    icon = 'check'
-
 
 
 class ListOverlayWidget(QtWidgets.QWidget):
@@ -822,9 +688,9 @@ class ListOverlayWidget(QtWidgets.QWidget):
 
         painter = QtGui.QPainter()
         painter.begin(self)
-        painter.setPen(common.SECONDARY_TEXT)
+        painter.setPen(common.color(common.TextSecondaryColor))
 
-        o = common.MARGIN()
+        o = common.size(common.WidthMargin)
         rect = self.rect().adjusted(o, o, -o, -o)
         text = QtGui.QFontMetrics(self.font()).elidedText(
             message,
@@ -860,7 +726,7 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
         painter.setRenderHint(
             QtGui.QPainter.SmoothPixmapTransform, on=True)
 
-        o = common.INDICATOR_WIDTH() * 1.5
+        o = common.size(common.WidthIndicator) * 1.5
         rect = option.rect.adjusted(o * 0.5, o * 0.5, -o * 0.5, -o * 0.5)
 
         # Background
@@ -870,15 +736,15 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
 
         painter.setPen(QtCore.Qt.NoPen)
         if selected:
-            painter.setBrush(common.SELECTED_BG)
+            painter.setBrush(common.color(common.BackgroundLightColor))
 
             painter.setPen(QtCore.Qt.NoPen)
             painter.drawRoundedRect(rect, o, o)
 
         if focus:
             painter.setBrush(QtCore.Qt.NoBrush)
-            pen = QtGui.QPen(common.BLUE)
-            pen.setWidthF(common.ROW_SEPARATOR())
+            pen = QtGui.QPen(common.color(common.BlueColor))
+            pen.setWidthF(common.size(common.HeightSeparator))
             painter.setPen(pen)
             painter.drawRoundedRect(rect, o, o)
 
@@ -886,7 +752,7 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
         rect = QtCore.QRect(rect)
         rect.setWidth(rect.height())
         center = rect.center()
-        h = common.MARGIN()
+        h = common.size(common.WidthMargin)
         rect.setSize(QtCore.QSize(h, h))
         rect.moveCenter(center)
 
@@ -897,11 +763,11 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
 
         if checkable and checked:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'check', common.GREEN, rect.height())
+                'check', common.color(common.GreenColor), rect.height())
             painter.drawPixmap(rect, pixmap)
         elif checkable and not checked:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'close', common.BG, rect.height())
+                'close', common.color(common.BackgroundColor), rect.height())
             painter.drawPixmap(rect, pixmap)
         elif not checkable and decoration and isinstance(decoration, QtGui.QPixmap):
             painter.drawPixmap(rect, decoration)
@@ -923,19 +789,19 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
 
         # Label
         font, metrics = common.font_db.primary_font(
-            font_size=common.SMALL_FONT_SIZE())
+            font_size=common.size(common.FontSizeSmall))
 
-        color = common.TEXT
-        color = common.SELECTED_TEXT if selected else color
-        color = common.TEXT if checked else color
+        color = common.color(common.TextColor)
+        color = common.color(common.TextSelectedColor) if selected else color
+        color = common.color(common.TextColor) if checked else color
 
         painter.setBrush(color)
 
-        x = rect.right() + common.INDICATOR_WIDTH() * 3
+        x = rect.right() + common.size(common.WidthIndicator) * 3
         text = metrics.elidedText(
             text,
             QtCore.Qt.ElideRight,
-            option.rect.width() - x - common.INDICATOR_WIDTH(),
+            option.rect.width() - x - common.size(common.WidthIndicator),
         )
 
         y = option.rect.center().y() + (metrics.ascent() / 2.0)
@@ -999,16 +865,17 @@ class ListWidget(QtWidgets.QListWidget):
             return
         item.setCheckState(QtCore.Qt.Unchecked)
 
-    def addItem(self, label, icon=None, color=common.SECONDARY_TEXT):
+    def addItem(self, label, icon=None, color=common.color(common.TextSecondaryColor)):
         if isinstance(label, QtWidgets.QListWidgetItem):
             return super(ListWidget, self).addItem(label)
 
         _, metrics = common.font_db.primary_font(
-            font_size=common.SMALL_FONT_SIZE())
-        width = metrics.horizontalAdvance(label) + common.ROW_HEIGHT() + common.MARGIN()
+            font_size=common.size(common.FontSizeSmall))
+        width = metrics.horizontalAdvance(
+            label) + common.size(common.HeightRow) + common.size(common.WidthMargin)
         item = QtWidgets.QListWidgetItem(label)
 
-        size = QtCore.QSize(width, common.ROW_HEIGHT())
+        size = QtCore.QSize(width, common.size(common.HeightRow))
         item.setData(QtCore.Qt.SizeHintRole, size)
 
         if icon:
@@ -1017,7 +884,8 @@ class ListWidget(QtWidgets.QListWidget):
             pixmap = images.ImageCache.get_rsc_pixmap(
                 icon,
                 color,
-                common.ROW_HEIGHT() - (common.INDICATOR_WIDTH() * 2)
+                common.size(common.HeightRow) -
+                (common.size(common.WidthIndicator) * 2)
             )
             item.setData(QtCore.Qt.DecorationRole, pixmap)
         else:
@@ -1031,3 +899,124 @@ class ListWidget(QtWidgets.QListWidget):
 
     def resizeEvent(self, event):
         self.resized.emit(event.size())
+
+
+def get_group(parent=None, vertical=True, margin=common.size(common.WidthMargin)):
+    """Utility method for creating a group widget.
+
+    Returns:
+        QGroupBox: group widget.
+
+    """
+    grp = QtWidgets.QGroupBox(parent=parent)
+    grp.setMinimumWidth(common.size(common.DefaultWidth) * 0.3)
+
+    if vertical:
+        QtWidgets.QVBoxLayout(grp)
+    else:
+        QtWidgets.QHBoxLayout(grp)
+
+    grp.setSizePolicy(
+        QtWidgets.QSizePolicy.Minimum,
+        QtWidgets.QSizePolicy.Maximum,
+    )
+
+    grp.layout().setContentsMargins(margin, margin, margin, margin)
+    grp.layout().setSpacing(margin * 0.5)
+    parent.layout().addWidget(grp, 1)
+
+    return grp
+
+
+def add_row(label, color=common.color(common.TextSecondaryColor), parent=None, padding=common.size(common.WidthMargin), height=common.size(common.HeightRow), cls=None, vertical=False):
+    """Utility method for creating a row widget.
+
+    Returns:
+        QWidget:    The newly created row.
+
+    """
+    if cls:
+        w = cls(parent=parent)
+    else:
+        w = QtWidgets.QWidget(parent=parent)
+
+    if vertical:
+        QtWidgets.QVBoxLayout(w)
+    else:
+        QtWidgets.QHBoxLayout(w)
+
+    w.layout().setContentsMargins(0, 0, 0, 0)
+    w.layout().setSpacing(common.size(common.WidthIndicator))
+    w.layout().setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
+
+    w.setSizePolicy(
+        QtWidgets.QSizePolicy.Expanding,
+        QtWidgets.QSizePolicy.Expanding,
+    )
+    if height:
+        w.setFixedHeight(height)
+
+    w.setAttribute(QtCore.Qt.WA_NoBackground)
+    w.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
+    if label:
+        l = PaintedLabel(
+            label,
+            size=common.size(common.FontSizeSmall),
+            color=color,
+            parent=parent
+        )
+        l.setFixedWidth(common.size(common.WidthMargin) * 8.6667)
+        w.layout().addWidget(l, 1)
+
+    if parent:
+        parent.layout().addWidget(w, 1)
+
+    return w
+
+
+def add_label(text, parent=None):
+    """Utility method for creating a label.
+
+    Returns:
+        QLabel: label widget.
+
+    """
+    label = QtWidgets.QLabel(text, parent=parent)
+    label.setFixedHeight(common.size(common.HeightRow))
+    label.setSizePolicy(
+        QtWidgets.QSizePolicy.Expanding,
+        QtWidgets.QSizePolicy.Expanding
+    )
+    label.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
+    parent.layout().addWidget(label, 0)
+
+
+def add_line_edit(label, parent=None):
+    """Utility method for adding a line editor.
+
+    Returns:
+        QLineEdit: line editor widget.
+
+    """
+    w = LineEdit(parent=parent)
+    w.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight)
+    w.setPlaceholderText(label)
+    parent.layout().addWidget(w, 1)
+    return w
+
+
+def add_description(text, label=' ', color=common.color(common.TextSecondaryColor), padding=common.size(common.WidthMargin), parent=None):
+    """Utility method for adding a description field.
+
+    Returns:
+        QLabel: the added QLabel.
+
+    """
+    row = add_row(label, padding=padding, height=None, parent=parent)
+    row.layout().setSpacing(0)
+
+    label = Label(text, color=color, parent=parent)
+    row.layout().addWidget(label, 1)
+    parent.layout().addWidget(row, 1)
+    return row

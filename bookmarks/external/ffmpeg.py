@@ -12,7 +12,7 @@ from PySide2 import QtCore, QtWidgets
 from .. import images
 from .. import ui
 from .. import common
-from .. import settings
+
 from .. import database
 
 
@@ -98,7 +98,7 @@ def _get_font_path():
 
     """
     v = os.path.sep.join((__file__, os.path.pardir, os.path.pardir, 'rsc', 'fonts',
-                f'{common.DEFAULT_MEDIUM_FONT}.ttf'))
+                f'{common.medium_font}.ttf'))
     v = os.path.normpath(os.path.abspath(v))
     if not os.path.isfile(v):
         raise RuntimeError('Font could not be found.')
@@ -205,7 +205,7 @@ def _get_info_label(job, asset, task, output_path, startframe, endframe):
 def _get_progress_bar(startframe, endframe):
     v = QtWidgets.QProgressDialog()
     common.set_custom_stylesheet(v)
-    v.setFixedWidth(common.WIDTH())
+    v.setFixedWidth(common.size(common.DefaultWidth))
     v.setLabelText('FFMpeg is converting, please wait...')
     v.setMinimum(int(startframe))
     v.setMaximum(int(endframe))
@@ -243,18 +243,18 @@ def convert(path, preset, server=None, job=None, root=None, asset=None, task=Non
     common.check_type(size, (tuple, None))
 
     # First, let's check if FFMPEG is available.
-    FFMPEG_BIN = common.get_path_to_executable(settings.FFMpegKey)
+    FFMPEG_BIN = common.get_path_to_executable(common.FFMpegKey)
     if not FFMPEG_BIN:
         raise RuntimeError('Could not find FFMpeg binary.')
     if not QtCore.QFileInfo(FFMPEG_BIN).exists():
         raise RuntimeError('FFMpeg is set but the file does not exist.')
     FFMPEG_BIN = os.path.normpath(os.path.abspath(FFMPEG_BIN))
 
-    server = server if server else settings.active(settings.ServerKey)
-    job = job if job else settings.active(settings.JobKey)
-    root = root if root else settings.active(settings.RootKey)
-    asset = asset if asset else settings.active(settings.AssetKey)
-    task = task if task else settings.active(settings.TaskKey)
+    server = server if server else common.active(common.ServerKey)
+    job = job if job else common.active(common.JobKey)
+    root = root if root else common.active(common.RootKey)
+    asset = asset if asset else common.active(common.AssetKey)
+    task = task if task else common.active(common.TaskKey)
 
     if not all((server, job, root, asset, task)):
         raise RuntimeError('Not all required active items are set.')

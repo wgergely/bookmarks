@@ -1,4 +1,4 @@
-scandir==1.10.0
+_scandir==1.10.0
 OpenImageIO==2.4.0
 PySide2==5.15.2
 Alembic==1.8.3

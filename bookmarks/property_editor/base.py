@@ -54,7 +54,7 @@ from .. import common
 from .. import ui
 from .. import images
 from .. import database
-from .. import settings
+
 from . import base_widgets
 
 
@@ -75,7 +75,7 @@ tokenvalidator.setRegExp(QtCore.QRegExp(r'[0-0a-zA-Z\_\-\.\{\}]*'))
 
 
 span = {
-    'start': '<span style="color:{}">'.format(common.rgb(common.GREEN)),
+    'start': '<span style="color:{}">'.format(common.rgb(common.color(common.GreenColor))),
     'end': '</span>',
 }
 
@@ -94,15 +94,15 @@ def add_section(icon, label, parent, color=None):
     """
     parent = ui.add_row('', height=None, vertical=True, parent=parent)
 
-    h = common.ROW_HEIGHT()
+    h = common.size(common.HeightRow)
 
     _label = QtWidgets.QLabel(parent=parent)
     pixmap = images.ImageCache.get_rsc_pixmap(icon, color, h * 0.8)
     _label.setPixmap(pixmap)
     label = ui.PaintedLabel(
         label,
-        size=common.LARGE_FONT_SIZE(),
-        color=common.TEXT,
+        size=common.size(common.FontSizeLarge),
+        color=common.color(common.TextColor),
         parent=parent
     )
 
@@ -116,8 +116,8 @@ def add_section(icon, label, parent, color=None):
 
 
 def _save_local_value(key, value):
-    settings.instance().setValue(
-        settings.CurrentUserPicksSection,
+    common.settings.setValue(
+        common.CurrentUserPicksSection,
         key,
         value
     )
@@ -199,8 +199,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
-        self.setMinimumWidth(common.WIDTH() * 0.5)
-        self.setMinimumHeight(common.HEIGHT() * 0.5)
+        self.setMinimumWidth(common.size(common.DefaultWidth) * 0.5)
+        self.setMinimumHeight(common.size(common.DefaultHeight) * 0.5)
 
         if all((server, job, root)):
             if not asset:
@@ -214,7 +214,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         self._connect_signals()
 
     def _create_ui(self):
-        o = common.MARGIN()
+        o = common.size(common.WidthMargin)
 
         QtWidgets.QHBoxLayout(self)
         self.layout().setContentsMargins(0, 0, 0, 0)
@@ -238,7 +238,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         # Separator pixmap
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'gradient3', None, common.MARGIN(), opacity=0.5)
+            'gradient3', None, common.size(common.WidthMargin), opacity=0.5)
         separator = QtWidgets.QLabel(parent=self)
         separator.setScaledContents(True)
         separator.setPixmap(pixmap)
@@ -248,7 +248,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
             self.left_row.hide()
 
         self.left_row.setStyleSheet(
-            'background-color: {};'.format(common.rgb(common.SEPARATOR)))
+            'background-color: {};'.format(common.rgb(common.color(common.SeparatorColor))))
         QtWidgets.QHBoxLayout(self.left_row)
         self.left_row.layout().setSpacing(0)
         self.left_row.layout().setContentsMargins(0, 0, 0, 0)
@@ -385,7 +385,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
                     if 'button' in v and v['button']:
                         button = ui.PaintedButton(
                             v['button'], parent=row)
-                        button.setFixedHeight(common.ROW_HEIGHT() * 0.8)
+                        button.setFixedHeight(common.size(common.HeightRow) * 0.8)
 
                         if v['key'] is not None:
                             if hasattr(self, v['key'] + '_button_clicked'):
@@ -403,7 +403,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
                     if 'button2' in v and v['button2']:
                         button2 = ui.PaintedButton(
                             v['button2'], parent=row)
-                        button2.setFixedHeight(common.ROW_HEIGHT() * 0.8)
+                        button2.setFixedHeight(common.size(common.HeightRow) * 0.8)
 
                         if v['key'] is not None:
                             if hasattr(self, v['key'] + '_button2_clicked'):
@@ -422,7 +422,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
     def _add_buttons(self):
         if not self._buttons:
             return
-        h = common.ROW_HEIGHT()
+        h = common.size(common.HeightRow)
 
         self.save_button = ui.PaintedButton(
             self._buttons[0], parent=self)
@@ -434,10 +434,10 @@ class BasePropertyEditor(QtWidgets.QDialog):
         row = ui.add_row(
             None, padding=None, height=h * 2, parent=self.right_row)
         row.layout().setAlignment(QtCore.Qt.AlignCenter)
-        row.layout().addSpacing(common.MARGIN())
+        row.layout().addSpacing(common.size(common.WidthMargin))
         row.layout().addWidget(self.save_button, 1)
         row.layout().addWidget(self.cancel_button, 0)
-        row.layout().addSpacing(common.MARGIN())
+        row.layout().addSpacing(common.size(common.WidthMargin))
 
     def _connect_editor_signals(self, key, _type, editor):
         """Utility method for connecting an editor's change signal to `data_changed`.
@@ -492,11 +492,11 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
     def _connect_settings_save_signals(self, keys):
         """Utility method for connecting editor signals to save their current
-        value in the user settings.
+        value in the user common.
 
         Args:
             keys (tuple):   A list of editor keys that save their current value
-                            in the user settings.
+                            in the user common.
 
         """
         for k in keys:
@@ -522,15 +522,15 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         Args:
             keys (tuple):   A list of editor keys that save their current value
-                            in the user settings.
+                            in the user common.
 
         """
         for k in keys:
             if not hasattr(self, k + '_editor'):
                 continue
 
-            v = settings.instance().value(
-                settings.CurrentUserPicksSection,
+            v = common.settings.value(
+                common.CurrentUserPicksSection,
                 k
             )
             if not v:
@@ -723,7 +723,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
             if not isinstance(editor, QtWidgets.QCheckBox):
                 editor.setStyleSheet(
-                    'color: {};'.format(common.rgb(common.GREEN)))
+                    'color: {};'.format(common.rgb(common.color(common.GreenColor))))
             return
 
         if key in self.changed_data:
@@ -731,7 +731,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         if not isinstance(editor, QtWidgets.QCheckBox):
             editor.setStyleSheet(
-                'color: {};'.format(common.rgb(common.TEXT)))
+                'color: {};'.format(common.rgb(common.color(common.TextColor))))
 
     def db_source(self):
         """The path of the file database values are associated with.
@@ -779,7 +779,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         common.center_window(self)
 
     def sizeHint(self):
-        return QtCore.QSize(common.WIDTH() * 1.33, common.HEIGHT() * 1.5)
+        return QtCore.QSize(common.size(common.DefaultWidth) * 1.33, common.size(common.DefaultHeight) * 1.5)
 
     @QtCore.Slot(str)
     @QtCore.Slot(str)

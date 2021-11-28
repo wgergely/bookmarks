@@ -16,7 +16,7 @@ from PySide2 import QtWidgets, QtGui, QtCore
 from .. import common
 from .. import contextmenu
 from .. import images
-from .. import settings
+
 
 from ..threads import threads
 from ..asset_config import asset_config
@@ -60,22 +60,22 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
         # Set rect with separator
         rect = QtCore.QRect(option.rect)
         center = rect.center()
-        rect.setHeight(rect.height() - common.ROW_SEPARATOR())
+        rect.setHeight(rect.height() - common.size(common.HeightSeparator))
         rect.moveCenter(center)
 
-        if index.data(QtCore.Qt.DisplayRole) == settings.active(settings.TaskKey):
-            o = common.ROW_SEPARATOR()
+        if index.data(QtCore.Qt.DisplayRole) == common.active(common.TaskKey):
+            o = common.size(common.HeightSeparator)
             _rect = rect.adjusted(o, o, -o, -o)
 
-            o = common.INDICATOR_WIDTH() * 2
+            o = common.size(common.WidthIndicator) * 2
             painter.setOpacity(0.66)
             painter.setPen(QtCore.Qt.NoPen)
-            painter.setBrush(common.GREEN)
+            painter.setBrush(common.color(common.GreenColor))
             painter.drawRoundedRect(_rect, o, o)
 
             painter.setOpacity(1.0)
-            pen = QtGui.QPen(common.GREEN)
-            pen.setWidth(common.ROW_SEPARATOR() * 2)
+            pen = QtGui.QPen(common.color(common.GreenColor))
+            pen.setWidth(common.size(common.HeightSeparator) * 2)
             painter.setPen(pen)
             painter.setBrush(QtCore.Qt.NoBrush)
             painter.drawRoundedRect(_rect, o, o)
@@ -83,10 +83,10 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
 
         painter.setOpacity(0.9)
         painter.setPen(QtGui.QPen(QtCore.Qt.NoPen))
-        painter.setBrush(common.SEPARATOR)
+        painter.setBrush(common.color(common.SeparatorColor))
         painter.drawRect(option.rect)
-        background = common.DARK_BG
-        color = common.SELECTED_BG if selected or hover else background
+        background = common.color(common.BackgroundDarkColor)
+        color = common.color(common.BackgroundLightColor) if selected or hover else background
         painter.setBrush(color)
         painter.drawRect(rect)
 
@@ -98,27 +98,27 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
             return
 
         if index.data(common.TodoCountRole):
-            color = common.SELECTED_TEXT if hover else common.TEXT
+            color = common.color(common.TextSelectedColor) if hover else common.color(common.TextColor)
         else:
-            color = common.TEXT if hover else common.SELECTED_BG
-        color = common.SELECTED_TEXT if selected else color
+            color = common.color(common.TextColor) if hover else common.color(common.BackgroundLightColor)
+        color = common.color(common.TextSelectedColor) if selected else color
 
-        font = common.font_db.primary_font(common.MEDIUM_FONT_SIZE())[0]
+        font = common.font_db.primary_font(common.size(common.FontSizeMedium))[0]
 
-        o = common.MARGIN()
+        o = common.size(common.WidthMargin)
         rect = QtCore.QRect(option.rect)
 
         if index.data(common.TodoCountRole) and index.data(common.TodoCountRole) > 0:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'folder', common.SEPARATOR, o)
+                'folder', common.color(common.SeparatorColor), o)
         else:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'folder', common.DARK_BG, o)
+                'folder', common.color(common.BackgroundDarkColor), o)
 
         _rect = QtCore.QRect(0, 0, o, o)
         _rect.moveCenter(option.rect.center())
         _rect.moveLeft(
-            option.rect.left() + ((o + common.INDICATOR_WIDTH()) * 0.5))
+            option.rect.left() + ((o + common.size(common.WidthIndicator)) * 0.5))
         painter.drawPixmap(_rect, pixmap, pixmap.rect())
 
         rect = rect.marginsRemoved(QtCore.QMargins(o * 2, 0, o, 0))
@@ -137,17 +137,17 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
             else:
                 text = '{} items'.format(
                     index.data(common.TodoCountRole))
-            color = common.SELECTED_TEXT if selected else common.GREEN
-            color = common.SELECTED_TEXT if hover else color
+            color = common.color(common.TextSelectedColor) if selected else common.color(common.GreenColor)
+            color = common.color(common.TextSelectedColor) if hover else color
             items.append((text, color))
         else:
-            color = common.TEXT if selected else common.BG
-            color = common.TEXT if hover else color
+            color = common.color(common.TextColor) if selected else common.color(common.BackgroundColor)
+            color = common.color(common.TextColor) if hover else color
             items.append(('(empty)', color))
 
         if index.data(QtCore.Qt.ToolTipRole):
-            color = common.SELECTED_TEXT if selected else common.TEXT
-            color = common.SELECTED_TEXT if hover else color
+            color = common.color(common.TextSelectedColor) if selected else common.color(common.TextColor)
+            color = common.color(common.TextSelectedColor) if hover else color
             items.append((index.data(QtCore.Qt.ToolTipRole), color))
 
         for idx, val in enumerate(items):
@@ -158,12 +158,12 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
                 align = QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight
 
             width = common.draw_aliased_text(
-                painter, common.font_db.secondary_font(common.SMALL_FONT_SIZE())[0], rect, '    |    ', align, common.SEPARATOR)
+                painter, common.font_db.secondary_font(common.size(common.FontSizeSmall))[0], rect, '    |    ', align, common.color(common.SeparatorColor))
             rect.setLeft(rect.left() + width)
 
             width = common.draw_aliased_text(
                 painter,
-                common.font_db.primary_font(common.MEDIUM_FONT_SIZE())[0],
+                common.font_db.primary_font(common.size(common.FontSizeMedium))[0],
                 rect,
                 text,
                 align,
@@ -229,10 +229,10 @@ class TaskFolderModel(base.BaseModel):
 
         """
         return (
-            settings.active(settings.ServerKey),
-            settings.active(settings.JobKey),
-            settings.active(settings.RootKey),
-            settings.active(settings.AssetKey),
+            common.active(common.ServerKey),
+            common.active(common.JobKey),
+            common.active(common.RootKey),
+            common.active(common.AssetKey),
         )
 
     def data_type(self):
@@ -259,7 +259,7 @@ class TaskFolderModel(base.BaseModel):
         # Thumbnail image
         default_thumbnail = images.ImageCache.get_rsc_pixmap(
             'folder_sm',
-            common.SECONDARY_TEXT,
+            common.color(common.TextSecondaryColor),
             self.row_size().height()
         )
         default_thumbnail = default_thumbnail.toImage()
@@ -321,7 +321,7 @@ class TaskFolderModel(base.BaseModel):
         """Slot used to verify the current task folder.
 
         """
-        v = settings.active(settings.TaskKey)
+        v = common.active(common.TaskKey)
         if not v:
             self.taskFolderChangeRequested.emit()
             return
@@ -335,10 +335,10 @@ class TaskFolderModel(base.BaseModel):
             self.taskFolderChangeRequested.emit()
 
     def default_row_size(self):
-        return QtCore.QSize(1, common.ROW_HEIGHT() * 1.2)
+        return QtCore.QSize(1, common.size(common.HeightRow) * 1.2)
 
     def local_settings_key(self):
-        return settings.TaskKey
+        return common.TaskKey
 
 
 class TaskFolderWidget(base.ThreadedBaseWidget):
@@ -402,7 +402,7 @@ class TaskFolderWidget(base.ThreadedBaseWidget):
         self.setFocus()
 
     def select_active_item(self):
-        key = settings.ACTIVE[settings.TaskKey]
+        key = common.ACTIVE[common.TaskKey]
         if not key:
             return
         for n in range(self.model().rowCount()):
@@ -428,7 +428,7 @@ class TaskFolderWidget(base.ThreadedBaseWidget):
             painter = QtGui.QPainter()
             painter.begin(self)
             painter.setPen(QtCore.Qt.NoPen)
-            painter.setBrush(common.SEPARATOR)
+            painter.setBrush(common.color(common.SeparatorColor))
             painter.setOpacity(0.75)
             painter.drawRect(self.rect())
             painter.end()

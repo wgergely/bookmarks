@@ -19,7 +19,7 @@ from .. import common
 from .. import ui
 from .. import images
 from .. import contextmenu
-from .. import settings
+
 from .. import actions
 from . import actions as template_actions
 
@@ -53,7 +53,7 @@ def get_template_folder(mode):
     )
     path = TEMPLATES_DIR.format(
         root=data_location,
-        product=common.PRODUCT,
+        product=common.product,
         mode=mode
     )
     _dir = QtCore.QDir(path)
@@ -85,7 +85,7 @@ class TemplateContextMenu(contextmenu.BaseContextMenu):
                 template_actions.pick_template,
                 self.parent().mode()
             ),
-            'icon': self.get_icon('add', color=common.GREEN)
+            'icon': self.get_icon('add', color=common.color(common.GreenColor))
         }
 
     def remove_menu(self):
@@ -96,7 +96,7 @@ class TemplateContextMenu(contextmenu.BaseContextMenu):
                 template_actions.remove_zip_template,
                 source
             ),
-            'icon': self.get_icon('close', color=common.RED)
+            'icon': self.get_icon('close', color=common.color(common.RedColor))
         }
 
     def refresh_menu(self):
@@ -176,13 +176,13 @@ class TemplateListWidget(ui.ListWidget):
         dir_ = QtCore.QDir(get_template_folder(self.mode()))
         dir_.setNameFilters(['*.zip', ])
 
-        h = common.ROW_HEIGHT()
+        h = common.size(common.HeightRow)
         size = QtCore.QSize(1, h)
 
         off_pixmap = images.ImageCache.get_rsc_pixmap(
-            'close', common.SEPARATOR, h)
+            'close', common.color(common.SeparatorColor), h)
         on_pixmap = images.ImageCache.get_rsc_pixmap(
-            'check', common.GREEN, h)
+            'check', common.color(common.GreenColor), h)
 
         icon = QtGui.QIcon()
         icon.addPixmap(off_pixmap, QtGui.QIcon.Normal)
@@ -219,7 +219,7 @@ class TemplateListWidget(ui.ListWidget):
 
     @QtCore.Slot()
     def save_selected(self):
-        """Save the current selection to the local settings.
+        """Save the current selection to the local common.
 
         """
         idx = self.currentRow()
@@ -228,19 +228,19 @@ class TemplateListWidget(ui.ListWidget):
         item = self.item(idx)
         if not item:
             return
-        settings.instance().setValue(
-            settings.UIStateSection,
+        common.settings.setValue(
+            common.UIStateSection,
             '{}/{}'.format(self.__class__.__name__, self.mode()),
             item.data(QtCore.Qt.DisplayRole)
         )
 
     @QtCore.Slot()
     def restore_selected(self):
-        """Restore the previously selected item from the local settings.
+        """Restore the previously selected item from the local common.
 
         """
-        v = settings.instance().value(
-            settings.UIStateSection,
+        v = common.settings.value(
+            common.UIStateSection,
             '{}/{}'.format(self.__class__.__name__, self.mode())
         )
         if not v:
@@ -365,31 +365,31 @@ class TemplateListWidget(ui.ListWidget):
             painter.setRenderHint(
                 QtGui.QPainter.SmoothPixmapTransform, on=True)
 
-            painter.setPen(common.SECONDARY_TEXT)
+            painter.setPen(common.color(common.TextSecondaryColor))
 
             _ = painter.setOpacity(0.6) if hover else painter.setOpacity(0.3)
 
-            o = common.INDICATOR_WIDTH() * 2
-            _o = common.ROW_SEPARATOR()
+            o = common.size(common.WidthIndicator) * 2
+            _o = common.size(common.HeightSeparator)
             rect = self.rect().adjusted(_o, _o, -_o, -_o)
             if self._drag_in_progress:
                 op = painter.opacity()
                 painter.setOpacity(1.0)
-                pen = QtGui.QPen(common.GREEN)
+                pen = QtGui.QPen(common.color(common.GreenColor))
                 pen.setWidthF(_o)
                 painter.setPen(pen)
                 painter.setBrush(QtCore.Qt.NoBrush)
                 painter.drawRoundedRect(rect, o, o)
                 painter.setOpacity(op)
 
-            pen = QtGui.QPen(common.SEPARATOR)
-            pen.setWidthF(common.ROW_SEPARATOR())
+            pen = QtGui.QPen(common.color(common.SeparatorColor))
+            pen.setWidthF(common.size(common.HeightSeparator))
             painter.setPen(pen)
-            painter.setBrush(common.SEPARATOR)
+            painter.setBrush(common.color(common.SeparatorColor))
             painter.drawRoundedRect(rect, o, o)
 
-            o = common.INDICATOR_WIDTH()
-            painter.setPen(common.TEXT)
+            o = common.size(common.WidthIndicator)
+            painter.setPen(common.color(common.TextColor))
 
             if self.count() > 0:
                 return False
@@ -416,7 +416,7 @@ class TemplateListWidget(ui.ListWidget):
         menu.exec_()
 
     def sizeHint(self):
-        return QtCore.QSize(common.WIDTH() * 0.15, common.WIDTH() * 0.2)
+        return QtCore.QSize(common.size(common.DefaultWidth) * 0.15, common.size(common.DefaultWidth) * 0.2)
 
 
 class TemplatesPreviewWidget(QtWidgets.QListWidget):
@@ -438,17 +438,17 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
         """
         self.clear()
 
-        size = QtCore.QSize(0, common.ROW_HEIGHT() * 0.8)
+        size = QtCore.QSize(0, common.size(common.HeightRow) * 0.8)
 
         folder_pixmap = images.ImageCache.get_rsc_pixmap(
-            'folder', common.SECONDARY_TEXT, common.MARGIN())
+            'folder', common.color(common.TextSecondaryColor), common.size(common.WidthMargin))
         folder_icon = QtGui.QIcon()
         folder_icon.addPixmap(folder_pixmap, QtGui.QIcon.Normal)
         folder_icon.addPixmap(folder_pixmap, QtGui.QIcon.Selected)
         folder_icon.addPixmap(folder_pixmap, QtGui.QIcon.Disabled)
 
         file_pixmap = images.ImageCache.get_rsc_pixmap(
-            'file', common.GREEN, common.MARGIN(), opacity=0.5)
+            'file', common.color(common.GreenColor), common.size(common.WidthMargin), opacity=0.5)
         file_icon = QtGui.QIcon()
         file_icon.addPixmap(file_pixmap, QtGui.QIcon.Normal)
         file_icon.addPixmap(file_pixmap, QtGui.QIcon.Selected)
@@ -462,7 +462,7 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
 
             item = QtWidgets.QListWidgetItem(parent=self)
             item.setData(QtCore.Qt.FontRole, common.font_db.secondary_font(
-                common.SMALL_FONT_SIZE())[0])
+                common.size(common.FontSizeSmall))[0])
             item.setData(QtCore.Qt.DisplayRole, f)
             item.setData(QtCore.Qt.SizeHintRole, size)
             item.setData(QtCore.Qt.DecorationRole, icon)
@@ -479,13 +479,13 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
                 return False
             painter = QtGui.QPainter()
             painter.begin(self)
-            painter.setBrush(common.DARK_BG)
+            painter.setBrush(common.color(common.BackgroundDarkColor))
             painter.setPen(QtCore.Qt.NoPen)
 
             painter.setFont(common.font_db.secondary_font(
-                common.SMALL_FONT_SIZE())[0])
+                common.size(common.FontSizeSmall))[0])
             painter.drawRect(self.rect())
-            o = common.MEDIUM_FONT_SIZE()
+            o = common.size(common.FontSizeMedium)
             rect = self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o))
             painter.drawText(
                 rect,
@@ -498,7 +498,7 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
         return False
 
     def sizeHint(self):
-        return QtCore.QSize(common.WIDTH() * 0.15, common.WIDTH() * 0.2)
+        return QtCore.QSize(common.size(common.DefaultWidth) * 0.15, common.size(common.DefaultWidth) * 0.2)
 
 
 class TemplatesWidget(QtWidgets.QSplitter):
@@ -516,7 +516,7 @@ class TemplatesWidget(QtWidgets.QSplitter):
         )
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        self.setMaximumHeight(common.WIDTH() * 0.3)
+        self.setMaximumHeight(common.size(common.DefaultWidth) * 0.3)
 
         self._create_UI()
         self._connect_signals()
@@ -531,7 +531,7 @@ class TemplatesWidget(QtWidgets.QSplitter):
         self.template_contents_widget = TemplatesPreviewWidget(parent=self)
         self.addWidget(self.template_list_widget)
         self.addWidget(self.template_contents_widget)
-        self.setSizes((common.WIDTH(), 0))
+        self.setSizes((common.size(common.DefaultWidth), 0))
 
     def _connect_signals(self):
         model = self.template_list_widget.selectionModel()
@@ -560,4 +560,4 @@ class TemplatesWidget(QtWidgets.QSplitter):
             index.data(TemplateContentsRole))
 
     def sizeHint(self):
-        return QtCore.QSize(common.WIDTH(), common.HEIGHT())
+        return QtCore.QSize(common.size(common.DefaultWidth), common.size(common.DefaultHeight))

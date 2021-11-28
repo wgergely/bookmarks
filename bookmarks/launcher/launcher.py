@@ -40,7 +40,7 @@ DEFAULT_ITEM = {
     },
 }
 
-THUMBNAIL_EDITOR_SIZE = common.MARGIN() * 5
+THUMBNAIL_EDITOR_SIZE = common.size(common.WidthMargin) * 5
 
 
 class LauncherItemEditor(QtWidgets.QDialog):
@@ -70,30 +70,30 @@ class LauncherItemEditor(QtWidgets.QDialog):
         if not self.parent():
             common.set_custom_stylesheet(self)
 
-        o = common.MARGIN() * 0.5
+        o = common.size(common.WidthMargin) * 0.5
 
         QtWidgets.QVBoxLayout(self)
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
 
-        grp = ui.get_group(margin=common.INDICATOR_WIDTH(),
+        grp = ui.get_group(margin=common.size(common.WidthIndicator),
                            vertical=False, parent=self)
         grp.layout().setAlignment(QtCore.Qt.AlignCenter)
 
-        h = common.MARGIN() * 2
+        h = common.size(common.WidthMargin) * 2
 
         self.thumbnail_viewer_widget = QtWidgets.QLabel(parent=grp)
-        w = h * len(DEFAULT_ITEM) + (common.INDICATOR_WIDTH() * 2)
+        w = h * len(DEFAULT_ITEM) + (common.size(common.WidthIndicator) * 2)
         self.thumbnail_viewer_widget.setFixedSize(QtCore.QSize(w, w))
         grp.layout().addWidget(self.thumbnail_viewer_widget, 0)
 
-        _grp = ui.get_group(margin=common.INDICATOR_WIDTH(), parent=grp)
+        _grp = ui.get_group(margin=common.size(common.WidthIndicator), parent=grp)
         _grp.layout().setAlignment(QtCore.Qt.AlignCenter)
 
         for k in DEFAULT_ITEM:
             row = ui.add_row(None, height=None,
-                             padding=common.INDICATOR_WIDTH(), parent=_grp)
+                             padding=common.size(common.WidthIndicator), parent=_grp)
             editor = DEFAULT_ITEM[k]['widget']()
             editor.setFixedHeight(h)
 
@@ -208,7 +208,7 @@ class LauncherItemEditor(QtWidgets.QDialog):
         return v
 
     def sizeHint(self):
-        return QtCore.QSize(common.WIDTH(), common.ROW_HEIGHT())
+        return QtCore.QSize(common.size(common.DefaultWidth), common.size(common.HeightRow))
 
 
 class LauncherListContextMenu(contextmenu.BaseContextMenu):
@@ -219,7 +219,7 @@ class LauncherListContextMenu(contextmenu.BaseContextMenu):
     def setup(self):
         self.menu[contextmenu.key()] = {
             'text': 'Add item...',
-            'icon': self.get_icon('add', color=common.GREEN),
+            'icon': self.get_icon('add', color=common.color(common.GreenColor)),
             'action': self.parent().add_new_item
         }
 
@@ -235,7 +235,7 @@ class LauncherListContextMenu(contextmenu.BaseContextMenu):
 
         self.menu[contextmenu.key()] = {
             'text': 'Remove item',
-            'icon': self.get_icon('close', color=common.RED),
+            'icon': self.get_icon('close', color=common.color(common.RedColor)),
             'action': functools.partial(self.parent().remove_item, self.index)
         }
 
@@ -322,7 +322,7 @@ class LauncherListWidget(ui.ListWidget):
     def add_item(self, data):
         item = QtWidgets.QListWidgetItem()
 
-        size = QtCore.QSize(1, common.ROW_HEIGHT())
+        size = QtCore.QSize(1, common.size(common.HeightRow))
         pixmap = QtGui.QPixmap(data['thumbnail'])
         pixmap.setDevicePixelRatio(images.pixel_ratio)
         icon = QtGui.QIcon(pixmap)

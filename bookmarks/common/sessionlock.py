@@ -3,13 +3,13 @@
 files.
 
 Bookmarks understand two session locks related to how active paths are read and
-set. When `common.SESSION_MODE` is `common.SyncronisedActivePaths` bookmarks
+set. When `common.session_mode` is `common.SyncronisedActivePaths` bookmarks
 will save active paths in the `local_settings`, as expected.
 
 However, when multiple Bookmarks instances are running this poses a problem,
-because instances will mutually overwrite each other's active path settings.
+because instances will mutually overwrite each other's active path common.
 
-Hence, when a second Bookmarks instance is launched `common.SESSION_MODE` is
+Hence, when a second Bookmarks instance is launched `common.session_mode` is
 automatically set to `common.PrivateActivePaths`. When this mode is active, the
 initial active path values are read on startup `local_settings` will no longer
 be modified. Instead, the paths will be saved into a private data container.
@@ -26,13 +26,8 @@ import re
 import psutil
 import _scandir
 
-from PySide2 import QtCore, QtWidgets, QtGui
-
+from PySide2 import QtCore
 from . import common
-from . import ui
-from . import actions
-from . import settings
-from . import images
 
 
 FORMAT = 'lock'
@@ -41,14 +36,14 @@ LOCK_PATH = '{root}/{product}/{prefix}_{pid}.{ext}'
 LOCK_DIR = '{root}/{product}'
 
 
-def prune():
+def prune_lock():
     """Removes stale lock files not associated with current PIDs.
 
     """
     path = LOCK_DIR.format(
         root=QtCore.QStandardPaths.writableLocation(
             QtCore.QStandardPaths.GenericDataLocation),
-        product=common.PRODUCT,
+        product=common.product,
     )
 
     r = r'{prefix}_([0-9]+)\.{ext}'.format(
@@ -71,7 +66,7 @@ def prune():
                 raise RuntimeError('Failed to remove a lockfile.')
 
 
-def init(pid=None):
+def init_lock(pid=None):
     """Initialises the Bookmark's session lock.
 
     We'll check all lockfiles and to see if there's already a
@@ -85,7 +80,7 @@ def init(pid=None):
     path = LOCK_DIR.format(
         root=QtCore.QStandardPaths.writableLocation(
             QtCore.QStandardPaths.GenericDataLocation),
-        product=common.PRODUCT,
+        product=common.product,
     )
 
     # Set the pid
@@ -101,7 +96,7 @@ def init(pid=None):
             continue
 
         # Read the contents
-        with open(entry.path, 'r') as f:
+        with open(entry.path, 'r', encoding='utf8') as f:
             data = f.read()
 
             try:
@@ -114,11 +109,11 @@ def init(pid=None):
             # in PrivateActivePaths as we don't want sessions to be able
             # to set their environent independently:
             if data == common.SyncronisedActivePaths:
-                common.SESSION_MODE = common.PrivateActivePaths
+                common.session_mode = common.PrivateActivePaths
                 return write_current_mode_to_lock(pid)
 
     # Otherwise, set the default value
-    common.SESSION_MODE = common.SyncronisedActivePaths
+    common.session_mode = common.SyncronisedActivePaths
     return write_current_mode_to_lock(pid)
 
 
@@ -132,7 +127,7 @@ def write_current_mode_to_lock(pid):
     path = LOCK_PATH.format(
         root=QtCore.QStandardPaths.writableLocation(
             QtCore.QStandardPaths.GenericDataLocation),
-        product=common.PRODUCT,
+        product=common.product,
         prefix=PREFIX,
         pid=pid,
         ext=FORMAT
@@ -144,61 +139,7 @@ def write_current_mode_to_lock(pid):
         os.makedirs(basedir)
 
     # Write current mode to the lockfile
-    with open(path, 'w+') as f:
-        f.write('{}'.format(common.SESSION_MODE))
+    with open(path, 'w+', encoding='utf8') as f:
+        f.write(f'{common.session_mode}')
 
     return path
-
-
-class ToggleSessionModeButton(ui.ClickableIconButton):
-    """Button used to toggle between Synronised and Private modes.
-
-    """
-    ContextMenu = None
-
-    def __init__(self, parent=None):
-        super(ToggleSessionModeButton, self).__init__(
-            'check',
-            (common.GREEN, common.RED),
-            common.MARGIN(),
-            description='Click to toggle {}.'.format(
-                common.PRODUCT),
-            parent=parent
-        )
-        self.setMouseTracking(True)
-        self.clicked.connect(actions.toggle_session_mode)
-        common.signals.sessionModeChanged.connect(self.update)
-
-    def pixmap(self):
-        if common.SESSION_MODE == common.SyncronisedActivePaths:
-            return images.ImageCache.get_rsc_pixmap('check', common.GREEN, self._size)
-        if common.SESSION_MODE == common.PrivateActivePaths:
-            return images.ImageCache.get_rsc_pixmap('crossed', common.RED, self._size)
-        return images.ImageCache.get_rsc_pixmap('crossed', common.RED, self._size)
-
-    def statusTip(self):
-        if common.SESSION_MODE == common.SyncronisedActivePaths:
-            return 'This session sets active paths. Click to toggle.'
-
-        if common.SESSION_MODE == common.PrivateActivePaths:
-            return 'This session does not modify active paths. Click to toggle.'
-
-        return 'Invalid session lock.'
-
-    def toolTip(self):
-        return self.whatsThis()
-
-    def whatsThis(self):
-        return 'Private Active Paths:\n{}\n{}\n{}\n{}\n{}\n\n{}\n{}\n{}\n{}\n{}'.format(
-            settings.instance(
-            ).PRIVATE_SESSION_MODE_VALUES[settings.ServerKey],
-            settings.instance().PRIVATE_SESSION_MODE_VALUES[settings.JobKey],
-            settings.instance().PRIVATE_SESSION_MODE_VALUES[settings.RootKey],
-            settings.instance().PRIVATE_SESSION_MODE_VALUES[settings.AssetKey],
-            settings.instance().PRIVATE_SESSION_MODE_VALUES[settings.TaskKey],
-            settings.active(settings.ServerKey),
-            settings.active(settings.JobKey),
-            settings.active(settings.RootKey),
-            settings.active(settings.AssetKey),
-            settings.active(settings.TaskKey),
-        )

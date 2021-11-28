@@ -11,10 +11,10 @@ from .. import contextmenu
 from .. import log
 from .. import common
 from ..threads import threads
-from .. import settings
+
 from .. import images
 from .. import actions
-from .. import datacache
+
 from ..asset_config import asset_config
 
 from . import base
@@ -38,20 +38,20 @@ class DropIndicatorWidget(QtWidgets.QWidget):
         """Paints the indicator area."""
         painter = QtGui.QPainter()
         painter.begin(self)
-        pen = QtGui.QPen(common.BLUE)
-        pen.setWidth(common.INDICATOR_WIDTH())
+        pen = QtGui.QPen(common.color(common.BlueColor))
+        pen.setWidth(common.size(common.WidthIndicator))
         painter.setPen(pen)
-        painter.setBrush(common.BLUE)
+        painter.setBrush(common.color(common.BlueColor))
         painter.setOpacity(0.35)
         painter.drawRect(self.rect())
         painter.setOpacity(1.0)
         common.draw_aliased_text(
             painter,
-            common.font_db.primary_font(common.MEDIUM_FONT_SIZE())[0],
+            common.font_db.primary_font(common.size(common.FontSizeMedium))[0],
             self.rect(),
             'Drop to add bookmark',
             QtCore.Qt.AlignCenter,
-            common.BLUE
+            common.color(common.BlueColor)
         )
         painter.end()
 
@@ -68,15 +68,15 @@ class ItemDrag(QtGui.QDrag):
         model = index.model().sourceModel()
         self.setMimeData(model.mimeData([index, ]))
 
-        def get(s, color=common.GREEN):
-            return images.ImageCache.get_rsc_pixmap(s, color, common.MARGIN() * images.pixel_ratio)
+        def get(s, color=common.color(common.GreenColor)):
+            return images.ImageCache.get_rsc_pixmap(s, color, common.size(common.WidthMargin) * images.pixel_ratio)
 
         # Set drag icon
         self.setDragCursor(get('add_circle'), QtCore.Qt.CopyAction)
         self.setDragCursor(get('file'), QtCore.Qt.MoveAction)
-        self.setDragCursor(get('close', color=common.RED),
+        self.setDragCursor(get('close', color=common.color(common.RedColor)),
                            QtCore.Qt.ActionMask)
-        self.setDragCursor(get('close', color=common.RED),
+        self.setDragCursor(get('close', color=common.color(common.RedColor)),
                            QtCore.Qt.IgnoreAction)
 
         # Set pixmap
@@ -94,20 +94,20 @@ class ItemDrag(QtGui.QDrag):
                 index.data(common.ParentPathRole)[1],
                 index.data(common.ParentPathRole)[2],
                 source,
-                size=common.ROW_HEIGHT(),
+                size=common.size(common.HeightRow),
             )
         elif alt_modifier and shift_modifier:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'folder', common.SECONDARY_TEXT, common.ROW_HEIGHT())
+                'folder', common.color(common.TextSecondaryColor), common.size(common.HeightRow))
             source = QtCore.QFileInfo(source).dir().path()
         elif alt_modifier:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'file', common.SECONDARY_TEXT, common.ROW_HEIGHT())
+                'file', common.color(common.TextSecondaryColor), common.size(common.HeightRow))
             source = common.get_sequence_startpath(source)
         elif shift_modifier:
             source = common.get_sequence_startpath(source) + ', ++'
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'multiples_files', common.SECONDARY_TEXT, common.ROW_HEIGHT())
+                'multiples_files', common.color(common.TextSecondaryColor), common.size(common.HeightRow))
         else:
             return
 
@@ -124,16 +124,16 @@ class DragPixmapFactory(QtWidgets.QWidget):
         self._pixmap = pixmap
         self._text = text
 
-        _, metrics = common.font_db.primary_font(common.MEDIUM_FONT_SIZE())
+        _, metrics = common.font_db.primary_font(common.size(common.FontSizeMedium))
         self._text_width = metrics.horizontalAdvance(text)
 
-        width = self._text_width + common.MARGIN()
-        width = common.WIDTH() + common.MARGIN() if width > common.WIDTH() else width
+        width = self._text_width + common.size(common.WidthMargin)
+        width = common.size(common.DefaultWidth) + common.size(common.WidthMargin) if width > common.size(common.DefaultWidth) else width
 
-        self.setFixedHeight(common.ROW_HEIGHT())
+        self.setFixedHeight(common.size(common.HeightRow))
 
         longest_edge = max((pixmap.width(), pixmap.height()))
-        o = common.INDICATOR_WIDTH()
+        o = common.size(common.WidthIndicator)
         self.setFixedWidth(
             longest_edge + (o * 2) + width
         )
@@ -161,30 +161,30 @@ class DragPixmapFactory(QtWidgets.QWidget):
         painter.begin(self)
 
         painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.DARK_BG)
+        painter.setBrush(common.color(common.BackgroundDarkColor))
         painter.setOpacity(0.6)
         painter.drawRoundedRect(self.rect(), 4, 4)
         painter.setOpacity(1.0)
 
         pixmap_rect = QtCore.QRect(
-            0, 0, common.ROW_HEIGHT(), common.ROW_HEIGHT())
+            0, 0, common.size(common.HeightRow), common.size(common.HeightRow))
         painter.drawPixmap(pixmap_rect, self._pixmap, self._pixmap.rect())
 
-        width = self._text_width + common.INDICATOR_WIDTH()
+        width = self._text_width + common.size(common.WidthIndicator)
         width = 640 if width > 640 else width
         rect = QtCore.QRect(
-            common.ROW_HEIGHT() + common.INDICATOR_WIDTH(),
+            common.size(common.HeightRow) + common.size(common.WidthIndicator),
             0,
             width,
             self.height()
         )
         common.draw_aliased_text(
             painter,
-            common.font_db.primary_font(common.MEDIUM_FONT_SIZE())[0],
+            common.font_db.primary_font(common.size(common.FontSizeMedium))[0],
             rect,
             self._text,
             QtCore.Qt.AlignCenter,
-            common.SELECTED_TEXT
+            common.color(common.TextSelectedColor)
         )
         painter.end()
 
@@ -292,7 +292,7 @@ class FilesModel(base.BaseModel):
         if not k:
             return None
         t = common.FileItem
-        data = datacache.get_data(p, k, t)
+        data = common.get_data(p, k, t)
         return data.refresh_needed
 
     def set_refresh_needed(self, v):
@@ -301,7 +301,7 @@ class FilesModel(base.BaseModel):
         if not k:
             return
         t = common.FileItem
-        data = datacache.get_data(p, k, t)
+        data = common.get_data(p, k, t)
         data.refresh_needed = v
 
     def watcher(self):
@@ -328,7 +328,7 @@ class FilesModel(base.BaseModel):
         if not k:
             return
         t = common.FileItem
-        data = datacache.get_data(p, k, t)
+        data = common.get_data(p, k, t)
 
         # If the dataset is small we can safely reload the model
         if len(data) < 1999:
@@ -360,7 +360,7 @@ class FilesModel(base.BaseModel):
         if not k:
             return
         t = common.FileItem
-        data = datacache.get_data(p, k, t)
+        data = common.get_data(p, k, t)
 
         SEQUENCE_DATA = common.DataDict()  # temporary dict for temp data
 
@@ -455,14 +455,14 @@ class FilesModel(base.BaseModel):
             if seq:
                 seqpath = seq.group(1) + common.SEQPROXY + \
                     seq.group(3) + '.' + seq.group(4)
-            if (seq and (seqpath in common.FAVOURITES_SET or filepath in common.FAVOURITES_SET)) or (filepath in common.FAVOURITES_SET):
+            if (seq and (seqpath in common.favourites or filepath in common.favourites)) or (filepath in common.favourites):
                 flags = flags | common.MarkedAsFavourite
 
             parent_path_role = p + (k, fileroot)
 
             idx = len(data)
 
-            if idx >= common.MAXITEMS:
+            if idx >= common.max_list_items:
                 break  # Let's limit the maximum number of items we load
 
             data[idx] = common.DataDict({
@@ -509,7 +509,7 @@ class FilesModel(base.BaseModel):
                     seqname = seqpath.split('/')[-1]
                     flags = base.DEFAULT_ITEM_FLAGS
 
-                    if seqpath in common.FAVOURITES_SET:
+                    if seqpath in common.favourites:
                         flags = flags | common.MarkedAsFavourite
 
                     sort_by_name_role = list(sort_by_name_role)
@@ -558,10 +558,10 @@ class FilesModel(base.BaseModel):
 
         # Cast the sequence data back onto the model
         t = common.SequenceItem
-        data = datacache.get_data(p, k, t)
+        data = common.get_data(p, k, t)
 
         for idx, v in enumerate(SEQUENCE_DATA.values()):
-            if idx >= common.MAXITEMS:
+            if idx >= common.max_list_items:
                 break  # Let's limit the maximum number of items we load
 
             # A sequence with only one element is not a sequencemas far as
@@ -582,7 +582,7 @@ class FilesModel(base.BaseModel):
                 v[common.SortByLastModifiedRole] = 0
 
                 flags = base.DEFAULT_ITEM_FLAGS
-                if filepath in common.FAVOURITES_SET:
+                if filepath in common.favourites:
                     flags = flags | common.MarkedAsFavourite
 
                 v[common.FlagsRole] = flags
@@ -609,10 +609,10 @@ class FilesModel(base.BaseModel):
 
         """
         return (
-            settings.active(settings.ServerKey),
-            settings.active(settings.JobKey),
-            settings.active(settings.RootKey),
-            settings.active(settings.AssetKey)
+            common.active(common.ServerKey),
+            common.active(common.JobKey),
+            common.active(common.RootKey),
+            common.active(common.AssetKey)
         )
 
     def item_iterator(self, path):
@@ -650,10 +650,10 @@ class FilesModel(base.BaseModel):
         filepath = parent_role[5] + '/' + \
             common.get_sequence_endpath(file_info.fileName())
 
-        actions.set_active(settings.FileKey, filepath)
+        actions.set_active(common.FileKey, filepath)
 
     def task(self):
-        return settings.active(settings.TaskKey)
+        return common.active(common.TaskKey)
 
     @QtCore.Slot(str)
     def set_task(self, val):
@@ -670,7 +670,7 @@ class FilesModel(base.BaseModel):
             return
 
         k = val
-        actions.set_active(settings.TaskKey, val)
+        actions.set_active(common.TaskKey, val)
         self.__resetdata__()
 
     @common.debug
@@ -693,9 +693,9 @@ class FilesModel(base.BaseModel):
                 task
             )
             val = self.get_local_setting(
-                settings.CurrentDataType,
+                common.CurrentDataType,
                 key=key,
-                section=settings.UIStateSection
+                section=common.UIStateSection
             )
             val = common.SequenceItem if val not in (
                 common.FileItem, common.SequenceItem) else val
@@ -724,10 +724,10 @@ class FilesModel(base.BaseModel):
             self.task()
         )
         self.set_local_setting(
-            settings.CurrentDataType,
+            common.CurrentDataType,
             val,
             key=key,
-            section=settings.UIStateSection
+            section=common.UIStateSection
         )
 
         self.beginResetModel()
@@ -735,16 +735,16 @@ class FilesModel(base.BaseModel):
         self.endResetModel()
 
     def local_settings_key(self):
-        if settings.active(settings.TaskKey) is None:
+        if common.active(common.TaskKey) is None:
             return None
 
         keys = (
-            settings.JobKey,
-            settings.RootKey,
-            settings.AssetKey,
-            settings.TaskKey,
+            common.JobKey,
+            common.RootKey,
+            common.AssetKey,
+            common.TaskKey,
         )
-        v = [settings.active(k) for k in keys]
+        v = [common.active(k) for k in keys]
         if not all(v):
             return None
 

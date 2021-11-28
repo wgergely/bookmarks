@@ -7,7 +7,7 @@ from PySide2 import QtCore
 
 from .. import common
 from .. import log
-from .. import settings
+
 
 
 RV_PUSH_COMMAND = '"{RV}" -tag {PRODUCT} url \'rvlink:// -reuse 1 -inferSequence -l -play -fullscreen -nofloat -lookback 0 -nomb \"{PATH}\"\''
@@ -18,7 +18,7 @@ RV_PUSH_COMMAND = '"{RV}" -tag {PRODUCT} url \'rvlink:// -reuse 1 -inferSequence
 def push(path):
     """Uses `rvpush` to view a given footage."""
 
-    rv_path = common.get_path_to_executable(settings.RVKey)
+    rv_path = common.get_path_to_executable(common.RVKey)
     if not rv_path:
         s = 'Shotgun RV not found.\n'
         s += 'To push footage to Shotgun RV, you can add RV in the preferences or add it to your PATH environment variable.'
@@ -37,7 +37,7 @@ def push(path):
 
         cmd = RV_PUSH_COMMAND.format(
             RV=rv_push_path,
-            PRODUCT=common.PRODUCT,
+            PRODUCT=common.product,
             PATH=path
         )
         startupinfo = subprocess.STARTUPINFO()

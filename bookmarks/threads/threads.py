@@ -47,7 +47,7 @@ controllers = {}
 
 THREADS = {
     BookmarkInfo: {
-        'queue': collections.deque([], common.MAXITEMS),
+        'queue': collections.deque([], common.max_list_items),
         'preload': True,
         'data_types': {
             common.FileItem: DataType(BookmarkInfo, common.FileItem),
@@ -69,7 +69,7 @@ THREADS = {
         'mutex': QtCore.QMutex()
     },
     AssetInfo: {
-        'queue': collections.deque([], common.MAXITEMS),
+        'queue': collections.deque([], common.max_list_items),
         'preload': True,
         'data_types': {
             common.FileItem: DataType(AssetInfo, common.FileItem),
@@ -91,7 +91,7 @@ THREADS = {
         'mutex': QtCore.QMutex()
     },
     FileInfo: {
-        'queue': collections.deque([], common.MAXITEMS),
+        'queue': collections.deque([], common.max_list_items),
         'preload': True,
         'data_types': {
             common.FileItem: DataType(FileInfo, common.FileItem),
@@ -115,7 +115,7 @@ THREADS = {
         'mutex': QtCore.QMutex()
     },
     FavouriteInfo: {
-        'queue': collections.deque([], common.MAXITEMS),
+        'queue': collections.deque([], common.max_list_items),
         'preload': True,
         'data_types': {
             common.FileItem: DataType(FavouriteInfo, common.FileItem),
@@ -139,7 +139,7 @@ THREADS = {
         'mutex': QtCore.QMutex()
     },
     TaskFolderInfo: {
-        'queue': collections.deque([], common.MAXITEMS),
+        'queue': collections.deque([], common.max_list_items),
         'preload': True,
         'data_types': {
             common.FileItem: DataType(TaskFolderInfo, common.FileItem),
@@ -150,7 +150,7 @@ THREADS = {
         'mutex': QtCore.QMutex()
     },
     QueuedDatabaseTransaction: {
-        'queue': collections.deque([], common.MAXITEMS),
+        'queue': collections.deque([], common.max_list_items),
         'preload': False,
         'data_types': {},
         'worker': workers.TransactionsWorker,
@@ -159,7 +159,7 @@ THREADS = {
         'mutex': QtCore.QMutex()
     },
     QueuedShotgunQuery: {
-        'queue': collections.deque([], common.MAXITEMS),
+        'queue': collections.deque([], common.max_list_items),
         'preload': False,
         'data_types': {},
         'worker': workers.ShotgunWorker,

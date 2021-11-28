@@ -11,7 +11,7 @@ from .. import ui
 from .. import database
 from .. import images
 from ..shotgun import actions as sg_actions
-from .. import settings
+
 
 from . import shotgun
 
@@ -21,7 +21,7 @@ instance = None
 NOT_LINKED = 'Not linked'
 CURRENT_VALUES = 'Linked (keep current values)'
 
-ROW_HEIGHT = common.ROW_HEIGHT()
+ROW_HEIGHT = common.size(common.HeightRow)
 ENTITY_TYPES = ('Asset', 'Shot', 'Sequence')
 
 
@@ -72,9 +72,9 @@ class TableWidget(QtWidgets.QTableWidget):
         header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
         header.setSectionResizeMode(3, QtWidgets.QHeaderView.Fixed)
 
-        self.setColumnWidth(1, common.ROW_HEIGHT())
-        self.setColumnWidth(2, common.WIDTH() * 0.4)
-        self.setColumnWidth(3, common.WIDTH() * 0.2)
+        self.setColumnWidth(1, common.size(common.HeightRow))
+        self.setColumnWidth(2, common.size(common.DefaultWidth) * 0.4)
+        self.setColumnWidth(3, common.size(common.DefaultWidth) * 0.2)
 
         self.setShowGrid(False)
 
@@ -92,7 +92,7 @@ class TableWidget(QtWidgets.QTableWidget):
         _item.setFlags(QtCore.Qt.ItemIsEnabled)
         _item.setTextAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'asset', common.DARK_BG, common.MARGIN())
+            'asset', common.color(common.BackgroundDarkColor), common.size(common.WidthMargin))
         icon = QtGui.QIcon()
         icon.addPixmap(pixmap, QtGui.QIcon.Normal)
         _item.setIcon(icon)
@@ -103,7 +103,7 @@ class TableWidget(QtWidgets.QTableWidget):
         item.setTextAlignment(QtCore.Qt.AlignCenter)
         self.setItem(row, 1, item)
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'branch_closed', common.DARK_BG, common.MARGIN())
+            'branch_closed', common.color(common.BackgroundDarkColor), common.size(common.WidthMargin))
         label = QtWidgets.QLabel()
         label.setPixmap(pixmap)
         self.setCellWidget(row, 1, label)
@@ -163,7 +163,7 @@ class LinkMultiple(QtWidgets.QDialog):
             common.set_custom_stylesheet(self)
 
         QtWidgets.QVBoxLayout(self)
-        o = common.MARGIN()
+        o = common.size(common.WidthMargin)
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
 
@@ -194,9 +194,9 @@ class LinkMultiple(QtWidgets.QDialog):
         self.table.createEntity.connect(self.create_entity)
 
     def restore_current_filter(self):
-        v = settings.instance().value(
-            settings.UIStateSection,
-            settings.LinkMultipleCurrentFilter
+        v = common.settings.value(
+            common.UIStateSection,
+            common.LinkMultipleCurrentFilter
         )
         if v:
             self.blockSignals(True)
@@ -209,9 +209,9 @@ class LinkMultiple(QtWidgets.QDialog):
             self.entity_type_filter.currentIndex(),
             role=QtCore.Qt.DisplayRole
         )
-        settings.instance().setValue(
-            settings.UIStateSection,
-            settings.LinkMultipleCurrentFilter,
+        common.settings.setValue(
+            common.UIStateSection,
+            common.LinkMultipleCurrentFilter,
             v,
         )
 
@@ -220,9 +220,9 @@ class LinkMultiple(QtWidgets.QDialog):
         self.entityTypeFilterChanged.emit(v)
 
     def source(self):
-        server = settings.active(settings.ServerKey)
-        job = settings.active(settings.JobKey)
-        root = settings.active(settings.RootKey)
+        server = common.active(common.ServerKey)
+        job = common.active(common.JobKey)
+        root = common.active(common.RootKey)
 
         if not all((server, job, root)):
             return None
@@ -390,9 +390,9 @@ class LinkMultiple(QtWidgets.QDialog):
         """Save the selected entity data to the bookmark database.
 
         """
-        server = settings.active(settings.ServerKey)
-        job = settings.active(settings.JobKey)
-        root = settings.active(settings.RootKey)
+        server = common.active(common.ServerKey)
+        job = common.active(common.JobKey)
+        root = common.active(common.RootKey)
 
         for row in self.table.data:
             data = self.table.data[row]
@@ -432,4 +432,4 @@ class LinkMultiple(QtWidgets.QDialog):
         QtCore.QTimer.singleShot(100, self.init_data)
 
     def sizeHint(self):
-        return QtCore.QSize(common.WIDTH(), common.HEIGHT())
+        return QtCore.QSize(common.size(common.DefaultWidth), common.size(common.DefaultHeight))

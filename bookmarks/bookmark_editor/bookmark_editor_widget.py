@@ -92,20 +92,20 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         common.set_custom_stylesheet(self)
         QtWidgets.QVBoxLayout(self)
 
-        o = common.MARGIN() * 0.66
+        o = common.size(common.WidthMargin) * 0.66
         self.layout().setContentsMargins(0, o, 0, o)
         self.layout().setSpacing(0)
 
-        h = common.ROW_HEIGHT() * 0.66
+        h = common.size(common.HeightRow) * 0.66
 
         _label = QtWidgets.QLabel(parent=self)
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'bookmark', common.SEPARATOR, h * 0.8)
+            'bookmark', common.color(common.SeparatorColor), h * 0.8)
         _label.setPixmap(pixmap)
         label = ui.PaintedLabel(
             'Edit Bookmarks',
-            size=common.LARGE_FONT_SIZE(),
-            color=common.TEXT,
+            size=common.size(common.FontSizeLarge),
+            color=common.color(common.TextColor),
             parent=self
         )
 
@@ -122,7 +122,7 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         _row = ui.add_row('', height=None, parent=None)
         self.layout().addWidget(_row, 0)
         _row.layout().setSpacing(0)
-        label = ui.Label(HINT, color=common.SECONDARY_TEXT, parent=_row)
+        label = ui.Label(HINT, color=common.color(common.TextSecondaryColor), parent=_row)
         _row.layout().addWidget(label, 0)
         label.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
@@ -132,14 +132,14 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
 
         label = QtWidgets.QLabel(parent=self)
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'gradient5', common.SEPARATOR, o)
+            'gradient5', common.color(common.SeparatorColor), o)
         label.setPixmap(pixmap)
         label.setScaledContents(True)
         row.layout().addWidget(label, 1)
 
         # =====================================================
 
-        _o = common.MARGIN()
+        _o = common.size(common.WidthMargin)
         main_row = ui.add_row(None, height=None, parent=self)
         main_row.setAttribute(QtCore.Qt.WA_TranslucentBackground, False)
         main_row.setAttribute(QtCore.Qt.WA_NoSystemBackground, False)
@@ -157,13 +157,13 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         row.layout().setSpacing(o * 0.5)
         row.layout().setContentsMargins(0, o, 0, o)
 
-        _grp = ui.get_group(parent=row, margin=common.INDICATOR_WIDTH() * 1.5)
+        _grp = ui.get_group(parent=row, margin=common.size(common.WidthIndicator) * 1.5)
         _row = ui.add_row(None, height=None, parent=_grp)
         _row.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.Maximum
         )
-        grp = ui.get_group(parent=row, margin=common.INDICATOR_WIDTH() * 0.66)
+        grp = ui.get_group(parent=row, margin=common.size(common.WidthIndicator) * 0.66)
         grp.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
@@ -171,13 +171,13 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
 
         label = ui.PaintedLabel(
             'Servers',
-            color=common.SECONDARY_TEXT
+            color=common.color(common.TextSecondaryColor)
         )
         self.server_editor = server_editor.ServerListWidget(parent=grp)
         self.server_add_button = ui.ClickableIconButton(
             'add',
-            (common.GREEN, common.SELECTED_TEXT),
-            common.ROW_HEIGHT() * 0.5,
+            (common.color(common.GreenColor), common.color(common.TextSelectedColor)),
+            common.size(common.HeightRow) * 0.5,
             description='Add Server',
             state=True,
             parent=self
@@ -193,14 +193,14 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         row.layout().setSpacing(o * 0.5)
         row.layout().setContentsMargins(0, o, 0, o)
 
-        _grp = ui.get_group(parent=row, margin=common.INDICATOR_WIDTH() * 1.5)
+        _grp = ui.get_group(parent=row, margin=common.size(common.WidthIndicator) * 1.5)
         _row = ui.add_row(None, height=None, parent=_grp)
         _row.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.Maximum
         )
 
-        grp = ui.get_group(parent=row, margin=common.INDICATOR_WIDTH() * 0.66)
+        grp = ui.get_group(parent=row, margin=common.size(common.WidthIndicator) * 0.66)
         grp.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
@@ -208,14 +208,14 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
 
         label = ui.PaintedLabel(
             'Jobs',
-            color=common.SECONDARY_TEXT
+            color=common.color(common.TextSecondaryColor)
         )
 
         self.job_editor = job_editor.JobListWidget(parent=self)
         self.job_add_button = ui.ClickableIconButton(
             'add',
-            (common.GREEN, common.SELECTED_TEXT),
-            common.ROW_HEIGHT() * 0.5,
+            (common.color(common.GreenColor), common.color(common.TextSelectedColor)),
+            common.size(common.HeightRow) * 0.5,
             description='Click to create a new job',
             state=True,
             parent=self
@@ -232,14 +232,14 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         row.layout().setSpacing(o * 0.5)
         row.layout().setContentsMargins(0, o, 0, o)
 
-        _grp = ui.get_group(parent=row, margin=common.INDICATOR_WIDTH() * 1.5)
+        _grp = ui.get_group(parent=row, margin=common.size(common.WidthIndicator) * 1.5)
         _row = ui.add_row(None, height=None, parent=_grp)
         _row.layout().setAlignment(QtCore.Qt.AlignCenter)
         _row.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.Maximum
         )
-        grp = ui.get_group(parent=row, margin=common.INDICATOR_WIDTH() * 0.66)
+        grp = ui.get_group(parent=row, margin=common.size(common.WidthIndicator) * 0.66)
         grp.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
@@ -247,14 +247,14 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
 
         label = ui.PaintedLabel(
             'Bookmarks',
-            color=common.SECONDARY_TEXT
+            color=common.color(common.TextSecondaryColor)
         )
 
         self.bookmark_editor = bookmark_editor.BookmarkListWidget(parent=self)
         self.bookmark_add_button = ui.ClickableIconButton(
             'add',
-            (common.GREEN, common.SELECTED_TEXT),
-            common.ROW_HEIGHT() * 0.5,
+            (common.color(common.GreenColor), common.color(common.TextSelectedColor)),
+            common.size(common.HeightRow) * 0.5,
             description='Click to select a folder and use it as a bookmark item.',
             state=True,
             parent=self
@@ -271,7 +271,7 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
 
         label = QtWidgets.QLabel(parent=self)
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'gradient2', common.SEPARATOR, o)
+            'gradient2', common.color(common.SeparatorColor), o)
         label.setPixmap(pixmap)
         label.setScaledContents(True)
         row.layout().addWidget(label, 1)
@@ -286,7 +286,7 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
             'Done',
             parent=self
         )
-        self.done_button.setFixedHeight(common.ROW_HEIGHT())
+        self.done_button.setFixedHeight(common.size(common.HeightRow))
 
         self.persistent_bookmarks_button = ui.PaintedButton(
             'Edit Persistent Bookmarks')
@@ -348,4 +348,4 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         super(BookmarkEditorWidget, self).showEvent(event)
 
     def sizeHint(self):
-        return QtCore.QSize(common.WIDTH(), common.HEIGHT() * 1.33)
+        return QtCore.QSize(common.size(common.DefaultWidth), common.size(common.DefaultHeight) * 1.33)

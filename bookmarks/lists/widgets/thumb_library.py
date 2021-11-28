@@ -61,7 +61,7 @@ class ClickableItem(QtWidgets.QLabel):
             QtWidgets.QSizePolicy.MinimumExpanding,
         )
 
-        h = common.ROW_HEIGHT() * 2
+        h = common.size(common.HeightRow) * 2
         self.setMinimumSize(QtCore.QSize(h, h))
 
     def enterEvent(self, event):
@@ -113,13 +113,13 @@ class ClickableItem(QtWidgets.QLabel):
             painter.end()
             return
 
-        painter.setPen(common.TEXT)
+        painter.setPen(common.color(common.TextColor))
         rect = self.rect()
         rect.moveTopLeft(rect.topLeft() + QtCore.QPoint(1, 1))
 
         text = self._path.split('/').pop()
         text = text.replace('thumb_', '')
-        font, _ = common.font_db.primary_font(common.MEDIUM_FONT_SIZE())
+        font, _ = common.font_db.primary_font(common.size(common.FontSizeMedium))
 
         common.draw_aliased_text(
             painter,
@@ -137,7 +137,7 @@ class ClickableItem(QtWidgets.QLabel):
             rect,
             text,
             QtCore.Qt.AlignCenter,
-            common.SELECTED_TEXT,
+            common.color(common.TextSelectedColor),
         )
         painter.end()
 
@@ -151,7 +151,7 @@ class ThumbnailLibraryWidget(QtWidgets.QDialog):
 
     """
     thumbnailSelected = QtCore.Signal(str)
-    label_size = common.ASSET_ROW_HEIGHT()
+    label_size = common.size(common.HeightAsset)
 
     def __init__(self, server, job, root, source, parent=None):
         super(ThumbnailLibraryWidget, self).__init__(parent=parent)
@@ -177,34 +177,34 @@ class ThumbnailLibraryWidget(QtWidgets.QDialog):
             common.set_custom_stylesheet(self)
 
         QtWidgets.QVBoxLayout(self)
-        o = common.MARGIN()
+        o = common.size(common.WidthMargin)
 
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(0)
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
 
         row = ui.add_row(
-            None, height=common.ROW_HEIGHT(), padding=None, parent=self)
+            None, height=common.size(common.HeightRow), padding=None, parent=self)
         label = ui.PaintedLabel(
             'Select a thumbnail',
-            color=common.TEXT,
-            size=common.LARGE_FONT_SIZE(),
+            color=common.color(common.TextColor),
+            size=common.size(common.FontSizeLarge),
             parent=self
         )
         row.layout().addWidget(label)
 
         widget = QtWidgets.QWidget(parent=self)
         widget.setStyleSheet(
-            'background-color: {}'.format(common.rgb(common.SEPARATOR)))
+            'background-color: {}'.format(common.rgb(common.color(common.SeparatorColor))))
 
         QtWidgets.QGridLayout(widget)
         widget.layout().setAlignment(QtCore.Qt.AlignCenter)
         widget.layout().setContentsMargins(
-            common.INDICATOR_WIDTH(),
-            common.INDICATOR_WIDTH(),
-            common.INDICATOR_WIDTH(),
-            common.INDICATOR_WIDTH())
-        widget.layout().setSpacing(common.INDICATOR_WIDTH())
+            common.size(common.WidthIndicator),
+            common.size(common.WidthIndicator),
+            common.size(common.WidthIndicator),
+            common.size(common.WidthIndicator))
+        widget.layout().setSpacing(common.size(common.WidthIndicator))
 
         self.scrollarea = QtWidgets.QScrollArea(parent=self)
         self.scrollarea.setWidgetResizable(True)
@@ -239,12 +239,12 @@ class ThumbnailLibraryWidget(QtWidgets.QDialog):
     def paintEvent(self, event):
         painter = QtGui.QPainter()
         painter.begin(self)
-        painter.setBrush(common.SEPARATOR)
+        painter.setBrush(common.color(common.SeparatorColor))
         pen = QtGui.QPen(QtGui.QColor(0, 0, 0, 50))
-        pen.setWidth(common.ROW_SEPARATOR())
+        pen.setWidth(common.size(common.HeightSeparator))
         painter.setPen(pen)
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        o = common.INDICATOR_WIDTH() * 2.0
+        o = common.size(common.WidthIndicator) * 2.0
         painter.drawRoundedRect(
             self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o)),
             o, o

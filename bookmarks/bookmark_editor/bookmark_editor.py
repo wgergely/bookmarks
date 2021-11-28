@@ -34,7 +34,7 @@ class BookmarkContextMenu(contextmenu.BaseContextMenu):
         self.menu[contextmenu.key()] = {
             'text': 'Pick a new folder to use as a Bookmark...',
             'action': self.parent().add,
-            'icon': self.get_icon('add', color=common.GREEN)
+            'icon': self.get_icon('add', color=common.color(common.GreenColor))
         }
 
     def reveal_menu(self):
@@ -64,7 +64,7 @@ class BookmarkContextMenu(contextmenu.BaseContextMenu):
 
 class BookmarkListWidget(ui.ListWidget):
     """Simple list widget used to add and remove servers to/from the local
-    settings.
+    common.
 
     """
     loaded = QtCore.Signal()
@@ -89,7 +89,7 @@ class BookmarkListWidget(ui.ListWidget):
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
         )
-        self.setMinimumWidth(common.WIDTH() * 0.2)
+        self.setMinimumWidth(common.size(common.DefaultWidth) * 0.2)
 
         self._connect_signals()
         self.init_shortcuts()
@@ -188,7 +188,7 @@ class BookmarkListWidget(ui.ListWidget):
         item.setData(QtCore.Qt.UserRole, path)
         size = QtCore.QSize(
             0,
-            common.MARGIN() * 2
+            common.size(common.WidthMargin) * 2
         )
         item.setSizeHint(size)
         self.set_item_state(item)
@@ -244,7 +244,7 @@ class BookmarkListWidget(ui.ListWidget):
             item.setData(QtCore.Qt.UserRole, d)
             size = QtCore.QSize(
                 0,
-                common.MARGIN() * 2
+                common.size(common.WidthMargin) * 2
             )
             item.setSizeHint(size)
             self.set_item_state(item)
@@ -262,7 +262,7 @@ class BookmarkListWidget(ui.ListWidget):
 
         """
         self.blockSignals(True)
-        if item.data(QtCore.Qt.UserRole) in list(common.BOOKMARKS):
+        if item.data(QtCore.Qt.UserRole) in list(common.bookmarks):
             item.setCheckState(QtCore.Qt.Checked)
         else:
             item.setCheckState(QtCore.Qt.Unchecked)

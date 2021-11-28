@@ -1,0 +1,2 @@
+#define Bookmarks_VERSION_MAJOR @Bookmarks_VERSION_MAJOR@
+#define Bookmarks_VERSION_MINOR @Bookmarks_VERSION_MINOR@

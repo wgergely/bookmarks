@@ -16,16 +16,14 @@ from .. import common
 from .. import images
 
 
-CACHE = {}
-
-
 def show(path, ref, parent):
     k = repr(parent)
-    if k not in CACHE:
-        CACHE[k] = ImageViewer(parent=parent)
+    if k not in common.VIEWER_WIDGET_CACHE:
+        common.VIEWER_WIDGET_CACHE[k] = ImageViewer(parent=parent)
 
-    CACHE[k].show()
-    QtCore.QTimer.singleShot(1, functools.partial(CACHE[k].set_image, path, ref))
+    common.VIEWER_WIDGET_CACHE[k].show()
+    QtCore.QTimer.singleShot(1, functools.partial(
+        common.VIEWER_WIDGET_CACHE[k].set_image, path, ref))
 
 
 def get_item_info(ref):
@@ -36,14 +34,14 @@ def get_item_info(ref):
 
     s = ref()[QtCore.Qt.StatusTipRole]
     s = s if isinstance(s, str) else ''
-    info.append((common.TEXT, s if s else ''))
+    info.append((common.color(common.TextColor), s if s else ''))
 
     if not ref or not ref():
         return info
 
     s = ref()[common.DescriptionRole]
     s = s if isinstance(s, str) else ''
-    info.append((common.GREEN, s if s else ''))
+    info.append((common.color(common.GreenColor), s if s else ''))
 
     if not ref or not ref():
         return info
@@ -51,7 +49,7 @@ def get_item_info(ref):
     s = ref()[common.FileDetailsRole]
     s = s if isinstance(s, str) else ''
     s = '   |   '.join(s.split(';')) if s else '-'
-    info.append((common.TEXT, s if s else '-'))
+    info.append((common.color(common.TextColor), s if s else '-'))
 
     if not ref or not ref():
         return info
@@ -69,10 +67,9 @@ def get_item_info(ref):
     for n, _s in enumerate([f.strip() for f in s.split('\n') if f]):
         if n > 32:
             break
-        info.append((common.SECONDARY_TEXT, _s if _s else ''))
+        info.append((common.color(common.TextSecondaryColor), _s if _s else ''))
 
     return info
-
 
 
 class Viewer(QtWidgets.QGraphicsView):
@@ -112,10 +109,11 @@ class Viewer(QtWidgets.QGraphicsView):
         painter.begin(self.viewport())
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
 
-        o = common.MARGIN()
+        o = common.size(common.WidthMargin)
         rect = self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o))
 
-        font, metrics = common.font_db.primary_font(common.MEDIUM_FONT_SIZE())
+        font, metrics = common.font_db.primary_font(
+            common.size(common.FontSizeMedium))
         rect.setHeight(metrics.height())
 
         for color, text in get_item_info(self.parent()._ref):
@@ -182,7 +180,7 @@ class ImageViewer(QtWidgets.QWidget):
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
-        height = common.ROW_HEIGHT() * 0.6
+        height = common.size(common.HeightRow) * 0.6
         o = 0
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
@@ -210,7 +208,8 @@ class ImageViewer(QtWidgets.QWidget):
         self._source = source
         self._ref = ref
 
-        oiio = QtCore.QFileInfo(source).suffix().lower() in images.QT_IMAGE_FORMATS
+        oiio = QtCore.QFileInfo(source).suffix(
+        ).lower() in images.QT_IMAGE_FORMATS
         pixmap = images.ImageCache.get_pixmap(source, -1, oiio=oiio)
 
         # Wait for the thread to finish loading the thumbnail
@@ -226,23 +225,16 @@ class ImageViewer(QtWidgets.QWidget):
         if size.height() > self.height() or size.width() > self.width():
             self.fitInView(self.viewer.item, QtCore.Qt.KeepAspectRatio)
 
-
     def paintEvent(self, event):
         painter = QtGui.QPainter()
         painter.begin(self)
-        pen = QtGui.QPen(common.SEPARATOR)
-        pen.setWidth(common.ROW_SEPARATOR())
+        pen = QtGui.QPen(common.color(common.SeparatorColor))
+        pen.setWidth(common.size(common.HeightSeparator))
         painter.setPen(pen)
 
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        #
-        # color = images.ImageCache.get_color(self.path)
-        # if not color:
-        #     color = images.ImageCache.make_color(self.path)
-        # if not color:
-        #     color = QtGui.QColor(20, 20, 20, 240)
 
-        painter.setBrush(common.SEPARATOR)
+        painter.setBrush(common.color(common.SeparatorColor))
         painter.drawRect(self.rect())
 
         painter.end()
@@ -269,7 +261,6 @@ class ImageViewer(QtWidgets.QWidget):
             self.parent().key_space()
         else:
             self.hide()
-
 
     def showEvent(self, event):
         common.fit_screen_geometry(self)

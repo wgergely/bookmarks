@@ -8,11 +8,11 @@ from PySide2 import QtWidgets, QtGui, QtCore
 from .. import common
 from ..threads import threads
 from .. import contextmenu
-from .. import settings
-from .. import actions
-from .. import datacache
 
-from . import base
+from .. import actions
+
+from . import basemodel
+from . import basewidget
 from . import delegate
 
 
@@ -110,7 +110,7 @@ class BookmarksModel(base.BaseModel):
         p = self.parent_path()
         _k = self.task()
         t = self.data_type()
-        data = datacache.get_data(p, _k, t)
+        data = common.get_data(p, _k, t)
 
         for k, v in self.item_generator():
             if not all(v.values()):
@@ -118,9 +118,9 @@ class BookmarksModel(base.BaseModel):
             if not len(v.values()) >= 3:
                 raise ValueError('Invalid bookmark value.')
 
-            server = v[settings.ServerKey]
-            job = v[settings.JobKey]
-            root = v[settings.RootKey]
+            server = v[common.ServerKey]
+            job = v[common.JobKey]
+            root = v[common.RootKey]
 
             file_info = QtCore.QFileInfo(k)
             exists = file_info.exists()
@@ -132,7 +132,7 @@ class BookmarksModel(base.BaseModel):
             else:
                 flags = DEFAULT_ITEM_FLAGS | common.MarkedAsArchived
 
-            if k in common.PERSISTENT_BOOKMARKS:
+            if k in common.static_bookmarks:
                 flags = flags | common.MarkedAsPersistent
 
             filepath = file_info.filePath()
@@ -140,13 +140,13 @@ class BookmarksModel(base.BaseModel):
             # Item flags. Active and favourite flags will be only set if the
             # bookmark exist
             if all((
-                server == settings.active(settings.ServerKey),
-                job == settings.active(settings.JobKey),
-                root == settings.active(settings.RootKey)
+                server == common.active(common.ServerKey),
+                job == common.active(common.JobKey),
+                root == common.active(common.RootKey)
             )) and exists:
                 flags = flags | common.MarkedAsActive
 
-            if filepath in common.FAVOURITES_SET and exists:
+            if filepath in common.favourites and exists:
                 flags = flags | common.MarkedAsFavourite
 
             text = '{}  |  {}'.format(
@@ -155,7 +155,7 @@ class BookmarksModel(base.BaseModel):
             )
 
             idx = len(data)
-            if idx >= common.MAXITEMS:
+            if idx >= common.max_list_items:
                 break  # Let's limit the maximum number of items we load
 
             data[idx] = common.DataDict({
@@ -201,7 +201,7 @@ class BookmarksModel(base.BaseModel):
         self.activeChanged.emit(self.active_index())
 
     def item_generator(self):
-        for item in common.BOOKMARKS.items():
+        for item in common.bookmarks.items():
             yield item
 
     def save_active(self):
@@ -215,9 +215,9 @@ class BookmarksModel(base.BaseModel):
             return
 
         server, job, root = index.data(common.ParentPathRole)
-        actions.set_active(settings.ServerKey, server)
-        actions.set_active(settings.JobKey, job)
-        actions.set_active(settings.RootKey, root)
+        actions.set_active(common.ServerKey, server)
+        actions.set_active(common.JobKey, job)
+        actions.set_active(common.RootKey, root)
 
     def parent_path(self):
         return ('bookmarks',)
@@ -226,10 +226,10 @@ class BookmarksModel(base.BaseModel):
         return common.FileItem
 
     def default_row_size(self):
-        return QtCore.QSize(1, common.BOOKMARK_ROW_HEIGHT())
+        return QtCore.QSize(1, common.size(common.HeightBookmark))
 
     def local_settings_key(self):
-        return settings.BookmarksKey
+        return common.BookmarksKey
 
 
 class BookmarksWidget(base.ThreadedBaseWidget):
@@ -254,7 +254,7 @@ class BookmarksWidget(base.ThreadedBaseWidget):
 
         cursor_position = self.mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)
-        
+
         if not index.isValid():
             return
         if not index.data(common.ParentPathRole):

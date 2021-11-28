@@ -13,7 +13,7 @@ from .. import common
 from ..threads import threads
 from .. import contextmenu
 from .. import actions
-from .. import datacache
+
 
 from . import delegate
 from . import files
@@ -93,7 +93,7 @@ class FavouritesModel(files.FilesModel):
         if not k:
             return
         t = common.FileItem
-        data = datacache.get_data(p, k, t)
+        data = common.get_data(p, k, t)
 
         SEQUENCE_DATA = common.DataDict()
 
@@ -154,12 +154,12 @@ class FavouritesModel(files.FilesModel):
             if seq:
                 seqpath = seq.group(1) + common.SEQPROXY + \
                     seq.group(3) + '.' + seq.group(4)
-            if (seq and (seqpath in common.FAVOURITES_SET or filepath in common.FAVOURITES_SET)) or (filepath in common.FAVOURITES_SET):
+            if (seq and (seqpath in common.favourites or filepath in common.favourites)) or (filepath in common.favourites):
                 flags = flags | common.MarkedAsFavourite
 
             # Let's limit the maximum number of items we load
             idx = len(data)
-            if idx >= common.MAXITEMS:
+            if idx >= common.max_list_items:
                 break
 
             data[idx] = common.DataDict({
@@ -206,7 +206,7 @@ class FavouritesModel(files.FilesModel):
                     seqname = seqpath.split('/')[-1]
                     flags = base.DEFAULT_ITEM_FLAGS
 
-                    if seqpath in common.FAVOURITES_SET:
+                    if seqpath in common.favourites:
                         flags = flags | common.MarkedAsFavourite
 
                     sort_by_name_role = list(sort_by_name_role)
@@ -255,11 +255,11 @@ class FavouritesModel(files.FilesModel):
 
         # Cast the sequence data back onto the model
         t = common.SequenceItem
-        data = datacache.get_data(p, k, t)
+        data = common.get_data(p, k, t)
 
         # Casting the sequence data back onto the model
         for idx, v in enumerate(SEQUENCE_DATA.values()):
-            if idx >= common.MAXITEMS:
+            if idx >= common.max_list_items:
                 break  # Let's limit the maximum number of items we load
 
             if len(v[common.FramesRole]) == 1:
@@ -279,7 +279,7 @@ class FavouritesModel(files.FilesModel):
                 v[common.SortByLastModifiedRole] = 0
 
                 flags = base.DEFAULT_ITEM_FLAGS
-                if filepath in common.FAVOURITES_SET:
+                if filepath in common.favourites:
                     flags = flags | common.MarkedAsFavourite
 
                 v[common.FlagsRole] = flags
@@ -307,14 +307,14 @@ class FavouritesModel(files.FilesModel):
         """
         entries = []
 
-        for k in common.FAVOURITES_SET:
+        for k in common.favourites:
             file_info = QtCore.QFileInfo(k)
             _path = file_info.path()
 
             if not QtCore.QFileInfo(_path).exists():
                 continue
 
-            parent_paths = common.FAVOURITES[k]
+            parent_paths = common.favourites[k]
             for entry in _scandir.scandir(_path):
                 path = entry.path.replace('\\', '/')
                 if path == k:
@@ -409,7 +409,7 @@ class FavouritesWidget(files.FilesWidget):
             source = _check_sequence(file_info.filePath())
 
             # Skip files saved already
-            if source in common.FAVOURITES_SET:
+            if source in common.favourites:
                 continue
 
             # Add the dropped file with dummy server/job/root values

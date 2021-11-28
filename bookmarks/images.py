@@ -23,20 +23,13 @@ from PySide2 import QtWidgets, QtGui, QtCore
 from . import log
 from . import common
 
-
-THUMBNAIL_IMAGE_SIZE = 512.0
-THUMBNAIL_FORMAT = 'png'
 PLACEHOLDER_PATH = '{}/../rsc/{}/{}.{}'
 QT_IMAGE_FORMATS = {f.data().decode('utf8') for f in QtGui.QImageReader.supportedImageFormats()}
 
 mutex = QtCore.QMutex()
 
 pixel_ratio = None
-
-oiio_cache = OpenImageIO.ImageCache(shared=True)
-oiio_cache.attribute('max_memory_MB', 4096.0)
-oiio_cache.attribute('max_open_files', 0)
-oiio_cache.attribute('trust_file_extensions', 1)
+oiio_cache = None
 
 
 BufferType = QtCore.Qt.UserRole
@@ -65,14 +58,6 @@ RESOURCES = {
 }
 
 
-def wait_for_lock(source):
-    t = 0.0
-    while os.path.isfile(source + '.lock'):
-        if t > 1.0:
-            break
-        time.sleep(0.1)
-        t += 0.1
-
 
 def reset():
     global RESOURCES
@@ -93,11 +78,41 @@ def reset():
     })
 
 
+def init_imagecache():
+    global oiio_cache
+    oiio_cache = OpenImageIO.ImageCache(shared=True)
+    oiio_cache.attribute('max_memory_MB', 4096.0)
+    oiio_cache.attribute('max_open_files', 0)
+    oiio_cache.attribute('trust_file_extensions', 1)
+
+
 def init_resources():
     global RESOURCES
     for _source, k in ((os.path.normpath(os.path.abspath('{}/../rsc/{}'.format(__file__, f))), f) for f in (GuiResource, ThumbnailResource, FormatResource)):
         for _entry in _scandir.scandir(_source):
             RESOURCES[k].append(_entry.name.split('.', maxsplit=1)[0])
+
+
+def init_pixel_ratio():
+    app = QtWidgets.QApplication.instance()
+    if not app:
+        log.error(
+            '`init_pixel_ratio()` was called before a QApplication was created.')
+
+    global pixel_ratio
+    if app and pixel_ratio is None:
+        pixel_ratio = app.primaryScreen().devicePixelRatio()
+    else:
+        pixel_ratio = 1.0
+
+
+def wait_for_lock(source):
+    t = 0.0
+    while os.path.isfile(source + '.lock'):
+        if t > 1.0:
+            break
+        time.sleep(0.1)
+        t += 0.1
 
 
 def get_oiio_extensions():
@@ -155,7 +170,7 @@ def check_for_thumbnail_image(source):
     return None
 
 
-def get_thumbnail(server, job, root, source, size=THUMBNAIL_IMAGE_SIZE, fallback_thumb='placeholder', get_path=False):
+def get_thumbnail(server, job, root, source, size=common.thumbnail_size, fallback_thumb='placeholder', get_path=False):
     """Get the thumbnail of a given item.
 
     When an item is missing a bespoke cached thumbnail file, we will try to load
@@ -280,7 +295,7 @@ def load_thumbnail_from_image(server, job, root, source, image, proxy=False):
     res = ImageCache.oiio_make_thumbnail(
         image,
         thumbnail_path,
-        THUMBNAIL_IMAGE_SIZE
+        common.thumbnail_size
     )
     if not res:
         raise RuntimeError('Failed to make thumbnail.')

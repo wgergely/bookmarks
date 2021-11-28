@@ -10,7 +10,7 @@ from . import common
 from . import ui
 from . import contextmenu
 from . import images
-from . import settings
+
 from . import database
 from . import actions
 from . import shortcuts
@@ -54,9 +54,9 @@ class QuickSwitchMenu(contextmenu.BaseContextMenu):
     def add_switch_menu(self, widget, label):
         """Adds the items needed to quickly change bookmarks or assets."""
         off_pixmap = images.ImageCache.get_rsc_pixmap(
-            'icon_bw', common.SECONDARY_TEXT, common.MARGIN())
+            'icon_bw', common.color(common.TextSecondaryColor), common.size(common.WidthMargin))
         on_pixmap = images.ImageCache.get_rsc_pixmap(
-            'check', common.GREEN, common.MARGIN())
+            'check', common.color(common.GreenColor), common.size(common.WidthMargin))
 
         self.menu[label] = {
             'disabled': True
@@ -77,7 +77,7 @@ class QuickSwitchMenu(contextmenu.BaseContextMenu):
                 index.data(common.ParentPathRole)[1],
                 index.data(common.ParentPathRole)[2],
                 index.data(QtCore.Qt.StatusTipRole),
-                size=common.MARGIN() * 4,
+                size=common.size(common.WidthMargin) * 4,
                 fallback_thumb='icon_bw'
             )
             pixmap = pixmap if pixmap else off_pixmap
@@ -103,7 +103,7 @@ class SwitchBookmarkMenu(QuickSwitchMenu):
 
     def add_menu(self):
         self.menu['add'] = {
-            'icon': self.get_icon('add', color=common.GREEN),
+            'icon': self.get_icon('add', color=common.color(common.GreenColor)),
             'text': 'Add Bookmark...',
             'action': actions.show_add_bookmark,
             'shortcut': shortcuts.string(shortcuts.MainWidgetShortcuts, shortcuts.AddItem),
@@ -124,7 +124,7 @@ class SwitchAssetMenu(QuickSwitchMenu):
 
     def add_menu(self):
         self.menu['add'] = {
-            'icon': self.get_icon('add', color=common.GREEN),
+            'icon': self.get_icon('add', color=common.color(common.GreenColor)),
             'text': 'Add Asset...',
             'action': actions.show_add_asset,
             'shortcut': shortcuts.string(shortcuts.MainWidgetShortcuts, shortcuts.AddItem),
@@ -143,7 +143,7 @@ class FilterHistoryMenu(contextmenu.BaseContextMenu):
         proxy = w.model()
         model = w.model().sourceModel()
 
-        v = model.get_local_setting(settings.TextFilterKeyHistory)
+        v = model.get_local_setting(common.TextFilterKeyHistory)
         v = v.split(';') if v else []
         v.reverse()
 
@@ -167,12 +167,12 @@ class FilterHistoryMenu(contextmenu.BaseContextMenu):
         self.separator()
 
         self.menu[contextmenu.key()] = {
-            'icon': self.get_icon('close', color=common.RED),
+            'icon': self.get_icon('close', color=common.color(common.RedColor)),
             'text': 'Clear History',
             'action': (
                 functools.partial(proxy.set_filter_text, ''),
                 lambda: model.set_local_setting(
-                    settings.TextFilterKeyHistory, '')
+                    common.TextFilterKeyHistory, '')
             ),
         }
 
@@ -180,11 +180,11 @@ class FilterHistoryMenu(contextmenu.BaseContextMenu):
 class BaseControlButton(ui.ClickableIconButton):
     """Base-class used for control buttons on the top bar."""
 
-    def __init__(self, pixmap, description, color=(common.SELECTED_TEXT, common.DISABLED_TEXT), parent=None):
+    def __init__(self, pixmap, description, color=(common.color(common.TextSelectedColor), common.color(common.TextDisabledColor)), parent=None):
         super(BaseControlButton, self).__init__(
             pixmap,
             color,
-            common.MARGIN(),
+            common.size(common.WidthMargin),
             description=description,
             parent=parent
         )
@@ -247,8 +247,8 @@ class ToggleSequenceButton(BaseControlButton):
 
     def pixmap(self):
         if self.state():
-            return images.ImageCache.get_rsc_pixmap('collapse', self._on_color, common.MARGIN())
-        return images.ImageCache.get_rsc_pixmap('expand', self._off_color, common.MARGIN())
+            return images.ImageCache.get_rsc_pixmap('collapse', self._on_color, common.size(common.WidthMargin))
+        return images.ImageCache.get_rsc_pixmap('expand', self._off_color, common.size(common.WidthMargin))
 
     def state(self):
         if not current_widget():
@@ -282,8 +282,8 @@ class ToggleArchivedButton(BaseControlButton):
 
     def pixmap(self):
         if self.state():
-            return images.ImageCache.get_rsc_pixmap('archivedVisible', self._on_color, common.MARGIN())
-        return images.ImageCache.get_rsc_pixmap('archivedHidden', self._off_color, common.MARGIN())
+            return images.ImageCache.get_rsc_pixmap('archivedVisible', self._on_color, common.size(common.WidthMargin))
+        return images.ImageCache.get_rsc_pixmap('archivedHidden', self._off_color, common.size(common.WidthMargin))
 
     def state(self):
         if not current_widget():
@@ -317,7 +317,7 @@ class ToggleInlineIcons(BaseControlButton):
         return val
 
     def hideEvent(self, event):
-        common.SORT_WITH_BASENAME = False
+        common.sort_by_basename = False
 
 
 class ToggleFavouriteButton(BaseControlButton):
@@ -381,8 +381,8 @@ class SlackButton(BaseControlButton):
         If the value is set we'll show the button, otherwise it will stay hidden.
 
         """
-        args = [settings.active(f) for f in (
-            settings.ServerKey, settings.JobKey, settings.RootKey)]
+        args = [common.active(f) for f in (
+            common.ServerKey, common.JobKey, common.RootKey)]
         if not all(args):
             self.setHidden(True)
             return False
@@ -485,15 +485,15 @@ class BaseTabButton(QtWidgets.QLabel):
         return self._label
 
     def get_width(self):
-        o = common.INDICATOR_WIDTH() * 6
-        _, metrics = common.font_db.primary_font(common.MEDIUM_FONT_SIZE())
+        o = common.size(common.WidthIndicator) * 6
+        _, metrics = common.font_db.primary_font(common.size(common.FontSizeMedium))
         return metrics.horizontalAdvance(self.text()) + o
 
     @QtCore.Slot()
     def adjust_size(self):
         """Slot responsible for setting the size of the widget to match the text."""
         self.setMaximumWidth(self.get_width())
-        self.setMinimumWidth(common.MARGIN() * 2)
+        self.setMinimumWidth(common.size(common.WidthMargin) * 2)
         self.update()
 
     def showEvent(self, event):
@@ -517,13 +517,13 @@ class BaseTabButton(QtWidgets.QLabel):
         painter.setPen(QtCore.Qt.NoPen)
 
         if current_index() == self.tab_idx:
-            color = common.SELECTED_TEXT if hover else common.TEXT
+            color = common.color(common.TextSelectedColor) if hover else common.color(common.TextColor)
             painter.setBrush(color)
         else:
-            color = common.TEXT if hover else common.BG
+            color = common.color(common.TextColor) if hover else common.color(common.BackgroundColor)
             painter.setBrush(color)
 
-        font, metrics = common.font_db.primary_font(common.MEDIUM_FONT_SIZE())
+        font, metrics = common.font_db.primary_font(common.size(common.FontSizeMedium))
 
         # When the width of the button is very small, we'll switch to an icon
         # representation instead of text:
@@ -531,10 +531,10 @@ class BaseTabButton(QtWidgets.QLabel):
             # Draw icon
             pixmap = images.ImageCache.get_rsc_pixmap(
                 'branch_open',
-                common.SELECTED_TEXT,
-                common.MARGIN()
+                common.color(common.TextSelectedColor),
+                common.size(common.WidthMargin)
             )
-            _rect = QtCore.QRect(0, 0, common.MARGIN(), common.MARGIN())
+            _rect = QtCore.QRect(0, 0, common.size(common.WidthMargin), common.size(common.WidthMargin))
             _rect.moveCenter(self.rect().center())
             painter.drawPixmap(
                 _rect,
@@ -542,7 +542,7 @@ class BaseTabButton(QtWidgets.QLabel):
                 pixmap.rect()
             )
         else:
-            if (metrics.horizontalAdvance(self.text()) + (common.MARGIN() * 0.5)) < self.rect().width():
+            if (metrics.horizontalAdvance(self.text()) + (common.size(common.WidthMargin) * 0.5)) < self.rect().width():
                 # Draw label
                 width = metrics.horizontalAdvance(self.text())
                 x = (self.width() / 2.0) - (width / 2.0)
@@ -554,9 +554,9 @@ class BaseTabButton(QtWidgets.QLabel):
                 pixmap = images.ImageCache.get_rsc_pixmap(
                     self.icon,
                     color,
-                    common.MARGIN()
+                    common.size(common.WidthMargin)
                 )
-                _rect = QtCore.QRect(0, 0, common.MARGIN(), common.MARGIN())
+                _rect = QtCore.QRect(0, 0, common.size(common.WidthMargin), common.size(common.WidthMargin))
                 _rect.moveCenter(self.rect().center())
                 painter.drawPixmap(
                     _rect,
@@ -565,16 +565,16 @@ class BaseTabButton(QtWidgets.QLabel):
                 )
 
         # Draw indicator line below icon or text
-        rect.setHeight(common.ROW_SEPARATOR() * 2.0)
+        rect.setHeight(common.size(common.HeightSeparator) * 2.0)
         painter.setPen(QtCore.Qt.NoPen)
         rect.setWidth(self.rect().width())
 
         if current_index() == self.tab_idx:
             painter.setOpacity(0.9)
-            color = common.TEXT if hover else common.RED
+            color = common.color(common.TextColor) if hover else common.color(common.RedColor)
         else:
             painter.setOpacity(0.3)
-            color = common.TEXT if hover else common.BLUE
+            color = common.color(common.TextColor) if hover else common.color(common.BlueColor)
 
         painter.setBrush(color)
         painter.drawRect(rect)
@@ -663,20 +663,20 @@ class FilesTabButton(BaseTabButton):
             painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform)
 
             rect = self.rect()
-            rect.setHeight(common.ROW_SEPARATOR() * 2.0)
+            rect.setHeight(common.size(common.HeightSeparator) * 2.0)
 
             painter.setPen(QtCore.Qt.NoPen)
-            painter.setBrush(common.GREEN)
+            painter.setBrush(common.color(common.GreenColor))
             painter.drawRect(rect)
 
-            o = common.MARGIN()
+            o = common.size(common.WidthMargin)
             pixmap = images.ImageCache.get_rsc_pixmap('gradient2', None, o)
             painter.drawPixmap(self.rect(), pixmap, pixmap.rect())
 
             rect = QtCore.QRect(0, 0, o, o)
             rect.moveCenter(self.rect().center())
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'folder', common.GREEN, o)
+                'folder', common.color(common.GreenColor), o)
             painter.drawPixmap(rect, pixmap, pixmap.rect())
 
             painter.drawPixmap(rect, pixmap, pixmap.rect())
@@ -721,21 +721,21 @@ class SlackDropOverlayWidget(QtWidgets.QWidget):
         painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
         painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, True)
         painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.SEPARATOR)
+        painter.setBrush(common.color(common.SeparatorColor))
         painter.drawRoundedRect(
-            self.rect(), common.INDICATOR_WIDTH(), common.INDICATOR_WIDTH())
+            self.rect(), common.size(common.WidthIndicator), common.size(common.WidthIndicator))
 
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'slack', common.GREEN, self.rect().height() - (common.INDICATOR_WIDTH() * 1.5))
-        rect = QtCore.QRect(0, 0, common.MARGIN(), common.MARGIN())
+            'slack', common.color(common.GreenColor), self.rect().height() - (common.size(common.WidthIndicator) * 1.5))
+        rect = QtCore.QRect(0, 0, common.size(common.WidthMargin), common.size(common.WidthMargin))
         rect.moveCenter(self.rect().center())
         painter.drawPixmap(rect, pixmap, pixmap.rect())
 
-        o = common.INDICATOR_WIDTH()
+        o = common.size(common.WidthIndicator)
         rect = self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o))
         painter.setBrush(QtCore.Qt.NoBrush)
-        pen = QtGui.QPen(common.GREEN)
-        pen.setWidthF(common.ROW_SEPARATOR() * 2.0)
+        pen = QtGui.QPen(common.color(common.GreenColor))
+        pen.setWidthF(common.size(common.HeightSeparator) * 2.0)
         painter.setPen(pen)
         painter.drawRoundedRect(rect, o, o)
         painter.end()
@@ -810,7 +810,7 @@ class ListControlWidget(QtWidgets.QWidget):
         self.layout().setSpacing(0)
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
 
-        height = common.MARGIN() + (common.INDICATOR_WIDTH() * 3)
+        height = common.size(common.WidthMargin) + (common.size(common.WidthIndicator) * 3)
         self.setFixedHeight(height)
 
         # Control view/model/button
@@ -836,20 +836,20 @@ class ListControlWidget(QtWidgets.QWidget):
         self.layout().addStretch()
 
         self.layout().addWidget(self.filter_button)
-        self.layout().addSpacing(common.INDICATOR_WIDTH())
+        self.layout().addSpacing(common.size(common.WidthIndicator))
         self.layout().addWidget(self.refresh_button)
-        self.layout().addSpacing(common.INDICATOR_WIDTH())
+        self.layout().addSpacing(common.size(common.WidthIndicator))
         self.layout().addWidget(self.collapse_button)
-        self.layout().addSpacing(common.INDICATOR_WIDTH())
+        self.layout().addSpacing(common.size(common.WidthIndicator))
         self.layout().addWidget(self.archived_button)
-        self.layout().addSpacing(common.INDICATOR_WIDTH())
+        self.layout().addSpacing(common.size(common.WidthIndicator))
         self.layout().addWidget(self.favourite_button)
-        self.layout().addSpacing(common.INDICATOR_WIDTH())
+        self.layout().addSpacing(common.size(common.WidthIndicator))
         self.layout().addWidget(self.inline_icons_button)
-        self.layout().addSpacing(common.INDICATOR_WIDTH())
+        self.layout().addSpacing(common.size(common.WidthIndicator))
         self.layout().addWidget(self.slack_button)
 
-        self.layout().addSpacing(common.INDICATOR_WIDTH())
+        self.layout().addSpacing(common.size(common.WidthIndicator))
 
         self.drop_overlay = SlackDropOverlayWidget(parent=self)
         self.drop_overlay.setHidden(True)

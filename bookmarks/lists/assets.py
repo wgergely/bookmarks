@@ -12,9 +12,9 @@ from .. import common
 from ..threads import threads
 from .. import contextmenu
 from .. import database
-from .. import settings
+
 from .. import actions
-from .. import datacache
+
 from .. import log
 
 from . import delegate
@@ -102,7 +102,7 @@ class AssetModel(base.BaseModel):
             hence the model does not have any threads associated with it.
 
         """
-        settings.instance().verify_active()
+        common.settings.verify_active()
 
         parent_path = self.parent_path()
         if not parent_path or not all(parent_path):
@@ -111,7 +111,7 @@ class AssetModel(base.BaseModel):
         p = self.parent_path()
         k = self.task()
         t = self.data_type()
-        data = datacache.get_data(p, k, t)
+        data = common.get_data(p, k, t)
 
         source = '/'.join(parent_path)
 
@@ -148,11 +148,11 @@ class AssetModel(base.BaseModel):
             filename = entry.name
             flags = base.DEFAULT_ITEM_FLAGS
 
-            if filepath in common.FAVOURITES_SET:
+            if filepath in common.favourites:
                 flags = flags | common.MarkedAsFavourite
 
             # Is the item currently active?
-            active_asset = settings.active(settings.AssetKey)
+            active_asset = common.active(common.AssetKey)
             if active_asset:
                 if active_asset == filename:
                     flags = flags | common.MarkedAsActive
@@ -161,7 +161,7 @@ class AssetModel(base.BaseModel):
             name = re.sub(r'[_]{1,}', ' ', filename).strip('_').strip('')
 
             idx = len(data)
-            if idx >= common.MAXITEMS:
+            if idx >= common.max_list_items:
                 break  # Let's limit the maximum number of items we load
 
             data[idx] = common.DataDict({
@@ -210,9 +210,9 @@ class AssetModel(base.BaseModel):
 
         """
         return (
-            settings.active(settings.ServerKey),
-            settings.active(settings.JobKey),
-            settings.active(settings.RootKey),
+            common.active(common.ServerKey),
+            common.active(common.JobKey),
+            common.active(common.RootKey),
         )
 
     def item_iterator(self, path):
@@ -243,7 +243,7 @@ class AssetModel(base.BaseModel):
             return
 
         actions.set_active(
-            settings.AssetKey,
+            common.AssetKey,
             index.data(common.ParentPathRole)[-1]
         )
 
@@ -251,13 +251,13 @@ class AssetModel(base.BaseModel):
         return common.FileItem
 
     def local_settings_key(self):
-        v = [settings.active(k) for k in (settings.JobKey, settings.RootKey)]
+        v = [common.active(k) for k in (common.JobKey, common.RootKey)]
         if not all(v):
             return None
         return '/'.join(v)
 
     def default_row_size(self):
-        return QtCore.QSize(1, common.ASSET_ROW_HEIGHT())
+        return QtCore.QSize(1, common.size(common.HeightAsset))
 
 
 class AssetsWidget(base.ThreadedBaseWidget):
@@ -284,7 +284,7 @@ class AssetsWidget(base.ThreadedBaseWidget):
 
     def inline_icons_count(self):
         """The number of icons on the right - hand side."""
-        if self.width() < common.WIDTH() * 0.5:
+        if self.width() < common.size(common.DefaultWidth) * 0.5:
             return 0
         if self.buttons_hidden():
             return 0

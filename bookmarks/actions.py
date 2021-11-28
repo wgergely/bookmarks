@@ -14,17 +14,16 @@ import functools
 
 from PySide2 import QtCore, QtWidgets, QtGui
 
-from . import settings
 from . import database
 from . import common
 from . import images
 
 
 def edit_persistent_bookmarks():
-    """Opens the `persistent_bookmarks.json`.
+    """Opens the `static_bookmarks.json`.
 
     """
-    execute(common.PERSISTENT_BOOKMARKS_SOURCE)
+    execute(common.static_bookmarks_PATH)
 
 
 def add_server(v):
@@ -35,12 +34,12 @@ def add_server(v):
 
     """
     # Disallow adding persistent servers
-    for bookmark in common.PERSISTENT_BOOKMARKS.values():
-        if bookmark[settings.ServerKey] == v:
+    for bookmark in common.static_bookmarks.values():
+        if bookmark[common.ServerKey] == v:
             return
 
     servers = tuple(common.SERVERS) + (v,)
-    settings.instance().set_servers(servers)
+    common.settings.set_servers(servers)
 
     common.signals.serversChanged.emit()
 
@@ -53,14 +52,14 @@ def remove_server(v):
 
     """
     # Disallow removing persistent servers
-    for bookmark in common.PERSISTENT_BOOKMARKS.values():
-        if bookmark[settings.ServerKey] == v:
+    for bookmark in common.static_bookmarks.values():
+        if bookmark[common.ServerKey] == v:
             return
 
     servers = list(common.SERVERS)
     if v in servers:
         servers.remove(v)
-    settings.instance().set_servers(servers)
+    common.settings.set_servers(servers)
 
     common.signals.serversChanged.emit()
 
@@ -75,21 +74,21 @@ def add_bookmark(server, job, root):
         bookmarks = {
             '//server/jobs/MyFirstJob/data/shots': {
                 {
-                    settings.ServerKey: '//server/jobs',
-                    settings.JobKey:  'MyFirstJob',
-                    settings.RootKey:  'data/shots'
+                    common.ServerKey: '//server/jobs',
+                    common.JobKey:  'MyFirstJob',
+                    common.RootKey:  'data/shots'
                 }
             },
             '//server/jobs/MySecondJob/data/shots': {
                 {
-                    settings.ServerKey: '//server/jobs',
-                    settings.JobKey:  'MySecondJob',
-                    settings.RootKey:  'data/shots'
+                    common.ServerKey: '//server/jobs',
+                    common.JobKey:  'MySecondJob',
+                    common.RootKey:  'data/shots'
                 }
             }
         }
 
-    Saved bookmarks can be retrieved using `settings.instance().get_bookmarks`
+    Saved bookmarks can be retrieved using `common.settings.get_bookmarks`
 
     Args:
         server (str): A path segment.
@@ -100,13 +99,13 @@ def add_bookmark(server, job, root):
     for arg in (server, job, root):
         common.check_type(arg, str)
 
-    k = settings.bookmark_key(server, job, root)
-    common.BOOKMARKS[k] = {
-        settings.ServerKey: server,
-        settings.JobKey: job,
-        settings.RootKey: root
+    k = common.bookmark_key(server, job, root)
+    common.bookmarks[k] = {
+        common.ServerKey: server,
+        common.JobKey: job,
+        common.RootKey: root
     }
-    settings.instance().set_bookmarks(common.BOOKMARKS)
+    common.settings.set_bookmarks(common.bookmarks)
     common.signals.bookmarkAdded.emit(server, job, root)
 
 
@@ -127,23 +126,23 @@ def remove_bookmark(server, job, root):
     # If the active bookmark is removed, make sure we're clearing the active
     # bookmark. This will cause all models to reset so show the bookmark tab.
     if (
-        settings.active(settings.ServerKey) == server and
-        settings.active(settings.JobKey) == job and
-        settings.active(settings.RootKey) == root
+        common.active(common.ServerKey) == server and
+        common.active(common.JobKey) == job and
+        common.active(common.RootKey) == root
     ):
-        set_active(settings.ServerKey, None)
+        set_active(common.ServerKey, None)
         change_tab(common.BookmarkTab)
 
     # Close, and delete all cached bookmark databases of this bookmark
     database.remove_db(server, job, root)
 
-    k = settings.bookmark_key(server, job, root)
-    if k not in common.BOOKMARKS:
+    k = common.bookmark_key(server, job, root)
+    if k not in common.bookmarks:
         raise RuntimeError(
             'Key does not seem to match any current bookmarks.')
 
-    del common.BOOKMARKS[k]
-    settings.instance().set_bookmarks(common.BOOKMARKS)
+    del common.bookmarks[k]
+    common.settings.set_bookmarks(common.bookmarks)
     common.signals.bookmarkRemoved.emit(server, job, root)
 
 
@@ -151,9 +150,8 @@ def add_favourite(parent_paths, source):
     common.check_type(parent_paths, (tuple, list))
     common.check_type(source, str)
 
-    common.FAVOURITES[source] = parent_paths
-    common.FAVOURITES_SET = set(common.FAVOURITES)
-    settings.instance().set_favourites(common.FAVOURITES)
+    common.favourites[source] = parent_paths
+    common.settings.set_favourites(common.favourites)
     common.signals.favouritesChanged.emit()
 
 
@@ -161,12 +159,11 @@ def remove_favourite(parent_paths, source):
     common.check_type(parent_paths, (tuple, list))
     common.check_type(source, str)
 
-    if source not in common.FAVOURITES:
+    if source not in common.favourites:
         return
 
-    del common.FAVOURITES[source]
-    common.FAVOURITES_SET = set(common.FAVOURITES)
-    settings.instance().set_favourites(common.FAVOURITES)
+    del common.favourites[source]
+    common.settings.set_favourites(common.favourites)
     common.signals.favouritesChanged.emit()
 
 
@@ -183,9 +180,8 @@ def clear_favourites(prompt=True):
         if mbox.exec_() == QtWidgets.QDialog.Rejected:
             return
 
-    common.FAVOURITES = {}
-    common.FAVOURITES_SET = set()
-    settings.instance().set_favourites(common.FAVOURITES)
+    common.favourites = {}
+    common.settings.set_favourites(common.favourites)
     common.signals.favouritesChanged.emit()
 
 
@@ -205,13 +201,13 @@ def export_favourites(destination=None):
 
     common.check_type(destination, str)
 
-    data = common.FAVOURITES.copy()
+    data = common.favourites.copy()
 
     # Assamble the zip file
     with zipfile.ZipFile(destination, 'w') as _zip:
 
         # Add thumbnail to zip
-        for source, parent_paths in common.FAVOURITES.items():
+        for source, parent_paths in common.favourites.items():
             server, job, root = parent_paths[0:3]
 
             thumbnail_path = images.get_cached_thumbnail_path(
@@ -319,9 +315,8 @@ def import_favourites(source=None):
             with db.connection():
                 db.setValue(source, k, database.b64decode(v), table=table)
 
-    common.FAVOURITES = data
-    common.FAVOURITES_SET = set(data)
-    settings.instance().set_favourites(data)
+    common.favourites = data
+    common.settings.set_favourites(data)
     common.signals.favouritesChanged.emit()
 
 
@@ -329,15 +324,15 @@ def prune_bookmarks():
     """Removes invalid bookmark items from the current set.
 
     """
-    if not common.BOOKMARKS:
+    if not common.bookmarks:
         return
 
-    for k, v in common.BOOKMARKS.items():
+    for k, v in common.bookmarks.items():
         if not QtCore.QFileInfo(k).exists():
             remove_bookmark(
-                v[settings.ServerKey],
-                v[settings.JobKey],
-                v[settings.RootKey]
+                v[common.ServerKey],
+                v[common.JobKey],
+                v[common.RootKey]
             )
 
 
@@ -345,15 +340,15 @@ def set_active(k, v):
     """Sets the given path as the active path segment for the given key.
 
     Args:
-        k (str): An active key, eg. `settings.ServerKey`.
+        k (str): An active key, eg. `common.ServerKey`.
         v (str): A path segment, eg. '//myserver/jobs'.
 
     """
-    if k not in settings.ACTIVE_KEYS:
+    if k not in common.ACTIVE_KEYS:
         raise ValueError('Invalid active key. Key must be the one of "{}"'.format(
-            '", "'.join(settings.ACTIVE_KEYS)))
-    settings.instance().setValue(settings.ActiveSection, k, v)
-    settings.instance().verify_active()
+            '", "'.join(common.ACTIVE_KEYS)))
+    common.settings.setValue(common.ActiveSection, k, v)
+    common.settings.verify_active()
 
 
 @common.error
@@ -418,7 +413,7 @@ def toggle_inline_icons():
     widget = instance().widget()
     state = not widget.buttons_hidden()
 
-    common.SORT_WITH_BASENAME = state
+    common.sort_by_basename = state
     widget.set_buttons_hidden(state)
 
     widget.model().sourceModel().sort_data()
@@ -515,7 +510,7 @@ def increase_row_size():
     model = proxy.sourceModel()
 
     v = model.row_size().height() + common.psize(20)
-    if v >= images.THUMBNAIL_IMAGE_SIZE:
+    if v >= common.thumbnail_size:
         return
 
     widget.set_row_size(v)
@@ -566,9 +561,9 @@ def show_add_bookmark():
 @common.debug
 def show_add_asset(server=None, job=None, root=None):
     if not all((server, job, root)):
-        server = settings.active(settings.ServerKey)
-        job = settings.active(settings.JobKey)
-        root = settings.active(settings.RootKey)
+        server = common.active(common.ServerKey)
+        job = common.active(common.JobKey)
+        root = common.active(common.RootKey)
 
     if not all((server, job, root)):
         return None
@@ -581,12 +576,12 @@ def show_add_asset(server=None, job=None, root=None):
 @common.error
 @common.debug
 def show_add_file(asset=None, extension=None, file=None, create_file=True, increment=False):
-    server = settings.active(settings.ServerKey)
-    job = settings.active(settings.JobKey)
-    root = settings.active(settings.RootKey)
+    server = common.active(common.ServerKey)
+    job = common.active(common.JobKey)
+    root = common.active(common.RootKey)
 
     if asset is None:
-        asset = settings.active(settings.AssetKey)
+        asset = common.active(common.AssetKey)
 
     args = (server, job, root, asset)
     if not all(args):
@@ -617,9 +612,9 @@ def show_add_favourite():
 @common.debug
 def edit_bookmark(server=None, job=None, root=None):
     if not all((server, job, root)):
-        server = settings.active(settings.ServerKey)
-        job = settings.active(settings.JobKey)
-        root = settings.active(settings.RootKey)
+        server = common.active(common.ServerKey)
+        job = common.active(common.JobKey)
+        root = common.active(common.RootKey)
 
     if not all((server, job, root)):
         return None
@@ -634,14 +629,14 @@ def edit_bookmark(server=None, job=None, root=None):
 @common.error
 @common.debug
 def edit_asset(asset=None):
-    server = settings.active(settings.ServerKey)
-    job = settings.active(settings.JobKey)
-    root = settings.active(settings.RootKey)
+    server = common.active(common.ServerKey)
+    job = common.active(common.JobKey)
+    root = common.active(common.RootKey)
 
     if not all((server, job, root)):
         return None
     if asset is None:
-        asset = settings.active(settings.AssetKey)
+        asset = common.active(common.AssetKey)
     if asset is None:
         return
 
@@ -654,10 +649,10 @@ def edit_asset(asset=None):
 @common.error
 @common.debug
 def edit_file(f):
-    server = settings.active(settings.ServerKey)
-    job = settings.active(settings.JobKey)
-    root = settings.active(settings.RootKey)
-    asset = settings.active(settings.AssetKey)
+    server = common.active(common.ServerKey)
+    job = common.active(common.JobKey)
+    root = common.active(common.RootKey)
+    asset = common.active(common.AssetKey)
 
     if not all((server, job, root, asset)):
         return
@@ -694,9 +689,9 @@ def show_slack():
     """Opens the Slack widget used to send messages using SlackAPI.
 
     """
-    server = settings.active(settings.ServerKey)
-    job = settings.active(settings.JobKey)
-    root = settings.active(settings.RootKey)
+    server = common.active(common.ServerKey)
+    job = common.active(common.JobKey)
+    root = common.active(common.RootKey)
 
     args = (server, job, root)
     if not all(args):
@@ -719,9 +714,8 @@ def show_slack():
 @common.error
 @common.debug
 def quit():
-    from .threads import threads
     common.quit()
-    if common.STANDALONE:
+    if common.get_init_mode() == common.StandaloneMode:
         QtWidgets.QApplication.instance().quit()
 
 
@@ -808,7 +802,7 @@ def toggle_minimized():
 @common.error
 @common.debug
 def toggle_stays_on_top():
-    if not common.STANDALONE:
+    if common.get_init_mode() == common.EmbeddedMode:
         return
 
     from . import standalone
@@ -817,9 +811,9 @@ def toggle_stays_on_top():
     flags = w.windowFlags()
     state = flags & QtCore.Qt.WindowStaysOnTopHint
 
-    settings.instance().setValue(
-        settings.UIStateSection,
-        settings.WindowAlwaysOnTopKey,
+    common.settings.setValue(
+        common.UIStateSection,
+        common.WindowAlwaysOnTopKey,
         not state
     )
     w.hide()
@@ -840,9 +834,9 @@ def toggle_frameless():
     flags = w.windowFlags()
     state = flags & QtCore.Qt.FramelessWindowHint
 
-    settings.instance().setValue(
-        settings.UIStateSection,
-        settings.WindowFramelessKey,
+    common.settings.setValue(
+        common.UIStateSection,
+        common.WindowFramelessKey,
         not state
     )
 
@@ -857,12 +851,12 @@ def toggle_frameless():
 @common.debug
 def exec_instance():
     if common.get_platform() == common.PlatformWindows:
-        if common.BOOKMARK_ROOT_KEY not in os.environ:
+        if common.env_key not in os.environ:
             s = 'Bookmarks does not seem to be installed correctly:\n'
             s += '"{}" environment variable is not set'.format(
-                common.BOOKMARK_ROOT_KEY)
+                common.env_key)
             raise RuntimeError(s)
-        p = os.environ[common.BOOKMARK_ROOT_KEY] + \
+        p = os.environ[common.env_key] + \
             os.path.sep + 'bookmarks.exe'
         subprocess.Popen(p)
     elif common.get_platform() == common.PlatformMacOS:
@@ -991,8 +985,8 @@ def preview(index):
     source = common.get_sequence_startpath(source)
 
     if '.abc' in source.lower():
-        from .lists import alembic_preview
-        editor = alembic_preview.AlembicPreviewWidget(source)
+        from .lists import alembic_widget
+        editor = alembic_widget.AlembicPreviewWidget(source)
         instance().widget().selectionModel().currentChanged.connect(editor.close)
         instance().widget().selectionModel().currentChanged.connect(editor.deleteLater)
         editor.show()
@@ -1406,20 +1400,18 @@ def paste_asset_properties(index):
 @common.debug
 def toggle_session_mode():
     # Toggle the active mode
-    if common.SESSION_MODE == common.SyncronisedActivePaths:
-        common.SESSION_MODE = common.PrivateActivePaths
-    elif common.SESSION_MODE == common.PrivateActivePaths:
-        common.SESSION_MODE = common.SyncronisedActivePaths
+    if common.session_mode == common.SyncronisedActivePaths:
+        common.session_mode = common.PrivateActivePaths
+    elif common.session_mode == common.PrivateActivePaths:
+        common.session_mode = common.SyncronisedActivePaths
     else:
-        common.SESSION_MODE = common.PrivateActivePaths
+        common.session_mode = common.PrivateActivePaths
 
     # Write new mode to the lock file
-    from . import session_lock
-    pid = os.getpid()
-    session_lock.write_current_mode_to_lock(pid)
+    common.write_current_mode_to_lock(os.getpid())
 
     # Load the values from the settings file
-    settings.instance().verify_active()
+    common.settings.verify_active()
 
     # Skip if the gui is not initialized
     if not instance():
@@ -1437,9 +1429,9 @@ def toggle_session_mode():
     widget.model().sourceModel().modelDataResetRequested.emit()
 
     widget.model().sourceModel().taskFolderChanged.emit(
-        settings.active(settings.TaskKey))
+        common.active(common.TaskKey))
 
-    common.signals.sessionModeChanged.emit(common.SESSION_MODE)
+    common.signals.sessionModeChanged.emit(common.session_mode)
 
 
 @common.error

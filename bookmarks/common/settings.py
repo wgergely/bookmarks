@@ -1,39 +1,16 @@
 # -*- coding: utf-8 -*-
 """Defines the customized QSettings instance used to
-store favourites, server, and ui states.
+store user and app common.
 
 """
-import collections
 import os
 import json
 import re
 
-
 from PySide2 import QtCore
 
-from . import log
-from . import common
-
-
-LOCAL_SETTINGS_FILE_NAME = 'local_settings.ini'
-
-_instance = None
-
-
-def instance():
-    global _instance
-    if _instance is None:
-        _instance = Settings()
-    return _instance
-
-
-def delete():
-    global _instance
-    try:
-        _instance.deleteLater()
-    except:
-        pass
-    _instance = None
+from .. import log
+from .. import common
 
 
 ActiveSection = 'Active'
@@ -44,8 +21,6 @@ AssetKey = 'Asset'
 TaskKey = 'Task'
 FileKey = 'File'
 
-
-ACTIVE = None
 ACTIVE_KEYS = (
     ServerKey,
     JobKey,
@@ -112,10 +87,93 @@ CurrentUserKey = 'CurrentUser'
 CurrentAssetKey = 'CurrentAsset'
 CurrentSelectionKey = 'CurrentSelection'
 
-
 SGUserKey = 'SGUser'
 SGStorageKey = 'SGStorage'
 SGTypeKey = 'SGType'
+
+
+def init_settings():
+    common.settings = UserSettings()
+
+    v = common.settings.value(CurrentUserPicksSection, ServersKey)
+    if not isinstance(v, dict):
+        v = {}
+    common.servers = v
+
+    v = common.settings.value(CurrentUserPicksSection, FavouritesKey)
+    if not v or not isinstance(v, dict):
+        v = {}
+    common.favourites = v
+    common.signals.favouritesChanged.emit()
+
+    _init_bookmarks()
+
+
+def _init_bookmarks():
+    """Loads all previously saved bookmarks to memory.
+
+    The list of bookmarks is made up of a list of persistent bookmarks, defined
+    in `static_bookmarks.json`, and bookmarks added by the user, stored in the
+    user setting.
+
+    """
+    _static = get_static_bookmarks()
+    _static = _static if _static else {}
+
+    # Save persistent items to cache
+    common.static_bookmarks = _static
+
+    _custom = common.settings.value(CurrentUserPicksSection, BookmarksKey)
+    _custom = _custom if _custom else {}
+
+    # Merge static and custom bookmarks
+    v = _static.copy()
+    v.update(_custom)
+
+    # Remove invalid values before adding
+    for k in list(v.keys()):
+        if (
+            ServerKey not in v[k]
+            or JobKey not in v[k]
+            or RootKey not in v[k]
+        ):
+            del v[k]
+            continue
+        # Add servers defined in the bookmark items:
+        common.servers[v[k][ServerKey]] = v[k][ServerKey]
+
+    common.bookmarks = v
+    return v
+
+
+def get_user_settings_path():
+    v = QtCore.QStandardPaths.writableLocation(
+        QtCore.QStandardPaths.GenericDataLocation)
+    return f'{v}/{common.product}/{common.user_settings}'
+
+
+def get_static_bookmarks():
+    """Loads any preconfigured bookmark items from the json config file.
+
+    Returns:
+        dict: The parsed data.
+
+    """
+    source = common.get_template_file_path(
+        common.static_bookmarks_template)
+    if not os.path.isfile(source):
+        log.error(f'{source} not found.')
+        return {}
+
+    data = {}
+    try:
+        with open(source, 'r', encoding='utf8') as f:
+            data = json.load(f)
+    except (ValueError, TypeError):
+        log.error(f'Could not decode `{source}`')
+    except RuntimeError:
+        log.error(f'Error opening `{source}`')
+    return data
 
 
 def strip(s):
@@ -132,11 +190,11 @@ def bookmark_key(*args):
 
 
 def active(k):
-    return ACTIVE[k]
+    return common.ACTIVE[k]
 
 
-class Settings(QtCore.QSettings):
-    """An `ini` config file to store all local user settings.
+class UserSettings(QtCore.QSettings):
+    """An `ini` config file to store all local user common.
 
     This is where the current bookmarks, saved favourites, active bookmark,
     assets and files and other widget states are kept.
@@ -154,28 +212,18 @@ class Settings(QtCore.QSettings):
     """
 
     def __init__(self, parent=None):
-        self.config_path = QtCore.QStandardPaths.writableLocation(
-            QtCore.QStandardPaths.GenericDataLocation)
-        self.config_path = '{}/{}/{}'.format(
-            self.config_path,
-            common.PRODUCT,
-            LOCAL_SETTINGS_FILE_NAME
-        )
-
-        super(Settings, self).__init__(
-            self.config_path,
+        super().__init__(
+            get_user_settings_path(),
             QtCore.QSettings.IniFormat,
             parent=parent
         )
-
-        # Internal data storage to use when `SESSION_MODE` is PrivateActivePaths
-        self.PRIVATE_SESSION_MODE_VALUES = {
-            ActiveSection + '/' + ServerKey: None,
-            ActiveSection + '/' + JobKey: None,
-            ActiveSection + '/' + RootKey: None,
-            ActiveSection + '/' + AssetKey: None,
-            ActiveSection + '/' + TaskKey: None,
-            ActiveSection + '/' + FileKey: None,
+        self._active_section_values = {
+            f'{ActiveSection}/{ServerKey}': None,
+            f'{ActiveSection}/{JobKey}': None,
+            f'{ActiveSection}/{RootKey}': None,
+            f'{ActiveSection}/{AssetKey}': None,
+            f'{ActiveSection}/{TaskKey}': None,
+            f'{ActiveSection}/{FileKey}': None,
         }
 
         # Simple timer to verify active paths every 30 seconds
@@ -187,141 +235,29 @@ class Settings(QtCore.QSettings):
 
         # Make sure all saved active paths are valid
         self.verify_active()
-
         # Load and cache values from the settings file
-        self.init_servers()
-        self.init_bookmarks()
-        self.init_favourites()
-
         # Save the current active paths as our private paths
-        self.init_private_data()
+        self.init_private_values()
 
-    def init_private_data(self):
-        self.PRIVATE_SESSION_MODE_VALUES = {
-            ActiveSection + '/' + ServerKey: active(ServerKey),
-            ActiveSection + '/' + JobKey: active(JobKey),
-            ActiveSection + '/' + RootKey: active(RootKey),
-            ActiveSection + '/' + AssetKey: active(AssetKey),
-            ActiveSection + '/' + TaskKey: active(TaskKey),
-            ActiveSection + '/' + FileKey: active(FileKey),
+    def init_private_values(self):
+        self._active_section_values = {
+            f'{ActiveSection}/{ServerKey}': active(ServerKey),
+            f'{ActiveSection}/{JobKey}': active(JobKey),
+            f'{ActiveSection}/{RootKey}': active(RootKey),
+            f'{ActiveSection}/{AssetKey}': active(AssetKey),
+            f'{ActiveSection}/{TaskKey}': active(TaskKey),
+            f'{ActiveSection}/{FileKey}': active(FileKey),
         }
-
-    def init_servers(self):
-        """Loads and caches a list of user-saved servers.
-
-        """
-        val = self.value(CurrentUserPicksSection, ServersKey)
-        if not val:
-            common.SERVERS = []
-            return common.SERVERS
-
-        # Make sure we always return a list, even if there's only one items
-        # saved
-        if isinstance(val, (str, str)):
-            common.SERVERS = [strip(val), ]
-            return common.SERVERS
-
-        common.SERVERS = sorted(set(val))
-        return common.SERVERS
-
-    def init_favourites(self):
-        """Load saved favourites from the settings fils.
-
-        Favourites are stored as dictionary items:
-
-        .. code-block:: python
-            {
-                '//myserver/jobs/job1234/assets/scenes/myfile.ma': {
-                    ServerKey: '//myserver/jobs',
-                    JobKey: 'job1234',
-                    RootKey: 'assets'
-                }
-            }
-
-        Returns:
-            dict: A dictionary of favourites
-
-        """
-        v = self.value(CurrentUserPicksSection, FavouritesKey)
-
-        if not v:
-            common.FAVOURITES = {}
-            common.FAVOURITES_SET = set()
-            return {}
-
-        if not isinstance(v, dict):
-            common.FAVOURITES = {}
-            common.FAVOURITES_SET = set()
-            return {}
-
-        common.FAVOURITES = v
-        common.FAVOURITES_SET = set(v)
-
-        # Emit signal to indicate the favourite items have been loaded
-        common.signals.favouritesChanged.emit()
-
-        return v
-
-    def init_bookmarks(self):
-        """Loads all previously saved bookmarks to memory.
-
-        The list of bookmarks is made up of a list of persistent bookmarks,
-        defined in `persistent_bookmarks.json`, and bookmarks added manually by
-        the user, stored in the `local_settings`.
-
-        Each bookmark is represented as a dictionary entry:
-
-        .. code-block:: python
-
-            v = {
-                '//my_server/my_job/path/to/my_root_folder': {
-                    ServerKey: '//my_server',
-                    JobKey: 'my_job',
-                    RootKey: 'path/to/my_root_folder'
-                }
-            }
-
-        Returns:
-            dict:   A dictionary containing all saved bookmark items.
-
-        """
-        _persistent = self.persistent_bookmarks()
-        _persistent = _persistent if _persistent else {}
-
-        # Save persistent items to cache
-        common.PERSISTENT_BOOKMARKS = _persistent
-
-        _custom = self.value(CurrentUserPicksSection, BookmarksKey)
-        _custom = _custom if _custom else {}
-
-        v = _persistent.copy()
-        v.update(_custom)
-
-        # Remove invalid values before adding
-        for k in list(v.keys()):
-            if (
-                ServerKey not in v[k]
-                or JobKey not in v[k]
-                or RootKey not in v[k]
-            ):
-                del v[k]
-                continue
-
-            common.SERVERS.append(v[k][ServerKey])
-
-        common.SERVERS = sorted(set(common.SERVERS))
-        common.BOOKMARKS = v
-        return v
 
     def set_servers(self, v):
         common.check_type(v, (tuple, list))
         servers = sorted(set(v))
-        common.SERVERS = servers
+        common.servers = servers
         self.setValue(CurrentUserPicksSection, ServersKey, servers)
 
     def set_bookmarks(self, v):
         common.check_type(v, dict)
-        common.BOOKMARKS = v
+        common.bookmarks = v
         self.setValue(CurrentUserPicksSection, BookmarksKey, v)
 
     def set_favourites(self, v):
@@ -346,40 +282,19 @@ class Settings(QtCore.QSettings):
         """
         self.sync()
 
-        for k in ACTIVE_KEYS:
-            ACTIVE[k] = self.value(ActiveSection, k)
+        for k in common.ACTIVE_KEYS:
+            common.ACTIVE[k] = self.value(ActiveSection, k)
 
         # Let's check the path and unset any invalid parts
         path = str()
-        for k in ACTIVE:
-            if ACTIVE[k]:
-                path += ACTIVE[k]
+        for k in common.ACTIVE:
+            if common.ACTIVE[k]:
+                path += common.ACTIVE[k]
             if not QtCore.QFileInfo(path).exists():
-                ACTIVE[k] = None
+                common.ACTIVE[k] = None
                 self.setValue(ActiveSection, k, None)
             path += '/'
-        return ACTIVE
-
-    def persistent_bookmarks(self):
-        """Loads any preconfigured bookmarks from the json config file.
-
-        Returns:
-            dict: The parsed data.
-
-        """
-        if not os.path.isfile(common.PERSISTENT_BOOKMARKS_SOURCE):
-            log.error('persistent_bookmarks.json not found.')
-            return {}
-
-        data = {}
-        try:
-            with open(common.PERSISTENT_BOOKMARKS_SOURCE, 'r', encoding='utf8') as f:
-                data = json.load(f)
-        except (ValueError, TypeError):
-            log.error('Could not decode `persistent_bookmarks.json`')
-        except RuntimeError:
-            log.error('Error opening `persistent_bookmarks.json`')
-        return data
+        return common.ACTIVE
 
     def value(self, section, key):
         """Used to retrieve a values from the local settings object.
@@ -399,11 +314,11 @@ class Settings(QtCore.QSettings):
 
         # If PrivateActivePaths is on, we won't query the settings file and
         # intead load and save from our private
-        if common.SESSION_MODE == common.PrivateActivePaths and section == ActiveSection:
-            return self.PRIVATE_SESSION_MODE_VALUES[k]
+        if common.session_mode == common.PrivateActivePaths and section == ActiveSection:
+            return self._active_section_values[k]
 
-        t = super(Settings, self).value(k + '_type')
-        v = super(Settings, self).value(k)
+        t = super().value(k + '_type')
+        v = super().value(k)
         if v is None:
             return
 
@@ -441,9 +356,9 @@ class Settings(QtCore.QSettings):
         k = '{}/{}'.format(section, key)
 
         # Save active path values in our private data instead of the settings file
-        if common.SESSION_MODE == common.PrivateActivePaths and section == ActiveSection:
-            self.PRIVATE_SESSION_MODE_VALUES[k] = v
+        if common.session_mode == common.PrivateActivePaths and section == ActiveSection:
+            self._active_section_values[k] = v
             return
 
-        super(Settings, self).setValue(k, v)
-        super(Settings, self).setValue(k + '_type', type(v).__name__)
+        super().setValue(k, v)
+        super().setValue(k + '_type', type(v).__name__)

@@ -17,7 +17,7 @@ from .. import log
 from .. import common
 from .. import images
 from .. import database
-from .. import datacache
+
 from ..shotgun import shotgun
 
 
@@ -252,7 +252,7 @@ class BaseWorker(QtCore.QObject):
         t2 = common.FileItem if t1 == common.SequenceItem else common.SequenceItem
 
         for t in (t1, t2):
-            ref = datacache.get_data_ref(p, k, t)
+            ref = common.get_data_ref(p, k, t)
             for idx in ref():
                 if not ref():
                     raise RuntimeError('Data changed during update.')
@@ -344,7 +344,7 @@ class BaseWorker(QtCore.QObject):
             sortorder
         )
 
-        datacache.set_data(p, k, t, d)
+        common.set_data(p, k, t, d)
 
         if model.data_type() == t:
             self.dataTypeSorted.emit(t)
@@ -825,7 +825,7 @@ class ThumbnailWorker(BaseWorker):
             res = images.ImageCache.oiio_make_thumbnail(
                 source,
                 destination,
-                images.THUMBNAIL_IMAGE_SIZE,
+                common.thumbnail_size,
             )
             if res:
                 images.ImageCache.get_image(destination, int(size), force=True)
@@ -835,11 +835,11 @@ class ThumbnailWorker(BaseWorker):
             # We should never get here ideally, but if we do we'll mark the item
             # with a bespoke 'failed' thumbnail
             fpath = '{}/../rsc/{}/{}.{}'.format(
-                __file__, images.GuiResource, 'close', images.THUMBNAIL_FORMAT)
+                __file__, images.GuiResource, 'close', common.thumbnail_format)
             res = images.ImageCache.oiio_make_thumbnail(
                 fpath,
                 destination,
-                images.THUMBNAIL_IMAGE_SIZE
+                common.thumbnail_size
             )
             if res:
                 images.ImageCache.get_image(destination, int(size), force=True)

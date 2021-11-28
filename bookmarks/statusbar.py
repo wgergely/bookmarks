@@ -6,11 +6,13 @@ import functools
 from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import common
+from . import actions
+from . import images
+from . import ui
 from .threads import threads
-from . import session_lock
 
 
-HEIGHT = common.MARGIN() + (common.INDICATOR_WIDTH() * 2)
+HEIGHT = common.size(common.WidthMargin) + (common.size(common.WidthIndicator) * 2)
 
 
 def get_thread_status():
@@ -42,14 +44,14 @@ class ThreadStatus(QtWidgets.QWidget):
 
         self.setFixedHeight(HEIGHT)
 
-        self.metrics = common.font_db.primary_font(common.SMALL_FONT_SIZE())[1]
+        self.metrics = common.font_db.primary_font(common.size(common.FontSizeSmall))[1]
 
     def show_debug_info(self):
         editor = QtWidgets.QTextBrowser(parent=self)
         editor.setWindowFlags(QtCore.Qt.Window)
         editor.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        editor.setMinimumWidth(common.WIDTH())
-        editor.setMinimumHeight(common.HEIGHT())
+        editor.setMinimumWidth(common.size(common.DefaultWidth))
+        editor.setMinimumHeight(common.size(common.DefaultHeight))
         timer = common.Timer(parent=editor)
         timer.setInterval(333)
         timer.setSingleShot(False)
@@ -74,16 +76,16 @@ class ThreadStatus(QtWidgets.QWidget):
         painter.begin(self)
         common.draw_aliased_text(
             painter,
-            common.font_db.primary_font(common.SMALL_FONT_SIZE())[0],
+            common.font_db.primary_font(common.size(common.FontSizeSmall))[0],
             self.rect(),
             self.text(),
             QtCore.Qt.AlignCenter,
-            common.GREEN
+            common.color(common.GreenColor)
         )
         painter.end()
 
     def update(self):
-        self.setFixedWidth(self.metrics.horizontalAdvance(self.text()) + common.MARGIN())
+        self.setFixedWidth(self.metrics.horizontalAdvance(self.text()) + common.size(common.WidthMargin))
         super(ThreadStatus, self).update()
 
     @staticmethod
@@ -121,22 +123,75 @@ class MessageWidget(QtWidgets.QStatusBar):
         painter = QtGui.QPainter()
         painter.begin(self)
 
-        font, _ = common.font_db.secondary_font(common.SMALL_FONT_SIZE())
+        font, _ = common.font_db.secondary_font(common.size(common.FontSizeSmall))
         common.draw_aliased_text(
             painter,
             font,
             self.rect().marginsRemoved(QtCore.QMargins(
-                common.INDICATOR_WIDTH(), 0, common.INDICATOR_WIDTH(), 0)),
+                common.size(common.WidthIndicator), 0, common.size(common.WidthIndicator), 0)),
             '  {}  '.format(self.currentMessage()),
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
-            common.TEXT
+            common.color(common.TextColor)
         )
         painter.end()
 
 
+class ToggleSessionModeButton(ui.ClickableIconButton):
+    """Button used to toggle between Synronised and Private modes.
+
+    """
+    ContextMenu = None
+
+    def __init__(self, parent=None):
+        super().__init__(
+            'check',
+            (common.color(common.GreenColor), common.color(common.RedColor)),
+            common.size(common.WidthMargin),
+            description=f'Click to toggle {common.product}.',
+            parent=parent
+        )
+        self.setMouseTracking(True)
+        self.clicked.connect(actions.toggle_session_mode)
+        common.signals.sessionModeChanged.connect(self.update)
+
+    def pixmap(self):
+        if common.session_mode == common.SyncronisedActivePaths:
+            return images.ImageCache.get_rsc_pixmap('check', common.color(common.GreenColor), self._size)
+        if common.session_mode == common.PrivateActivePaths:
+            return images.ImageCache.get_rsc_pixmap('crossed', common.color(common.RedColor), self._size)
+        return images.ImageCache.get_rsc_pixmap('crossed', common.color(common.RedColor), self._size)
+
+    def statusTip(self):
+        if common.session_mode == common.SyncronisedActivePaths:
+            return 'This session sets active paths. Click to toggle.'
+
+        if common.session_mode == common.PrivateActivePaths:
+            return 'This session does not modify active paths. Click to toggle.'
+
+        return 'Invalid session lock.'
+
+    def toolTip(self):
+        return self.whatsThis()
+
+    def whatsThis(self):
+        return 'Private Active Paths:\n{}\n{}\n{}\n{}\n{}\n\n{}\n{}\n{}\n{}\n{}'.format(
+            common.instance(
+            )._active_section_values[common.ServerKey],
+            common.settings._active_section_values[common.JobKey],
+            common.settings._active_section_values[common.RootKey],
+            common.settings._active_section_values[common.AssetKey],
+            common.settings._active_section_values[common.TaskKey],
+            common.active(common.ServerKey),
+            common.active(common.JobKey),
+            common.active(common.RootKey),
+            common.active(common.AssetKey),
+            common.active(common.TaskKey),
+        )
+
+
 class StatusBar(QtWidgets.QWidget):
     def __init__(self, parent=None):
-        super(StatusBar, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.message_widget = None
         self.thread_status_widget = None
         self.toggle_mode_widget = None
@@ -166,7 +221,7 @@ class StatusBar(QtWidgets.QWidget):
         self.thread_status_widget = ThreadStatus(parent=self)
         self.layout().addWidget(self.thread_status_widget, 0)
 
-        self.toggle_mode_widget = session_lock.ToggleSessionModeButton(
+        self.toggle_mode_widget = common.ToggleSessionModeButton(
             parent=self)
         self.layout().addWidget(self.toggle_mode_widget, 0)
-        self.layout().addSpacing(common.INDICATOR_WIDTH() * 2)
+        self.layout().addSpacing(common.size(common.WidthIndicator) * 2)

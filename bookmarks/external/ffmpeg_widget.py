@@ -69,7 +69,7 @@ SECTIONS = {
     0: {
         'name': 'Convert Image Sequence to Video',
         'icon': 'convert',
-        'color': common.DARK_BG,
+        'color': common.color(common.BackgroundDarkColor),
         'groups': {
             0: {
                 0: {
@@ -143,4 +143,4 @@ class FFMpegWidget(base.BasePropertyEditor):
         )
 
     def sizeHint(self):
-        return QtCore.QSize(common.WIDTH() * 0.66, common.HEIGHT() * 0.66)
+        return QtCore.QSize(common.size(common.DefaultWidth) * 0.66, common.size(common.DefaultHeight) * 0.66)

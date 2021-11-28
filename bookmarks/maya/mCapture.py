@@ -499,7 +499,7 @@ def parse_view(panel):
 def parse_active_scene():
     """Parse active scene for arguments for capture()
 
-    *Resolution taken from render settings.
+    *Resolution taken from render common.
 
     """
 

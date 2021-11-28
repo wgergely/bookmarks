@@ -84,7 +84,7 @@ class TokenEditor(QtWidgets.QDialog):
             task='ANIM',
             mode='ANIM',
             element='MyElement',
-            ext=images.THUMBNAIL_FORMAT,
+            ext=common.thumbnail_format,
             prefix='MYP',
             asset='MyAsset',
             seq='###',
@@ -109,7 +109,7 @@ class TokenEditor(QtWidgets.QDialog):
     def sizeHint(self):
         return QtCore.QSize(
             self.parent().geometry().width(),
-            common.ROW_HEIGHT() * 7
+            common.size(common.HeightRow) * 7
         )
 
     def showEvent(self, event):
@@ -136,7 +136,7 @@ class FormatEditor(QtWidgets.QDialog):
         self._create_ui()
 
     def _create_ui(self):
-        o = common.MARGIN()
+        o = common.size(common.WidthMargin)
         QtWidgets.QVBoxLayout(self)
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
@@ -155,7 +155,7 @@ class FormatEditor(QtWidgets.QDialog):
         self.save_button = ui.PaintedButton('Save')
         self.cancel_button = ui.PaintedButton('Cancel')
 
-        row = ui.add_row(None, height=common.ROW_HEIGHT(), parent=self)
+        row = ui.add_row(None, height=common.size(common.HeightRow), parent=self)
         row.layout().addWidget(self.save_button, 1)
         row.layout().addWidget(self.cancel_button, 0)
 
@@ -181,7 +181,7 @@ class SubfolderEditor(QtWidgets.QDialog):
         self._create_ui()
 
     def _create_ui(self):
-        o = common.MARGIN()
+        o = common.size(common.WidthMargin)
         QtWidgets.QVBoxLayout(self)
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
@@ -212,7 +212,7 @@ class SubfolderEditor(QtWidgets.QDialog):
         self.save_button = ui.PaintedButton('Save')
         self.cancel_button = ui.PaintedButton('Cancel')
 
-        row = ui.add_row(None, height=common.ROW_HEIGHT(), parent=self)
+        row = ui.add_row(None, height=common.size(common.HeightRow), parent=self)
         row.layout().addWidget(self.save_button, 1)
         row.layout().addWidget(self.cancel_button, 0)
 
@@ -248,8 +248,8 @@ class AssetConfigEditor(QtWidgets.QWidget):
         common.set_custom_stylesheet(self)
 
         QtWidgets.QVBoxLayout(self)
-        o = common.MARGIN()
-        h = common.ROW_HEIGHT()
+        o = common.size(common.WidthMargin)
+        h = common.size(common.HeightRow)
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(o)
 
@@ -270,7 +270,7 @@ class AssetConfigEditor(QtWidgets.QWidget):
                 '',
                 section_name,
                 self,
-                color=common.DARK_BG
+                color=common.color(common.BackgroundDarkColor)
             )
 
             _grp = ui.get_group(parent=maingroup)
@@ -392,13 +392,13 @@ class AssetConfigEditor(QtWidgets.QWidget):
         if v != self.current_data[key]:
             self.changed_data[key] = v
             editor.setStyleSheet(
-                'color: {};'.format(common.rgb(common.GREEN)))
+                'color: {};'.format(common.rgb(common.color(common.GreenColor))))
             return
 
         if key in self.changed_data:
             del self.changed_data[key]
         editor.setStyleSheet(
-            'color: {};'.format(common.rgb(common.TEXT)))
+            'color: {};'.format(common.rgb(common.color(common.TextColor))))
 
     @QtCore.Slot()
     def save_changes(self):

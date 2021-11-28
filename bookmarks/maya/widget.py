@@ -31,7 +31,7 @@ from .. import ui
 from .. import images
 from .. import contextmenu
 from .. import main
-from .. import settings
+
 
 from . import actions as maya_actions
 from . import base as maya_base
@@ -61,7 +61,7 @@ def init_tool_button(*args, **kwargs):
     global _button_instance
     ptr = OpenMayaUI.MQtUtil.findControl('ToolBox')
     if ptr is None:
-        _button_instance = ToolButton(common.ASSET_ROW_HEIGHT())
+        _button_instance = ToolButton(common.size(common.HeightAsset))
         _button_instance.show()
         return
 
@@ -101,10 +101,10 @@ def show():
     for widget in app.allWidgets():
         # Skipping workspaceControls objects, just in case there's a name conflict
         # between what the parent().objectName() and this method yields
-        if re.match('{}.*WorkspaceControl'.format(common.PRODUCT), widget.objectName()):
+        if re.match('{}.*WorkspaceControl'.format(common.product), widget.objectName()):
             continue
 
-        match = re.match('{}.*'.format(common.PRODUCT), widget.objectName())
+        match = re.match('{}.*'.format(common.product), widget.objectName())
 
         # Skip invalid matches
         if not match:
@@ -166,7 +166,7 @@ def show():
     # By default, the tab is docked just next to the attribute editor
     for widget in app.allWidgets():
         match = re.match(
-            '{}.*WorkspaceControl'.format(common.PRODUCT), widget.objectName())
+            '{}.*WorkspaceControl'.format(common.product), widget.objectName())
 
         if not match:
             continue
@@ -204,17 +204,17 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         self.capture_menu()
 
     def apply_bookmark_settings_menu(self):
-        server = settings.active(settings.ServerKey)
-        job = settings.active(settings.JobKey)
-        root = settings.active(settings.RootKey)
-        asset = settings.active(settings.AssetKey)
+        server = common.active(common.ServerKey)
+        job = common.active(common.JobKey)
+        root = common.active(common.RootKey)
+        asset = common.active(common.AssetKey)
 
         if not all((server, job, root, asset)):
             return
 
         self.menu['apply_settings'] = {
-            'text': 'Apply scene settings...',
-            'icon': self.get_icon('check', color=common.GREEN),
+            'text': 'Apply scene common...',
+            'icon': self.get_icon('check', color=common.color(common.GreenColor)),
             'action': maya_actions.apply_settings
         }
 
@@ -223,7 +223,7 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
 
         self.menu[contextmenu.key()] = {
             'text': 'Save Scene...',
-            'icon': self.get_icon('add_file', color=common.GREEN),
+            'icon': self.get_icon('add_file', color=common.color(common.GreenColor)),
             'action': lambda: maya_actions.save_scene(increment=False)
         }
         if common.get_sequence(scene.fileName()):
@@ -353,7 +353,7 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
             return
         self.menu['show'] = {
             'icon': self.get_icon('icon_bw', color=None),
-            'text': 'Toggle {}'.format(common.PRODUCT),
+            'text': 'Toggle {}'.format(common.product),
             'action': self.parent().clicked.emit
         }
         return
@@ -503,14 +503,14 @@ class PanelPicker(QtWidgets.QDialog):
             bottomright = self.mapFromGlobal(bottomright)
 
             capture_rect = QtCore.QRect(topleft, bottomright)
-            pen = QtGui.QPen(common.GREEN)
-            pen.setWidth(common.ROW_SEPARATOR() * 2)
+            pen = QtGui.QPen(common.color(common.GreenColor))
+            pen.setWidth(common.size(common.HeightSeparator) * 2)
             painter.setPen(pen)
             painter.setBrush(QtCore.Qt.NoBrush)
             painter.drawRect(capture_rect)
 
             painter.setPen(QtCore.Qt.NoPen)
-            painter.setBrush(common.GREEN)
+            painter.setBrush(common.color(common.GreenColor))
             painter.setOpacity(0.3)
             painter.drawRect(capture_rect)
 
@@ -558,7 +558,7 @@ class ToolButton(ui.ClickableIconButton):
             (None, None),
             size,
             description='Click to toggle {}.'.format(
-                common.PRODUCT),
+                common.product),
             parent=parent
         )
 
@@ -600,7 +600,7 @@ class ToolButton(ui.ClickableIconButton):
 
         rect = self.rect()
         center = rect.center()
-        o = common.INDICATOR_WIDTH() * 2
+        o = common.size(common.WidthIndicator) * 2
         rect = rect.adjusted(0, 0, -o, -o)
         rect.moveCenter(center)
 
@@ -640,12 +640,12 @@ class PluginWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         self._callbacks = []  # Maya api callbacks
         self.mainwidget = None
 
-        self.setWindowTitle(common.PRODUCT)
+        self.setWindowTitle(common.product)
         common.set_custom_stylesheet(self)
 
         # Rename object
         _object_name = self.objectName().replace(
-            self.__class__.__name__, common.PRODUCT)
+            self.__class__.__name__, common.product)
         self.setObjectName(_object_name)
 
         self._create_UI()
@@ -671,9 +671,9 @@ class PluginWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         """Slot called when an active asset changes.
 
         """
-        v = settings.instance().value(
-            settings.SettingsSection,
-            settings.WorksapceWarningsKey
+        v = common.settings.value(
+            common.SettingsSection,
+            common.WorksapceWarningsKey
         )
         v = QtCore.Qt.Unchecked if v is None else v
 
@@ -711,7 +711,7 @@ class PluginWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
     def paintEvent(self, event):
         painter = QtGui.QPainter()
         painter.begin(self)
-        painter.setBrush(common.SEPARATOR)
+        painter.setBrush(common.color(common.SeparatorColor))
         painter.setPen(QtCore.Qt.NoPen)
         painter.drawRect(self.rect())
         painter.end()
@@ -777,8 +777,8 @@ class PluginWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
     def customFilesContextMenuEvent(self, index, parent):
         """Shows the custom context menu."""
         width = parent.viewport().geometry().width()
-        width = (width * 0.5) if width > common.WIDTH() else width
-        width = width - common.INDICATOR_WIDTH()
+        width = (width * 0.5) if width > common.size(common.DefaultWidth) else width
+        width = width - common.size(common.WidthIndicator)
 
         widget = PluginWidgetContextMenu(index, parent=parent)
         if index.isValid():
@@ -791,7 +791,7 @@ class PluginWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
             widget.move(common.cursor.pos())
 
         widget.setFixedWidth(width)
-        widget.move(widget.x() + common.INDICATOR_WIDTH(), widget.y())
+        widget.move(widget.x() + common.size(common.WidthIndicator), widget.y())
         common.move_widget_to_available_geo(widget)
         widget.exec_()
 
@@ -802,8 +802,8 @@ class PluginWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
             'dockable': True,
             'allowedArea': None,
             'retain': True,
-            'width': common.WIDTH() * 0.5,
-            'height': common.HEIGHT() * 0.5
+            'width': common.size(common.DefaultWidth) * 0.5,
+            'height': common.size(common.DefaultHeight) * 0.5
         }
 
         try:
@@ -813,4 +813,4 @@ class PluginWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
             super(PluginWidget, self).show(**kwargs)
 
     def sizeHint(self):
-        return QtCore.QSize(common.WIDTH() * 0.5, common.HEIGHT() * 0.5)
+        return QtCore.QSize(common.size(common.DefaultWidth) * 0.5, common.size(common.DefaultHeight) * 0.5)

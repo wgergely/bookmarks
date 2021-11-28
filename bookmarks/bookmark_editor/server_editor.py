@@ -8,7 +8,6 @@ import functools
 from PySide2 import QtCore, QtGui, QtWidgets
 
 from .. import common
-from .. import settings
 from .. import ui
 from .. import images
 from .. import contextmenu
@@ -39,12 +38,12 @@ class AddServerEditor(QtWidgets.QDialog):
 
         QtWidgets.QVBoxLayout(self)
 
-        o = common.MARGIN()
+        o = common.size(common.WidthMargin)
         self.layout().setSpacing(o)
         self.layout().setContentsMargins(o, o, o, o)
 
         self.ok_button = ui.PaintedButton('Done', parent=self)
-        self.ok_button.setFixedHeight(common.ROW_HEIGHT())
+        self.ok_button.setFixedHeight(common.size(common.HeightRow))
         self.pick_button = ui.PaintedButton('Pick', parent=self)
 
         self.editor = ui.LineEdit(parent=self)
@@ -77,7 +76,7 @@ class AddServerEditor(QtWidgets.QDialog):
             lambda: self.done(QtWidgets.QDialog.Accepted))
         self.pick_button.clicked.connect(self.pick)
         self.editor.textChanged.connect(lambda: self.editor.setStyleSheet(
-            'color: {};'.format(common.rgb(common.GREEN))))
+            'color: {};'.format(common.rgb(common.color(common.GreenColor)))))
 
     @QtCore.Slot()
     def pick(self):
@@ -105,7 +104,7 @@ class AddServerEditor(QtWidgets.QDialog):
         if not file_info.exists() or not file_info.isReadable() or v in common.SERVERS:
             # Indicate the selected item is invalid and keep the editor open
             self.editor.setStyleSheet(
-                'color: {0}; border-color: {0}'.format(common.rgb(common.RED)))
+                'color: {0}; border-color: {0}'.format(common.rgb(common.color(common.RedColor))))
             self.editor.blockSignals(True)
             self.editor.setText(v)
             self.editor.blockSignals(False)
@@ -116,14 +115,14 @@ class AddServerEditor(QtWidgets.QDialog):
 
     def text(self):
         v = self.editor.text()
-        return settings.strip(v) if v else ''
+        return common.strip(v) if v else ''
 
     def showEvent(self, event):
         self.editor.setFocus()
         common.center_window(self)
 
     def sizeHint(self):
-        return QtCore.QSize(common.WIDTH(), common.ROW_HEIGHT() * 2)
+        return QtCore.QSize(common.size(common.DefaultWidth), common.size(common.HeightRow) * 2)
 
 
 class ServerContextMenu(contextmenu.BaseContextMenu):
@@ -145,7 +144,7 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
     def add_menu(self):
         self.menu['Add server...'] = {
             'action': self.parent().add,
-            'icon': self.get_icon('add', color=common.GREEN)
+            'icon': self.get_icon('add', color=common.color(common.GreenColor))
         }
 
     def reveal_menu(self):
@@ -157,7 +156,7 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
     def remove_menu(self):
         self.menu['Remove'] = {
             'action': self.parent().remove,
-            'icon': self.get_icon('close', color=common.RED)
+            'icon': self.get_icon('close', color=common.color(common.RedColor))
         }
 
     def refresh_menu(self):
@@ -169,7 +168,7 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
 
 class ServerListWidget(ui.ListWidget):
     """Simple list widget used to add and remove servers to/from the local
-    settings.
+    common.
 
     """
     serverChanged = QtCore.Signal(str)
@@ -193,7 +192,7 @@ class ServerListWidget(ui.ListWidget):
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
         )
-        self.setMinimumWidth(common.WIDTH() * 0.2)
+        self.setMinimumWidth(common.size(common.DefaultWidth) * 0.2)
 
         self._connect_signals()
         self.init_shortcuts()
@@ -225,7 +224,7 @@ class ServerListWidget(ui.ListWidget):
             return
 
         v = index.data(QtCore.Qt.DisplayRole)
-        v = settings.strip(v)
+        v = common.strip(v)
         actions.remove_server(v)
 
     @common.debug
@@ -268,9 +267,9 @@ class ServerListWidget(ui.ListWidget):
             return
 
         v = index.data(QtCore.Qt.DisplayRole)
-        settings.instance().setValue(
-            settings.UIStateSection,
-            settings.BookmarkEditorServerKey,
+        common.settings.setValue(
+            common.UIStateSection,
+            common.BookmarkEditorServerKey,
             v
         )
 
@@ -279,9 +278,9 @@ class ServerListWidget(ui.ListWidget):
     @QtCore.Slot()
     def restore_current(self, current=None):
         if current is None:
-            current = settings.instance().value(
-                settings.UIStateSection,
-                settings.BookmarkEditorServerKey
+            current = common.settings.value(
+                common.UIStateSection,
+                common.BookmarkEditorServerKey
             )
         if not current:
             self.serverChanged.emit(None)
@@ -327,7 +326,7 @@ class ServerListWidget(ui.ListWidget):
             item = QtWidgets.QListWidgetItem(server)
             size = QtCore.QSize(
                 0,
-                common.MARGIN() * 2
+                common.size(common.WidthMargin) * 2
             )
             item.setSizeHint(size)
             self.validate_item(item)
@@ -341,11 +340,11 @@ class ServerListWidget(ui.ListWidget):
         self.blockSignals(True)
 
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'server', common.TEXT, common.ROW_HEIGHT() * 0.8)
+            'server', common.color(common.TextColor), common.size(common.HeightRow) * 0.8)
         pixmap_selected = images.ImageCache.get_rsc_pixmap(
-            'server', common.SELECTED_TEXT, common.ROW_HEIGHT() * 0.8)
+            'server', common.color(common.TextSelectedColor), common.size(common.HeightRow) * 0.8)
         pixmap_disabled = images.ImageCache.get_rsc_pixmap(
-            'close', common.RED, common.ROW_HEIGHT() * 0.8)
+            'close', common.color(common.RedColor), common.size(common.HeightRow) * 0.8)
         icon = QtGui.QIcon()
 
         file_info = QtCore.QFileInfo(item.text())

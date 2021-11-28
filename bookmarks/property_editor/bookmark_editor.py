@@ -63,7 +63,7 @@ SECTIONS = {
     0: {
         'name': 'Basic Settings',
         'icon': 'bookmark',
-        'color': common.DARK_BG,
+        'color': common.color(common.BackgroundDarkColor),
         'groups': {
             0: {
                 0: {
@@ -144,7 +144,7 @@ SECTIONS = {
     1: {
         'name': 'Slack',
         'icon': 'slack',
-        'color': common.DARK_BG,
+        'color': common.color(common.BackgroundDarkColor),
         'groups': {
             0: {
                 0: {
@@ -244,7 +244,7 @@ SECTIONS = {
     4: {
         'name': 'Links',
         'icon': 'link',
-        'color': common.DARK_BG,
+        'color': common.color(common.BackgroundDarkColor),
         'groups': {
             0: {
                 0: {
@@ -271,7 +271,7 @@ SECTIONS = {
     5: {
         'name': 'Launcher',
         'icon': 'icon',
-        'color': common.DARK_BG,
+        'color': common.color(common.BackgroundDarkColor),
         'groups': {
             0: {
                 0: {
@@ -288,7 +288,7 @@ SECTIONS = {
     6: {
         'name': 'Database',
         'icon': 'bookmark',
-        'color': common.DARK_BG,
+        'color': common.color(common.BackgroundDarkColor),
         'groups': {
             0: {
                 0: {

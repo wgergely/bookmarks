@@ -47,7 +47,7 @@ class BaseCase(unittest.TestCase):
 
         import bookmarks.common as common
         # Set mock product name
-        common.PRODUCT = PRODUCT
+        common.product = PRODUCT
 
         # Create folder used to test the app
         if not os.path.exists(PRODUCT_ROOT):

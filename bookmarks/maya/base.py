@@ -11,7 +11,7 @@ from PySide2 import QtWidgets, QtCore, QtGui
 import maya.cmds as cmds  # pylint: disable=E0401
 
 from .. import database
-from .. import settings
+
 from ..asset_config import asset_config
 
 
@@ -173,9 +173,9 @@ def get_export_dir():
     """Find the name of the export folder.
 
     """
-    server = settings.active(settings.ServerKey)
-    job = settings.active(settings.JobKey)
-    root = settings.active(settings.RootKey)
+    server = common.active(common.ServerKey)
+    job = common.active(common.JobKey)
+    root = common.active(common.RootKey)
 
     if not all((server, job, root)):
         raise RuntimeError('No active bookmark item found.')
@@ -190,9 +190,9 @@ def get_export_subdir(v):
     """
 
 
-    server = settings.active(settings.ServerKey)
-    job = settings.active(settings.JobKey)
-    root = settings.active(settings.RootKey)
+    server = common.active(common.ServerKey)
+    job = common.active(common.JobKey)
+    root = common.active(common.RootKey)
 
     if not all((server, job, root)):
         raise RuntimeError('No active bookmark item found.')
@@ -561,10 +561,10 @@ class MayaProperties(object):
     def __init__(self, parent=None):
         super(MayaProperties, self).__init__()
 
-        server = settings.active(settings.ServerKey)
-        job = settings.active(settings.JobKey)
-        root = settings.active(settings.RootKey)
-        asset = settings.active(settings.AssetKey)
+        server = common.active(common.ServerKey)
+        job = common.active(common.JobKey)
+        root = common.active(common.RootKey)
+        asset = common.active(common.AssetKey)
 
         if not all((server, job, root, asset)):
             raise RuntimeError('Could not find active asset.')

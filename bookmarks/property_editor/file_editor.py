@@ -106,7 +106,7 @@ SECTIONS = {
     0: {
         'name': 'Save File',
         'icon': '',
-        'color': common.DARK_BG,
+        'color': common.color(common.BackgroundDarkColor),
         'groups': {
             0: {
                 0: {
@@ -257,8 +257,8 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
         self.update_timer.timeout.connect(self.set_name)
         self.update_timer.timeout.connect(self.set_thumbnail_source)
 
-        # if settings.ACTIVE[settings.TaskKey] is not None:
-        #     self.add_task(settings.ACTIVE[settings.TaskKey])
+        # if common.ACTIVE[common.TaskKey] is not None:
+        #     self.add_task(common.ACTIVE[common.TaskKey])
 
     def file_path(self):
         return self._file_path
@@ -381,7 +381,7 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
         )
         v = _strip(v)
         v = v.replace(
-            '{invalid_token}', '<span style="color:{}">{{invalid_token}}</span>'.format(common.rgb(common.RED)))
+            '{invalid_token}', '<span style="color:{}">{{invalid_token}}</span>'.format(common.rgb(common.color(common.RedColor))))
 
         self.filename_editor.setText(v)
 
@@ -397,10 +397,10 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
 
         if self._filelist[self.db_source()]:
             self.filename_editor.setStyleSheet(
-                'color:{};'.format(common.rgb(common.RED)))
+                'color:{};'.format(common.rgb(common.color(common.RedColor))))
         else:
             self.filename_editor.setStyleSheet(
-                'color:{};'.format(common.rgb(common.GREEN)))
+                'color:{};'.format(common.rgb(common.color(common.GreenColor))))
 
     def parent_folder(self):
         """The folder where the new file is about to be saved.

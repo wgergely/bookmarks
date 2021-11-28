@@ -3,7 +3,7 @@ import os
 from PySide2 import QtCore, QtGui, QtWidgets
 
 from .. import common
-from .. import settings
+
 from ..bookmark_editor import server_editor
 from ..bookmark_editor import job_editor
 from ..bookmark_editor import bookmark_editor
@@ -67,7 +67,7 @@ class Test(base.BaseApplicationTest):
             server = common.temp_path() + os.sep + base.random_ascii(32)
             os.makedirs(server)
             servers.append(server)
-        settings.instance().set_servers(servers)
+        common.settings.set_servers(servers)
 
         s.init_data()
         self.assertEqual(s.count(), 50)

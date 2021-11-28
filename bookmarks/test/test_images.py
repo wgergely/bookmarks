@@ -65,7 +65,7 @@ class Test(base.BaseApplicationTest):
 
     def test_oiio_make_thumbnail(self):
         server, job, root = common.local_user_bookmark()
-        size = int(round(images.THUMBNAIL_IMAGE_SIZE * 0.5))
+        size = int(round(common.thumbnail_size * 0.5))
 
         for f in os.listdir(common.temp_path()):
             if '.png' not in f:
@@ -97,7 +97,7 @@ class Test(base.BaseApplicationTest):
 
         # Invalid
         v = images.get_thumbnail(
-            server, job, root, source, size=images.THUMBNAIL_IMAGE_SIZE)
+            server, job, root, source, size=common.thumbnail_size)
         self.assertIsInstance(v, tuple)
 
         self.assertIsInstance(v[0], QtGui.QPixmap)
@@ -105,9 +105,9 @@ class Test(base.BaseApplicationTest):
 
         self.assertFalse(v[0].isNull())
         m = max(v[0].size().height(), v[0].size().width())
-        self.assertEqual(m, images.THUMBNAIL_IMAGE_SIZE * images.pixel_ratio)
+        self.assertEqual(m, common.thumbnail_size * images.pixel_ratio)
 
-        s = int(images.THUMBNAIL_IMAGE_SIZE)
+        s = int(common.thumbnail_size)
         for f in os.listdir(common.temp_path()):
             if '.png' not in f:
                 continue
@@ -131,7 +131,7 @@ class Test(base.BaseApplicationTest):
                 job,
                 root,
                 source,
-                size=images.THUMBNAIL_IMAGE_SIZE,
+                size=common.thumbnail_size,
                 fallback_thumb='bogusfallback'
             )
             self.assertIsInstance(v, tuple)
@@ -167,7 +167,7 @@ class Test(base.BaseApplicationTest):
             from .. import actions
             self.assertTrue(os.path.isfile(p))
 
-            s = int(images.THUMBNAIL_IMAGE_SIZE)
+            s = int(common.thumbnail_size)
             v = images.ImageCache.get_pixmap(p, s)
             self.assertIsInstance(v, QtGui.QPixmap)
             self.assertFalse(v.isNull())
@@ -176,19 +176,19 @@ class Test(base.BaseApplicationTest):
                 s
             )
 
-            s = int(images.THUMBNAIL_IMAGE_SIZE / 0.5)
+            s = int(common.thumbnail_size / 0.5)
             v = images.ImageCache.get_pixmap(p, s)
             self.assertIsInstance(v, QtGui.QPixmap)
             self.assertFalse(v.isNull())
             self.assertEqual(v.size().width(), s)
 
-            s = int(images.THUMBNAIL_IMAGE_SIZE)
+            s = int(common.thumbnail_size)
             v = images.ImageCache.get_image(p, s)
             self.assertIsInstance(v, QtGui.QImage)
             self.assertFalse(v.isNull())
             self.assertEqual(v.size().width(), s)
 
-            s = int(images.THUMBNAIL_IMAGE_SIZE / 0.5)
+            s = int(common.thumbnail_size / 0.5)
             v = images.ImageCache.get_image(p, s)
             self.assertIsInstance(v, QtGui.QImage)
             self.assertFalse(v.isNull())

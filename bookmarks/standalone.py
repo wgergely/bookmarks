@@ -14,7 +14,7 @@ from . import common
 from . import ui
 from . import contextmenu
 from . import main
-from . import settings
+
 from . import images
 from . import actions
 from . import __version__
@@ -23,7 +23,7 @@ from . import __version__
 _instance = None
 _tray_instance = None
 
-MODEL_ID = f'{common.PRODUCT}App'
+MODEL_ID = f'{common.product}App'
 
 
 @QtCore.Slot()
@@ -35,9 +35,9 @@ def show():
     if not _instance:
         _instance = BookmarksAppWindow()
 
-    state = settings.instance().value(
-        settings.UIStateSection,
-        settings.WindowStateKey,
+    state = common.settings.value(
+        common.UIStateSection,
+        common.WindowStateKey,
     )
     state = QtCore.Qt.WindowNoState if state is None else QtCore.Qt.WindowState(
         state)
@@ -59,7 +59,7 @@ def instance():
 
 
 def _set_application_properties(app=None):
-    """Enables OpenGL and high-DPI support.
+    """Enables OpenGL and high-dpi support.
 
     """
     if app:
@@ -92,14 +92,12 @@ class TrayMenu(contextmenu.BaseContextMenu):
         except:
             pass
 
-
     def tray_menu(self):
         """Actions associated with the visibility of the widget."""
         self.menu['Quit'] = {
             'action': actions.quit,
         }
         return
-
 
 
 class Tray(QtWidgets.QSystemTrayIcon):
@@ -112,14 +110,14 @@ class Tray(QtWidgets.QSystemTrayIcon):
         super().__init__(parent=parent)
 
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'icon_bw', None, images.THUMBNAIL_IMAGE_SIZE)
+            'icon_bw', None, common.thumbnail_size)
         icon = QtGui.QIcon(pixmap)
         self.setIcon(icon)
 
         w = TrayMenu(parent=self.window())
         self.setContextMenu(w)
 
-        self.setToolTip(common.PRODUCT)
+        self.setToolTip(common.product)
 
         self.activated.connect(self.tray_activated)
 
@@ -143,15 +141,15 @@ class Tray(QtWidgets.QSystemTrayIcon):
             return
 
 
-
 class MinimizeButton(ui.ClickableIconButton):
     """Custom QLabel with a `clicked` signal."""
 
     def __init__(self, parent=None):
         super().__init__(
             'minimize',
-            (common.RED, common.SECONDARY_TEXT),
-            common.MARGIN() - common.INDICATOR_WIDTH(),
+            (common.color(common.RedColor), common.color(common.TextSecondaryColor)),
+            common.size(common.WidthMargin) -
+            common.size(common.WidthIndicator),
             description='Click to minimize the window...',
             parent=parent
         )
@@ -163,8 +161,9 @@ class CloseButton(ui.ClickableIconButton):
     def __init__(self, parent=None):
         super().__init__(
             'close',
-            (common.RED, common.SECONDARY_TEXT),
-            common.MARGIN() - common.INDICATOR_WIDTH(),
+            (common.color(common.RedColor), common.color(common.TextSecondaryColor)),
+            common.size(common.WidthMargin) -
+            common.size(common.WidthIndicator),
             description='Click to close the window...',
             parent=parent
         )
@@ -189,8 +188,8 @@ class HeaderWidget(QtWidgets.QWidget):
 
         self.setFocusPolicy(QtCore.Qt.NoFocus)
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
-        self.setFixedHeight(common.MARGIN() +
-                            (common.INDICATOR_WIDTH() * 2))
+        self.setFixedHeight(common.size(common.WidthMargin) +
+                            (common.size(common.WidthIndicator) * 2))
 
         self._create_ui()
 
@@ -203,16 +202,16 @@ class HeaderWidget(QtWidgets.QWidget):
         menu_bar = QtWidgets.QMenuBar(parent=self)
         self.layout().addWidget(menu_bar)
         menu_bar.hide()
-        menu = menu_bar.addMenu(common.PRODUCT)
+        menu = menu_bar.addMenu(common.product)
 
         action = menu.addAction('Quit')
         action.triggered.connect(actions.quit)
 
         self.layout().addStretch()
         self.layout().addWidget(MinimizeButton(parent=self))
-        self.layout().addSpacing(common.INDICATOR_WIDTH() * 2)
+        self.layout().addSpacing(common.size(common.WidthIndicator) * 2)
         self.layout().addWidget(CloseButton(parent=self))
-        self.layout().addSpacing(common.INDICATOR_WIDTH() * 2)
+        self.layout().addSpacing(common.size(common.WidthIndicator) * 2)
 
     def mousePressEvent(self, event):
         """Custom ``movePressEvent``.
@@ -329,26 +328,24 @@ class BookmarksAppWindow(main.MainWidget):
         self.layout().insertWidget(0, self.headerwidget, 1)
         self.headerwidget.setHidden(True)
 
-
     @QtCore.Slot()
     def toggle_header(self):
         """Adjust the header visibility based on the current window flags."""
         if self._frameless and self.layout():
             self.headerwidget.setHidden(False)
-            o = common.INDICATOR_WIDTH()
+            o = common.size(common.WidthIndicator)
             self.layout().setContentsMargins(o, o, o, o)
         elif not self._frameless and self.layout():
             self.headerwidget.setHidden(True)
             self.layout().setContentsMargins(0, 0, 0, 0)
 
-
     def update_window_flags(self, v=None):
-        """Load previously saved window flag values from user settings.
+        """Load previously saved window flag values from user common.
 
         """
-        self._frameless = settings.instance().value(
-            settings.UIStateSection,
-            settings.WindowFramelessKey,
+        self._frameless = common.settings.value(
+            common.UIStateSection,
+            common.WindowFramelessKey,
         )
 
         if not self._frameless:
@@ -364,9 +361,9 @@ class BookmarksAppWindow(main.MainWidget):
             self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
             self.setAttribute(QtCore.Qt.WA_NoSystemBackground, True)
 
-        self._ontop = settings.instance().value(
-            settings.UIStateSection,
-            settings.WindowAlwaysOnTopKey
+        self._ontop = common.settings.value(
+            common.UIStateSection,
+            common.WindowAlwaysOnTopKey
         )
 
         if self._ontop:
@@ -376,14 +373,12 @@ class BookmarksAppWindow(main.MainWidget):
             self.setWindowFlags(
                 self.windowFlags() & ~ QtCore.Qt.WindowStaysOnTopHint)
 
-
     def init_tray(self):
         """Creates the system tray icon associated with the app.
 
         """
         self.tray = Tray(parent=self)
         self.tray.show()
-
 
     def _paint_background(self, painter):
         if not self._frameless:
@@ -392,11 +387,11 @@ class BookmarksAppWindow(main.MainWidget):
 
         rect = QtCore.QRect(self.rect())
         pen = QtGui.QPen(QtGui.QColor(35, 35, 35, 255))
-        pen.setWidth(common.ROW_SEPARATOR() * 2)
+        pen.setWidth(common.size(common.HeightSeparator) * 2)
         painter.setPen(pen)
-        painter.setBrush(common.SEPARATOR.darker(110))
+        painter.setBrush(common.color(common.SeparatorColor).darker(110))
 
-        o = common.INDICATOR_WIDTH()
+        o = common.size(common.WidthIndicator)
         rect = rect.adjusted(o, o, -o, -o)
         painter.drawRoundedRect(rect, o * 3, o * 3)
 
@@ -404,25 +399,24 @@ class BookmarksAppWindow(main.MainWidget):
     @common.debug
     @QtCore.Slot()
     def save_window(self, *args, **kwargs):
-        """Saves window's position to the local settings."""
-        settings.instance().setValue(
-            settings.UIStateSection,
-            settings.WindowGeometryKey,
+        """Saves window's position to the local common."""
+        common.settings.setValue(
+            common.UIStateSection,
+            common.WindowGeometryKey,
             self.saveGeometry()
         )
-        settings.instance().setValue(
-            settings.UIStateSection,
-            settings.WindowStateKey,
+        common.settings.setValue(
+            common.UIStateSection,
+            common.WindowStateKey,
             int(self.windowState())
         )
-
 
     @common.error
     @common.debug
     def restore_window(self, *args, **kwargs):
-        geometry = settings.instance().value(
-            settings.UIStateSection,
-            settings.WindowGeometryKey,
+        geometry = common.settings.value(
+            common.UIStateSection,
+            common.WindowGeometryKey,
         )
         if geometry is not None:
             self.restoreGeometry(geometry)
@@ -524,7 +518,6 @@ class BookmarksAppWindow(main.MainWidget):
         self.save_window()
         super().hideEvent(event)
 
-
     def closeEvent(self, event):
         """Bookmarks won't close when the main window is closed.
         Instead, it will be hidden to the taskbar and a pop up notice will be shown to the user.
@@ -539,7 +532,6 @@ class BookmarksAppWindow(main.MainWidget):
             3000
         )
         self.save_window()
-
 
     def mousePressEvent(self, event):
         """The mouse press event responsible for setting the properties needed
@@ -563,7 +555,6 @@ class BookmarksAppWindow(main.MainWidget):
         self.resize_initial_rect = None
         self.resize_area = None
         event.ignore()
-
 
     def mouseMoveEvent(self, event):
         """Custom mouse move event responsible for resizing the frameless
@@ -607,7 +598,6 @@ class BookmarksAppWindow(main.MainWidget):
         if self.geometry().width() > geo.width():
             self.setGeometry(original_geo)
 
-
     def mouseReleaseEvent(self, event):
         """Resets the custom resize properties to their initial values.
 
@@ -630,15 +620,12 @@ class BookmarksAppWindow(main.MainWidget):
         app = QtWidgets.QApplication.instance()
         app.restoreOverrideCursor()
 
-
     def changeEvent(self, event):
         if event.type() == QtCore.QEvent.WindowStateChange:
             self.save_window()
 
-
     def showEvent(self, event):
         QtCore.QTimer.singleShot(1, self.initialize)
-
 
 
 class BookmarksApp(QtWidgets.QApplication):
@@ -655,10 +642,10 @@ class BookmarksApp(QtWidgets.QApplication):
         _set_application_properties()
         super().__init__(args)
         _set_application_properties(app=self)
-        common.init_components(True)
+        common.initialize(True)
 
         self.setApplicationVersion(__version__)
-        self.setApplicationName(common.PRODUCT)
+        self.setApplicationName(common.product)
         self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, bool=True)
 
         self._set_model_id()
@@ -668,7 +655,7 @@ class BookmarksApp(QtWidgets.QApplication):
     def _set_window_icon(self):
         """Set the application icon."""
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'icon', None, common.ROW_HEIGHT() * 7.0)
+            'icon', None, common.size(common.HeightRow) * 7.0)
         icon = QtGui.QIcon(pixmap)
         self.setWindowIcon(icon)
 

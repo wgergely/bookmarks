@@ -31,7 +31,7 @@ from .. import log
 from .. import common
 from .. import ui
 from .. import images
-from .. import settings
+
 
 
 IdRole = QtCore.Qt.UserRole + 1
@@ -124,22 +124,22 @@ class OverlayWidget(QtWidgets.QWidget):
 
         painter = QtGui.QPainter()
         painter.begin(self)
-        o = common.MARGIN()
+        o = common.size(common.WidthMargin)
         o = 0
         rect = self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o))
 
-        painter.setBrush(common.SEPARATOR)
+        painter.setBrush(common.color(common.SeparatorColor))
         painter.setPen(QtCore.Qt.NoPen)
 
         painter.setOpacity(0.5)
         painter.drawRoundedRect(
-            rect, common.INDICATOR_WIDTH(), common.INDICATOR_WIDTH())
+            rect, common.size(common.WidthIndicator), common.size(common.WidthIndicator))
         painter.setOpacity(1.0)
 
         painter.setBrush(QtCore.Qt.NoBrush)
-        painter.setPen(common.TEXT)
+        painter.setPen(common.color(common.TextColor))
         painter.setFont(common.font_db.primary_font(
-            common.MEDIUM_FONT_SIZE())[0])
+            common.size(common.FontSizeMedium))[0])
 
         painter.drawText(
             rect,
@@ -309,7 +309,7 @@ class UsersModel(QtCore.QAbstractItemModel):
     def __init__(self, token, parent=None):
         super(UsersModel, self).__init__(parent=parent)
         self.token = token
-        self._row_size = QtCore.QSize(1, common.ROW_HEIGHT())
+        self._row_size = QtCore.QSize(1, common.size(common.HeightRow))
 
         self.INTERNAL_USER_DATA = common.DataDict()
         self.modelDataResetRequested.connect(self.__initdata__)
@@ -322,7 +322,7 @@ class UsersModel(QtCore.QAbstractItemModel):
 
         pixmap = images.ImageCache.get_rsc_pixmap(
             'slack',
-            common.SECONDARY_TEXT,
+            common.color(common.TextSecondaryColor),
             self._row_size.height()
         )
         icon = QtGui.QIcon()
@@ -337,7 +337,7 @@ class UsersModel(QtCore.QAbstractItemModel):
                     QtCore.Qt.DisplayRole: 'Channel:  ' + channel['name'],
                     QtCore.Qt.DecorationRole: icon,
                     QtCore.Qt.SizeHintRole: self._row_size,
-                    QtCore.Qt.FontRole: common.font_db.primary_font(font_size=common.SMALL_FONT_SIZE())[0],
+                    QtCore.Qt.FontRole: common.font_db.primary_font(font_size=common.size(common.FontSizeSmall))[0],
                     IdRole: channel['id'],
                     ThumbnailHashRole: None,
                     ThumbnailUrlRole: None,
@@ -353,7 +353,7 @@ class UsersModel(QtCore.QAbstractItemModel):
                     QtCore.Qt.DisplayRole: self.get_pretty_name(profile),
                     QtCore.Qt.DecorationRole: icon,
                     QtCore.Qt.SizeHintRole: self._row_size,
-                    QtCore.Qt.FontRole: common.font_db.primary_font(font_size=common.SMALL_FONT_SIZE())[0],
+                    QtCore.Qt.FontRole: common.font_db.primary_font(font_size=common.size(common.FontSizeSmall))[0],
                     IdRole: profile['id'],
                     ThumbnailHashRole: profile['profile']['avatar_hash'],
                     ThumbnailUrlRole: profile['profile']['image_32'],
@@ -441,7 +441,7 @@ class UsersModel(QtCore.QAbstractItemModel):
         # Cache directory
         cache_dir_path = QtCore.QStandardPaths.writableLocation(
             QtCore.QStandardPaths.GenericDataLocation)
-        cache_dir_path = '{}/{}/slack'.format(cache_dir_path, common.PRODUCT)
+        cache_dir_path = '{}/{}/slack'.format(cache_dir_path, common.product)
 
         cache_file_path = '{}/{}.png'.format(
             cache_dir_path,
@@ -503,17 +503,17 @@ class UsersWidget(QtWidgets.QListView):
     @QtCore.Slot(QtCore.QModelIndex)
     def save_selection(self, index):
         v = index.data(QtCore.Qt.DisplayRole)
-        settings.instance().setValue(
-            settings.UIStateSection,
-            settings.SlackUserKey,
+        common.settings.setValue(
+            common.UIStateSection,
+            common.SlackUserKey,
             v
         )
 
     @QtCore.Slot()
     def restore_selection(self):
-        v = settings.instance().value(
-            settings.UIStateSection,
-            settings.SlackUserKey,
+        v = common.settings.value(
+            common.UIStateSection,
+            common.SlackUserKey,
         )
 
         if v is None:
@@ -554,7 +554,7 @@ class SlackWidget(QtWidgets.QDialog):
         self._connect_signals()
 
     def _create_UI(self):
-        height = common.ROW_HEIGHT()
+        height = common.size(common.HeightRow)
 
         QtWidgets.QVBoxLayout(self)
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
@@ -575,13 +575,13 @@ class SlackWidget(QtWidgets.QDialog):
         self.message_widget = QtWidgets.QTextEdit(parent=self)
         self.message_widget.setStyleSheet(
             'QTextEdit {{border-radius: {}px;}}'.format(
-                common.MARGIN() * 0.33,
+                common.size(common.WidthMargin) * 0.33,
             )
         )
-        self.message_widget.setMaximumHeight(common.ROW_HEIGHT() * 3)
+        self.message_widget.setMaximumHeight(common.size(common.HeightRow) * 3)
         self.message_widget.setObjectName('SlackMessageBox')
 
-        self.message_widget.document().setDocumentMargin(common.MARGIN() * 0.5)
+        self.message_widget.document().setDocumentMargin(common.size(common.WidthMargin) * 0.5)
         self.message_widget.setPlaceholderText(
             'Enter a message to send...')
         self.message_widget.setAcceptRichText(False)

@@ -5,7 +5,7 @@
 from PySide2 import QtWidgets, QtCore, QtGui
 
 from .. import common
-from .. import settings
+
 from .. import images
 from . import shotgun
 from . import actions as sg_actions
@@ -30,7 +30,7 @@ class DropWidget(QtWidgets.QWidget):
         self._placeholder_text = None
 
         self.setAcceptDrops(True)
-        self.setFixedHeight(common.ROW_HEIGHT() * 4)
+        self.setFixedHeight(common.size(common.HeightRow) * 4)
         self.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.Fixed
@@ -90,9 +90,9 @@ class DropWidget(QtWidgets.QWidget):
     def _draw_background(self, painter, hover):
         painter.setOpacity(0.55 if hover else 0.45)
 
-        o = common.INDICATOR_WIDTH() * 1.5
+        o = common.size(common.WidthIndicator) * 1.5
         painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.SEPARATOR)
+        painter.setBrush(common.color(common.SeparatorColor))
         painter.drawRoundedRect(self.rect(), o, o)
 
         if self._path:
@@ -100,9 +100,9 @@ class DropWidget(QtWidgets.QWidget):
 
         rect = self.rect().adjusted(o, o, -o, -o)
 
-        color = common.GREEN if hover else common.SEPARATOR
+        color = common.color(common.GreenColor) if hover else common.color(common.SeparatorColor)
         pen = QtGui.QPen(color)
-        pen.setWidthF(common.ROW_SEPARATOR() * 2)
+        pen.setWidthF(common.size(common.HeightSeparator) * 2)
         pen.setStyle(QtCore.Qt.DashLine)
         pen.setCapStyle(QtCore.Qt.RoundCap)
         pen.setJoinStyle(QtCore.Qt.RoundJoin)
@@ -121,11 +121,11 @@ class DropWidget(QtWidgets.QWidget):
 
         painter.setOpacity(1.0 if hover else 0.8)
 
-        o = common.MARGIN() * 1.5
+        o = common.size(common.WidthMargin) * 1.5
 
-        color = common.GREEN if hover else common.SECONDARY_TEXT
-        color = common.SELECTED_TEXT if self._path else color
-        color = common.GREEN if self._drag_in_progress else color
+        color = common.color(common.GreenColor) if hover else common.color(common.TextSecondaryColor)
+        color = common.color(common.TextSelectedColor) if self._path else color
+        color = common.color(common.GreenColor) if self._drag_in_progress else color
 
         if self._path:
             rect = self.rect().adjusted(o * 3, o, -o, -o)
@@ -134,7 +134,7 @@ class DropWidget(QtWidgets.QWidget):
 
         common.draw_aliased_text(
             painter,
-            common.font_db.primary_font(font_size=common.LARGE_FONT_SIZE())[0],
+            common.font_db.primary_font(font_size=common.size(common.FontSizeLarge))[0],
             rect,
             v,
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
@@ -148,24 +148,24 @@ class DropWidget(QtWidgets.QWidget):
             icon = 'file'
 
         if hover:
-            color = common.GREEN
+            color = common.color(common.GreenColor)
         else:
-            color = common.DISABLED_TEXT
+            color = common.color(common.TextDisabledColor)
 
         if self._path:
             icon = 'check'
-            color = common.GREEN
+            color = common.color(common.GreenColor)
 
         if self._drag_in_progress:
             icon = 'add_file'
-            color = common.GREEN
+            color = common.color(common.GreenColor)
 
-        h = common.MARGIN()
+        h = common.size(common.WidthMargin)
         pixmap = images.ImageCache.get_rsc_pixmap(icon, color, h)
 
         prect = pixmap.rect()
         prect.moveCenter(self.rect().center())
-        prect.moveLeft(common.MARGIN() * 2)
+        prect.moveLeft(common.size(common.WidthMargin) * 2)
 
         painter.drawPixmap(prect, pixmap, pixmap.rect())
 
@@ -308,9 +308,9 @@ class StatusEditor(shotgun.EntityComboBox):
         # apart from the # entity type and the server, job, root names.
         model.entityDataRequested.emit(
             model.uuid,
-            settings.active(settings.ServerKey),
-            settings.active(settings.JobKey),
-            settings.active(settings.RootKey),
+            common.active(common.ServerKey),
+            common.active(common.JobKey),
+            common.active(common.RootKey),
             None,
             'Status',
             [],
@@ -392,18 +392,18 @@ class TaskEditor(shotgun.EntityComboBox):
             return
         k = 'content'
         if k in entity and entity[k]:
-            settings.instance().setValue(
-                settings.UIStateSection,
-                settings.PublishTask,
+            common.settings.setValue(
+                common.UIStateSection,
+                common.PublishTask,
                 entity[k]
             )
 
     @common.error
     @common.debug
     def restore_selection(self, *args, **kwargs):
-        v = settings.instance().value(
-            settings.UIStateSection,
-            settings.PublishTask
+        v = common.settings.value(
+            common.UIStateSection,
+            common.PublishTask
         )
         if not v:
             self.setCurrentIndex(0)
@@ -479,7 +479,7 @@ class LocalStorageEditor(shotgun.EntityComboBox):
         )
 
     def select_entity(self):
-        server = settings.active(settings.ServerKey)
+        server = common.active(common.ServerKey)
         file_info = QtCore.QFileInfo(server)
         apath = file_info.absoluteFilePath()
 
@@ -563,18 +563,18 @@ class PublishedFileTypeEditor(shotgun.EntityComboBox):
             return
         k = 'code'
         if k in entity and entity[k]:
-            settings.instance().setValue(
-                settings.UIStateSection,
-                settings.PublishFileType,
+            common.settings.setValue(
+                common.UIStateSection,
+                common.PublishFileType,
                 entity[k]
             )
 
     @common.error
     @common.debug
     def restore_selection(self, *args, **kwargs):
-        v = settings.instance().value(
-            settings.UIStateSection,
-            settings.PublishFileType
+        v = common.settings.value(
+            common.UIStateSection,
+            common.PublishFileType
         )
         if not v:
             self.setCurrentIndex(0)
@@ -630,18 +630,18 @@ class PickFile(QtWidgets.QFileDialog):
         )
 
         args = (
-            settings.active(settings.ServerKey),
-            settings.active(settings.JobKey),
-            settings.active(settings.RootKey),
-            settings.active(settings.AssetKey),
-            settings.active(settings.TaskKey),
+            common.active(common.ServerKey),
+            common.active(common.JobKey),
+            common.active(common.RootKey),
+            common.active(common.AssetKey),
+            common.active(common.TaskKey),
         )
         if not all(args):
             args = (
-                settings.active(settings.ServerKey),
-                settings.active(settings.JobKey),
-                settings.active(settings.RootKey),
-                settings.active(settings.AssetKey),
+                common.active(common.ServerKey),
+                common.active(common.JobKey),
+                common.active(common.RootKey),
+                common.active(common.AssetKey),
             )
         if not all(args):
             return

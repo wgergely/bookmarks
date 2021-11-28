@@ -9,7 +9,6 @@ import _scandir
 
 from .. import common
 from .. import ui
-from .. import settings
 from .. import images
 from .. import contextmenu
 from .. import shortcuts
@@ -22,7 +21,7 @@ SECTIONS = {
     0: {
         'name': 'Add Job',
         'icon': '',
-        'color': common.DARK_BG,
+        'color': common.color(common.BackgroundDarkColor),
         'groups': {
             0: {
                 0: {
@@ -94,7 +93,7 @@ class AddJobWidget(base.BasePropertyEditor):
         )
 
         self.setWindowTitle('{}: Add Job'.format(self.server))
-        self.setFixedHeight(common.HEIGHT() * 0.66)
+        self.setFixedHeight(common.size(common.DefaultHeight) * 0.66)
 
     def init_data(self):
         items = []
@@ -125,7 +124,7 @@ class AddJobWidget(base.BasePropertyEditor):
         if not QtCore.QFileInfo(path).exists():
             raise RuntimeError('Unknown error, could not find the new job.')
 
-        path += f'/thumbnail.{images.THUMBNAIL_FORMAT}'
+        path += f'/thumbnail.{common.thumbnail_format}'
         self.thumbnail_editor.save_image(destination=path)
 
         ui.MessageBox(f'{name} was successfully created.').open()
@@ -149,7 +148,7 @@ class JobContextMenu(contextmenu.BaseContextMenu):
     def add_menu(self):
         self.menu['Add Job...'] = {
             'action': self.parent().add,
-            'icon': self.get_icon('add', color=common.GREEN)
+            'icon': self.get_icon('add', color=common.color(common.GreenColor))
         }
 
     def reveal_menu(self):
@@ -170,7 +169,7 @@ class JobContextMenu(contextmenu.BaseContextMenu):
 
 class JobListWidget(ui.ListWidget):
     """Simple list widget used to add and remove servers to/from the local
-    settings.
+    common.
 
     Signals:
         jobChanged(server, job):    Emitted when the current job selection changedes.
@@ -196,7 +195,7 @@ class JobListWidget(ui.ListWidget):
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
         )
-        self.setMinimumWidth(common.WIDTH() * 0.2)
+        self.setMinimumWidth(common.size(common.DefaultWidth) * 0.2)
 
         self._connect_signals()
         self.init_shortcuts()
@@ -230,7 +229,7 @@ class JobListWidget(ui.ListWidget):
         if not self.model():
             return
 
-        jobs = [f[settings.JobKey] for f in common.BOOKMARKS.values()]
+        jobs = [f[common.JobKey] for f in common.bookmarks.values()]
 
         for n in range(self.model().rowCount()):
             item = self.item(n)
@@ -271,9 +270,9 @@ class JobListWidget(ui.ListWidget):
         index = next((f for f in current.indexes()), QtCore.QModelIndex())
         if not index.isValid():
             return
-        settings.instance().setValue(
-            settings.UIStateSection,
-            settings.BookmarkEditorJobKey,
+        common.settings.setValue(
+            common.UIStateSection,
+            common.BookmarkEditorJobKey,
             index.data(QtCore.Qt.DisplayRole)
         )
 
@@ -282,9 +281,9 @@ class JobListWidget(ui.ListWidget):
         if name:
             v = name
         else:
-            v = settings.instance().value(
-                settings.UIStateSection,
-                settings.BookmarkEditorJobKey
+            v = common.settings.value(
+                common.UIStateSection,
+                common.BookmarkEditorJobKey
             )
         if not v:
             return
@@ -352,7 +351,7 @@ class JobListWidget(ui.ListWidget):
 
             size = QtCore.QSize(
                 0,
-                common.MARGIN() * 2
+                common.size(common.WidthMargin) * 2
             )
             item.setSizeHint(size)
             self.validate_item(item)
@@ -367,11 +366,11 @@ class JobListWidget(ui.ListWidget):
         pixmap = get_job_thumbnail(item.data(QtCore.Qt.UserRole))
         if pixmap.isNull():
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'icon', common.DARK_BG, common.ROW_HEIGHT() * 0.8)
+                'icon', common.color(common.BackgroundDarkColor), common.size(common.HeightRow) * 0.8)
             pixmap_selected = images.ImageCache.get_rsc_pixmap(
-                'icon', common.SELECTED_TEXT, common.ROW_HEIGHT() * 0.8)
+                'icon', common.color(common.TextSelectedColor), common.size(common.HeightRow) * 0.8)
             pixmap_disabled = images.ImageCache.get_rsc_pixmap(
-                'close', common.RED, common.ROW_HEIGHT() * 0.8)
+                'close', common.color(common.RedColor), common.size(common.HeightRow) * 0.8)
         else:
             pixmap_selected = pixmap
             pixmap_disabled = pixmap

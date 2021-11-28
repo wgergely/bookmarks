@@ -6,7 +6,7 @@ from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
 from .. import ui
-from .. import settings
+
 
 
 class FilterEditor(QtWidgets.QDialog):
@@ -32,7 +32,7 @@ class FilterEditor(QtWidgets.QDialog):
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
-        o = common.MARGIN() * 2
+        o = common.size(common.WidthMargin) * 2
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(0)
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
@@ -41,13 +41,13 @@ class FilterEditor(QtWidgets.QDialog):
             None,
             parent=self,
             padding=0,
-            height=common.ROW_HEIGHT()
+            height=common.size(common.HeightRow)
         )
 
         self.history_button = ui.ClickableIconButton(
             'filter',
-            (common.SECONDARY_TEXT, common.SECONDARY_TEXT),
-            common.MARGIN()
+            (common.color(common.TextSecondaryColor), common.color(common.TextSecondaryColor)),
+            common.size(common.WidthMargin)
         )
         self.history_button.setFocusPolicy(QtCore.Qt.NoFocus)
         row.layout().addWidget(self.history_button, 0)
@@ -69,7 +69,7 @@ class FilterEditor(QtWidgets.QDialog):
         proxy = self.parent().model()
         model = proxy.sourceModel()
 
-        v = model.get_local_setting(settings.TextFilterKeyHistory)
+        v = model.get_local_setting(common.TextFilterKeyHistory)
         v = v.split(';') if v else []
         v.reverse()
         v = [f for f in v if f]
@@ -111,18 +111,18 @@ class FilterEditor(QtWidgets.QDialog):
 
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
 
-        pen = QtGui.QPen(common.SEPARATOR)
-        pen.setWidthF(common.ROW_SEPARATOR())
+        pen = QtGui.QPen(common.color(common.SeparatorColor))
+        pen.setWidthF(common.size(common.HeightSeparator))
         painter.setPen(pen)
 
-        o = common.MARGIN()
-        i = common.INDICATOR_WIDTH()
-        r = common.ROW_HEIGHT()
+        o = common.size(common.WidthMargin)
+        i = common.size(common.WidthIndicator)
+        r = common.size(common.HeightRow)
 
         rect = self.rect().adjusted(o, o, -o, -o)
         rect.setHeight(r + (o * 2))
 
-        painter.setBrush(common.DARK_BG)
+        painter.setBrush(common.color(common.BackgroundDarkColor))
         painter.setOpacity(0.85)
         painter.drawRoundedRect(rect, i, i)
         painter.end()

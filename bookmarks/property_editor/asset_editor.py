@@ -52,7 +52,7 @@ SECTIONS = {
     0: {
         'name': 'Basic Settings',
         'icon': '',
-        'color': common.DARK_BG,
+        'color': common.color(common.BackgroundDarkColor),
         'groups': {
             0: {
                 0: {
@@ -129,7 +129,7 @@ SECTIONS = {
     2: {
         'name': 'Cut',
         'icon': 'todo',
-        'color': common.DARK_BG,
+        'color': common.color(common.BackgroundDarkColor),
         'groups': {
             0: {
                 0: {
@@ -162,7 +162,7 @@ SECTIONS = {
     3: {
         'name': 'Links',
         'icon': '',
-        'color': common.DARK_BG,
+        'color': common.color(common.BackgroundDarkColor),
         'groups': {
             0: {
                 0: {

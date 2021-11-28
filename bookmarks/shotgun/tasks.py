@@ -8,7 +8,7 @@ from PySide2 import QtWidgets, QtCore, QtGui
 
 from .. import common
 from .. import ui
-from .. import settings
+
 from .. import images
 from .. import contextmenu
 from . import shotgun
@@ -213,9 +213,9 @@ class TaskModel(QtCore.QAbstractItemModel):
     @common.debug
     def init_icons(self):
         pixmap1 = images.ImageCache.get_rsc_pixmap(
-            'sg', common.GREEN, common.MARGIN())
+            'sg', common.color(common.GreenColor), common.size(common.WidthMargin))
         pixmap2 = images.ImageCache.get_rsc_pixmap(
-            'check', common.SELECTED_TEXT, common.MARGIN())
+            'check', common.color(common.TextSelectedColor), common.size(common.WidthMargin))
         icon = QtGui.QIcon()
         icon.addPixmap(pixmap1, mode=QtGui.QIcon.Normal)
         icon.addPixmap(pixmap2, mode=QtGui.QIcon.Active)
@@ -223,7 +223,7 @@ class TaskModel(QtCore.QAbstractItemModel):
         self.task_icon = icon
 
         self.step_icon = QtGui.QIcon(images.ImageCache.get_rsc_pixmap(
-            'sg', common.BLUE, common.MARGIN()))
+            'sg', common.color(common.BlueColor), common.size(common.WidthMargin)))
 
     def entities_to_nodes(self):
         """Builds the internal node hierarchy base on the given entity data.
@@ -344,21 +344,21 @@ class TaskModel(QtCore.QAbstractItemModel):
             return ''
 
         if role == QtCore.Qt.ForegroundRole and column == 0:
-            return common.TEXT
+            return common.color(common.TextColor)
         if role == QtCore.Qt.ForegroundRole and column > 0:
-            return common.DISABLED_TEXT
+            return common.color(common.TextDisabledColor)
 
         if role == QtCore.Qt.FontRole and column == 0:
             font, _ = common.font_db.primary_font(
-                font_size=common.MEDIUM_FONT_SIZE())
+                font_size=common.size(common.FontSizeMedium))
             return font
         if role == QtCore.Qt.FontRole and column > 0:
             font, _ = common.font_db.secondary_font(
-                font_size=common.SMALL_FONT_SIZE())
+                font_size=common.size(common.FontSizeSmall))
             return font
 
         if role == QtCore.Qt.SizeHintRole:
-            return QtCore.QSize(0, common.ROW_HEIGHT())
+            return QtCore.QSize(0, common.size(common.HeightRow))
 
         if role == QtCore.Qt.DecorationRole and column == 0:
             return self.task_icon
@@ -371,10 +371,10 @@ class TaskModel(QtCore.QAbstractItemModel):
             return entity['name']
 
         if role == QtCore.Qt.ForegroundRole:
-            return common.BLUE
+            return common.color(common.BlueColor)
 
         if role == QtCore.Qt.SizeHintRole:
-            return QtCore.QSize(0, common.ROW_HEIGHT() * 0.66)
+            return QtCore.QSize(0, common.size(common.HeightRow) * 0.66)
 
         if role == QtCore.Qt.DecorationRole and entity['name'] != NoStepName:
             return self.step_icon
@@ -446,7 +446,7 @@ class TaskView(QtWidgets.QTreeView):
         self.setSortingEnabled(False)
         self.setItemsExpandable(True)
         self.setRootIsDecorated(True)
-        self.setIndentation(common.MARGIN())
+        self.setIndentation(common.size(common.WidthMargin))
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
 
         header = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, parent=self)
@@ -468,16 +468,16 @@ class TaskView(QtWidgets.QTreeView):
 
     def save_selection(self, current, previous):
         v = current.data(QtCore.Qt.DisplayRole)
-        settings.instance().setValue(
-            settings.PublishVersionSection,
-            settings.CurrentSelectionKey,
+        common.settings.setValue(
+            common.PublishVersionSection,
+            common.CurrentSelectionKey,
             v
         )
 
     def restore_selection(self):
-        v = settings.instance().value(
-            settings.PublishVersionSection,
-            settings.CurrentSelectionKey,
+        v = common.settings.value(
+            common.PublishVersionSection,
+            common.CurrentSelectionKey,
         )
 
         index = self.indexAt(QtCore.QPoint(0, 0))
@@ -495,7 +495,7 @@ class TaskView(QtWidgets.QTreeView):
         if not self.model():
             return
 
-        fixed = common.WIDTH() * 0.3
+        fixed = common.size(common.DefaultWidth) * 0.3
         w = (self.rect().width() - fixed) / \
             (self.model().columnCount(QtCore.QModelIndex()) - 1)
         for x in range(self.model().columnCount(QtCore.QModelIndex())):
@@ -559,7 +559,7 @@ class TaskPicker(QtWidgets.QDialog):
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
-        o = common.MARGIN()
+        o = common.size(common.WidthMargin)
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
 
@@ -597,7 +597,7 @@ class TaskPicker(QtWidgets.QDialog):
             lambda x: self.task_editor.model().invalidateFilter())
 
         self.user_editor.currentTextChanged.connect(
-            functools.partial(self.save_selection, self.user_editor, settings.CurrentUserKey))
+            functools.partial(self.save_selection, self.user_editor, common.CurrentUserKey))
 
         self.asset_editor.currentIndexChanged.connect(
             lambda: self.task_editor.model().set_asset_filter(self.asset_editor.currentData()))
@@ -605,7 +605,7 @@ class TaskPicker(QtWidgets.QDialog):
             lambda x: self.task_editor.model().invalidateFilter())
 
         self.asset_editor.currentTextChanged.connect(
-            functools.partial(self.save_selection, self.asset_editor, settings.CurrentAssetKey))
+            functools.partial(self.save_selection, self.asset_editor, common.CurrentAssetKey))
 
         self.task_editor.selectionModel().currentChanged.connect(
             self.task_editor.save_selection)
@@ -649,8 +649,8 @@ class TaskPicker(QtWidgets.QDialog):
 
         self._connect_signals()
 
-        self.restore_selection(self.user_editor, settings.CurrentUserKey)
-        self.restore_selection(self.asset_editor, settings.CurrentAssetKey)
+        self.restore_selection(self.user_editor, common.CurrentUserKey)
+        self.restore_selection(self.asset_editor, common.CurrentAssetKey)
 
     def init_users(self, entities):
         self.user_editor.clear()
@@ -711,15 +711,15 @@ class TaskPicker(QtWidgets.QDialog):
         super(TaskPicker, self).done(result)
 
     def save_selection(self, editor, k, v):
-        settings.instance().setValue(
-            settings.PublishVersionSection,
+        common.settings.setValue(
+            common.PublishVersionSection,
             k,
             v
         )
 
     def restore_selection(self, k, v):
-        v = settings.instance().value(
-            settings.PublishVersionSection,
+        v = common.settings.value(
+            common.PublishVersionSection,
             k,
         )
         if isinstance(v, str):
@@ -737,4 +737,4 @@ class TaskPicker(QtWidgets.QDialog):
         QtCore.QTimer.singleShot(100, self.init_items)
 
     def sizeHint(self):
-        return QtCore.QSize(common.WIDTH() * 1.5, common.HEIGHT() * 1.3)
+        return QtCore.QSize(common.size(common.DefaultWidth) * 1.5, common.size(common.DefaultHeight) * 1.3)

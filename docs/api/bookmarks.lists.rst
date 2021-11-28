@@ -7,7 +7,7 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   bookmarks.lists.alembic_preview
+   bookmarks.lists.alembic_widget
    bookmarks.lists.assets
    bookmarks.lists.base
    bookmarks.lists.bookmarks

@@ -12,7 +12,7 @@ from PySide2 import QtCore, QtGui, QtWidgets
 from .. import common
 from .. import ui
 from .. import database
-from .. import settings
+
 from .. import images
 from ..property_editor import base
 from ..asset_config import asset_config
@@ -64,7 +64,7 @@ SECTIONS = {
     0: {
         'name': 'Publish File',
         'icon': '',
-        'color': common.DARK_BG,
+        'color': common.color(common.BackgroundDarkColor),
         'groups': {
             0: {
                 0: {
@@ -372,16 +372,16 @@ class PublishWidget(base.BasePropertyEditor):
         v = self.file_editor.path()
 
         config = asset_config.get(
-            settings.active(settings.ServerKey),
-            settings.active(settings.JobKey),
-            settings.active(settings.RootKey)
+            common.active(common.ServerKey),
+            common.active(common.JobKey),
+            common.active(common.RootKey)
         )
         exts = config.get_extensions(asset_config.SceneFormat)
         return QtCore.QFileInfo(v).suffix().lower() in exts
 
     @property
     def server(self):
-        return settings.active(settings.ServerKey)
+        return common.active(common.ServerKey)
 
     @server.setter
     def server(self, v):
@@ -389,7 +389,7 @@ class PublishWidget(base.BasePropertyEditor):
 
     @property
     def job(self):
-        return settings.active(settings.JobKey)
+        return common.active(common.JobKey)
 
     @job.setter
     def job(self, v):
@@ -397,7 +397,7 @@ class PublishWidget(base.BasePropertyEditor):
 
     @property
     def root(self):
-        return settings.active(settings.RootKey)
+        return common.active(common.RootKey)
 
     @root.setter
     def root(self, v):
@@ -405,7 +405,7 @@ class PublishWidget(base.BasePropertyEditor):
 
     @property
     def asset(self):
-        return settings.active(settings.AssetKey)
+        return common.active(common.AssetKey)
 
     @asset.setter
     def asset(self, v):
@@ -413,7 +413,7 @@ class PublishWidget(base.BasePropertyEditor):
 
     @property
     def task(self):
-        return settings.active(settings.TaskKey)
+        return common.active(common.TaskKey)
 
     def db_source(self):
         p = self.file_editor.path()

@@ -18,10 +18,10 @@ from . import base as mbase
 from .. import log
 from .. import common
 from .. import ui
-from .. import settings
+
 from .. import main
 from .. import actions
-from .. import datacache
+
 from .. external import rv
 
 from .. import __path__ as package_path
@@ -31,9 +31,9 @@ from .. import __path__ as package_path
 @common.debug
 def set_workspace(*args, **kwargs):
     # Get preference
-    v = settings.instance().value(
-        settings.SettingsSection,
-        settings.WorkspaceSyncKey
+    v = common.settings.value(
+        common.SettingsSection,
+        common.WorkspaceSyncKey
     )
     # Set default value if none has been set previously
     v = QtCore.Qt.Unchecked if v is None else v
@@ -498,9 +498,9 @@ def save_warning(*args):
 
     """
     # Get preference
-    v = settings.instance().value(
-        settings.SettingsSection,
-        settings.SaveWarningsKey
+    v = common.settings.value(
+        common.SettingsSection,
+        common.SaveWarningsKey
     )
     # Set default value if none has been set previously
     v = QtCore.Qt.Unchecked if v is None else v
@@ -522,7 +522,7 @@ def save_warning(*args):
                 scene_file.fileName(),
                 workspace_info.path()),
             'If you didn\'t expect this message, is it possible the project was changed by {} from another instance of Maya?'.format(
-                common.PRODUCT)
+                common.product)
         ).open()
 
 
@@ -558,7 +558,7 @@ def update_active_item(*args):
     for t in (t1, t2):
         if t == common.SequenceItem:
             scene = common.proxy_path(scene)
-        ref = datacache.get_data_ref(p, k, t)
+        ref = common.get_data_ref(p, k, t)
         for idx in ref().keys():
             if not ref():
                 continue
@@ -853,7 +853,7 @@ def export_alembic(destination_path, outliner_set, startframe, endframe, step=1.
 
         # Our custom progress callback
         perframecallback = '"import {}.maya.widget as w;w.report_export_progress({}, #FRAME#, {}, {})"'.format(
-            common.PRODUCT.lower(), startframe, endframe, time.time())
+            common.product.lower(), startframe, endframe, time.time())
 
         # Let's build the export command
         jobArg = '{f} {fr} {s} {uv} {ws} {wv} {wuvs} {sn} {rt} {df} {pfc} {ro}'.format(
@@ -941,7 +941,7 @@ def capture_viewport(size=1.0):
     camera = cmds.modelPanel(panel, query=True, camera=True)
 
     # The the panel settings using mCapture.py and update it with our
-    # custom settings. See `mbase.CaptureOptions` for the hard-coded
+    # custom common. See `mbase.CaptureOptions` for the hard-coded
     # defaults we're using here
     from . import mCapture
     options = mCapture.parse_view(panel)
@@ -1024,9 +1024,9 @@ def capture_viewport(size=1.0):
 
 def push_capture(path):
     # Get preference
-    v = settings.instance().value(
-        settings.SettingsSection,
-        settings.PushCaptureToRVKey
+    v = common.settings.value(
+        common.SettingsSection,
+        common.PushCaptureToRVKey
     )
     # Set default value if none has been set previously
     v = QtCore.Qt.Unchecked if v is None else v
@@ -1040,9 +1040,9 @@ def push_capture(path):
 
 def reveal_capture(path):
     # Get preference
-    v = settings.instance().value(
-        settings.SettingsSection,
-        settings.RevealCaptureKey
+    v = common.settings.value(
+        common.SettingsSection,
+        common.RevealCaptureKey
     )
     # Set default value if none has been set previously
     v = QtCore.Qt.Unchecked if v is None else v
@@ -1059,9 +1059,9 @@ def publish_capture(workspace, capture_folder, scene_info, ext):
 
     """
     # Get preference
-    v = settings.instance().value(
-        settings.SettingsSection,
-        settings.PublishCaptureKey
+    v = common.settings.value(
+        common.SettingsSection,
+        common.PublishCaptureKey
     )
     # Set default value if none has been set previously
     v = QtCore.Qt.Unchecked if v is None else v
@@ -1157,7 +1157,7 @@ def remove_workspace_control(workspace_control):
         print('Couldn\'t remove workspace controls')
 
     sys.stdout.write(
-        '# {}: UI deleted.\n'.format(common.PRODUCT))
+        '# {}: UI deleted.\n'.format(common.product))
 
 
 def quit():

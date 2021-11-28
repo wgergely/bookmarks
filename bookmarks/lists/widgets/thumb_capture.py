@@ -128,7 +128,7 @@ class ScreenCapture(QtWidgets.QDialog):
         temp_image_path = '{}/{}.{}'.format(
             common.temp_path(),
             uuid.uuid1().hex,
-            images.THUMBNAIL_FORMAT
+            common.thumbnail_format
         )
         f = QtCore.QFileInfo(temp_image_path)
         if not f.dir().exists():
@@ -214,7 +214,7 @@ class ScreenCapture(QtWidgets.QDialog):
 
         pen = QtGui.QPen(
             QtGui.QColor(255, 255, 255, 64),
-            common.ROW_SEPARATOR(),
+            common.size(common.HeightSeparator),
             QtCore.Qt.DotLine
         )
         painter.setPen(pen)

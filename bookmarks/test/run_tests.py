@@ -28,7 +28,7 @@ if __name__ == '__main__':
         loader.loadTestsFromTestCase(bookmarks.test.test_main.Test),
         loader.loadTestsFromTestCase(bookmarks.test.test_bookmark_editor.Test),
         loader.loadTestsFromTestCase(bookmarks.test.test_actions.Test),
-        loader.loadTestsFromTestCase(bookmarks.test.test_session_lock.Test),
+        loader.loadTestsFromTestCase(bookmarks.test.test_common.Test),
         loader.loadTestsFromTestCase(bookmarks.test.test_actions.TestWidgetActions),
     )
     suite = unittest.TestSuite(cases)

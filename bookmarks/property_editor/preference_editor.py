@@ -6,7 +6,7 @@ import functools
 
 from PySide2 import QtWidgets, QtCore, QtGui
 
-from .. import settings
+
 from .. import common
 from .. import ui
 from .. import actions
@@ -42,10 +42,10 @@ class ScaleWidget(QtWidgets.QComboBox):
         self.init_data()
 
     def init_data(self):
-        size = QtCore.QSize(1, common.ROW_HEIGHT() * 0.8)
+        size = QtCore.QSize(1, common.size(common.HeightRow) * 0.8)
 
         self.blockSignals(True)
-        for n in common.SCALE_FACTORS:
+        for n in common.scale_factors:
             name = '{}%'.format(int(n * 100))
             self.addItem(name)
 
@@ -69,11 +69,11 @@ class AboutLabel(QtWidgets.QLabel):
         self.setAlignment(QtCore.Qt.AlignCenter)
         self.setStyleSheet(
             'background-color:{bg};border: {bd}px solid {bc};border-radius:{r}px;color:{c};padding: {r}px {r}px {r}px {r}px;'.format(
-                bg=common.rgb(common.DARK_BG),
-                bd=common.ROW_SEPARATOR(),
-                bc=common.rgb(common.SEPARATOR),
-                r=common.MARGIN() * 0.5,
-                c=common.rgb(common.DISABLED_TEXT)
+                bg=common.rgb(common.color(common.BackgroundDarkColor)),
+                bd=common.size(common.HeightSeparator),
+                bc=common.rgb(common.color(common.SeparatorColor)),
+                r=common.size(common.WidthMargin) * 0.5,
+                c=common.rgb(common.color(common.TextDisabledColor))
             )
         )
         self.init_data()
@@ -101,7 +101,7 @@ class AboutWidget(QtWidgets.QDialog):
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
-        o = common.MARGIN()
+        o = common.size(common.WidthMargin)
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
 
@@ -124,7 +124,7 @@ SECTIONS = {
             0: {
                 0: {
                     'name': 'Interface Scale',
-                    'key': settings.UIScaleKey,
+                    'key': common.UIScaleKey,
                     'validator': None,
                     'widget': ScaleWidget,
                     'placeholder': '',
@@ -132,7 +132,7 @@ SECTIONS = {
                 },
                 1: {
                     'name': 'Show Menu Icons',
-                    'key': settings.ShowMenuIconsKey,
+                    'key': common.ShowMenuIconsKey,
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Hide Menu Icons'),
                     'placeholder': 'Check to hide menu icons',
@@ -142,7 +142,7 @@ SECTIONS = {
             1: {
                 0: {
                     'name': 'Shotgun RV',
-                    'key': settings.RVKey,
+                    'key': common.RVKey,
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'Path to RV, eg. "C:/apps/rv.exe"',
@@ -152,7 +152,7 @@ SECTIONS = {
                 },
                 1: {
                     'name': 'FFMpeg',
-                    'key': settings.FFMpegKey,
+                    'key': common.FFMpegKey,
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'Path to FFMpeg, eg. "C:/apps/ffmpeg.exe"',
@@ -171,25 +171,25 @@ SECTIONS = {
             0: {
                 0: {
                     'name': 'Set Workspace',
-                    'key': settings.WorkspaceSyncKey,
+                    'key': common.WorkspaceSyncKey,
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
-                    'description': 'By default, {} always sets the Maya Workspace to the currently active asset item. Check here to disable this behaviour.'.format(common.PRODUCT),
+                    'description': 'By default, {} always sets the Maya Workspace to the currently active asset item. Check here to disable this behaviour.'.format(common.product),
                 },
             },
             1: {
                 0: {
                     'name': 'Warn Workspace',
-                    'key': settings.WorksapceWarningsKey,
+                    'key': common.WorksapceWarningsKey,
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
-                    'description': 'Disabled warnings when the\ncurrent Workspace is changed by {}.'.format(common.PRODUCT),
+                    'description': 'Disabled warnings when the\ncurrent Workspace is changed by {}.'.format(common.product),
                 },
                 1: {
                     'name': 'Warning on Save',
-                    'key': settings.SaveWarningsKey,
+                    'key': common.SaveWarningsKey,
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
@@ -199,7 +199,7 @@ SECTIONS = {
             2: {
                 0: {
                     'name': 'Push Capture',
-                    'key': settings.PushCaptureToRVKey,
+                    'key': common.PushCaptureToRVKey,
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
@@ -207,7 +207,7 @@ SECTIONS = {
                 },
                 1: {
                     'name': 'Reveal Capture',
-                    'key': settings.RevealCaptureKey,
+                    'key': common.RevealCaptureKey,
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
@@ -215,7 +215,7 @@ SECTIONS = {
                 },
                 2: {
                     'name': 'Publish Capture',
-                    'key': settings.PublishCaptureKey,
+                    'key': common.PublishCaptureKey,
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
@@ -227,7 +227,7 @@ SECTIONS = {
     2: {
         'name': 'About',
         'icon': None,
-        'color': common.SECONDARY_TEXT,
+        'color': common.color(common.TextSecondaryColor),
         'groups': {
             0: {
                 0: {
@@ -292,8 +292,8 @@ class PreferenceEditor(base.BasePropertyEditor):
                             continue
 
                         editor = getattr(self, row['key'] + '_editor')
-                        v = settings.instance().value(
-                            settings.SettingsSection,
+                        v = common.settings.value(
+                            common.SettingsSection,
                             row['key'],
                         )
                         self.current_data[row['key']] = v
@@ -319,7 +319,7 @@ class PreferenceEditor(base.BasePropertyEditor):
     @common.debug
     def save_changes(self, *args, **kwargs):
         for k, v in self.changed_data.items():
-            settings.instance().setValue(settings.SettingsSection, k, v)
+            common.settings.setValue(common.SettingsSection, k, v)
         return True
 
     @common.error
@@ -340,13 +340,13 @@ class PreferenceEditor(base.BasePropertyEditor):
     @common.debug
     @QtCore.Slot()
     def RVPath_button_clicked(self, *args, **kwargs):
-        self._pick_file(settings.RVKey)
+        self._pick_file(common.RVKey)
 
     @common.error
     @common.debug
     @QtCore.Slot()
     def RVPath_button2_clicked(self, *args, **kwargs):
-        editor = getattr(self, settings.RVKey + '_editor')
+        editor = getattr(self, common.RVKey + '_editor')
         if not editor.text():
             return
         actions.reveal(editor.text())
@@ -355,13 +355,13 @@ class PreferenceEditor(base.BasePropertyEditor):
     @common.debug
     @QtCore.Slot()
     def FFMpegPath_button_clicked(self, *args, **kwargs):
-        self._pick_file(settings.FFMpegKey)
+        self._pick_file(common.FFMpegKey)
 
     @common.error
     @common.debug
     @QtCore.Slot()
     def FFMpegPath_button2_clicked(self, *args, **kwargs):
-        editor = getattr(self, settings.FFMpegKey + '_editor')
+        editor = getattr(self, common.FFMpegKey + '_editor')
         if not editor.text():
             return
         actions.reveal(editor.text())
@@ -382,4 +382,4 @@ class PreferenceEditor(base.BasePropertyEditor):
         editor.setText(path)
 
     def sizeHint(self):
-        return QtCore.QSize(common.WIDTH(), common.HEIGHT() * 1.5)
+        return QtCore.QSize(common.size(common.DefaultWidth), common.size(common.DefaultHeight) * 1.5)

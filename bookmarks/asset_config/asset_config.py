@@ -442,7 +442,7 @@ class AssetConfig(QtCore.QObject):
                         return _v['description']
         return ''
 
-    def expand_tokens(self, s, user=getpass.getuser(), version='v001', host=socket.gethostname(), task='anim', ext=images.THUMBNAIL_FORMAT, prefix=None, **_kwargs):
+    def expand_tokens(self, s, user=getpass.getuser(), version='v001', host=socket.gethostname(), task='anim', ext=common.thumbnail_format, prefix=None, **_kwargs):
         """Expands all valid tokens in the given string, based on the current
         asset config values.
 

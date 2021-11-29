@@ -250,10 +250,9 @@ class UserSettings(QtCore.QSettings):
         }
 
     def set_servers(self, v):
-        common.check_type(v, (tuple, list))
-        servers = sorted(set(v))
-        common.servers = servers
-        self.setValue(CurrentUserPicksSection, ServersKey, servers)
+        common.check_type(v, dict)
+        common.servers = v    
+        self.setValue(CurrentUserPicksSection, ServersKey, v)
 
     def set_bookmarks(self, v):
         common.check_type(v, dict)

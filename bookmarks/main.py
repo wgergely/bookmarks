@@ -10,18 +10,19 @@ from PySide2 import QtWidgets, QtGui, QtCore
 from . import common
 from . import images
 
-from .threads import threads
+from . threads import threads
 from . import topbar
 from . import shortcuts
 from . import actions
 from . import statusbar
 
-from .lists import base
-from .lists import assets
-from .lists import bookmarks
-from .lists import favourites
-from .lists import files
-from .lists import tasks
+from . lists import basemodel
+from . lists import basewidget
+from . lists import assets
+from . lists import bookmarks
+from . lists import favourites
+from . lists import files
+from . lists import tasks
 
 
 _instance = None
@@ -93,7 +94,7 @@ class MainWidget(QtWidgets.QWidget):
             QtWidgets.QSizePolicy.Minimum
         )
 
-        self.stackedwidget = base.TabsWidget(parent=self)
+        self.stackedwidget = basewidget.TabsWidget(parent=self)
         self.bookmarkswidget = bookmarks.BookmarksWidget(parent=self)
         self.assetswidget = assets.AssetsWidget(parent=self)
         self.fileswidget = files.FilesWidget(parent=self)
@@ -246,7 +247,7 @@ class MainWidget(QtWidgets.QWidget):
 
         # Let's load our favourite items
         common.signals.favouritesChanged.emit()
-        
+
         # We're done, let other componenets know, we have finished initializing
         # the base widget
         self._initialized = True
@@ -306,7 +307,7 @@ class MainWidget(QtWidgets.QWidget):
         connect(shortcuts.CopyProperties, actions.copy_properties)
         connect(shortcuts.PasteProperties, actions.paste_properties)
 
-        if common.STANDALONE:
+        if common.init_mode == common.StandaloneMode:
             connect(shortcuts.Quit, actions.quit)
             connect(shortcuts.Minimize, actions.toggle_minimized)
             connect(shortcuts.Maximize, actions.toggle_maximized)

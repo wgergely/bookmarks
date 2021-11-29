@@ -64,7 +64,7 @@ class AddServerEditor(QtWidgets.QDialog):
         for info in QtCore.QStorageInfo.mountedVolumes():
             if info.isValid():
                 items.append(info.rootPath())
-        items += common.SERVERS
+        items += common.servers.values()
 
         completer = QtWidgets.QCompleter(items, parent=self)
         completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
@@ -101,7 +101,7 @@ class AddServerEditor(QtWidgets.QDialog):
         v = self.text()
         file_info = QtCore.QFileInfo(v)
 
-        if not file_info.exists() or not file_info.isReadable() or v in common.SERVERS:
+        if not file_info.exists() or not file_info.isReadable() or v in common.servers:
             # Indicate the selected item is invalid and keep the editor open
             self.editor.setStyleSheet(
                 'color: {0}; border-color: {0}'.format(common.rgb(common.color(common.RedColor))))
@@ -322,7 +322,7 @@ class ServerListWidget(ui.ListWidget):
         self.selectionModel().blockSignals(True)
 
         self.clear()
-        for server in common.SERVERS:
+        for server in common.servers:
             item = QtWidgets.QListWidgetItem(server)
             size = QtCore.QSize(
                 0,

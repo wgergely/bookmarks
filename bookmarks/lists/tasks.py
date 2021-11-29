@@ -21,7 +21,8 @@ from .. import images
 from ..threads import threads
 from ..asset_config import asset_config
 
-from . import base
+from . import basemodel
+from . import basewidget
 from . import delegate
 
 
@@ -176,7 +177,7 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
         return index.data(QtCore.Qt.SizeHintRole)
 
 
-class TaskFolderModel(base.BaseModel):
+class TaskFolderModel(basemodel.BaseModel):
     """This model holds all the necessary data needed to display items to
     select for selecting the asset subfolders and/or bookmarks and assets.
 
@@ -238,7 +239,7 @@ class TaskFolderModel(base.BaseModel):
     def data_type(self):
         return common.FileItem
 
-    @base.initdata
+    @basemodel.initdata
     def __initdata__(self):
         """Bookmarks and assets are static. But files will be any number of """
         self.reset_monitor()
@@ -341,7 +342,7 @@ class TaskFolderModel(base.BaseModel):
         return common.TaskKey
 
 
-class TaskFolderWidget(base.ThreadedBaseWidget):
+class TaskFolderWidget(basewidget.ThreadedBaseWidget):
     """The view responsonsible for displaying the available data-keys."""
     SourceModel = TaskFolderModel
     Delegate = TaskFolderWidgetDelegate

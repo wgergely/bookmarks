@@ -6,9 +6,9 @@ import os
 import _scandir
 from PySide2 import QtCore, QtWidgets, QtGui
 
-from .. import common
-from .. import ui
-from .. import images
+from ... import common
+from ... import ui
+from ... import images
 
 instance = None
 
@@ -259,7 +259,7 @@ class ThumbnailLibraryWidget(QtWidgets.QDialog):
     def save_image(self, image):
         if not all((self.server, self.job, self.root, self.source)):
             return
-            
+
         images.load_thumbnail_from_image(
             self.server,
             self.job,

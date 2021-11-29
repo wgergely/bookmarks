@@ -17,7 +17,8 @@ from .. import actions
 
 from ..asset_config import asset_config
 
-from . import base
+from . import basemodel
+from . import basewidget
 from . import delegate
 
 
@@ -245,7 +246,7 @@ class FilesWidgetContextMenu(contextmenu.BaseContextMenu):
         self.quit_menu()
 
 
-class FilesModel(base.BaseModel):
+class FilesModel(basemodel.BaseModel):
     """Model used to list files in an asset.
 
     The root of the asset folder is never read, instead, each asset is expected
@@ -340,7 +341,7 @@ class FilesModel(base.BaseModel):
         self.set_refresh_needed(True)
 
     @common.status_bar_message('Loading Files...')
-    @base.initdata
+    @basemodel.initdata
     def __initdata__(self):
         """The method is responsible for getting the bare-bones file items by
         running a file-iterator stemming from ``self.parent_path()``.
@@ -450,7 +451,7 @@ class FilesModel(base.BaseModel):
                 log.error('"' + filename + '" named incorrectly. Skipping.')
                 continue
 
-            flags = base.DEFAULT_ITEM_FLAGS
+            flags = basemodel.DEFAULT_ITEM_FLAGS
 
             if seq:
                 seqpath = seq.group(1) + common.SEQPROXY + \
@@ -507,7 +508,7 @@ class FilesModel(base.BaseModel):
                 # of seqeunces we add it here
                 if seqpath not in SEQUENCE_DATA:  # ... and create it if it doesn't exist
                     seqname = seqpath.split('/')[-1]
-                    flags = base.DEFAULT_ITEM_FLAGS
+                    flags = basemodel.DEFAULT_ITEM_FLAGS
 
                     if seqpath in common.favourites:
                         flags = flags | common.MarkedAsFavourite
@@ -581,7 +582,7 @@ class FilesModel(base.BaseModel):
                 v[common.TypeRole] = common.FileItem
                 v[common.SortByLastModifiedRole] = 0
 
-                flags = base.DEFAULT_ITEM_FLAGS
+                flags = basemodel.DEFAULT_ITEM_FLAGS
                 if filepath in common.favourites:
                     flags = flags | common.MarkedAsFavourite
 
@@ -808,7 +809,7 @@ class FilesModel(base.BaseModel):
         return mime
 
 
-class FilesWidget(base.ThreadedBaseWidget):
+class FilesWidget(basewidget.ThreadedBaseWidget):
     """The view used to display the contents of a ``FilesModel`` instance.
 
     """

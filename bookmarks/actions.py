@@ -38,9 +38,8 @@ def add_server(v):
         if bookmark[common.ServerKey] == v:
             return
 
-    servers = tuple(common.SERVERS) + (v,)
-    common.settings.set_servers(servers)
-
+    common.servers[v] = v
+    common.settings.set_servers(common.servers)
     common.signals.serversChanged.emit()
 
 
@@ -56,11 +55,10 @@ def remove_server(v):
         if bookmark[common.ServerKey] == v:
             return
 
-    servers = list(common.SERVERS)
-    if v in servers:
-        servers.remove(v)
-    common.settings.set_servers(servers)
+    if v in common.servers:
+        del common.servers[v]
 
+    common.settings.set_servers(common.servers)
     common.signals.serversChanged.emit()
 
 
@@ -715,7 +713,7 @@ def show_slack():
 @common.debug
 def quit():
     common.quit()
-    if common.get_init_mode() == common.StandaloneMode:
+    if common.init_mode == common.StandaloneMode:
         QtWidgets.QApplication.instance().quit()
 
 
@@ -802,7 +800,7 @@ def toggle_minimized():
 @common.error
 @common.debug
 def toggle_stays_on_top():
-    if common.get_init_mode() == common.EmbeddedMode:
+    if common.init_mode == common.EmbeddedMode:
         return
 
     from . import standalone
@@ -825,7 +823,7 @@ def toggle_stays_on_top():
 @common.error
 @common.debug
 def toggle_frameless():
-    if not common.STANDALONE:
+    if common.init_mode == common.EmbeddedMode:
         return
 
     from . import standalone
@@ -1401,11 +1399,11 @@ def paste_asset_properties(index):
 def toggle_session_mode():
     # Toggle the active mode
     if common.session_mode == common.SyncronisedActivePaths:
-        common.session_mode = common.PrivateActivePaths
+        common.set_session_mode(common.PrivateActivePaths)
     elif common.session_mode == common.PrivateActivePaths:
-        common.session_mode = common.SyncronisedActivePaths
+        common.set_session_mode(common.SyncronisedActivePaths)
     else:
-        common.session_mode = common.PrivateActivePaths
+        common.set_session_mode(common.PrivateActivePaths)
 
     # Write new mode to the lock file
     common.write_current_mode_to_lock(os.getpid())

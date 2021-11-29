@@ -48,7 +48,7 @@ def status_bar_message(message):
             from .. import log
             from . import signals
 
-            if common.DEBUG:
+            if common.debug_on:
                 log.debug(message)
             signals.showStatusBarMessage.emit(message)
             result = function(*args, **kwargs)
@@ -136,6 +136,7 @@ def set_custom_stylesheet(widget):
         os.path.abspath(
             os.path.join(
                 __file__,
+                os.pardir,
                 os.pardir,
                 'rsc',
                 'stylesheet.qss'

@@ -6,6 +6,7 @@ It defines :class:`.BookmarksApp`, Bookmark's custom QApplication, and
 :class:`.BookmarksAppWindow` which is the main window of the application.
 
 """
+import os
 import ctypes
 
 from PySide2 import QtWidgets, QtGui, QtCore
@@ -15,7 +16,6 @@ from . import ui
 from . import contextmenu
 from . import main
 
-from . import images
 from . import actions
 from . import __version__
 
@@ -26,15 +26,21 @@ _tray_instance = None
 MODEL_ID = f'{common.product}App'
 
 
+def instance():
+    return _instance
+
+
+def init_window():
+    global _instance
+    if not _instance:
+        _instance = BookmarksAppWindow()
+
+
 @QtCore.Slot()
 def show():
     """Shows the main window.
 
     """
-    global _instance
-    if not _instance:
-        _instance = BookmarksAppWindow()
-
     state = common.settings.value(
         common.UIStateSection,
         common.WindowStateKey,
@@ -52,10 +58,6 @@ def show():
         _instance.showFullScreen()
     else:
         _instance.showNormal()
-
-
-def instance():
-    return _instance
 
 
 def _set_application_properties(app=None):
@@ -109,8 +111,8 @@ class Tray(QtWidgets.QSystemTrayIcon):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        pixmap = images.ImageCache.get_rsc_pixmap(
-            'icon_bw', None, common.thumbnail_size)
+        p = os.path.normpath(f'{__file__}/../rsc/gui/icon.png')
+        pixmap = QtGui.QPixmap(p)
         icon = QtGui.QIcon(pixmap)
         self.setIcon(icon)
 
@@ -642,8 +644,6 @@ class BookmarksApp(QtWidgets.QApplication):
         _set_application_properties()
         super().__init__(args)
         _set_application_properties(app=self)
-        common.initialize(True)
-
         self.setApplicationVersion(__version__)
         self.setApplicationName(common.product)
         self.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, bool=True)
@@ -654,8 +654,8 @@ class BookmarksApp(QtWidgets.QApplication):
 
     def _set_window_icon(self):
         """Set the application icon."""
-        pixmap = images.ImageCache.get_rsc_pixmap(
-            'icon', None, common.size(common.HeightRow) * 7.0)
+        p = os.path.normpath(f'{__file__}/../rsc/gui/icon.png')
+        pixmap = QtGui.QPixmap(p)
         icon = QtGui.QIcon(pixmap)
         self.setWindowIcon(icon)
 

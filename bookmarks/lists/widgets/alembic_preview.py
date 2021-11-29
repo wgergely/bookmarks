@@ -16,9 +16,9 @@ import alembic
 
 from PySide2 import QtCore, QtWidgets, QtGui
 
-from .. import common
-from .. import ui
-from .. import images
+from ... import common
+from ... import ui
+from ... import images
 
 
 instance = None

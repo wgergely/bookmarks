@@ -4,8 +4,8 @@
 """
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from .. import common
-from .. import ui
+from ... import common
+from ... import ui
 
 
 

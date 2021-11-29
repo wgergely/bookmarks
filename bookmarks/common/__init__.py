@@ -7,8 +7,7 @@ import collections
 from . core import *
 from . font import *
 from . settings import *
-from . initmode import *
-from . syncmode import *
+from . sessionmode import *
 from . signals import *
 from . sessionlock import *
 from . ui import *
@@ -20,12 +19,12 @@ from . sequence import *
 
 
 debug_on = False       # Print debug messages
-typecheck_on = False   # Check types
-sort_by_basename = False # Sort models by a item basename instead of full name
+typecheck_on = True   # Check types
 init_mode = None    # App startup mode
 session_mode = None # Session mode can be private or syncronised
 ui_scale_factor = 1.0      # Global ui scaling factor
 dpi = 72.0
+sort_by_basename = False # Sort models by a item basename instead of full name
 stylesheet = None
 signals = None
 settings = None
@@ -46,7 +45,7 @@ font_cache = {
 
 ACTIVE = collections.OrderedDict()
 
-MODEL_DATA = DataDict()
+itemdata = DataDict()
 
 PATH_CACHE = {}
 RECTANGLE_CACHE = {}
@@ -93,3 +92,7 @@ BlueColor = None
 RedColor = None
 GreenColor = None
 OpaqueColor = None
+
+
+# Widget instance bindings
+WIDGET_INSTANCE = {}

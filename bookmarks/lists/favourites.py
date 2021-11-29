@@ -17,7 +17,8 @@ from .. import actions
 
 from . import delegate
 from . import files
-from . import base
+from . import basemodel
+from . import basewidget
 
 
 def _check_sequence(path):
@@ -86,7 +87,7 @@ class FavouritesModel(files.FilesModel):
 
     @common.error
     @common.status_bar_message('Loading My Files...')
-    @base.initdata
+    @basemodel.initdata
     def __initdata__(self):
         p = self.parent_path()
         k = self.task()
@@ -149,7 +150,7 @@ class FavouritesModel(files.FilesModel):
                 log.error('"' + filename + '" named incorrectly. Skipping.')
                 continue
 
-            flags = base.DEFAULT_ITEM_FLAGS
+            flags = basemodel.DEFAULT_ITEM_FLAGS
 
             if seq:
                 seqpath = seq.group(1) + common.SEQPROXY + \
@@ -204,7 +205,7 @@ class FavouritesModel(files.FilesModel):
                 # of seqeunces we add it here
                 if seqpath not in SEQUENCE_DATA:  # ... and create it if it doesn't exist
                     seqname = seqpath.split('/')[-1]
-                    flags = base.DEFAULT_ITEM_FLAGS
+                    flags = basemodel.DEFAULT_ITEM_FLAGS
 
                     if seqpath in common.favourites:
                         flags = flags | common.MarkedAsFavourite
@@ -278,7 +279,7 @@ class FavouritesModel(files.FilesModel):
                 v[common.TypeRole] = common.FileItem
                 v[common.SortByLastModifiedRole] = 0
 
-                flags = base.DEFAULT_ITEM_FLAGS
+                flags = basemodel.DEFAULT_ITEM_FLAGS
                 if filepath in common.favourites:
                     flags = flags | common.MarkedAsFavourite
 

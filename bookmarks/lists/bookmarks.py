@@ -16,7 +16,7 @@ from . import basewidget
 from . import delegate
 
 
-DEFAULT_ITEM_FLAGS = base.DEFAULT_ITEM_FLAGS | QtCore.Qt.ItemIsDropEnabled
+DEFAULT_ITEM_FLAGS = basemodel.DEFAULT_ITEM_FLAGS | QtCore.Qt.ItemIsDropEnabled
 
 
 class BookmarksWidgetContextMenu(contextmenu.BaseContextMenu):
@@ -75,7 +75,7 @@ class BookmarksWidgetContextMenu(contextmenu.BaseContextMenu):
         self.quit_menu()
 
 
-class BookmarksModel(base.BaseModel):
+class BookmarksModel(basemodel.BaseModel):
     """The model used store the data necessary to display bookmarks.
 
     """
@@ -100,7 +100,7 @@ class BookmarksModel(base.BaseModel):
         common.signals.bookmarkRemoved.connect(self.endResetModel)
 
     @common.status_bar_message('Loading Bookmarks...')
-    @base.initdata
+    @basemodel.initdata
     @common.error
     @common.debug
     def __initdata__(self):
@@ -232,7 +232,7 @@ class BookmarksModel(base.BaseModel):
         return common.BookmarksKey
 
 
-class BookmarksWidget(base.ThreadedBaseWidget):
+class BookmarksWidget(basewidget.ThreadedBaseWidget):
     """The view used to display the contents of a ``BookmarksModel`` instance."""
     SourceModel = BookmarksModel
     Delegate = delegate.BookmarksWidgetDelegate
@@ -241,7 +241,7 @@ class BookmarksWidget(base.ThreadedBaseWidget):
     queues = (threads.BookmarkInfo, threads.BookmarkThumbnail)
 
     def __init__(self, parent=None):
-        super(BookmarksWidget, self).__init__(
+        super().__init__(
             icon='bookmark',
             parent=parent
         )
@@ -250,7 +250,7 @@ class BookmarksWidget(base.ThreadedBaseWidget):
         if not isinstance(event, QtGui.QMouseEvent):
             return
 
-        super(BookmarksWidget, self).mouseReleaseEvent(event)
+        super().mouseReleaseEvent(event)
 
         cursor_position = self.mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)

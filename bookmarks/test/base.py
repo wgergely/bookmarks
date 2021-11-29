@@ -10,7 +10,7 @@ import random
 from PySide2 import QtCore, QtGui, QtWidgets
 
 
-PRODUCT = 'bookmarks_test_{}'.format(uuid.uuid1().hex)
+PRODUCT = f'bookmarks_test_{uuid.uuid1().hex}'
 PRODUCT_ROOT = '{}/{}'.format(
     QtCore.QStandardPaths.writableLocation(
         QtCore.QStandardPaths.GenericDataLocation),
@@ -46,6 +46,8 @@ class BaseCase(unittest.TestCase):
         super(BaseCase, cls).setUpClass()
 
         import bookmarks.common as common
+        common.initialize(common.StandaloneMode)
+
         # Set mock product name
         common.product = PRODUCT
 
@@ -60,37 +62,7 @@ class BaseCase(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         super(BaseCase, cls).tearDownClass()
-        from .. import common
-        common.quit()
-
-        # Delete all test folders
         try:
             shutil.rmtree(PRODUCT_ROOT)
         except:
             pass
-
-
-class NonInitializedAppTest(BaseCase):
-    @classmethod
-    def setUpClass(cls):
-        super(NonInitializedAppTest, cls).setUpClass()
-
-        if not QtWidgets.QApplication.instance():
-            QtWidgets.QApplication([])
-
-
-class BaseApplicationTest(NonInitializedAppTest):
-    @classmethod
-    def setUpClass(cls):
-        super(BaseApplicationTest, cls).setUpClass()
-
-        from .. import common
-        common.init_signals()
-        common.init_standalone()
-        common.init_dirs_dir()
-        common.init_settings()
-        common.init_ui_scale()
-        common.init_resources()
-        common.init_session_lock()
-        common.init_font_db()
-        common.init_pixel_ratio()

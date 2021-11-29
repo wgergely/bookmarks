@@ -45,7 +45,7 @@ class ScaleWidget(QtWidgets.QComboBox):
         size = QtCore.QSize(1, common.size(common.HeightRow) * 0.8)
 
         self.blockSignals(True)
-        for n in common.scale_factors:
+        for n in common.ui_scale_factors:
             name = '{}%'.format(int(n * 100))
             self.addItem(name)
 
@@ -271,7 +271,7 @@ class PreferenceEditor(base.BasePropertyEditor):
         self.setWindowTitle('Preferences')
 
     def toggle_debug(self, state):
-        common.DEBUG = self.debug_editor.isChecked()
+        common.debug_on = self.debug_editor.isChecked()
 
     @common.error
     @common.debug

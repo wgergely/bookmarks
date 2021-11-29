@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
-"""The delegate used to visualise bookmark, asset and file items derived from `base.BaseListWidget`.
+"""The delegate used to visualise bookmark, asset and file items derived from
+`base.BaseListWidget`.
 
-The delegate is responsible for painting the thumbnails, names, and clickable buttons
-of the list items. The base list widget has a number of custom features, such as,
-clickable in-line-buttons that the deleagate is aware of.
+The delegate is responsible for painting the thumbnails, names, and clickable
+buttons of the list items. The base list widget has a number of custom features,
+such as, clickable in-line-buttons that the deleagate is aware of.
 
 We're painting text using `QPainterPaths` for a high-quality, aliased display
-but the approach comes with a huge performance hit and therefore any QPainterPath
-paint operation is backed by a cache (see `PATH_CACHE`).
+but the approach comes with a huge performance hit and therefore any
+QPainterPath paint operation is backed by a cache (see `common.PATH_CACHE`).
 
 """
 import re
-import time
 import functools
 from PySide2 import QtWidgets, QtGui, QtCore
 
@@ -20,11 +20,11 @@ from .. import images
 
 
 regex_remove_version = re.compile(
-    r'(.*)(v)([\{}0-9\-\{}]+.*)'.format(common.SEQSTART, common.SEQEND),
+    rf'(.*)(v)([\{common.SEQSTART}0-9\-\{common.SEQEND}]+.*)',
     flags=re.IGNORECASE | re.UNICODE
 )
 regex_remove_seq_marker = re.compile(
-    r'[\{}\{}]*'.format(common.SEQSTART, common.SEQEND),
+    rf'[\{common.SEQSTART}\{common.SEQEND}]*',
     flags=re.IGNORECASE | re.UNICODE
 )
 
@@ -47,42 +47,15 @@ PropertiesRect = 11
 InlineBackgroundRect = 12
 
 
-
-def reset():
-    global PATH_CACHE
-    PATH_CACHE = {}
-    global RECTANGLE_CACHE
-    RECTANGLE_CACHE = {}
-    global TEXT_SEGMENT_CACHE
-    TEXT_SEGMENT_CACHE = {}
-
-    global DESCRIPTION_RECTS
-    DESCRIPTION_RECTS = {}
-    global SUBDIR_RECTS
-    SUBDIR_RECTS = {}
-    global SUBDIR_BG_RECTS
-    SUBDIR_BG_RECTS = {}
-    global SUBDIR_BG_BRUSHES
-    SUBDIR_BG_BRUSHES = {}
-
-
 def paintmethod(func):
     """Decorator used to manage painter states."""
     @functools.wraps(func)
     def func_wrapper(self, *args, **kwargs):
-        # t1 = time.time()
-
         args[1].save()
         res = func(self, *args, **kwargs)
         args[1].restore()
-
-        # t2 = time.time()
-        # delta = t2-t1
-        # if delta > 0.0001:
-        #     print(f'{func.__name__} = {t2-t1}')
         return res
     return func_wrapper
-
 
 
 def subdir_rects_key(index, option):
@@ -95,12 +68,12 @@ def subdir_bg_rect_key(index, option):
 
 def get_painter_path(x, y, font, text):
     """Creates, populates and caches a QPainterPath instance."""
-    k = '{}{}{}{}'.format(x, y, font, text)
-    if k not in PATH_CACHE:
+    k = f'{x}{y}{font}{text}'
+    if k not in common.PATH_CACHE:
         path = QtGui.QPainterPath()
         path.addText(x, y, font, text)
-        PATH_CACHE[k] = path
-    return PATH_CACHE[k]
+        common.PATH_CACHE[k] = path
+    return common.PATH_CACHE[k]
 
 
 null_rect = QtCore.QRect()
@@ -118,9 +91,9 @@ def get_rectangles(rectangle, count):
         dict:  Dictionary containing `count` number of rectangles.
 
     """
-    k = '{}{}'.format(rectangle, count)
-    if k in RECTANGLE_CACHE:
-        return RECTANGLE_CACHE[k]
+    k = f'{rectangle}{count}'
+    if k in common.RECTANGLE_CACHE:
+        return common.RECTANGLE_CACHE[k]
 
     def adjusted():
         return rectangle.adjusted(0, 0, 0, -common.size(common.HeightSeparator))
@@ -140,13 +113,15 @@ def get_rectangles(rectangle, count):
     inline_icon_rect = adjusted()
     spacing = common.size(common.WidthIndicator) * 2
     center = inline_icon_rect.center()
-    size = QtCore.QSize(common.size(common.WidthMargin), common.size(common.WidthMargin))
+    size = QtCore.QSize(common.size(common.WidthMargin),
+                        common.size(common.WidthMargin))
     inline_icon_rect.setSize(size)
     inline_icon_rect.moveCenter(center)
     inline_icon_rect.moveRight(rectangle.right() - spacing)
 
     inline_background_rect = QtCore.QRect(background_rect)
-    inline_background_rect.setLeft(inline_background_rect.right() - ((common.size(common.WidthMargin) + (common.size(common.WidthIndicator) * 2)) * count + common.size(common.WidthMargin)))
+    inline_background_rect.setLeft(inline_background_rect.right() - ((common.size(common.WidthMargin) + (
+        common.size(common.WidthIndicator) * 2)) * count + common.size(common.WidthMargin)))
 
     offset = 0
     for _ in range(count):
@@ -159,7 +134,7 @@ def get_rectangles(rectangle, count):
     data_rect.setLeft(thumbnail_rect.right() + spacing)
     data_rect.setRight(rectangle.right() + offset)
 
-    RECTANGLE_CACHE[k] = {
+    common.RECTANGLE_CACHE[k] = {
         BackgroundRect: background_rect,
         IndicatorRect: indicator_rect,
         ThumbnailRect: thumbnail_rect,
@@ -172,7 +147,7 @@ def get_rectangles(rectangle, count):
         InlineBackgroundRect: inline_background_rect if count else null_rect,
         DataRect: data_rect
     }
-    return RECTANGLE_CACHE[k]
+    return common.RECTANGLE_CACHE[k]
 
 
 def draw_segments(it, font, metrics, offset, *args):
@@ -180,7 +155,8 @@ def draw_segments(it, font, metrics, offset, *args):
     x = 0
 
     rect = QtCore.QRect(rectangles[DataRect])
-    rect.setRight(rectangles[DataRect].right() - common.size(common.WidthMargin) * 1.5)
+    rect.setRight(rectangles[DataRect].right() -
+                  common.size(common.WidthMargin) * 1.5)
 
     o = 0.9 if selected else 0.8
     o = 1.0 if hover else o
@@ -237,11 +213,11 @@ def draw_subdirs(bg_rect, clickable_rectangles, filter_text, text_edge, *args):
     control_modifier = modifiers & QtCore.Qt.ControlModifier
 
     k = subdir_rects_key(index, option)
-    if k not in SUBDIR_RECTS:
+    if k not in common.SUBDIR_RECTS:
         return
 
     n = -1
-    for rect, text in SUBDIR_RECTS[k]:
+    for rect, text in common.SUBDIR_RECTS[k]:
         n += 1
         # Move the rectangle in-place
         rect = QtCore.QRect(rect)
@@ -310,27 +286,27 @@ def draw_subdir_background(text_edge, *args):
     rectangles, painter, option, index, selected, _, active, _, _, hover, font, metrics, cursor_position = args
 
     k = subdir_rects_key(index, option)
-    if k not in SUBDIR_RECTS:
+    if k not in common.SUBDIR_RECTS:
         return QtCore.QRect()
 
     _k = subdir_bg_rect_key(index, option)
 
     # Calculate and cache the subdir retangles background rectangle
-    if SUBDIR_RECTS[k] and _k in SUBDIR_BG_RECTS:
-        bg_rect = SUBDIR_BG_RECTS[_k]
-    elif SUBDIR_RECTS[k] and _k not in SUBDIR_BG_RECTS:
-        left = min([f[0].left() for f in SUBDIR_RECTS[k]])
-        right = max([f[0].right() for f in SUBDIR_RECTS[k]])
-        height = max([f[0].height() for f in SUBDIR_RECTS[k]])
+    if common.SUBDIR_RECTS[k] and _k in common.SUBDIR_BG_RECTS:
+        bg_rect = common.SUBDIR_BG_RECTS[_k]
+    elif common.SUBDIR_RECTS[k] and _k not in common.SUBDIR_BG_RECTS:
+        left = min([f[0].left() for f in common.SUBDIR_RECTS[k]])
+        right = max([f[0].right() for f in common.SUBDIR_RECTS[k]])
+        height = max([f[0].height() for f in common.SUBDIR_RECTS[k]])
         bg_rect = QtCore.QRect(left, 0, right - left, height)
 
         # Add margin
         o = common.size(common.WidthIndicator)
         bg_rect = bg_rect.adjusted(-o, -o, o * 1.5, o)
 
-        SUBDIR_BG_RECTS[_k] = bg_rect
+        common.SUBDIR_BG_RECTS[_k] = bg_rect
 
-    if SUBDIR_RECTS[k]:
+    if common.SUBDIR_RECTS[k]:
         # We have to move the rectangle in-place before painting it
         rect = QtCore.QRect(bg_rect)
         rect.moveCenter(
@@ -363,8 +339,8 @@ def draw_gradient_background(text_edge, *args):
     rectangles, painter, option, index, selected, _, active, _, _, hover, font, metrics, cursor_position = args
     k = subdir_bg_rect_key(index, option)
 
-    if k in SUBDIR_BG_BRUSHES:
-        rect, brush = SUBDIR_BG_BRUSHES[k]
+    if k in common.SUBDIR_BG_BRUSHES:
+        rect, brush = common.SUBDIR_BG_BRUSHES[k]
     else:
         rect = QtCore.QRect(
             rectangles[ThumbnailRect].right(),
@@ -395,7 +371,7 @@ def draw_gradient_background(text_edge, *args):
         gradient.setColorAt(1.0, common.color(common.Transparent))
         brush = QtGui.QBrush(gradient)
 
-        SUBDIR_BG_BRUSHES[k] = (rect, brush)
+        common.SUBDIR_BG_BRUSHES[k] = (rect, brush)
 
     rect.moveCenter(
         QtCore.QPoint(
@@ -411,12 +387,14 @@ def draw_description(clickable_rectangles, left_limit, right_limit, offset, *arg
     """Helper method used to draw file items' descriptions."""
     rectangles, painter, option, index, selected, _, active, _, _, hover, font, metrics, cursor_position = args
 
-    color = common.color(common.TextSelectedColor) if selected else common.color(common.GreenColor)
+    color = common.color(common.TextSelectedColor) if selected else common.color(
+        common.GreenColor)
 
     large_mode = option.rect.height() >= (common.size(common.HeightRow) * 2)
     if large_mode:
         left_limit = rectangles[DataRect].left()
-        right_limit = rectangles[DataRect].right() - common.size(common.WidthMargin)
+        right_limit = rectangles[DataRect].right(
+        ) - common.size(common.WidthMargin)
         font, metrics = common.font_db.primary_font(
             common.size(common.FontSizeMedium))
     else:
@@ -463,8 +441,6 @@ def draw_description(clickable_rectangles, left_limit, right_limit, offset, *arg
     painter.drawPath(path)
 
 
-
-
 class BaseDelegate(QtWidgets.QAbstractItemDelegate):
     """The main delegate used to represent lists derived from `base.BaseListWidget`.
 
@@ -506,7 +482,8 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         active = flags & common.MarkedAsActive
         rectangles = get_rectangles(
             option.rect, self.parent().inline_icons_count())
-        font, metrics = common.font_db.primary_font(common.size(common.FontSizeMedium))
+        font, metrics = common.font_db.primary_font(
+            common.size(common.FontSizeMedium))
         painter.setFont(font)
 
         cursor_position = self.parent().mapFromGlobal(common.cursor.pos())
@@ -652,7 +629,8 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
 
             text = 'Drop image to add as thumbnail'
             painter.drawText(
-                option.rect.adjusted(common.size(common.WidthMargin), 0, -common.size(common.WidthMargin), 0),
+                option.rect.adjusted(common.size(
+                    common.WidthMargin), 0, -common.size(common.WidthMargin), 0),
                 QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter | QtCore.Qt.TextWordWrap,
                 text,
                 boundingRect=option.rect,
@@ -685,7 +663,8 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
 
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
 
-        color = common.color(common.BackgroundLightColor) if selected else common.color(common.BackgroundColor)
+        color = common.color(common.BackgroundLightColor) if selected else common.color(
+            common.BackgroundColor)
         painter.setBrush(color)
 
         painter.setOpacity(1.0)
@@ -696,7 +675,8 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
             painter.setOpacity(0.5)
             painter.setBrush(color)
             _rect = QtCore.QRect(rect)
-            _rect.setBottom(_rect.bottom() + common.size(common.WidthIndicator))
+            _rect.setBottom(_rect.bottom() +
+                            common.size(common.WidthIndicator))
             _rect.setTop(_rect.bottom() - common.size(common.WidthIndicator))
             _rect.setLeft(common.size(common.WidthIndicator) +
                           option.rect.height() - common.size(common.HeightSeparator))
@@ -733,7 +713,8 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         rect.setLeft(rectangles[ThumbnailRect].right() +
                      common.size(common.WidthIndicator))
 
-        color = common.color(common.BackgroundLightColor) if selected else common.color(common.BackgroundDarkColor)
+        color = common.color(common.BackgroundLightColor) if selected else common.color(
+            common.BackgroundDarkColor)
         painter.setBrush(color)
         painter.drawRect(rect)
         if hover:
@@ -763,7 +744,6 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         if rectangles[InlineBackgroundRect].left() < rectangles[ThumbnailRect].right():
             return
 
-
         if index.row() == (self.parent().model().rowCount() - 1):
             rect = QtCore.QRect(rectangles[InlineBackgroundRect])
             rect.setHeight(rect.height() + common.size(common.HeightSeparator))
@@ -771,7 +751,8 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
             rect = rectangles[InlineBackgroundRect]
 
         painter.setBrush(common.color(common.SeparatorColor))
-        painter.setOpacity(0.6) if rect.contains(cursor_position) else painter.setOpacity(0.4)
+        painter.setOpacity(0.6) if rect.contains(
+            cursor_position) else painter.setOpacity(0.4)
         painter.drawRect(rect)
 
     @paintmethod
@@ -817,7 +798,8 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         if rect.contains(cursor_position):
             painter.setOpacity(1.0)
 
-        color = common.color(common.GreenColor) if archived else common.color(common.RedColor)
+        color = common.color(
+            common.GreenColor) if archived else common.color(common.RedColor)
         color = color if rect.contains(
             cursor_position) else common.color(common.SeparatorColor)
         if archived:
@@ -936,7 +918,8 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         """Paints the leading rectangle indicating the selection."""
         rectangles, painter, option, index, selected, focused, active, archived, favourite, hover, font, metrics, cursor_position = args
         rect = rectangles[IndicatorRect]
-        color = common.color(common.TextSelectedColor) if selected else common.color(common.Transparent)
+        color = common.color(common.TextSelectedColor) if selected else common.color(
+            common.Transparent)
         painter.setBrush(color)
         painter.drawRect(rect)
 
@@ -958,7 +941,6 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         painter.drawPixmap(rect, pixmap, pixmap.rect())
         rect.setWidth(common.size(common.WidthMargin) * 1.5)
         painter.drawPixmap(rect, pixmap, pixmap.rect())
-
 
     @paintmethod
     def paint_inline_background_shadow(self, *args):
@@ -1014,7 +996,8 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         if not index.data(common.ShotgunLinkedRole):
             return
 
-        rect = QtCore.QRect(0, 0, common.size(common.WidthMargin), common.size(common.WidthMargin))
+        rect = QtCore.QRect(0, 0, common.size(
+            common.WidthMargin), common.size(common.WidthMargin))
 
         offset = QtCore.QPoint(common.size(common.WidthIndicator),
                                common.size(common.WidthIndicator))
@@ -1067,8 +1050,8 @@ class BookmarksWidgetDelegate(BaseDelegate):
         description = description if description else ''
 
         k = text + description
-        if k in TEXT_SEGMENT_CACHE:
-            return TEXT_SEGMENT_CACHE[k]
+        if k in common.TEXT_SEGMENT_CACHE:
+            return common.TEXT_SEGMENT_CACHE[k]
 
         text = text.strip().strip('/').strip('\\')
         if not text:
@@ -1098,8 +1081,8 @@ class BookmarksWidgetDelegate(BaseDelegate):
             d[len(d)] = ('   |   ', s_color)
             d[len(d)] = (description, s_color)
 
-        TEXT_SEGMENT_CACHE[k] = d
-        return TEXT_SEGMENT_CACHE[k]
+        common.TEXT_SEGMENT_CACHE[k] = d
+        return common.TEXT_SEGMENT_CACHE[k]
 
     @paintmethod
     def paint_name(self, *args):
@@ -1243,8 +1226,8 @@ class AssetsWidgetDelegate(BaseDelegate):
     def get_description_rect(self, rectangles, index):
         """Returns the description area of an ``AssetsWidget`` item."""
         k = '/'.join([repr(v) for v in rectangles.values()])
-        if k in DESCRIPTION_RECTS:
-            return DESCRIPTION_RECTS[k]
+        if k in common.DESCRIPTION_RECTS:
+            return common.DESCRIPTION_RECTS[k]
 
         if not index.isValid():
             return
@@ -1252,7 +1235,8 @@ class AssetsWidgetDelegate(BaseDelegate):
         rect = QtCore.QRect(rectangles[DataRect])
         rect.setLeft(rect.left() + common.size(common.WidthMargin))
 
-        _, metrics = common.font_db.primary_font(common.size(common.FontSizeMedium))
+        _, metrics = common.font_db.primary_font(
+            common.size(common.FontSizeMedium))
 
         name_rect = QtCore.QRect(rect)
         center = name_rect.center()
@@ -1274,10 +1258,11 @@ class AssetsWidgetDelegate(BaseDelegate):
                 name_rect.center().y() + metrics.lineSpacing()
             )
         )
-        description_rect.setRight(description_rect.right() - common.size(common.WidthMargin))
+        description_rect.setRight(
+            description_rect.right() - common.size(common.WidthMargin))
 
-        DESCRIPTION_RECTS[k] = description_rect
-        return DESCRIPTION_RECTS[k]
+        common.DESCRIPTION_RECTS[k] = description_rect
+        return common.DESCRIPTION_RECTS[k]
 
     @paintmethod
     def paint_name(self, *args):
@@ -1289,7 +1274,8 @@ class AssetsWidgetDelegate(BaseDelegate):
         rect.setLeft(rect.left() + common.size(common.WidthMargin))
 
         # Name
-        color = common.color(common.TextSelectedColor) if hover else common.color(common.TextColor)
+        color = common.color(
+            common.TextSelectedColor) if hover else common.color(common.TextColor)
         color = common.color(common.TextSelectedColor) if selected else color
         painter.setBrush(color)
 
@@ -1321,9 +1307,11 @@ class AssetsWidgetDelegate(BaseDelegate):
             QtCore.QPoint(name_rect.center().x(),
                           name_rect.center().y() + metrics.lineSpacing())
         )
-        description_rect.setWidth(description_rect.width() - common.size(common.WidthMargin))
+        description_rect.setWidth(
+            description_rect.width() - common.size(common.WidthMargin))
 
-        color = common.color(common.TextColor) if hover else common.color(common.TextSecondaryColor)
+        color = common.color(common.TextColor) if hover else common.color(
+            common.TextSecondaryColor)
         color = common.color(common.TextSelectedColor) if selected else color
         painter.setBrush(color)
 
@@ -1404,8 +1392,8 @@ class FilesWidgetDelegate(BaseDelegate):
     def get_description_rect(self, rectangles, index):
         """The description rectangle of a file item."""
         k = '/'.join([repr(v) for v in rectangles.values()])
-        if k in DESCRIPTION_RECTS:
-            return DESCRIPTION_RECTS[k]
+        if k in common.DESCRIPTION_RECTS:
+            return common.DESCRIPTION_RECTS[k]
 
         if self.parent().buttons_hidden():
             rect = self.get_simple_description_rectangle(rectangles, index)
@@ -1416,8 +1404,8 @@ class FilesWidgetDelegate(BaseDelegate):
             else:
                 rect = clickable[0][0]
 
-        DESCRIPTION_RECTS[k] = rect
-        return DESCRIPTION_RECTS[k]
+        common.DESCRIPTION_RECTS[k] = rect
+        return common.DESCRIPTION_RECTS[k]
 
     @paintmethod
     def paint_name(self, *args):
@@ -1445,7 +1433,8 @@ class FilesWidgetDelegate(BaseDelegate):
         painter.restore()
 
         painter.save()
-        bg_rect = draw_subdir_background(left - common.size(common.WidthMargin), *args)
+        bg_rect = draw_subdir_background(
+            left - common.size(common.WidthMargin), *args)
         painter.restore()
 
         painter.save()
@@ -1495,7 +1484,8 @@ class FilesWidgetDelegate(BaseDelegate):
             _text_segments[idx] = text_segments[(len(text_segments) - 1) - idx]
 
         if index.data(common.DescriptionRole):
-            _text_segments[len(_text_segments)] = ('  |  ', common.color(common.SeparatorColor))
+            _text_segments[len(_text_segments)] = (
+                '  |  ', common.color(common.SeparatorColor))
             _text_segments[len(_text_segments)] = (
                 index.data(common.DescriptionRole),
                 common.color(common.GreenColor)
@@ -1556,7 +1546,8 @@ class FilesWidgetDelegate(BaseDelegate):
 
             text = '"Drag+Shift" grabs all files    |    "Drag+Alt" grabs the first file    |    "Drag+Shift+Alt" grabs the parent folder'
             painter.drawText(
-                option.rect.adjusted(common.size(common.WidthMargin), 0, -common.size(common.WidthMargin), 0),
+                option.rect.adjusted(common.size(
+                    common.WidthMargin), 0, -common.size(common.WidthMargin), 0),
                 QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter | QtCore.Qt.TextWordWrap,
                 text,
                 boundingRect=option.rect,
@@ -1573,7 +1564,8 @@ class FilesWidgetDelegate(BaseDelegate):
         rect = QtCore.QRect(rectangles[DataRect])
         rect.setLeft(rect.left() + (common.size(common.WidthIndicator) * 2))
 
-        _, metrics = common.font_db.primary_font(common.size(common.FontSizeMedium))
+        _, metrics = common.font_db.primary_font(
+            common.size(common.FontSizeMedium))
 
         # File-name
         name_rect = QtCore.QRect(rect)
@@ -1635,8 +1627,8 @@ class FilesWidgetDelegate(BaseDelegate):
             return {}
 
         k = index.data(QtCore.Qt.StatusTipRole)
-        if k in TEXT_SEGMENT_CACHE:
-            return TEXT_SEGMENT_CACHE[k]
+        if k in common.TEXT_SEGMENT_CACHE:
+            return common.TEXT_SEGMENT_CACHE[k]
 
         s = regex_remove_version.sub(r'\1\3', s)
         d = {}
@@ -1661,7 +1653,7 @@ class FilesWidgetDelegate(BaseDelegate):
             # Filename
             d[len(d)] = (
                 match.group(1).upper(), common.color(common.TextSelectedColor))
-            TEXT_SEGMENT_CACHE[k] = d
+            common.TEXT_SEGMENT_CACHE[k] = d
             return d
 
         # Item is a non-collapsed sequence
@@ -1681,7 +1673,7 @@ class FilesWidgetDelegate(BaseDelegate):
             # Prefix
             d[len(d)] = (
                 match.group(1).upper(), common.color(common.TextSelectedColor))
-            TEXT_SEGMENT_CACHE[k] = d
+            common.TEXT_SEGMENT_CACHE[k] = d
             return d
 
         # Items is not collapsed and it isn't a sequence either
@@ -1691,7 +1683,7 @@ class FilesWidgetDelegate(BaseDelegate):
         else:
             s = s[0].upper()
         d[len(d)] = (s, common.color(common.TextSelectedColor))
-        TEXT_SEGMENT_CACHE[k] = d
+        common.TEXT_SEGMENT_CACHE[k] = d
         return d
 
     def get_filedetail_text_segments(self, index):
@@ -1706,8 +1698,8 @@ class FilesWidgetDelegate(BaseDelegate):
 
         """
         k = index.data(common.FileDetailsRole)
-        if k in TEXT_SEGMENT_CACHE:
-            return TEXT_SEGMENT_CACHE[k]
+        if k in common.TEXT_SEGMENT_CACHE:
+            return common.TEXT_SEGMENT_CACHE[k]
 
         d = {}
 
@@ -1723,20 +1715,20 @@ class FilesWidgetDelegate(BaseDelegate):
                 break
             d[len(d)] = ('  |  ', common.color(common.BackgroundDarkColor))
 
-        TEXT_SEGMENT_CACHE[k] = d
-        return TEXT_SEGMENT_CACHE[k]
+        common.TEXT_SEGMENT_CACHE[k] = d
+        return common.TEXT_SEGMENT_CACHE[k]
 
     def get_subdir_rectangles(self, option, index, rectangles, metrics, padding=common.size(common.WidthIndicator)):
         """Returns the available mode rectangles for FileWidget index."""
         k = subdir_rects_key(index, option)
-        if k in SUBDIR_RECTS:
-            return SUBDIR_RECTS[k]
+        if k in common.SUBDIR_RECTS:
+            return common.SUBDIR_RECTS[k]
 
-        SUBDIR_RECTS[k] = []
+        common.SUBDIR_RECTS[k] = []
 
         subdirs = index.data(common.ParentPathRole)
         if not subdirs:
-            return SUBDIR_RECTS[k]
+            return common.SUBDIR_RECTS[k]
 
         rect = QtCore.QRect(
             rectangles[ThumbnailRect].right() + (padding * 2.0),
@@ -1758,10 +1750,10 @@ class FilesWidgetDelegate(BaseDelegate):
 
             rect.setWidth(width)
 
-            SUBDIR_RECTS[k].append((QtCore.QRect(rect), text))
+            common.SUBDIR_RECTS[k].append((QtCore.QRect(rect), text))
             rect.moveLeft(rect.left() + rect.width() + padding)
 
-        return SUBDIR_RECTS[k]
+        return common.SUBDIR_RECTS[k]
 
     def sizeHint(self, option, index):
         return self.parent().model().sourceModel().row_size()

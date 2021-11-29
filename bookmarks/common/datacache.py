@@ -6,21 +6,21 @@ from . import common
 
 
 def get_data(parent_path, task, data_type):
-    if parent_path not in common.MODEL_DATA:
+    if parent_path not in common.itemdata:
         reset_data(parent_path, task)
-    elif task not in common.MODEL_DATA[parent_path]:
+    elif task not in common.itemdata[parent_path]:
         reset_data(parent_path, task)
-    elif data_type not in common.MODEL_DATA[parent_path][task]:
+    elif data_type not in common.itemdata[parent_path][task]:
         reset_data(parent_path, task)
-    return common.MODEL_DATA[parent_path][task][data_type]
+    return common.itemdata[parent_path][task][data_type]
 
 
 def get_task_data(parent_path, task):
-    if parent_path not in common.MODEL_DATA:
+    if parent_path not in common.itemdata:
         reset_data(parent_path, task)
-    elif task not in common.MODEL_DATA[parent_path]:
+    elif task not in common.itemdata[parent_path]:
         reset_data(parent_path, task)
-    return common.MODEL_DATA[parent_path][task]
+    return common.itemdata[parent_path][task]
 
 
 def data_count(parent_path, task, data_type):
@@ -42,17 +42,17 @@ def get_data_ref(parent_path, task, data_type):
 
 
 def reset_data(parent_path, task):
-    if parent_path not in common.MODEL_DATA:
-        common.MODEL_DATA[parent_path] = common.DataDict()
-    common.MODEL_DATA[parent_path][task] = common.DataDict()
+    if parent_path not in common.itemdata:
+        common.itemdata[parent_path] = common.DataDict()
+    common.itemdata[parent_path][task] = common.DataDict()
     for t in (common.FileItem, common.SequenceItem):
-        common.MODEL_DATA[parent_path][task][t] = common.DataDict()
-        common.MODEL_DATA[parent_path][task][t].data_type = t
+        common.itemdata[parent_path][task][t] = common.DataDict()
+        common.itemdata[parent_path][task][t].data_type = t
 
 
 def set_data(parent_path, task, data_type, data):
-    if parent_path not in common.MODEL_DATA:
+    if parent_path not in common.itemdata:
         reset_data(parent_path, task)
-    elif task not in common.MODEL_DATA[parent_path]:
+    elif task not in common.itemdata[parent_path]:
         reset_data(parent_path, task)
-    common.MODEL_DATA[parent_path][task][data_type] = data
+    common.itemdata[parent_path][task][data_type] = data

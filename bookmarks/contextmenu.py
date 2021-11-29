@@ -283,7 +283,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         menu['separator' + key()] = None
 
     def window_menu(self):
-        if common.get_init_mode() == common.EmbeddedMode:
+        if common.init_mode == common.EmbeddedMode:
             return
 
         w = self.parent().window()
@@ -739,7 +739,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def quit_menu(self):
-        if not common.STANDALONE:
+        if common.init_mode == common.EmbeddedMode:
             return
         self.menu[key()] = {
             'text': 'Quit {}'.format(common.product),

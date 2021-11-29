@@ -23,11 +23,26 @@ sorting mechanisms because of performance considerations. Instead, sorting
 is implemented in the :class:`.BaseModel` directly.
 
 """
+import re
+import weakref
+import functools
+
+from PySide2 import QtWidgets, QtGui, QtCore
+
+from .. import common
+
+from .. import images
+
+
+
+
+
 DEFAULT_ITEM_FLAGS = (
     QtCore.Qt.ItemNeverHasChildren |
     QtCore.Qt.ItemIsEnabled |
     QtCore.Qt.ItemIsSelectable
 )
+
 
 def initdata(func):
     """Wraps `__initdata__` calls.

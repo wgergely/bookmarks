@@ -221,7 +221,7 @@ class StatusBar(QtWidgets.QWidget):
         self.thread_status_widget = ThreadStatus(parent=self)
         self.layout().addWidget(self.thread_status_widget, 0)
 
-        self.toggle_mode_widget = common.ToggleSessionModeButton(
+        self.toggle_mode_widget = ToggleSessionModeButton(
             parent=self)
         self.layout().addWidget(self.toggle_mode_widget, 0)
         self.layout().addSpacing(common.size(common.WidthIndicator) * 2)

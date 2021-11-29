@@ -7,33 +7,62 @@ from .. import common
 from . import base
 
 
-class Test(base.NonInitializedAppTest):
-    def test_init_standalone(self):
-        common.init_standalone()
-        self.assertTrue(common.get_init_mode() == common.StandaloneMode)
+class Test(base.BaseCase):
+    def test_initialize(self):
+        self.assertTrue(common.init_mode == common.StandaloneMode)
+        self.assertIsNotNone(common.session_mode)
+        self.assertIsNotNone(common.stylesheet)
+        self.assertIsNotNone(common.signals)
+        self.assertIsNotNone(common.settings)
+        self.assertIsNotNone(common.cursor)
+        self.assertIsNotNone(common.font_db)
+        self.assertIsNotNone(common.product)
+        self.assertIsNotNone(common.env_key)
+        self.assertIsNotNone(common.bookmark_cache_dir)
+        self.assertIsNotNone(common.favorite_file_ext)
+        self.assertIsNotNone(common.static_bookmarks_template)
+        self.assertIsNotNone(common.job_template)
+        self.assertIsNotNone(common.asset_template)
+        self.assertIsNotNone(common.max_list_items)
+        self.assertIsNotNone(common.ui_scale_factors)
+        self.assertIsNotNone(common.bold_font)
+        self.assertIsNotNone(common.medium_font)
+        self.assertIsNotNone(common.FontSizeSmall)
+        self.assertIsNotNone(common.FontSizeMedium)
+        self.assertIsNotNone(common.FontSizeLarge)
+        self.assertIsNotNone(common.HeightRow)
+        self.assertIsNotNone(common.HeightBookmark)
+        self.assertIsNotNone(common.HeightAsset)
+        self.assertIsNotNone(common.HeightSeparator)
+        self.assertIsNotNone(common.WidthMargin)
+        self.assertIsNotNone(common.WidthIndicator)
+        self.assertIsNotNone(common.DefaultWidth)
+        self.assertIsNotNone(common.DefaultHeight)
+        self.assertIsNotNone(common.BackgroundColor)
+        self.assertIsNotNone(common.BackgroundLightColor)
+        self.assertIsNotNone(common.BackgroundDarkColor)
+        self.assertIsNotNone(common.TextColor)
+        self.assertIsNotNone(common.TextSecondaryColor)
+        self.assertIsNotNone(common.TextSelectedColor)
+        self.assertIsNotNone(common.TextDisabledColor)
+        self.assertIsNotNone(common.SeparatorColor)
+        self.assertIsNotNone(common.BlueColor)
+        self.assertIsNotNone(common.RedColor)
+        self.assertIsNotNone(common.GreenColor)
+        self.assertIsNotNone(common.OpaqueColor)
 
-    def test_init_settings(self):
-
-        self.assertIsNone(common._instance)
-        common.init_settings()
-        self.assertIsInstance(common._instance, common.Settings)
+        from .. import standalone
+        self.assertIsNotNone(standalone.instance())
 
     def test_init_resources(self):
         from .. import images
-        self.assertFalse(images.RESOURCES[images.GuiResource])
-        common.init_resources()
         self.assertTrue(images.RESOURCES[images.GuiResource])
 
     def test_init_ui_scale(self):
-
         self.assertIsInstance(common.ui_scale_factor, float)
-        common.init_ui_scale()
-        self.assertIsInstance(common.ui_scale_factor, float)
-        self.assertIn(common.ui_scale_factor, common.scale_factors)
+        self.assertIn(common.ui_scale_factor, common.ui_scale_factors)
 
     def test_init_session_lock(self):
-        self.assertIsInstance(common.session_mode, int)
-        common.init_session_lock()
         self.assertIsInstance(common.session_mode, int)
         self.assertIn(
             common.session_mode,
@@ -41,30 +70,13 @@ class Test(base.NonInitializedAppTest):
         )
 
     def test_init_font_db(self):
-        common.init_font_db()
         self.assertIsInstance(common.font_db, common.FontDatabase)
 
-    def test_psize(self):
-
-        self.assertIsInstance(common.psize(10), float)
-
-    def test_sizes(self):
-
-        self.assertIsInstance(common.size(common.FontSizeSmall), int)
-        self.assertIsInstance(common.size(common.FontSizeMedium), int)
-        self.assertIsInstance(common.size(common.FontSizeLarge), int)
-
-        self.assertIsInstance(common.size(common.HeightRow), int)
-        self.assertIsInstance(common.size(common.HeightBookmark), int)
-        self.assertIsInstance(common.size(common.HeightAsset), int)
-        self.assertIsInstance(common.size(common.HeightSeparator), int)
-        self.assertIsInstance(common.size(common.WidthMargin), int)
-        self.assertIsInstance(common.size(common.WidthIndicator), int)
-        self.assertIsInstance(common.size(common.DefaultWidth), int)
-        self.assertIsInstance(common.size(common.DefaultHeight), int)
+    def test_size(self):
+        self.assertEqual(common.size(10), common.size(10.5))
+        self.assertIsInstance(common.size(10), int)
 
     def test_hash(self):
-
         self.assertIsInstance(common.hashes, dict)
         self.assertFalse(common.hashes)
 

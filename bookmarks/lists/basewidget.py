@@ -34,7 +34,6 @@ import functools
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from .. import log
 from .. import common
 from .. import ui
 from .. import database
@@ -45,9 +44,10 @@ from .. import actions
 
 from ..threads import threads
 
-from .. lists import filter_editor
-from .. lists import description_editor
+from . widgets import filter_editor
+from . widgets import description_editor
 
+from . import basemodel
 from . import delegate
 
 
@@ -68,13 +68,13 @@ def get_visible_indexes(widget):
 
     rect = widget.visualRect(index)
     i = 0
-    idxs = [index.data(IdRole), ]
+    idxs = [index.data(common.IdRole), ]
     while r.intersects(rect):
         if i >= 999:  # Don't check more than 999 items
             break
         i += 1
 
-        idx = index.data(IdRole)
+        idx = index.data(common.IdRole)
         idxs.append(idx)
 
         index = index_below(rect)
@@ -88,7 +88,7 @@ class TabsWidget(QtWidgets.QStackedWidget):
     bookmarks, assets, files and favourites."""
 
     def __init__(self, parent=None):
-        super(TabsWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.setObjectName('BrowserStackedWidget')
         common.signals.tabChanged.connect(self.setCurrentIndex)
 
@@ -123,7 +123,7 @@ class TabsWidget(QtWidgets.QStackedWidget):
         self._setCurrentIndex(idx)
 
     def _setCurrentIndex(self, idx):
-        super(TabsWidget, self).setCurrentIndex(idx)
+        super().setCurrentIndex(idx)
         self.currentWidget().setFocus()
 
     def showEvent(self, event):
@@ -378,9 +378,9 @@ class BaseListWidget(QtWidgets.QListView):
         and the view to communicate are made here.
 
         """
-        common.check_type(model, BaseModel)
+        common.check_type(model, basemodel.BaseModel)
 
-        proxy = FilterProxyModel(parent=self)
+        proxy = basemodel.FilterProxyModel(parent=self)
 
         proxy.setSourceModel(model)
         self.setModel(proxy)

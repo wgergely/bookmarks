@@ -50,7 +50,6 @@ GuiResource = 'gui'
 ThumbnailResource = 'thumbnails'
 FormatResource = 'formats'
 
-
 RESOURCES = {
     GuiResource: [],
     ThumbnailResource: [],
@@ -828,13 +827,16 @@ class ImageCache(QtCore.QObject):
             QPixmap: The loaded image.
 
         """
+        common.check_type(name, str)
+        common.check_type(color, (QtGui.QColor, None))
+
         source = f'{__file__}/../rsc/{resource}/{name}.png'
 
         if get_path:
             file_info = QtCore.QFileInfo(source)
             return file_info.absoluteFilePath()
 
-        _color = color.name() if color else 'null'
+        _color = color.name() if isinstance(color, QtGui.QColor) else 'null'
         k = 'rsc:' + name + ':' + str(int(size)) + ':' + _color
 
         if k in cls.RESOURCE_DATA:

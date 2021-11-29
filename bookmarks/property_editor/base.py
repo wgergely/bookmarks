@@ -84,7 +84,8 @@ def add_section(icon, label, parent, color=None):
     """Used to a new section with an icon and a title to a widget.
 
     Args:
-        icon (str):     The name of an rsc image.
+        icon (str):         The name of an rsc image.
+        label (str):        The name of the section.
         parent (QWidget):   A widget to add the section to.
         color (QColor):     The color of the icon. Defaults to `None`.
 
@@ -92,25 +93,35 @@ def add_section(icon, label, parent, color=None):
         QWidget:            A widget to add editors to.
 
     """
-    parent = ui.add_row('', height=None, vertical=True, parent=parent)
+    common.check_type(icon, (None, str))
+    common.check_type(label, str)
+    common.check_type(parent, QtWidgets.QWidget)
+    common.check_type(color, (QtGui.QColor, None))
 
     h = common.size(common.HeightRow)
+    parent = ui.add_row('', height=None, vertical=True, parent=parent)
 
-    _label = QtWidgets.QLabel(parent=parent)
-    pixmap = images.ImageCache.get_rsc_pixmap(icon, color, h * 0.8)
-    _label.setPixmap(pixmap)
-    label = ui.PaintedLabel(
-        label,
-        size=common.size(common.FontSizeLarge),
-        color=common.color(common.TextColor),
-        parent=parent
-    )
+    if any((icon, label)):
+        row = ui.add_row('', height=h, parent=parent)
+        row.layout().setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft)
 
-    row = ui.add_row('', height=h, parent=parent)
-    row.layout().setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft)
-    row.layout().addWidget(_label, 0)
-    row.layout().addWidget(label, 0)
-    row.layout().addStretch(1)
+    if icon:
+        w = QtWidgets.QLabel(parent=parent)
+        pixmap = images.ImageCache.get_rsc_pixmap(icon, color, h * 0.8)
+        w.setPixmap(pixmap)
+        row.layout().addWidget(w, 0)
+
+    if label:
+        w = ui.PaintedLabel(
+            label,
+            size=common.size(common.FontSizeLarge),
+            color=common.color(common.TextColor),
+            parent=parent
+        )
+        row.layout().addWidget(w, 0)
+
+    if any((icon, label)):
+        row.layout().addStretch(1)
 
     return parent
 
@@ -385,7 +396,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
                     if 'button' in v and v['button']:
                         button = ui.PaintedButton(
                             v['button'], parent=row)
-                        button.setFixedHeight(common.size(common.HeightRow) * 0.8)
+                        button.setFixedHeight(
+                            common.size(common.HeightRow) * 0.8)
 
                         if v['key'] is not None:
                             if hasattr(self, v['key'] + '_button_clicked'):
@@ -403,7 +415,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
                     if 'button2' in v and v['button2']:
                         button2 = ui.PaintedButton(
                             v['button2'], parent=row)
-                        button2.setFixedHeight(common.size(common.HeightRow) * 0.8)
+                        button2.setFixedHeight(
+                            common.size(common.HeightRow) * 0.8)
 
                         if v['key'] is not None:
                             if hasattr(self, v['key'] + '_button2_clicked'):

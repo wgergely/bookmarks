@@ -520,15 +520,6 @@ LineEdit:!read-only:focus{{
     border-bottom: {HeightSeparator}px solid {GREEN};
 }}
 
-LogView {{
-		color: {SECONDARY_TEXT};
-    margin: 0;
-    padding: 0;
-    border-radius: {RADIUS}px;
-    font-size: {FontSizeSmall}px;
-    background-color: {LOG_BG};
-}}
-
 .ListWidget {{
 	border-radius: {RADIUS}px;
 	border: {HeightSeparator}px solid {DARK_BG};

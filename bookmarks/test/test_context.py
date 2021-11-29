@@ -5,7 +5,7 @@ from PySide2 import QtCore, QtWidgets
 from . import base
 
 
-class Test(base.BaseApplicationTest):
+class Test(base.BaseCase):
     def test_import_oiio(self):
         try:
             import OpenImageIO

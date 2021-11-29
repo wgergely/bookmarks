@@ -82,7 +82,7 @@ class Test(base.BaseApplicationTest):
         for server in servers:
             actions.remove_server(server)
 
-        self.assertEqual(len(common.SERVERS), 0)
+        self.assertEqual(len(common.servers), 0)
         self.assertEqual(s.count(), 0)
 
         # Add test server and select it
@@ -91,9 +91,9 @@ class Test(base.BaseApplicationTest):
             os.makedirs(server)
 
         self.assertTrue(os.path.isdir(server))
-        self.assertNotIn(server, common.SERVERS)
+        self.assertNotIn(server, common.servers)
         actions.add_server(server)
-        self.assertIn(server, common.SERVERS)
+        self.assertIn(server, common.servers)
 
         for idx in range(s.count()):
             item = s.item(idx)
@@ -135,9 +135,9 @@ class Test(base.BaseApplicationTest):
 
         # Add test server and select it
         server = common.temp_path() + '/' + base.random_str(48)
-        self.assertNotIn(server, common.SERVERS)
+        self.assertNotIn(server, common.servers)
         actions.add_server(server)
-        self.assertIn(server, common.SERVERS)
+        self.assertIn(server, common.servers)
 
         if not os.path.isdir(server):
             os.makedirs(server)

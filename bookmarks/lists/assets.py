@@ -17,8 +17,9 @@ from .. import actions
 
 from .. import log
 
+from . import basemodel
+from . import basewidget
 from . import delegate
-from . import base
 
 
 class AssetsWidgetContextMenu(contextmenu.BaseContextMenu):
@@ -76,7 +77,7 @@ class AssetsWidgetContextMenu(contextmenu.BaseContextMenu):
         self.quit_menu()
 
 
-class AssetModel(base.BaseModel):
+class AssetModel(basemodel.BaseModel):
     """The model containing all item information needed to represent assets.
 
     """
@@ -92,7 +93,7 @@ class AssetModel(base.BaseModel):
         common.signals.assetsLinked.connect(self.sort_data)
 
     @common.status_bar_message('Assets Bookmarks...')
-    @base.initdata
+    @basemodel.initdata
     def __initdata__(self):
         """Collects the data needed to populate the bookmarks model by querrying
         the active root folder.
@@ -146,7 +147,7 @@ class AssetModel(base.BaseModel):
                 QtWidgets.QApplication.instance().processEvents()
 
             filename = entry.name
-            flags = base.DEFAULT_ITEM_FLAGS
+            flags = basemodel.DEFAULT_ITEM_FLAGS
 
             if filepath in common.favourites:
                 flags = flags | common.MarkedAsFavourite
@@ -260,7 +261,7 @@ class AssetModel(base.BaseModel):
         return QtCore.QSize(1, common.size(common.HeightAsset))
 
 
-class AssetsWidget(base.ThreadedBaseWidget):
+class AssetsWidget(basewidget.ThreadedBaseWidget):
     """The view used to display the contents of a ``AssetModel`` instance."""
     SourceModel = AssetModel
     Delegate = delegate.AssetsWidgetDelegate

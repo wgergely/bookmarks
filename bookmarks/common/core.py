@@ -24,6 +24,9 @@ CONFIG = 'config.json'
 # DEFAULT_ASSET_SOURCE = get_template_file_path(DEFAULT_JOB_TEMPLATE)
 # DEFAULT_JOB_SOURCE = get_template_file_path(DEFAULT_ASSET_TEMPLATE)
 
+StandaloneMode = 'standalone'
+EmbeddedMode = 'embedded'
+
 BookmarkTab = 0
 AssetTab = 1
 FileTab = 2
@@ -126,7 +129,10 @@ def initialize(mode):
             mode (bool):    Bookmarks will run in *standalone* mode when `True`.
 
     """
-    common.set_initmode(mode)
+    if mode not in (StandaloneMode, EmbeddedMode):
+        raise ValueError(f'Invalid initalization mode. Got "{mode}", expected StandaloneMode or EmbeddedMode')
+    common.init_mode = mode
+
     _init_config()
 
     if not os.path.isdir(temp_path()):
@@ -139,21 +145,25 @@ def initialize(mode):
     _init_ui_scale()
     _init_dpi()
 
-    from .. import images
-    images.init_imagecache()
-    images.init_resources()
-    images.init_pixel_ratio()
     common.prune_lock()
     common.init_lock()
-    common.init_font()
 
     common.cursor = QtGui.QCursor()
 
+    from .. import images
+    images.init_imagecache()
+    images.init_resources()
+
     if mode == common.StandaloneMode:
         from .. import standalone
-        app = standalone.BookmarksApp([])
-        standalone.show()
-        app.exec_()
+        standalone.BookmarksApp([])
+    elif not QtWidgets.QApplication.instance():
+        raise RuntimeError('No QApplication instance found.')
+
+    images.init_pixel_ratio()
+    common.init_font()
+    if mode == common.StandaloneMode:
+        standalone.init_window()
 
 
 def init_environment(add_private=False):
@@ -223,7 +233,7 @@ def _init_ui_scale():
     except:
         v = 1.0
 
-    if v not in common.scale_factors:
+    if v not in common.ui_scale_factors:
         v = 1.0
 
     common.ui_scale = v
@@ -238,25 +248,30 @@ def _init_dpi():
         common.dpi = 72.0
 
 
-def check_type(value, valid_type):
+def check_type(value, _type):
     """Verify the type of an object.
 
     Args:
             value (object): An object of invalid type.
-            valid_type (type or tuple): The valid type.
+            _type (type or tuple or types): The valid type.
 
     """
-    if not common.TYPECHECK:
+    if not common.typecheck_on:
         return
 
+    it = None
     try:
-        it = iter(valid_type)
-        for _type in it:
-            if not isinstance(value, _type):
-                raise InvalidTypeError(value, _type)
+        it = iter(_type)
     except:
-        if not isinstance(value, valid_type):
-            raise InvalidTypeError(value, valid_type)
+        pass
+
+    if it:
+        if not any(isinstance(value, type(f) if f is None else f) for f in it):
+            _types = ' or '.join([repr(type(f)) for f in _type])
+            raise TypeError(f'Invalid type. Expected {_types}, got {type(value)}')
+    else:
+        if not isinstance(value, type(_type) if _type is None else _type):
+            raise TypeError(f'Invalid type. Expected {_type}, got {type(value)}')
 
 
 def get_hash(key):
@@ -281,7 +296,7 @@ def get_hash(key):
     if '\\' in key:
         key = key.replace('\\', '/')
 
-    for s in [common.SERVERS]:
+    for s in common.servers:
         if s not in key:
             continue
 
@@ -290,6 +305,7 @@ def get_hash(key):
             key = key[l:]
             break
 
+    key = key.encode('utf8')
     if key in common.hashes:
         return common.hashes[key]
 
@@ -681,18 +697,3 @@ class Timer(QtCore.QTimer):
             common.timers[k].stop()
             common.timers[k].deleteLater()
             del common.timers[k]
-
-
-class InvalidTypeError(TypeError):
-    """ Raised when an invalid object type is encountered.
-
-    Args:
-            value (object): An object of invalid type.
-            valid_type (type): The valid type.
-
-    """
-
-    def __init__(self, value, valid_type):
-        super().__init__(
-            f'Invalid type. Expected {valid_type}, got {value}'
-        )

@@ -30,17 +30,17 @@ class Test(base.BaseApplicationTest):
             os.makedirs(common.temp_path())
 
     def test_add_server(self):
-        self.assertFalse(common.SERVERS)
+        self.assertFalse(common.servers)
         v = base.random_str(32)
         actions.add_server(v)
-        self.assertIn(v, common.SERVERS)
+        self.assertIn(v, common.servers)
 
     def test_remove_server(self):
         v = base.random_str(32)
         actions.add_server(v)
-        self.assertIn(v, common.SERVERS)
+        self.assertIn(v, common.servers)
         actions.remove_server(v)
-        self.assertNotIn(v, common.SERVERS)
+        self.assertNotIn(v, common.servers)
 
     def test_add_bookmark(self):
         self.assertFalse(common.bookmarks)

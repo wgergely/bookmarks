@@ -47,7 +47,7 @@ def debug(message, cls=None):
     """Log a debug message to help analyze program flow.
 
     """
-    if not common.DEBUG:
+    if not common.debug_on:
         return
 
     message = '{color}{ts} [Debug]:{default}    {cls}{message}{default}'.format(

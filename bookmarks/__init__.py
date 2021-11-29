@@ -73,6 +73,8 @@ import importlib
 import traceback
 import platform
 
+from PySide2 import QtWidgets
+
 __author__ = 'Gergely Wootsch'
 __website__ = 'https://github.com/wgergely/bookmarks'
 __email__ = 'hello@gergely-wootsch.com'
@@ -125,7 +127,6 @@ def get_info():
     ))
 
 
-
 def _verify_dependecies():
     """Checks the presence of all required python modules.
 
@@ -151,9 +152,10 @@ def exec_():
 
     """
     print(get_info())
+    _verify_dependecies()
     from . import common
     common.initialize(common.StandaloneMode)
-
-
-
-_verify_dependecies()
+    from . import standalone
+    standalone.init_window()
+    standalone.show()
+    QtWidgets.QApplication.instance().exec_()

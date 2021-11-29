@@ -4,11 +4,11 @@
 """
 from PySide2 import QtCore
 
-from .. import common
-from .. import ui
-from .. import database
+from ... import common
+from ... import ui
+from ... import database
 
-from ..lists import delegate
+from ... lists import delegate
 
 
 class DescriptionEditorWidget(ui.LineEdit):

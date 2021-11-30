@@ -19,11 +19,156 @@ from . import common
 from . import images
 
 
+@common.error
+@common.debug
+def uninitialize():
+    """Closes and deletes all cached data and ui elements.
+
+    """
+
+    from . threads import threads
+
+    threads.quit_threads()
+    common.main_widget.close()
+    common.main_widget.deleteLater()
+    common.main_widget = None
+
+    if common.init_mode == common.StandaloneMode:
+        QtWidgets.QApplication.instance().quit()
+
+    # import gc
+    #
+    # from . lists import alembic_widget
+    # from . lists import thumb_capture
+    # from . lists import thumb_library
+    # from . lists import thumb_picker
+    # from .property_editor import asset_editor
+    # from .property_editor import bookmark_editor
+    # from .property_editor import file_editor
+    # from .property_editor import preference_editor
+    #
+    # from . import standalone
+    #
+    # from . import main
+    # from . import database
+    # from . import images
+    # from . import ui
+    # from . import actions
+    # from .threads import threads
+    # from . lists import delegate
+    #
+    # delete_timers()
+    # threads.quit()
+    #
+    # if STANDALONE and standalone.instance():
+    #     standalone._instance.hide()
+    #
+    # if main._instance:
+    #     main._instance.hide()
+    #
+    #     for widget in (
+    #             main._instance.bookmarks_widget,
+    #             main._instance.assets_widget,
+    #             main._instance.files_widget,
+    #             main._instance.favourites_widget,
+    #             main._instance.tasks_widget
+    #     ):
+    #         if not widget:
+    #             continue
+    #
+    #         widget.removeEventFilter(widget)
+    #         widget.removeEventFilter(main._instance)
+    #         if hasattr(widget.model(), 'sourceModel'):
+    #             widget.model().sourceModel().deleteLater()
+    #             widget.model().setSourceModel(None)
+    #         widget.model().deleteLater()
+    #         widget.setModel(None)
+    #
+    #         for child in widget.children():
+    #             child.deleteLater()
+    #
+    #         widget.deleteLater()
+    #
+    #     for widget in (main._instance.topbar_widget, main._instance.stacked_widget, main._instance.statusbar):
+    #         if not widget:
+    #             continue
+    #
+    #         for child in widget.children():
+    #             child.deleteLater()
+    #         widget.deleteLater()
+    #
+    #     main._instance._initialized = False
+    #
+    # global SERVERS
+    # SERVERS = []
+    # global BOOKMARKS
+    # BOOKMARKS = {}
+    # global favourites
+    # favourites = {}
+    # global hashes
+    # hashes = {}
+    #
+    # global font_db
+    # try:
+    #     font_db.deleteLater()
+    # except:
+    #     pass
+    # font_db = None
+    #
+    # # Signas teardown
+    # global signals
+    # for k, v in Signals.__dict__.items():
+    #     if not isinstance(v, QtCore.Signal):
+    #         continue
+    #     if not hasattr(signals, k):
+    #         continue
+    #     signal = getattr(signals, k)
+    #     try:
+    #         signal.disconnect()
+    #     except RuntimeError as e:
+    #         pass
+    #
+    # try:
+    #     signals.deleteLater()
+    # except:
+    #     pass
+    # signals = None
+    #
+    # database.close()
+    # images.reset()
+    # common.delete()
+    # ui.reset()
+    # delegate.reset()
+    #
+    # alembic_widget.close()
+    # thumb_capture.close()
+    # thumb_library.close()
+    # thumb_picker.close()
+    # asset_editor.close()
+    # bookmark_editor.close()
+    # file_editor.close()
+    # preference_editor.close()
+    #
+    # if main._instance:
+    #     main._instance.deleteLater()
+    #     main._instance = None
+    # if STANDALONE and standalone._instance:
+    #     standalone._instance.deleteLater()
+    #     standalone._instance = None
+    #
+    # # delete_module_import_cache()
+    #
+    # # Force garbage collection
+    # gc.collect()
+
+
+
+
 def edit_persistent_bookmarks():
     """Opens the `static_bookmarks.json`.
 
     """
-    execute(common.static_bookmarks_PATH)
+    execute(common.get_template_file_path(common.static_bookmarks_template))
 
 
 def add_server(v):
@@ -63,7 +208,7 @@ def remove_server(v):
 
 
 def add_bookmark(server, job, root):
-    """Save the given bookmark in `local_settings`.
+    """Save the given bookmark in `user_settings`.
 
     Each bookmark is stored as dictionary entry:
 
@@ -144,17 +289,17 @@ def remove_bookmark(server, job, root):
     common.signals.bookmarkRemoved.emit(server, job, root)
 
 
-def add_favourite(parent_paths, source):
-    common.check_type(parent_paths, (tuple, list))
+def add_favourite(source_paths, source):
+    common.check_type(source_paths, (tuple, list))
     common.check_type(source, str)
 
-    common.favourites[source] = parent_paths
+    common.favourites[source] = source_paths
     common.settings.set_favourites(common.favourites)
     common.signals.favouritesChanged.emit()
 
 
-def remove_favourite(parent_paths, source):
-    common.check_type(parent_paths, (tuple, list))
+def remove_favourite(source_paths, source):
+    common.check_type(source_paths, (tuple, list))
     common.check_type(source, str)
 
     if source not in common.favourites:
@@ -205,8 +350,8 @@ def export_favourites(destination=None):
     with zipfile.ZipFile(destination, 'w') as _zip:
 
         # Add thumbnail to zip
-        for source, parent_paths in common.favourites.items():
-            server, job, root = parent_paths[0:3]
+        for source, source_paths in common.favourites.items():
+            server, job, root = source_paths[0:3]
 
             thumbnail_path = images.get_cached_thumbnail_path(
                 server,
@@ -273,8 +418,8 @@ def import_favourites(source=None):
 
         data = json.loads(v)
 
-        for _source, parent_paths in data.items():
-            server, job, root = parent_paths[0:3]
+        for _source, source_paths in data.items():
+            server, job, root = source_paths[0:3]
 
             thumbnail_path = images.get_cached_thumbnail_path(
                 server,
@@ -289,7 +434,7 @@ def import_favourites(source=None):
                 # Let's write the thumbnails to disk
                 if file_info.fileName() in _zip.namelist():
                     root = '/'.join((server, job, root,
-                                     common.BOOKMARK_ROOT_DIR))
+                                     common.bookmark_cache_dir))
                     _zip.extract(
                         file_info.fileName(),
                         root
@@ -342,23 +487,32 @@ def set_active(k, v):
         v (str): A path segment, eg. '//myserver/jobs'.
 
     """
-    if k not in common.ACTIVE_KEYS:
+    if k not in common.ActiveSectionCacheKeys:
         raise ValueError('Invalid active key. Key must be the one of "{}"'.format(
-            '", "'.join(common.ACTIVE_KEYS)))
-    common.settings.setValue(common.ActiveSection, k, v)
-    common.settings.verify_active()
+            '", "'.join(common.ActiveSectionCacheKeys)))
+
+    common.ActiveSectionCache[common.active_mode][k] = v
+    if common.active_mode == common.SyncronisedActivePaths:
+        common.settings.setValue(common.ActiveSection, k, v)
+
+
+@common.error
+@common.debug
+def set_task_folder(v):
+    set_active(common.TaskKey, v)
+    common.source_model(common.FileTab).reset_data()
+    common.widget(common.FileTab).model().invalidateFilter()
 
 
 @common.error
 @common.debug
 def toggle_sequence():
-    if instance() is None:
+    if common.main_widget is None:
         return
-    idx = instance().stackedwidget.currentIndex()
-    if idx not in (common.FileTab, common.FavouriteTab):
+    if common.current_tab() not in (common.FileTab, common.FavouriteTab):
         return
 
-    model = instance().widget().model().sourceModel()
+    model = common.source_model()
     datatype = model.data_type()
     if datatype == common.FileItem:
         model.dataTypeChanged.emit(common.SequenceItem)
@@ -369,9 +523,9 @@ def toggle_sequence():
 @common.error
 @common.debug
 def toggle_archived_items():
-    if instance() is None:
+    if common.main_widget is None:
         return
-    w = instance().widget()
+    w = common.widget()
     proxy = w.model()
     val = proxy.filter_flag(common.MarkedAsArchived)
     proxy.set_filter_flag(common.MarkedAsArchived, not val)
@@ -381,9 +535,9 @@ def toggle_archived_items():
 @common.error
 @common.debug
 def toggle_active_item():
-    if instance() is None:
+    if common.main_widget is None:
         return
-    w = instance().widget()
+    w = common.widget()
     proxy = w.model()
     val = proxy.filter_flag(common.MarkedAsActive)
     proxy.set_filter_flag(common.MarkedAsActive, not val)
@@ -393,9 +547,9 @@ def toggle_active_item():
 @common.error
 @common.debug
 def toggle_favourite_items():
-    if instance() is None:
+    if common.main_widget is None:
         return
-    w = instance().widget()
+    w = common.widget()
     proxy = w.model()
     val = proxy.filter_flag(common.MarkedAsFavourite)
     proxy.set_filter_flag(common.MarkedAsFavourite, not val)
@@ -405,10 +559,10 @@ def toggle_favourite_items():
 @common.error
 @common.debug
 def toggle_inline_icons():
-    if instance() is None:
+    if common.main_widget is None:
         return
 
-    widget = instance().widget()
+    widget = common.widget()
     state = not widget.buttons_hidden()
 
     common.sort_by_basename = state
@@ -421,9 +575,9 @@ def toggle_inline_icons():
 @common.error
 @common.debug
 def toggle_make_thumbnails():
-    if instance() is None:
+    if common.main_widget is None:
         return
-    widget = instance().widget()
+    widget = common.widget()
     model = widget.model().sourceModel()
     state = not model.generate_thumbnails_enabled()
     model.set_generate_thumbnails_enabled(state)
@@ -437,18 +591,18 @@ def toggle_make_thumbnails():
 
 @QtCore.Slot()
 def toggle_task_view():
-    if not instance():
+    if not common.main_widget:
         return
-    if instance().stackedwidget.currentIndex() != common.FileTab:
+    if common.current_tab() != common.FileTab:
         return
-    instance().taskswidget.setHidden(not instance().taskswidget.isHidden())
+    common.widget(common.TaskTab).setHidden(not common.widget(common.TaskTab).isHidden())
     common.signals.taskViewToggled.emit()
 
 
 def toggle_filter_editor():
-    if instance() is None:
+    if common.main_widget is None:
         return
-    w = instance().widget()
+    w = common.widget()
     if w.filter_editor.isHidden():
         w.filter_editor.open()
     else:
@@ -463,13 +617,13 @@ def asset_identifier_changed(table, source, key, value):
     """Refresh the assets model if the identifier changes.
 
     """
-    if instance() is None:
+    if common.main_widget is None:
         return
     # All shotgun fields should be prefix by 'shotgun_'
     if not (table == database.BookmarkTable and key == 'identifier'):
         return
-    widget = instance().stackedwidget.widget(common.AssetTab)
-    widget.model().sourceModel().modelDataResetRequested.emit()
+    model = common.source_model(common.AssetTab)
+    model.reset_data()
 
 
 def selection(func):
@@ -479,35 +633,25 @@ def selection(func):
     """
     @functools.wraps(func)
     def func_wrapper():
-        if instance() is None:
+        if common.main_widget is None:
             return None
-        index = instance().index()
+        index = common.selected_index()
         if not index.isValid():
             return None
         return func(index)
     return func_wrapper
 
 
-def instance():
-    from . import main
-    try:
-        return main.instance()
-    except RuntimeError:
-        return None
-    except:
-        raise
-
-
 @common.error
 @common.debug
 def increase_row_size():
-    if instance() is None:
+    if common.main_widget is None:
         return
-    widget = instance().widget()
+    widget = common.widget()
     proxy = widget.model()
     model = proxy.sourceModel()
 
-    v = model.row_size().height() + common.psize(20)
+    v = model.row_size().height() + common.size(common.thumbnail_size / 15)
     if v >= common.thumbnail_size:
         return
 
@@ -518,13 +662,13 @@ def increase_row_size():
 @common.error
 @common.debug
 def decrease_row_size():
-    if instance() is None:
+    if common.main_widget is None:
         return
-    widget = instance().widget()
+    widget = common.widget()
     proxy = widget.model()
     model = proxy.sourceModel()
 
-    v = model.row_size().height() - common.psize(20)
+    v = model.row_size().height() - common.size(common.thumbnail_size / 15)
     if v <= model.default_row_size().height():
         v = model.default_row_size().height()
 
@@ -535,9 +679,9 @@ def decrease_row_size():
 @common.error
 @common.debug
 def reset_row_size():
-    if instance() is None:
+    if common.main_widget is None:
         return
-    widget = instance().widget()
+    widget = common.widget()
     proxy = widget.model()
     model = proxy.sourceModel()
 
@@ -711,16 +855,8 @@ def show_slack():
 
 @common.error
 @common.debug
-def quit():
-    common.quit()
-    if common.init_mode == common.StandaloneMode:
-        QtWidgets.QApplication.instance().quit()
-
-
-@common.error
-@common.debug
 def add_item():
-    idx = instance().stackedwidget.currentIndex()
+    idx = common.current_tab()
     if idx == common.BookmarkTab:
         show_add_bookmark()
     elif idx == common.AssetTab:
@@ -735,7 +871,7 @@ def add_item():
 @common.debug
 @selection
 def edit_item(index):
-    idx = instance().stackedwidget.currentIndex()
+    idx = common.current_tab()
     if idx == common.BookmarkTab:
         server, job, root = index.data(common.ParentPathRole)[0:3]
         edit_bookmark(
@@ -756,16 +892,16 @@ def edit_item(index):
 
 @common.error
 @common.debug
-def refresh():
-    w = instance().widget()
+def refresh(idx=None):
+    w = common.widget(idx=idx)
     model = w.model().sourceModel()
-    model.__resetdata__(force=True)
+    model.reset_data(force=True)
 
 
 @common.error
 @common.debug
 def toggle_flag(flag, v):
-    proxy = instance().widget().model()
+    proxy = common.widget().model()
     proxy.set_filter_flag(flag, v)
     proxy.filterFlagChanged.emit(flag, v)
 
@@ -773,28 +909,28 @@ def toggle_flag(flag, v):
 @common.error
 @common.debug
 def toggle_fullscreen():
-    if instance().isFullScreen():
-        instance().showNormal()
+    if common.main_widget.isFullScreen():
+        common.main_widget.showNormal()
     else:
-        instance().showFullScreen()
+        common.main_widget.showFullScreen()
 
 
 @common.error
 @common.debug
 def toggle_maximized():
-    if instance().isMaximized():
-        instance().showNormal()
+    if common.main_widget.isMaximized():
+        common.main_widget.showNormal()
     else:
-        instance().showMaximized()
+        common.main_widget.showMaximized()
 
 
 @common.error
 @common.debug
 def toggle_minimized():
-    if instance().isMinimized():
-        instance().showNormal()
+    if common.main_widget.isMinimized():
+        common.main_widget.showNormal()
     else:
-        instance().showMinimized()
+        common.main_widget.showMinimized()
 
 
 @common.error
@@ -805,7 +941,7 @@ def toggle_stays_on_top():
 
     from . import standalone
 
-    w = standalone.instance()
+    w = common.main_widget
     flags = w.windowFlags()
     state = flags & QtCore.Qt.WindowStaysOnTopHint
 
@@ -828,7 +964,7 @@ def toggle_frameless():
 
     from . import standalone
 
-    w = standalone.instance()
+    w = common.main_widget
     flags = w.windowFlags()
     state = flags & QtCore.Qt.FramelessWindowHint
 
@@ -851,9 +987,9 @@ def exec_instance():
     if common.get_platform() == common.PlatformWindows:
         if common.env_key not in os.environ:
             s = 'Bookmarks does not seem to be installed correctly:\n'
-            s += '"{}" environment variable is not set'.format(
-                common.env_key)
+            s += f'"{common.env_key}" environment variable is not set.'
             raise RuntimeError(s)
+
         p = os.environ[common.env_key] + \
             os.path.sep + 'bookmarks.exe'
         subprocess.Popen(p)
@@ -866,9 +1002,9 @@ def exec_instance():
 @common.error
 @common.debug
 def change_tab(idx):
-    if not instance():
+    if not common.main_widget:
         return
-    if instance().stackedwidget.currentIndex() == idx:
+    if common.current_tab() == idx:
         return
     common.signals.tabChanged.emit(idx)
 
@@ -876,9 +1012,9 @@ def change_tab(idx):
 @common.error
 @common.debug
 def next_tab():
-    n = instance().stackedwidget.currentIndex()
+    n = common.current_tab()
     n += 1
-    if n > (instance().stackedwidget.count() - 1):
+    if n > (common.main_widget.stacked_widget.count() - 1):
         common.signals.tabChanged.emit(common.BookmarkTab)
         return
     common.signals.tabChanged.emit(n)
@@ -887,10 +1023,10 @@ def next_tab():
 @common.error
 @common.debug
 def previous_tab():
-    n = instance().stackedwidget.currentIndex()
+    n = common.current_tab()
     n -= 1
     if n < 0:
-        n = instance().stackedwidget.count() - 1
+        n = common.main_widget.stacked_widget.count() - 1
         common.signals.tabChanged.emit(n)
         return
     common.signals.tabChanged.emit(n)
@@ -899,14 +1035,14 @@ def previous_tab():
 @common.error
 @common.debug
 def change_sorting(role, order):
-    model = instance().widget().model().sourceModel()
+    model = common.widget().model().sourceModel()
     model.sortingChanged.emit(role, order)
 
 
 @common.error
 @common.debug
 def toggle_sort_order():
-    model = instance().widget().model().sourceModel()
+    model = common.widget().model().sourceModel()
     order = model.sort_order()
     role = model.sort_role()
     model.sortingChanged.emit(role, not order)
@@ -949,7 +1085,7 @@ def copy_selected_alt_path(index):
 @selection
 def show_todos(index):
     from . import notes
-    parent = instance().widget()
+    parent = common.widget()
     editors = [f for f in parent.children() if isinstance(
         f, notes.TodoEditorWidget)]
     if editors:
@@ -983,10 +1119,10 @@ def preview(index):
     source = common.get_sequence_startpath(source)
 
     if '.abc' in source.lower():
-        from .lists import alembic_widget
+        from . lists.widgets import alembic_widget
         editor = alembic_widget.AlembicPreviewWidget(source)
-        instance().widget().selectionModel().currentChanged.connect(editor.close)
-        instance().widget().selectionModel().currentChanged.connect(editor.deleteLater)
+        common.widget().selectionModel().currentChanged.connect(editor.close)
+        common.widget().selectionModel().currentChanged.connect(editor.deleteLater)
         editor.show()
         return
 
@@ -1001,7 +1137,7 @@ def preview(index):
         root,
         source,
         get_path=True,
-        fallback_thumb=instance().widget().itemDelegate().fallback_thumb
+        fallback_thumb=common.widget().itemDelegate().fallback_thumb
     )
     if not source:
         return
@@ -1012,11 +1148,8 @@ def preview(index):
     idx = model.mapToSource(index).row()
     ref = weakref.ref(data[idx])
 
-    from .lists import image_viewer
-    image_viewer.show(source, ref, instance().widget())
-
-    # ImageViewer(thumb_path, parent=instance().widget())
-    # editor.open()
+    from . lists.widgets import image_viewer
+    image_viewer.show(source, ref, common.widget())
 
 
 @common.debug
@@ -1030,14 +1163,14 @@ def reveal_selected(index):
 @common.error
 @selection
 def reveal_url(index):
-    parent_path = index.data(common.ParentPathRole)
-    if len(parent_path) == 3:
+    source_path = index.data(common.ParentPathRole)
+    if len(source_path) == 3:
         table = database.BookmarkTable
     else:
         table = database.AssetTable
 
-    source = '/'.join(parent_path)
-    db = database.get_db(*parent_path[0:3])
+    source = '/'.join(source_path)
+    db = database.get_db(*source_path[0:3])
     v = db.value(source, 'url1', table=table)
 
     if not v:
@@ -1050,9 +1183,9 @@ def reveal_url(index):
 @common.error
 @selection
 def toggle_favourite(index):
-    instance().widget().save_selection()
-    instance().widget().toggle_item_flag(index, common.MarkedAsFavourite)
-    instance().widget().update(index)
+    common.widget().save_selection()
+    common.widget().toggle_item_flag(index, common.MarkedAsFavourite)
+    common.widget().update(index)
 
 
 @common.debug
@@ -1065,10 +1198,29 @@ def toggle_archived(index):
         ui.MessageBox('Persistent items cannot be archived.').open()
         return
 
-    instance().widget().save_selection()
-    instance().widget().toggle_item_flag(index, common.MarkedAsArchived)
-    instance().widget().update(index)
-    instance().widget().model().invalidateFilter()
+    common.widget().save_selection()
+    common.widget().toggle_item_flag(index, common.MarkedAsArchived)
+    common.widget().update(index)
+    common.widget().model().invalidateFilter()
+
+
+@QtCore.Slot(str)
+@common.debug
+@common.error
+def show_asset(path):
+    index = common.active_index(common.BookmarkTab)
+    if not index or not index.isValid():
+        return
+
+    # Check if the aded asset has been added to the currently active bookmark
+    if index.data(QtCore.Qt.StatusTipRole) not in path:
+        return
+
+    # Change tabs otherwise
+    common.signals.tabChanged.emit(common.AssetTab)
+
+    widget = common.widget(common.AssetTab)
+    widget.show_item(path, role=QtCore.Qt.StatusTipRole)
 
 
 @common.debug
@@ -1231,7 +1383,11 @@ def capture_thumbnail(index):
     server, job, root = index.data(common.ParentPathRole)[0:3]
     source = index.data(QtCore.Qt.StatusTipRole)
 
-    from .lists import thumb_capture as editor
+    if common.init_mode == common.StandaloneMode:
+        common.main_widget.hide()
+        common.main_widget.save_window()
+
+    from . lists.widgets import thumb_capture as editor
     widget = editor.show(
         server=server,
         job=job,
@@ -1239,6 +1395,10 @@ def capture_thumbnail(index):
         source=source,
         proxy=False
     )
+
+    if common.init_mode == common.StandaloneMode:
+        from . import standalone
+        widget.captureFinished.connect(standalone.show)
 
     widget.captureFinished.connect(widget.save_image)
     model = index.model().sourceModel()
@@ -1254,7 +1414,7 @@ def pick_thumbnail_from_file(index):
     server, job, root = index.data(common.ParentPathRole)[0:3]
     source = index.data(QtCore.Qt.StatusTipRole)
 
-    from .lists import thumb_picker as editor
+    from . lists.widgets import thumb_picker as editor
     widget = editor.show(
         server=server,
         job=job,
@@ -1274,7 +1434,7 @@ def pick_thumbnail_from_library(index):
     server, job, root = index.data(common.ParentPathRole)[0:3]
     source = index.data(QtCore.Qt.StatusTipRole)
 
-    from .lists import thumb_library as editor
+    from . lists.widgets import thumb_library as editor
     widget = editor.show(
         server=server,
         job=job,
@@ -1317,7 +1477,7 @@ def remove_thumbnail(index):
 @common.error
 @common.debug
 def copy_properties():
-    idx = instance().stackedwidget.currentIndex()
+    idx = common.current_tab()
     if idx == common.BookmarkTab:
         copy_bookmark_properties()
     elif idx == common.AssetTab:
@@ -1329,7 +1489,7 @@ def copy_properties():
 @common.error
 @common.debug
 def paste_properties():
-    idx = instance().stackedwidget.currentIndex()
+    idx = common.current_tab()
     if idx == common.BookmarkTab:
         paste_bookmark_properties()
     elif idx == common.AssetTab:
@@ -1396,40 +1556,14 @@ def paste_asset_properties(index):
 
 @common.error
 @common.debug
-def toggle_session_mode():
-    # Toggle the active mode
-    if common.session_mode == common.SyncronisedActivePaths:
-        common.set_session_mode(common.PrivateActivePaths)
-    elif common.session_mode == common.PrivateActivePaths:
-        common.set_session_mode(common.SyncronisedActivePaths)
-    else:
-        common.set_session_mode(common.PrivateActivePaths)
-
-    # Write new mode to the lock file
-    common.write_current_mode_to_lock(os.getpid())
-
-    # Load the values from the settings file
-    common.settings.verify_active()
-
-    # Skip if the gui is not initialized
-    if not instance():
+def toggle_active_mode():
+    if not common.main_widget:
         return
-
-    widget = instance().stackedwidget.widget(common.BookmarkTab)
-    widget.model().sourceModel().modelDataResetRequested.emit()
-    # # The current bookmark has changed
-    widget.model().sourceModel().modelDataResetRequested.emit()
-    # The current asset has changed
-    widget = instance().stackedwidget.widget(common.AssetTab)
-    widget.model().sourceModel().modelDataResetRequested.emit()
-    # The current task folder has changed
-    widget = instance().stackedwidget.widget(common.FileTab)
-    widget.model().sourceModel().modelDataResetRequested.emit()
-
-    widget.model().sourceModel().taskFolderChanged.emit(
-        common.active(common.TaskKey))
-
-    common.signals.sessionModeChanged.emit(common.session_mode)
+    # Toggle the active mode
+    common.active_mode = int(not bool(common.active_mode))
+    common.write_current_mode_to_lock()
+    common.signals.activeModeChanged.emit(common.active_mode)
+    common.source_model(common.BookmarkTab).reset_data(force=True)
 
 
 @common.error
@@ -1442,11 +1576,10 @@ def import_asset_properties_from_json():
     if not source:
         return
 
-    from . import main
     from . import ui
 
     # Load config values from JSON
-    with open(source, 'r') as f:
+    with open(source, 'r', encoding='utf8') as f:
         v = f.read()
     import_data = json.loads(v)
 
@@ -1455,14 +1588,14 @@ def import_asset_properties_from_json():
     mbox.open()
 
     try:
-        w = main.instance().stackedwidget.widget(common.AssetTab)
+        w = common.widget(common.AssetTab)
         proxy = w.model()
         model = w.model().sourceModel()
         data = model.model_data()
 
         for k in import_data:
             # Progress update
-            mbox_title = 'Applying properties ({})...'
+            mbox_title = f'Applying properties ({k})...'
             mbox.set_labels(mbox_title)
             QtWidgets.QApplication.instance().processEvents()
 

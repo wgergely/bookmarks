@@ -131,12 +131,20 @@ SECTIONS = {
                     'description': 'Scales Bookmark\'s interface by the specified amount.\nUseful for high-dpi displays if the text is too small to read.\n\nTakes effect the next time Bookmarks is launched.',
                 },
                 1: {
-                    'name': 'Show Menu Icons',
+                    'name': 'Context Menu Icon',
                     'key': common.ShowMenuIconsKey,
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Hide Menu Icons'),
                     'placeholder': 'Check to hide menu icons',
                     'description': 'Check to hide menu icons',
+                },
+                2: {
+                    'name': 'Thumbnail Background Color',
+                    'key': common.ShowThumbnailBackgroundKey,
+                    'validator': None,
+                    'widget': functools.partial(QtWidgets.QCheckBox, 'Show Color'),
+                    'placeholder': 'Check to show a generic thumbnail background color for transparent images',
+                    'description': 'Check to show a generic thumbnail background color for transparent images',
                 },
             },
             1: {

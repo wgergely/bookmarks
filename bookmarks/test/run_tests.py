@@ -6,8 +6,8 @@ sys.stdout.reconfigure(encoding='utf-8')
 import unittest
 
 import bookmarks.test.test_common
-import bookmarks.test.test_context
-# import bookmarks.test.test_database
+import bookmarks.test.test_database
+# import bookmarks.test.test_context
 # import bookmarks.test.test_images
 # import bookmarks.test.test_settings
 # import bookmarks.test.test_session_lock
@@ -21,8 +21,8 @@ if __name__ == '__main__':
     loader = unittest.TestLoader()
     cases = (
         loader.loadTestsFromTestCase(bookmarks.test.test_common.Test),
-        loader.loadTestsFromTestCase(bookmarks.test.test_context.Test),
-        # loader.loadTestsFromTestCase(bookmarks.test.test_database.Test),
+        loader.loadTestsFromTestCase(bookmarks.test.test_database.Test),
+        # loader.loadTestsFromTestCase(bookmarks.test.test_context.Test),
         # loader.loadTestsFromTestCase(bookmarks.test.test_images.Test),
         # loader.loadTestsFromTestCase(bookmarks.test.test_templates.Test),
         # loader.loadTestsFromTestCase(bookmarks.test.test_main.Test),

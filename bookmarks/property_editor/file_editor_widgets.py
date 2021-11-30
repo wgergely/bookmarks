@@ -23,60 +23,10 @@ CacheMode = 'export'
 ROW_SIZE = QtCore.QSize(1, common.size(common.HeightRow))
 
 
-def active_icon():
-    """Checkmark icon.
-
-    """
-    return QtGui.QIcon(
-        images.ImageCache.get_rsc_pixmap(
-            'check',
-            common.color(common.GreenColor),
-            common.size(common.WidthMargin) * 2
-        )
-    )
-
-
-_keys = (
-    common.ServerKey,
-    common.JobKey,
-    common.RootKey,
-    common.AssetKey,
-    common.TaskKey,
-)
-
-
-def _active(n, join=True):
-    v = [common.ACTIVE[k] for k in _keys[0:n]]
-    if not all(v):
-        return None
-    if join:
-        return '/'.join(v)
-    return v
-
-
-def active_bookmark():
-    return _active(3)
-
-
-def active_asset():
-    return _active(4)
-
-
-def active_task():
-    return _active(5)
-
-
 def init_data(func):
     @functools.wraps(func)
     def func_wrapper(self, *args, **kwargs):
-        keys = (
-            common.ServerKey,
-            common.JobKey,
-            common.RootKey,
-            common.AssetKey
-        )
-        args = [common.ACTIVE[k] for k in keys]
-        return func(self, *args)
+        return func(self, *common.active(common.AssetKey, args=True))
     return func_wrapper
 
 
@@ -86,8 +36,10 @@ class BaseModel(QtCore.QAbstractListModel):
     """
 
     def __init__(self, parent=None):
-        super(BaseModel, self).__init__(parent=parent)
+        super().__init__(parent=parent)
+
         self._data = {}
+
         self.beginResetModel()
         self.init_data()
         self.endResetModel()
@@ -128,7 +80,7 @@ class BookmarksModel(BaseModel):
         super(BookmarksModel, self).__init__(parent=parent)
 
     def init_data(self, load_all=False):
-        k = active_bookmark()
+        k = common.active(common.RootKey, path=True)
         if not k or not QtCore.QFileInfo(k).exists():
             return
 
@@ -142,7 +94,7 @@ class BookmarksModel(BaseModel):
         if not load_all:
             self._data[0] = {
                 QtCore.Qt.DisplayRole: self.display_name(k),
-                QtCore.Qt.DecorationRole: active_icon(),
+                QtCore.Qt.DecorationRole: ui.get_icon('check', color=common.color(common.GreenColor)),
                 QtCore.Qt.ForegroundRole: common.color(common.TextSelectedColor),
                 QtCore.Qt.SizeHintRole: ROW_SIZE,
                 QtCore.Qt.StatusTipRole: k,
@@ -156,10 +108,10 @@ class BookmarksModel(BaseModel):
             return
 
         for k in sorted(common.bookmarks.keys()):
-            active = active_bookmark() == k
+            active = common.active(common.RootKey, path=True) == k
             self._data[len(self._data)] = {
                 QtCore.Qt.DisplayRole: self.display_name(k),
-                QtCore.Qt.DecorationRole: active_icon() if active else icon,
+                QtCore.Qt.DecorationRole: ui.get_icon('check', color=common.color(common.GreenColor)) if active else icon,
                 QtCore.Qt.ForegroundRole: common.color(common.TextSelectedColor) if active else common.color(common.TextSecondaryColor),
                 QtCore.Qt.SizeHintRole: ROW_SIZE,
                 QtCore.Qt.StatusTipRole: k,
@@ -177,7 +129,7 @@ class BookmarkComboBox(QtWidgets.QComboBox):
 
 class AssetsModel(BaseModel):
     def init_data(self, load_all=False):
-        k = active_asset()
+        k = common.active(common.AssetKey, path=True)
         if not k or not QtCore.QFileInfo(k).exists():
             return
 
@@ -191,7 +143,7 @@ class AssetsModel(BaseModel):
         if not load_all:
             self._data[0] = {
                 QtCore.Qt.DisplayRole: self.display_name(k),
-                QtCore.Qt.DecorationRole: active_icon(),
+                QtCore.Qt.DecorationRole: ui.get_icon('check', color=common.color(common.GreenColor)),
                 QtCore.Qt.ForegroundRole: common.color(common.TextSelectedColor),
                 QtCore.Qt.SizeHintRole: ROW_SIZE,
                 QtCore.Qt.StatusTipRole: k,
@@ -202,7 +154,7 @@ class AssetsModel(BaseModel):
             return
 
         # Let's get the identifier from the bookmark database
-        db = database.get_db(*_active(3, join=False))
+        db = database.get_db(*common.active(common.RootKey, args=True))
         ASSET_IDENTIFIER = db.value(
             db.source(),
             'identifier',
@@ -222,10 +174,10 @@ class AssetsModel(BaseModel):
                 if not QtCore.QFileInfo(identifier).exists():
                     continue
 
-            active = active_asset() == entry.name
+            active = common.active(common.AssetKey, path=True) == entry.name
             self._data[len(self._data)] = {
                 QtCore.Qt.DisplayRole: self.display_name(filepath),
-                QtCore.Qt.DecorationRole: active_icon() if active else icon,
+                QtCore.Qt.DecorationRole: ui.get_icon('check', color=common.color(common.GreenColor)) if active else icon,
                 QtCore.Qt.ForegroundRole: common.color(common.TextSelectedColor) if active else common.color(common.TextSecondaryColor),
                 QtCore.Qt.SizeHintRole: ROW_SIZE,
                 QtCore.Qt.StatusTipRole: filepath,
@@ -235,7 +187,7 @@ class AssetsModel(BaseModel):
             }
 
     def display_name(self, v):
-        k = active_bookmark()
+        k = common.active(common.RootKey, path=True)
         return v.replace(k, '').strip('/').split('/', maxsplit=1)[0]
 
 
@@ -272,12 +224,12 @@ class TaskModel(BaseModel):
     def init_data(self):
         self._data = {}
 
-        k = active_asset()
+        k = common.active(common.AssetKey, path=True)
         if not k or not QtCore.QFileInfo(k).exists():
             return
 
         # Load the available task folders from the active bookmark item's `asset_config`.
-        config = asset_config.get(*_active(3, join=False))
+        config = asset_config.get(*common.active(common.RootKey, args=True))
         data = config.data()
         if not isinstance(data, dict):
             return
@@ -335,9 +287,9 @@ class TaskModel(BaseModel):
 
 class TemplateModel(BaseModel):
     def init_data(self):
-        server = common.ACTIVE[common.ServerKey]
-        job = common.ACTIVE[common.JobKey]
-        root = common.ACTIVE[common.RootKey]
+        server = common.active(common.ServerKey)
+        job = common.active(common.JobKey)
+        root = common.active(common.RootKey)
 
         if not all((server, job, root)):
             return
@@ -380,9 +332,9 @@ class TemplateComboBox(QtWidgets.QComboBox):
 
 class ExtensionModel(BaseModel):
     def init_data(self):
-        server = common.ACTIVE[common.ServerKey]
-        job = common.ACTIVE[common.JobKey]
-        root = common.ACTIVE[common.RootKey]
+        server = common.active(common.ServerKey)
+        job = common.active(common.JobKey)
+        root = common.active(common.RootKey)
 
         if not all((server, job, root)):
             return

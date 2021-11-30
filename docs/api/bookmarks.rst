@@ -40,7 +40,7 @@ Submodules
    bookmarks.shortcuts
    bookmarks.standalone
    bookmarks.statusbar
-   bookmarks.topbar
+   bookmarks.topbar_widget
    bookmarks.ui
 
 Module contents

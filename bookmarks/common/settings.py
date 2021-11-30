@@ -6,12 +6,16 @@ store user and app common.
 import os
 import json
 import re
+import collections
 
 from PySide2 import QtCore
 
 from .. import log
 from .. import common
 
+
+SyncronisedActivePaths = 0
+PrivateActivePaths = 1
 
 ActiveSection = 'Active'
 ServerKey = 'Server'
@@ -21,7 +25,7 @@ AssetKey = 'Asset'
 TaskKey = 'Task'
 FileKey = 'File'
 
-ACTIVE_KEYS = (
+ActiveSectionCacheKeys = (
     ServerKey,
     JobKey,
     RootKey,
@@ -29,7 +33,6 @@ ACTIVE_KEYS = (
     TaskKey,
     FileKey,
 )
-
 
 CurrentUserPicksSection = 'UserPicks'
 ServersKey = 'Servers'
@@ -41,6 +44,7 @@ FFMpegKey = 'FFMpegPath'
 RVKey = 'RVPath'
 UIScaleKey = 'UIScale'
 ShowMenuIconsKey = 'ShowMenuIcons'
+ShowThumbnailBackgroundKey = 'ShowThumbnailBackgroundKey'
 WorkspaceSyncKey = 'WorkspaceSync'
 WorksapceWarningsKey = 'WorkspaceWarnings'
 SaveWarningsKey = 'SaveWarnings'
@@ -93,7 +97,20 @@ SGTypeKey = 'SGType'
 
 
 def init_settings():
+    # Initialize the ActiveSectionCache object
+    common.ActiveSectionCache = {
+        SyncronisedActivePaths: collections.OrderedDict(),
+        PrivateActivePaths: collections.OrderedDict(),
+    }
+    for mode in common.ActiveSectionCache:
+        for key in ActiveSectionCacheKeys:
+            common.ActiveSectionCache[mode][key] = None
+
+    # Create the setting object, this will load the previously saved active
+    # paths from the ini file.
     common.settings = UserSettings()
+    common.settings.load_active_values()
+    common.settings.update_private_values()
 
     v = common.settings.value(CurrentUserPicksSection, ServersKey)
     if not isinstance(v, dict):
@@ -143,7 +160,42 @@ def _init_bookmarks():
         common.servers[v[k][ServerKey]] = v[k][ServerKey]
 
     common.bookmarks = v
-    return v
+
+
+def active(k, path=False, args=False):
+    """Get the current active item.
+
+    Args:
+        k (str): The name of the path segment, eg. `common.ServerKey`.
+        path (bool, optional): If True, will return a path to the active item.
+        args (bool, optional): If `True`, will return all components that make up the path.
+
+    Returns:
+        str: The name of the active item.
+        str (when path=True): Path to the active item.
+        tuple (when args=True): Active path elements.
+
+    """
+    if path or args:
+        _path = None
+        _args = None
+        idx = common.ActiveSectionCacheKeys.index(k)
+        v = tuple(common.ActiveSectionCache[common.active_mode][k]
+             for k in common.ActiveSectionCacheKeys[:idx + 1])
+
+    if path:
+        _path = '/'.join(v) if all(v) else None
+        if args:
+            return (_path, _args)
+        return _path
+
+    if args:
+        _args = v if all(v) else None
+        if path:
+            return (_path, _args)
+        return _args
+
+    return common.ActiveSectionCache[common.active_mode][k]
 
 
 def get_user_settings_path():
@@ -189,10 +241,6 @@ def bookmark_key(*args):
     return k
 
 
-def active(k):
-    return common.ACTIVE[k]
-
-
 class UserSettings(QtCore.QSettings):
     """An `ini` config file to store all local user common.
 
@@ -217,41 +265,53 @@ class UserSettings(QtCore.QSettings):
             QtCore.QSettings.IniFormat,
             parent=parent
         )
-        self._active_section_values = {
-            f'{ActiveSection}/{ServerKey}': None,
-            f'{ActiveSection}/{JobKey}': None,
-            f'{ActiveSection}/{RootKey}': None,
-            f'{ActiveSection}/{AssetKey}': None,
-            f'{ActiveSection}/{TaskKey}': None,
-            f'{ActiveSection}/{FileKey}': None,
-        }
 
         # Simple timer to verify active paths every 30 seconds
         self.verify_timer = common.Timer(parent=self)
         self.verify_timer.setInterval(30000)
         self.verify_timer.setSingleShot(False)
         self.verify_timer.setTimerType(QtCore.Qt.CoarseTimer)
-        self.verify_timer.timeout.connect(self.verify_active)
+        self.verify_timer.timeout.connect(self.load_active_values)
 
-        # Make sure all saved active paths are valid
-        self.verify_active()
-        # Load and cache values from the settings file
-        # Save the current active paths as our private paths
-        self.init_private_values()
+    def load_active_values(self):
+        """Load previously saved active path elements from the `ini` file.
 
-    def init_private_values(self):
-        self._active_section_values = {
-            f'{ActiveSection}/{ServerKey}': active(ServerKey),
-            f'{ActiveSection}/{JobKey}': active(JobKey),
-            f'{ActiveSection}/{RootKey}': active(RootKey),
-            f'{ActiveSection}/{AssetKey}': active(AssetKey),
-            f'{ActiveSection}/{TaskKey}': active(TaskKey),
-            f'{ActiveSection}/{FileKey}': active(FileKey),
-        }
+        If the resulting path is invalid, we'll progressively unset the invalid
+        path segments until we find a valid path.
+
+        """
+        self.sync()
+        for k in ActiveSectionCacheKeys:
+            common.ActiveSectionCache[SyncronisedActivePaths][k] = self.value(ActiveSection, k)
+        self.verify_active(SyncronisedActivePaths)
+        self.verify_active(PrivateActivePaths)
+
+        # for m in (SyncronisedActivePaths, PrivateActivePaths):
+
+    def verify_active(self, m):
+        """Verify the load active section values.
+
+        Args:
+                m (int): The active mode.
+
+        """
+        p = str()
+        for k in ActiveSectionCacheKeys:
+            if common.ActiveSectionCache[m][k]:
+                p += common.ActiveSectionCache[m][k]
+            if not os.path.exists(p):
+                common.ActiveSectionCache[m][k] = None
+                if m == SyncronisedActivePaths:
+                    self.setValue(ActiveSection, k, None)
+            p += '/'
+
+    def update_private_values(self):
+        for k in ActiveSectionCacheKeys:
+            common.ActiveSectionCache[PrivateActivePaths][k] = common.ActiveSectionCache[SyncronisedActivePaths][k]
 
     def set_servers(self, v):
         common.check_type(v, dict)
-        common.servers = v    
+        common.servers = v
         self.setValue(CurrentUserPicksSection, ServersKey, v)
 
     def set_bookmarks(self, v):
@@ -266,37 +326,8 @@ class UserSettings(QtCore.QSettings):
         common.check_type(v, dict)
         self.setValue(CurrentUserPicksSection, FavouritesKey, v)
 
-    @QtCore.Slot()
-    def verify_active(self):
-        """This slot verifies and returns the saved ``active paths`` wrapped in
-        a dictionary.
-
-        If the resulting active path is not an existing file, we will
-        progressively unset the invalid path segments until we get a valid file
-        path.
-
-        Returns:
-            OrderedDict:    Path segments of an existing file.
-
-        """
-        self.sync()
-
-        for k in common.ACTIVE_KEYS:
-            common.ACTIVE[k] = self.value(ActiveSection, k)
-
-        # Let's check the path and unset any invalid parts
-        path = str()
-        for k in common.ACTIVE:
-            if common.ACTIVE[k]:
-                path += common.ACTIVE[k]
-            if not QtCore.QFileInfo(path).exists():
-                common.ACTIVE[k] = None
-                self.setValue(ActiveSection, k, None)
-            path += '/'
-        return common.ACTIVE
-
     def value(self, section, key):
-        """Used to retrieve a values from the local settings object.
+        """Used to retrieve a values from the user settings object.
 
         Overrides the default `value()` method to provide type checking.
         Types are saved in `{key}_type`.
@@ -306,15 +337,10 @@ class UserSettings(QtCore.QSettings):
             key (str): A key name.
 
         Returns:
-            The value stored in `local_settings` or `None` if not found.
+            The value stored in `user_settings` or `None` if not found.
 
         """
-        k = '{}/{}'.format(section, key)
-
-        # If PrivateActivePaths is on, we won't query the settings file and
-        # intead load and save from our private
-        if common.session_mode == common.PrivateActivePaths and section == ActiveSection:
-            return self._active_section_values[k]
+        k = f'{section}/{key}'
 
         t = super().value(k + '_type')
         v = super().value(k)
@@ -348,16 +374,11 @@ class UserSettings(QtCore.QSettings):
         return v
 
     def setValue(self, section, key, v):
-        """Override to allow redirecting `ActiveSection` keys to be saved in memory
-        when solo mode is on.
+        k = f'{section}/{key}'
 
-        """
-        k = '{}/{}'.format(section, key)
-
-        # Save active path values in our private data instead of the settings file
-        if common.session_mode == common.PrivateActivePaths and section == ActiveSection:
-            self._active_section_values[k] = v
+        if section == common.ActiveSection and common.active_mode == PrivateActivePaths:
             return
+        #     raise RuntimeError('The saved active path cannot be changed when the mode is `PrivateActivePaths`')
 
         super().setValue(k, v)
         super().setValue(k + '_type', type(v).__name__)

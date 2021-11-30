@@ -6,7 +6,7 @@ from .. import main
 from . import base
 
 
-class Test(base.BaseApplicationTest):
+class Test(base.BaseCase):
     @classmethod
     def setUpClass(cls):
         super(Test, cls).setUpClass()

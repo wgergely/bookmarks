@@ -1,7 +1,7 @@
 """
 The model is used to wrap data needed to display bookmark, asset and file
 items. Data is stored in :const:`common.DATA` and populated by
-:func:`.BaseModel.__initdata__`. The model can be initiated by the
+:func:`.BaseModel.init_data`. The model can be initiated by the
 `BaseModel.modelDataResetRequested` signal.
 
 The model refers to multiple data sets simultaneously. This is because file
@@ -30,13 +30,11 @@ import functools
 from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
-
+from .. import log
 from .. import images
 
 
-
-
-
+MAX_HISTORY = 20
 DEFAULT_ITEM_FLAGS = (
     QtCore.Qt.ItemNeverHasChildren |
     QtCore.Qt.ItemIsEnabled |
@@ -45,7 +43,7 @@ DEFAULT_ITEM_FLAGS = (
 
 
 def initdata(func):
-    """Wraps `__initdata__` calls.
+    """Wraps `init_data` calls.
 
     The decorator is responsible for emiting the begin- and endResetModel
     signals and sorting resulting data.
@@ -64,7 +62,7 @@ def initdata(func):
         self.endResetModel()
 
         # Emit  references to the just loaded core data
-        p = self.parent_path()
+        p = self.source_path()
         k = self.task()
         t1 = self.data_type()
         t2 = common.FileItem if t1 == common.SequenceItem else common.SequenceItem
@@ -82,7 +80,7 @@ class BaseModel(QtCore.QAbstractListModel):
     file items.
 
     Data is stored in the datacache module that can be fetched using the model's
-    `parent_path`, `task` and `data_type`.
+    `source_path`, `task` and `data_type`.
 
     """
     modelDataResetRequested = QtCore.Signal()  # Main signal to load model data
@@ -92,7 +90,6 @@ class BaseModel(QtCore.QAbstractListModel):
     dataTypeSorted = QtCore.Signal(int)
 
     activeChanged = QtCore.Signal(QtCore.QModelIndex)
-    taskFolderChanged = QtCore.Signal(str)
     dataTypeChanged = QtCore.Signal(int)
 
     sortingChanged = QtCore.Signal(int, bool)  # (SortRole, SortOrder)
@@ -103,7 +100,7 @@ class BaseModel(QtCore.QAbstractListModel):
     queues = ()
 
     def __init__(self, parent=None):
-        super(BaseModel, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.view = parent
 
         # Custom data type for weakref compatibility
@@ -156,21 +153,21 @@ class BaseModel(QtCore.QAbstractListModel):
     @common.debug
     @common.error
     @initdata
-    def __initdata__(self):
+    def init_data(self):
         """The main method used by the model to fetch and store item information
         from the file system.
 
         The model itself does not store any data, instead, we're using the
         :mod:`datacache` module to store item data.
 
-        The individual items are returned by :func:`item_generator`.
+        The individual items are returned by :func:`item_iterator`.
 
         """
         raise NotImplementedError(
             'Abstract method has to be implemented in subclass.')
 
     def item_iterator(self):
-        """A generator function used by :func:`__initdata__` find and yield the
+        """A generator function used by :func:`init_data` find and yield the
         items the model should load.
 
         Eg. for assets, the function should return a series of `_scandir` entries
@@ -180,29 +177,37 @@ class BaseModel(QtCore.QAbstractListModel):
         raise NotImplementedError(
             'Abstract method has to be implemented in subclass.')
 
-    def __resetdata__(self, force=False):
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def reset_data(self, *args, force=False, emit_active=True):
         """Resets the model's internal data.
 
         The underlying data is cached in the :mod:`datacache` module, so here
         we'll make sure the data is available for the model to use. When the
-        optional `force` flag is set, we'll use `__initdata__` to load the item
+        optional `force` flag is set, we'll use `init_data` to load the item
         data from disk.
 
         Otherwise, the method will check if our cached data is available and if
-        not, uses `__initdata__` to fetch it.
+        not, uses `init_data` to fetch it.
 
         """
-        p = self.parent_path()
+        common.check_type(force, bool)
+        common.check_type(emit_active, bool)
+
+        p = self.source_path()
         k = self.task()
+        if not p or not all(p) or not k:
+            return
 
         if force:
             common.reset_data(p, k)
-            self.__initdata__()
+            self.init_data()
             return
 
         d = common.get_task_data(p, k)
         if not d[common.FileItem]:
-            self.__initdata__()
+            self.init_data()
 
         # The let's signal the model reset and emit the current active index
         self.beginResetModel()
@@ -210,9 +215,11 @@ class BaseModel(QtCore.QAbstractListModel):
         index = self.active_index()
         if not index.isValid():
             return
-        self.set_active(index)
 
-    def parent_path(self):
+        if emit_active:
+            self.set_active(index)
+
+    def source_path(self):
         return ()
 
     @common.debug
@@ -324,7 +331,7 @@ class BaseModel(QtCore.QAbstractListModel):
         sortrole = self.sort_role()
         sortorder = self.sort_order()
 
-        p = self.parent_path()
+        p = self.source_path()
         k = self.task()
         t1 = self.data_type()
         t2 = common.FileItem if t1 == common.SequenceItem else common.SequenceItem
@@ -349,9 +356,13 @@ class BaseModel(QtCore.QAbstractListModel):
     @QtCore.Slot(int)
     def is_data_type_loaded(self, t):
         """Check if the given data type is loaded."""
-        p = self.parent_path()
+        p = self.source_path()
         k = self.task()
         t = self.data_type()
+
+        if not p or not all(p) or not k or t is None:
+            return False
+
         return common.is_loaded(p, k, t)
 
     def generate_thumbnails_enabled(self):
@@ -371,11 +382,14 @@ class BaseModel(QtCore.QAbstractListModel):
         """The pointer to the model's internal data.
 
         """
-        return common.get_data(
-            self.parent_path(),
-            self.task(),
-            self.data_type(),
-        )
+        p = self.source_path()
+        k = self.task()
+        t = self.data_type()
+
+        if not p or not all(p) or not k or t is None:
+            return common.DataDict()
+
+        return common.get_data(p, k, t)
 
     def _active_idx(self):
         data = self.model_data()
@@ -416,7 +430,7 @@ class BaseModel(QtCore.QAbstractListModel):
         """Set a newly activated item in globally active item.
 
         The active items are stored in `common.active` and are used by the
-        models to locate items to load (see `BaseModel.parent_paths()`).
+        models to locate items to load (see `BaseModel.source_paths()`).
 
         """
         pass
@@ -442,19 +456,16 @@ class BaseModel(QtCore.QAbstractListModel):
     def task(self):
         return 'default'
 
-    def set_task(self, v):
-        pass
-
-    def local_settings_key(self):
+    def user_settings_key(self):
         """Should return a key to be used to associated current filter and item
-        selections when storing them in the the `local_settings`.
+        selections when storing them in the the `user_settings`.
 
         Returns:
-            str: A local_settings key value.
+            str: A user_settings key value.
 
         """
         raise NotImplementedError(
-            'Abstract class "local_settings_key" has to be implemented in the subclasses.')
+            'Abstract class "user_settings_key" has to be implemented in the subclasses.')
 
     def get_local_setting(self, key_type, key=None, section=common.ListFilterSection):
         """Get a value stored in the local_common.
@@ -465,10 +476,10 @@ class BaseModel(QtCore.QAbstractListModel):
             section (str): A settings `section`. Defaults to `common.ListFilterSection`.
 
         Returns:
-            The value saved in `local_settings`, or `None` if not found.
+            The value saved in `user_settings`, or `None` if not found.
 
         """
-        key = key if key else self.local_settings_key()
+        key = key if key else self.user_settings_key()
         if not key:
             return None
         if not isinstance(key, str):
@@ -479,7 +490,7 @@ class BaseModel(QtCore.QAbstractListModel):
     @common.error
     @common.debug
     def set_local_setting(self, key_type, v, key=None, section=common.ListFilterSection):
-        """Set a value to store in `local_settings`.
+        """Set a value to store in `user_settings`.
 
         Args:
             key_type (str): A filter key type.
@@ -488,7 +499,7 @@ class BaseModel(QtCore.QAbstractListModel):
             section (type): A settings `section`. Defaults to `common.ListFilterSection`.
 
         """
-        key = key if key else self.local_settings_key()
+        key = key if key else self.user_settings_key()
         if not key:
             return None
         k = '{}/{}'.format(key_type, common.get_hash(key))
@@ -535,7 +546,7 @@ class BaseModel(QtCore.QAbstractListModel):
         index = self.index(row, 0)
         source = index.data(QtCore.Qt.StatusTipRole)
 
-        proxy = True if common.is_collapsed(source) else False
+        proxy = bool(common.is_collapsed(source))
         server, job, root = index.data(common.ParentPathRole)[0:3]
         images.load_thumbnail_from_image(
             server, job, root, source, image, proxy=proxy)
@@ -546,23 +557,27 @@ class BaseModel(QtCore.QAbstractListModel):
         return 1
 
     def rowCount(self, parent=QtCore.QModelIndex()):
-        p = self.parent_path()
+        p = self.source_path()
         k = self.task()
         t = self.data_type()
+        if not all((p, k)) or t is None:
+            return 0
         return common.data_count(p, k, t)
 
     def index(self, row, column, parent=QtCore.QModelIndex()):
-        p = self.parent_path()
+        p = self.source_path()
         k = self.task()
         t = self.data_type()
-        d = common.get_data(p, k, t)
 
-        if not d:
-            return QtCore.QModelIndex()
-        if row not in d:
+        if not p or not all(p) or not k or t is None:
             return QtCore.QModelIndex()
 
-        ptr = weakref.ref(d[row])
+        data = common.get_data(p, k, t)
+
+        if row not in data:
+            return QtCore.QModelIndex()
+
+        ptr = weakref.ref(data[row])
         return self.createIndex(row, 0, ptr=ptr)
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
@@ -704,7 +719,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
     @common.error
     @common.debug
     def init_filter_values(self, *args, **kwargs):
-        """Load the saved widget filters from `local_settings`.
+        """Load the saved widget filters from `user_settings`.
 
         This determines if eg. archived items are visible in the view.
 
@@ -739,7 +754,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         # Save the set text in the model
         self._filter_text = v
 
-        # Save the text in the local settings file
+        # Save the text in the user settings file
         self.sourceModel().set_local_setting(common.TextFilterKey, v)
         self.save_history(v)
         self.filterTextChanged.emit(v)
@@ -766,7 +781,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
     @QtCore.Slot(int, bool)
     def set_filter_flag(self, flag, v):
-        """Save a widget filter state to `local_settings`."""
+        """Save a widget filter state to `user_settings`."""
         if self._filter_flags[flag] == v:
             return
         self._filter_flags[flag] = v
@@ -786,7 +801,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
         """
         model = self.sourceModel()
-        p = model.parent_path()
+        p = model.source_path()
         k = model.task()
         t = model.data_type()
 

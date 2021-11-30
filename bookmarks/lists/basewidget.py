@@ -5,7 +5,7 @@ file items.
 BaseModel:
     The model is used to wrap data needed to display bookmark, asset and file
     items. Data is stored in :const:`common.DATA` and populated by
-    :func:`.BaseModel.__initdata__`. The model can be initiated by the
+    :func:`.BaseModel.init_data`. The model can be initiated by the
     `BaseModel.modelDataResetRequested` signal.
 
     The model refers to multiple data sets simultaneously. This is because file
@@ -52,7 +52,6 @@ from . import delegate
 
 
 BG_COLOR = QtGui.QColor(0, 0, 0, 50)
-MAX_HISTORY = 20
 
 
 def get_visible_indexes(widget):
@@ -100,17 +99,15 @@ class TabsWidget(QtWidgets.QStackedWidget):
 
         """
         # Converting idx to int
-        idx = 0 if idx is None or False else idx
+        idx = 0 if idx is None or idx is False else idx
         idx = idx if idx >= 0 else 0
 
         # No active bookmark
-        def active_index(x):
-            return self.widget(x).model().sourceModel().active_index()
-        if not active_index(0).isValid() and idx in (1, 2):
+        if not common.active_index(0).isValid() and idx in (1, 2):
             idx = 0
 
         # No active asset
-        if active_index(0).isValid() and not active_index(1).isValid() and idx == 2:
+        if common.active_index(0).isValid() and not common.active_index(1).isValid() and idx == 2:
             idx = 1
 
         if idx <= 3:
@@ -120,9 +117,6 @@ class TabsWidget(QtWidgets.QStackedWidget):
                 idx
             )
 
-        self._setCurrentIndex(idx)
-
-    def _setCurrentIndex(self, idx):
         super().setCurrentIndex(idx)
         self.currentWidget().setFocus()
 
@@ -256,7 +250,7 @@ class BaseListWidget(QtWidgets.QListView):
     ThumbnailContextMenu = ThumbnailsContextMenu
 
     def __init__(self, icon='icon_bw', parent=None):
-        super(BaseListWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.setDragDropOverwriteMode(False)
         self.setDropIndicatorShown(True)
         self.viewport().setAcceptDrops(True)
@@ -265,7 +259,7 @@ class BaseListWidget(QtWidgets.QListView):
         self.delayed_layout_timer = common.Timer(parent=self)
         self.delayed_layout_timer.setObjectName('DelayedLayoutTimer')
         self.delayed_layout_timer.setSingleShot(True)
-        self.delayed_layout_timer.setInterval(200)
+        self.delayed_layout_timer.setInterval(33)
         self.delayed_layout_timer.timeout.connect(
             self.scheduleDelayedItemsLayout)
         self.delayed_layout_timer.timeout.connect(self.repaint_visible_rows)
@@ -402,12 +396,9 @@ class BaseListWidget(QtWidgets.QListView):
 
         self.filter_editor.finished.connect(proxy.set_filter_text)
 
-        model.taskFolderChanged.connect(proxy.invalidateFilter)
-
-        model.modelDataResetRequested.connect(model.__resetdata__)
-
         model.modelReset.connect(self.delay_restore_selection)
         proxy.invalidated.connect(self.delay_restore_selection)
+
 
     @QtCore.Slot(QtCore.QModelIndex)
     def update(self, index):
@@ -422,7 +413,7 @@ class BaseListWidget(QtWidgets.QListView):
             return
         if not hasattr(index.model(), 'sourceModel'):
             index = self.model().mapFromSource(index)
-        super(BaseListWidget, self).update(index)
+        super().update(index)
 
     @QtCore.Slot(QtCore.QModelIndex)
     def activate(self, index):
@@ -579,7 +570,7 @@ class BaseListWidget(QtWidgets.QListView):
                 return
             database.set_flag(server, job, root, k, mode, flag)
 
-        def save_to_local_settings(k, mode, flag):
+        def save_to_user_settings(k, mode, flag):
             if mode:
                 actions.add_favourite(index.data(common.ParentPathRole), k)
                 return
@@ -600,7 +591,7 @@ class BaseListWidget(QtWidgets.QListView):
         if flag == common.MarkedAsArchived:
             save_func = save_to_db
         elif flag == common.MarkedAsFavourite:
-            save_func = save_to_local_settings
+            save_func = save_to_user_settings
         elif flag == common.MarkedAsActive:
             save_func = save_active
         else:
@@ -627,23 +618,30 @@ class BaseListWidget(QtWidgets.QListView):
 
         def can_toggle_flag(k, mode, data, flag):
             seq = common.get_sequence(k)
+
             if not seq:
                 return True
+
             proxy_k = common.proxy_path(k)
+
             if flag == common.MarkedAsActive:
-                pass
+                pass # not implemented
+
             elif flag == common.MarkedAsArchived:
                 db = database.get_db(*index.data(common.ParentPathRole)[0:3])
+
                 flags = db.value(
                     proxy_k,
                     'flags',
                     table=database.AssetTable
                 )
+
                 if not flags:
                     return True
                 if flags & common.MarkedAsArchived:
                     return False
                 return True
+
             elif flag == common.MarkedAsFavourite:
                 if proxy_k in common.favourites:
                     return False
@@ -651,19 +649,23 @@ class BaseListWidget(QtWidgets.QListView):
             return False
 
         if not index.isValid():
-            return None
+            return False
 
         if hasattr(index.model(), 'sourceModel'):
             source_index = self.model().mapToSource(index)
         else:
             source_index = index
 
-        if not index.data(common.FileInfoLoaded):
-            return None
+        if not source_index.data(common.FileInfoLoaded):
+            return False
 
         model = self.model().sourceModel()
-        p = model.parent_path()
+
+        p = model.source_path()
         k = model.task()
+
+        if not p or not all(p):
+            return False
 
         idx = source_index.row()
         data = model.model_data()[idx]
@@ -691,13 +693,15 @@ class BaseListWidget(QtWidgets.QListView):
                 _set_flags(FILE_DATA, k, mode, flag, commit=False, proxy=True)
         else:
             k = data[QtCore.Qt.StatusTipRole]
+
             if not can_toggle_flag(k, mode, data, flag):
                 ui.MessageBox(
                     'Looks like this item belongs to a sequence that has a flag set already.',
                     'To modify individual sequence items, remove the flag from the sequence first and try again.'
                 ).open()
                 self.reset_multitoggle()
-                return
+                return False
+
             _set_flag(k, mode, data, flag, commit=True)
             if self.model().sourceModel().model_data() == FILE_DATA:
                 _set_flags(SEQ_DATA, k, mode, flag, commit=True, proxy=False)
@@ -888,7 +892,7 @@ class BaseListWidget(QtWidgets.QListView):
         rect = rect.adjusted(o * 3, o, -o * 3, -o)
 
         font, metrics = common.font_db.primary_font(
-            font_size=common.size(common.FontSizeSmall))
+            common.size(common.FontSizeSmall))
         text = metrics.elidedText(
             text,
             QtCore.Qt.ElideRight,
@@ -920,6 +924,9 @@ class BaseListWidget(QtWidgets.QListView):
 
     @QtCore.Slot()
     def repaint_visible_rows(self):
+        if QtWidgets.QApplication.instance().mouseButtons() != QtCore.Qt.NoButton:
+            return
+
         def _next(rect):
             rect.moveTop(rect.top() + rect.height())
             return self.indexAt(rect.topLeft())
@@ -938,7 +945,7 @@ class BaseListWidget(QtWidgets.QListView):
         while viewport_rect.intersects(index_rect):
             if n > 99:  # manuel limit on how many items we will repaint
                 break
-            super(BaseListWidget, self).update(index)
+            super().update(index)
             index = _next(index_rect)
             if not index.isValid():
                 break
@@ -994,13 +1001,17 @@ class BaseListWidget(QtWidgets.QListView):
         proxy = self.model()
         model = proxy.sourceModel()
         if update and model.rowCount() < limit:
-            model.modelDataResetRequested.emit()
+            model.reset_data(force=True, emit_active=False)
 
         # Delay the selection to let the model process events
-        QtCore.QTimer.singleShot(300, functools.partial(
+        QtWidgets.QApplication.instance().processEvents()
+        QtCore.QTimer.singleShot(10, functools.partial(
             self.select_item, v, role=role))
 
     def select_item(self, v, role=QtCore.Qt.DisplayRole):
+        """Select an item in the viewer.
+
+        """
         proxy = self.model()
         model = proxy.sourceModel()
         data = model.model_data()
@@ -1092,7 +1103,7 @@ class BaseListWidget(QtWidgets.QListView):
         self.scheduleDelayedItemsLayout()
 
     def mouseReleaseEvent(self, event):
-        super(BaseListWidget, self).mouseReleaseEvent(event)
+        super().mouseReleaseEvent(event)
         self.delay_save_selection()
 
     def eventFilter(self, widget, event):
@@ -1174,19 +1185,19 @@ class BaseListWidget(QtWidgets.QListView):
                     self.delay_save_selection()
                     return
             elif event.key() == QtCore.Qt.Key_PageDown:
-                super(BaseListWidget, self).keyPressEvent(event)
+                super().keyPressEvent(event)
                 self.delay_save_selection()
                 return
             elif event.key() == QtCore.Qt.Key_PageUp:
-                super(BaseListWidget, self).keyPressEvent(event)
+                super().keyPressEvent(event)
                 self.delay_save_selection()
                 return
             elif event.key() == QtCore.Qt.Key_Home:
-                super(BaseListWidget, self).keyPressEvent(event)
+                super().keyPressEvent(event)
                 self.delay_save_selection()
                 return
             elif event.key() == QtCore.Qt.Key_End:
-                super(BaseListWidget, self).keyPressEvent(event)
+                super().keyPressEvent(event)
                 self.delay_save_selection()
                 return
 
@@ -1303,7 +1314,7 @@ class BaseListWidget(QtWidgets.QListView):
                 QtCore.QModelIndex(),
                 QtCore.QItemSelectionModel.ClearAndSelect
             )
-        super(BaseListWidget, self).mousePressEvent(event)
+        super().mousePressEvent(event)
 
     def mouseDoubleClickEvent(self, event):
         """Custom doubleclick event.
@@ -1352,7 +1363,7 @@ class BaseListWidget(QtWidgets.QListView):
                     elif len(p) == 3:
                         p = [p[0], ]
 
-                    path = '/'.join(p).rstrip('/')
+                    path = p.rstrip('/')
                     root_path = '/'.join(root_dir).strip('/')
                     path = path + '/' + root_path
                     actions.reveal(path)
@@ -1696,7 +1707,7 @@ class ThreadedBaseWidget(BaseInlineIconWidget):
         self.delayed_queue_timer.setInterval(300)
         self.delayed_queue_timer.setSingleShot(True)
 
-        super(ThreadedBaseWidget, self).__init__(icon=icon, parent=parent)
+        super().__init__(icon=icon, parent=parent)
         self.init_threads()
 
     @common.debug
@@ -1717,7 +1728,7 @@ class ThreadedBaseWidget(BaseInlineIconWidget):
                 break
 
     def set_model(self, *args, **kwargs):
-        super(ThreadedBaseWidget, self).set_model(*args, **kwargs)
+        super().set_model(*args, **kwargs)
         self.updateRow.connect(self.update_row)
 
         self.model().invalidated.connect(self.delay_queue_visible_indexes)
@@ -1798,4 +1809,4 @@ class ThreadedBaseWidget(BaseInlineIconWidget):
         index = self.model().mapFromSource(source_index)
         if not index.isValid():
             return
-        super(ThreadedBaseWidget, self).update(index)
+        super().update(index)

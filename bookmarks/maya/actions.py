@@ -42,11 +42,8 @@ def set_workspace(*args, **kwargs):
     if v == QtCore.Qt.Checked:
         return
 
-    widget = main.instance().stackedwidget.widget(common.AssetTab)
-    model = widget.model().sourceModel()
-
     # Nothing to do if there's no active index set
-    index = model.active_index()
+    index = common.active_index(common.AssetTab)
     if not index.isValid():
         return
 
@@ -530,9 +527,7 @@ def save_warning(*args):
 @common.debug
 def unmark_active(*args):
     """Callback responsible for keeping the active-file in the list updated."""
-    widget = main.instance().stackedwidget.widget(common.FileTab)
-    model = widget.model().sourceModel()
-    model.unset_active()
+    common.source_model(common.FileTab).unset_active()
 
 
 @common.error
@@ -541,7 +536,7 @@ def update_active_item(*args):
     """Callback responsible for keeping the active-file in the list updated.
 
     """
-    f = main.instance().stackedwidget.widget(common.FileTab)
+    f = common.widget(common.FileTab)
     model = f.model().sourceModel()
     active_index = model.active_index()
 
@@ -550,7 +545,7 @@ def update_active_item(*args):
 
     scene = cmds.file(query=True, expandName=True)
 
-    p = model.parent_path()
+    p = model.source_path()
     k = model.task()
     t1 = model.data_type()
     t2 = common.FileItem if t1 == common.SequenceItem else common.SequenceItem
@@ -1160,7 +1155,7 @@ def remove_workspace_control(workspace_control):
         '# {}: UI deleted.\n'.format(common.product))
 
 
-def quit():
+def uninitialize():
     from . import widget as maya_widget
     if not maya_widget._instance:
         raise RuntimeError('Not initialized.')

@@ -246,7 +246,6 @@ class AlembicTree(QtWidgets.QTreeView):
 
     def __init__(self, path, parent=None):
         super(AlembicTree, self).__init__(parent=parent)
-        path = path.encode('utf-8')
         file_info = QtCore.QFileInfo(path)
 
         self._abc = None

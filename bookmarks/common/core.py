@@ -31,6 +31,7 @@ BookmarkTab = 0
 AssetTab = 1
 FileTab = 2
 FavouriteTab = 3
+TaskTab = 4
 
 InfoThread = 0
 ThumbnailThread = 1
@@ -129,24 +130,28 @@ def initialize(mode):
             mode (bool):    Bookmarks will run in *standalone* mode when `True`.
 
     """
+    if common.init_mode is not None:
+        raise RuntimeError(f'Already initialized as "{common.init_mode}"!')
     if mode not in (StandaloneMode, EmbeddedMode):
-        raise ValueError(f'Invalid initalization mode. Got "{mode}", expected StandaloneMode or EmbeddedMode')
+        raise ValueError(f'Invalid initalization mode. Got "{mode}", expected `StandaloneMode` or `EmbeddedMode`')
+
     common.init_mode = mode
 
     _init_config()
+
+    common.itemdata = DataDict()
 
     if not os.path.isdir(temp_path()):
         os.makedirs(os.path.normpath(temp_path()))
 
     common.init_signals()
+    common.prune_lock()
+    common.init_lock() # Sets the current active mode
     common.init_settings()
 
-    _init_active()
     _init_ui_scale()
     _init_dpi()
 
-    common.prune_lock()
-    common.init_lock()
 
     common.cursor = QtGui.QCursor()
 
@@ -154,8 +159,10 @@ def initialize(mode):
     images.init_imagecache()
     images.init_resources()
 
-    if mode == common.StandaloneMode:
-        from .. import standalone
+    print(f'# {common.product} initialized as "{common.init_mode}".')
+
+    from .. import standalone
+    if not QtWidgets.QApplication.instance() and mode == common.StandaloneMode:
         standalone.BookmarksApp([])
     elif not QtWidgets.QApplication.instance():
         raise RuntimeError('No QApplication instance found.')
@@ -163,7 +170,47 @@ def initialize(mode):
     images.init_pixel_ratio()
     common.init_font()
     if mode == common.StandaloneMode:
-        standalone.init_window()
+        standalone.init()
+    else:
+        from .. import main
+        main.init()
+
+    common.init_monitor()
+
+
+def _init_ui_scale():
+    v = common.settings.value(
+        common.SettingsSection,
+        common.UIScaleKey
+    )
+
+    if v is None or not isinstance(v, str):
+        common.ui_scale = 1.0
+        return
+
+    if '%' not in v:
+        v = 1.0
+    else:
+        v = v.strip('%')
+    try:
+        v = float(v) * 0.01
+    except:
+        v = 1.0
+
+
+    if not common.ui_scale_factors or v not in common.ui_scale_factors:
+        v = 1.0
+
+    common.ui_scale = v
+
+
+def _init_dpi():
+    if get_platform() == PlatformWindows:
+        common.dpi = 72.0
+    elif get_platform() == PlatformMacOS:
+        common.dpi = 96.0
+    elif get_platform() == PlatformUnsupported:
+        common.dpi = 72.0
 
 
 def init_environment(add_private=False):
@@ -208,45 +255,6 @@ def init_environment(add_private=False):
     sys.path.append(v)
 
 
-def _init_active():
-    common.ACTIVE = collections.OrderedDict()
-    for k in common.ACTIVE_KEYS:
-        common.ACTIVE[k] = None
-
-
-def _init_ui_scale():
-    v = common.settings.value(
-        common.SettingsSection,
-        common.UIScaleKey
-    )
-
-    if v is None or not isinstance(v, str):
-        common.ui_scale = 1.0
-        return
-
-    if '%' not in v:
-        v = 1.0
-    else:
-        v = v.strip('%')
-    try:
-        v = float(v) * 0.01
-    except:
-        v = 1.0
-
-    if v not in common.ui_scale_factors:
-        v = 1.0
-
-    common.ui_scale = v
-
-
-def _init_dpi():
-    if get_platform() == PlatformWindows:
-        common.dpi = 72.0
-    elif get_platform() == PlatformMacOS:
-        common.dpi = 96.0
-    elif get_platform() == PlatformUnsupported:
-        common.dpi = 72.0
-
 
 def check_type(value, _type):
     """Verify the type of an object.
@@ -278,7 +286,7 @@ def get_hash(key):
     """Calculates the md5 hash of a string.
 
     In practice, we use this function to generate hashes for file paths. These
-    hashes are used by the `ImageCache`, `local_settings` and `BookmarkDB` to
+    hashes are used by the `ImageCache`, `user_settings` and `BookmarkDB` to
     associate data with the file items. Generated hashes are server agnostic,
     meaning, if the passed string contains a server's name, we'll remove it
     before hashing.
@@ -502,136 +510,6 @@ def temp_path():
 
     """
     return '/'.join(local_user_bookmark())
-
-
-def quit():
-    """Closes and deletes all cached data and ui elements.
-
-    """
-    # import gc
-    #
-    # from .lists import alembic_widget
-    # from .lists import thumb_capture
-    # from .lists import thumb_library
-    # from .lists import thumb_picker
-    # from .property_editor import asset_editor
-    # from .property_editor import bookmark_editor
-    # from .property_editor import file_editor
-    # from .property_editor import preference_editor
-    #
-    # from . import standalone
-    #
-    # from . import main
-    # from . import database
-    # from . import images
-    # from . import ui
-    # from . import actions
-    # from .threads import threads
-    # from .lists import delegate
-    #
-    # delete_timers()
-    # threads.quit()
-    #
-    # if STANDALONE and standalone.instance():
-    #     standalone._instance.hide()
-    #
-    # if main._instance:
-    #     main._instance.hide()
-    #
-    #     for widget in (
-    #             main._instance.bookmarkswidget,
-    #             main._instance.assetswidget,
-    #             main._instance.fileswidget,
-    #             main._instance.favouriteswidget,
-    #             main._instance.taskswidget
-    #     ):
-    #         if not widget:
-    #             continue
-    #
-    #         widget.removeEventFilter(widget)
-    #         widget.removeEventFilter(main._instance)
-    #         if hasattr(widget.model(), 'sourceModel'):
-    #             widget.model().sourceModel().deleteLater()
-    #             widget.model().setSourceModel(None)
-    #         widget.model().deleteLater()
-    #         widget.setModel(None)
-    #
-    #         for child in widget.children():
-    #             child.deleteLater()
-    #
-    #         widget.deleteLater()
-    #
-    #     for widget in (main._instance.topbar, main._instance.stackedwidget, main._instance.statusbar):
-    #         if not widget:
-    #             continue
-    #
-    #         for child in widget.children():
-    #             child.deleteLater()
-    #         widget.deleteLater()
-    #
-    #     main._instance._initialized = False
-    #
-    # global SERVERS
-    # SERVERS = []
-    # global BOOKMARKS
-    # BOOKMARKS = {}
-    # global favourites
-    # favourites = {}
-    # global hashes
-    # hashes = {}
-    #
-    # global font_db
-    # try:
-    #     font_db.deleteLater()
-    # except:
-    #     pass
-    # font_db = None
-    #
-    # # Signas teardown
-    # global signals
-    # for k, v in Signals.__dict__.items():
-    #     if not isinstance(v, QtCore.Signal):
-    #         continue
-    #     if not hasattr(signals, k):
-    #         continue
-    #     signal = getattr(signals, k)
-    #     try:
-    #         signal.disconnect()
-    #     except RuntimeError as e:
-    #         pass
-    #
-    # try:
-    #     signals.deleteLater()
-    # except:
-    #     pass
-    # signals = None
-    #
-    # database.close()
-    # images.reset()
-    # common.delete()
-    # ui.reset()
-    # delegate.reset()
-    #
-    # alembic_widget.close()
-    # thumb_capture.close()
-    # thumb_library.close()
-    # thumb_picker.close()
-    # asset_editor.close()
-    # bookmark_editor.close()
-    # file_editor.close()
-    # preference_editor.close()
-    #
-    # if main._instance:
-    #     main._instance.deleteLater()
-    #     main._instance = None
-    # if STANDALONE and standalone._instance:
-    #     standalone._instance.deleteLater()
-    #     standalone._instance = None
-    #
-    # # delete_module_import_cache()
-    #
-    # # Force garbage collection
-    # gc.collect()
 
 
 class DataDict(dict):

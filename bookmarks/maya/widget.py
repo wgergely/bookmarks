@@ -12,7 +12,6 @@ Usage:
 
 """
 import re
-import sys
 import functools
 import collections
 
@@ -25,13 +24,11 @@ import maya.OpenMayaUI as OpenMayaUI
 import maya.OpenMaya as OpenMaya
 import maya.cmds as cmds
 
-from .. import log
 from .. import common
 from .. import ui
 from .. import images
 from .. import contextmenu
 from .. import main
-
 
 from . import actions as maya_actions
 from . import base as maya_base
@@ -214,7 +211,7 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
 
         self.menu['apply_settings'] = {
             'text': 'Apply scene common...',
-            'icon': self.get_icon('check', color=common.color(common.GreenColor)),
+            'icon': ui.get_icon('check', color=common.color(common.GreenColor)),
             'action': maya_actions.apply_settings
         }
 
@@ -223,13 +220,13 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
 
         self.menu[contextmenu.key()] = {
             'text': 'Save Scene...',
-            'icon': self.get_icon('add_file', color=common.color(common.GreenColor)),
+            'icon': ui.get_icon('add_file', color=common.color(common.GreenColor)),
             'action': lambda: maya_actions.save_scene(increment=False)
         }
         if common.get_sequence(scene.fileName()):
             self.menu[contextmenu.key()] = {
                 'text': 'Incremental Save...',
-                'icon': self.get_icon('add_file'),
+                'icon': ui.get_icon('add_file'),
                 'action': lambda: maya_actions.save_scene(increment=True)
             }
 
@@ -245,8 +242,8 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         if _s not in ('ma', 'mb', 'abc'):
             return
 
-        maya_pixmap = self.get_icon('maya', color=None)
-        maya_reference_pixmap = self.get_icon('maya_reference', color=None)
+        maya_pixmap = ui.get_icon('maya', color=None)
+        maya_reference_pixmap = ui.get_icon('maya_reference', color=None)
 
         self.menu[contextmenu.key()] = {
             'text': 'Open',
@@ -287,7 +284,7 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
             },
         }
 
-        icon = self.get_icon('set', color=None)
+        icon = ui.get_icon('set', color=None)
         sets = maya_base.outliner_sets()
         keys = sorted(set(sets))
 
@@ -334,7 +331,7 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
     def capture_menu(self):
         k = 'Capture Viewport'
         self.menu[k] = collections.OrderedDict()
-        self.menu['{}:icon'.format(k)] = self.get_icon('capture_thumbnail')
+        self.menu['{}:icon'.format(k)] = ui.get_icon('capture_thumbnail')
 
         width = cmds.getAttr("defaultResolution.width")
         height = cmds.getAttr("defaultResolution.height")
@@ -345,14 +342,14 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
             self.menu[k]['capture{}'.format(n)] = {
                 'text': 'Capture  |  @{}  |  {}x{}px'.format(n, *size(n)),
                 'action': functools.partial(maya_actions.capture_viewport, size=n),
-                'icon': self.get_icon('capture_thumbnail'),
+                'icon': ui.get_icon('capture_thumbnail'),
             }
 
     def show_window_menu(self):
         if not hasattr(self.parent(), 'clicked'):
             return
         self.menu['show'] = {
-            'icon': self.get_icon('icon_bw', color=None),
+            'icon': ui.get_icon('icon_bw', color=None),
             'text': 'Toggle {}'.format(common.product),
             'action': self.parent().clicked.emit
         }
@@ -575,7 +572,6 @@ class ToolButton(ui.ClickableIconButton):
 
         self.clicked.connect(show)
 
-
     def paintEvent(self, event):
         option = QtWidgets.QStyleOption()
         option.initFrom(self)
@@ -631,14 +627,13 @@ class ToolButton(ui.ClickableIconButton):
 
 
 class PluginWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
-    """The main wrapper-widget to be used inside maya."""
+    """This Maya mixing wraps the standard Bookmarks widget."""
 
     def __init__(self, parent=None):
-        super(PluginWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
         self._workspacecontrol = None
         self._callbacks = []  # Maya api callbacks
-        self.mainwidget = None
 
         self.setWindowTitle(common.product)
         common.set_custom_stylesheet(self)
@@ -649,22 +644,27 @@ class PluginWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         self.setObjectName(_object_name)
 
         self._create_UI()
-        self.setFocusProxy(self.mainwidget.stackedwidget)
-
-        self.mainwidget.sizeHint = self.sizeHint
+        self.setFocusProxy(common.main_widget.stacked_widget)
+        common.main_widget.sizeHint = self.sizeHint
 
         self.workspace_timer = common.Timer(parent=self)
         self.workspace_timer.setSingleShot(False)
         self.workspace_timer.setInterval(1000)
         self.workspace_timer.timeout.connect(maya_actions.set_workspace)
 
-        self.mainwidget.initialized.connect(
-            lambda: self.mainwidget.layout().setContentsMargins(0, 0, 0, 0))
+        common.main_widget.initialized.connect(
+            lambda: common.main_widget.layout().setContentsMargins(0, 0, 0, 0))
 
-        self.mainwidget.initialized.connect(self._connect_signals)
-        self.mainwidget.initialized.connect(self.context_callbacks)
-        self.mainwidget.initialized.connect(maya_actions.set_workspace)
-        self.mainwidget.initialized.connect(self.workspace_timer.start)
+        common.main_widget.initialized.connect(self._connect_signals)
+        common.main_widget.initialized.connect(self.context_callbacks)
+        common.main_widget.initialized.connect(maya_actions.set_workspace)
+        common.main_widget.initialized.connect(self.workspace_timer.start)
+
+    def _create_UI(self):
+        QtWidgets.QHBoxLayout(self)
+        self.layout().setContentsMargins(0, 0, 0, 0)
+        self.layout().setSpacing(0)
+        self.layout().addWidget(common.main_widget)
 
     @QtCore.Slot()
     def active_changed(self):
@@ -684,7 +684,7 @@ class PluginWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         # We will get a warning when we change to a new bookmark item. Whilst
         # technically correct, it is counterintuitive to be warned of a direct
         # action just performed
-        assets_model = self.mainwidget.assetswidget.model().sourceModel()
+        assets_model = common.main_widget.assets_widget.model().sourceModel()
         if not assets_model.active_index().isValid():
             return
 
@@ -696,17 +696,6 @@ class PluginWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
                 workspace_info.path()),
             'If you didn\'t expect this message, it is possible your current project was changed by Bookmarks, perhaps in another instance of Maya.'
         ).open()
-
-    def _add_shortcuts(self):
-        """Global maya shortcut to do a save as"""
-
-    def _create_UI(self):
-        QtWidgets.QHBoxLayout(self)
-        self.layout().setContentsMargins(0, 0, 0, 0)
-        self.layout().setSpacing(0)
-
-        self.mainwidget = main.MainWidget(parent=self)
-        self.layout().addWidget(self.mainwidget)
 
     def paintEvent(self, event):
         painter = QtGui.QPainter()
@@ -747,30 +736,28 @@ class PluginWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
 
     @QtCore.Slot()
     def _connect_signals(self):
-        bookmarkswidget = self.mainwidget.bookmarkswidget
-        assetswidget = self.mainwidget.assetswidget
-        fileswidget = self.mainwidget.fileswidget
-        favouriteswidget = self.mainwidget.favouriteswidget
+        common.widget(common.BookmarkTab).customContextMenuRequested.connect(
+            self.customFilesContextMenuEvent)
 
-        # Asset/project
-        assetswidget.model().sourceModel().activeChanged.connect(
+        common.widget(common.AssetTab).customContextMenuRequested.connect(
+            self.customFilesContextMenuEvent)
+        common.source_model(common.AssetTab).activeChanged.connect(
             maya_actions.set_workspace)
 
-        # Context menu
-        bookmarkswidget.customContextMenuRequested.connect(
+        common.widget(common.FileTab).customContextMenuRequested.connect(
             self.customFilesContextMenuEvent)
-        assetswidget.customContextMenuRequested.connect(
-            self.customFilesContextMenuEvent)
-        fileswidget.customContextMenuRequested.connect(
-            self.customFilesContextMenuEvent)
-        favouriteswidget.customContextMenuRequested.connect(
-            self.customFilesContextMenuEvent)
-
-        fileswidget.activated.connect(maya_actions.execute)
-        favouriteswidget.activated.connect(maya_actions.execute)
-        fileswidget.model().sourceModel().modelReset.connect(maya_actions.unmark_active)
-        fileswidget.model().sourceModel().modelReset.connect(
+        common.source_model(common.FileTab).modelReset.connect(
+            maya_actions.unmark_active)
+        common.source_model(common.FileTab).modelReset.connect(
             maya_actions.update_active_item)
+        common.widget(common.FileTab).activated.connect(
+            maya_actions.execute)
+
+        common.widget(common.FavouriteTab).customContextMenuRequested.connect(
+            self.customFilesContextMenuEvent)
+        common.widget(common.FavouriteTab).activated.connect(
+            maya_actions.execute)
+
 
     @QtCore.Slot(QtCore.QModelIndex)
     @QtCore.Slot(QtCore.QObject)
@@ -807,10 +794,10 @@ class PluginWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         }
 
         try:
-            super(PluginWidget, self).show(**kwargs)
+            super().show(**kwargs)
         except:
             kwargs['dockable'] = False
-            super(PluginWidget, self).show(**kwargs)
+            super().show(**kwargs)
 
     def sizeHint(self):
         return QtCore.QSize(common.size(common.DefaultWidth) * 0.5, common.size(common.DefaultHeight) * 0.5)

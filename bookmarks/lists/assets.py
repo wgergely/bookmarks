@@ -3,6 +3,7 @@
 
 """
 import re
+import os
 import _scandir
 import functools
 
@@ -87,14 +88,14 @@ class AssetModel(basemodel.BaseModel):
         super().__init__(parent=parent)
         common.signals.assetsLinked.connect(
             lambda: self.blockSignals(True))
-        common.signals.assetsLinked.connect(self.__resetdata__)
+        common.signals.assetsLinked.connect(self.reset_data)
         common.signals.assetsLinked.connect(
             lambda: self.blockSignals(False))
         common.signals.assetsLinked.connect(self.sort_data)
 
     @common.status_bar_message('Assets Bookmarks...')
     @basemodel.initdata
-    def __initdata__(self):
+    def init_data(self):
         """Collects the data needed to populate the bookmarks model by querrying
         the active root folder.
 
@@ -103,21 +104,20 @@ class AssetModel(basemodel.BaseModel):
             hence the model does not have any threads associated with it.
 
         """
-        common.settings.verify_active()
+        common.settings.load_active_values()
 
-        parent_path = self.parent_path()
-        if not parent_path or not all(parent_path):
-            return
-
-        p = self.parent_path()
+        p = self.source_path()
         k = self.task()
         t = self.data_type()
-        data = common.get_data(p, k, t)
 
-        source = '/'.join(parent_path)
+        if not p or not all(p) or not k or t is None:
+            return
+
+        data = common.get_data(p, k, t)
+        source = '/'.join(p)
 
         # Let's get the identifier from the bookmark database
-        db = database.get_db(*parent_path)
+        db = database.get_db(*p)
         ASSET_IDENTIFIER = db.value(
             source,
             'identifier',
@@ -134,16 +134,15 @@ class AssetModel(basemodel.BaseModel):
             filepath = entry.path.replace('\\', '/')
 
             if ASSET_IDENTIFIER:
-                identifier = '{}/{}'.format(
-                    filepath, ASSET_IDENTIFIER)
-                if not QtCore.QFileInfo(identifier).exists():
+                identifier = filepath + '/' + ASSET_IDENTIFIER
+                if not os.path.isfile(identifier):
                     continue
 
             # Progress bar
             c += 1
             if not c % nth:
                 common.signals.showStatusBarMessage.emit(
-                    'Loading assets ({} found)...'.format(c))
+                    f'Loading assets ({c} found)...')
                 QtWidgets.QApplication.instance().processEvents()
 
             filename = entry.name
@@ -153,10 +152,9 @@ class AssetModel(basemodel.BaseModel):
                 flags = flags | common.MarkedAsFavourite
 
             # Is the item currently active?
-            active_asset = common.active(common.AssetKey)
-            if active_asset:
-                if active_asset == filename:
-                    flags = flags | common.MarkedAsActive
+            active = common.active(common.AssetKey)
+            if active and active == filename:
+                flags = flags | common.MarkedAsActive
 
             # Beautify the name
             name = re.sub(r'[_]{1,}', ' ', filename).strip('_').strip('')
@@ -176,7 +174,7 @@ class AssetModel(basemodel.BaseModel):
                 #
                 common.EntryRole: [entry, ],
                 common.FlagsRole: flags,
-                common.ParentPathRole: parent_path + (filename,),
+                common.ParentPathRole: p + (filename,),
                 common.DescriptionRole: '',
                 common.TodoCountRole: 0,
                 common.FileDetailsRole: '',
@@ -203,7 +201,7 @@ class AssetModel(basemodel.BaseModel):
         # Explicitly emit `activeChanged` to notify other dependent models
         self.activeChanged.emit(self.active_index())
 
-    def parent_path(self):
+    def source_path(self):
         """The model's parent folder path.
 
         Returns:
@@ -217,7 +215,7 @@ class AssetModel(basemodel.BaseModel):
         )
 
     def item_iterator(self, path):
-        """Yields DirEntry instances to be processed in __initdata__.
+        """Yields DirEntry instances to be processed in init_data.
 
         """
         try:
@@ -251,7 +249,7 @@ class AssetModel(basemodel.BaseModel):
     def data_type(self):
         return common.FileItem
 
-    def local_settings_key(self):
+    def user_settings_key(self):
         v = [common.active(k) for k in (common.JobKey, common.RootKey)]
         if not all(v):
             return None

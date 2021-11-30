@@ -350,11 +350,11 @@ class TaskModel(QtCore.QAbstractItemModel):
 
         if role == QtCore.Qt.FontRole and column == 0:
             font, _ = common.font_db.primary_font(
-                font_size=common.size(common.FontSizeMedium))
+                common.size(common.FontSizeMedium))
             return font
         if role == QtCore.Qt.FontRole and column > 0:
             font, _ = common.font_db.secondary_font(
-                font_size=common.size(common.FontSizeSmall))
+                common.size(common.FontSizeSmall))
             return font
 
         if role == QtCore.Qt.SizeHintRole:

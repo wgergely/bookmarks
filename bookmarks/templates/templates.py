@@ -85,7 +85,7 @@ class TemplateContextMenu(contextmenu.BaseContextMenu):
                 template_actions.pick_template,
                 self.parent().mode()
             ),
-            'icon': self.get_icon('add', color=common.color(common.GreenColor))
+            'icon': ui.get_icon('add', color=common.color(common.GreenColor))
         }
 
     def remove_menu(self):
@@ -96,14 +96,14 @@ class TemplateContextMenu(contextmenu.BaseContextMenu):
                 template_actions.remove_zip_template,
                 source
             ),
-            'icon': self.get_icon('close', color=common.color(common.RedColor))
+            'icon': ui.get_icon('close', color=common.color(common.RedColor))
         }
 
     def refresh_menu(self):
         self.menu[contextmenu.key()] = {
             'text': 'Refresh',
             'action': self.parent().init_data,
-            'icon': self.get_icon('refresh')
+            'icon': ui.get_icon('refresh')
         }
 
     def reveal_menu(self):
@@ -112,7 +112,7 @@ class TemplateContextMenu(contextmenu.BaseContextMenu):
 
         self.menu[contextmenu.key()] = {
             'text': 'Show in file explorer...',
-            'icon': self.get_icon('folder'),
+            'icon': ui.get_icon('folder'),
             'action': reveal,
         }
 
@@ -482,8 +482,8 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
             painter.setBrush(common.color(common.BackgroundDarkColor))
             painter.setPen(QtCore.Qt.NoPen)
 
-            painter.setFont(common.font_db.secondary_font(
-                common.size(common.FontSizeSmall))[0])
+            painter.setFont(
+                common.font_db.secondary_font(common.size(common.FontSizeSmall))[0])
             painter.drawRect(self.rect())
             o = common.size(common.FontSizeMedium)
             rect = self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o))

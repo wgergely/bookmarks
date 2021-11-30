@@ -86,4 +86,9 @@ class FontDatabase(QtGui.QFontDatabase):
 
 
 def init_font():
+    common.font_cache = {
+        PrimaryFontRole: {},
+        SecondaryFontRole: {},
+        MetricsRole: {},
+    }
     common.font_db = FontDatabase()

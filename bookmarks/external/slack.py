@@ -304,17 +304,14 @@ class UsersModel(QtCore.QAbstractItemModel):
     """Model used to store the available profiles.
 
     """
-    modelDataResetRequested = QtCore.Signal()
-
     def __init__(self, token, parent=None):
         super(UsersModel, self).__init__(parent=parent)
         self.token = token
         self._row_size = QtCore.QSize(1, common.size(common.HeightRow))
 
         self.INTERNAL_USER_DATA = common.DataDict()
-        self.modelDataResetRequested.connect(self.__initdata__)
 
-    def __initdata__(self):
+    def init_data(self):
         self.beginResetModel()
 
         self.INTERNAL_USER_DATA = common.DataDict()
@@ -337,7 +334,7 @@ class UsersModel(QtCore.QAbstractItemModel):
                     QtCore.Qt.DisplayRole: 'Channel:  ' + channel['name'],
                     QtCore.Qt.DecorationRole: icon,
                     QtCore.Qt.SizeHintRole: self._row_size,
-                    QtCore.Qt.FontRole: common.font_db.primary_font(font_size=common.size(common.FontSizeSmall))[0],
+                    QtCore.Qt.FontRole: common.font_db.primary_font(common.size(common.FontSizeSmall))[0],
                     IdRole: channel['id'],
                     ThumbnailHashRole: None,
                     ThumbnailUrlRole: None,
@@ -353,7 +350,7 @@ class UsersModel(QtCore.QAbstractItemModel):
                     QtCore.Qt.DisplayRole: self.get_pretty_name(profile),
                     QtCore.Qt.DecorationRole: icon,
                     QtCore.Qt.SizeHintRole: self._row_size,
-                    QtCore.Qt.FontRole: common.font_db.primary_font(font_size=common.size(common.FontSizeSmall))[0],
+                    QtCore.Qt.FontRole: common.font_db.primary_font(common.size(common.FontSizeSmall))[0],
                     IdRole: profile['id'],
                     ThumbnailHashRole: profile['profile']['avatar_hash'],
                     ThumbnailUrlRole: profile['profile']['image_32'],
@@ -645,7 +642,7 @@ class SlackWidget(QtWidgets.QDialog):
     def initialize(self):
         self.overlay.setText('Loading data...')
         source_model = self.users_widget.model().sourceModel()
-        source_model.modelDataResetRequested.emit()
+        source_model.init_data()
         self._initialized = True
 
     def showEvent(self, event):

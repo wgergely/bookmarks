@@ -3,19 +3,19 @@
 files.
 
 Bookmarks understand two session locks related to how active paths are read and
-set. When `common.session_mode` is `common.SyncronisedActivePaths` bookmarks
-will save active paths in the `local_settings`, as expected.
+set. When `common.active_mode` is `common.SyncronisedActivePaths` bookmarks
+will save active paths in the `user_settings`, as expected.
 
 However, when multiple Bookmarks instances are running this poses a problem,
 because instances will mutually overwrite each other's active path common.
 
-Hence, when a second Bookmarks instance is launched `common.session_mode` is
+Hence, when a second Bookmarks instance is launched `common.active_mode` is
 automatically set to `common.PrivateActivePaths`. When this mode is active, the
-initial active path values are read on startup `local_settings` will no longer
+initial active path values are read on startup `user_settings` will no longer
 be modified. Instead, the paths will be saved into a private data container.
 
-To toggle between  private active paths, and the ones stored in `local_settings`
-see `actions.toggle_session_mode`.
+To toggle between  private active paths, and the ones stored in `user_settings`
+see `actions.toggle_active_mode`.
 
 `ToggleSessionModeButton` is a UI element used by the user to togge between
 these modes.
@@ -34,6 +34,18 @@ FORMAT = 'lock'
 PREFIX = 'session_lock'
 LOCK_PATH = '{root}/{product}/{prefix}_{pid}.{ext}'
 LOCK_DIR = '{root}/{product}'
+
+
+
+def get_lock_path():
+    return LOCK_PATH.format(
+        root=QtCore.QStandardPaths.writableLocation(
+            QtCore.QStandardPaths.GenericDataLocation),
+        product=common.product,
+        prefix=PREFIX,
+        pid=os.getpid(),
+        ext=FORMAT
+    )
 
 
 def prune_lock():
@@ -66,7 +78,7 @@ def prune_lock():
                 raise RuntimeError('Failed to remove a lockfile.')
 
 
-def init_lock(pid=None):
+def init_lock():
     """Initialises the Bookmark's session lock.
 
     We'll check all lockfiles and to see if there's already a
@@ -82,11 +94,6 @@ def init_lock(pid=None):
             QtCore.QStandardPaths.GenericDataLocation),
         product=common.product,
     )
-
-    # Set the pid
-    if pid is None:
-        pid = os.getpid()
-
     # Iterate over all lock files and check their contents
     for entry in _scandir.scandir(path):
         if entry.is_dir():
@@ -109,29 +116,23 @@ def init_lock(pid=None):
             # in PrivateActivePaths as we don't want sessions to be able
             # to set their environent independently:
             if data == common.SyncronisedActivePaths:
-                common.session_mode = common.PrivateActivePaths
-                return write_current_mode_to_lock(pid)
+                common.active_mode = common.PrivateActivePaths
+                return write_current_mode_to_lock()
 
     # Otherwise, set the default value
-    common.session_mode = common.SyncronisedActivePaths
-    return write_current_mode_to_lock(pid)
+    common.active_mode = common.SyncronisedActivePaths
+    return write_current_mode_to_lock()
 
 
+@QtCore.Slot()
 @common.error
 @common.debug
-def write_current_mode_to_lock(pid):
+def write_current_mode_to_lock(*args, **kwargs):
     """Write the current mode this session's lock file.
 
     """
     # Create our lockfile
-    path = LOCK_PATH.format(
-        root=QtCore.QStandardPaths.writableLocation(
-            QtCore.QStandardPaths.GenericDataLocation),
-        product=common.product,
-        prefix=PREFIX,
-        pid=pid,
-        ext=FORMAT
-    )
+    path = get_lock_path()
 
     # Create all folders
     basedir = os.path.dirname(path)
@@ -140,6 +141,6 @@ def write_current_mode_to_lock(pid):
 
     # Write current mode to the lockfile
     with open(path, 'w+', encoding='utf8') as f:
-        f.write(f'{common.session_mode}')
+        f.write(f'{common.active_mode}')
 
     return path

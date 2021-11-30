@@ -29,6 +29,7 @@ def color(v):
         COLOR_CACHE[r] = QtGui.QColor(*v)
     return COLOR_CACHE[r]
 
+
 def rgb(v):
     """Returns the `rgba(r,g,b,a)` string representation of a QColor.
 
@@ -203,8 +204,6 @@ def set_custom_stylesheet(widget):
     common.stylesheet = qss
     widget.setStyleSheet(common.stylesheet)
     return common.stylesheet
-
-
 
 
 def draw_aliased_text(painter, font, rect, text, align, color, elide=None):

@@ -219,7 +219,7 @@ class LauncherListContextMenu(contextmenu.BaseContextMenu):
     def setup(self):
         self.menu[contextmenu.key()] = {
             'text': 'Add item...',
-            'icon': self.get_icon('add', color=common.color(common.GreenColor)),
+            'icon': ui.get_icon('add', color=common.color(common.GreenColor)),
             'action': self.parent().add_new_item
         }
 
@@ -235,7 +235,7 @@ class LauncherListContextMenu(contextmenu.BaseContextMenu):
 
         self.menu[contextmenu.key()] = {
             'text': 'Remove item',
-            'icon': self.get_icon('close', color=common.color(common.RedColor)),
+            'icon': ui.get_icon('close', color=common.color(common.RedColor)),
             'action': functools.partial(self.parent().remove_item, self.index)
         }
 

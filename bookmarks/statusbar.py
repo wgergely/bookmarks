@@ -151,21 +151,21 @@ class ToggleSessionModeButton(ui.ClickableIconButton):
             parent=parent
         )
         self.setMouseTracking(True)
-        self.clicked.connect(actions.toggle_session_mode)
-        common.signals.sessionModeChanged.connect(self.update)
+        self.clicked.connect(actions.toggle_active_mode)
+        common.signals.activeModeChanged.connect(self.update)
 
     def pixmap(self):
-        if common.session_mode == common.SyncronisedActivePaths:
+        if common.active_mode == common.SyncronisedActivePaths:
             return images.ImageCache.get_rsc_pixmap('check', common.color(common.GreenColor), self._size)
-        if common.session_mode == common.PrivateActivePaths:
+        if common.active_mode == common.PrivateActivePaths:
             return images.ImageCache.get_rsc_pixmap('crossed', common.color(common.RedColor), self._size)
         return images.ImageCache.get_rsc_pixmap('crossed', common.color(common.RedColor), self._size)
 
     def statusTip(self):
-        if common.session_mode == common.SyncronisedActivePaths:
+        if common.active_mode == common.SyncronisedActivePaths:
             return 'This session sets active paths. Click to toggle.'
 
-        if common.session_mode == common.PrivateActivePaths:
+        if common.active_mode == common.PrivateActivePaths:
             return 'This session does not modify active paths. Click to toggle.'
 
         return 'Invalid session lock.'

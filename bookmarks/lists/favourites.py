@@ -73,7 +73,7 @@ class FavouritesModel(files.FilesModel):
         self.reset_timer.setSingleShot(True)
 
         self.reset_timer.timeout.connect(
-            functools.partial(self.__resetdata__, force=True)
+            functools.partial(self.reset_data, force=True)
         )
         common.signals.favouritesChanged.connect(self.queued_model_reset)
 
@@ -88,8 +88,8 @@ class FavouritesModel(files.FilesModel):
     @common.error
     @common.status_bar_message('Loading My Files...')
     @basemodel.initdata
-    def __initdata__(self):
-        p = self.parent_path()
+    def init_data(self):
+        p = self.source_path()
         k = self.task()
         if not k:
             return
@@ -100,8 +100,8 @@ class FavouritesModel(files.FilesModel):
 
         nth = 1
         c = 0
-        for entry, parent_paths in self.item_iterator():
-            _parent_path = '/'.join(parent_paths)
+        for entry, source_paths in self.item_iterator():
+            _source_path = '/'.join(source_paths)
 
             if self._interrupt_requested:
                 break
@@ -129,7 +129,7 @@ class FavouritesModel(files.FilesModel):
                 QtWidgets.QApplication.instance().processEvents()
 
             # Getting the fileroot
-            fileroot = filepath.replace(_parent_path, '').strip('/')
+            fileroot = filepath.replace(_source_path, '').strip('/')
             fileroot = '/'.join(fileroot.split('/')[:-1])
 
             # To sort by subfolders correctly, we'll have to populate a list
@@ -174,7 +174,7 @@ class FavouritesModel(files.FilesModel):
                 #
                 common.EntryRole: [entry, ],
                 common.FlagsRole: flags,
-                common.ParentPathRole: parent_paths,
+                common.ParentPathRole: source_paths,
                 common.DescriptionRole: '',
                 common.TodoCountRole: 0,
                 common.FileDetailsRole: '',
@@ -223,7 +223,7 @@ class FavouritesModel(files.FilesModel):
                         #
                         common.EntryRole: [],
                         common.FlagsRole: flags,
-                        common.ParentPathRole: parent_paths,
+                        common.ParentPathRole: source_paths,
                         common.DescriptionRole: '',
                         common.TodoCountRole: 0,
                         common.FileDetailsRole: '',
@@ -292,7 +292,7 @@ class FavouritesModel(files.FilesModel):
             data[idx][common.IdRole] = idx
             data[idx][common.DataTypeRole] = common.SequenceItem
 
-    def parent_path(self):
+    def source_path(self):
         """The model's parent folder path segments.
 
         Returns:
@@ -315,15 +315,15 @@ class FavouritesModel(files.FilesModel):
             if not QtCore.QFileInfo(_path).exists():
                 continue
 
-            parent_paths = common.favourites[k]
+            source_paths = common.favourites[k]
             for entry in _scandir.scandir(_path):
                 path = entry.path.replace('\\', '/')
                 if path == k:
-                    entries.append((entry, parent_paths))
+                    entries.append((entry, source_paths))
                     continue
                 _k = common.proxy_path(path)
                 if k == _k:
-                    entries.append((entry, parent_paths))
+                    entries.append((entry, source_paths))
 
         for args in entries:
             yield args
@@ -331,10 +331,7 @@ class FavouritesModel(files.FilesModel):
     def task(self):
         return 'favourites'
 
-    def set_task(self, v):
-        pass
-
-    def local_settings_key(self):
+    def user_settings_key(self):
         return self.task()
 
 

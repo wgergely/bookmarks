@@ -229,7 +229,7 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
     @common.error
     @common.debug
     def pick_image(self):
-        from ..lists import thumb_picker as editor
+        from .. lists.widgets import thumb_picker as editor
         widget = editor.show()
         widget.fileSelected.connect(self.process_image)
 
@@ -242,12 +242,11 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         disk when `self.save_image()` is called.
 
         """
-        self._window_pos = self.window().saveGeometry()
         self.save_window()
         self.hide_window()
 
         try:
-            from ..lists import thumb_capture as editor
+            from .. lists.widgets import thumb_capture as editor
             widget = editor.show()
             widget.accepted.connect(self.restore_window)
             widget.rejected.connect(self.restore_window)

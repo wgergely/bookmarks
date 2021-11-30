@@ -11,9 +11,9 @@ from .. import actions
 from . import base
 
 
-class Test(base.BaseApplicationTest):
+class Test(base.BaseCase):
     def test_default_mode(self):
-        self.assertEqual(common.session_mode, common.SyncronisedActivePaths)
+        self.assertEqual(common.active_mode, common.SyncronisedActivePaths)
 
     def test_init(self):
         path = common.init_lock()
@@ -55,7 +55,7 @@ class Test(base.BaseApplicationTest):
         v = [f for f in paths if os.path.isfile(f)]
         self.assertFalse(v)
 
-    def test_toggle_session_mode(self):
-        v = common.session_mode
-        actions.toggle_session_mode()
-        self.assertNotEqual(v, common.session_mode)
+    def test_toggle_active_mode(self):
+        v = common.active_mode
+        actions.toggle_active_mode()
+        self.assertNotEqual(v, common.active_mode)

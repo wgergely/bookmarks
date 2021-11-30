@@ -2,33 +2,14 @@
 import os
 from PySide2 import QtCore, QtGui, QtWidgets
 
-from .. import common
-
-from .. import main
-from ..bookmark_editor import server_editor
-from ..bookmark_editor import job_editor
-from ..bookmark_editor import bookmark_editor
-from ..bookmark_editor import bookmark_editor_widget
 from .. import actions
-from ..templates import actions as template_actions
+from .. import common
+from .. import templates
+
 from . import base
 
 
-class Test(base.BaseApplicationTest):
-    @classmethod
-    def setUpClass(cls):
-        super(Test, cls).setUpClass()
-
-        common.init_standalone()
-        common.init_pixel_ratio()
-        common.init_ui_scale()
-        common.init_session_lock()
-        common.init_settings()
-        common.init_font_db()
-
-        if not os.path.isdir(common.temp_path()):
-            os.makedirs(common.temp_path())
-
+class Test(base.BaseCase):
     def test_add_server(self):
         self.assertFalse(common.servers)
         v = base.random_str(32)
@@ -77,23 +58,25 @@ class Test(base.BaseApplicationTest):
         server = base.random_str(32)
         job = base.random_str(32)
         root = base.random_str(32)
-        parent_paths = (server, job, root)
-        source = common.bookmark_key(server, job, root) + '/' + base.random_str(32)
+        source_paths = (server, job, root)
+        source = common.bookmark_key(
+            server, job, root) + '/' + base.random_str(32)
 
-        actions.add_favourite(parent_paths, source)
+        actions.add_favourite(source_paths, source)
         self.assertIn(source, common.favourites)
 
     def test_remove_favourite(self):
         server = base.random_str(32)
         job = base.random_str(32)
         root = base.random_str(32)
-        parent_paths = (server, job, root)
-        source = common.bookmark_key(server, job, root) + '/' + base.random_str(32)
+        source_paths = (server, job, root)
+        source = common.bookmark_key(
+            server, job, root) + '/' + base.random_str(32)
 
-        actions.add_favourite(parent_paths, source)
+        actions.add_favourite(source_paths, source)
         self.assertIn(source, common.favourites)
 
-        actions.remove_favourite(parent_paths, source)
+        actions.remove_favourite(source_paths, source)
         self.assertNotIn(source, common.favourites)
 
     def test_clear_favourites(self):
@@ -101,25 +84,26 @@ class Test(base.BaseApplicationTest):
             server = base.random_str(32)
             job = base.random_str(32)
             root = base.random_str(32)
-            parent_paths = (server, job, root)
-            source = common.bookmark_key(server, job, root) + '/' + base.random_str(32)
+            source_paths = (server, job, root)
+            source = common.bookmark_key(
+                server, job, root) + '/' + base.random_str(32)
 
-            actions.add_favourite(parent_paths, source)
+            actions.add_favourite(source_paths, source)
             self.assertIn(source, common.favourites)
 
         actions.clear_favourites(prompt=False)
         self.assertFalse(common.favourites)
-
 
     def test_export_favourites(self):
         for _ in range(999):
             server = base.random_str(32)
             job = base.random_str(32)
             root = base.random_str(32)
-            parent_paths = (server, job, root)
-            source = common.bookmark_key(server, job, root) + '/' + base.random_str(32)
+            source_paths = (server, job, root)
+            source = common.bookmark_key(
+                server, job, root) + '/' + base.random_str(32)
 
-            actions.add_favourite(parent_paths, source)
+            actions.add_favourite(source_paths, source)
             self.assertIn(source, common.favourites)
 
         for _ in range(3):
@@ -129,7 +113,8 @@ class Test(base.BaseApplicationTest):
                 os.makedirs(destination)
             self.assertTrue(os.path.isdir(destination))
 
-            destination = common.temp_path() + '/' + base.random_str(12) + '.' + common.FAVOURITE_FILE_FORMAT
+            destination = common.temp_path() + '/' + base.random_str(12) + \
+                '.' + common.FAVOURITE_FILE_FORMAT
 
             v = actions.export_favourites(destination=destination)
             self.assertIsNotNone(v)
@@ -141,7 +126,8 @@ class Test(base.BaseApplicationTest):
             destination = common.temp_path()
             if not os.path.isdir(destination):
                 os.makedirs(destination)
-            destination = common.temp_path() + '/' + base.random_str(12) + '.' + common.FAVOURITE_FILE_FORMAT
+            destination = common.temp_path() + '/' + base.random_str(12) + \
+                '.' + common.FAVOURITE_FILE_FORMAT
             actions.export_favourites(destination=destination)
 
         for f in os.listdir(common.temp_path()):
@@ -156,68 +142,46 @@ class Test(base.BaseApplicationTest):
         with self.assertRaises(ValueError):
             actions.set_active(None, None)
 
-        for k in common.ACTIVE_KEYS:
+        for k in common.ActiveSectionCacheKeys:
             actions.set_active(k, base.random_str(32))
 
         # Should reset and invalidate all active paths if they don't correspont
         # to real folders (the case here)
-        common.settings.verify_active()
+        common.settings.load_active_values()
 
-        for k in common.ACTIVE_KEYS:
+        for k in common.ActiveSectionCacheKeys:
             self.assertIsNone(common.active(k))
 
 
-
-class TestWidgetActions(base.BaseApplicationTest):
+class TestWidgetActions(base.BaseCase):
     @classmethod
     def setUpClass(cls):
         super(TestWidgetActions, cls).setUpClass()
-
-        common.init_standalone()
-        common.init_pixel_ratio()
-        common.init_ui_scale()
-        common.init_session_lock()
-        common.init_settings()
-        common.init_font_db()
-
-        if not os.path.isdir(common.temp_path()):
-            os.makedirs(common.temp_path())
 
         server = common.temp_path() + '/' + base.random_ascii(16)
         if not os.path.isdir(server):
             os.makedirs(server)
         actions.add_server(server)
 
-
         # Template path
-        t = __file__ + os.sep + os.pardir + os.sep + os.pardir + os.sep + 'rsc' + os.sep + 'templates' + os.sep + 'Bookmarks_Default_Job.zip'
+        t = __file__ + os.sep + os.pardir + os.sep + os.pardir + os.sep + \
+            'rsc' + os.sep + 'templates' + os.sep + 'Bookmarks_Default_Job.zip'
         t = os.path.normpath(t)
 
         for _ in range(2):
             job = base.random_ascii(16)
-            v = template_actions.extract_zip_template(t, server, job)
+            v = templates.actions.extract_zip_template(t, server, job)
 
             actions.add_bookmark(server, job, 'data/asset')
             actions.add_bookmark(server, job, 'data/shot')
 
-            # Add a random files to the dir
-        #     for seq in (base.random_ascii(16), '_v001', '_v002', '_v003'):
-        #         for ext in ('.png', '.ma'):
-        #             for f in os.listdir(v):
-        #                 p = v + '/' + f
-        #                 for _ in range(3):
-        #                         f = p + '/' + base.random_ascii(8) + seq + ext
-        #                         open(f, 'w').close()
-
-        # main.init()
-
     # def test_activate(self):
     #     self.assertIsNotNone(main.instance())
     #
-    #     w = main.instance().stackedwidget.widget(common.BookmarkTab)
+    #     w = common.widget(common.BookmarkTab)
     #     self.assertGreater(w.model().rowCount(), 0)
     #
-    #     _w = main.instance().stackedwidget.widget(common.AssetTab)
+    #     _w = common.widget(common.AssetTab)
     #     self.assertEqual(_w.model().rowCount(), 0)
     #
     #     for idx in range(w.model().rowCount()):
@@ -236,7 +200,7 @@ class TestWidgetActions(base.BaseApplicationTest):
 
         # self.assertIsNotNone(main.instance())
 
-        # w = main.instance().stackedwidget.widget(common.BookmarkTab)
+        # w = common.widget(common.BookmarkTab)
         # self.assertGreater(w.model().rowCount(), 0)
         #
         # for idx in range(w.model().rowCount()):

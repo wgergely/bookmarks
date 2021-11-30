@@ -834,7 +834,7 @@ class TodoEditorWidget(QtWidgets.QDialog):
             painter = QtGui.QPainter()
             painter.begin(self)
             font = common.font_db.secondary_font(
-                font_size=common.size(common.FontSizeMedium))[0]
+                common.size(common.FontSizeMedium))[0]
             painter.setFont(font)
             painter.setRenderHints(QtGui.QPainter.Antialiasing)
 

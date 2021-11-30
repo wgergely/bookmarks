@@ -25,14 +25,14 @@ def get_widget(q):
     from .. import main
     from . import threads
 
-    if not main.instance():
+    if not common.main_widget:
         return None
 
     if q == threads.TaskFolderInfo:
-        widget = main.instance().taskswidget
+        widget = common.widget(common.TaskTab)
     elif threads.THREADS[q]['tab'] >= 0:
         idx = threads.THREADS[q]['tab']
-        widget = main.instance().stackedwidget.widget(idx)
+        widget = common.widget(idx)
     else:
         widget = None
     return widget
@@ -243,7 +243,7 @@ class BaseWorker(QtCore.QObject):
 
         model = get_model(self.queue)
 
-        p = model.parent_path()
+        p = model.source_path()
         k = model.task()
         source = common.proxy_path(source)
         n = -1
@@ -334,7 +334,7 @@ class BaseWorker(QtCore.QObject):
         sortrole = model.sort_role()
         sortorder = model.sort_order()
 
-        p = model.parent_path()
+        p = model.source_path()
         k = model.task()
         t = ref().data_type
 
@@ -542,7 +542,7 @@ class InfoWorker(BaseWorker):
                 ref()[QtCore.Qt.EditRole] = seqname
                 if not is_valid():
                     return False
-                # We saved the DirEntry instances previously in `__initdata__` but
+                # We saved the DirEntry instances previously in `init_data` but
                 # only for the thread to extract the information from it.
                 if not is_valid():
                     return False
@@ -620,9 +620,9 @@ class InfoWorker(BaseWorker):
 
 
     @staticmethod
-    def update_shotgun_configured(parent_paths, db, data):
-        server, job, root = parent_paths[0:3]
-        asset = None if len(parent_paths) == 3 else parent_paths[3]
+    def update_shotgun_configured(source_paths, db, data):
+        server, job, root = source_paths[0:3]
+        asset = None if len(source_paths) == 3 else source_paths[3]
 
         sg_properties = shotgun.ShotgunProperties(server, job, root, asset)
         sg_properties.init(db=db)

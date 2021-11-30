@@ -10,7 +10,7 @@ from . import base
 class Test(base.BaseCase):
     def test_initialize(self):
         self.assertTrue(common.init_mode == common.StandaloneMode)
-        self.assertIsNotNone(common.session_mode)
+        self.assertIsNotNone(common.active_mode)
         self.assertIsNotNone(common.stylesheet)
         self.assertIsNotNone(common.signals)
         self.assertIsNotNone(common.settings)
@@ -54,20 +54,21 @@ class Test(base.BaseCase):
         from .. import standalone
         self.assertIsNotNone(standalone.instance())
 
-    def test_init_resources(self):
+    def test_resources(self):
         from .. import images
         self.assertTrue(images.RESOURCES[images.GuiResource])
 
-    def test_init_ui_scale(self):
+    def test_ui_scale(self):
         self.assertIsInstance(common.ui_scale_factor, float)
         self.assertIn(common.ui_scale_factor, common.ui_scale_factors)
 
-    def test_init_session_lock(self):
-        self.assertIsInstance(common.session_mode, int)
+    def test_session_lock(self):
+        self.assertIsInstance(common.active_mode, int)
         self.assertIn(
-            common.session_mode,
+            common.active_mode,
             (common.SyncronisedActivePaths, common.PrivateActivePaths)
         )
+
 
     def test_init_font_db(self):
         self.assertIsInstance(common.font_db, common.FontDatabase)

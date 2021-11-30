@@ -178,7 +178,7 @@ SECTIONS = {
 
 class PublishWidget(base.BasePropertyEditor):
     def __init__(self, parent=None):
-        super(PublishWidget, self).__init__(
+        super().__init__(
             SECTIONS,
             None,
             None,
@@ -196,7 +196,7 @@ class PublishWidget(base.BasePropertyEditor):
         self.init_file_from_selection()
 
     def _connect_signals(self):
-        super(PublishWidget, self)._connect_signals()
+        super()._connect_signals()
         self.file_editor.fileSelected.connect(self.set_path)
 
     @common.error
@@ -206,11 +206,10 @@ class PublishWidget(base.BasePropertyEditor):
         set the file path.
 
         """
-        from .. import main
-        if not main.instance():
+        if not common.main_widget:
             return
 
-        widget = main.instance().stackedwidget.widget(common.FileTab)
+        widget = common.widget(common.FileTab)
         if not widget.selectionModel().hasSelection():
             return
 

@@ -57,7 +57,7 @@ value_map = {
 
 class LinkBookmarkWidget(link.BaseLinkWidget):
     def __init__(self, server, job, root, parent=None):
-        super(LinkBookmarkWidget, self).__init__(
+        super().__init__(
             server, job, root, None, 'Project', value_map, parent=parent)
 
     def db_source(self):
@@ -69,12 +69,8 @@ class LinkBookmarkWidget(link.BaseLinkWidget):
         return database.BookmarkTable
 
     def candidate(self):
-        from .. import main
-        widget = main.instance().stackedwidget.widget(common.BookmarkTab)
-        if widget.selectionModel().hasSelection():
-            index = widget.selectionModel().currentIndex()
-            return index.data(common.ParentPathRole)[1]
-        return None
+        index = common.selected_index(common.BookmarkTab)
+        return index.data(common.ParentPathRole)[1] if index.isValid() else None
 
     @common.error
     @common.debug

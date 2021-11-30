@@ -412,7 +412,7 @@ class BookmarkDB(QtCore.QObject):
 
         self._bookmark = '/'.join((server, job, root))
         self._bookmark_root = '{}/{}'.format(
-            self._bookmark, common.BOOKMARK_ROOT_DIR)
+            self._bookmark, common.bookmark_cache_dir)
         self._database_path = '{}/{}'.format(self._bookmark_root, DATABASE)
 
         if self._create_bookmark_dir():
@@ -470,7 +470,7 @@ class BookmarkDB(QtCore.QObject):
                 raise
 
     def _create_bookmark_dir(self):
-        """Creates the `BOOKMARK_ROOT_DIR` if does not yet exist.
+        """Creates the `bookmark_cache_dir` if does not yet exist.
 
         Returns:
             bool:   `True` if the folder already exists, or successfully created.
@@ -481,7 +481,7 @@ class BookmarkDB(QtCore.QObject):
         if file_info.exists():
             return True
         _dir = file_info.dir()
-        if _dir.exists() and _dir.mkdir(common.BOOKMARK_ROOT_DIR):
+        if _dir.exists() and _dir.mkdir(common.bookmark_cache_dir):
             return True
         return False
 

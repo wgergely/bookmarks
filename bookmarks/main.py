@@ -4,6 +4,7 @@
 This is where the UI is assembled and signals & slots are connected.
 
 """
+import time
 import functools
 from PySide2 import QtWidgets, QtGui, QtCore
 
@@ -16,7 +17,6 @@ from . import shortcuts
 from . import actions
 from . import statusbar
 
-from . lists import basemodel
 from . lists import basewidget
 from . lists import assets
 from . lists import bookmarks
@@ -29,100 +29,92 @@ _instance = None
 
 
 def init():
-    global _instance
-    _instance = MainWidget()
-    _instance.initialize()
-    return _instance
+    if common.init_mode == common.StandaloneMode:
+        raise RuntimeError("Cannot be initialized in `StandaloneMode`.")
 
+    if isinstance(common.main_widget, MainWidget):
+        raise RuntimeError("MainWidget already exists.")
 
-def instance():
-    if _instance is None:
-        raise RuntimeError('MainWidget is not initialized.')
-    if not isinstance(_instance, MainWidget):
-        raise TypeError('Wrong widget type.')
-    return _instance
+    common.main_widget = MainWidget()
 
 
 class MainWidget(QtWidgets.QWidget):
-    """Bookmark's main widget.
+    """Bookmark's main widget when initialized as `EmbeddedMode`.
 
-    The widget is made up of a top bar, a stacked widget, and a status bar. The
+    The widget is made up of topbar, a stacked widget, and a status bar. The
     stacked widget contains the Bookmark-, Asset-, File- and Favourite widgets.
 
     """
-    initialized = QtCore.Signal()
     aboutToInitialize = QtCore.Signal()
+    initialized = QtCore.Signal()
 
     def __init__(self, parent=None):
-        global _instance
-        if _instance is not None:
-            raise RuntimeError(
-                '{} cannot be initialised more than once.'.format(self.__class__.__name__))
-        _instance = self
+        if isinstance(common.main_widget, self.__class__):
+            raise RuntimeError(f'{self.__class__.__name__} already exists.')
 
-        super(MainWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
-        pixmap = images.ImageCache.get_rsc_pixmap(
-            'icon', None, common.size(common.HeightAsset))
-        self.setWindowIcon(QtGui.QIcon(pixmap))
-
-        self._contextMenu = None
         self._initialized = False
+        self.init_progress = 'Loading...'
         self.shortcuts = []
 
-        self.stackedwidget = None
-        self.bookmarkswidget = None
-        self.topbar = None
-        self.assetswidget = None
-        self.fileswidget = None
-        self.taskswidget = None
-        self.favouriteswidget = None
+        self._contextMenu = None
+
+        self.stacked_widget = None
+        self.bookmarks_widget = None
+        self.topbar_widget = None
+        self.assets_widget = None
+        self.files_widget = None
+        self.tasks_widget = None
+        self.favourites_widget = None
         self.statusbar = None
-        self.init_progress = 'Loading...'
+
+        self.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
+        self.setSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding,
+            QtWidgets.QSizePolicy.MinimumExpanding
+        )
+
 
     @common.debug
     @common.error
     def _create_ui(self):
-        o = 0
         QtWidgets.QVBoxLayout(self)
+
+        o = 0
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(0)
-        self.setContextMenuPolicy(QtCore.Qt.NoContextMenu)
 
-        self.setSizePolicy(
-            QtWidgets.QSizePolicy.Minimum,
-            QtWidgets.QSizePolicy.Minimum
-        )
+        self.stacked_widget = basewidget.TabsWidget(parent=self)
+        self.bookmarks_widget = bookmarks.BookmarksWidget(parent=self)
+        self.assets_widget = assets.AssetsWidget(parent=self)
+        self.files_widget = files.FilesWidget(parent=self)
+        self.tasks_widget = tasks.TaskFolderWidget(parent=self.files_widget)
+        self.tasks_widget.setHidden(True)
+        self.favourites_widget = favourites.FavouritesWidget(parent=self)
 
-        self.stackedwidget = basewidget.TabsWidget(parent=self)
-        self.bookmarkswidget = bookmarks.BookmarksWidget(parent=self)
-        self.assetswidget = assets.AssetsWidget(parent=self)
-        self.fileswidget = files.FilesWidget(parent=self)
-        self.taskswidget = tasks.TaskFolderWidget(parent=self.fileswidget)
-        self.taskswidget.setHidden(True)
-        self.favouriteswidget = favourites.FavouritesWidget(parent=self)
+        self.stacked_widget.addWidget(self.bookmarks_widget)
+        self.stacked_widget.addWidget(self.assets_widget)
+        self.stacked_widget.addWidget(self.files_widget)
+        self.stacked_widget.addWidget(self.favourites_widget)
 
-        self.stackedwidget.addWidget(self.bookmarkswidget)
-        self.stackedwidget.addWidget(self.assetswidget)
-        self.stackedwidget.addWidget(self.fileswidget)
-        self.stackedwidget.addWidget(self.favouriteswidget)
+        self.topbar_widget = topbar.TopBarWidget(parent=self)
+        self.statusbar = statusbar.StatusBar(parent=self)
 
+        self.layout().addWidget(self.topbar_widget)
+        self.layout().addWidget(self.stacked_widget)
+        self.layout().addWidget(self.statusbar)
+
+    def _init_current_tab(self):
         # Setting the tab now before we do any more initialisation
         idx = common.settings.value(
             common.UIStateSection,
             common.CurrentList
         )
-        idx = common.BookmarkTab if idx is None or False else idx
+        idx = common.BookmarkTab if idx is None or idx is False else idx
         idx = common.BookmarkTab if idx < common.BookmarkTab else idx
         idx = common.FavouriteTab if idx > common.FavouriteTab else idx
-        self.stackedwidget._setCurrentIndex(idx)
-
-        self.topbar = topbar.ListControlWidget(parent=self)
-        self.statusbar = statusbar.StatusBar(parent=self)
-
-        self.layout().addWidget(self.topbar)
-        self.layout().addWidget(self.stackedwidget)
-        self.layout().addWidget(self.statusbar)
+        super(basewidget.TabsWidget, self.stacked_widget).setCurrentIndex(idx)
 
     @common.debug
     @common.error
@@ -131,25 +123,18 @@ class MainWidget(QtWidgets.QWidget):
         signals and slots are connected.
 
         """
-        b = self.bookmarkswidget
-        a = self.assetswidget
-        f = self.fileswidget
-        lc = self.topbar
-        l = self.taskswidget
+        b = self.bookmarks_widget
+        a = self.assets_widget
+        f = self.files_widget
+        lc = self.topbar_widget
+        l = self.tasks_widget
 
         # Bookmark -> Asset
         b.model().sourceModel().activeChanged.connect(
-            a.model().sourceModel().modelDataResetRequested)
+            a.model().sourceModel().reset_data)
         # Asset -> File
         a.model().sourceModel().activeChanged.connect(
-            f.model().sourceModel().modelDataResetRequested)
-
-        # * -> Listcontrol
-        f.model().sourceModel().modelDataResetRequested.connect(
-            l.model().sourceModel().modelDataResetRequested)
-        f.model().sourceModel().taskFolderChanged.connect(
-            l.model().sourceModel().check_task)
-
+            f.model().sourceModel().reset_data)
         #####################################################
         # Stacked widget navigation
         b.activated.connect(
@@ -161,7 +146,7 @@ class MainWidget(QtWidgets.QWidget):
         ########################################################################
         b.model().sourceModel().activeChanged.connect(lc.slack_button.check_token)
         #####################################################
-        self.taskswidget.connect_signals()
+        l.connect_signals()
 
         common.signals.tabChanged.connect(common.signals.updateButtons)
 
@@ -186,7 +171,8 @@ class MainWidget(QtWidgets.QWidget):
     @common.error
     @common.debug
     def initialize(self):
-        """Load all model and user data.
+        """When the widget is first constructed it won't be initialized until
+        this method is called.
 
         """
         if self._initialized:
@@ -194,34 +180,9 @@ class MainWidget(QtWidgets.QWidget):
 
         self._init_shortcuts()
         self._create_ui()
+        self._init_current_tab()
         self._connect_signals()
         self.aboutToInitialize.emit()
-
-        # Load active paths from the local settings
-        common.settings.verify_active()
-
-        # Update the window title to display the current active paths
-        for n in range(3):
-            model = self.stackedwidget.widget(n).model().sourceModel()
-            model.activeChanged.connect(self.update_window_title)
-            model.modelReset.connect(self.update_window_title)
-
-        # Load saved flter values from local settings
-        b = self.bookmarkswidget.model()
-        b.filterTextChanged.emit(b.filter_text())
-        a = self.assetswidget.model()
-        a.filterTextChanged.emit(a.filter_text())
-        f = self.fileswidget.model()
-        f.filterTextChanged.emit(f.filter_text())
-        ff = self.favouriteswidget.model()
-        ff.filterTextChanged.emit(ff.filter_text())
-
-        # Load and apply filter flags stored in the local settings
-        for flag in (common.MarkedAsActive, common.MarkedAsArchived, common.MarkedAsFavourite):
-            b.filterFlagChanged.emit(flag, b.filter_flag(flag))
-            a.filterFlagChanged.emit(flag, a.filter_flag(flag))
-            f.filterFlagChanged.emit(flag, f.filter_flag(flag))
-            ff.filterFlagChanged.emit(flag, ff.filter_flag(flag))
 
         # Start non-model linked worker threads
         _threads = []
@@ -232,10 +193,32 @@ class MainWidget(QtWidgets.QWidget):
         thread.start()
         _threads.append(thread)
 
+        # Update the window title to display the current active paths
+        for n in range(3):
+            model = self.stacked_widget.widget(n).model().sourceModel()
+            model.activeChanged.connect(self.update_window_title)
+            model.modelReset.connect(self.update_window_title)
+
+        # Load saved flter values from user settings
+        b = self.bookmarks_widget.model()
+        b.filterTextChanged.emit(b.filter_text())
+        a = self.assets_widget.model()
+        a.filterTextChanged.emit(a.filter_text())
+        f = self.files_widget.model()
+        f.filterTextChanged.emit(f.filter_text())
+        ff = self.favourites_widget.model()
+        ff.filterTextChanged.emit(ff.filter_text())
+
+        # Load and apply filter flags stored in the user settings
+        for flag in (common.MarkedAsActive, common.MarkedAsArchived, common.MarkedAsFavourite):
+            b.filterFlagChanged.emit(flag, b.filter_flag(flag))
+            a.filterFlagChanged.emit(flag, a.filter_flag(flag))
+            f.filterFlagChanged.emit(flag, f.filter_flag(flag))
+            ff.filterFlagChanged.emit(flag, ff.filter_flag(flag))
+
         # Wait for all threads to spin up before continuing
         n = 0.0
-        import time
-        while not all([f.isRunning() for f in _threads]):
+        while not all(f.isRunning() for f in _threads):
             n += 0.1
             time.sleep(0.1)
             if n > 2.0:
@@ -243,7 +226,7 @@ class MainWidget(QtWidgets.QWidget):
 
         # Initialize the bookmarks model. This will initialise the
         # connected models asset, task and file models.
-        self.bookmarkswidget.model().sourceModel().modelDataResetRequested.emit()
+        self.bookmarks_widget.model().sourceModel().reset_data()
 
         # Let's load our favourite items
         common.signals.favouritesChanged.emit()
@@ -308,7 +291,7 @@ class MainWidget(QtWidgets.QWidget):
         connect(shortcuts.PasteProperties, actions.paste_properties)
 
         if common.init_mode == common.StandaloneMode:
-            connect(shortcuts.Quit, actions.quit)
+            connect(shortcuts.Quit, actions.uninitialize)
             connect(shortcuts.Minimize, actions.toggle_minimized)
             connect(shortcuts.Maximize, actions.toggle_maximized)
             connect(shortcuts.FullScreen, actions.toggle_fullscreen)
@@ -332,17 +315,6 @@ class MainWidget(QtWidgets.QWidget):
 
         connect(shortcuts.ToggleItemArchived, actions.toggle_archived)
         connect(shortcuts.ToggleItemFavourite, actions.toggle_favourite)
-
-    def widget(self):
-        return self.stackedwidget.currentWidget()
-
-    def index(self):
-        if not self.widget().selectionModel().hasSelection():
-            return QtCore.QModelIndex()
-        index = self.widget().selectionModel().currentIndex()
-        if not index.isValid():
-            return QtCore.QModelIndex()
-        return index
 
     def paintEvent(self, event):
         painter = QtGui.QPainter()
@@ -400,5 +372,7 @@ class MainWidget(QtWidgets.QWidget):
             painter, font, rect, self.init_progress, align, color)
 
     def sizeHint(self):
-        """The widget's default size."""
-        return QtCore.QSize(common.size(common.DefaultWidth), common.size(common.DefaultHeight))
+        return QtCore.QSize(
+            common.size(common.DefaultWidth),
+            common.size(common.DefaultHeight)
+        )

@@ -19,21 +19,13 @@ from . import main
 from . import actions
 from . import __version__
 
-
-_instance = None
-_tray_instance = None
-
 MODEL_ID = f'{common.product}App'
 
 
-def instance():
-    return _instance
+def init():
+    if not common.main_widget:
+        common.main_widget = BookmarksAppWindow()
 
-
-def init_window():
-    global _instance
-    if not _instance:
-        _instance = BookmarksAppWindow()
 
 
 @QtCore.Slot()
@@ -41,6 +33,9 @@ def show():
     """Shows the main window.
 
     """
+    if common.init_mode != common.StandaloneMode or not isinstance(common.main_widget, BookmarksAppWindow):
+        raise RuntimeError('Window can only be show in StandaloneMode.')
+
     state = common.settings.value(
         common.UIStateSection,
         common.WindowStateKey,
@@ -48,16 +43,16 @@ def show():
     state = QtCore.Qt.WindowNoState if state is None else QtCore.Qt.WindowState(
         state)
 
-    _instance.activateWindow()
-    _instance.restore_window()
+    common.main_widget.activateWindow()
+    common.main_widget.restore_window()
     if state == QtCore.Qt.WindowNoState:
-        _instance.showNormal()
+        common.main_widget.showNormal()
     elif state & QtCore.Qt.WindowMaximized:
-        _instance.showMaximized()
+        common.main_widget.showMaximized()
     elif state & QtCore.Qt.WindowFullScreen:
-        _instance.showFullScreen()
+        common.main_widget.showFullScreen()
     else:
-        _instance.showNormal()
+        common.main_widget.showNormal()
 
 
 def _set_application_properties(app=None):
@@ -97,7 +92,7 @@ class TrayMenu(contextmenu.BaseContextMenu):
     def tray_menu(self):
         """Actions associated with the visibility of the widget."""
         self.menu['Quit'] = {
-            'action': actions.quit,
+            'action': actions.uninitialize,
         }
         return
 
@@ -207,7 +202,7 @@ class HeaderWidget(QtWidgets.QWidget):
         menu = menu_bar.addMenu(common.product)
 
         action = menu.addAction('Quit')
-        action.triggered.connect(actions.quit)
+        action.triggered.connect(actions.uninitialize)
 
         self.layout().addStretch()
         self.layout().addWidget(MinimizeButton(parent=self))
@@ -278,11 +273,8 @@ class BookmarksAppWindow(main.MainWidget):
     """
 
     def __init__(self, parent=None):
-        global _instance
-        if _instance is not None:
-            raise RuntimeError(
-                '{} cannot be initialised more than once.'.format(self.__class__.__name__))
-        _instance = self
+        if isinstance(common.main_widget, self.__class__):
+            raise RuntimeError(f'{self.__class__.__name__} already exists.')
 
         super().__init__(parent=None)
 
@@ -510,10 +502,10 @@ class BookmarksAppWindow(main.MainWidget):
         self.headerwidget.findChild(MinimizeButton).clicked.connect(
             actions.toggle_minimized)
         self.headerwidget.findChild(CloseButton).clicked.connect(
-            actions.quit)
+            actions.uninitialize)
 
-        self.fileswidget.activated.connect(actions.execute)
-        self.favouriteswidget.activated.connect(actions.execute)
+        self.files_widget.activated.connect(actions.execute)
+        self.favourites_widget.activated.connect(actions.execute)
 
     def hideEvent(self, event):
         """Custom hide event."""
@@ -612,8 +604,8 @@ class BookmarksAppWindow(main.MainWidget):
 
         if self.resize_initial_pos != QtCore.QPoint(-1, -1):
             self.save_window()
-            if hasattr(self.stackedwidget.currentWidget(), 'reset'):
-                self.stackedwidget.currentWidget().reset()
+            if hasattr(common.widget(), 'reset'):
+                common.widget().reset()
 
         self.resize_initial_pos = QtCore.QPoint(-1, -1)
         self.resize_initial_rect = None

@@ -204,7 +204,7 @@ def draw_subdirs(bg_rect, clickable_rectangles, filter_text, text_edge, *args):
         return
 
     font, metrics = common.font_db.primary_font(
-        font_size=common.size(common.FontSizeSmall))
+        common.size(common.FontSizeSmall))
 
     # Paint the background rectangle of the subfolder
     modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
@@ -590,14 +590,17 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
             fallback_thumb=self.fallback_thumb
         )
 
-        # Background
         o = 1.0 if selected or active or hover else 0.9
-        painter.setOpacity(o)
 
-        color = color if color else common.color(common.SeparatorColor)
-        # Paint a generic thumbnail background color
-        painter.setBrush(color)
-        painter.drawRect(rectangles[ThumbnailRect])
+        # Background
+        if common.settings.value(
+            common.SettingsSection,
+            common.ShowThumbnailBackgroundKey
+        ):
+            painter.setOpacity(o)
+            color = color if color else common.color(common.SeparatorColor)
+            painter.setBrush(color)
+            painter.drawRect(rectangles[ThumbnailRect])
 
         if not pixmap:
             return
@@ -904,7 +907,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
 
         text = '{}'.format(count)
         _font, _metrics = common.font_db.primary_font(
-            font_size=common.size(common.FontSizeSmall))
+            common.size(common.FontSizeSmall))
         x = count_rect.center().x() - (_metrics.horizontalAdvance(text) / 2.0) + \
             common.size(common.HeightSeparator)
         y = count_rect.center().y() + (_metrics.ascent() / 2.0)
@@ -1318,7 +1321,7 @@ class AssetsWidgetDelegate(BaseDelegate):
         text = index.data(common.DescriptionRole)
         text = text if text else ''
         font, _metrics = common.font_db.primary_font(
-            font_size=common.size(common.FontSizeMedium))
+            common.size(common.FontSizeMedium))
         painter.setFont(font)
         text = _metrics.elidedText(
             text,
@@ -1418,7 +1421,7 @@ class FilesWidgetDelegate(BaseDelegate):
 
         painter.setRenderHint(QtGui.QPainter.Antialiasing, on=True)
         font, metrics = common.font_db.primary_font(
-            font_size=common.size(common.FontSizeSmall) + 1)
+            common.size(common.FontSizeSmall) + 1)
         offset = 0
 
         self.get_subdir_rectangles(option, index, rectangles, metrics)
@@ -1441,7 +1444,7 @@ class FilesWidgetDelegate(BaseDelegate):
         it = self.get_filedetail_text_segments(index).values()
         offset = metrics.ascent()
         font, metrics = common.font_db.primary_font(
-            font_size=common.size(common.FontSizeSmall) * 0.95)
+            common.size(common.FontSizeSmall) * 0.95)
         left = draw_segments(it, font, metrics, offset, *args)
         painter.restore()
 
@@ -1494,7 +1497,7 @@ class FilesWidgetDelegate(BaseDelegate):
         painter.setPen(common.color(common.TextColor))
         painter.setBrush(QtCore.Qt.NoBrush)
         font, metrics = common.font_db.primary_font(
-            font_size=common.size(common.FontSizeSmall) * 1.1)
+            common.size(common.FontSizeSmall) * 1.1)
 
         offset = 0
 
@@ -1579,7 +1582,7 @@ class FilesWidgetDelegate(BaseDelegate):
 
         text_segments = self.get_text_segments(index)
         font, metrics = common.font_db.primary_font(
-            font_size=common.size(common.FontSizeSmall) * 1.1)
+            common.size(common.FontSizeSmall) * 1.1)
 
         offset = 0
         for k in sorted(text_segments, reverse=True):
@@ -1596,7 +1599,7 @@ class FilesWidgetDelegate(BaseDelegate):
                 r.setRight(rect.right() - (common.size(common.WidthIndicator)))
 
         font, metrics = common.font_db.secondary_font(
-            font_size=common.size(common.FontSizeSmall) * 1.2)
+            common.size(common.FontSizeSmall) * 1.2)
 
         description_rect = QtCore.QRect(name_rect)
         description_rect = QtCore.QRect(rect)

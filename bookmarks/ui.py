@@ -395,7 +395,7 @@ class Label(QtWidgets.QLabel):
                 'color: {}; font-size: {}px; font-family: "{}"'.format(
                     common.rgb(self._color),
                     common.size(common.FontSizeSmall),
-                    common.font_db.secondary_font()[0].family()
+                    common.font_db.secondary_font(common.size(common.FontSizeMedium))[0].family()
                 )
             )
         else:
@@ -403,7 +403,7 @@ class Label(QtWidgets.QLabel):
                 'color: {}; font-size: {}px; font-family: "{}"'.format(
                     common.rgb(self.color),
                     common.size(common.FontSizeSmall),
-                    common.font_db.secondary_font()[0].family()
+                    common.font_db.secondary_font(common.size(common.FontSizeMedium))[0].family()
                 )
             )
         self.update()
@@ -506,7 +506,7 @@ class PaintedLabel(QtWidgets.QLabel):
         self.update_size()
 
     def update_size(self):
-        font, metrics = common.font_db.primary_font(font_size=self._size)
+        font, metrics = common.font_db.primary_font(self._size)
         self.setFixedHeight(metrics.height())
         self.setFixedWidth(metrics.horizontalAdvance(self._text) +
                            common.size(common.WidthIndicator) * 2)
@@ -532,7 +532,7 @@ class PaintedLabel(QtWidgets.QLabel):
         rect.setLeft(rect.left() + common.size(common.WidthIndicator))
         common.draw_aliased_text(
             painter,
-            common.font_db.primary_font(font_size=self._size)[0],
+            common.font_db.primary_font(self._size)[0],
             self.rect(),
             self.text(),
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
@@ -789,7 +789,7 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
 
         # Label
         font, metrics = common.font_db.primary_font(
-            font_size=common.size(common.FontSizeSmall))
+            common.size(common.FontSizeSmall))
 
         color = common.color(common.TextColor)
         color = common.color(common.TextSelectedColor) if selected else color
@@ -870,7 +870,7 @@ class ListWidget(QtWidgets.QListWidget):
             return super(ListWidget, self).addItem(label)
 
         _, metrics = common.font_db.primary_font(
-            font_size=common.size(common.FontSizeSmall))
+            common.size(common.FontSizeSmall))
         width = metrics.horizontalAdvance(
             label) + common.size(common.HeightRow) + common.size(common.WidthMargin)
         item = QtWidgets.QListWidgetItem(label)
@@ -899,6 +899,48 @@ class ListWidget(QtWidgets.QListWidget):
 
     def resizeEvent(self, event):
         self.resized.emit(event.size())
+
+
+def get_icon(
+    name,
+    color=common.color(common.TextDisabledColor),
+    size=common.size(common.HeightRow),
+    opacity=1.0,
+    resource=images.GuiResource
+):
+    """Utility method for retuning a QIcon to use in the context menu.
+
+    Args:
+        name (str): The name of the icon.
+        color (QtGui.QColor): The color of the icon.
+        size (QtGui.QSize): The size of the icon.
+        opacity (float): The opacity of the icon.
+        resource (str): The resource source for the icon.
+
+    Returns:
+        QtGui.QIcon: The QIcon.
+
+    """
+    icon = QtGui.QIcon()
+
+    pixmap = images.ImageCache.get_rsc_pixmap(
+        name, color, size, opacity=opacity)
+    icon.addPixmap(pixmap, mode=QtGui.QIcon.Normal)
+
+    _c = common.color(common.TextSelectedColor) if color else None
+    pixmap = images.ImageCache.get_rsc_pixmap(
+        name, _c, size, opacity=opacity, resource=resource)
+    icon.addPixmap(pixmap, mode=QtGui.QIcon.Active)
+    icon.addPixmap(pixmap, mode=QtGui.QIcon.Selected)
+
+    _c = common.color(common.SeparatorColor) if color else None
+    pixmap = images.ImageCache.get_rsc_pixmap(
+        'close', _c, size, opacity=0.5, resource=resource)
+
+    icon.addPixmap(pixmap, mode=QtGui.QIcon.Disabled)
+
+    return icon
+
 
 
 def get_group(parent=None, vertical=True, margin=common.size(common.WidthMargin)):

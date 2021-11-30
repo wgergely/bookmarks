@@ -5,54 +5,80 @@ import weakref
 from . import common
 
 
-def get_data(parent_path, task, data_type):
-    if parent_path not in common.itemdata:
-        reset_data(parent_path, task)
-    elif task not in common.itemdata[parent_path]:
-        reset_data(parent_path, task)
-    elif data_type not in common.itemdata[parent_path][task]:
-        reset_data(parent_path, task)
-    return common.itemdata[parent_path][task][data_type]
+def get_data(key, task, data_type):
+    common.check_type(key, tuple)
+    common.check_type(task, str)
+    common.check_type(data_type, int)
+
+    if key not in common.itemdata:
+        reset_data(key, task)
+    elif task not in common.itemdata[key]:
+        reset_data(key, task)
+    elif data_type not in common.itemdata[key][task]:
+        reset_data(key, task)
+    return common.itemdata[key][task][data_type]
 
 
-def get_task_data(parent_path, task):
-    if parent_path not in common.itemdata:
-        reset_data(parent_path, task)
-    elif task not in common.itemdata[parent_path]:
-        reset_data(parent_path, task)
-    return common.itemdata[parent_path][task]
+def get_task_data(key, task):
+    common.check_type(key, tuple)
+    common.check_type(task, str)
+
+    if key not in common.itemdata:
+        reset_data(key, task)
+    elif task not in common.itemdata[key]:
+        reset_data(key, task)
+    return common.itemdata[key][task]
 
 
-def data_count(parent_path, task, data_type):
-    d = get_data(parent_path, task, data_type)
+def data_count(key, task, data_type):
+    common.check_type(key, tuple)
+    common.check_type(task, str)
+    common.check_type(data_type, int)
+
+    d = get_data(key, task, data_type)
     return len(d)
 
 
-def is_loaded(parent_path, task, data_type):
-    d = get_data(parent_path, task, data_type)
+def is_loaded(key, task, data_type):
+    common.check_type(key, tuple)
+    common.check_type(task, str)
+    common.check_type(data_type, int)
+
+    d = get_data(key, task, data_type)
     if d and d.loaded:
         return True
     return False
 
 
-def get_data_ref(parent_path, task, data_type):
+def get_data_ref(key, task, data_type):
+    common.check_type(key, tuple)
+    common.check_type(task, str)
+    common.check_type(data_type, int)
+
     return weakref.ref(
-        get_data(parent_path, task, data_type)
+        get_data(key, task, data_type)
     )
 
 
-def reset_data(parent_path, task):
-    if parent_path not in common.itemdata:
-        common.itemdata[parent_path] = common.DataDict()
-    common.itemdata[parent_path][task] = common.DataDict()
+def reset_data(key, task):
+    common.check_type(key, tuple)
+    common.check_type(task, str)
+
+    if key not in common.itemdata:
+        common.itemdata[key] = common.DataDict()
+    common.itemdata[key][task] = common.DataDict()
     for t in (common.FileItem, common.SequenceItem):
-        common.itemdata[parent_path][task][t] = common.DataDict()
-        common.itemdata[parent_path][task][t].data_type = t
+        common.itemdata[key][task][t] = common.DataDict()
+        common.itemdata[key][task][t].data_type = t
 
 
-def set_data(parent_path, task, data_type, data):
-    if parent_path not in common.itemdata:
-        reset_data(parent_path, task)
-    elif task not in common.itemdata[parent_path]:
-        reset_data(parent_path, task)
-    common.itemdata[parent_path][task][data_type] = data
+def set_data(key, task, data_type, data):
+    common.check_type(key, tuple)
+    common.check_type(task, str)
+    common.check_type(data_type, int)
+
+    if key not in common.itemdata:
+        reset_data(key, task)
+    elif task not in common.itemdata[key]:
+        reset_data(key, task)
+    common.itemdata[key][task][data_type] = data

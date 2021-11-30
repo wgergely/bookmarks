@@ -89,7 +89,7 @@ SETTING_KEYS = (
     'template'
 )
 
-INACTIVE_KEYS = (
+INActiveSectionCacheKeys = (
     'bookmark',
     'asset',
     'task',
@@ -257,9 +257,6 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
         self.update_timer.timeout.connect(self.set_name)
         self.update_timer.timeout.connect(self.set_thumbnail_source)
 
-        # if common.ACTIVE[common.TaskKey] is not None:
-        #     self.add_task(common.ACTIVE[common.TaskKey])
-
     def file_path(self):
         return self._file_path
 
@@ -298,7 +295,7 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
         self.thumbnail_editor.source = file
         self.thumbnail_editor.update()
 
-        for k in INACTIVE_KEYS:
+        for k in INActiveSectionCacheKeys:
             if not hasattr(self, k + '_editor'):
                 continue
             editor = getattr(self, k + '_editor')

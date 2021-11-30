@@ -90,7 +90,7 @@ class LinkAssetWidget(link.BaseLinkWidget):
 
     def candidate(self):
         from .. import main
-        widget = main.instance().stackedwidget.widget(common.AssetTab)
+        widget = common.widget(common.AssetTab)
         if widget.selectionModel().hasSelection():
             index = widget.selectionModel().currentIndex()
             return index.data(common.ParentPathRole)[3]

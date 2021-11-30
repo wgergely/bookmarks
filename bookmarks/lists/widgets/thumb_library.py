@@ -14,7 +14,7 @@ instance = None
 
 
 COLUMNS = 5
-RSC_DIR = '{}/../../rsc'.format(__file__)
+RSC_DIR = '{}/../../../rsc'.format(__file__)
 
 
 def close():

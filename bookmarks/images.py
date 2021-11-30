@@ -323,8 +323,8 @@ def get_cached_thumbnail_path(server, job, root, source, proxy=False):
 
     if proxy or common.is_collapsed(source):
         source = common.proxy_path(source)
-    name = common.get_hash(source) + '.' + THUMBNAIL_FORMAT
-    return server + '/' + job + '/' + root + '/' + common.BOOKMARK_ROOT_DIR + '/' + name
+    name = common.get_hash(source) + '.' + common.thumbnail_format
+    return server + '/' + job + '/' + root + '/' + common.bookmark_cache_dir + '/' + name
 
 
 def get_placeholder_path(file_path, fallback='placeholder'):
@@ -344,7 +344,7 @@ def get_placeholder_path(file_path, fallback='placeholder'):
 
     def path(r, n):
         return PLACEHOLDER_PATH.format(
-            __file__, r, n, THUMBNAIL_FORMAT
+            __file__, r, n, common.thumbnail_format
         )
 
     file_info = QtCore.QFileInfo(file_path)

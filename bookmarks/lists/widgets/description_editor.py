@@ -15,7 +15,7 @@ class DescriptionEditorWidget(ui.LineEdit):
     """The editor used to edit the desciption of items."""
 
     def __init__(self, parent=None):
-        super(DescriptionEditorWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.installEventFilter(self)
         self.setAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
         self.setPlaceholderText('Edit description...')
@@ -24,7 +24,6 @@ class DescriptionEditorWidget(ui.LineEdit):
         self._connect_signals()
 
     def _connect_signals(self):
-        """Connects signals."""
         self.editingFinished.connect(self.action)
         self.parent().verticalScrollBar().valueChanged.connect(self.hide)
         if self.parent():
@@ -32,13 +31,13 @@ class DescriptionEditorWidget(ui.LineEdit):
 
     def action(self):
         index = self.parent().selectionModel().currentIndex()
-        text = '{}'.format(index.data(common.DescriptionRole))
+        text = f'{index.data(common.DescriptionRole)}'
         if text.lower() == self.text().lower():
             self.hide()
             return
 
-        parent_path = index.data(common.ParentPathRole)
-        if not parent_path:
+        source_path = index.data(common.ParentPathRole)
+        if not source_path:
             self.hide()
             return
 
@@ -48,14 +47,17 @@ class DescriptionEditorWidget(ui.LineEdit):
         else:
             k = p
 
-        db = database.get_db(*parent_path[0:3])
+        # Set the database value
+        db = database.get_db(*source_path[0:3])
         with db.connection():
             db.setValue(k, 'description', self.text())
 
+        # Repaint the index
         source_index = index.model().mapToSource(index)
-        data = source_index.model().model_data()[source_index.row()]
+        data = source_index.model().model_data()
+        idx = source_index.row()
 
-        data[common.DescriptionRole] = self.text()
+        data[idx][common.DescriptionRole] = self.text()
         self.parent().update(source_index)
         self.hide()
 

@@ -168,5 +168,5 @@ def uninitializePlugin(name):
         version=module.__version__
     )
 
-    cmds.evalDeferred(module.maya.actions.quit)
-    cmds.evalDeferred(module.common.quit)
+    cmds.evalDeferred(module.maya.actions.uninitialize)
+    cmds.evalDeferred(module.actions.uninitialize)

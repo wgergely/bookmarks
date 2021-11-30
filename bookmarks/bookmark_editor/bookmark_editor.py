@@ -34,20 +34,20 @@ class BookmarkContextMenu(contextmenu.BaseContextMenu):
         self.menu[contextmenu.key()] = {
             'text': 'Pick a new folder to use as a Bookmark...',
             'action': self.parent().add,
-            'icon': self.get_icon('add', color=common.color(common.GreenColor))
+            'icon': ui.get_icon('add', color=common.color(common.GreenColor))
         }
 
     def reveal_menu(self):
         self.menu[contextmenu.key()] = {
             'text': 'Reveal',
             'action': functools.partial(actions.reveal, self.index.data(QtCore.Qt.UserRole) + '/.'),
-            'icon': self.get_icon('folder')
+            'icon': ui.get_icon('folder')
         }
 
     def refresh_menu(self):
         self.menu['Refresh'] = {
             'action': self.parent().init_data,
-            'icon': self.get_icon('refresh')
+            'icon': ui.get_icon('refresh')
         }
 
     def bookmark_properties_menu(self):
@@ -58,7 +58,7 @@ class BookmarkContextMenu(contextmenu.BaseContextMenu):
         self.menu['Properties'] = {
             'text': 'Edit Properties...',
             'action': functools.partial(actions.edit_bookmark, server, job, root),
-            'icon': self.get_icon('settings')
+            'icon': ui.get_icon('settings')
         }
 
 
@@ -163,7 +163,7 @@ class BookmarkListWidget(ui.ListWidget):
         )
         if not path:
             return
-        if not QtCore.QDir(path).mkdir(common.BOOKMARK_ROOT_DIR):
+        if not QtCore.QDir(path).mkdir(common.bookmark_cache_dir):
             log.error('Failed to create bookmark.')
 
         name = path.split(self.job)[-1].strip('/').strip('\\')
@@ -303,7 +303,7 @@ class BookmarkListWidget(ui.ListWidget):
             if [f for f in arr if f in path]:
                 continue
 
-            if entry.name == common.BOOKMARK_ROOT_DIR:
+            if entry.name == common.bookmark_cache_dir:
                 arr.append('/'.join(path.split('/')[:-1]))
 
             self.find_bookmark_dirs(path, count, limit, arr)

@@ -16,12 +16,12 @@ from .. import actions
 
 
 class AddServerEditor(QtWidgets.QDialog):
-    """Dialog used to add a new server to `local_settings`.
+    """Dialog used to add a new server to `user_settings`.
 
     """
 
     def __init__(self, parent=None):
-        super(AddServerEditor, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.ok_button = None
         self.pick_button = None
         self.editor = None
@@ -92,7 +92,7 @@ class AddServerEditor(QtWidgets.QDialog):
     @common.debug
     def done(self, result):
         if result == QtWidgets.QDialog.Rejected:
-            super(AddServerEditor, self).done(result)
+            super().done(result)
             return
 
         if not self.text():
@@ -111,7 +111,7 @@ class AddServerEditor(QtWidgets.QDialog):
             return
 
         actions.add_server(v)
-        super(AddServerEditor, self).done(QtWidgets.QDialog.Accepted)
+        super().done(QtWidgets.QDialog.Accepted)
 
     def text(self):
         v = self.editor.text()
@@ -144,25 +144,25 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
     def add_menu(self):
         self.menu['Add server...'] = {
             'action': self.parent().add,
-            'icon': self.get_icon('add', color=common.color(common.GreenColor))
+            'icon': ui.get_icon('add', color=common.color(common.GreenColor))
         }
 
     def reveal_menu(self):
         self.menu['Reveal...'] = {
             'action': lambda: actions.reveal(self.index.text() + '/.'),
-            'icon': self.get_icon('folder'),
+            'icon': ui.get_icon('folder'),
         }
 
     def remove_menu(self):
         self.menu['Remove'] = {
             'action': self.parent().remove,
-            'icon': self.get_icon('close', color=common.color(common.RedColor))
+            'icon': ui.get_icon('close', color=common.color(common.RedColor))
         }
 
     def refresh_menu(self):
         self.menu['Refresh'] = {
             'action': (self.parent().init_data, self.parent().restore_current),
-            'icon': self.get_icon('refresh')
+            'icon': ui.get_icon('refresh')
         }
 
 

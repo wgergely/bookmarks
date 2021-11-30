@@ -12,7 +12,7 @@ from ..templates import actions as template_actions
 from . import base
 
 
-class Test(base.BaseApplicationTest):
+class Test(base.BaseCase):
     @classmethod
     def setUpClass(cls):
         super(Test, cls).setUpClass()

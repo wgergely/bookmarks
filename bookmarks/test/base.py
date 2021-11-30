@@ -55,9 +55,13 @@ class BaseCase(unittest.TestCase):
         if not os.path.exists(PRODUCT_ROOT):
             os.makedirs(PRODUCT_ROOT)
 
-        # Create server folder
+        # Create a server folder
         if not os.path.isdir(PRODUCT_ROOT + '/' + 'server'):
             os.makedirs(PRODUCT_ROOT + '/' + 'server')
+
+        if not os.path.isdir(common.temp_path()):
+            os.makedirs(common.temp_path())
+
 
     @classmethod
     def tearDownClass(cls):

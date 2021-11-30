@@ -2,26 +2,10 @@
 used to define the look and behaviour of Bookmarks.
 
 """
-import collections
-
-from . core import *
-from . font import *
-from . settings import *
-from . sessionmode import *
-from . signals import *
-from . sessionlock import *
-from . ui import *
-from . datacache import *
-from . sequence import *
-
-# from . import
-# from . sequence import *
-
-
 debug_on = False       # Print debug messages
 typecheck_on = True   # Check types
 init_mode = None    # App startup mode
-session_mode = None # Session mode can be private or syncronised
+active_mode = None # Session mode can be private or syncronised
 ui_scale_factor = 1.0      # Global ui scaling factor
 dpi = 72.0
 sort_by_basename = False # Sort models by a item basename instead of full name
@@ -37,15 +21,12 @@ bookmarks = {}
 favourites = {}
 hashes = {}
 timers = {}
-font_cache = {
-    PrimaryFontRole: {},
-    SecondaryFontRole: {},
-    MetricsRole: {},
-}
+font_cache = {}
 
-ACTIVE = collections.OrderedDict()
+ActiveSectionCache = None
 
-itemdata = DataDict()
+itemdata = {}
+monitors = {}
 
 PATH_CACHE = {}
 RECTANGLE_CACHE = {}
@@ -95,4 +76,20 @@ OpaqueColor = None
 
 
 # Widget instance bindings
-WIDGET_INSTANCE = {}
+main_widget = None
+
+# Save the initial module values for later use
+__initial_values__ = {k:v for (k,v) in locals().copy().items() if not k.startswith('__')}
+
+import collections
+
+from . core import *
+from . font import *
+from . settings import *
+from . signals import *
+from . sessionlock import *
+from . ui import *
+from . datacache import *
+from . sequence import *
+from . tabs import *
+from . filemonitor import *

@@ -17,9 +17,8 @@ from .. import common
 from .. import contextmenu
 from .. import images
 
-
-from ..threads import threads
-from ..asset_config import asset_config
+from .. threads import threads
+from .. asset_config import asset_config
 
 from . import basemodel
 from . import basewidget
@@ -44,7 +43,6 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
         args = self.get_paint_arguments(painter, option, index)
         self.paint_background(*args)
         self.paint_name(*args)
-        self.paint_selection_indicator(*args)
 
     def get_description_rect(self, *args, **kwargs):
         return QtCore.QRect()
@@ -60,9 +58,8 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
 
         # Set rect with separator
         rect = QtCore.QRect(option.rect)
-        center = rect.center()
         rect.setHeight(rect.height() - common.size(common.HeightSeparator))
-        rect.moveCenter(center)
+        rect.setLeft(common.size(common.WidthIndicator))
 
         if index.data(QtCore.Qt.DisplayRole) == common.active(common.TaskKey):
             o = common.size(common.HeightSeparator)
@@ -86,10 +83,15 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
         painter.setPen(QtGui.QPen(QtCore.Qt.NoPen))
         painter.setBrush(common.color(common.SeparatorColor))
         painter.drawRect(option.rect)
-        background = common.color(common.BackgroundDarkColor)
-        color = common.color(common.BackgroundLightColor) if selected or hover else background
+        color = common.color(common.BackgroundDarkColor)
         painter.setBrush(color)
         painter.drawRect(rect)
+
+        if hover:
+            painter.setOpacity(0.2)
+            color = common.color(common.BackgroundLightColor)
+            painter.setBrush(color)
+            painter.drawRect(rect)
 
     @delegate.paintmethod
     def paint_name(self, *args):
@@ -98,13 +100,18 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
         if not index.data(QtCore.Qt.DisplayRole):
             return
 
-        if index.data(common.TodoCountRole):
-            color = common.color(common.TextSelectedColor) if hover else common.color(common.TextColor)
-        else:
-            color = common.color(common.TextColor) if hover else common.color(common.BackgroundLightColor)
-        color = common.color(common.TextSelectedColor) if selected else color
+        active = index.data(QtCore.Qt.DisplayRole) == common.active(common.TaskKey)
 
-        font = common.font_db.primary_font(common.size(common.FontSizeMedium))[0]
+        if index.data(common.TodoCountRole):
+            color = common.color(
+                common.TextSelectedColor) if hover else common.color(common.TextColor)
+        else:
+            color = common.color(common.TextColor) if hover else common.color(
+                common.BackgroundLightColor)
+        color = common.color(common.TextSelectedColor) if active else color
+
+        font = common.font_db.primary_font(
+            common.size(common.FontSizeMedium))[0]
 
         o = common.size(common.WidthMargin)
         rect = QtCore.QRect(option.rect)
@@ -138,16 +145,19 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
             else:
                 text = '{} items'.format(
                     index.data(common.TodoCountRole))
-            color = common.color(common.TextSelectedColor) if selected else common.color(common.GreenColor)
+            color = common.color(common.TextSelectedColor) if selected else common.color(
+                common.GreenColor)
             color = common.color(common.TextSelectedColor) if hover else color
             items.append((text, color))
         else:
-            color = common.color(common.TextColor) if selected else common.color(common.BackgroundColor)
+            color = common.color(common.TextColor) if active else common.color(
+                common.BackgroundColor)
             color = common.color(common.TextColor) if hover else color
             items.append(('(empty)', color))
 
         if index.data(QtCore.Qt.ToolTipRole):
-            color = common.color(common.TextSelectedColor) if selected else common.color(common.TextColor)
+            color = common.color(
+                common.TextSelectedColor) if active else common.color(common.TextColor)
             color = common.color(common.TextSelectedColor) if hover else color
             items.append((index.data(QtCore.Qt.ToolTipRole), color))
 
@@ -164,7 +174,8 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
 
             width = common.draw_aliased_text(
                 painter,
-                common.font_db.primary_font(common.size(common.FontSizeMedium))[0],
+                common.font_db.primary_font(
+                    common.size(common.FontSizeMedium))[0],
                 rect,
                 text,
                 align,
@@ -173,8 +184,7 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
             rect.setLeft(rect.left() + width)
 
     def sizeHint(self, option, index):
-        """Returns the size of the TaskFolderWidgetDelegate items."""
-        return index.data(QtCore.Qt.SizeHintRole)
+        return self.parent().model().sourceModel().row_size()
 
 
 class TaskFolderModel(basemodel.BaseModel):
@@ -188,15 +198,14 @@ class TaskFolderModel(basemodel.BaseModel):
     taskFolderChangeRequested = QtCore.Signal()
 
     def __init__(self, parent=None):
-        self._parent = parent
+        super().__init__(parent=parent)
         self._monitor = None
 
-        super(TaskFolderModel, self).__init__(parent=parent)
-
-        self.modelDataResetRequested.connect(self.__resetdata__)
-        common.signals.tabChanged.connect(self.check_task)
-
         self.init_monitor()
+
+        common.signals.tabChanged.connect(self.check_task)
+        common.signals.taskFolderChanged.connect(self.check_task)
+        common.signals.taskViewToggled.connect(self.check_task)
 
     @QtCore.Slot()
     def init_monitor(self):
@@ -206,42 +215,27 @@ class TaskFolderModel(basemodel.BaseModel):
         If a new file/folder is added or changed we will trigger a model reset.
 
         """
-        if not isinstance(self._monitor, QtCore.QFileSystemWatcher):
-            self._monitor = QtCore.QFileSystemWatcher()
-            self._monitor.fileChanged.connect(self.beginResetModel)
-            self._monitor.fileChanged.connect(self.__resetdata__)
-            self._monitor.directoryChanged.connect(self.beginResetModel)
-            self._monitor.directoryChanged.connect(self.__resetdata__)
+        if isinstance(self._monitor, QtCore.QFileSystemWatcher):
+            return
+        self._monitor = QtCore.QFileSystemWatcher()
+        self._monitor.fileChanged.connect(lambda: self.reset_data(force=True))
+        self._monitor.directoryChanged.connect(lambda: self.reset_data(force=True))
 
     @QtCore.Slot()
     def reset_monitor(self):
-        if self._monitor is None:
-            self._monitor = QtCore.QFileSystemWatcher()
         for f in self._monitor.files():
             self._monitor.removePath(f)
         for f in self._monitor.directories():
             self._monitor.removePath(f)
 
-    def parent_path(self):
-        """The model's parent folder path.
-
-        Returns:
-            tuple: A tuple of path segments.
-
-        """
-        return (
-            common.active(common.ServerKey),
-            common.active(common.JobKey),
-            common.active(common.RootKey),
-            common.active(common.AssetKey),
-        )
+    def source_path(self):
+        return common.active(common.AssetKey, args=True)
 
     def data_type(self):
         return common.FileItem
 
     @basemodel.initdata
-    def __initdata__(self):
-        """Bookmarks and assets are static. But files will be any number of """
+    def init_data(self):
         self.reset_monitor()
 
         flags = (
@@ -251,27 +245,26 @@ class TaskFolderModel(basemodel.BaseModel):
             QtCore.Qt.ItemIsEditable
         )
         data = self.model_data()
-
-        parent_path = self.parent_path()
-        if not parent_path or not all(parent_path):
+        source_path = self.source_path()
+        if not source_path or not all(source_path):
             return
-        _parent_path = '/'.join(parent_path)
+        _source_path = '/'.join(source_path)
 
         # Thumbnail image
         default_thumbnail = images.ImageCache.get_rsc_pixmap(
-            'folder_sm',
+            'folder',
             common.color(common.TextSecondaryColor),
             self.row_size().height()
         )
         default_thumbnail = default_thumbnail.toImage()
 
-        config = asset_config.get(*parent_path[0:3])
+        config = asset_config.get(*source_path[0:3])
 
         # Add the parent path
-        self._monitor.addPath(_parent_path)
+        self._monitor.addPath(_source_path)
 
         entries = sorted(
-            ([f for f in _scandir.scandir(_parent_path)]), key=lambda x: x.name)
+            ([f for f in _scandir.scandir(_source_path)]), key=lambda x: x.name)
 
         for entry in entries:
             if entry.name.startswith('.'):
@@ -293,7 +286,7 @@ class TaskFolderModel(basemodel.BaseModel):
                 #
                 common.EntryRole: [entry, ],
                 common.FlagsRole: flags,
-                common.ParentPathRole: parent_path,
+                common.ParentPathRole: source_path,
                 common.DescriptionRole: '',
                 common.TodoCountRole: 0,
                 common.FileDetailsRole: '',
@@ -324,21 +317,23 @@ class TaskFolderModel(basemodel.BaseModel):
         """
         v = common.active(common.TaskKey)
         if not v:
-            self.taskFolderChangeRequested.emit()
+            self.reset_data()
             return
 
-        parent_path = self.parent_path() + (v,)
-        if not all(parent_path):
-            self.taskFolderChangeRequested.emit()
+        p = common.active(common.TaskKey, args=True)
+        if not p or not all(p):
+            self.reset_data(force=True)
             return
 
-        if not QtCore.QFileInfo('/'.join(parent_path)).exists():
-            self.taskFolderChangeRequested.emit()
+        if not QtCore.QFileInfo('/'.join(p)).exists():
+            self.reset_data(force=True)
+
+        self.reset_data()
 
     def default_row_size(self):
         return QtCore.QSize(1, common.size(common.HeightRow) * 1.2)
 
-    def local_settings_key(self):
+    def user_settings_key(self):
         return common.TaskKey
 
 
@@ -351,7 +346,7 @@ class TaskFolderWidget(basewidget.ThreadedBaseWidget):
     queues = (threads.TaskFolderInfo,)
 
     def __init__(self, parent=None):
-        super(TaskFolderWidget, self).__init__(
+        super().__init__(
             icon='folder',
             parent=parent
         )
@@ -361,19 +356,19 @@ class TaskFolderWidget(basewidget.ThreadedBaseWidget):
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
 
     def connect_signals(self):
-        self.clicked.connect(self.activated)
-        self.clicked.connect(self.hide)
+        self.clicked.connect(self.item_clicked)
+        common.signals.tabChanged.connect(self.tab_changed)
+        common.widget(common.FileTab).resized.connect(self.resize_widget)
 
-        from .. import main
-        widget = main.instance().stackedwidget.widget(common.FileTab)
-        model = widget.model().sourceModel()
+    @QtCore.Slot(QtCore.QModelIndex)
+    def item_clicked(self, index):
+        if not index.isValid():
+            return
+        common.signals.taskFolderChanged.emit(index.data(QtCore.Qt.DisplayRole))
+        self.hide()
 
-        self.clicked.connect(lambda x: model.taskFolderChanged.emit(
-            x.data(QtCore.Qt.DisplayRole)))
-        common.signals.tabChanged.connect(self.hide_widget)
-        self.parent().resized.connect(self.resize_widget)
-
-    def hide_widget(self, idx):
+    @QtCore.Slot(int)
+    def tab_changed(self, idx):
         if idx != common.FileTab:
             self.hide()
 
@@ -392,18 +387,22 @@ class TaskFolderWidget(basewidget.ThreadedBaseWidget):
 
     def hideEvent(self, event):
         """TaskFolderWidget hide event."""
-        if self.parent():
-            self.parent().verticalScrollBar().setHidden(False)
+        common.widget(common.FileTab).verticalScrollBar().setHidden(False)
         common.signals.taskViewToggled.emit()
+        return super().hideEvent(event)
 
     def showEvent(self, event):
         """TaskFolderWidget show event."""
-        self.parent().verticalScrollBar().setHidden(True)
+        common.widget(common.FileTab).verticalScrollBar().setHidden(True)
         self.select_active_item()
         self.setFocus()
 
+        common.signals.taskViewToggled.emit()
+
+        return super().showEvent(event)
+
     def select_active_item(self):
-        key = common.ACTIVE[common.TaskKey]
+        key = common.active(common.TaskKey)
         if not key:
             return
         for n in range(self.model().rowCount()):
@@ -442,7 +441,7 @@ class TaskFolderWidget(basewidget.ThreadedBaseWidget):
         elif (event.key() == QtCore.Qt.Key_Return) or (event.key() == QtCore.Qt.Key_Enter):
             self.hide()
             return
-        super(TaskFolderWidget, self).keyPressEvent(event)
+        super().keyPressEvent(event)
 
     def focusOutEvent(self, event):
         """Closes the editor on focus loss."""
@@ -453,7 +452,7 @@ class TaskFolderWidget(basewidget.ThreadedBaseWidget):
 
     def contextMenuEvent(self, event):
         self._context_menu_active = True
-        super(TaskFolderWidget, self).contextMenuEvent(event)
+        super().contextMenuEvent(event)
         self._context_menu_active = False
 
     def mousePressEvent(self, event):
@@ -463,4 +462,4 @@ class TaskFolderWidget(basewidget.ThreadedBaseWidget):
         if not index.isValid():
             self.hide()
             return
-        super(TaskFolderWidget, self).mousePressEvent(event)
+        super().mousePressEvent(event)

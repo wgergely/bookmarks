@@ -13,8 +13,9 @@ from .. import images
 from .. import contextmenu
 from .. import shortcuts
 from .. import actions
-from ..templates import templates
-from ..property_editor import base
+
+from .. templates import templates
+from .. property_editor import base
 
 
 SECTIONS = {
@@ -148,13 +149,13 @@ class JobContextMenu(contextmenu.BaseContextMenu):
     def add_menu(self):
         self.menu['Add Job...'] = {
             'action': self.parent().add,
-            'icon': self.get_icon('add', color=common.color(common.GreenColor))
+            'icon': ui.get_icon('add', color=common.color(common.GreenColor))
         }
 
     def reveal_menu(self):
         self.menu['Reveal...'] = {
             'action': lambda: actions.reveal(self.index.data(QtCore.Qt.UserRole) + '/.'),
-            'icon': self.get_icon('folder')
+            'icon': ui.get_icon('folder')
         }
 
     def add_refresh_menu(self):
@@ -163,7 +164,7 @@ class JobContextMenu(contextmenu.BaseContextMenu):
                 functools.partial(self.parent().init_data, reset=False),
                 self.parent().restore_current
             ),
-            'icon': self.get_icon('refresh')
+            'icon': ui.get_icon('refresh')
         }
 
 

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """The widget, model and context menu needed for listing bookmarks stored
-in `local_settings`.
+in `user_settings`.
 
 """
+import functools
 from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
@@ -82,41 +83,36 @@ class BookmarksModel(basemodel.BaseModel):
     queues = (threads.BookmarkInfo, threads.BookmarkThumbnail)
 
     def __init__(self, parent=None):
-        super(BookmarksModel, self).__init__(parent=parent)
-        common.signals.bookmarkAdded.connect(
-            lambda: self.blockSignals(True))
-        common.signals.bookmarkAdded.connect(self.__resetdata__)
-        common.signals.bookmarkAdded.connect(
-            lambda: self.blockSignals(False))
-        common.signals.bookmarkAdded.connect(self.beginResetModel)
-        common.signals.bookmarkAdded.connect(self.endResetModel)
-
-        common.signals.bookmarkRemoved.connect(
-            lambda: self.blockSignals(True))
-        common.signals.bookmarkRemoved.connect(self.__resetdata__)
-        common.signals.bookmarkRemoved.connect(
-            lambda: self.blockSignals(False))
-        common.signals.bookmarkRemoved.connect(self.beginResetModel)
-        common.signals.bookmarkRemoved.connect(self.endResetModel)
+        super().__init__(parent=parent)
+        common.signals.bookmarkAdded.connect(lambda _: self.reset_data(force=True, emit_active=False))
+        common.signals.bookmarkRemoved.connect(lambda _: self.reset_data(force=True, emit_active=False))
 
     @common.status_bar_message('Loading Bookmarks...')
     @basemodel.initdata
     @common.error
     @common.debug
-    def __initdata__(self):
+    def init_data(self):
         """Collects the data needed to populate the bookmarks model.
 
         """
-        p = self.parent_path()
+        common.settings.load_active_values()
+
+        p = self.source_path()
         _k = self.task()
         t = self.data_type()
+
+        if not p or not all(p) or not _k or t is None:
+            return
+
         data = common.get_data(p, _k, t)
 
-        for k, v in self.item_generator():
+        for k, v in self.item_iterator():
+            common.check_type(v, dict)
+
             if not all(v.values()):
                 continue
             if not len(v.values()) >= 3:
-                raise ValueError('Invalid bookmark value.')
+                continue
 
             server = v[common.ServerKey]
             job = v[common.JobKey]
@@ -149,10 +145,7 @@ class BookmarksModel(basemodel.BaseModel):
             if filepath in common.favourites and exists:
                 flags = flags | common.MarkedAsFavourite
 
-            text = '{}  |  {}'.format(
-                job,
-                root
-            )
+            text = f'{job}  |  {root}'
 
             idx = len(data)
             if idx >= common.max_list_items:
@@ -168,7 +161,6 @@ class BookmarksModel(basemodel.BaseModel):
                 common.QueueRole: self.queues,
                 common.DataTypeRole: t,
                 #
-                common.EntryRole: [],
                 common.FlagsRole: flags,
                 common.ParentPathRole: (server, job, root),
                 common.DescriptionRole: '',
@@ -200,7 +192,7 @@ class BookmarksModel(basemodel.BaseModel):
 
         self.activeChanged.emit(self.active_index())
 
-    def item_generator(self):
+    def item_iterator(self):
         for item in common.bookmarks.items():
             yield item
 
@@ -219,7 +211,7 @@ class BookmarksModel(basemodel.BaseModel):
         actions.set_active(common.JobKey, job)
         actions.set_active(common.RootKey, root)
 
-    def parent_path(self):
+    def source_path(self):
         return ('bookmarks',)
 
     def data_type(self):
@@ -228,7 +220,7 @@ class BookmarksModel(basemodel.BaseModel):
     def default_row_size(self):
         return QtCore.QSize(1, common.size(common.HeightBookmark))
 
-    def local_settings_key(self):
+    def user_settings_key(self):
         return common.BookmarksKey
 
 

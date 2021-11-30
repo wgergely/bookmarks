@@ -121,7 +121,7 @@ class DragPixmapFactory(QtWidgets.QWidget):
     """Widget used to define the appearance of an item being dragged."""
 
     def __init__(self, pixmap, text, parent=None):
-        super(DragPixmapFactory, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self._pixmap = pixmap
         self._text = text
 
@@ -195,7 +195,7 @@ class FilesWidgetContextMenu(contextmenu.BaseContextMenu):
     @common.debug
     def setup(self):
         self.title()
-        self.task_toggles_menu()
+        self.task_folder_toggle_menu()
         self.separator()
 
         self.window_menu()
@@ -278,73 +278,44 @@ class FilesModel(basemodel.BaseModel):
     queues = (threads.FileInfo, threads.FileThumbnail)
 
     def __init__(self, parent=None):
-        super(FilesModel, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
-        self._watcher = QtCore.QFileSystemWatcher(parent=self)
-        self._watcher.directoryChanged.connect(self.dir_changed)
-
-        self.taskFolderChanged.connect(self.set_task)
         self.dataTypeChanged.connect(self.set_data_type)
         self.dataTypeChanged.connect(common.signals.updateButtons)
 
     def refresh_needed(self):
-        p = self.parent_path()
+        p = self.source_path()
         k = self.task()
-        if not k:
-            return None
         t = common.FileItem
+
+        if not p or not all(p) or not k or t is None:
+            return False
+
         data = common.get_data(p, k, t)
+        if not data:
+            return False
+
         return data.refresh_needed
 
     def set_refresh_needed(self, v):
-        p = self.parent_path()
+        p = self.source_path()
         k = self.task()
-        if not k:
-            return
         t = common.FileItem
+
+        if not p or not all(p) or not k or t is None:
+            return
+
         data = common.get_data(p, k, t)
+        if not data:
+            return
+
         data.refresh_needed = v
-
-    def watcher(self):
-        """The file system monitor used to check for file changes."""
-        return self._watcher
-
-    def clear_watchdirs(self):
-        self.set_refresh_needed(False)
-        v = self._watcher.directories()
-        if not v:
-            return
-        self._watcher.removePaths(v)
-
-    def set_watchdirs(self, v):
-        self._watcher.addPaths(v[0:128])
-
-    @QtCore.Slot(str)
-    def dir_changed(self, path):
-        """Slot called when a watched directory changes.
-
-        """
-        p = self.parent_path()
-        k = self.task()
-        if not k:
-            return
-        t = common.FileItem
-        data = common.get_data(p, k, t)
-
-        # If the dataset is small we can safely reload the model
-        if len(data) < 1999:
-            self.__resetdata__(force=True)
-            return
-
-        # Otherwise, we won't reload but indicate that the model needs
-        # refreshing
-        self.set_refresh_needed(True)
 
     @common.status_bar_message('Loading Files...')
     @basemodel.initdata
-    def __initdata__(self):
+    def init_data(self):
         """The method is responsible for getting the bare-bones file items by
-        running a file-iterator stemming from ``self.parent_path()``.
+        running a file-iterator stemming from ``self.source_path()``.
 
         Additional information, like description, item flags or thumbnails are
         fetched by thread workers.
@@ -356,22 +327,25 @@ class FilesModel(basemodel.BaseModel):
         type).
 
         """
-        p = self.parent_path()
+        common.settings.load_active_values()
+
+        p = self.source_path()
         k = self.task()
-        if not k:
-            return
         t = common.FileItem
+
+        if not p or not all(p) or not k or t is None:
+            return
+
+        _dirs = []
         data = common.get_data(p, k, t)
 
         SEQUENCE_DATA = common.DataDict()  # temporary dict for temp data
 
         # Reset file system watcher
-        self.clear_watchdirs()
-        WATCHDIRS = []
-
-        _parent_path = '/'.join(p + (k,))
-        if not QtCore.QFileInfo(_parent_path).exists():
+        _source_path = '/'.join(p + (k,))
+        if not QtCore.QFileInfo(_source_path).exists():
             return
+        _dirs.append(_source_path)
 
         # Let' get the asset config instance to check what extensions are
         # currently allowed to be displayed in the task folder
@@ -386,7 +360,7 @@ class FilesModel(basemodel.BaseModel):
         nth = 987
         c = 0
 
-        for entry in self.item_iterator(_parent_path):
+        for entry in self.item_iterator(_source_path):
             if self._interrupt_requested:
                 break
 
@@ -425,17 +399,17 @@ class FilesModel(basemodel.BaseModel):
             # Getting the file's relative root folder
             # This data is used to display the clickable subfolders relative
             # to the current task folder
-            fileroot = filepath.replace(_parent_path, '').strip('/')
-            fileroot = '/'.join(fileroot.split('/')[:-1])
+            fileroot = filepath[:filepath.rfind('/')]
+            fileroot = fileroot[len(_source_path) + 1:]
 
-            # Save the file's parent folder for the file system watcher
-            WATCHDIRS.append(_parent_path + '/' + fileroot)
-
-            # To sort by subfolders correctly, we'll a populate a fixed length
-            # list with the subfolders and file names. Sorting is do case
-            # insensitive:
             sort_by_name_role = DEFAULT_SORT_BY_NAME_ROLE.copy()
             if fileroot:
+                # Save the file's parent folder for the file system watcher
+                _dir = _source_path + '/' + fileroot
+                _dirs.append(_source_path + '/' + fileroot)
+                # To sort by subfolders correctly, we'll a populate a fixed length
+                # list with the subfolders and file names. Sorting is do case
+                # insensitive:
                 _fileroot = fileroot.lower().split('/')
                 for idx in range(len(_fileroot)):
                     sort_by_name_role[idx] = _fileroot[idx]
@@ -459,10 +433,9 @@ class FilesModel(basemodel.BaseModel):
             if (seq and (seqpath in common.favourites or filepath in common.favourites)) or (filepath in common.favourites):
                 flags = flags | common.MarkedAsFavourite
 
-            parent_path_role = p + (k, fileroot)
+            source_path_role = p + (k, fileroot)
 
             idx = len(data)
-
             if idx >= common.max_list_items:
                 break  # Let's limit the maximum number of items we load
 
@@ -477,7 +450,7 @@ class FilesModel(basemodel.BaseModel):
                 #
                 common.EntryRole: [entry, ],
                 common.FlagsRole: flags,
-                common.ParentPathRole: parent_path_role,
+                common.ParentPathRole: source_path_role,
                 common.DescriptionRole: '',
                 common.TodoCountRole: 0,
                 common.FileDetailsRole: '',
@@ -526,7 +499,7 @@ class FilesModel(basemodel.BaseModel):
                         #
                         common.EntryRole: [],
                         common.FlagsRole: flags,
-                        common.ParentPathRole: parent_path_role,
+                        common.ParentPathRole: source_path_role,
                         common.DescriptionRole: '',
                         common.TodoCountRole: 0,
                         common.FileDetailsRole: '',
@@ -595,14 +568,15 @@ class FilesModel(basemodel.BaseModel):
             data[idx][common.IdRole] = idx
             data[idx][common.DataTypeRole] = common.SequenceItem
 
-        self.set_watchdirs(list(set(WATCHDIRS)))
+        common.clear_watchdirs(common.FileItemMonitor)
+        common.set_watchdirs(common.FileItemMonitor, list(set(_dirs)))
         self.set_refresh_needed(False)
 
     def disable_filter(self):
         """Overrides the asset config and disables file filters."""
         return False
 
-    def parent_path(self):
+    def source_path(self):
         """The model's parent folder path segments.
 
         Returns:
@@ -656,24 +630,6 @@ class FilesModel(basemodel.BaseModel):
     def task(self):
         return common.active(common.TaskKey)
 
-    @QtCore.Slot(str)
-    def set_task(self, val):
-        """Slot used to set the model's task folder.
-
-        The active task folder is stored in `settings` and
-        can be retried using `self.task()`.
-
-        """
-        p = self.parent_path()
-        k = self.task()
-
-        if k == val:
-            return
-
-        k = val
-        actions.set_active(common.TaskKey, val)
-        self.__resetdata__()
-
     @common.debug
     @common.error
     def data_type(self):
@@ -719,7 +675,7 @@ class FilesModel(basemodel.BaseModel):
         if self._datatype[task] == val:
             return
 
-        # Set the data type to the local settings file
+        # Set the data type to the user settings file
         key = '{}/{}'.format(
             self.__class__.__name__,
             self.task()
@@ -735,7 +691,7 @@ class FilesModel(basemodel.BaseModel):
         self._datatype[task] = val
         self.endResetModel()
 
-    def local_settings_key(self):
+    def user_settings_key(self):
         if common.active(common.TaskKey) is None:
             return None
 
@@ -865,8 +821,8 @@ class FilesWidget(basewidget.ThreadedBaseWidget):
         model = self.model().sourceModel()
         k = model.task()
         if not k:
-            return 'Click the File tab to select a folder.'
-        return 'No files found in {}.'.format(k)
+            return 'Click the File tab to select a folder'
+        return f'No files found in "{k}"'
 
     @QtCore.Slot(str)
     @QtCore.Slot(int)
@@ -895,20 +851,20 @@ class FilesWidget(basewidget.ThreadedBaseWidget):
         model = proxy.sourceModel()
         k = model.task()
 
-        if not all(model.parent_path()):
+        if not all(model.source_path()):
             return
-        parent_path = '/'.join(model.parent_path())
+        source_path = '/'.join(model.source_path())
 
         # We probably saved outside the asset, we won't be showing the
         # file...
-        if parent_path not in v:
+        if source_path not in v:
             return
 
         # Show files tab
         actions.change_tab(common.FileTab)
 
         # Change task folder
-        task = v.replace(parent_path, '').strip('/').split('/', maxsplit=1)[0]
+        task = v.replace(source_path, '').strip('/').split('/', maxsplit=1)[0]
         if k != task:
             model.set_task(task)
 
@@ -919,7 +875,7 @@ class FilesWidget(basewidget.ThreadedBaseWidget):
 
         # Refresh the model if
         if len(data) < limit:
-            model.__resetdata__(force=True)
+            model.reset_data(force=True)
 
         # Delay the selection to let the model process events
         QtCore.QTimer.singleShot(300, functools.partial(

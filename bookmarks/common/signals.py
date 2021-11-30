@@ -1,6 +1,7 @@
 """
 
 """
+import functools
 from PySide2 import QtCore
 
 from .. import common
@@ -45,7 +46,7 @@ class CoreSignals(QtCore.QObject):
     toggleFavouritesButton = QtCore.Signal()
     toggleMakeThumbnailsButton = QtCore.Signal()
 
-    sessionModeChanged = QtCore.Signal(int)
+    activeModeChanged = QtCore.Signal(int)
 
     tabChanged = QtCore.Signal(int)
     taskViewToggled = QtCore.Signal()
@@ -64,6 +65,8 @@ class CoreSignals(QtCore.QObject):
     assetActivated = QtCore.Signal(str, str, str, str)
     fileActivated = QtCore.Signal(str, str, str, str, str)
 
+    taskFolderChanged = QtCore.Signal(str)
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         from .. import actions
@@ -74,3 +77,6 @@ class CoreSignals(QtCore.QObject):
         self.toggleFavouritesButton.connect(actions.toggle_favourite_items)
         self.toggleMakeThumbnailsButton.connect(actions.toggle_make_thumbnails)
         self.databaseValueUpdated.connect(actions.asset_identifier_changed)
+        self.assetAdded.connect(actions.show_asset)
+
+        self.taskFolderChanged.connect(actions.set_task_folder)

@@ -187,7 +187,7 @@ def reset_all_queues():
         THREADS[k]['queue'].clear()
 
 
-def quit():
+def quit_threads():
     for k in THREADS:
         thread = get_thread(k)
         if thread.isRunning():

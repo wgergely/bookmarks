@@ -2,8 +2,9 @@
 """The widget used to link multiple local assets with Shotgun Entities.
 
 """
-
+import os
 import functools
+
 from PySide2 import QtWidgets, QtCore, QtGui
 
 from .. import common

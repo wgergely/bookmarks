@@ -94,7 +94,7 @@ class Test(unittest.TestCase):
         from maya import cmds as cmds
         cmds.file(newFile=True, force=True)
 
-    def test_ToolButton(self):
+    def test_MayaButtonWidget(self):
         try:
             import bookmarks.maya.widget as mayawidget
             import bookmarks.common as common
@@ -103,7 +103,7 @@ class Test(unittest.TestCase):
         except ImportError as e:
             raise
 
-        w = mayawidget.ToolButton()
+        w = mayawidget.MayaButtonWidget()
         w.show()
 
         try:

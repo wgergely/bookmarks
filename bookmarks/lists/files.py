@@ -2,7 +2,7 @@
 """The view and model used to browse files.
 
 """
-
+import os
 import functools
 
 from PySide2 import QtWidgets, QtCore, QtGui
@@ -30,7 +30,7 @@ class DropIndicatorWidget(QtWidgets.QWidget):
     """Widgets responsible for drawing an overlay."""
 
     def __init__(self, parent=None):
-        super(DropIndicatorWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
@@ -59,7 +59,7 @@ class DropIndicatorWidget(QtWidgets.QWidget):
     def show(self):
         """Shows and sets the size of the widget."""
         self.setGeometry(self.parent().geometry())
-        super(DropIndicatorWidget, self).show()
+        super().show()
 
 
 class ItemDrag(QtGui.QDrag):
@@ -866,7 +866,7 @@ class FilesWidget(basewidget.ThreadedBaseWidget):
         # Change task folder
         task = v.replace(source_path, '').strip('/').split('/', maxsplit=1)[0]
         if k != task:
-            model.set_task(task)
+            common.signals.taskFolderChanged.emit(task)
 
         data = model.model_data()
         t = model.data_type()

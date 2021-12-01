@@ -22,6 +22,7 @@ import OpenImageIO
 from . import log
 from . import common
 
+
 QT_IMAGE_FORMATS = {f.data().decode('utf8')
                     for f in QtGui.QImageReader.supportedImageFormats()}
 
@@ -30,17 +31,11 @@ mutex = QtCore.QMutex()
 pixel_ratio = None
 oiio_cache = None
 
-
 BufferType = QtCore.Qt.UserRole
 PixmapType = BufferType + 1
 ImageType = PixmapType + 1
 ResourcePixmapType = ImageType + 1
 ColorType = ResourcePixmapType + 1
-
-_capture_widget = None
-_library_widget = None
-_filedialog_widget = None
-_viewer_widget = None
 
 accepted_codecs = ('h.264', 'h264', 'mpeg-4', 'mpeg4')
 
@@ -58,26 +53,13 @@ INTERNAL_DATA = {
     ColorType: {},
 }
 
-
-def uninitialize_images():
-    global oiio_cache
-    oiio_cache = None
-    global RESOURCES
-    RESOURCES = {
-        common.GuiResource: [],
-        common.ThumbnailResource: [],
-        common.FormatResource: [],
-    }
-    global RESOURCE_DATA
-    RESOURCE_DATA = {}
-    global INTERNAL_DATA
-    INTERNAL_DATA = {
-        BufferType: {},
-        PixmapType: {},
-        ImageType: {},
-        ResourcePixmapType: {},
-        ColorType: {},
-    }
+__initial_values__ = {
+    'pixel_ratio': pixel_ratio,
+    'oiio_cache': oiio_cache,
+    'RESOURCES': RESOURCES,
+    'RESOURCE_DATA': RESOURCE_DATA,
+    'INTERNAL_DATA': INTERNAL_DATA
+}
 
 
 def init_imagecache():
@@ -87,27 +69,10 @@ def init_imagecache():
     oiio_cache.attribute('max_open_files', 0)
     oiio_cache.attribute('trust_file_extensions', 1)
 
-    global RESOURCES
-    RESOURCES = {
-        common.GuiResource: [],
-        common.ThumbnailResource: [],
-        common.FormatResource: [],
-    }
-    global RESOURCE_DATA
-    RESOURCE_DATA = {}
-    global INTERNAL_DATA
-    INTERNAL_DATA = {
-        BufferType: {},
-        PixmapType: {},
-        ImageType: {},
-        ResourcePixmapType: {},
-        ColorType: {},
-    }
-
 
 def init_resources():
     global RESOURCES
-    for _source, k in (common.get_rsc(f) for f in (common.GuiResource, common.ThumbnailResource, common.FormatResource)):
+    for _source, k in ((common.get_rsc(f), f) for f in (common.GuiResource, common.ThumbnailResource, common.FormatResource)):
         for _entry in os.scandir(_source):
             RESOURCES[k].append(_entry.name.split('.', maxsplit=1)[0])
 

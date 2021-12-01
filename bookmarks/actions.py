@@ -586,7 +586,7 @@ def show_add_file(asset=None, extension=None, file=None, create_file=True, incre
     if not all(args):
         return None
 
-    from .property_editor import file_editor as editor
+    from . property_editor import file_editor as editor
     widget = editor.show(
         server,
         job,

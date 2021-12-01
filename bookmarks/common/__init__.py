@@ -78,6 +78,8 @@ OpaqueColor = None
 # Widget instance bindings
 main_widget = None
 tray_widget = None
+maya_widget = None
+maya_button_widget = None
 
 # Save the initial module values for later use
 __initial_values__ = {k:v for (k,v) in locals().copy().items() if not k.startswith('__')}
@@ -85,6 +87,7 @@ __initial_values__ = {k:v for (k,v) in locals().copy().items() if not k.startswi
 import collections
 
 from . core import *
+from . dist import *
 from . font import *
 from . settings import *
 from . signals import *

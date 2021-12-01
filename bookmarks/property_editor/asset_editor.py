@@ -2,8 +2,8 @@
 """Defines `AssetEditor`, the widget used to create and edit asset items.
 
 """
+import os
 import functools
-
 
 from PySide2 import QtWidgets, QtGui, QtCore
 

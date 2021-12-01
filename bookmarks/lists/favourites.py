@@ -2,23 +2,20 @@
 """Classes responsible for viewing and editing items marked as favourites.
 
 """
+import os
 import functools
-
 
 from PySide2 import QtWidgets, QtCore, QtGui
 
-
 from .. import log
 from .. import common
-from ..threads import threads
+from .. threads import threads
 from .. import contextmenu
 from .. import actions
-
 
 from . import delegate
 from . import files
 from . import basemodel
-from . import basewidget
 
 
 def _check_sequence(path):

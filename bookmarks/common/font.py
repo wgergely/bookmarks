@@ -28,14 +28,11 @@ class FontDatabase(QtGui.QFontDatabase):
         """Load the fonts used by Bookmarks to the font database.
 
         """
-
-
         if common.medium_font in self.families():
             return
 
         source = common.get_rsc('fonts')
-
-        for entry in os.scandir(FONT_SOURCE_DIR):
+        for entry in os.scandir(source):
             if not entry.name.endswith('ttf'):
                 continue
             idx = self.addApplicationFont(entry.path)

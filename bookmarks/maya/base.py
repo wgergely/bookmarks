@@ -10,6 +10,7 @@ from PySide2 import QtWidgets, QtCore, QtGui
 
 import maya.cmds as cmds  # pylint: disable=E0401
 
+from .. import common
 from .. import database
 
 from ..asset_config import asset_config
@@ -559,7 +560,7 @@ def capture_viewport_destination():
 
 class MayaProperties(object):
     def __init__(self, parent=None):
-        super(MayaProperties, self).__init__()
+        super().__init__()
 
         server = common.active(common.ServerKey)
         job = common.active(common.JobKey)
@@ -594,8 +595,7 @@ class MayaProperties(object):
         v = self.data['framerate']
         if isinstance(v, (float, int)) and float(v) in MAYA_FPS.values():
             return v
-
-        return cmds.currentUnit(query=True, time=True)
+        return get_framerate()
 
     @property
     def startframe(self):

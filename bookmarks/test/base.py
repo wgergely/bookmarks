@@ -45,8 +45,9 @@ class BaseCase(unittest.TestCase):
     def setUpClass(cls):
         super(BaseCase, cls).setUpClass()
 
-        import bookmarks.common as common
+        from .. import common
         common.initialize(common.StandaloneMode)
+        common.typecheck_on = True
 
         # Set mock product name
         common.product = PRODUCT
@@ -66,6 +67,8 @@ class BaseCase(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         super(BaseCase, cls).tearDownClass()
+        from .. import common
+        common.uninitialize()
         try:
             shutil.rmtree(PRODUCT_ROOT)
         except:

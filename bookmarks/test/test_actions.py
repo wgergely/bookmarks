@@ -170,7 +170,7 @@ class TestWidgetActions(base.BaseCase):
 
         for _ in range(2):
             job = base.random_ascii(16)
-            v = templates.actions.extract_zip_template(t, server, job)
+            v = actions.extract_zip_template(t, server, job)
 
             actions.add_bookmark(server, job, 'data/asset')
             actions.add_bookmark(server, job, 'data/shot')

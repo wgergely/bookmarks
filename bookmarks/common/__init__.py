@@ -77,6 +77,7 @@ OpaqueColor = None
 
 # Widget instance bindings
 main_widget = None
+tray_widget = None
 
 # Save the initial module values for later use
 __initial_values__ = {k:v for (k,v) in locals().copy().items() if not k.startswith('__')}
@@ -89,7 +90,7 @@ from . settings import *
 from . signals import *
 from . sessionlock import *
 from . ui import *
-from . datacache import *
+from . data import *
 from . sequence import *
 from . tabs import *
 from . filemonitor import *

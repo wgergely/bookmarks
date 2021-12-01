@@ -214,7 +214,7 @@ class AlembicModel(QtCore.QAbstractItemModel):
 
         if role == QtCore.Qt.DecorationRole:
             if '.childBnds' in node.name:
-                return images.ImageCache.get_rsc_pixmap('abc', None, common.size(common.WidthMargin), resource=images.FormatResource)
+                return images.ImageCache.get_rsc_pixmap('abc', None, common.size(common.WidthMargin), resource=common.FormatResource)
             if '.geom' in node.name:
                 return images.ImageCache.get_rsc_pixmap('mesh', None, common.size(common.WidthMargin))
             if '.xform' in node.name:

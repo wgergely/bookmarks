@@ -363,7 +363,7 @@ class BaseModel(QtCore.QAbstractListModel):
         if not p or not all(p) or not k or t is None:
             return False
 
-        return common.is_loaded(p, k, t)
+        return common.is_data_loaded(p, k, t)
 
     def generate_thumbnails_enabled(self):
         return self._generate_thumbnails_enabled

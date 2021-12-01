@@ -12,19 +12,19 @@ Thumbnails:
 All generated thumbnails and ui resources are cached in ``ImageCache``.
 
 """
-import time
 import os
+import time
 import functools
-import OpenImageIO
-import _scandir
 
 from PySide2 import QtWidgets, QtGui, QtCore
+import OpenImageIO
 
 from . import log
 from . import common
 
 PLACEHOLDER_PATH = '{}/../rsc/{}/{}.{}'
-QT_IMAGE_FORMATS = {f.data().decode('utf8') for f in QtGui.QImageReader.supportedImageFormats()}
+QT_IMAGE_FORMATS = {f.data().decode('utf8')
+                    for f in QtGui.QImageReader.supportedImageFormats()}
 
 mutex = QtCore.QMutex()
 
@@ -57,7 +57,6 @@ RESOURCES = {
 }
 
 
-
 def reset():
     global RESOURCES
     RESOURCES = {
@@ -88,7 +87,7 @@ def init_imagecache():
 def init_resources():
     global RESOURCES
     for _source, k in ((os.path.normpath(os.path.abspath('{}/../rsc/{}'.format(__file__, f))), f) for f in (GuiResource, ThumbnailResource, FormatResource)):
-        for _entry in _scandir.scandir(_source):
+        for _entry in os.scandir(_source):
             RESOURCES[k].append(_entry.name.split('.', maxsplit=1)[0])
 
 
@@ -975,14 +974,14 @@ class ImageCache(QtCore.QObject):
         buf = resize(buf, source_spec)
 
         # if buf.nchannels > 3:
-            # background_buf = OpenImageIO.ImageBuf(destination_spec)
-            # OpenImageIO.ImageBufAlgo.checker(
-            #     background_buf,
-            #     12, 12, 1,
-            #     (0.3, 0.3, 0.3),
-            #     (0.2, 0.2, 0.2)
-            # )
-            # buf = OpenImageIO.ImageBufAlgo.over(buf, background_buf)
+        # background_buf = OpenImageIO.ImageBuf(destination_spec)
+        # OpenImageIO.ImageBufAlgo.checker(
+        #     background_buf,
+        #     12, 12, 1,
+        #     (0.3, 0.3, 0.3),
+        #     (0.2, 0.2, 0.2)
+        # )
+        # buf = OpenImageIO.ImageBufAlgo.over(buf, background_buf)
 
         spec = buf.spec()
         buf.set_write_format(OpenImageIO.UINT8)

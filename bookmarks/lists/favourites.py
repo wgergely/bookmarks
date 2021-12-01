@@ -3,7 +3,7 @@
 
 """
 import functools
-import _scandir
+
 
 from PySide2 import QtWidgets, QtCore, QtGui
 
@@ -31,7 +31,7 @@ def _check_sequence(path):
     # Let's see if we can find more than one members
     file_info = QtCore.QFileInfo(path)
     frames = 0
-    for entry in _scandir.scandir(file_info.dir().path()):
+    for entry in os.scandir(file_info.dir().path()):
         p = entry.path.replace('\\', '/')
         if seq.group(1) in p and seq.group(3) in p:
             frames += 1
@@ -316,7 +316,7 @@ class FavouritesModel(files.FilesModel):
                 continue
 
             source_paths = common.favourites[k]
-            for entry in _scandir.scandir(_path):
+            for entry in os.scandir(_path):
                 path = entry.path.replace('\\', '/')
                 if path == k:
                     entries.append((entry, source_paths))

@@ -10,11 +10,9 @@ import collections
 import traceback
 import inspect
 
-import _scandir
 from PySide2 import QtCore, QtGui, QtWidgets
 
 from .. import common
-from .. import log
 
 
 CONFIG = 'config.json'
@@ -107,21 +105,6 @@ def _init_config():
         setattr(common, k, v)
 
 
-def get_template_file_path(name):
-    """Returns the path to the source template file.
-
-    Args:
-        name (str): The name of the template file.
-
-    Returns:
-        str: The path to the template file.
-
-    """
-    return os.path.normpath(os.path.abspath(os.path.sep.join((
-        __file__, os.pardir, os.pardir, 'rsc', 'templates', name
-    ))))
-
-
 def initialize(mode):
     """Initializes the components of the application required to run in
     standalone mode.
@@ -130,10 +113,14 @@ def initialize(mode):
             mode (bool):    Bookmarks will run in *standalone* mode when `True`.
 
     """
+    from . import verify_dependecies
+    verify_dependecies()
+
     if common.init_mode is not None:
         raise RuntimeError(f'Already initialized as "{common.init_mode}"!')
     if mode not in (StandaloneMode, EmbeddedMode):
-        raise ValueError(f'Invalid initalization mode. Got "{mode}", expected `StandaloneMode` or `EmbeddedMode`')
+        raise ValueError(
+            f'Invalid initalization mode. Got "{mode}", expected `StandaloneMode` or `EmbeddedMode`')
 
     common.init_mode = mode
 
@@ -146,20 +133,17 @@ def initialize(mode):
 
     common.init_signals()
     common.prune_lock()
-    common.init_lock() # Sets the current active mode
+    common.init_lock()  # Sets the current active mode
     common.init_settings()
 
     _init_ui_scale()
     _init_dpi()
-
 
     common.cursor = QtGui.QCursor()
 
     from .. import images
     images.init_imagecache()
     images.init_resources()
-
-    print(f'# {common.product} initialized as "{common.init_mode}".')
 
     from .. import standalone
     if not QtWidgets.QApplication.instance() and mode == common.StandaloneMode:
@@ -197,7 +181,6 @@ def _init_ui_scale():
     except:
         v = 1.0
 
-
     if not common.ui_scale_factors or v not in common.ui_scale_factors:
         v = 1.0
 
@@ -211,49 +194,6 @@ def _init_dpi():
         common.dpi = 96.0
     elif get_platform() == PlatformUnsupported:
         common.dpi = 72.0
-
-
-def init_environment(add_private=False):
-    """Add the dependencies to the Python environment.
-
-    The method requires that BOOKMARKS_ENV_KEY is set. The key is usually set
-    by the Bookmark installer to point to the install root directory.
-    The
-
-    Raises:
-            EnvironmentError: When the BOOKMARKS_ENV_KEY is not set.
-            RuntimeError: When the BOOKMARKS_ENV_KEY is invalid or a directory missing.
-
-    """
-    if common.env_key not in os.environ:
-        raise EnvironmentError(
-            f'"{common.env_key}" environment variable is not set.')
-
-    v = os.environ[common.env_key]
-
-    if not os.path.isdir(v):
-        raise RuntimeError(
-            f'"{v}" is not a falid folder. Is "{common.env_key}" environment variable set?')
-
-    # Add BOOKMARKS_ENV_KEY to the PATH
-    v = os.path.normpath(os.path.abspath(v)).strip()
-    if v.lower() not in os.environ['PATH'].lower():
-        os.environ['PATH'] = v + ';' + os.environ['PATH'].strip(';')
-
-    def _add_path_to_sys(p):
-        _v = f'{v}{os.path.sep}{p}'
-        if not os.path.isdir(_v):
-            raise RuntimeError(f'{_v} does not exist.')
-
-        if _v in sys.path:
-            return
-        sys.path.append(_v)
-
-    _add_path_to_sys('shared')
-    if add_private:
-        _add_path_to_sys('private')
-    sys.path.append(v)
-
 
 
 def check_type(value, _type):
@@ -276,10 +216,12 @@ def check_type(value, _type):
     if it:
         if not any(isinstance(value, type(f) if f is None else f) for f in it):
             _types = ' or '.join([repr(type(f)) for f in _type])
-            raise TypeError(f'Invalid type. Expected {_types}, got {type(value)}')
+            raise TypeError(
+                f'Invalid type. Expected {_types}, got {type(value)}')
     else:
         if not isinstance(value, type(_type) if _type is None else _type):
-            raise TypeError(f'Invalid type. Expected {_type}, got {type(value)}')
+            raise TypeError(
+                f'Invalid type. Expected {_type}, got {type(value)}')
 
 
 def get_hash(key):
@@ -335,6 +277,7 @@ def error(func):
             else:
                 e = ''
 
+            from .. import log
             log.error('Error.')
 
             # So we can use the method in threads too
@@ -384,6 +327,7 @@ def debug(func):
                     trace.append(_funcname)
                 trace.append(funcname)
 
+                from .. import log
                 log.debug(
                     DEBUG_MESSAGE.format(
                         trace=DEBUG_SEPARATOR.join(trace),
@@ -446,6 +390,47 @@ def qlast_modified(n):
     return QtCore.QDateTime.fromMSecsSinceEpoch(n * 1000)
 
 
+def local_user_bookmark():
+    """Return a location on the local system to store temporary files.
+    This is used to store thumbnails for starred items and other temporary items.
+
+    Returns:
+            tuple: A tuple of path segments.
+
+    """
+    return (
+        QtCore.QStandardPaths.writableLocation(
+            QtCore.QStandardPaths.GenericDataLocation),
+        common.product,
+        'temp',
+    )
+
+
+def temp_path():
+    """Path to the folder to store temporary files.
+
+    Returns:
+            str: Path to a directory.
+
+    """
+    return '/'.join(local_user_bookmark())
+
+
+def get_template_file_path(name):
+    """Returns the path to the source template file.
+
+    Args:
+        name (str): The name of the template file.
+
+    Returns:
+        str: The path to the template file.
+
+    """
+    return os.path.normpath(os.path.abspath(os.path.sep.join((
+        __file__, os.pardir, os.pardir, 'rsc', 'templates', name
+    ))))
+
+
 def get_path_to_executable(key):
     """Returns the path to an executable.
 
@@ -472,44 +457,17 @@ def get_path_to_executable(key):
         return QtCore.QFileInfo(v).filePath()
 
     # Otheriwse, let's check the environment
-    if get_platform() == PlatformWindows:
+    if common.get_platform() == common.PlatformWindows:
         paths = os.environ['PATH'].split(';')
         paths = {os.path.normpath(f).rstrip('\\')
                  for f in paths if os.path.isdir(f)}
 
         for path in paths:
-            for entry in _scandir.scandir(path):
+            for entry in os.scandir(path):
                 if entry.name.lower().startswith(name):
                     return QtCore.QFileInfo(entry.path).filePath()
 
-    # If the envinronment lookup fails too, we'll return nothing
     return None
-
-
-def local_user_bookmark():
-    """Return a location on the local system to store temporary files.
-    This is used to store thumbnails for starred items and other temporary items.
-
-    Returns:
-            tuple: A tuple of path segments.
-
-    """
-    return (
-        QtCore.QStandardPaths.writableLocation(
-            QtCore.QStandardPaths.GenericDataLocation),
-        common.product,
-        'temp',
-    )
-
-
-def temp_path():
-    """Path to the folder to store temporary files.
-
-    Returns:
-            str: Path to a directory.
-
-    """
-    return '/'.join(local_user_bookmark())
 
 
 class DataDict(dict):

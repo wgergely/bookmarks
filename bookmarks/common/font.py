@@ -1,7 +1,6 @@
 import os
-import _scandir
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2 import QtGui, QtWidgets
 
 from .. import common
 
@@ -32,13 +31,15 @@ class FontDatabase(QtGui.QFontDatabase):
         """Load the fonts used by Bookmarks to the font database.
 
         """
+
+
         if common.medium_font in self.families():
             return
 
         if not os.path.isdir(FONT_SOURCE_DIR):
             raise OSError(f'{FONT_SOURCE_DIR} could not be found')
 
-        for entry in _scandir.scandir(FONT_SOURCE_DIR):
+        for entry in os.scandir(FONT_SOURCE_DIR):
             if not entry.name.endswith('ttf'):
                 continue
             idx = self.addApplicationFont(entry.path)

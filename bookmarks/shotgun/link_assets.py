@@ -2,7 +2,7 @@
 """The widget used to link multiple local assets with Shotgun Entities.
 
 """
-import _scandir
+
 import functools
 from PySide2 import QtWidgets, QtCore, QtGui
 
@@ -256,7 +256,7 @@ class LinkMultiple(QtWidgets.QDialog):
 
         self.emit_request(sg_properties)
 
-        for entry in _scandir.scandir(self.source()):
+        for entry in os.scandir(self.source()):
             # Skip archived items
             flags = db.value(
                 db.source(entry.name),

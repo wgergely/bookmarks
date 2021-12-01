@@ -14,7 +14,7 @@ class Test(base.BaseCase):
 
     def test_import_scandir(self):
         try:
-            import _scandir
+            
         except ImportError as err:
             self.fail(err)
 

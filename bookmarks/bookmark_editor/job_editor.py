@@ -14,8 +14,8 @@ from .. import images
 from .. import contextmenu
 from .. import shortcuts
 from .. import actions
+from .. import templates
 
-from .. templates import templates
 from .. property_editor import base
 
 

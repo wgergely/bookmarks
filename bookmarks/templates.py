@@ -15,13 +15,12 @@ import functools
 
 from PySide2 import QtCore, QtWidgets, QtGui
 
-from .. import common
-from .. import ui
-from .. import images
-from .. import contextmenu
+from . import common
+from . import ui
+from . import images
+from . import contextmenu
+from . import actions
 
-from .. import actions
-from . import actions as template_actions
 
 
 JobTemplateMode = 'job'
@@ -82,7 +81,7 @@ class TemplateContextMenu(contextmenu.BaseContextMenu):
         self.menu[contextmenu.key()] = {
             'text': 'Add new {} template...'.format(self.parent().mode()),
             'action': functools.partial(
-                template_actions.pick_template,
+                actions.pick_template,
                 self.parent().mode()
             ),
             'icon': ui.get_icon('add', color=common.color(common.GreenColor))
@@ -93,7 +92,7 @@ class TemplateContextMenu(contextmenu.BaseContextMenu):
         self.menu[contextmenu.key()] = {
             'text': 'Delete',
             'action': functools.partial(
-                template_actions.remove_zip_template,
+                actions.remove_zip_template,
                 source
             ),
             'icon': ui.get_icon('close', color=common.color(common.RedColor))
@@ -280,7 +279,7 @@ class TemplateListWidget(ui.ListWidget):
         if not index.isValid():
             raise RuntimeError('Invalid template selection.')
 
-        template_actions.extract_zip_template(
+        actions.extract_zip_template(
             index.data(TemplatePathRole),
             destination,
             name
@@ -349,7 +348,7 @@ class TemplateListWidget(ui.ListWidget):
                 for url in event.mimeData().urls():
                     source = url.toLocalFile()
                     if zipfile.is_zipfile(source):
-                        template_actions.add_zip_template(source, self.mode())
+                        actions.add_zip_template(source, self.mode())
 
                 return True
 

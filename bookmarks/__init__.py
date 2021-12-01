@@ -156,6 +156,5 @@ def exec_():
     from . import common
     common.initialize(common.StandaloneMode)
     from . import standalone
-    standalone.init()
     standalone.show()
     QtWidgets.QApplication.instance().exec_()

@@ -17,7 +17,6 @@ from .. import common
 
 CONFIG = 'config.json'
 
-
 # static_bookmarks_PATH = get_template_file_path(static_bookmarks)
 # DEFAULT_ASSET_SOURCE = get_template_file_path(DEFAULT_JOB_TEMPLATE)
 # DEFAULT_JOB_SOURCE = get_template_file_path(DEFAULT_ASSET_TEMPLATE)
@@ -81,11 +80,19 @@ DEFAULT_SORT_VALUES = {
     SortByTypeRole: 'Type',
 }
 
+GuiResource = 'gui'
+ThumbnailResource = 'thumbnails'
+FormatResource = 'formats'
+TemplateResource = 'templates'
 
-def _get_conf_path():
-    return os.path.normpath(os.path.abspath(os.path.sep.join((
-        __file__, os.pardir, os.pardir, 'rsc', CONFIG
-    ))))
+
+
+def get_rsc(rel_path):
+    v = '/'.join((__file__, os.pardir, os.pardir, 'rsc', rel_path))
+    f = QtCore.QFileInfo(v)
+    if not f.exists():
+        raise RuntimeError(f'{f.absoluteFilePath()} does not exist.')
+    return f.absoluteFilePath()
 
 
 def _init_config():
@@ -93,9 +100,7 @@ def _init_config():
     public properties.
 
     """
-    p = _get_conf_path()
-    if not os.path.isfile(p):
-        raise RuntimeError(f'{p} not found.')
+    p = get_rsc(CONFIG)
 
     with open(p, 'r', encoding='utf8') as f:
         config = json.loads(f.read())
@@ -162,6 +167,28 @@ def initialize(mode):
     common.init_monitor()
 
 
+def uninitialize():
+    """Closes and deletes all cached data and ui elements.
+
+    """
+
+    from .. threads import threads
+
+    threads.quit_threads()
+    common.main_widget.close()
+    common.main_widget.deleteLater()
+    common.main_widget = None
+
+    if common.init_mode == common.StandaloneMode:
+        QtWidgets.QApplication.instance().quit()
+
+    for k, v in common.__initial_values__.items():
+        setattr(common, k, v)
+
+    from .. import images
+    images.uninitialize_images()
+
+
 def _init_ui_scale():
     v = common.settings.value(
         common.SettingsSection,
@@ -194,6 +221,48 @@ def _init_dpi():
         common.dpi = 96.0
     elif get_platform() == PlatformUnsupported:
         common.dpi = 72.0
+
+
+def init_environment(add_private=False):
+    """Add the dependencies to the Python environment.
+
+    The method requires that BOOKMARKS_ENV_KEY is set. The key is usually set
+    by the Bookmark installer to point to the install root directory.
+    The
+
+    Raises:
+            EnvironmentError: When the BOOKMARKS_ENV_KEY is not set.
+            RuntimeError: When the BOOKMARKS_ENV_KEY is invalid or a directory missing.
+
+    """
+    if common.env_key not in os.environ:
+        raise EnvironmentError(
+            f'"{common.env_key}" environment variable is not set.')
+
+    v = os.environ[common.env_key]
+
+    if not os.path.isdir(v):
+        raise RuntimeError(
+            f'"{v}" is not a falid folder. Is "{common.env_key}" environment variable set?')
+
+    # Add BOOKMARKS_ENV_KEY to the PATH
+    v = os.path.normpath(os.path.abspath(v)).strip()
+    if v.lower() not in os.environ['PATH'].lower():
+        os.environ['PATH'] = v + ';' + os.environ['PATH'].strip(';')
+
+    def _add_path_to_sys(p):
+        _v = f'{v}{os.path.sep}{p}'
+        if not os.path.isdir(_v):
+            raise RuntimeError(f'{_v} does not exist.')
+
+        if _v in sys.path:
+            return
+        sys.path.append(_v)
+
+    _add_path_to_sys('shared')
+    if add_private:
+        _add_path_to_sys('private')
+    sys.path.append(v)
 
 
 def check_type(value, _type):
@@ -253,14 +322,14 @@ def get_hash(key):
         l = len(s)
         if key[:l] == s:
             key = key[l:]
+            key = key.lstrip('/')
             break
 
-    key = key.encode('utf8')
     if key in common.hashes:
         return common.hashes[key]
 
     # Otherwise, we calculate, save and return the digest
-    common.hashes[key] = hashlib.md5(key).hexdigest()
+    common.hashes[key] = hashlib.md5(key.encode('utf8')).hexdigest()
     return common.hashes[key]
 
 
@@ -338,35 +407,6 @@ def debug(func):
     return func_wrapper
 
 
-def sort_data(ref, sortrole, sortorder):
-    check_type(sortrole, QtCore.Qt.ItemDataRole)
-    check_type(sortorder, bool)
-
-    def sort_key(idx):
-        # If sort_by_basename is `True` we'll use the base file name for sorting
-        v = ref().__getitem__(idx)
-        if common.sort_by_basename and sortrole == SortByNameRole and isinstance(v[sortrole], list):
-            return v[sortrole][-1]
-        return v[sortrole]
-
-    sorted_idxs = sorted(
-        ref().keys(),
-        key=sort_key,
-        reverse=sortorder
-    )
-
-    d = DataDict()
-    d.loaded = ref().loaded
-    d.data_type = ref().data_type
-
-    for n, idx in enumerate(sorted_idxs):
-        if not ref():
-            raise RuntimeError('Model mutated during sorting.')
-        ref()[idx][IdRole] = n
-        d[n] = ref()[idx]
-    return d
-
-
 def get_platform():
     """Returns the current platform."""
     ptype = QtCore.QSysInfo().productType()
@@ -381,13 +421,20 @@ def get_username():
     """Returns the name of the currently logged-in user.
 
     """
-    n = QtCore.QFileInfo(os.path.expanduser('~')).fileName()
-    n = re.sub(r'[^a-zA-Z0-9]*', '', n, flags=re.IGNORECASE | re.UNICODE)
-    return n
+    v = ''
+    if get_platform() == PlatformWindows:
+        if 'username' in os.environ:
+            v = os.environ['username']
+        elif 'USERNAME' in os.environ:
+            v = os.environ['USERNAME']
+    if get_platform() == PlatformMacOS:
+        if 'user' in os.environ:
+            v = os.environ['user']
+        elif 'USER' in os.environ:
+            v = os.environ['USER']
+    v = v.replace('.', '')
+    return v
 
-
-def qlast_modified(n):
-    return QtCore.QDateTime.fromMSecsSinceEpoch(n * 1000)
 
 
 def local_user_bookmark():
@@ -468,6 +515,32 @@ def get_path_to_executable(key):
                     return QtCore.QFileInfo(entry.path).filePath()
 
     return None
+
+
+def pseudo_local_bookmark():
+    """Return a location on the local system to store temporary files.
+    This is used to store thumbnails for starred items and other temporary items.
+
+    Returns:
+            tuple: A tuple of path segments.
+
+    """
+    return (
+        QtCore.QStandardPaths.writableLocation(
+            QtCore.QStandardPaths.GenericDataLocation),
+        common.product,
+        'temp',
+    )
+
+
+def temp_path():
+    """Path to the folder to store temporary files.
+
+    Returns:
+            str: Path to a directory.
+
+    """
+    return '/'.join(pseudo_local_bookmark())
 
 
 class DataDict(dict):

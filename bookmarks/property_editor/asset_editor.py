@@ -10,8 +10,8 @@ from PySide2 import QtWidgets, QtGui, QtCore
 from .. import common
 from .. import ui
 from .. import database
+from .. import templates
 
-from ..templates import templates
 from ..shotgun import shotgun
 from ..shotgun import actions as sg_actions
 

@@ -291,7 +291,7 @@ class MainWidget(QtWidgets.QWidget):
         connect(shortcuts.PasteProperties, actions.paste_properties)
 
         if common.init_mode == common.StandaloneMode:
-            connect(shortcuts.Quit, actions.uninitialize)
+            connect(shortcuts.Quit, common.uninitialize)
             connect(shortcuts.Minimize, actions.toggle_minimized)
             connect(shortcuts.Maximize, actions.toggle_maximized)
             connect(shortcuts.FullScreen, actions.toggle_fullscreen)

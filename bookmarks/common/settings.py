@@ -130,7 +130,7 @@ def _init_bookmarks():
     """Loads all previously saved bookmarks to memory.
 
     The list of bookmarks is made up of a list of persistent bookmarks, defined
-    in `static_bookmarks.json`, and bookmarks added by the user, stored in the
+    in `common.static_bookmarks_template`, and bookmarks added by the user, stored in the
     user setting.
 
     """
@@ -211,11 +211,8 @@ def get_static_bookmarks():
         dict: The parsed data.
 
     """
-    source = common.get_template_file_path(
-        common.static_bookmarks_template)
-    if not os.path.isfile(source):
-        log.error(f'{source} not found.')
-        return {}
+    source = common.get_rsc(
+        f'{common.TemplateResource}/{common.static_bookmarks_template}')
 
     data = {}
     try:

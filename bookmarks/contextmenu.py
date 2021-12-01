@@ -515,7 +515,7 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         self.menu[k][m] = {
             'text': n,
-            'icon': ui.get_icon('hip', color=None, resource=images.FormatResource),
+            'icon': ui.get_icon('hip', color=None, resource=common.FormatResource),
             'action': functools.partial(actions.copy_path, path, mode=None),
         }
 
@@ -703,7 +703,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             return
         self.menu[key()] = {
             'text': 'Quit {}'.format(common.product),
-            'action': actions.uninitialize,
+            'action': common.uninitialize,
             'icon': ui.get_icon('close'),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,

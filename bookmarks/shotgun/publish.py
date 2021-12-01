@@ -206,7 +206,7 @@ class PublishWidget(base.BasePropertyEditor):
         set the file path.
 
         """
-        if not common.main_widget:
+        if common.main_widget is None or not common.main_widget._initialized:
             return
 
         widget = common.widget(common.FileTab)

@@ -23,8 +23,15 @@ MODEL_ID = f'{common.product}App'
 
 
 def init():
-    if not common.main_widget:
-        common.main_widget = BookmarksAppWindow()
+    if common.main_widget:
+        raise RuntimeError('Cannot initialize more than once.')
+    common.main_widget = BookmarksAppWindow()
+
+
+def init_tray():
+    if not common.tray_widget:
+        common.tray_widget = Tray()
+        common.tray_widget.show()
 
 
 
@@ -92,7 +99,7 @@ class TrayMenu(contextmenu.BaseContextMenu):
     def tray_menu(self):
         """Actions associated with the visibility of the widget."""
         self.menu['Quit'] = {
-            'action': actions.uninitialize,
+            'action': common.uninitialize,
         }
         return
 
@@ -106,7 +113,7 @@ class Tray(QtWidgets.QSystemTrayIcon):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        p = os.path.normpath(f'{__file__}/../rsc/gui/icon.png')
+        p = common.get_rsc(f'{common.GuiResource}{os.path.sep}icon.{common.thumbnail_format}')
         pixmap = QtGui.QPixmap(p)
         icon = QtGui.QIcon(pixmap)
         self.setIcon(icon)
@@ -119,7 +126,7 @@ class Tray(QtWidgets.QSystemTrayIcon):
         self.activated.connect(self.tray_activated)
 
     def window(self):
-        return self.parent().window()
+        return common.main_widget.window()
 
     def tray_activated(self, reason):
         if reason == QtWidgets.QSystemTrayIcon.Unknown:
@@ -202,7 +209,7 @@ class HeaderWidget(QtWidgets.QWidget):
         menu = menu_bar.addMenu(common.product)
 
         action = menu.addAction('Quit')
-        action.triggered.connect(actions.uninitialize)
+        action.triggered.connect(common.uninitialize)
 
         self.layout().addStretch()
         self.layout().addWidget(MinimizeButton(parent=self))
@@ -278,7 +285,6 @@ class BookmarksAppWindow(main.MainWidget):
 
         super().__init__(parent=None)
 
-        self.tray = None
         self._frameless = False
         self._ontop = False
         self.headerwidget = None
@@ -306,8 +312,8 @@ class BookmarksAppWindow(main.MainWidget):
 
         self.aboutToInitialize.connect(self.init_header)
         self.aboutToInitialize.connect(self.toggle_header)
-        self.initialized.connect(self.init_tray)
         self.initialized.connect(self._connect_standalone_signals)
+        self.initialized.connect(init_tray)
 
         self.adjustSize()
         self.update_window_flags()
@@ -366,13 +372,6 @@ class BookmarksAppWindow(main.MainWidget):
         else:
             self.setWindowFlags(
                 self.windowFlags() & ~ QtCore.Qt.WindowStaysOnTopHint)
-
-    def init_tray(self):
-        """Creates the system tray icon associated with the app.
-
-        """
-        self.tray = Tray(parent=self)
-        self.tray.show()
 
     def _paint_background(self, painter):
         if not self._frameless:
@@ -502,7 +501,7 @@ class BookmarksAppWindow(main.MainWidget):
         self.headerwidget.findChild(MinimizeButton).clicked.connect(
             actions.toggle_minimized)
         self.headerwidget.findChild(CloseButton).clicked.connect(
-            actions.uninitialize)
+            common.uninitialize)
 
         self.files_widget.activated.connect(actions.execute)
         self.favourites_widget.activated.connect(actions.execute)
@@ -519,12 +518,15 @@ class BookmarksAppWindow(main.MainWidget):
         """
         event.ignore()
         self.hide()
-        self.tray.showMessage(
-            'Bookmarks',
-            'Bookmarks will continue running in the background. Use this icon to restore its visibility.',
-            QtWidgets.QSystemTrayIcon.Information,
-            3000
-        )
+        try:
+            common.tray_widget.showMessage(
+                'Bookmarks',
+                'Bookmarks will continue running in the background. Use this icon to restore its visibility.',
+                QtWidgets.QSystemTrayIcon.Information,
+                3000
+            )
+        except:
+            pass
         self.save_window()
 
     def mousePressEvent(self, event):
@@ -646,8 +648,8 @@ class BookmarksApp(QtWidgets.QApplication):
 
     def _set_window_icon(self):
         """Set the application icon."""
-        p = os.path.normpath(f'{__file__}/../rsc/gui/icon.png')
-        pixmap = QtGui.QPixmap(p)
+        path = common.get_rsc(f'{common.GuiResource}{os.path.sep}icon.{common.thumbnail_format}')
+        pixmap = QtGui.QPixmap(path)
         icon = QtGui.QIcon(pixmap)
         self.setWindowIcon(icon)
 

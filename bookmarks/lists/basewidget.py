@@ -1601,43 +1601,46 @@ class BaseInlineIconWidget(BaseListWidget):
         if self.multi_toggle_pos is None:
             rectangles = delegate.get_rectangles(
                 self.visualRect(index), self.inline_icons_count())
-            for k in (
-                delegate.PropertiesRect,
-                delegate.AddAssetRect,
-                delegate.DataRect,
-                delegate.TodoRect,
-                delegate.RevealRect,
-                delegate.ArchiveRect,
-                delegate.FavouriteRect,
-                delegate.ThumbnailRect
-            ):
 
-                if rectangles[k].contains(cursor_position):
-                    if k == delegate.PropertiesRect:
-                        common.signals.showStatusTipMessage.emit(
-                            'Edit item properties...')
-                    elif k == delegate.AddAssetRect:
-                        common.signals.showStatusTipMessage.emit(
-                            'Add new item...')
-                    elif k == delegate.DataRect:
-                        common.signals.showStatusTipMessage.emit(
-                            index.data(QtCore.Qt.StatusTipRole))
-                    elif k == delegate.TodoRect:
-                        common.signals.showStatusTipMessage.emit(
-                            'Edit Notes...')
-                    elif k == delegate.RevealRect:
-                        common.signals.showStatusTipMessage.emit(
-                            'Show item in File Explorer...')
-                    elif k == delegate.ArchiveRect:
-                        common.signals.showStatusTipMessage.emit(
-                            'Archive item...')
-                    elif k == delegate.FavouriteRect:
-                        common.signals.showStatusTipMessage.emit(
-                            'Star item...')
-                    elif k == delegate.ThumbnailRect:
-                        common.signals.showStatusTipMessage.emit(
-                            'Drag and drop an image, or right-click to edit the thumbnail...')
+            if event.buttons() == QtCore.Qt.NoButton:
+                if rectangles[delegate.PropertiesRect].contains(cursor_position):
+                    common.signals.showStatusTipMessage.emit(
+                        'Edit item properties...')
                     self.update(index)
+                elif rectangles[delegate.AddAssetRect].contains(cursor_position):
+                    common.signals.showStatusTipMessage.emit(
+                        'Add new item...')
+                    self.update(index)
+                elif rectangles[delegate.TodoRect].contains(cursor_position):
+                    common.signals.showStatusTipMessage.emit(
+                        'Edit Notes...')
+                    self.update(index)
+                elif rectangles[delegate.RevealRect].contains(cursor_position):
+                    common.signals.showStatusTipMessage.emit(
+                        'Show item in File Explorer...')
+                    self.update(index)
+                elif rectangles[delegate.ArchiveRect].contains(cursor_position):
+                    common.signals.showStatusTipMessage.emit(
+                        'Archive item...')
+                    self.update(index)
+                elif rectangles[delegate.FavouriteRect].contains(cursor_position):
+                    common.signals.showStatusTipMessage.emit(
+                        'Star item...')
+                    self.update(index)
+                elif rectangles[delegate.ThumbnailRect].contains(cursor_position):
+                    common.signals.showStatusTipMessage.emit(
+                        'Drag and drop an image, or right-click to edit the thumbnail...')
+                    self.update(index)
+                elif rectangles[delegate.InlineBackgroundRect].contains(cursor_position):
+                    common.signals.clearStatusBarMessage.emit()
+                    self.update(index)
+                elif rectangles[delegate.DataRect].contains(cursor_position):
+                    common.signals.showStatusTipMessage.emit(
+                        index.data(QtCore.Qt.StatusTipRole))
+                else:
+                    common.signals.clearStatusBarMessage.emit()
+                    self.update(index)
+
 
             rect = self.itemDelegate().get_description_rect(rectangles, index)
             if rect.contains(cursor_position):

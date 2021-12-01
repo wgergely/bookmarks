@@ -19,7 +19,6 @@ from .. import log
 
 CONFIG = 'config.json'
 
-
 # static_bookmarks_PATH = get_template_file_path(static_bookmarks)
 # DEFAULT_ASSET_SOURCE = get_template_file_path(DEFAULT_JOB_TEMPLATE)
 # DEFAULT_JOB_SOURCE = get_template_file_path(DEFAULT_ASSET_TEMPLATE)
@@ -83,11 +82,19 @@ DEFAULT_SORT_VALUES = {
     SortByTypeRole: 'Type',
 }
 
+GuiResource = 'gui'
+ThumbnailResource = 'thumbnails'
+FormatResource = 'formats'
+TemplateResource = 'templates'
 
-def _get_conf_path():
-    return os.path.normpath(os.path.abspath(os.path.sep.join((
-        __file__, os.pardir, os.pardir, 'rsc', CONFIG
-    ))))
+
+
+def get_rsc(rel_path):
+    v = '/'.join((__file__, os.pardir, os.pardir, 'rsc', rel_path))
+    f = QtCore.QFileInfo(v)
+    if not f.exists():
+        raise RuntimeError(f'{f.absoluteFilePath()} does not exist.')
+    return f.absoluteFilePath()
 
 
 def _init_config():
@@ -95,9 +102,7 @@ def _init_config():
     public properties.
 
     """
-    p = _get_conf_path()
-    if not os.path.isfile(p):
-        raise RuntimeError(f'{p} not found.')
+    p = get_rsc(CONFIG)
 
     with open(p, 'r', encoding='utf8') as f:
         config = json.loads(f.read())
@@ -105,21 +110,6 @@ def _init_config():
     # Set config values in the common module
     for k, v in config.items():
         setattr(common, k, v)
-
-
-def get_template_file_path(name):
-    """Returns the path to the source template file.
-
-    Args:
-        name (str): The name of the template file.
-
-    Returns:
-        str: The path to the template file.
-
-    """
-    return os.path.normpath(os.path.abspath(os.path.sep.join((
-        __file__, os.pardir, os.pardir, 'rsc', 'templates', name
-    ))))
 
 
 def initialize(mode):
@@ -133,7 +123,8 @@ def initialize(mode):
     if common.init_mode is not None:
         raise RuntimeError(f'Already initialized as "{common.init_mode}"!')
     if mode not in (StandaloneMode, EmbeddedMode):
-        raise ValueError(f'Invalid initalization mode. Got "{mode}", expected `StandaloneMode` or `EmbeddedMode`')
+        raise ValueError(
+            f'Invalid initalization mode. Got "{mode}", expected `StandaloneMode` or `EmbeddedMode`')
 
     common.init_mode = mode
 
@@ -146,12 +137,11 @@ def initialize(mode):
 
     common.init_signals()
     common.prune_lock()
-    common.init_lock() # Sets the current active mode
+    common.init_lock()  # Sets the current active mode
     common.init_settings()
 
     _init_ui_scale()
     _init_dpi()
-
 
     common.cursor = QtGui.QCursor()
 
@@ -178,6 +168,28 @@ def initialize(mode):
     common.init_monitor()
 
 
+def uninitialize():
+    """Closes and deletes all cached data and ui elements.
+
+    """
+
+    from .. threads import threads
+
+    threads.quit_threads()
+    common.main_widget.close()
+    common.main_widget.deleteLater()
+    common.main_widget = None
+
+    if common.init_mode == common.StandaloneMode:
+        QtWidgets.QApplication.instance().quit()
+
+    for k, v in common.__initial_values__.items():
+        setattr(common, k, v)
+
+    from .. import images
+    images.uninitialize_images()
+
+
 def _init_ui_scale():
     v = common.settings.value(
         common.SettingsSection,
@@ -196,7 +208,6 @@ def _init_ui_scale():
         v = float(v) * 0.01
     except:
         v = 1.0
-
 
     if not common.ui_scale_factors or v not in common.ui_scale_factors:
         v = 1.0
@@ -255,7 +266,6 @@ def init_environment(add_private=False):
     sys.path.append(v)
 
 
-
 def check_type(value, _type):
     """Verify the type of an object.
 
@@ -276,10 +286,12 @@ def check_type(value, _type):
     if it:
         if not any(isinstance(value, type(f) if f is None else f) for f in it):
             _types = ' or '.join([repr(type(f)) for f in _type])
-            raise TypeError(f'Invalid type. Expected {_types}, got {type(value)}')
+            raise TypeError(
+                f'Invalid type. Expected {_types}, got {type(value)}')
     else:
         if not isinstance(value, type(_type) if _type is None else _type):
-            raise TypeError(f'Invalid type. Expected {_type}, got {type(value)}')
+            raise TypeError(
+                f'Invalid type. Expected {_type}, got {type(value)}')
 
 
 def get_hash(key):
@@ -311,14 +323,14 @@ def get_hash(key):
         l = len(s)
         if key[:l] == s:
             key = key[l:]
+            key = key.lstrip('/')
             break
 
-    key = key.encode('utf8')
     if key in common.hashes:
         return common.hashes[key]
 
     # Otherwise, we calculate, save and return the digest
-    common.hashes[key] = hashlib.md5(key).hexdigest()
+    common.hashes[key] = hashlib.md5(key.encode('utf8')).hexdigest()
     return common.hashes[key]
 
 
@@ -394,35 +406,6 @@ def debug(func):
     return func_wrapper
 
 
-def sort_data(ref, sortrole, sortorder):
-    check_type(sortrole, QtCore.Qt.ItemDataRole)
-    check_type(sortorder, bool)
-
-    def sort_key(idx):
-        # If sort_by_basename is `True` we'll use the base file name for sorting
-        v = ref().__getitem__(idx)
-        if common.sort_by_basename and sortrole == SortByNameRole and isinstance(v[sortrole], list):
-            return v[sortrole][-1]
-        return v[sortrole]
-
-    sorted_idxs = sorted(
-        ref().keys(),
-        key=sort_key,
-        reverse=sortorder
-    )
-
-    d = DataDict()
-    d.loaded = ref().loaded
-    d.data_type = ref().data_type
-
-    for n, idx in enumerate(sorted_idxs):
-        if not ref():
-            raise RuntimeError('Model mutated during sorting.')
-        ref()[idx][IdRole] = n
-        d[n] = ref()[idx]
-    return d
-
-
 def get_platform():
     """Returns the current platform."""
     ptype = QtCore.QSysInfo().productType()
@@ -437,13 +420,20 @@ def get_username():
     """Returns the name of the currently logged-in user.
 
     """
-    n = QtCore.QFileInfo(os.path.expanduser('~')).fileName()
-    n = re.sub(r'[^a-zA-Z0-9]*', '', n, flags=re.IGNORECASE | re.UNICODE)
-    return n
+    v = ''
+    if get_platform() == PlatformWindows:
+        if 'username' in os.environ:
+            v = os.environ['username']
+        elif 'USERNAME' in os.environ:
+            v = os.environ['USERNAME']
+    if get_platform() == PlatformMacOS:
+        if 'user' in os.environ:
+            v = os.environ['user']
+        elif 'USER' in os.environ:
+            v = os.environ['USER']
+    v = v.replace('.', '')
+    return v
 
-
-def qlast_modified(n):
-    return QtCore.QDateTime.fromMSecsSinceEpoch(n * 1000)
 
 
 def get_path_to_executable(key):
@@ -486,7 +476,7 @@ def get_path_to_executable(key):
     return None
 
 
-def local_user_bookmark():
+def pseudo_local_bookmark():
     """Return a location on the local system to store temporary files.
     This is used to store thumbnails for starred items and other temporary items.
 
@@ -509,7 +499,7 @@ def temp_path():
             str: Path to a directory.
 
     """
-    return '/'.join(local_user_bookmark())
+    return '/'.join(pseudo_local_bookmark())
 
 
 class DataDict(dict):

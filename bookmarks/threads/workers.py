@@ -21,11 +21,10 @@ from .. import database
 from ..shotgun import shotgun
 
 
-def get_widget(q):
-    from .. import main
+def _widget(q):
     from . import threads
 
-    if not common.main_widget:
+    if common.main_widget is None or not common.main_widget._initialized:
         return None
 
     if q == threads.TaskFolderInfo:
@@ -38,16 +37,17 @@ def get_widget(q):
     return widget
 
 
-def get_model(q):
-    widget = get_widget(q)
+def _qlast_modified(n):
+    return QtCore.QDateTime.fromMSecsSinceEpoch(n * 1000)
 
+
+def _model(q):
+    widget = _widget(q)
     if widget is None:
         return None
-
     # Make sure the queue is associated with this widget
     if q not in widget.queues:
         return None
-
     return widget.model().sourceModel()
 
 
@@ -198,8 +198,8 @@ class BaseWorker(QtCore.QObject):
 
         q = self.queue
         cnx = QtCore.Qt.QueuedConnection
-        widget = get_widget(q)
-        model = get_model(q)
+        widget = _widget(q)
+        model = _model(q)
 
         # Timer controls
         threads.get_thread(self.queue).startTimer.connect(self.startTimer, cnx)
@@ -241,7 +241,7 @@ class BaseWorker(QtCore.QObject):
         if not threads.THREADS[self.queue]['preload']:
             return
 
-        model = get_model(self.queue)
+        model = _model(self.queue)
 
         p = model.source_path()
         k = model.task()
@@ -327,7 +327,7 @@ class BaseWorker(QtCore.QObject):
     def sort_data_type(self, ref):
         verify_thread_affinity()
 
-        model = get_model(self.queue)
+        model = _model(self.queue)
         if not model:
             return
 
@@ -558,7 +558,7 @@ class InfoWorker(BaseWorker):
                     if not is_valid():
                         return False
                     ref()[common.SortByLastModifiedRole] = mtime
-                    mtime = common.qlast_modified(mtime)
+                    mtime = _qlast_modified(mtime)
 
                     if not is_valid():
                         return False
@@ -584,7 +584,7 @@ class InfoWorker(BaseWorker):
                     stat = er[0].stat()
                     mtime = stat.st_mtime
                     ref()[common.SortByLastModifiedRole] = mtime
-                    mtime = common.qlast_modified(mtime)
+                    mtime = _qlast_modified(mtime)
                     ref()[common.SortBySizeRole] = stat.st_size
                     info_string = \
                         mtime.toString('dd') + '/' + \
@@ -613,11 +613,9 @@ class InfoWorker(BaseWorker):
             if ref():
                 ref()[common.FileInfoLoaded] = True
 
-
     def count_todos(self, db, k):
         v = db.value(k, 'notes')
         return len(v) if isinstance(v, dict) else 0
-
 
     @staticmethod
     def update_shotgun_configured(source_paths, db, data):
@@ -834,8 +832,8 @@ class ThumbnailWorker(BaseWorker):
 
             # We should never get here ideally, but if we do we'll mark the item
             # with a bespoke 'failed' thumbnail
-            fpath = '{}/../rsc/{}/{}.{}'.format(
-                __file__, images.GuiResource, 'close', common.thumbnail_format)
+            fpath = common.get_rsc(
+                f'{common.GuiResource}/close.{common.thumbnail_format}')
             res = images.ImageCache.oiio_make_thumbnail(
                 fpath,
                 destination,
@@ -855,7 +853,6 @@ class ThumbnailWorker(BaseWorker):
 
 class TaskFolderWorker(InfoWorker):
     """Used by the TaskFolderModel to count the number of files in a folder."""
-
 
     def count_todos(self, db, k):
         count = 0

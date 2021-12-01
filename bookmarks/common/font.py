@@ -9,9 +9,6 @@ PrimaryFontRole = 0
 SecondaryFontRole = 1
 MetricsRole = 2
 
-FONT_SOURCE_DIR = os.path.normpath(os.path.abspath(
-    f'{__file__}/../../rsc/fonts'))
-
 
 class FontDatabase(QtGui.QFontDatabase):
     """Utility class for loading and getting the application's custom fonts.
@@ -35,10 +32,9 @@ class FontDatabase(QtGui.QFontDatabase):
         if common.medium_font in self.families():
             return
 
-        if not os.path.isdir(FONT_SOURCE_DIR):
-            raise OSError(f'{FONT_SOURCE_DIR} could not be found')
+        source = common.get_rsc('fonts')
 
-        for entry in _scandir.scandir(FONT_SOURCE_DIR):
+        for entry in _scandir.scandir(source):
             if not entry.name.endswith('ttf'):
                 continue
             idx = self.addApplicationFont(entry.path)

@@ -23,8 +23,8 @@ from PySide2 import QtWidgets, QtGui, QtCore
 from . import log
 from . import common
 
-PLACEHOLDER_PATH = '{}/../rsc/{}/{}.{}'
-QT_IMAGE_FORMATS = {f.data().decode('utf8') for f in QtGui.QImageReader.supportedImageFormats()}
+QT_IMAGE_FORMATS = {f.data().decode('utf8')
+                    for f in QtGui.QImageReader.supportedImageFormats()}
 
 mutex = QtCore.QMutex()
 
@@ -45,36 +45,40 @@ _viewer_widget = None
 
 accepted_codecs = ('h.264', 'h264', 'mpeg-4', 'mpeg4')
 
-
-GuiResource = 'gui'
-ThumbnailResource = 'thumbnails'
-FormatResource = 'formats'
-
 RESOURCES = {
-    GuiResource: [],
-    ThumbnailResource: [],
-    FormatResource: [],
+    common.GuiResource: [],
+    common.ThumbnailResource: [],
+    common.FormatResource: [],
+}
+RESOURCE_DATA = {}
+INTERNAL_DATA = {
+    BufferType: {},
+    PixmapType: {},
+    ImageType: {},
+    ResourcePixmapType: {},
+    ColorType: {},
 }
 
 
-
-def reset():
+def uninitialize_images():
+    global oiio_cache
+    oiio_cache = None
     global RESOURCES
     RESOURCES = {
-        GuiResource: [],
-        ThumbnailResource: [],
-        FormatResource: [],
+        common.GuiResource: [],
+        common.ThumbnailResource: [],
+        common.FormatResource: [],
     }
-    ImageCache.COLOR_DATA = common.DataDict()
-    ImageCache.RESOURCE_DATA = common.DataDict()
-    ImageCache.PIXEL_DATA = common.DataDict()
-    ImageCache.INTERNAL_DATA = common.DataDict({
-        BufferType: common.DataDict(),
-        PixmapType: common.DataDict(),
-        ImageType: common.DataDict(),
-        ResourcePixmapType: common.DataDict(),
-        ColorType: common.DataDict(),
-    })
+    global RESOURCE_DATA
+    RESOURCE_DATA = {}
+    global INTERNAL_DATA
+    INTERNAL_DATA = {
+        BufferType: {},
+        PixmapType: {},
+        ImageType: {},
+        ResourcePixmapType: {},
+        ColorType: {},
+    }
 
 
 def init_imagecache():
@@ -84,10 +88,27 @@ def init_imagecache():
     oiio_cache.attribute('max_open_files', 0)
     oiio_cache.attribute('trust_file_extensions', 1)
 
+    global RESOURCES
+    RESOURCES = {
+        common.GuiResource: [],
+        common.ThumbnailResource: [],
+        common.FormatResource: [],
+    }
+    global RESOURCE_DATA
+    RESOURCE_DATA = {}
+    global INTERNAL_DATA
+    INTERNAL_DATA = {
+        BufferType: {},
+        PixmapType: {},
+        ImageType: {},
+        ResourcePixmapType: {},
+        ColorType: {},
+    }
+
 
 def init_resources():
     global RESOURCES
-    for _source, k in ((os.path.normpath(os.path.abspath('{}/../rsc/{}'.format(__file__, f))), f) for f in (GuiResource, ThumbnailResource, FormatResource)):
+    for _source, k in ((os.path.normpath(os.path.abspath('{}/../rsc/{}'.format(__file__, f))), f) for f in (common.GuiResource, common.ThumbnailResource, common.FormatResource)):
         for _entry in _scandir.scandir(_source):
             RESOURCES[k].append(_entry.name.split('.', maxsplit=1)[0])
 
@@ -343,24 +364,22 @@ def get_placeholder_path(file_path, fallback='placeholder'):
     common.check_type(file_path, str)
 
     def path(r, n):
-        return PLACEHOLDER_PATH.format(
-            __file__, r, n, common.thumbnail_format
-        )
+        return common.get_rsc(f'{r}/{n}.{common.thumbnail_format}')
 
     file_info = QtCore.QFileInfo(file_path)
     suffix = file_info.suffix().lower()
 
-    if suffix in RESOURCES[FormatResource]:
-        path = path(FormatResource, suffix)
+    if suffix in RESOURCES[common.FormatResource]:
+        path = path(common.FormatResource, suffix)
     else:
-        if fallback in RESOURCES[FormatResource]:
-            path = path(FormatResource, fallback)
-        elif fallback in RESOURCES[ThumbnailResource]:
-            path = path(ThumbnailResource, fallback)
-        elif fallback in RESOURCES[GuiResource]:
-            path = path(GuiResource, fallback)
+        if fallback in RESOURCES[common.FormatResource]:
+            path = path(common.FormatResource, fallback)
+        elif fallback in RESOURCES[common.ThumbnailResource]:
+            path = path(common.ThumbnailResource, fallback)
+        elif fallback in RESOURCES[common.GuiResource]:
+            path = path(common.GuiResource, fallback)
         else:
-            path = path(GuiResource, 'placeholder')
+            path = path(common.GuiResource, 'placeholder')
 
     return os.path.normpath(os.path.abspath(path)).replace('\\', '/')
 
@@ -501,21 +520,10 @@ class ImageCache(QtCore.QObject):
     GUI resources should be loaded with ``ImageCache.get_rsc_pixmap()``.
 
     """
-    COLOR_DATA = common.DataDict()
-    RESOURCE_DATA = common.DataDict()
-    PIXEL_DATA = common.DataDict()
-    INTERNAL_DATA = common.DataDict({
-        BufferType: common.DataDict(),
-        PixmapType: common.DataDict(),
-        ImageType: common.DataDict(),
-        ResourcePixmapType: common.DataDict(),
-        ColorType: common.DataDict(),
-    })
-
     @classmethod
     def contains(cls, hash, cache_type):
         """Checks if the given hash exists in the database."""
-        return hash in cls.INTERNAL_DATA[cache_type]
+        return hash in INTERNAL_DATA[cache_type]
 
     @classmethod
     def value(cls, hash, cache_type, size=None):
@@ -529,10 +537,10 @@ class ImageCache(QtCore.QObject):
         if not cls.contains(hash, cache_type):
             return None
         if size is not None:
-            if size not in cls.INTERNAL_DATA[cache_type][hash]:
+            if size not in INTERNAL_DATA[cache_type][hash]:
                 return None
-            return cls.INTERNAL_DATA[cache_type][hash][size]
-        return cls.INTERNAL_DATA[cache_type][hash]
+            return INTERNAL_DATA[cache_type][hash][size]
+        return INTERNAL_DATA[cache_type][hash]
 
     @classmethod
     def setValue(cls, hash, value, cache_type, size=None):
@@ -543,13 +551,13 @@ class ImageCache(QtCore.QObject):
 
         """
         if not cls.contains(hash, cache_type):
-            cls.INTERNAL_DATA[cache_type][hash] = common.DataDict()
+            INTERNAL_DATA[cache_type][hash] = {}
 
         if cache_type == BufferType:
             common.check_type(value, OpenImageIO.ImageBuf)
 
-            cls.INTERNAL_DATA[BufferType][hash] = value
-            return cls.INTERNAL_DATA[BufferType][hash]
+            INTERNAL_DATA[BufferType][hash] = value
+            return INTERNAL_DATA[BufferType][hash]
 
         elif cache_type == ImageType:
             common.check_type(value, QtGui.QImage)
@@ -560,8 +568,8 @@ class ImageCache(QtCore.QObject):
             if not isinstance(size, int):
                 size = int(size)
 
-            cls.INTERNAL_DATA[cache_type][hash][size] = value
-            return cls.INTERNAL_DATA[cache_type][hash][size]
+            INTERNAL_DATA[cache_type][hash][size] = value
+            return INTERNAL_DATA[cache_type][hash][size]
 
         elif cache_type in (PixmapType, ResourcePixmapType):
             common.check_type(value, QtGui.QPixmap)
@@ -569,14 +577,14 @@ class ImageCache(QtCore.QObject):
             if not isinstance(size, int):
                 size = int(size)
 
-            cls.INTERNAL_DATA[cache_type][hash][size] = value
-            return cls.INTERNAL_DATA[cache_type][hash][size]
+            INTERNAL_DATA[cache_type][hash][size] = value
+            return INTERNAL_DATA[cache_type][hash][size]
 
         elif cache_type == ColorType:
             common.check_type(value, QtGui.QColor)
 
-            cls.INTERNAL_DATA[ColorType][hash] = value
-            return cls.INTERNAL_DATA[ColorType][hash]
+            INTERNAL_DATA[ColorType][hash] = value
+            return INTERNAL_DATA[ColorType][hash]
 
         raise TypeError('`cache_type` is invalid.')
 
@@ -586,9 +594,9 @@ class ImageCache(QtCore.QObject):
 
         """
         hash = common.get_hash(source)
-        for k in cls.INTERNAL_DATA:
-            if hash in cls.INTERNAL_DATA[k]:
-                del cls.INTERNAL_DATA[k][hash]
+        for k in INTERNAL_DATA:
+            if hash in INTERNAL_DATA[k]:
+                del INTERNAL_DATA[k][hash]
 
     @classmethod
     def get_pixmap(cls, source, size, hash=None, force=False, oiio=False):
@@ -772,10 +780,11 @@ class ImageCache(QtCore.QObject):
             return None
 
         # Let's resize, but only if the source is bigger than the requested size
-        spec = buf.spec()
-        msize = max((spec.width, spec.height))
+        # spec = buf.spec()
+        # msize = max((spec.width, spec.height))
 
-        if size != -1 and size < msize:
+        # if size != -1 and size < msize:
+        if size != -1:
             image = cls.resize_image(image, size)
         if image.isNull():
             return None
@@ -813,7 +822,7 @@ class ImageCache(QtCore.QObject):
         return image.smoothScaled(round(w), round(h))
 
     @classmethod
-    def get_rsc_pixmap(cls, name, color, size, opacity=1.0, resource=GuiResource, get_path=False):
+    def get_rsc_pixmap(cls, name, color, size, opacity=1.0, resource=common.GuiResource, get_path=False):
         """Loads an image resource and returns it as a sized (and recolored) QPixmap.
 
         Args:
@@ -830,7 +839,7 @@ class ImageCache(QtCore.QObject):
         common.check_type(name, str)
         common.check_type(color, (QtGui.QColor, None))
 
-        source = f'{__file__}/../rsc/{resource}/{name}.png'
+        source = common.get_rsc(f'{resource}/{name}.{common.thumbnail_format}')
 
         if get_path:
             file_info = QtCore.QFileInfo(source)
@@ -839,8 +848,8 @@ class ImageCache(QtCore.QObject):
         _color = color.name() if isinstance(color, QtGui.QColor) else 'null'
         k = 'rsc:' + name + ':' + str(int(size)) + ':' + _color
 
-        if k in cls.RESOURCE_DATA:
-            return cls.RESOURCE_DATA[k]
+        if k in RESOURCE_DATA:
+            return RESOURCE_DATA[k]
 
         image = QtGui.QImage()
         image.setDevicePixelRatio(pixel_ratio)
@@ -879,8 +888,8 @@ class ImageCache(QtCore.QObject):
         pixmap = QtGui.QPixmap()
         pixmap.setDevicePixelRatio(pixel_ratio)
         pixmap.convertFromImage(image, flags=QtCore.Qt.ColorOnly)
-        cls.RESOURCE_DATA[k] = pixmap
-        return cls.RESOURCE_DATA[k]
+        RESOURCE_DATA[k] = pixmap
+        return RESOURCE_DATA[k]
 
     @classmethod
     def oiio_make_thumbnail(cls, source, destination, size, nthreads=3):
@@ -975,14 +984,14 @@ class ImageCache(QtCore.QObject):
         buf = resize(buf, source_spec)
 
         # if buf.nchannels > 3:
-            # background_buf = OpenImageIO.ImageBuf(destination_spec)
-            # OpenImageIO.ImageBufAlgo.checker(
-            #     background_buf,
-            #     12, 12, 1,
-            #     (0.3, 0.3, 0.3),
-            #     (0.2, 0.2, 0.2)
-            # )
-            # buf = OpenImageIO.ImageBufAlgo.over(buf, background_buf)
+        # background_buf = OpenImageIO.ImageBuf(destination_spec)
+        # OpenImageIO.ImageBufAlgo.checker(
+        #     background_buf,
+        #     12, 12, 1,
+        #     (0.3, 0.3, 0.3),
+        #     (0.2, 0.2, 0.2)
+        # )
+        # buf = OpenImageIO.ImageBufAlgo.over(buf, background_buf)
 
         spec = buf.spec()
         buf.set_write_format(OpenImageIO.UINT8)

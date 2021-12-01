@@ -349,7 +349,7 @@ class ExtensionModel(BaseModel):
                 continue
             for ext in [f.lower().strip() for f in v['value'].split(',')]:
                 pixmap = images.ImageCache.get_rsc_pixmap(
-                    ext, None, common.size(common.WidthMargin) * 2, resource=images.FormatResource)
+                    ext, None, common.size(common.WidthMargin) * 2, resource=common.FormatResource)
                 if not pixmap or pixmap.isNull():
                     pixmap = images.ImageCache.get_rsc_pixmap(
                         'placeholder', common.color(common.SeparatorColor), common.size(common.WidthMargin) * 2)

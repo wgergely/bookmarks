@@ -7,7 +7,7 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
-   bookmarks.templates.actions
+   bookmarks.actions
    bookmarks.templates.templates
 
 Module contents

@@ -481,7 +481,7 @@ class BaseTabButton(QtWidgets.QLabel):
     def paintEvent(self, event):
         """The control button's paint method - shows the the set text and
         an underline if the tab is active."""
-        if not common.main_widget:
+        if common.main_widget is None or not common.main_widget._initialized:
             return
 
         rect = QtCore.QRect(self.rect())

@@ -543,7 +543,7 @@ MainWidget  {{
 	font-size: {FontSizeMedium}px;
 	background-color: {SEPARATOR};
 }}
-PluginWidget {{
+MayaWidget {{
 	font-family: "{PRIMARY_FONT}";
 	font-size: {FontSizeMedium}px;
 	background-color: {SEPARATOR};

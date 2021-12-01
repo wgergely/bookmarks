@@ -158,9 +158,10 @@ def initialize(mode):
 
     images.init_pixel_ratio()
     common.init_font()
+
     if mode == common.StandaloneMode:
         standalone.init()
-    else:
+    elif mode == common.EmbeddedMode:
         from .. import main
         main.init()
 
@@ -171,12 +172,14 @@ def uninitialize():
     """Closes and deletes all cached data and ui elements.
 
     """
-
     from .. threads import threads
-
     threads.quit_threads()
-    common.main_widget.close()
-    common.main_widget.deleteLater()
+
+    try:
+        common.main_widget.close()
+        common.main_widget.deleteLater()
+    except:
+        pass
     common.main_widget = None
 
     if common.init_mode == common.StandaloneMode:
@@ -186,7 +189,8 @@ def uninitialize():
         setattr(common, k, v)
 
     from .. import images
-    images.uninitialize_images()
+    for k, v in images.__initial_values__.items():
+        setattr(images, k, v)
 
 
 def _init_ui_scale():
@@ -221,48 +225,6 @@ def _init_dpi():
         common.dpi = 96.0
     elif get_platform() == PlatformUnsupported:
         common.dpi = 72.0
-
-
-def init_environment(add_private=False):
-    """Add the dependencies to the Python environment.
-
-    The method requires that BOOKMARKS_ENV_KEY is set. The key is usually set
-    by the Bookmark installer to point to the install root directory.
-    The
-
-    Raises:
-            EnvironmentError: When the BOOKMARKS_ENV_KEY is not set.
-            RuntimeError: When the BOOKMARKS_ENV_KEY is invalid or a directory missing.
-
-    """
-    if common.env_key not in os.environ:
-        raise EnvironmentError(
-            f'"{common.env_key}" environment variable is not set.')
-
-    v = os.environ[common.env_key]
-
-    if not os.path.isdir(v):
-        raise RuntimeError(
-            f'"{v}" is not a falid folder. Is "{common.env_key}" environment variable set?')
-
-    # Add BOOKMARKS_ENV_KEY to the PATH
-    v = os.path.normpath(os.path.abspath(v)).strip()
-    if v.lower() not in os.environ['PATH'].lower():
-        os.environ['PATH'] = v + ';' + os.environ['PATH'].strip(';')
-
-    def _add_path_to_sys(p):
-        _v = f'{v}{os.path.sep}{p}'
-        if not os.path.isdir(_v):
-            raise RuntimeError(f'{_v} does not exist.')
-
-        if _v in sys.path:
-            return
-        sys.path.append(_v)
-
-    _add_path_to_sys('shared')
-    if add_private:
-        _add_path_to_sys('private')
-    sys.path.append(v)
 
 
 def check_type(value, _type):

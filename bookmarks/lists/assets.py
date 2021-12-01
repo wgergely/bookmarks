@@ -2,8 +2,8 @@
 """The widget, model and context menu needed for interacting with assets.
 
 """
-import re
 import os
+import re
 
 import functools
 

@@ -2,11 +2,10 @@
 """A list of widgets used by the `FileBasePropertyEditor`.
 
 """
-
+import os
 import functools
+
 from PySide2 import QtCore, QtWidgets, QtGui
-
-
 
 from .. import database
 from .. import common
@@ -348,9 +347,10 @@ class ExtensionModel(BaseModel):
             if v['flag'] == asset_config.ImageFormat:
                 continue
             for ext in [f.lower().strip() for f in v['value'].split(',')]:
-                pixmap = images.ImageCache.get_rsc_pixmap(
-                    ext, None, common.size(common.WidthMargin) * 2, resource=common.FormatResource)
-                if not pixmap or pixmap.isNull():
+                try:
+                    pixmap = images.ImageCache.get_rsc_pixmap(
+                        ext, None, common.size(common.WidthMargin) * 2, resource=common.FormatResource)
+                except:
                     pixmap = images.ImageCache.get_rsc_pixmap(
                         'placeholder', common.color(common.SeparatorColor), common.size(common.WidthMargin) * 2)
 

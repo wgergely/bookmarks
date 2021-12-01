@@ -80,16 +80,6 @@ __website__ = 'https://github.com/wgergely/bookmarks'
 __email__ = 'hello@gergely-wootsch.com'
 __version__ = '0.5.0'
 __copyright__ = f'Copyright (C) 2021  {__author__}'
-__dependencies__ = (
-    '_scandir',
-    'PySide2',
-    'OpenImageIO',
-    'alembic',
-    'numpy',
-    'psutil',
-    'shotgun_api3',
-    'slack',
-)
 
 
 # Python 2 support has been dropped and the code base only supports Python 3.
@@ -97,7 +87,7 @@ if sys.version_info[0] < 3 and sys.version_info[1] < 6:
     raise RuntimeError('Bookmarks requires Python 3.6.0 or later.')
 
 
-def get_info():
+def info():
     """Returns an informative string about the project environment and author.
 
     Returns:
@@ -127,21 +117,6 @@ def get_info():
     ))
 
 
-def verify_dependecies():
-    """Checks the presence of all required python modules.
-
-    Raises:
-        ModuleNotFoundError: When a required python library was not found.
-
-    """
-    for mod in __dependencies__:
-        try:
-            importlib.import_module(mod)
-        except ModuleNotFoundError as e:
-            raise ModuleNotFoundError(
-                f'Bookmarks cannot be run. A required dependency was not found\n>> {mod}') from e
-
-
 def exec_():
     """Opens the Bookmark application.
 
@@ -151,9 +126,9 @@ def exec_():
     Make sure to check the :doc:`list of dependencies <index>` before running.
 
     """
-    print(get_info())
-    verify_dependecies()
+    print(info())
     from . import common
+    common.verify_dependecies()
     common.initialize(common.StandaloneMode)
     from . import standalone
     standalone.show()

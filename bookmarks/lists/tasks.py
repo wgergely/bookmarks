@@ -9,7 +9,7 @@ generally expects them to be associated with a task or data-type eg. ``render``,
 Core task folders are defined by `asset_config.py`.
 
 """
-
+import os
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
@@ -100,7 +100,8 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
         if not index.data(QtCore.Qt.DisplayRole):
             return
 
-        active = index.data(QtCore.Qt.DisplayRole) == common.active(common.TaskKey)
+        active = index.data(
+            QtCore.Qt.DisplayRole) == common.active(common.TaskKey)
 
         if index.data(common.TodoCountRole):
             color = common.color(
@@ -219,7 +220,8 @@ class TaskFolderModel(basemodel.BaseModel):
             return
         self._monitor = QtCore.QFileSystemWatcher()
         self._monitor.fileChanged.connect(lambda: self.reset_data(force=True))
-        self._monitor.directoryChanged.connect(lambda: self.reset_data(force=True))
+        self._monitor.directoryChanged.connect(
+            lambda: self.reset_data(force=True))
 
     @QtCore.Slot()
     def reset_monitor(self):
@@ -364,7 +366,8 @@ class TaskFolderWidget(basewidget.ThreadedBaseWidget):
     def item_clicked(self, index):
         if not index.isValid():
             return
-        common.signals.taskFolderChanged.emit(index.data(QtCore.Qt.DisplayRole))
+        common.signals.taskFolderChanged.emit(
+            index.data(QtCore.Qt.DisplayRole))
         self.hide()
 
     @QtCore.Slot(int)

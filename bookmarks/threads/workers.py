@@ -6,6 +6,7 @@ Each thread is assigned a single Worker - usually responsible for taking
 a *weakref.ref* from the thread's queue.
 
 """
+import os
 import functools
 import weakref
 import uuid
@@ -24,7 +25,7 @@ from ..shotgun import shotgun
 def _widget(q):
     from . import threads
 
-    if common.main_widget is None or not common.main_widget._initialized:
+    if common.main_widget is None:
         return None
 
     if q == threads.TaskFolderInfo:

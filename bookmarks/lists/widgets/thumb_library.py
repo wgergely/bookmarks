@@ -14,8 +14,6 @@ instance = None
 
 
 COLUMNS = 5
-RSC_DIR = '{}/../../../rsc'.format(__file__)
-
 
 def close():
     global instance
@@ -214,14 +212,9 @@ class ThumbnailLibraryWidget(QtWidgets.QDialog):
 
     def _add_thumbnails(self):
         row = 0
-        path = '{root}/{resource}'.format(
-            root=RSC_DIR,
-            resource=common.ThumbnailResource
-        )
-        path = os.path.normpath(os.path.abspath(path))
-
         idx = 0
-        for entry in os.scandir(path):
+        
+        for entry in os.scandir(common.get_rsc(common.ThumbnailResource)):
             label = ClickableItem(
                 entry.path.replace('\\', '/'),
                 parent=self
@@ -230,6 +223,7 @@ class ThumbnailLibraryWidget(QtWidgets.QDialog):
             column = idx % self.columns
             if column == 0:
                 row += 1
+
             self.scrollarea.widget().layout().addWidget(label, row, column)
             label.clicked.connect(self.thumbnailSelected)
             label.clicked.connect(self.close)

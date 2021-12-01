@@ -2,10 +2,10 @@
 """Sub-editor widget used by the Bookmark Editor to add and toggle bookmarks.
 
 """
+import os
 import functools
-from PySide2 import QtCore, QtGui, QtWidgets
 
-import _scandir
+from PySide2 import QtCore, QtGui, QtWidgets
 
 from .. import common
 from .. import log
@@ -13,7 +13,6 @@ from .. import contextmenu
 from .. import ui
 from .. import shortcuts
 from .. import actions
-
 
 
 class BookmarkContextMenu(contextmenu.BaseContextMenu):
@@ -288,7 +287,7 @@ class BookmarkListWidget(ui.ListWidget):
 
         # We'll let unreadable paths fail silently
         try:
-            it = _scandir.scandir(path)
+            it = os.scandir(path)
         except:
             return arr
 

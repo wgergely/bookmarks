@@ -11,7 +11,7 @@ import weakref
 import uuid
 
 from PySide2 import QtCore, QtGui, QtWidgets
-import _scandir
+
 
 from .. import log
 from .. import common
@@ -632,7 +632,7 @@ class InfoWorker(BaseWorker):
     @staticmethod
     def count_assets(path, ASSET_IDENTIFIER):
         n = 0
-        for entry in _scandir.scandir(path):
+        for entry in os.scandir(path):
             if entry.name.startswith('.'):
                 continue
             if not entry.is_dir():
@@ -874,7 +874,7 @@ class TaskFolderWorker(InfoWorker):
 
         """
         try:
-            it = _scandir.scandir(path)
+            it = os.scandir(path)
         except:
             return
 

@@ -4,7 +4,7 @@
 """
 import re
 import os
-import _scandir
+
 import functools
 
 from PySide2 import QtCore, QtWidgets, QtGui
@@ -219,7 +219,7 @@ class AssetModel(basemodel.BaseModel):
 
         """
         try:
-            it = _scandir.scandir(path)
+            it = os.scandir(path)
         except OSError as e:
             log.error(e)
             return

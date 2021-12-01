@@ -6,7 +6,7 @@ Our publish logic creates `Version` and `PublishFile` entites linked against
 the current active project and asset and uploads any custom thumbnails set.
 
 """
-import _scandir
+
 from PySide2 import QtCore, QtGui, QtWidgets
 
 from .. import common
@@ -336,7 +336,7 @@ class PublishWidget(base.BasePropertyEditor):
             if not QtCore.QFileInfo(path).exists():
                 continue
 
-            for entry in _scandir.scandir(path):
+            for entry in os.scandir(path):
                 if entry.is_dir():
                     continue
 

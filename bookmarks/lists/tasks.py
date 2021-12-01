@@ -9,7 +9,7 @@ generally expects them to be associated with a task or data-type eg. ``render``,
 Core task folders are defined by `asset_config.py`.
 
 """
-import _scandir
+
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
@@ -264,7 +264,7 @@ class TaskFolderModel(basemodel.BaseModel):
         self._monitor.addPath(_source_path)
 
         entries = sorted(
-            ([f for f in _scandir.scandir(_source_path)]), key=lambda x: x.name)
+            ([f for f in os.scandir(_source_path)]), key=lambda x: x.name)
 
         for entry in entries:
             if entry.name.startswith('.'):

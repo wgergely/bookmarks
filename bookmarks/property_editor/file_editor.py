@@ -33,7 +33,7 @@ Example
 """
 import re
 import os
-import _scandir
+
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
@@ -709,7 +709,7 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
         idx = name.index(v)
 
         _arr = []
-        for entry in _scandir.scandir(_dir.path()):
+        for entry in os.scandir(_dir.path()):
             if len(name) != len(entry.name):
                 continue
             if name[:idx] != entry.name[:idx]:

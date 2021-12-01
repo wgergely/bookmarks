@@ -4,6 +4,7 @@
 	"bookmark_cache_dir": ".bookmark",
 	"favorite_file_ext": "bfav",
   "user_settings": "common.ini",
+	"stylesheet_file": "stylesheet.qss",
 	"static_bookmarks_template": "static_bookmarks.json",
 	"job_template": "Job.zip",
 	"asset_template": "Asset.zip",

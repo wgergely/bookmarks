@@ -179,4 +179,4 @@ def uninitializePlugin(name):
     )
 
     cmds.evalDeferred(module.maya.actions.uninitialize)
-    cmds.evalDeferred(module.actions.uninitialize)
+    cmds.evalDeferred(module.common.uninitialize)

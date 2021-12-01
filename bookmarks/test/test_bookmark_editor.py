@@ -9,7 +9,7 @@ from ..bookmark_editor import job_editor
 from ..bookmark_editor import bookmark_editor
 from ..bookmark_editor import bookmark_editor_widget
 from .. import actions
-from ..templates import actions as template_actions
+from ..templates import actions as actions
 from . import base
 
 
@@ -164,7 +164,7 @@ class Test(base.BaseCase):
             self.assertIsInstance(job, str)
 
             # Will trigger an automatic reload and select
-            v = template_actions.extract_zip_template(t, server, job)
+            v = actions.extract_zip_template(t, server, job)
             self.assertIsNotNone(v)
             self.assertTrue(os.path.isdir(v))
 

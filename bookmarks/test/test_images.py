@@ -6,7 +6,6 @@ import shutil
 from PySide2 import QtCore, QtGui, QtWidgets
 
 from .. import common
-from .. import images
 from . import base
 
 
@@ -27,12 +26,8 @@ class Test(base.BaseCase):
         for f in os.listdir(root):
             shutil.copy(root + os.sep + f, common.temp_path())
 
-    def test_pixel_ratio(self):
-        common.init_pixel_ratio()
-        self.assertIsNotNone(images.pixel_ratio)
-        self.assertIsInstance(images.pixel_ratio, float)
-
     def test_get_oiio_namefilters(self):
+        from .. import images
         v = images.get_oiio_namefilters()
         self.assertIsNotNone(v)
         self.assertIsInstance(v, str)
@@ -40,6 +35,7 @@ class Test(base.BaseCase):
         self.assertIn('jpg', v)
 
     def test_get_oiio_extensions(self):
+        from .. import images
         v = images.get_oiio_extensions()
         self.assertIsNotNone(v)
         self.assertIsInstance(v, list)
@@ -47,6 +43,7 @@ class Test(base.BaseCase):
         self.assertIn('jpg', v)
 
     def test_check_for_thumbnail_image(self):
+        from .. import images
         v = images.check_for_thumbnail_image(common.temp_path())
         self.assertIsNotNone(v)
         self.assertIsInstance(v, str)
@@ -56,6 +53,7 @@ class Test(base.BaseCase):
         self.assertIsNone(v)
 
     def test_get_placeholder_path(self):
+        from .. import images
         for ext in ('ma', 'aep'):
             p = base.random_str(32) + '.' + ext
 
@@ -64,7 +62,8 @@ class Test(base.BaseCase):
             self.assertTrue(os.path.isfile(v))
 
     def test_oiio_make_thumbnail(self):
-        server, job, root = common.local_user_bookmark()
+        from .. import images
+        server, job, root = common.pseudo_local_bookmark()
         size = int(round(common.thumbnail_size * 0.5))
 
         for f in os.listdir(common.temp_path()):
@@ -89,8 +88,9 @@ class Test(base.BaseCase):
             self.assertTrue(os.path.isfile(dest))
 
     def test_get_thumbnail(self):
-        server, job, root = common.local_user_bookmark()
-        
+        from .. import images
+        server, job, root = common.pseudo_local_bookmark()
+
         # Invalid
         source = '/'.join((server, job, root, 'thumbnail.png'))
         self.assertTrue(os.path.isfile(source))
@@ -145,7 +145,8 @@ class Test(base.BaseCase):
             self.assertEqual(m, s * images.pixel_ratio)
 
     def test_get_cached_thumbnail_path(self):
-        server, job, root = common.local_user_bookmark()
+        from .. import images
+        server, job, root = common.pseudo_local_bookmark()
         arr = []
 
         for _ in range(999):
@@ -157,14 +158,14 @@ class Test(base.BaseCase):
             self.assertIsInstance(v, str)
         self.assertEqual(len(arr), len(set(arr)))
 
-    def test_test_image_cache(self):
+    def test_image_cache(self):
+        from .. import images
         for f in os.listdir(common.temp_path()):
             if f == 'thumbnail.png':
                 continue
             if 'png' not in f:
                 continue
             p = common.temp_path() + '/' + f
-            from .. import actions
             self.assertTrue(os.path.isfile(p))
 
             s = int(common.thumbnail_size)
@@ -182,6 +183,12 @@ class Test(base.BaseCase):
             self.assertFalse(v.isNull())
             self.assertEqual(v.size().width(), s)
 
+            s = int(common.thumbnail_size * 2)
+            v = images.ImageCache.get_pixmap(p, s)
+            self.assertIsInstance(v, QtGui.QPixmap)
+            self.assertFalse(v.isNull())
+            self.assertEqual(v.size().width(), s)
+
             s = int(common.thumbnail_size)
             v = images.ImageCache.get_image(p, s)
             self.assertIsInstance(v, QtGui.QImage)
@@ -189,6 +196,12 @@ class Test(base.BaseCase):
             self.assertEqual(v.size().width(), s)
 
             s = int(common.thumbnail_size / 0.5)
+            v = images.ImageCache.get_image(p, s)
+            self.assertIsInstance(v, QtGui.QImage)
+            self.assertFalse(v.isNull())
+            self.assertEqual(v.size().width(), s)
+
+            s = int(common.thumbnail_size * 2)
             v = images.ImageCache.get_image(p, s)
             self.assertIsInstance(v, QtGui.QImage)
             self.assertFalse(v.isNull())

@@ -19,156 +19,12 @@ from . import common
 from . import images
 
 
-@common.error
-@common.debug
-def uninitialize():
-    """Closes and deletes all cached data and ui elements.
-
-    """
-
-    from . threads import threads
-
-    threads.quit_threads()
-    common.main_widget.close()
-    common.main_widget.deleteLater()
-    common.main_widget = None
-
-    if common.init_mode == common.StandaloneMode:
-        QtWidgets.QApplication.instance().quit()
-
-    # import gc
-    #
-    # from . lists import alembic_widget
-    # from . lists import thumb_capture
-    # from . lists import thumb_library
-    # from . lists import thumb_picker
-    # from .property_editor import asset_editor
-    # from .property_editor import bookmark_editor
-    # from .property_editor import file_editor
-    # from .property_editor import preference_editor
-    #
-    # from . import standalone
-    #
-    # from . import main
-    # from . import database
-    # from . import images
-    # from . import ui
-    # from . import actions
-    # from .threads import threads
-    # from . lists import delegate
-    #
-    # delete_timers()
-    # threads.quit()
-    #
-    # if STANDALONE and standalone.instance():
-    #     standalone._instance.hide()
-    #
-    # if main._instance:
-    #     main._instance.hide()
-    #
-    #     for widget in (
-    #             main._instance.bookmarks_widget,
-    #             main._instance.assets_widget,
-    #             main._instance.files_widget,
-    #             main._instance.favourites_widget,
-    #             main._instance.tasks_widget
-    #     ):
-    #         if not widget:
-    #             continue
-    #
-    #         widget.removeEventFilter(widget)
-    #         widget.removeEventFilter(main._instance)
-    #         if hasattr(widget.model(), 'sourceModel'):
-    #             widget.model().sourceModel().deleteLater()
-    #             widget.model().setSourceModel(None)
-    #         widget.model().deleteLater()
-    #         widget.setModel(None)
-    #
-    #         for child in widget.children():
-    #             child.deleteLater()
-    #
-    #         widget.deleteLater()
-    #
-    #     for widget in (main._instance.topbar_widget, main._instance.stacked_widget, main._instance.statusbar):
-    #         if not widget:
-    #             continue
-    #
-    #         for child in widget.children():
-    #             child.deleteLater()
-    #         widget.deleteLater()
-    #
-    #     main._instance._initialized = False
-    #
-    # global SERVERS
-    # SERVERS = []
-    # global BOOKMARKS
-    # BOOKMARKS = {}
-    # global favourites
-    # favourites = {}
-    # global hashes
-    # hashes = {}
-    #
-    # global font_db
-    # try:
-    #     font_db.deleteLater()
-    # except:
-    #     pass
-    # font_db = None
-    #
-    # # Signas teardown
-    # global signals
-    # for k, v in Signals.__dict__.items():
-    #     if not isinstance(v, QtCore.Signal):
-    #         continue
-    #     if not hasattr(signals, k):
-    #         continue
-    #     signal = getattr(signals, k)
-    #     try:
-    #         signal.disconnect()
-    #     except RuntimeError as e:
-    #         pass
-    #
-    # try:
-    #     signals.deleteLater()
-    # except:
-    #     pass
-    # signals = None
-    #
-    # database.close()
-    # images.reset()
-    # common.delete()
-    # ui.reset()
-    # delegate.reset()
-    #
-    # alembic_widget.close()
-    # thumb_capture.close()
-    # thumb_library.close()
-    # thumb_picker.close()
-    # asset_editor.close()
-    # bookmark_editor.close()
-    # file_editor.close()
-    # preference_editor.close()
-    #
-    # if main._instance:
-    #     main._instance.deleteLater()
-    #     main._instance = None
-    # if STANDALONE and standalone._instance:
-    #     standalone._instance.deleteLater()
-    #     standalone._instance = None
-    #
-    # # delete_module_import_cache()
-    #
-    # # Force garbage collection
-    # gc.collect()
-
-
-
-
 def edit_persistent_bookmarks():
-    """Opens the `static_bookmarks.json`.
+    """Opens `common.static_bookmarks_template`.
 
     """
-    execute(common.get_template_file_path(common.static_bookmarks_template))
+    execute(common.get_rsc(
+        f'{common.TemplateResource}/{common.static_bookmarks_template}'))
 
 
 def add_server(v):
@@ -507,7 +363,7 @@ def set_task_folder(v):
 @common.error
 @common.debug
 def toggle_sequence():
-    if common.main_widget is None:
+    if common.main_widget is None or not common.main_widget._initialized:
         return
     if common.current_tab() not in (common.FileTab, common.FavouriteTab):
         return
@@ -523,7 +379,7 @@ def toggle_sequence():
 @common.error
 @common.debug
 def toggle_archived_items():
-    if common.main_widget is None:
+    if common.main_widget is None or not common.main_widget._initialized:
         return
     w = common.widget()
     proxy = w.model()
@@ -535,7 +391,7 @@ def toggle_archived_items():
 @common.error
 @common.debug
 def toggle_active_item():
-    if common.main_widget is None:
+    if common.main_widget is None or not common.main_widget._initialized:
         return
     w = common.widget()
     proxy = w.model()
@@ -547,7 +403,7 @@ def toggle_active_item():
 @common.error
 @common.debug
 def toggle_favourite_items():
-    if common.main_widget is None:
+    if common.main_widget is None or not common.main_widget._initialized:
         return
     w = common.widget()
     proxy = w.model()
@@ -559,7 +415,7 @@ def toggle_favourite_items():
 @common.error
 @common.debug
 def toggle_inline_icons():
-    if common.main_widget is None:
+    if common.main_widget is None or not common.main_widget._initialized:
         return
 
     widget = common.widget()
@@ -575,7 +431,7 @@ def toggle_inline_icons():
 @common.error
 @common.debug
 def toggle_make_thumbnails():
-    if common.main_widget is None:
+    if common.main_widget is None or not common.main_widget._initialized:
         return
     widget = common.widget()
     model = widget.model().sourceModel()
@@ -591,16 +447,17 @@ def toggle_make_thumbnails():
 
 @QtCore.Slot()
 def toggle_task_view():
-    if not common.main_widget:
+    if common.main_widget is None or not common.main_widget._initialized:
         return
     if common.current_tab() != common.FileTab:
         return
-    common.widget(common.TaskTab).setHidden(not common.widget(common.TaskTab).isHidden())
+    common.widget(common.TaskTab).setHidden(
+        not common.widget(common.TaskTab).isHidden())
     common.signals.taskViewToggled.emit()
 
 
 def toggle_filter_editor():
-    if common.main_widget is None:
+    if common.main_widget is None or not common.main_widget._initialized:
         return
     w = common.widget()
     if w.filter_editor.isHidden():
@@ -617,7 +474,7 @@ def asset_identifier_changed(table, source, key, value):
     """Refresh the assets model if the identifier changes.
 
     """
-    if common.main_widget is None:
+    if common.main_widget is None or not common.main_widget._initialized:
         return
     # All shotgun fields should be prefix by 'shotgun_'
     if not (table == database.BookmarkTable and key == 'identifier'):
@@ -633,7 +490,7 @@ def selection(func):
     """
     @functools.wraps(func)
     def func_wrapper():
-        if common.main_widget is None:
+        if common.main_widget is None or not common.main_widget._initialized:
             return None
         index = common.selected_index()
         if not index.isValid():
@@ -645,7 +502,7 @@ def selection(func):
 @common.error
 @common.debug
 def increase_row_size():
-    if common.main_widget is None:
+    if common.main_widget is None or not common.main_widget._initialized:
         return
     widget = common.widget()
     proxy = widget.model()
@@ -662,7 +519,7 @@ def increase_row_size():
 @common.error
 @common.debug
 def decrease_row_size():
-    if common.main_widget is None:
+    if common.main_widget is None or not common.main_widget._initialized:
         return
     widget = common.widget()
     proxy = widget.model()
@@ -679,7 +536,7 @@ def decrease_row_size():
 @common.error
 @common.debug
 def reset_row_size():
-    if common.main_widget is None:
+    if common.main_widget is None or not common.main_widget._initialized:
         return
     widget = common.widget()
     proxy = widget.model()
@@ -1002,7 +859,7 @@ def exec_instance():
 @common.error
 @common.debug
 def change_tab(idx):
-    if not common.main_widget:
+    if common.main_widget is None or not common.main_widget._initialized:
         return
     if common.current_tab() == idx:
         return
@@ -1557,7 +1414,7 @@ def paste_asset_properties(index):
 @common.error
 @common.debug
 def toggle_active_mode():
-    if not common.main_widget:
+    if common.main_widget is None or not common.main_widget._initialized:
         return
     # Toggle the active mode
     common.active_mode = int(not bool(common.active_mode))
@@ -1645,3 +1502,186 @@ def import_asset_properties_from_json():
 def convert_image_sequence(index):
     from .external import ffmpeg_widget
     ffmpeg_widget.show(index.data(QtCore.Qt.StatusTipRole))
+
+
+def add_zip_template(source, mode, prompt=False):
+    """Adds the selected source zip archive as a `mode` template file.
+
+    Args:
+        source (str): Path to a source file.
+        mode (str): A template mode, eg. 'job' or 'asset'
+
+    Returns:
+        str: Path to the saved template file, or `None`.
+
+    """
+    common.check_type(source, str)
+    common.check_type(mode, str)
+
+    from . import ui
+
+    file_info = QtCore.QFileInfo(source)
+    if not file_info.exists():
+        raise RuntimeError('Source does not exist.')
+
+    # Test the zip before saving it
+    if not zipfile.is_zipfile(source):
+        raise RuntimeError('Source is not a zip file.')
+
+    with zipfile.ZipFile(source) as f:
+        corrupt = f.testzip()
+        if corrupt:
+            raise RuntimeError(
+                'The zip archive seems corrupted: {}'.format(corrupt))
+
+    from . import templates
+    root = templates.get_template_folder(mode)
+    name = QtCore.QFileInfo(source).fileName()
+    file_info = QtCore.QFileInfo('{}/{}'.format(root, name))
+
+    # Let's check if file exists before we copy anything...
+    s = 'A template file with the same name exists already.'
+    if file_info.exists() and not prompt:
+        raise RuntimeError(s)
+
+    if file_info.exists():
+        mbox = ui.MessageBox(
+            s,
+            'Do you want to overwrite the existing file?',
+            buttons=[ui.YesButton, ui.CancelButton]
+        )
+        if mbox.exec_() == QtWidgets.QDialog.Rejected:
+            return None
+        QtCore.QFile.remove(file_info.filePath())
+
+    # If copied successfully, let's reload the
+    if not QtCore.QFile.copy(source, file_info.filePath()):
+        raise RuntimeError('An unknown error occured adding the template.')
+
+    common.signals.templatesChanged.emit()
+    return file_info.filePath()
+
+
+def extract_zip_template(source, destination, name):
+    """Expands the selected source zip archive to `destination` as `name`.
+
+    The contents will be expanded to a `{destination}/{name}` where name is an
+    arbitary name of a job or an asset item to be created.
+
+    Args:
+        source (str):           Path to a *.zip archive.
+        description (str):      Path to a folder
+        name (str):             Name of the root folder where the arhive
+                                    contents will be expanded to.
+
+    Returns:
+        str:                    Path to the expanded archive contents.
+
+    """
+    for arg in (source, destination, name):
+        common.check_type(arg, str)
+
+    if not destination:
+        raise ValueError('Destination not set')
+
+    file_info = QtCore.QFileInfo(destination)
+    if not file_info.exists():
+        raise RuntimeError(
+            'Destination {} does not exist.'.format(file_info.filePath()))
+    if not file_info.isWritable():
+        raise RuntimeError(
+            'Destination {} not writable'.format(file_info.filePath()))
+    if not name:
+        raise ValueError('Must enter a name.')
+
+    source_file_info = file_info = QtCore.QFileInfo(source)
+    if not source_file_info.exists():
+        raise RuntimeError('{} does not exist.'.format(
+            source_file_info.filePath()))
+
+    dest_file_info = QtCore.QFileInfo('{}/{}'.format(destination, name))
+    if dest_file_info.exists():
+        raise RuntimeError('{} exists already.'.format(
+            dest_file_info.fileName()))
+
+    with zipfile.ZipFile(source_file_info.absoluteFilePath(), 'r', zipfile.ZIP_DEFLATED) as f:
+        corrupt = f.testzip()
+        if corrupt:
+            raise RuntimeError(
+                'This zip archive seems to be corrupt: {}'.format(corrupt))
+
+        f.extractall(
+            dest_file_info.absoluteFilePath(),
+            members=None,
+            pwd=None
+        )
+
+    common.signals.templateExpanded.emit(dest_file_info.filePath())
+    return dest_file_info.filePath()
+
+
+def remove_zip_template(source, prompt=True):
+    """Deletes a zip template file from the disk.
+
+    Args:
+        source (str): Path to a zip template file.
+
+    """
+    common.check_type(source, str)
+
+    from . import ui
+
+    file_info = QtCore.QFileInfo(source)
+
+    if not file_info.exists():
+        raise RuntimeError('Template does not exist.')
+
+    if prompt:
+        mbox = ui.MessageBox(
+            'Are you sure you want to delete this template?',
+            buttons=[ui.CancelButton, ui.YesButton]
+        )
+        if mbox.exec_() == QtWidgets.QDialog.Rejected:
+            return
+
+    if not QtCore.QFile.remove(source):
+        raise RuntimeError('Could not delete the template archive.')
+
+    common.signals.templatesChanged.emit()
+
+
+@common.error
+@common.debug
+def pick_template(mode):
+    """Prompts the user to pick a new `*.zip` file containing a template
+    directory structure.
+
+    The template is copied to ``%localappdata%/[product]/[mode]_templates/*.zip``
+    folder.
+
+    Args:
+        mode (str): A template mode, eg. `JobTemplateMode`.
+
+    """
+    common.check_type(mode, str)
+
+    dialog = QtWidgets.QFileDialog(parent=None)
+    dialog.setFileMode(QtWidgets.QFileDialog.ExistingFile)
+    dialog.setViewMode(QtWidgets.QFileDialog.List)
+    dialog.setAcceptMode(QtWidgets.QFileDialog.AcceptOpen)
+    dialog.setNameFilters(['*.zip', ])
+    dialog.setFilter(QtCore.QDir.Files | QtCore.QDir.NoDotAndDotDot)
+    dialog.setLabelText(
+        QtWidgets.QFileDialog.Accept,
+        'Select a {} template'.format(mode.title())
+    )
+    dialog.setWindowTitle(
+        'Select *.zip archive to use as a {} template'.format(mode.lower())
+    )
+    if dialog.exec_() == QtWidgets.QDialog.Rejected:
+        return
+    source = next((f for f in dialog.selectedFiles()), None)
+    if not source:
+        return
+
+    add_zip_template(source, mode)

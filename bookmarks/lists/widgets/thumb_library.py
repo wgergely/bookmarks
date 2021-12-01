@@ -216,7 +216,7 @@ class ThumbnailLibraryWidget(QtWidgets.QDialog):
         row = 0
         path = '{root}/{resource}'.format(
             root=RSC_DIR,
-            resource=images.ThumbnailResource
+            resource=common.ThumbnailResource
         )
         path = os.path.normpath(os.path.abspath(path))
 

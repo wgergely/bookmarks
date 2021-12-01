@@ -118,9 +118,7 @@ def move_widget_to_available_geo(widget):
 def set_custom_stylesheet(widget):
     """Set Bookmark's custom stylesheet to the given widget.
 
-    The tokenised stylesheet is stored in the rsc/stylesheet.qss file.
-    We'll load and expand the tokens, then store the stylesheet as `STYLESHEET`
-    in the module.
+    The tokenised stylesheet is stored in `common.stylesheet_file`.
 
     Args:
             widget (QWidget): A widget t apply the stylesheet to.
@@ -133,20 +131,7 @@ def set_custom_stylesheet(widget):
         widget.setStyleSheet(common.stylesheet)
         return
 
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                __file__,
-                os.pardir,
-                os.pardir,
-                'rsc',
-                'stylesheet.qss'
-            )
-        )
-    )
-
-    if not os.path.isfile(path):
-        raise RuntimeError(f'{path} could not be found.')
+    path = common.get_rsc(common.stylesheet_file)
 
     with open(path, 'r', encoding='utf-8') as f:
         f.seek(0)

@@ -906,7 +906,7 @@ def get_icon(
     color=common.color(common.TextDisabledColor),
     size=common.size(common.HeightRow),
     opacity=1.0,
-    resource=images.GuiResource
+    resource=common.GuiResource
 ):
     """Utility method for retuning a QIcon to use in the context menu.
 
@@ -924,7 +924,7 @@ def get_icon(
     icon = QtGui.QIcon()
 
     pixmap = images.ImageCache.get_rsc_pixmap(
-        name, color, size, opacity=opacity)
+        name, color, size, opacity=opacity, resource=resource)
     icon.addPixmap(pixmap, mode=QtGui.QIcon.Normal)
 
     _c = common.color(common.TextSelectedColor) if color else None
@@ -935,7 +935,7 @@ def get_icon(
 
     _c = common.color(common.SeparatorColor) if color else None
     pixmap = images.ImageCache.get_rsc_pixmap(
-        'close', _c, size, opacity=0.5, resource=resource)
+        'close', _c, size, opacity=0.5, resource=common.GuiResource)
 
     icon.addPixmap(pixmap, mode=QtGui.QIcon.Disabled)
 

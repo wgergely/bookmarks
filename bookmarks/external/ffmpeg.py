@@ -97,14 +97,9 @@ def _get_font_path():
     can consume.
 
     """
-    v = os.path.sep.join((__file__, os.path.pardir, os.path.pardir, 'rsc', 'fonts',
-                f'{common.medium_font}.ttf'))
-    v = os.path.normpath(os.path.abspath(v))
-    if not os.path.isfile(v):
-        raise RuntimeError('Font could not be found.')
-
+    v = common.get_rsc(f'fonts/{common.medium_font}.ttf')
     v = v.replace(':', '\\:').replace('\\', '\\\\').replace('\\\\:', '\\:')
-    return '\'{}\''.format(v)
+    return f'\'{v}\''
 
 
 def _get_sequence_start_end(path):

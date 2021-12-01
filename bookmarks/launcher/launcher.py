@@ -185,7 +185,7 @@ class LauncherItemEditor(QtWidgets.QDialog):
             self.thumbnail_editor,
             caption='Pick a Thumbnail',
             filter=images.get_oiio_namefilters(),
-            dir=QtCore.QFileInfo(__file__ + os.path.sep + os.pardir + os.path.sep + os.pardir + os.path.sep + 'rsc' + os.path.sep + 'formats').filePath()
+            dir=QtCore.QFileInfo(common.get_rsc(common.FormatResource)).filePath()
         )
 
     def _pick(self, editor, caption=None, filter=None, dir=None):

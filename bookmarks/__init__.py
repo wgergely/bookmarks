@@ -127,7 +127,7 @@ def get_info():
     ))
 
 
-def _verify_dependecies():
+def verify_dependecies():
     """Checks the presence of all required python modules.
 
     Raises:
@@ -152,7 +152,7 @@ def exec_():
 
     """
     print(get_info())
-    _verify_dependecies()
+    verify_dependecies()
     from . import common
     common.initialize(common.StandaloneMode)
     from . import standalone

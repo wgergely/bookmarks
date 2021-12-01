@@ -6,7 +6,7 @@
 import functools
 from PySide2 import QtCore, QtWidgets, QtGui
 
-import _scandir
+
 
 from .. import database
 from .. import common
@@ -161,7 +161,7 @@ class AssetsModel(BaseModel):
             table=database.BookmarkTable
         )
 
-        for entry in _scandir.scandir(db.source()):
+        for entry in os.scandir(db.source()):
             if entry.name.startswith('.'):
                 continue
             if not entry.is_dir():

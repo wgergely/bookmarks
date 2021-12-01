@@ -1085,8 +1085,8 @@ def publish_capture(workspace, capture_folder, scene_info, ext):
         s = '{} is not writable.'.format(publish_folder)
         raise OSError(s)
 
-    import _scandir
-    for entry in _scandir.scandir(publish_folder):
+    
+    for entry in os.scandir(publish_folder):
         os.remove(entry.path)
 
     idx = 0

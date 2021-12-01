@@ -2,7 +2,7 @@
 """The view and model used to browse files.
 
 """
-import _scandir
+
 import functools
 
 from PySide2 import QtWidgets, QtCore, QtGui
@@ -595,7 +595,7 @@ class FilesModel(basemodel.BaseModel):
 
         """
         try:
-            it = _scandir.scandir(path)
+            it = os.scandir(path)
         except OSError as e:
             log.error(e)
             return

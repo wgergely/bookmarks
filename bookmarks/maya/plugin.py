@@ -16,44 +16,54 @@ import maya.api.OpenMaya as OpenMaya
 import maya.cmds as cmds
 
 
-k = 'BOOKMARKS_ROOT'
-PRODUCT = 'bookmarks'
-VENDOR = 'Gergely Wootsch'
+env_key = 'BOOKMARKS_ROOT'
+product = 'bookmarks'
+author = 'Gergely Wootsch'
 
 maya_useNewAPI = True
 
 
-def init_environment():
-    # Check if the environment variable is set
-    if k not in os.environ:
+
+def init_environment(env_key, add_private=False):
+    """Add the dependencies to the Python environment.
+
+    The method requires that BOOKMARKS_ENV_KEY is set. The key is usually set
+    by the Bookmark installer to point to the install root directory.
+    The
+
+    Raises:
+            EnvironmentError: When the BOOKMARKS_ENV_KEY is not set.
+            RuntimeError: When the BOOKMARKS_ENV_KEY is invalid or a directory missing.
+
+    """
+    if env_key not in os.environ:
         raise EnvironmentError(
-            'Cannot load the plugin, because the "{}" environment variable is not set.'.format(k))
+            f'"{env_key}" environment variable is not set.')
 
-    # Check if it points to a valid directory
-    if not os.path.isdir(os.environ[k]):
-        raise EnvironmentError(
-            'Cannot load the plugin, because "{}" does not exist.'.format(os.environ[k]))
+    v = os.environ[env_key]
 
-    # Add the package root to bin
-    r = os.path.normapth(os.environ[k])
-    if r not in os.environ['PATH']:
-        os.environ['PATH'] = r + ';' + os.environ['PATH']
+    if not os.path.isdir(v):
+        raise RuntimeError(
+            f'"{v}" is not a falid folder. Is "{env_key}" environment variable set?')
 
-    # Add install directories to sys.path
-    for d in ('shared', 'bin'):
-        p = os.path.normpath(os.environ[k] + os.path.sep + d)
-        if not os.path.isdir(p):
-            raise EnvironmentError(
-                'Cannot load the plugin, because "{}" does not exist.'.format(p))
+    # Add BOOKMARKS_ENV_KEY to the PATH
+    v = os.path.normpath(os.path.abspath(v)).strip()
+    if v.lower() not in os.environ['PATH'].lower():
+        os.environ['PATH'] = v + ';' + os.environ['PATH'].strip(';')
+ 
+    def _add_path_to_sys(p):
+        _v = f'{v}{os.path.sep}{p}'
+        if not os.path.isdir(_v):
+            raise RuntimeError(f'{_v} does not exist.')
 
-        if d == 'shared':
-            # Add the `shared` folder to the python path
-            if p not in sys.path:
-                sys.path.insert(0, p)
-        if d == 'bin':
-            # Add the `bin` folder to the current path envrionment
-            if p not in os.environ['PATH']:
-                os.environ['PATH'] = p + ';' + os.environ['PATH']
+        if _v in sys.path:
+            return
+        sys.path.append(_v)
+
+    _add_path_to_sys('shared')
+    if add_private:
+        _add_path_to_sys('private')
+    sys.path.append(v)
 
 
 def get_modules():

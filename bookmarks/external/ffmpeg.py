@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """Common FFMpeg functionality."""
-import re
 import os
+import re
 from datetime import datetime
 import subprocess
 import string
 
-import _scandir
+
 from PySide2 import QtCore, QtWidgets
 
 from .. import images
@@ -17,6 +17,7 @@ from .. import database
 
 
 PROGRESS_MATCH = re.compile(r'frame=.+?([0-9]+).+?fps.*')
+
 
 class SafeDict(dict):
     def __missing__(self, key):
@@ -98,7 +99,7 @@ def _get_font_path():
 
     """
     v = os.path.sep.join((__file__, os.path.pardir, os.path.pardir, 'rsc', 'fonts',
-                f'{common.medium_font}.ttf'))
+                          f'{common.medium_font}.ttf'))
     v = os.path.normpath(os.path.abspath(v))
     if not os.path.isfile(v):
         raise RuntimeError('Font could not be found.')
@@ -130,7 +131,7 @@ def _get_sequence_start_end(path):
         raise RuntimeError('{} does not exists.'.format(_dir))
 
     f = []
-    for entry in _scandir.scandir(_dir.path()):
+    for entry in os.scandir(_dir.path()):
         _path = entry.path.replace('\\', '/')
         if not seq.group(1) in _path:
             continue

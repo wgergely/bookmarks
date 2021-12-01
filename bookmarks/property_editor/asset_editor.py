@@ -3,7 +3,7 @@
 
 """
 import functools
-import _scandir
+
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
@@ -279,7 +279,7 @@ class AssetEditor(base.BasePropertyEditor):
 
         """
         source = '/'.join((self.server, self.job, self.root))
-        items = [f.name for f in _scandir.scandir(source) if f.is_dir()]
+        items = [f.name for f in os.scandir(source) if f.is_dir()]
         completer = QtWidgets.QCompleter(items, parent=self)
         completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
         common.set_custom_stylesheet(completer.popup())

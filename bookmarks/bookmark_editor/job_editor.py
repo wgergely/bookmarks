@@ -3,9 +3,10 @@
 server.
 
 """
+import os
 import functools
+
 from PySide2 import QtCore, QtGui, QtWidgets
-import _scandir
 
 from .. import common
 from .. import ui
@@ -58,7 +59,7 @@ def get_job_thumbnail(path):
     if not file_info.exists():
         return QtGui.QPixmap()
 
-    for entry in _scandir.scandir(file_info.absoluteFilePath()):
+    for entry in os.scandir(file_info.absoluteFilePath()):
         if entry.is_dir():
             continue
 
@@ -98,7 +99,7 @@ class AddJobWidget(base.BasePropertyEditor):
 
     def init_data(self):
         items = []
-        for entry in _scandir.scandir(self.server):
+        for entry in os.scandir(self.server):
             if not entry.is_dir():
                 continue
             items.append(entry.name)
@@ -333,7 +334,7 @@ class JobListWidget(ui.ListWidget):
             self.blockSignals(False)
             return
 
-        for entry in _scandir.scandir(self.server):
+        for entry in os.scandir(self.server):
             if not entry.is_dir():
                 continue
             file_info = QtCore.QFileInfo(entry.path)
@@ -382,7 +383,7 @@ class JobListWidget(ui.ListWidget):
         # files inside the folder
         is_valid = False
         try:
-            next(_scandir.scandir(item.data(QtCore.Qt.UserRole)))
+            next(os.scandir(item.data(QtCore.Qt.UserRole)))
             is_valid = True
         except StopIteration:
             is_valid = True

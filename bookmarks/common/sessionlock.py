@@ -24,9 +24,9 @@ these modes.
 import os
 import re
 import psutil
-import _scandir
 
 from PySide2 import QtCore
+
 from . import common
 
 
@@ -34,7 +34,6 @@ FORMAT = 'lock'
 PREFIX = 'session_lock'
 LOCK_PATH = '{root}/{product}/{prefix}_{pid}.{ext}'
 LOCK_DIR = '{root}/{product}'
-
 
 
 def get_lock_path():
@@ -63,7 +62,7 @@ def prune_lock():
         ext=FORMAT
     )
     pids = psutil.pids()
-    for entry in _scandir.scandir(path):
+    for entry in os.scandir(path):
         if entry.is_dir():
             continue
 
@@ -95,7 +94,7 @@ def init_lock():
         product=common.product,
     )
     # Iterate over all lock files and check their contents
-    for entry in _scandir.scandir(path):
+    for entry in os.scandir(path):
         if entry.is_dir():
             continue
 

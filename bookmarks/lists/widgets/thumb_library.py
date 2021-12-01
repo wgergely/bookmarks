@@ -3,7 +3,7 @@
 
 """
 import os
-import _scandir
+
 from PySide2 import QtCore, QtWidgets, QtGui
 
 from ... import common
@@ -221,7 +221,7 @@ class ThumbnailLibraryWidget(QtWidgets.QDialog):
         path = os.path.normpath(os.path.abspath(path))
 
         idx = 0
-        for entry in _scandir.scandir(path):
+        for entry in os.scandir(path):
             label = ClickableItem(
                 entry.path.replace('\\', '/'),
                 parent=self

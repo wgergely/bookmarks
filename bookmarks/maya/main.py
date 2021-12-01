@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # pylint: disable=E0401
-"""This module defines Bookmarks's ``PluginWidget``, a dockable `mayaMixin`
+"""This module defines Bookmarks's ``MayaWidget``, a dockable `mayaMixin`
 widget that wraps MainWidget.
 
 Usage:
@@ -34,51 +34,40 @@ from . import actions as maya_actions
 from . import base as maya_base
 
 
-object_name = 'm{}MainButton'.format(__name__.split('.')[0])
-
-
-_button_instance = None
-_instance = None
-
-
-def instance():
-    return _instance
-
-
-def button_instance():
-    return _button_instance
-
-
 @common.error
 @common.debug
 def init_tool_button(*args, **kwargs):
     """Finds the built-in Toolbox menu and embeds a custom control-button.
 
     """
-    global _button_instance
+
     ptr = OpenMayaUI.MQtUtil.findControl('ToolBox')
+
     if ptr is None:
-        _button_instance = ToolButton(common.size(common.HeightAsset))
-        _button_instance.show()
+        common.maya_button_widget = MayaButtonWidget(common.size(common.HeightRow * 2))
+        common.maya_button_widget.show()
         return
 
-    widget = shiboken2.wrapInstance(int(ptr), QtWidgets.QWidget)
-    if not widget:
+    parent = shiboken2.wrapInstance(int(ptr), QtWidgets.QWidget)
+    if not parent:
+        common.maya_button_widget = MayaButtonWidget(common.size(common.HeightRow * 2))
+        common.maya_button_widget.show()
         return
 
-    _button_instance = ToolButton(widget.width())
-    widget.layout().addWidget(_button_instance)
-    _button_instance.adjustSize()
-    _button_instance.update()
+    common.maya_button_widget = MayaButtonWidget(parent.width())
+    parent.layout().addWidget(common.maya_button_widget, 0)
+    common.maya_button_widget.adjustSize()
+    common.maya_button_widget.update()
+    common.maya_button_widget.show()
 
 
 @QtCore.Slot()
 @common.error
 def show():
-    """Main function to show ``PluginWidget`` inside Maya as a dockable
+    """Main function to show ``MayaWidget`` inside Maya as a dockable
     widget.
 
-    The function will create ``PluginWidget`` if it doesn't yet exist and
+    The function will create ``MayaWidget`` if it doesn't yet exist and
     dock it to the _AttributeEditor_. If it exists it will get the existing
     instance and show it if not currently visible, hide it if visible.
 
@@ -92,27 +81,21 @@ def show():
             widget.show()
 
     """
-    app = QtWidgets.QApplication.instance()
-
-    # We will check if there's already a _PluginWidget_ instance
-    for widget in app.allWidgets():
+    # We will check if there's already a _MayaWidget_ instance
+    for widget in QtWidgets.QApplication.instance().allWidgets():
         # Skipping workspaceControls objects, just in case there's a name conflict
         # between what the parent().objectName() and this method yields
-        if re.match('{}.*WorkspaceControl'.format(common.product), widget.objectName()):
+        if re.match(f'{common.product}_.*WorkspaceControl', widget.objectName()):
             continue
 
-        match = re.match('{}.*'.format(common.product), widget.objectName())
-
-        # Skip invalid matches
+        match = re.match(f'{common.product}_.*', widget.objectName())
         if not match:
             continue
 
         # We have found our instance and now we'll restore/toggle its state
-
         # The widget is visible and is currently a floating window
         if not widget.parent():
-            state = widget.isVisible()
-            widget.setVisible(not state)
+            widget.setVisible(not widget.isVisible())
             return
 
         # The widget is docked with a workspace control object
@@ -124,46 +107,44 @@ def show():
                 cmds.workspaceControl(
                     workspace_control, e=True, visible=not visible)
                 return
+
             state = cmds.workspaceControl(
                 workspace_control, q=True, collapse=True)
+
             if state is None:
                 cmds.workspaceControl(
                     workspace_control, e=True, tabToControl=('AttributeEditor', -1))
                 cmds.workspaceControl(workspace_control, e=True, visible=True)
                 cmds.workspaceControl(
                     workspace_control, e=True, collapse=False)
-                return
-            if not widget.parent().isVisible():
+            elif not widget.parent().isVisible():
                 cmds.workspaceControl(workspace_control, e=True, visible=True)
                 cmds.workspaceControl(
                     workspace_control, e=True, collapse=False)
-                return
-            if state is False:
+            elif state is False:
                 cmds.workspaceControl('AttributeEditor', e=True, visible=True)
                 cmds.workspaceControl(
                     'AttributeEditor', e=True, collapse=False)
-                return
-            if state is True:
+            elif state is True:
                 cmds.workspaceControl(
                     workspace_control, e=True, collapse=True)
-            return
         else:
             # We'll toggle the visibilty
             state = widget.parent().isVisible()
             widget.setVisible(not state)
-        return
 
-    # We should only get here if no PluginWidget instances were found elsewhere
-    # Initializing PluginWidget
-    global _instance
-    _instance = PluginWidget()
-    _instance.show()
 
+def init_maya_widget():
+    if isinstance(common.maya_widget, MayaWidget):
+        raise RuntimeError('Already initialized!')
+
+    common.maya_widget = MayaWidget()
+    common.maya_widget.show()
 
     # By default, the tab is docked just next to the attribute editor
-    for widget in app.allWidgets():
+    for widget in QtWidgets.QApplication.instance().allWidgets():
         match = re.match(
-            '{}.*WorkspaceControl'.format(common.product), widget.objectName())
+            f'{common.product}.*WorkspaceControl', widget.objectName())
 
         if not match:
             continue
@@ -177,27 +158,19 @@ def show():
         )
         cmds.evalDeferred(func)
         cmds.evalDeferred(widget.raise_)
-        break
+        return
 
 
 class PluginContextMenu(contextmenu.BaseContextMenu):
     def setup(self):
         self.apply_bookmark_settings_menu()
-
         self.separator()
-
         self.save_menu()
-
         self.separator()
-
         self.open_import_scene_menu()
-
         self.separator()
-
         self.export_sets_menu()
-
         self.separator()
-
         self.capture_menu()
 
     def apply_bookmark_settings_menu(self):
@@ -209,13 +182,16 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         if not all((server, job, root, asset)):
             return
 
-        self.menu['apply_settings'] = {
-            'text': 'Apply scene common...',
+        self.menu[contextmenu.key()] = {
+            'text': 'Apply scene settings...',
             'icon': ui.get_icon('check', color=common.color(common.GreenColor)),
             'action': maya_actions.apply_settings
         }
 
     def save_menu(self):
+        if not all(common.active(common.AssetKey, args=True)):
+            return
+
         scene = QtCore.QFileInfo(cmds.file(query=True, expandName=True))
 
         self.menu[contextmenu.key()] = {
@@ -288,7 +264,6 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         sets = maya_base.outliner_sets()
         keys = sorted(set(sets))
 
-
         kk = contextmenu.key()
         self.menu[kk] = collections.OrderedDict()
         self.menu[kk + ':icon'] = icon
@@ -297,7 +272,8 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         for e in formats:
             k = contextmenu.key()
             self.menu[kk][k] = collections.OrderedDict()
-            self.menu[kk][k + ':text'] = '*.{}: Export Timeline'.format(e.upper())
+            self.menu[kk][k +
+                          ':text'] = '*.{}: Export Timeline'.format(e.upper())
             for _k in keys:
                 s = _k.replace(':', ' - ')
                 self.menu[kk][k][contextmenu.key()] = {
@@ -314,7 +290,8 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
             k = contextmenu.key()
             self.menu[kk][k] = collections.OrderedDict()
             self.menu[kk][k + ':icon'] = icon
-            self.menu[kk][k + ':text'] = '*.{}: Export Current Frame'.format(e.upper())
+            self.menu[kk][k +
+                          ':text'] = '*.{}: Export Current Frame'.format(e.upper())
             for _k in keys:
                 s = _k.replace(':', ' - ')
                 self.menu[kk][k][contextmenu.key()] = {
@@ -356,15 +333,15 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         return
 
 
-class ToolButtonContextMenu(PluginContextMenu):
+class MayaButtonWidgetContextMenu(PluginContextMenu):
     """The context-menu associated with the BrowserButton."""
 
     def __init__(self, parent=None):
-        super(ToolButtonContextMenu, self).__init__(
+        super(MayaButtonWidgetContextMenu, self).__init__(
             QtCore.QModelIndex(), parent=parent)
 
 
-class PluginWidgetContextMenu(PluginContextMenu):
+class MayaWidgetContextMenu(PluginContextMenu):
     @common.error
     @common.debug
     def setup(self):
@@ -542,15 +519,14 @@ class PanelPicker(QtWidgets.QDialog):
         self.fade_in.start()
 
 
-
-class ToolButton(ui.ClickableIconButton):
+class MayaButtonWidget(ui.ClickableIconButton):
     """Small widget to embed into the context to toggle the MainWidget's visibility.
 
     """
-    ContextMenu = ToolButtonContextMenu
+    ContextMenu = MayaButtonWidgetContextMenu
 
     def __init__(self, size, parent=None):
-        super(ToolButton, self).__init__(
+        super(MayaButtonWidget, self).__init__(
             'icon',
             (None, None),
             size,
@@ -559,7 +535,7 @@ class ToolButton(ui.ClickableIconButton):
             parent=parent
         )
 
-        self.setObjectName(object_name)
+        self.setObjectName('BookmarksMayaButton')
         self.setAttribute(QtCore.Qt.WA_NoBackground, False)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground, False)
         self.setFocusPolicy(QtCore.Qt.NoFocus)
@@ -626,7 +602,7 @@ class ToolButton(ui.ClickableIconButton):
         widget.exec_()
 
 
-class PluginWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
+class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
     """This Maya mixing wraps the standard Bookmarks widget."""
 
     def __init__(self, parent=None):
@@ -639,9 +615,9 @@ class PluginWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         common.set_custom_stylesheet(self)
 
         # Rename object
-        _object_name = self.objectName().replace(
+        o = self.objectName().replace(
             self.__class__.__name__, common.product)
-        self.setObjectName(_object_name)
+        self.setObjectName(o)
 
         self._create_UI()
         self.setFocusProxy(common.main_widget.stacked_widget)
@@ -758,7 +734,6 @@ class PluginWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         common.widget(common.FavouriteTab).activated.connect(
             maya_actions.execute)
 
-
     @QtCore.Slot(QtCore.QModelIndex)
     @QtCore.Slot(QtCore.QObject)
     def customFilesContextMenuEvent(self, index, parent):
@@ -767,7 +742,7 @@ class PluginWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         width = (width * 0.5) if width > common.size(common.DefaultWidth) else width
         width = width - common.size(common.WidthIndicator)
 
-        widget = PluginWidgetContextMenu(index, parent=parent)
+        widget = MayaWidgetContextMenu(index, parent=parent)
         if index.isValid():
             rect = parent.visualRect(index)
             widget.move(

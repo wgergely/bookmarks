@@ -25,9 +25,6 @@ from . lists import files
 from . lists import tasks
 
 
-_instance = None
-
-
 def init():
     if common.init_mode == common.StandaloneMode:
         raise RuntimeError("Cannot be initialized in `StandaloneMode`.")

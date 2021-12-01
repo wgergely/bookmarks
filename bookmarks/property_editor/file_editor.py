@@ -34,7 +34,6 @@ Example
 import re
 import os
 
-
 from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import ui
@@ -462,8 +461,9 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
                 self.prefix_editor.setText(prefix)
 
         if self._extension and self._file is None:
-            self.extension_editor.setCurrentText(self._extension.upper())
-            self.extension_editor.setDisabled(True)
+            if self.extension_editor.findText(self._extension) > 0:
+                self.extension_editor.setCurrentText(self._extension)
+                self.extension_editor.setDisabled(True)
 
             self.task_editor.blockSignals(True)
             self.update_tasks(self._extension)
@@ -532,6 +532,10 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
         """Creates a new empty file or updates and existing item.
 
         """
+        name = self.name()
+        if not name or '{invalid_token}' in name:
+            raise RuntimeError('Invalid token in output name')
+            
         self.create_file()
         self.save_changed_data_to_db()
         self.thumbnail_editor.save_image()

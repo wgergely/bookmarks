@@ -2,29 +2,29 @@
 """This module contains the available Maya actions.
 
 """
+import os
 import sys
 import uuid
 import time
-import os
 import re
 
 import shiboken2
 from PySide2 import QtWidgets, QtCore
 
 import maya.OpenMayaUI as OpenMayaUI  # pylint: disable=E0401
+import maya.app.general.mayaMixin as mayaMixin
 import maya.cmds as cmds  # pylint: disable=E0401
 
-from . import base as mbase
 from .. import log
 from .. import common
 from .. import ui
-
-from .. import main
 from .. import actions
 
 from .. external import rv
-
 from .. import __path__ as package_path
+
+from . import base
+from . import main
 
 
 @common.error
@@ -66,7 +66,7 @@ def apply_settings(*args, **kwargs):
     """Applies asset and bookmark item properties to the current scene.
 
     """
-    props = mbase.MayaProperties()
+    props = base.MayaProperties()
     mbox = ui.MessageBox(
         'Are you sure you want to apply the following settings?',
         props.get_info(),
@@ -76,12 +76,12 @@ def apply_settings(*args, **kwargs):
     if res == QtWidgets.QDialog.Rejected:
         return
 
-    mbase.patch_workspace_file_rules()
-    mbase.set_framerate(props.framerate)
-    mbase.set_startframe(props.startframe)
-    mbase.set_endframe(props.endframe)
-    mbase.apply_default_render_values()
-    mbase.set_render_resolution(props.width, props.height)
+    base.patch_workspace_file_rules()
+    base.set_framerate(props.framerate)
+    base.set_startframe(props.startframe)
+    base.set_endframe(props.endframe)
+    base.apply_default_render_values()
+    base.set_render_resolution(props.width, props.height)
 
 
 @common.error
@@ -107,31 +107,33 @@ def save_scene(increment=False, type='mayaAscii'):
 
     widget = actions.show_add_file(
         extension=ext, file=_file, create_file=False, increment=increment)
-    file_path = widget.exec_()
-    if file_path == QtWidgets.QDialog.Rejected:
+    if not widget:
         return
-    if not file_path:
+
+    result = widget.exec_()
+
+    if result == QtWidgets.QDialog.Rejected:
+        return
+    if not result:
         raise RuntimeError('Invalid destination path')
 
-    file_info = QtCore.QFileInfo(file_path)
+    file_info = QtCore.QFileInfo(result)
 
     # Let's make sure destination folder exists
     _dir = file_info.dir()
     if not _dir.exists():
         if not _dir.mkpath('.'):
-            s = 'Could not create {}'.format(_dir.path())
-            raise OSError(s)
+            raise OSError(f'Could not create {_dir.path()}')
 
     # Check to make sure we're not overwriting anything
     if file_info.exists():
-        s = 'Unable to save file because {} already exists.'.format(file_path)
-        raise RuntimeError(s)
+        raise RuntimeError(f'Unable to save file because {result} already exists.')
 
-    cmds.file(rename=file_path)
+    cmds.file(rename=result)
     cmds.file(force=True, save=True, type=type)
 
-    common.signals.fileAdded.emit(file_path)
-    return file_path
+    common.signals.fileAdded.emit(result)
+    return result
 
 
 @QtCore.Slot(str)
@@ -163,12 +165,12 @@ def export_set_to_ass(set_name, set_members, frame=True):
         query=True, currentRenderLayer=True)
     ext = 'ass'
 
-    exportdir = mbase.DEFAULT_CACHE_DIR.format(
-        exportdir=mbase.get_export_dir(),
-        ext=mbase.get_export_subdir(ext)
+    exportdir = base.DEFAULT_CACHE_DIR.format(
+        exportdir=base.get_export_dir(),
+        ext=base.get_export_subdir(ext)
     )
 
-    file_path = mbase.CACHE_LAYER_PATH.format(
+    file_path = base.CACHE_LAYER_PATH.format(
         workspace=cmds.workspace(q=True, fn=True),
         exportdir=exportdir,
         set=set_name,
@@ -230,7 +232,7 @@ def export_set_to_ass(set_name, set_members, frame=True):
                 cmds.currentTime(fr, edit=True)
                 _file_path = file_path.replace('.{}'.format(ext), '')
                 _file_path += '_'
-                _file_path += '{}'.format(fr).zfill(mbase.DefaultPadding)
+                _file_path += '{}'.format(fr).zfill(base.DefaultPadding)
                 _file_path += '.'
                 _file_path += ext
 
@@ -280,12 +282,12 @@ def export_set_to_abc(set_name, set_members, frame=False):
     set_name = re.sub(r'[0-9]*$', '', set_name)
     ext = 'abc'
 
-    exportdir = mbase.DEFAULT_CACHE_DIR.format(
-        exportdir=mbase.get_export_dir(),
-        ext=mbase.get_export_subdir(ext)
+    exportdir = base.DEFAULT_CACHE_DIR.format(
+        exportdir=base.get_export_dir(),
+        ext=base.get_export_subdir(ext)
     )
 
-    file_path = mbase.CACHE_PATH.format(
+    file_path = base.CACHE_PATH.format(
         workspace=cmds.workspace(q=True, fn=True),
         exportdir=exportdir,
         set=set_name,
@@ -382,12 +384,12 @@ def export_set_to_obj(set_name, set_members, frame=False):
     set_name = re.sub(r'[0-9]*$', '', set_name)
     ext = 'obj'
 
-    exportdir = mbase.DEFAULT_CACHE_DIR.format(
-        exportdir=mbase.get_export_dir(),
-        ext=mbase.get_export_subdir(ext)
+    exportdir = base.DEFAULT_CACHE_DIR.format(
+        exportdir=base.get_export_dir(),
+        ext=base.get_export_subdir(ext)
     )
 
-    file_path = mbase.CACHE_PATH.format(
+    file_path = base.CACHE_PATH.format(
         workspace=cmds.workspace(q=True, fn=True),
         exportdir=exportdir,
         set=set_name,
@@ -448,7 +450,7 @@ def export_set_to_obj(set_name, set_members, frame=False):
                 cmds.currentTime(fr, edit=True)
                 _file_path = file_path.replace('.{}'.format(ext), '')
                 _file_path += '_'
-                _file_path += '{}'.format(fr).zfill(mbase.DefaultPadding)
+                _file_path += '{}'.format(fr).zfill(base.DefaultPadding)
                 _file_path += '.'
                 _file_path += ext
 
@@ -608,7 +610,7 @@ def open_scene(path):
         s = '{} does not exist.'.format(p)
         raise RuntimeError(s)
 
-    if mbase.is_scene_modified() == QtWidgets.QMessageBox.Cancel:
+    if base.is_scene_modified() == QtWidgets.QMessageBox.Cancel:
         return
     cmds.file(file_info.filePath(), open=True, force=True)
     s = 'Scene opened {}\n'.format(file_info.filePath())
@@ -651,13 +653,13 @@ def import_scene(path, reference=False):
     basename = match.group(1) if match else file_info.baseName()
     basename = re.sub(r'_v$', '', basename, flags=re.IGNORECASE)
 
-    alphabet = mbase._get_available_suffixes(basename)
+    alphabet = base._get_available_suffixes(basename)
     if not alphabet:  # no more suffixes to assign
         return None
 
     w = QtWidgets.QInputDialog()
     w.setWindowTitle('Assign suffix')
-    w.setLabelText(mbase.SUFFIX_LABEL)
+    w.setLabelText(base.SUFFIX_LABEL)
     w.setComboBoxItems(alphabet)
     w.setCancelButtonText('Cancel')
     w.setOkButtonText('Import')
@@ -678,7 +680,7 @@ def import_scene(path, reference=False):
             ns=ns,
             rfn=rfn,
         )
-        mbase._add_suffix_attribute(rfn, suffix, reference=reference)
+        base._add_suffix_attribute(rfn, suffix, reference=reference)
 
         # The reference node is locked by default
         cmds.lockNode(rfn, lock=False)
@@ -690,7 +692,7 @@ def import_scene(path, reference=False):
             i=True,
             ns=ns
         )
-        mbase._add_suffix_attribute(ns, suffix, reference=reference)
+        base._add_suffix_attribute(ns, suffix, reference=reference)
 
     s = '{} was imported.'.format(file_info.filePath())
     log.success(s)
@@ -847,8 +849,8 @@ def export_alembic(destination_path, outliner_set, startframe, endframe, step=1.
             world_shapes.append(world_shape)
 
         # Our custom progress callback
-        perframecallback = '"import {}.maya.widget as w;w.report_export_progress({}, #FRAME#, {}, {})"'.format(
-            common.product.lower(), startframe, endframe, time.time())
+        perframecallback = '"from {}.maya import base;base.report_export_progress({}, #FRAME#, {}, {})"'.format(
+            common.product, startframe, endframe, time.time())
 
         # Let's build the export command
         jobArg = '{f} {fr} {s} {uv} {ws} {wv} {wuvs} {sn} {rt} {df} {pfc} {ro}'.format(
@@ -902,7 +904,7 @@ def capture_viewport(size=1.0):
 
         .. code-block:: python
 
-        PluginWidget.capture_viewport()
+        MayaWidget.capture_viewport()
 
 
     """
@@ -910,7 +912,7 @@ def capture_viewport(size=1.0):
     scene_info = QtCore.QFileInfo(cmds.file(q=True, expandName=True))
 
     # CAPTURE_DESTINATION
-    capture_folder, workspace, base_destination_path = mbase.capture_viewport_destination()
+    capture_folder, workspace, base_destination_path = base.capture_viewport_destination()
 
     _dir = QtCore.QFileInfo(base_destination_path).dir()
     if not _dir.exists():
@@ -918,9 +920,9 @@ def capture_viewport(size=1.0):
 
     # Use our custom ModelPanel picker to select the viewport we want to
     # capture
-    from . import widget
+    from . import main
 
-    picker = widget.PanelPicker()
+    picker = main.PanelPicker()
     picker.exec_()
     panel = picker.panel
 
@@ -936,11 +938,11 @@ def capture_viewport(size=1.0):
     camera = cmds.modelPanel(panel, query=True, camera=True)
 
     # The the panel settings using mCapture.py and update it with our
-    # custom common. See `mbase.CaptureOptions` for the hard-coded
+    # custom common. See `base.CaptureOptions` for the hard-coded
     # defaults we're using here
     from . import mCapture
     options = mCapture.parse_view(panel)
-    options['viewport_options'].update(mbase.CaptureOptions)
+    options['viewport_options'].update(base.CaptureOptions)
 
     # Hide existing panels
     current_state = {}
@@ -967,8 +969,8 @@ def capture_viewport(size=1.0):
             camera=camera,
             width=width,
             height=height,
-            display_options=mbase.DisplayOptions,
-            camera_options=mbase.CameraOptions,
+            display_options=base.DisplayOptions,
+            camera_options=base.CameraOptions,
             viewport2_options=options['viewport2_options'],
             viewport_options=options['viewport_options'],
             format='image',
@@ -1001,16 +1003,16 @@ def capture_viewport(size=1.0):
             except:
                 print(f'# Could not restore {panel} after capture')
 
-
     # Publish output
     publish_capture(workspace, capture_folder, scene_info, ext)
 
     # Push and reveal output
-    path = mbase.CAPTURE_FILE.format(
+    path = base.CAPTURE_FILE.format(
         workspace=workspace,
         capture_folder=capture_folder,
         scene=scene_info.baseName(),
-        frame='{}'.format(int(cmds.playbackOptions(q=True, minTime=True))).zfill(mbase.DefaultPadding),
+        frame='{}'.format(int(cmds.playbackOptions(q=True, minTime=True))).zfill(
+            base.DefaultPadding),
         ext=ext
     )
     push_capture(path)
@@ -1070,7 +1072,7 @@ def publish_capture(workspace, capture_folder, scene_info, ext):
     end = int(cmds.playbackOptions(q=True, maxTime=True))
     duration = (end - start) + 1
 
-    publish_folder = mbase.CAPTURE_PUBLISH_DIR.format(
+    publish_folder = base.CAPTURE_PUBLISH_DIR.format(
         workspace=workspace,
         capture_folder=capture_folder,
         asset=asset,
@@ -1085,21 +1087,20 @@ def publish_capture(workspace, capture_folder, scene_info, ext):
         s = '{} is not writable.'.format(publish_folder)
         raise OSError(s)
 
-    
     for entry in os.scandir(publish_folder):
         os.remove(entry.path)
 
     idx = 0
     for n in range(int(duration)):
-        frame = str(n + int(start)).zfill(mbase.DefaultPadding)
-        source = mbase.CAPTURE_FILE.format(
+        frame = str(n + int(start)).zfill(base.DefaultPadding)
+        source = base.CAPTURE_FILE.format(
             workspace=workspace,
             capture_folder=capture_folder,
             scene=scene_info.baseName(),
             frame=frame,
             ext=ext
         )
-        dest = mbase.AGNOSTIC_CAPTURE_FILE.format(
+        dest = base.AGNOSTIC_CAPTURE_FILE.format(
             workspace=workspace,
             capture_folder=capture_folder,
             asset=asset,
@@ -1114,58 +1115,38 @@ def publish_capture(workspace, capture_folder, scene_info, ext):
         idx += 1
 
 
-def remove_button():
-    from . import widget as maya_widget
+def remove_maya_widget():
+    if isinstance(common.maya_widget, main.MayaWidget):
+        common.maya_widget.remove_context_callbacks()
+        common.maya_widget.close()
+        common.maya_widget.deleteLater()
+    common.maya_widget = None
 
-    ptr = OpenMayaUI.MQtUtil.findControl('ToolBox')
-    if not ptr:
-        widgets = QtWidgets.QApplication.instance().allWidgets()
-        widget = [f for f in widgets if f.objectName() ==
-                  maya_widget.object_name]
-        if not widget:
-            return
-        widget = widget[0]
 
-    else:
-        widget = shiboken2.wrapInstance(int(ptr), QtWidgets.QWidget)
-        if not widget:
-            return
+def remove_maya_button():
+    if isinstance(common.maya_button_widget, main.MayaButtonWidget):
+        common.maya_button_widget.close()
+        common.maya_button_widget.deleteLater()
+    common.maya_button_widget = None
 
-        widget = widget.findChild(maya_widget.ToolButton)
 
-    widget.hide()
-    widget.deleteLater()
+def remove_workspace_controls():
+    for k in list(mayaMixin.mixinWorkspaceControls):
+        if common.product in k:
+            del mayaMixin.mixinWorkspaceControls[k]
+
+    for widget in QtWidgets.QApplication.instance().allWidgets():
+        try:
+            name = widget.objectName()
+        except:
+            continue
+
+        if re.match(f'{common.product}.*WorkspaceControl', name):
+            remove_workspace_control(widget.objectName())
 
 
 def remove_workspace_control(workspace_control):
-    from . import widget as maya_widget
-
     if cmds.workspaceControl(workspace_control, q=True, exists=True):
         cmds.deleteUI(workspace_control)
         if cmds.workspaceControlState(workspace_control, ex=True):
             cmds.workspaceControlState(workspace_control, remove=True)
-    try:
-        for k in maya_widget.mayaMixin.mixinWorkspaceControls.items():
-            if 'PluginWidget' in k:
-                del maya_widget.mayaMixin.mixinWorkspaceControls[k]
-    except:
-        print('Couldn\'t remove workspace controls')
-
-    sys.stdout.write(
-        '# {}: UI deleted.\n'.format(common.product))
-
-
-def uninitialize():
-    from . import widget as maya_widget
-    if not maya_widget._instance:
-        raise RuntimeError('Not initialized.')
-
-    maya_widget._instance.remove_context_callbacks()
-    maya_widget._instance.deleteLater()
-    maya_widget._instance = None
-    remove_button()
-    # maya_widget._instance.hide()
-
-    for widget in QtWidgets.QApplication.instance().allWidgets():
-        if re.match('PluginWidget.*WorkspaceControl', widget.objectName()):
-            remove_workspace_control(widget.objectName())

@@ -1,8 +1,18 @@
 import os
+import sys
+import importlib
 
 from PySide2 import QtCore
 
-from .. import common
+dependencies = (
+    'PySide2',
+    'OpenImageIO',
+    'alembic',
+    'numpy',
+    'psutil',
+    'shotgun_api3',
+    'slack',
+)
 
 
 def init_environment(env_key, add_private=False):
@@ -45,3 +55,18 @@ def init_environment(env_key, add_private=False):
     if add_private:
         _add_path_to_sys('private')
     sys.path.append(v)
+
+
+def verify_dependecies():
+    """Checks the presence of all required python modules.
+
+    Raises:
+        ModuleNotFoundError: When a required python library was not found.
+
+    """
+    for mod in dependencies:
+        try:
+            importlib.import_module(mod)
+        except ModuleNotFoundError as e:
+            raise ModuleNotFoundError(
+                f'Bookmarks cannot be run. A required dependency was not found\n>> {mod}') from e

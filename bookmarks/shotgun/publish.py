@@ -6,6 +6,7 @@ Our publish logic creates `Version` and `PublishFile` entites linked against
 the current active project and asset and uploads any custom thumbnails set.
 
 """
+import os
 
 from PySide2 import QtCore, QtGui, QtWidgets
 

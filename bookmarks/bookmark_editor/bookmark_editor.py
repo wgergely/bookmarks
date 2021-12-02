@@ -228,8 +228,7 @@ class BookmarkListWidget(ui.ListWidget):
             return
 
         path = self.server + '/' + self.job
-        dirs = self.find_bookmark_dirs(path, -1, 4, [])
-        self._interrupt_requested = False
+        dirs = self.find_bookmark_items(path, -1, 4, [])
 
         for d in dirs:
             item = QtWidgets.QListWidgetItem()
@@ -271,13 +270,11 @@ class BookmarkListWidget(ui.ListWidget):
         if event.key() == QtCore.Qt.Key_Escape:
             self._interrupt_requested = True
 
-    def find_bookmark_dirs(self, path, count, limit, arr, emit_progress=True):
+    def find_bookmark_items(self, path, count, limit, arr, emit_progress=True):
         """Recursive scanning function for finding bookmark folders
         inside the given path.
 
         """
-        QtWidgets.QApplication.instance().processEvents()
-
         if self._interrupt_requested:
             return arr
 
@@ -292,8 +289,7 @@ class BookmarkListWidget(ui.ListWidget):
             return arr
 
         if emit_progress:
-            self.progressUpdate.emit(
-                'Scanning for bookmarks, please wait...\n{}'.format(path))
+            self.progressUpdate.emit(f'Scanning {path}. Please wait...')
 
         for entry in it:
             if not entry.is_dir():
@@ -305,7 +301,7 @@ class BookmarkListWidget(ui.ListWidget):
             if entry.name == common.bookmark_cache_dir:
                 arr.append('/'.join(path.split('/')[:-1]))
 
-            self.find_bookmark_dirs(path, count, limit, arr)
+            self.find_bookmark_items(path, count, limit, arr)
 
         if emit_progress:
             self.progressUpdate.emit('')

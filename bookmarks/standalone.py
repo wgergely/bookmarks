@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-"""The module contains the main objects required to run Bookmarks as a
-standalone Qt application.
+"""The module contains the elements used when initialized in ``StandaloneMode``.
 
 It defines :class:`.BookmarksApp`, Bookmark's custom QApplication, and
-:class:`.BookmarksAppWindow` which is the main window of the application.
+:class:`.BookmarksAppWindow`, a modified :class:`.main.MainWidget`.
+
+Note, in ``EmbeddedMode``, Bookmarks uses :class:`.main.MainWidget` as the main
+widget.
 
 """
 import os

@@ -114,7 +114,7 @@ class Test(base.BaseCase):
             self.assertTrue(os.path.isdir(destination))
 
             destination = common.temp_path() + '/' + base.random_str(12) + \
-                '.' + common.FAVOURITE_FILE_FORMAT
+                '.' + common.favorite_file_ext
 
             v = actions.export_favourites(destination=destination)
             self.assertIsNotNone(v)
@@ -127,11 +127,11 @@ class Test(base.BaseCase):
             if not os.path.isdir(destination):
                 os.makedirs(destination)
             destination = common.temp_path() + '/' + base.random_str(12) + \
-                '.' + common.FAVOURITE_FILE_FORMAT
+                '.' + common.favorite_file_ext
             actions.export_favourites(destination=destination)
 
         for f in os.listdir(common.temp_path()):
-            if common.FAVOURITE_FILE_FORMAT not in f:
+            if common.favorite_file_ext not in f:
                 continue
             actions.import_favourites(common.temp_path() + '/' + f)
 

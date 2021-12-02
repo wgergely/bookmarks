@@ -15,7 +15,7 @@ Usage
     connections to a database
 
 The bookmark databases have currently 3 tables. The `data` table is used to
-store information about folders and files, eg. assets would store their
+store information about folders and files, e.g. assets would store their
 visibility flags, cut information and Shotgun data here.
 The `info` and `properties` tables are linked to the bookmark.
 

@@ -155,14 +155,14 @@ class ToggleSessionModeButton(ui.ClickableIconButton):
         common.signals.activeModeChanged.connect(self.update)
 
     def pixmap(self):
-        if common.active_mode == common.SyncronisedActivePaths:
+        if common.active_mode == common.SynchronisedActivePaths:
             return images.ImageCache.get_rsc_pixmap('check', common.color(common.GreenColor), self._size)
         if common.active_mode == common.PrivateActivePaths:
             return images.ImageCache.get_rsc_pixmap('crossed', common.color(common.RedColor), self._size)
         return images.ImageCache.get_rsc_pixmap('crossed', common.color(common.RedColor), self._size)
 
     def statusTip(self):
-        if common.active_mode == common.SyncronisedActivePaths:
+        if common.active_mode == common.SynchronisedActivePaths:
             return 'This session sets active paths. Click to toggle.'
 
         if common.active_mode == common.PrivateActivePaths:

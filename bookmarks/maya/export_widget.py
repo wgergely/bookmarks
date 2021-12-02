@@ -31,6 +31,7 @@ def show(source):
     return instance
 
 
+
 class PresetComboBox(QtWidgets.QComboBox):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -54,6 +55,7 @@ class SizeComboBox(QtWidgets.QComboBox):
         for v in ffmpeg.SIZE_PRESETS.values():
             self.addItem(v['name'], userData=v['value'])
         self.blockSignals(False)
+
 
 
 SETTING_KEYS = (
@@ -100,6 +102,8 @@ SECTIONS = {
 }
 
 
+
+
 class FFMpegWidget(base.BasePropertyEditor):
     """Widget used to convert an image sequence to a video.
 
@@ -123,6 +127,7 @@ class FFMpegWidget(base.BasePropertyEditor):
     @common.debug
     def init_data(self):
         self.load_saved_user_settings(SETTING_KEYS)
+
 
     @common.error
     @common.debug

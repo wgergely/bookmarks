@@ -88,7 +88,8 @@ class LauncherItemEditor(QtWidgets.QDialog):
         self.thumbnail_viewer_widget.setFixedSize(QtCore.QSize(w, w))
         grp.layout().addWidget(self.thumbnail_viewer_widget, 0)
 
-        _grp = ui.get_group(margin=common.size(common.WidthIndicator), parent=grp)
+        _grp = ui.get_group(margin=common.size(
+            common.WidthIndicator), parent=grp)
         _grp.layout().setAlignment(QtCore.Qt.AlignCenter)
 
         for k in DEFAULT_ITEM:
@@ -185,7 +186,8 @@ class LauncherItemEditor(QtWidgets.QDialog):
             self.thumbnail_editor,
             caption='Pick a Thumbnail',
             filter=images.get_oiio_namefilters(),
-            dir=QtCore.QFileInfo(common.get_rsc(common.FormatResource)).filePath()
+            dir=QtCore.QFileInfo(common.get_rsc(
+                common.FormatResource)).filePath()
         )
 
     def _pick(self, editor, caption=None, filter=None, dir=None):

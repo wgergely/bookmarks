@@ -86,12 +86,12 @@ class AssetModel(basemodel.BaseModel):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        common.signals.assetsLinked.connect(
+        common.signals.sgAssetsLinked.connect(
             lambda: self.blockSignals(True))
-        common.signals.assetsLinked.connect(self.reset_data)
-        common.signals.assetsLinked.connect(
+        common.signals.sgAssetsLinked.connect(self.reset_data)
+        common.signals.sgAssetsLinked.connect(
             lambda: self.blockSignals(False))
-        common.signals.assetsLinked.connect(self.sort_data)
+        common.signals.sgAssetsLinked.connect(self.sort_data)
 
     @common.status_bar_message('Assets Bookmarks...')
     @basemodel.initdata
@@ -279,7 +279,7 @@ class AssetsWidget(basewidget.ThreadedBaseWidget):
             )
         )
         common.signals.assetAdded.connect(self.queue_visible_indexes)
-        common.signals.assetsLinked.connect(self.queue_visible_indexes)
+        common.signals.sgAssetsLinked.connect(self.queue_visible_indexes)
 
     def inline_icons_count(self):
         """The number of icons on the right - hand side."""

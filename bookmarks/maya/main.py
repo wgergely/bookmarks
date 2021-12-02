@@ -44,13 +44,15 @@ def init_tool_button(*args, **kwargs):
     ptr = OpenMayaUI.MQtUtil.findControl('ToolBox')
 
     if ptr is None:
-        common.maya_button_widget = MayaButtonWidget(common.size(common.HeightRow * 2))
+        common.maya_button_widget = MayaButtonWidget(
+            common.size(common.HeightRow * 2))
         common.maya_button_widget.show()
         return
 
     parent = shiboken2.wrapInstance(int(ptr), QtWidgets.QWidget)
     if not parent:
-        common.maya_button_widget = MayaButtonWidget(common.size(common.HeightRow * 2))
+        common.maya_button_widget = MayaButtonWidget(
+            common.size(common.HeightRow * 2))
         common.maya_button_widget.show()
         return
 
@@ -649,7 +651,7 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         """
         v = common.settings.value(
             common.SettingsSection,
-            common.WorksapceWarningsKey
+            common.WorkspaceWarningsKey
         )
         v = QtCore.Qt.Unchecked if v is None else v
 

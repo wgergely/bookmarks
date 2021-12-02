@@ -539,7 +539,7 @@ class TaskPicker(QtWidgets.QDialog):
      Shotgun.
 
     """
-    entitySelected = QtCore.Signal(dict)
+    sgEntitySelected = QtCore.Signal(dict)
 
     def __init__(self, parent=None):
         super(TaskPicker, self).__init__(parent=parent)
@@ -691,23 +691,23 @@ class TaskPicker(QtWidgets.QDialog):
             return
 
         if not self.task_editor.selectionModel().hasSelection():
-            self.entitySelected.emit(None)
+            self.sgEntitySelected.emit(None)
             super(TaskPicker, self).done(result)
             return
 
         if not self.task_editor.selectionModel().currentIndex().isValid():
-            self.entitySelected.emit(None)
+            self.sgEntitySelected.emit(None)
             super(TaskPicker, self).done(result)
             return
 
         index = self.task_editor.selectionModel().currentIndex()
         entity = index.data(QtCore.Qt.UserRole)
         if not entity:
-            self.entitySelected.emit(None)
+            self.sgEntitySelected.emit(None)
             super(TaskPicker, self).done(result)
             return
 
-        self.entitySelected.emit(entity)
+        self.sgEntitySelected.emit(entity)
         super(TaskPicker, self).done(result)
 
     def save_selection(self, editor, k, v):

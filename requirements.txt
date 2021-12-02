@@ -1,8 +1,7 @@
-_scandir==1.10.0
-OpenImageIO==2.4.0
-PySide2==5.15.2
-Alembic==1.8.3
-psutil==5.8.0
-shotgun_api3==3.3.2
-slackclient
+OpenImageIO
+PySide2
+Alembic
+psutil
+shotgun_api3
+slack_sdk
 numpy

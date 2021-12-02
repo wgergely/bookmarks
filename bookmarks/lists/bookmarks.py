@@ -83,8 +83,10 @@ class BookmarksModel(basemodel.BaseModel):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        common.signals.bookmarkAdded.connect(lambda _: self.reset_data(force=True, emit_active=False))
-        common.signals.bookmarkRemoved.connect(lambda _: self.reset_data(force=True, emit_active=False))
+        common.signals.bookmarkAdded.connect(
+            lambda _: self.reset_data(force=True, emit_active=False))
+        common.signals.bookmarkRemoved.connect(
+            lambda _: self.reset_data(force=True, emit_active=False))
 
     @common.status_bar_message('Loading Bookmarks...')
     @basemodel.initdata
@@ -184,6 +186,7 @@ class BookmarksModel(basemodel.BaseModel):
                 common.IdRole: idx,
                 #
                 common.ShotgunLinkedRole: False,
+                common.SlackLinkedRole: False
             })
 
             if not exists:

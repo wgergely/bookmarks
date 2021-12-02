@@ -42,13 +42,10 @@ def selected_index(idx=None):
     return index
 
 
-
 def current_tab():
     if common.init_mode is None or not common.main_widget:
         raise RuntimeError('Not yet initialized!')
     return common.main_widget.stacked_widget.currentIndex()
-
-
 
 
 # def data(idx):

@@ -1,14 +1,25 @@
-"""The modules contains a list of core parameters, classes and methods
+"""A list of core parameters, classes and methods
 used to define the look and behaviour of Bookmarks.
 
+Submodules can be accessed directly from the top module. See below:
+
+.. code-block:: python
+
+    import bookmarks.common.setup
+    bookmarks.common.setup.initialize(common.EmbeddedMode)
+
+    # The above can be accessed directly
+    from bookmarks import common
+    common.initialize(common.EmbeddedMode)
+
 """
-debug_on = False       # Print debug messages
-typecheck_on = True   # Check types
-init_mode = None    # App startup mode
-active_mode = None # Session mode can be private or syncronised
-ui_scale_factor = 1.0      # Global ui scaling factor
+debug_on = False        # Print debug messages
+typecheck_on = True     # Check types
+init_mode = None        # App startup mode
+active_mode = None      # Session mode can be private or synchronised
+ui_scale_factor = 1.0   # Global ui scaling factor
 dpi = 72.0
-sort_by_basename = False # Sort models by a item basename instead of full name
+sort_by_basename = False  # Sort models by item basename instead of full name
 stylesheet = None
 signals = None
 settings = None
@@ -35,6 +46,7 @@ DESCRIPTION_RECTS = {}
 SUBDIR_RECTS = {}
 SUBDIR_BG_RECTS = {}
 SUBDIR_BG_BRUSHES = {}
+COLOR_CACHE = {}
 
 VIEWER_WIDGET_CACHE = {}
 
@@ -80,14 +92,17 @@ main_widget = None
 tray_widget = None
 maya_widget = None
 maya_button_widget = None
+slack_widget = None
+
+sg_connecting_message = None
+sg_error_message = None
 
 # Save the initial module values for later use
 __initial_values__ = {k:v for (k,v) in locals().copy().items() if not k.startswith('__')}
 
-import collections
 
 from . core import *
-from . dist import *
+from . setup import *
 from . font import *
 from . settings import *
 from . signals import *

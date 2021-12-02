@@ -4,13 +4,16 @@ Welcome to Bookmarks!
 .. automodule:: bookmarks
 
 
-Python Modules Documentation
-============================
+
+
+Python Modules
+==============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
-   api
+   bookmarks.common
+   bookmarks.standalone
 
 
 

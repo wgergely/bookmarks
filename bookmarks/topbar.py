@@ -465,7 +465,8 @@ class BaseTabButton(QtWidgets.QLabel):
 
     def get_width(self):
         o = common.size(common.WidthIndicator) * 6
-        _, metrics = common.font_db.primary_font(common.size(common.FontSizeMedium))
+        _, metrics = common.font_db.primary_font(
+            common.size(common.FontSizeMedium))
         return metrics.horizontalAdvance(self.text()) + o
 
     @QtCore.Slot()
@@ -481,7 +482,7 @@ class BaseTabButton(QtWidgets.QLabel):
     def paintEvent(self, event):
         """The control button's paint method - shows the the set text and
         an underline if the tab is active."""
-        if common.main_widget is None or not common.main_widget._initialized:
+        if common.main_widget is None or not common.main_widget.is_initialized:
             return
 
         rect = QtCore.QRect(self.rect())
@@ -496,13 +497,16 @@ class BaseTabButton(QtWidgets.QLabel):
         painter.setPen(QtCore.Qt.NoPen)
 
         if common.current_tab() == self.tab_idx:
-            color = common.color(common.TextSelectedColor) if hover else common.color(common.TextColor)
+            color = common.color(
+                common.TextSelectedColor) if hover else common.color(common.TextColor)
             painter.setBrush(color)
         else:
-            color = common.color(common.TextColor) if hover else common.color(common.BackgroundColor)
+            color = common.color(common.TextColor) if hover else common.color(
+                common.BackgroundColor)
             painter.setBrush(color)
 
-        font, metrics = common.font_db.primary_font(common.size(common.FontSizeMedium))
+        font, metrics = common.font_db.primary_font(
+            common.size(common.FontSizeMedium))
 
         # When the width of the button is very small, we'll switch to an icon
         # representation instead of text:
@@ -513,7 +517,8 @@ class BaseTabButton(QtWidgets.QLabel):
                 common.color(common.TextSelectedColor),
                 common.size(common.WidthMargin)
             )
-            _rect = QtCore.QRect(0, 0, common.size(common.WidthMargin), common.size(common.WidthMargin))
+            _rect = QtCore.QRect(0, 0, common.size(
+                common.WidthMargin), common.size(common.WidthMargin))
             _rect.moveCenter(self.rect().center())
             painter.drawPixmap(
                 _rect,
@@ -535,7 +540,8 @@ class BaseTabButton(QtWidgets.QLabel):
                     color,
                     common.size(common.WidthMargin)
                 )
-                _rect = QtCore.QRect(0, 0, common.size(common.WidthMargin), common.size(common.WidthMargin))
+                _rect = QtCore.QRect(0, 0, common.size(
+                    common.WidthMargin), common.size(common.WidthMargin))
                 _rect.moveCenter(self.rect().center())
                 painter.drawPixmap(
                     _rect,
@@ -550,10 +556,12 @@ class BaseTabButton(QtWidgets.QLabel):
 
         if common.current_tab() == self.tab_idx:
             painter.setOpacity(0.9)
-            color = common.color(common.TextColor) if hover else common.color(common.RedColor)
+            color = common.color(
+                common.TextColor) if hover else common.color(common.RedColor)
         else:
             painter.setOpacity(0.3)
-            color = common.color(common.TextColor) if hover else common.color(common.BlueColor)
+            color = common.color(
+                common.TextColor) if hover else common.color(common.BlueColor)
 
         painter.setBrush(color)
         painter.drawRect(rect)
@@ -592,8 +600,7 @@ class AssetsTabButton(BaseTabButton):
         )
 
     def text(self):
-        widget = common.widget(common.BookmarkTab)
-        if not widget.model().sourceModel().active_index().isValid():
+        if not common.active_index(common.BookmarkTab).isValid():
             return ''
         return super(AssetsTabButton, self).text()
 
@@ -661,7 +668,6 @@ class FilesTabButton(BaseTabButton):
         painter.end()
 
 
-
 class FavouritesTabButton(BaseTabButton):
     """Drop-down widget to switch between the list"""
     icon = 'favourite'
@@ -675,11 +681,11 @@ class FavouritesTabButton(BaseTabButton):
         )
 
 
-class SlackDropOverlayWidget(QtWidgets.QWidget):
+class SlackDropAreaWidget(QtWidgets.QWidget):
     """Widget used to receive a slack message drop."""
 
     def __init__(self, parent=None):
-        super(SlackDropOverlayWidget, self).__init__(parent=parent)
+        super(SlackDropAreaWidget, self).__init__(parent=parent)
         self.setAcceptDrops(True)
         self.drop_target = True
         self.setWindowFlags(
@@ -704,7 +710,8 @@ class SlackDropOverlayWidget(QtWidgets.QWidget):
 
         pixmap = images.ImageCache.get_rsc_pixmap(
             'slack', common.color(common.GreenColor), self.rect().height() - (common.size(common.WidthIndicator) * 1.5))
-        rect = QtCore.QRect(0, 0, common.size(common.WidthMargin), common.size(common.WidthMargin))
+        rect = QtCore.QRect(0, 0, common.size(
+            common.WidthMargin), common.size(common.WidthMargin))
         rect.moveCenter(self.rect().center())
         painter.drawPixmap(rect, pixmap, pixmap.rect())
 
@@ -722,17 +729,6 @@ class SlackDropOverlayWidget(QtWidgets.QWidget):
             event.acceptProposedAction()
 
     def dropEvent(self, event):
-        """Slack drop event"""
-        try:
-            from .external import slack
-        except ImportError as err:
-            ui.ErrorBox(
-                'Could not import SlackClient',
-                'The Slack API python module was not loaded:\n{}'.format(err),
-            ).open()
-            log.error('Slack import error.')
-            return
-
         if event.source() == self:
             return  # Won't allow dropping an item from itself
         mime = event.mimeData()
@@ -749,14 +745,8 @@ class SlackDropOverlayWidget(QtWidgets.QWidget):
             message.append(line)
 
         message = '\n'.join(message)
-        parent = self.parent().parent().stacked_widget
-        index = parent.widget(
-            common.BookmarkTab).model().sourceModel().active_index()
-        if not index.isValid():
-            return
-
-        widget = parent.currentWidget().show_slack()
-        widget.message_widget.append_message(message)
+        widget = actions.show_slack()
+        widget.append_message(message)
 
     def showEvent(self, event):
         pos = self.parent().rect().topLeft()
@@ -786,7 +776,8 @@ class TopBarWidget(QtWidgets.QWidget):
         self.layout().setSpacing(0)
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
 
-        height = common.size(common.WidthMargin) + (common.size(common.WidthIndicator) * 3)
+        height = common.size(common.WidthMargin) + \
+            (common.size(common.WidthIndicator) * 3)
         self.setFixedHeight(height)
 
         # Control view/model/button
@@ -827,8 +818,8 @@ class TopBarWidget(QtWidgets.QWidget):
 
         self.layout().addSpacing(common.size(common.WidthIndicator))
 
-        self.drop_overlay = SlackDropOverlayWidget(parent=self)
-        self.drop_overlay.setHidden(True)
+        self.slack_drop_area_widget = SlackDropAreaWidget(parent=self)
+        self.slack_drop_area_widget.setHidden(True)
 
     def paintEvent(self, event):
         """`TopBarWidget`' paint event."""

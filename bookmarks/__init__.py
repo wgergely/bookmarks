@@ -7,70 +7,69 @@ files.
 Features
 --------
 
-I (Gergely, an animation director/CG generalist) started developing Bookmarks as
-a personal project to help manage in-house and freelance jobs. What can I say,
-I'm a digitally messy person!
-
-Bookmarks essentially is a file browser and strives to provide the tools needed
-to find and view items. It can link local assets with ``Autodesk ShotGrid`` and
-set project properties (like framerate and resolution) that we can use to set
-scenes up in DCCs.
-
-But for me, it helps me most to provide a quick access point to my project and
-to hop and jump between assets and shots quickly when working on a project with
-many different parts.
-
-I work on Windows with Maya, so that's where Bookmarks' focus lies. In theory,
-the codebase is largely platform-agnostic and should run on Linux or Mac OS
-(given that its dependencies are available) but I never tested these.
-
+Bookmarks can help provide an overview project files and makes it easy to hop
+between assets and shots. It organises items into separate ``bookmark``,
+``asset`` and ``file`` items that can be configured to link with ``ShotGrid``
+entities or to have properties, like frame-rate and resolution. These properties
+can be used to set up scene files in host applications, like Maya.
 
 
 Getting Bookmarks
 -----------------
 
-Bookmarks is open-source and the latest source can be downloaded from
-https://github.com/wgergely/bookmarks.
+The source can be downloaded from https://github.com/wgergely/bookmarks.
 
-To download the latest binary release for Windows visit:
-https://github.com/wgergely/bookmarks/releases
+Bookmarks is developed on Windows and the latest binary release is available at
+https://github.com/wgergely/bookmarks/releases.
 
 
 Requirements
 ------------
 
-Bookmarks requires Python 3.6.0 or later and the following Python packages:
-
-* ``scandir``: If your Python distribution is missing _scandir.pyd, you might have to build it from source. https://github.com/benhoyt/scandir.
+* ``Python3``: Tested against version 3.7 and 3.9.
 * ``PySide2``: Tested against Qt 5.15. https://pypi.org/project/PySide2
 * ``OpenImageIO``: We're using this brilliant library to generate thumbnails for image items. https://github.com/OpenImageIO/oiio
 * ``numpy``: https://pypi.org/project/numpy
-* ``slack``: https://pypi.org/project/slackclient
+* ``slack_sdk``: https://pypi.org/project/slack_sdk
 * ``psutil``: https://pypi.org/project/psutil
 * ``shotgun_api3``: https://github.com/shotgunsoftware/python-api
 * ``alembic``: Alembic's Python library. https://github.com/alembic/alembic
 
 
-Running Bookmarks from Python
------------------------------
+Running Bookmarks
+-----------------
 
-To run bookmarks, make sure all the dependencies are available and simply call:
+Bookmarks can be initialized in ``standalone`` or ``embedded`` mode. To start
+the  ``standalone`` app, simply call :func:`.exec_`:
 
-.. code-block:: python
-    :linenos:
+    .. code-block:: python
+        :linenos:
 
-    import bookmarks
-    bookmarks.exec_()
+        import bookmarks
+        bookmarks.exec_()
 
-This will initialize the PySide2 application and all the oebjects Bookmarks
-needs to run. See :doc:`bookmarks.standalone <./bookmarks.standalone>` for more
-information.
+        # The above is a shortcut of:
+        from bookmarks import common
+        common.initialize(common.StandaloneMode)
+        from bookmarks import standalone
+        standalone.show()
+
+
+To run it from a host application, you'll have to first initialize in
+``EmbeddedMode``:
+
+    .. code-block:: python
+        :linenos:
+
+        from bookmarks import common
+        common.initialize(common.EmbeddedMode)
+
+Regardless of the initialization mode, the main widget instance will be saved to
+``common.main_widget``.
 
 """
 import sys
-import os
 import importlib
-import traceback
 import platform
 
 from PySide2 import QtWidgets
@@ -100,7 +99,7 @@ def info():
     alembic_ver = importlib.import_module('alembic').Abc.GetLibraryVersion()
     qt_ver = importlib.import_module('PySide2.QtCore').__version__
     sg_ver = importlib.import_module('shotgun_api3').__version__
-    slack_ver = importlib.import_module('slack.version').__version__
+    slack_ver = importlib.import_module('slack_sdk.version').__version__
 
     return '\n'.join((
         __copyright__,

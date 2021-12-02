@@ -190,7 +190,6 @@ def get_export_subdir(v):
 
     """
 
-
     server = common.active(common.ServerKey)
     job = common.active(common.JobKey)
     root = common.active(common.RootKey)

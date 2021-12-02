@@ -344,7 +344,7 @@ class TaskEditor(shotgun.EntityComboBox):
         self.model().sourceModel().entityDataReceived.connect(self.restore_selection)
         self.activated.connect(self.open_editor)
         self.currentIndexChanged.connect(self.save_selection)
-        common.signals.entitySelected.connect(self.select_entity)
+        common.signals.sgEntitySelected.connect(self.select_entity)
 
     @common.error
     @common.debug

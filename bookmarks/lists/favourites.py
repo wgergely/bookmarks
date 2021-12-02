@@ -397,7 +397,7 @@ class FavouritesWidget(files.FilesWidget):
             file_info = QtCore.QFileInfo(url.toLocalFile())
 
             # Import favourites file
-            if file_info.suffix() == common.FAVOURITE_FILE_FORMAT:
+            if file_info.suffix() == common.favorite_file_ext:
                 actions.import_favourites(source=file_info.filePath())
                 continue
 

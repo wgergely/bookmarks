@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
-"""Contains various UI definitions and methods used to construct, and
+"""Various ui utility methods used to construct, and
 define ui elements.
 
 """
-import os
 from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
-
-
-COLOR_CACHE = {}
 
 
 def size(v):
@@ -24,10 +20,11 @@ def size(v):
 
 
 def color(v):
+    """Get and cache a QColor."""
     r = repr(v)
-    if r not in COLOR_CACHE:
-        COLOR_CACHE[r] = QtGui.QColor(*v)
-    return COLOR_CACHE[r]
+    if r not in common.COLOR_CACHE:
+        common.COLOR_CACHE[r] = QtGui.QColor(*v)
+    return common.COLOR_CACHE[r]
 
 
 def rgb(v):
@@ -86,11 +83,11 @@ def move_widget_to_available_geo(widget):
     """
     app = QtWidgets.QApplication.instance()
     if widget.window():
-        screenID = app.desktop().screenNumber(widget.window())
+        screen_idx = app.desktop().screenNumber(widget.window())
     else:
-        screenID = app.desktop().primaryScreen()
+        screen_idx = app.desktop().primaryScreen()
 
-    screen = app.screens()[screenID]
+    screen = app.screens()[screen_idx]
     screen_rect = screen.availableGeometry()
 
     # Widget's rectangle in the global screen space
@@ -239,6 +236,8 @@ def draw_aliased_text(painter, font, rect, text, align, color, elide=None):
         x = rect.right() - width
     if QtCore.Qt.AlignHCenter & align:
         x = rect.left() + (rect.width() * 0.5) - (width * 0.5)
+    else:
+        x = rect.left()
 
     y = rect.center().y() + (metrics.ascent() * 0.5) - (metrics.descent() * 0.5)
 

@@ -654,7 +654,7 @@ class ListOverlayWidget(QtWidgets.QWidget):
     """
 
     def __init__(self, parent=None):
-        super(ListOverlayWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self._message = ''
 
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
@@ -679,6 +679,7 @@ class ListOverlayWidget(QtWidgets.QWidget):
         """Custom paint event used to paint the widget's message.
 
         """
+        parent = self.parent().parent()
         if not self._message and not self.parent().parent().count():
             message = self.parent().parent().default_message
         elif not self._message:
@@ -822,7 +823,7 @@ class ListWidget(QtWidgets.QListWidget):
     resized = QtCore.Signal(QtCore.QSize)
 
     def __init__(self, default_message='No items', parent=None):
-        super(ListWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         if not self.parent():
             common.set_custom_stylesheet(self)
 
@@ -867,7 +868,7 @@ class ListWidget(QtWidgets.QListWidget):
 
     def addItem(self, label, icon=None, color=common.color(common.TextSecondaryColor)):
         if isinstance(label, QtWidgets.QListWidgetItem):
-            return super(ListWidget, self).addItem(label)
+            return super().addItem(label)
 
         _, metrics = common.font_db.primary_font(
             common.size(common.FontSizeSmall))
@@ -895,10 +896,171 @@ class ListWidget(QtWidgets.QListWidget):
             )
 
         item.setCheckState(QtCore.Qt.Unchecked)
-        return super(ListWidget, self).addItem(item)
+        return super().addItem(item)
 
     def resizeEvent(self, event):
         self.resized.emit(event.size())
+
+
+
+class ListViewOverlayWidget(QtWidgets.QWidget):
+    """Widget used to display a status message over the list widget.
+
+    """
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self._message = ''
+
+        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+        self.setSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding,
+            QtWidgets.QSizePolicy.MinimumExpanding,
+        )
+
+    @QtCore.Slot(str)
+    def set_message(self, message):
+        if message == self._message:
+            return
+
+        self._message = message
+        self.update()
+        QtWidgets.QApplication.instance().processEvents(
+            flags=QtCore.QEventLoop.ExcludeUserInputEvents)
+
+    def paintEvent(self, event):
+        """Custom paint event used to paint the widget's message.
+
+        """
+        parent = self.parent().parent()
+        if not self._message and not parent.model().sourceModel().rowCount():
+            message = parent.default_message
+        elif not self._message:
+            return
+        elif self._message:
+            message = self._message
+
+        painter = QtGui.QPainter()
+        painter.begin(self)
+        painter.setPen(common.color(common.TextSecondaryColor))
+
+        o = common.size(common.WidthMargin)
+        rect = self.rect().adjusted(o, o, -o, -o)
+        text = QtGui.QFontMetrics(self.font()).elidedText(
+            message,
+            QtCore.Qt.ElideMiddle,
+            rect.width(),
+        )
+
+        painter.drawText(
+            rect,
+            QtCore.Qt.AlignCenter,
+            text,
+        )
+        painter.end()
+
+
+
+class ListViewWidget(QtWidgets.QListView):
+    """A custom list widget used to display selectable item.
+
+    """
+    progressUpdate = QtCore.Signal(str)
+    resized = QtCore.Signal(QtCore.QSize)
+
+    def __init__(self, default_message='No items', parent=None):
+        super().__init__(parent=parent)
+        if not self.parent():
+            common.set_custom_stylesheet(self)
+
+        self.default_message = default_message
+
+        self.server = None
+        self.job = None
+        self.root = None
+
+        self.setResizeMode(QtWidgets.QListView.Adjust)
+        self.setEditTriggers(
+            QtWidgets.QAbstractItemView.DoubleClicked |
+            QtWidgets.QAbstractItemView.EditKeyPressed
+        )
+        self.setAcceptDrops(False)
+        self.setDragEnabled(False)
+        self.setSpacing(0)
+        self.setItemDelegate(ListWidgetDelegate(parent=self))
+        self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
+        self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectItems)
+        self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.setSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding,
+            QtWidgets.QSizePolicy.MinimumExpanding,
+        )
+
+        self.setModel(QtCore.QSortFilterProxyModel(parent=self))
+        self.model().setSourceModel(QtGui.QStandardItemModel(parent=self))
+        self.model().sourceModel().setColumnCount(1)
+        self.model().setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
+
+        self.overlay = ListViewOverlayWidget(parent=self.viewport())
+        self.overlay.show()
+
+    def _connect_signals(self):
+        self.resized.connect(self.overlay.resize)
+        self.progressUpdate.connect(self.overlay.set_message)
+
+    @QtCore.Slot(QtGui.QStandardItem)
+    def toggle(self, item):
+        if not item.flags() & QtCore.Qt.ItemIsUserCheckable:
+            return
+        if item.checkState() == QtCore.Qt.Unchecked:
+            item.setCheckState(QtCore.Qt.Checked)
+            return
+        item.setCheckState(QtCore.Qt.Unchecked)
+
+    def addItem(self, v, icon=None, color=common.color(common.TextSecondaryColor)):
+        common.check_type(v, (str, QtGui.QStandardItem))
+        common.check_type(icon, (QtGui.QPixmap, QtGui.QIcon, str, None))
+        common.check_type(color, (QtGui.QColor, None))
+
+        if isinstance(v, QtGui.QStandardItem):
+            self.model().sourceModel().appendRow(v)
+            return
+
+        _, metrics = common.font_db.primary_font(
+            common.size(common.FontSizeSmall))
+        width = metrics.horizontalAdvance(v) + common.size(common.HeightRow) + common.size(common.WidthMargin)
+
+        item = QtGui.QStandardItem(v)
+
+        size = QtCore.QSize(width, common.size(common.HeightRow))
+        item.setData(size, role=QtCore.Qt.SizeHintRole)
+
+        if isinstance(icon, str):
+            item.setFlags(
+                QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
+            pixmap = images.ImageCache.get_rsc_pixmap(
+                icon,
+                color,
+                common.size(common.HeightRow) -
+                (common.size(common.WidthIndicator) * 2)
+            )
+            item.setData(pixmap, role=QtCore.Qt.DecorationRole)
+        elif isinstance(icon, (QtGui.QIcon, QtGui.QPixmap)):
+            item.setData(pixmap, role=QtCore.Qt.DecorationRole)
+        else:
+            item.setFlags(
+                QtCore.Qt.ItemIsEnabled |
+                QtCore.Qt.ItemIsUserCheckable
+            )
+
+        item.setCheckState(QtCore.Qt.Unchecked)
+        self.model().sourceModel().appendRow(item)
+
+    def resizeEvent(self, event):
+        self.resized.emit(event.size())
+
 
 
 def get_icon(
@@ -921,6 +1083,11 @@ def get_icon(
         QtGui.QIcon: The QIcon.
 
     """
+    k = f'{name}/{color}/{size}/{opacity}/{resource}'
+
+    if k in images.INTERNAL_DATA[images.IconType]:
+        return images.INTERNAL_DATA[images.IconType][k]
+
     icon = QtGui.QIcon()
 
     pixmap = images.ImageCache.get_rsc_pixmap(
@@ -939,8 +1106,8 @@ def get_icon(
 
     icon.addPixmap(pixmap, mode=QtGui.QIcon.Disabled)
 
-    return icon
-
+    images.INTERNAL_DATA[images.IconType][k] = icon
+    return images.INTERNAL_DATA[images.IconType][k]
 
 
 def get_group(parent=None, vertical=True, margin=common.size(common.WidthMargin)):

@@ -12,7 +12,7 @@ Scopes
 ------
 
 The Slack App requires the `users:read` and
-`chat:write` scopes to function. To send messages to channels
+`chat:write` scopes to function. To send messages to Slack Channels
 the bot is not part of add `chat:write.public`.
 Scopes `channels:read` and `groups:read` are needed to list the available
 slack channels.
@@ -23,7 +23,8 @@ See http://api.slack.com/apps for more information.
 """
 import urllib.request
 import urllib.error
-import slack
+import slack_sdk
+
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
@@ -32,26 +33,22 @@ from .. import common
 from .. import ui
 from .. import images
 
-
-
 IdRole = QtCore.Qt.UserRole + 1
 ThumbnailHashRole = IdRole + 1
 ThumbnailUrlRole = ThumbnailHashRole + 1
 
-instance = None
 CLIENTS = {}
 
 
 def show(token):
-    global instance
-    if instance is not None and instance.token == token:
-        instance.open()
-        instance.raise_()
-        return
+    if common.slack_widget is not None and common.slack_widget.token == token:
+        common.slack_widget.open()
+        common.slack_widget.raise_()
+        return common.slack_widget
 
-    instance = SlackWidget(token)
-    instance.open()
-    return instance
+    common.slack_widget = SlackWidget(token)
+    common.slack_widget.open()
+    return common.slack_widget
 
 
 def get_client(token):
@@ -62,8 +59,10 @@ def get_client(token):
     return CLIENTS[token]
 
 
-def response_error(response):
-    common.check_type(response, dict)
+@common.error
+@common.debug
+def verify_response(response):
+    common.check_type(response, slack_sdk.web.slack_response.SlackResponse)
 
     if 'ok' not in response:
         raise KeyError('Key `ok` missing in response')
@@ -152,7 +151,7 @@ class OverlayWidget(QtWidgets.QWidget):
         self.setGeometry(self.parent().rect())
 
 
-class SlackClient(slack.SlackClient):
+class SlackClient(slack_sdk.WebClient):
     """Customized SlackClient used by bookmarks to send and receive massages.
 
     """
@@ -161,6 +160,8 @@ class SlackClient(slack.SlackClient):
         super(SlackClient, self).__init__(token)
         common.check_type(token, str)
 
+    @common.error
+    @common.debug
     def verify_token(self):
         """Tests the slack token and the permissions needed to send messages to
         channels.
@@ -174,31 +175,49 @@ class SlackClient(slack.SlackClient):
             ValueError:     When the any problems with the token.
 
         """
-        auth_test_response = self.api_call('auth.test')
-        response_error(auth_test_response)
+        auth_test_response = self.api_call(
+            'auth.test',
+            http_verb='GET'
+        )
+        verify_response(auth_test_response)
+
         if 'user_id' in auth_test_response:
             response = self.api_call(
-                'users.info', user=auth_test_response['user_id'])
-            response_error(response)
-            response = self.api_call(
-                'users.list', user=auth_test_response['user_id'])
-            response_error(response)
+                'users.info',
+                http_verb='GET',
+                params={'user': auth_test_response['user_id']}
+            )
+            verify_response(response)
 
-        response = self.api_call('conversations.list')
-        response_error(response)
+            response = self.api_call(
+                'users.list',
+                http_verb='GET',
+                params={'user': auth_test_response['user_id']}
+            )
+            verify_response(response)
+
+        response = self.api_call(
+            'conversations.list',
+            http_verb='GET',
+        )
+        verify_response(response)
 
         title = 'Slack API Token seems to be working fine.'
         details = ''
         if 'url' in auth_test_response:
-            details += 'URL: {}\n'.format(auth_test_response['url'])
+            url = auth_test_response['url']
+            details += f'URL: {url}\n'
         if 'team' in auth_test_response:
-            details += 'Team: {}\n'.format(auth_test_response['team'])
+            team = auth_test_response['team']
+            details += f'Team: {team}\n'
 
+    @common.error
+    @common.debug
     def get_url(self):
-        response = self.api_call('auth.test')
-        response_error(response)
-        if 'url' not in response:
-            raise KeyError('Key `url` is missing from response.')
+        response = self.api_call(
+            'auth.test'
+        )
+        verify_response(response)
         return response['url']
 
     @staticmethod
@@ -221,6 +240,8 @@ class SlackClient(slack.SlackClient):
             _profiles.append(member)
         return _profiles
 
+    @common.error
+    @common.debug
     def get_user_profiles(self):
         """Returns all available profiles in the workspace associated with the
         token. Make sure scope `users.read` is available for the token.
@@ -229,13 +250,16 @@ class SlackClient(slack.SlackClient):
             ValueError:     If the token is invalid or missing a required scope.
 
         """
-        method = 'users.list'
         limit = 20
         profiles = []
 
         # Getting the user-list in segments as per the Slack API documentation
         # `limit` sets the number of entries to get with each call
-        response = self.api_call(method, limit=limit)
+        response = self.api_call(
+            'users.list',
+            http_verb="GET",
+            params={'limit': limit}
+        )
         profiles += self._get_profiles(response)
 
         while response['response_metadata']['next_cursor']:
@@ -244,28 +268,33 @@ class SlackClient(slack.SlackClient):
                 app.processEvents()
 
             response = self.api_call(
-                method, limit=limit, cursor=response['response_metadata']['next_cursor'])
+                'users.list',
+                http_verb="GET",
+                kwargs={
+                    'limit': limit,
+                    'cursor': response['response_metadata']['next_cursor']
+                },
+            )
 
             profiles += self._get_profiles(response)
 
         return profiles
 
+    @common.error
+    @common.debug
     def get_channels(self):
         """Returns all conversations and groups.
 
         """
         response = self.api_call(
             'conversations.list',
-            exclude_archived=True,
-            types='public_channel,private_channel'
+            http_verb="GET",
+            params={
+                'exclude_archived': True,
+                'types': 'public_channel,private_channel'
+            }
         )
-
-        if not response['ok']:
-            s = 'Maybe a required scope is missing?\nError: "{}"'.format(
-                response['error'])
-            if 'needed' in response:
-                s += '\nScope needed: "{}"'.format(response['needed'])
-            raise ValueError(s)
+        verify_response(response)
 
         channels = []
         for channel in response['channels']:
@@ -286,24 +315,29 @@ class SlackClient(slack.SlackClient):
         text = text.replace('&', '&amp')
         # text = text.replace('<', '&lt')
         # text = text.replace('>', '&gt')
+
         response = self.api_call(
             'chat.postMessage',
-            channel=channel,
-            text=text,
-            mrkdwn=True,
-            unfurl_media=True,
-            unfurl_links=True,
-            link_names=True,
+            http_verb='POST',
+            json={
+                'channel': channel,
+                'text': text,
+                'mrkdwn': True,
+                'unfurl_media': True,
+                'unfurl_links': True,
+                'link_names': True
+            }
         )
 
-        if not response['ok']:
-            raise RuntimeError(response['error'])
+        verify_response(response)
+        assert response['message']['text'] == text
 
 
 class UsersModel(QtCore.QAbstractItemModel):
     """Model used to store the available profiles.
 
     """
+
     def __init__(self, token, parent=None):
         super(UsersModel, self).__init__(parent=parent)
         self.token = token
@@ -534,7 +568,7 @@ class SlackWidget(QtWidgets.QDialog):
 
         self.token = token
 
-        self._initialized = False
+        self.is_initialized = False
 
         self.initialize_timer = common.Timer(parent=self)
         self.initialize_timer.setInterval(50)
@@ -578,7 +612,8 @@ class SlackWidget(QtWidgets.QDialog):
         self.message_widget.setMaximumHeight(common.size(common.HeightRow) * 3)
         self.message_widget.setObjectName('SlackMessageBox')
 
-        self.message_widget.document().setDocumentMargin(common.size(common.WidthMargin) * 0.5)
+        self.message_widget.document().setDocumentMargin(
+            common.size(common.WidthMargin) * 0.5)
         self.message_widget.setPlaceholderText(
             'Enter a message to send...')
         self.message_widget.setAcceptRichText(False)
@@ -643,10 +678,10 @@ class SlackWidget(QtWidgets.QDialog):
         self.overlay.setText('Loading data...')
         source_model = self.users_widget.model().sourceModel()
         source_model.init_data()
-        self._initialized = True
+        self.is_initialized = True
 
     def showEvent(self, event):
-        if not self._initialized:
+        if not self.is_initialized:
             self.initialize_timer.start()
 
     @QtCore.Slot()

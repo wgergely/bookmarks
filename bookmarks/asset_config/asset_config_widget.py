@@ -155,7 +155,8 @@ class FormatEditor(QtWidgets.QDialog):
         self.save_button = ui.PaintedButton('Save')
         self.cancel_button = ui.PaintedButton('Cancel')
 
-        row = ui.add_row(None, height=common.size(common.HeightRow), parent=self)
+        row = ui.add_row(None, height=common.size(
+            common.HeightRow), parent=self)
         row.layout().addWidget(self.save_button, 1)
         row.layout().addWidget(self.cancel_button, 0)
 
@@ -212,7 +213,8 @@ class SubfolderEditor(QtWidgets.QDialog):
         self.save_button = ui.PaintedButton('Save')
         self.cancel_button = ui.PaintedButton('Cancel')
 
-        row = ui.add_row(None, height=common.size(common.HeightRow), parent=self)
+        row = ui.add_row(None, height=common.size(
+            common.HeightRow), parent=self)
         row.layout().addWidget(self.save_button, 1)
         row.layout().addWidget(self.cancel_button, 0)
 

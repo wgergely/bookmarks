@@ -5,6 +5,7 @@ __pycache__
 
 # Distribution / packaging
 .Python
+.idea
 .DS_Store
 build/
 build

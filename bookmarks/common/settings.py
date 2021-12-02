@@ -14,7 +14,7 @@ from .. import log
 from .. import common
 
 
-SyncronisedActivePaths = 0
+SynchronisedActivePaths = 0
 PrivateActivePaths = 1
 
 ActiveSection = 'Active'
@@ -40,13 +40,14 @@ BookmarksKey = 'Bookmarks'
 FavouritesKey = 'Favourites'
 
 SettingsSection = 'Settings'
+JobsHaveSubdirs = 'JobsHaveSubdirs'
 FFMpegKey = 'FFMpegPath'
 RVKey = 'RVPath'
 UIScaleKey = 'UIScale'
 ShowMenuIconsKey = 'ShowMenuIcons'
 ShowThumbnailBackgroundKey = 'ShowThumbnailBackgroundKey'
 WorkspaceSyncKey = 'WorkspaceSync'
-WorksapceWarningsKey = 'WorkspaceWarnings'
+WorkspaceWarningsKey = 'WorkspaceWarnings'
 SaveWarningsKey = 'SaveWarnings'
 PushCaptureToRVKey = 'PushCaptureToRV'
 RevealCaptureKey = 'RevealCapture'
@@ -99,7 +100,7 @@ SGTypeKey = 'SGType'
 def init_settings():
     # Initialize the ActiveSectionCache object
     common.ActiveSectionCache = {
-        SyncronisedActivePaths: collections.OrderedDict(),
+        SynchronisedActivePaths: collections.OrderedDict(),
         PrivateActivePaths: collections.OrderedDict(),
     }
     for mode in common.ActiveSectionCache:
@@ -181,19 +182,19 @@ def active(k, path=False, args=False):
         _args = None
         idx = common.ActiveSectionCacheKeys.index(k)
         v = tuple(common.ActiveSectionCache[common.active_mode][k]
-             for k in common.ActiveSectionCacheKeys[:idx + 1])
+                  for k in common.ActiveSectionCacheKeys[:idx + 1])
 
-    if path:
-        _path = '/'.join(v) if all(v) else None
-        if args:
-            return (_path, _args)
-        return _path
-
-    if args:
-        _args = v if all(v) else None
         if path:
-            return (_path, _args)
-        return _args
+            _path = '/'.join(v) if all(v) else None
+            if args:
+                return (_path, _args)
+            return _path
+
+        if args:
+            _args = v if all(v) else None
+            if path:
+                return (_path, _args)
+            return _args
 
     return common.ActiveSectionCache[common.active_mode][k]
 
@@ -279,11 +280,12 @@ class UserSettings(QtCore.QSettings):
         """
         self.sync()
         for k in ActiveSectionCacheKeys:
-            common.ActiveSectionCache[SyncronisedActivePaths][k] = self.value(ActiveSection, k)
-        self.verify_active(SyncronisedActivePaths)
+            common.ActiveSectionCache[SynchronisedActivePaths][k] = self.value(
+                ActiveSection, k)
+        self.verify_active(SynchronisedActivePaths)
         self.verify_active(PrivateActivePaths)
 
-        # for m in (SyncronisedActivePaths, PrivateActivePaths):
+        # for m in (SynchronisedActivePaths, PrivateActivePaths):
 
     def verify_active(self, m):
         """Verify the load active section values.
@@ -298,13 +300,13 @@ class UserSettings(QtCore.QSettings):
                 p += common.ActiveSectionCache[m][k]
             if not os.path.exists(p):
                 common.ActiveSectionCache[m][k] = None
-                if m == SyncronisedActivePaths:
+                if m == SynchronisedActivePaths:
                     self.setValue(ActiveSection, k, None)
             p += '/'
 
     def update_private_values(self):
         for k in ActiveSectionCacheKeys:
-            common.ActiveSectionCache[PrivateActivePaths][k] = common.ActiveSectionCache[SyncronisedActivePaths][k]
+            common.ActiveSectionCache[PrivateActivePaths][k] = common.ActiveSectionCache[SynchronisedActivePaths][k]
 
     def set_servers(self, v):
         common.check_type(v, dict)
@@ -366,14 +368,14 @@ class UserSettings(QtCore.QSettings):
             elif t == 'float' and not isinstance(v, float):
                 v = float(v)
         except:
-            log.error('Type converion failed')
+            log.error('Type conversion failed')
 
         return v
 
     def setValue(self, section, key, v):
         k = f'{section}/{key}'
 
-        if section == common.ActiveSection and common.active_mode == PrivateActivePaths:
+        if section == ActiveSection and common.active_mode == PrivateActivePaths:
             return
         #     raise RuntimeError('The saved active path cannot be changed when the mode is `PrivateActivePaths`')
 

@@ -125,11 +125,13 @@ class DragPixmapFactory(QtWidgets.QWidget):
         self._pixmap = pixmap
         self._text = text
 
-        _, metrics = common.font_db.primary_font(common.size(common.FontSizeMedium))
+        _, metrics = common.font_db.primary_font(
+            common.size(common.FontSizeMedium))
         self._text_width = metrics.horizontalAdvance(text)
 
         width = self._text_width + common.size(common.WidthMargin)
-        width = common.size(common.DefaultWidth) + common.size(common.WidthMargin) if width > common.size(common.DefaultWidth) else width
+        width = common.size(common.DefaultWidth) + common.size(
+            common.WidthMargin) if width > common.size(common.DefaultWidth) else width
 
         self.setFixedHeight(common.size(common.HeightRow))
 
@@ -211,7 +213,6 @@ class FilesWidgetContextMenu(contextmenu.BaseContextMenu):
         self.sg_url_menu()
 
         self.convert_menu()
-
 
         self.add_file_menu()
 
@@ -813,7 +814,9 @@ class FilesWidget(basewidget.ThreadedBaseWidget):
         self.update(index)
 
         drag = ItemDrag(index, self)
+        common.main_widget.topbar_widget.slack_drop_area_widget.setHidden(False)
         drag.exec_(supported_actions)
+        common.main_widget.topbar_widget.slack_drop_area_widget.setHidden(True)
 
         self.drag_source_index = QtCore.QModelIndex()
 

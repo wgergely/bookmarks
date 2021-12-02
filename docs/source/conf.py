@@ -12,9 +12,11 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../bookmarks'))
-import bookmarks.standalone
-app = bookmarks.standalone.BookmarksApp([])
+
+sys.path.insert(0, os.path.abspath(f'{__file__}/../../../bookmarks'))
+
+from bookmarks import common
+common.initialize(common.StandaloneMode)
 
 # -- Project information -----------------------------------------------------
 

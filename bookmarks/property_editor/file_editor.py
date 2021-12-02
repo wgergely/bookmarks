@@ -535,7 +535,7 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
         name = self.name()
         if not name or '{invalid_token}' in name:
             raise RuntimeError('Invalid token in output name')
-            
+
         self.create_file()
         self.save_changed_data_to_db()
         self.thumbnail_editor.save_image()

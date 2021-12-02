@@ -9,7 +9,6 @@ from .. import common
 from .. import log
 
 
-
 RV_PUSH_COMMAND = '"{RV}" -tag {PRODUCT} url \'rvlink:// -reuse 1 -inferSequence -l -play -fullscreen -nofloat -lookback 0 -nomb \"{PATH}\"\''
 
 
@@ -44,7 +43,6 @@ def push(path):
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
         startupinfo.wShowWindow = subprocess.SW_HIDE
         subprocess.Popen(cmd, startupinfo=startupinfo)
-
 
         log.success('Footage sent to RV. Command used was {}'.format(cmd))
     else:

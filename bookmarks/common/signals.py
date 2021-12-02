@@ -1,11 +1,9 @@
 """
 
 """
-import functools
 from PySide2 import QtCore
 
 from .. import common
-
 
 
 def init_signals():
@@ -56,9 +54,14 @@ class CoreSignals(QtCore.QObject):
     templateExpanded = QtCore.Signal(str)
 
     # Shotgun
-    entitySelected = QtCore.Signal(dict)
-    assetsLinked = QtCore.Signal()
-    shotgunEntityDataReady = QtCore.Signal(str, list)
+    sgEntitySelected = QtCore.Signal(dict)
+    sgAssetsLinked = QtCore.Signal()
+    sgEntityDataReady = QtCore.Signal(str, list)
+
+    sgConnectionAttemptStarted = QtCore.Signal()
+    sgConnectionSuccessful = QtCore.Signal()
+    sgConnectionFailed = QtCore.Signal(str)
+    sgConnectionClosed = QtCore.Signal()
 
     # General activation signals
     bookmarkActivated = QtCore.Signal(str, str, str)
@@ -80,3 +83,11 @@ class CoreSignals(QtCore.QObject):
         self.assetAdded.connect(actions.show_asset)
 
         self.taskFolderChanged.connect(actions.set_task_folder)
+
+        self.sgConnectionAttemptStarted.connect(actions.show_sg_connecting_message)
+        self.sgConnectionSuccessful.connect(actions.hide_sg_connecting_message)
+        self.sgConnectionFailed.connect(actions.hide_sg_connecting_message)
+        self.sgConnectionClosed.connect(actions.hide_sg_connecting_message)
+
+        self.sgConnectionFailed.connect(actions.hide_sg_connecting_message)
+        self.sgConnectionFailed.connect(actions.show_sg_error_message)

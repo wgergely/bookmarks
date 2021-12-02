@@ -1,4 +1,26 @@
 #!mayapy
+"""Maya plugin load/unload tester.
+
+Make sure to run this from the Python boundled with the Maya installation.
+THe script will test the Maya plugin `initializePlugin` and `uninitializePlugin`.
+
+"""
+import sys
+import os
+
+sys.path.append(
+    os.path.normpath(
+        os.path.join(
+            __file__,
+            os.pardir,
+            os.pardir,
+            os.pardir,
+            os.pardir,
+        )
+    )
+)
+
+
 from PySide2 import QtCore, QtWidgets
 import maya.standalone as standalone
 import maya.cmds as cmds

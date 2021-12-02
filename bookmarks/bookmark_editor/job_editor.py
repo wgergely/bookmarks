@@ -51,34 +51,25 @@ SECTIONS = {
 }
 
 
-def get_job_thumbnail(path):
+def get_job_icon(path):
     """Checks the given job folder for the presence of a thumbnail image file.
 
     """
-    file_info = QtCore.QFileInfo(path)
-    if not file_info.exists():
-        return QtGui.QPixmap()
-
-    for entry in os.scandir(file_info.absoluteFilePath()):
-        if entry.is_dir():
+    for entry in os.scandir(path):
+        if 'thumbnail' not in entry.name:
             continue
-
-        if 'thumbnail' not in entry.name.lower():
-            continue
-
-        pixmap = QtGui.QPixmap(entry.path)
+        pixmap = QtGui.QPixmap(QtCore.QFileInfo(entry.path).filePath())
         if pixmap.isNull():
             continue
-        return pixmap
-
-    return QtGui.QPixmap()
+        return QtGui.QIcon(pixmap)
+    return None
 
 
 class AddJobWidget(base.BasePropertyEditor):
     """A custom `BasePropertyEditor` used to add new jobs on a server.
 
     """
-    buttons = ('Create', 'Cancel')
+    buttons = ('Create Job', 'Cancel')
 
     def __init__(self, server, parent=None):
         super().__init__(
@@ -88,21 +79,18 @@ class AddJobWidget(base.BasePropertyEditor):
             None,
             asset=None,
             db_table=None,
-            fallback_thumb='folder_sm',
             buttons=self.buttons,
-            hide_thumbnail_editor=True,
             parent=parent
         )
 
-        self.setWindowTitle('{}: Add Job'.format(self.server))
+        self.setWindowTitle(f'{self.server}: Add Job')
         self.setFixedHeight(common.size(common.DefaultHeight) * 0.66)
 
     def init_data(self):
         items = []
-        for entry in os.scandir(self.server):
-            if not entry.is_dir():
-                continue
-            items.append(entry.name)
+
+        for name, path in self.parent().job_editor.find_job_items(self.server):
+            items.append(name)
 
         completer = QtWidgets.QCompleter(items, parent=self)
         completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
@@ -118,13 +106,24 @@ class AddJobWidget(base.BasePropertyEditor):
         if not self.name_editor.text():
             raise ValueError('Must enter a name to create a job.')
 
-        # Create template and signal
+        root = self.server
+
         name = self.name_editor.text()
-        self.template_editor.template_list_widget.create(name, self.server)
-        path = f'{self.server}/{name}'
+        if not name:
+            raise ValueError('Must enter a name to create job')
+        name = name.replace('\\', '/')
+
+        if '/' in name:
+            _name = name.split('/')[-1]
+            _root = name[:len(_name) - 1]
+            root = f'{self.server}/{_root}'
+
+        # Create template and signal
+        self.template_editor.template_list_widget.create(name, root)
+        path = f'{root}/{name}'
 
         if not QtCore.QFileInfo(path).exists():
-            raise RuntimeError('Unknown error, could not find the new job.')
+            raise RuntimeError('Could not find the new job.')
 
         path += f'/thumbnail.{common.thumbnail_format}'
         self.thumbnail_editor.save_image(destination=path)
@@ -142,8 +141,7 @@ class JobContextMenu(contextmenu.BaseContextMenu):
     def setup(self):
         self.add_menu()
         self.separator()
-        if isinstance(self.index, QtWidgets.QListWidgetItem) and self.index.flags() & QtCore.Qt.ItemIsEnabled:
-            self.reveal_menu()
+        self.reveal_menu()
         self.separator()
         self.refresh_menu()
 
@@ -159,7 +157,7 @@ class JobContextMenu(contextmenu.BaseContextMenu):
             'icon': ui.get_icon('folder')
         }
 
-    def add_refresh_menu(self):
+    def refresh_menu(self):
         self.menu['Refresh'] = {
             'action': (
                 functools.partial(self.parent().init_data, reset=False),
@@ -169,7 +167,7 @@ class JobContextMenu(contextmenu.BaseContextMenu):
         }
 
 
-class JobListWidget(ui.ListWidget):
+class JobListWidget(ui.ListViewWidget):
     """Simple list widget used to add and remove servers to/from the local
     common.
 
@@ -184,6 +182,8 @@ class JobListWidget(ui.ListWidget):
             default_message='No jobs found.',
             parent=parent
         )
+
+        self._interrupt_requested = False
 
         self.setWindowTitle('Job Editor')
         self.setObjectName('JobEditor')
@@ -217,10 +217,100 @@ class JobListWidget(ui.ListWidget):
         common.signals.bookmarkAdded.connect(self.update_status)
         common.signals.bookmarkRemoved.connect(self.update_status)
 
-        common.signals.templateExpanded.connect(lambda: self.init_data(reset=False))
+        common.signals.templateExpanded.connect(
+            lambda: self.init_data(reset=False))
         common.signals.templateExpanded.connect(
             lambda x: self.restore_current(name=QtCore.QFileInfo(x).fileName())
         )
+
+    def find_job_items(self, source):
+        has_subdir = common.settings.value(
+            common.SettingsSection, common.JobsHaveSubdirs)
+        has_subdir = QtCore.Qt.UnChecked if has_subdir is None else QtCore.Qt.CheckState(
+            has_subdir)
+        has_subdir = has_subdir == QtCore.Qt.Checked
+
+        for client_entry in os.scandir(source):
+            if self._interrupt_requested:
+                return
+
+            self.window().set_info_message('Scanning: ' + client_entry.path)
+
+            if not client_entry.is_dir():
+                continue
+
+            file_info = QtCore.QFileInfo(client_entry.path)
+            if file_info.isHidden():
+                continue
+            if not file_info.isReadable():
+                continue
+            try:
+                next(os.scandir(file_info.filePath()))
+            except:
+                continue
+            if not has_subdir:
+                yield client_entry.name, file_info.filePath()
+                continue
+
+            for job_entry in os.scandir(client_entry.path):
+                if self._interrupt_requested:
+                    return
+                self.progressUpdate.emit(f'Scanning:  {job_entry.path}')
+
+                if not job_entry.is_dir():
+                    continue
+
+                file_info = QtCore.QFileInfo(job_entry.path)
+                if file_info.isHidden():
+                    continue
+                if not file_info.isReadable():
+                    continue
+                try:
+                    next(os.scandir(file_info.filePath()))
+                except:
+                    continue
+                yield f'{client_entry.name}/{job_entry.name}', file_info.filePath()
+
+    @QtCore.Slot()
+    def init_data(self, reset=True):
+        if reset:
+            self.jobChanged.emit(None, None)
+
+        self.blockSignals(True)
+        self.model().sourceModel().clear()
+
+        self._interrupt_requested = False
+
+        if not self.server or not QtCore.QFileInfo(self.server).exists():
+            self.blockSignals(False)
+            return
+
+        for name, path in self.find_job_items(self.server):
+            item = QtGui.QStandardItem()
+
+            _name = (
+                name.
+                replace('_', ' ').
+                replace('  ', ' ').
+                replace('/', ':  ').
+                strip().upper()
+            )
+
+            item.setData(_name, role=QtCore.Qt.DisplayRole)
+            item.setData(path, role=QtCore.Qt.UserRole)
+            item.setData(name, role=QtCore.Qt.UserRole + 1)
+
+            size = QtCore.QSize(0, common.size(common.WidthMargin) * 2)
+            item.setSizeHint(size)
+
+            _icon = get_job_icon(path)
+            item.setData(_icon if _icon else None,
+                         role=QtCore.Qt.DecorationRole)
+
+            self.addItem(item)
+
+        self.blockSignals(False)
+        self.progressUpdate.emit('')
 
     @QtCore.Slot()
     def update_status(self):
@@ -234,37 +324,16 @@ class JobListWidget(ui.ListWidget):
         jobs = [f[common.JobKey] for f in common.bookmarks.values()]
 
         for n in range(self.model().rowCount()):
-            item = self.item(n)
-            if item.data(QtCore.Qt.DisplayRole) in jobs:
+            index = self.model().index(n, 0)
+            source_index = self.model().mapToSource(index)
+            item = self.model().sourceModel().itemFromIndex(source_index)
+
+            if item.data(QtCore.Qt.UserRole + 1) in jobs:
                 item.setFlags(item.flags() | QtCore.Qt.ItemIsUserCheckable)
-                item.setData(QtCore.Qt.CheckStateRole, QtCore.Qt.Checked)
+                item.setData(QtCore.Qt.Checked, role=QtCore.Qt.CheckStateRole)
                 return
             item.setFlags(item.flags() & ~QtCore.Qt.ItemIsUserCheckable)
-            item.setData(QtCore.Qt.CheckStateRole, None)
-
-    @QtCore.Slot(QtCore.QItemSelection)
-    @QtCore.Slot(QtCore.QItemSelection)
-    def emit_job_changed(self, current, previous):
-        index = next((f for f in current.indexes()), QtCore.QModelIndex())
-        if not index.isValid():
-            self.jobChanged.emit(None, None)
-            return
-        self.jobChanged.emit(
-            self.server,
-            index.data(QtCore.Qt.DisplayRole)
-        )
-
-    @QtCore.Slot()
-    def add(self):
-        """Open the widget used to add a new job to the server.
-
-        """
-        if not self.server:
-            return
-
-        widget = AddJobWidget(self.server, parent=self.window())
-        common.signals.templateExpanded.connect(widget.close)
-        widget.open()
+            item.setData(None, role=QtCore.Qt.CheckStateRole)
 
     @staticmethod
     @QtCore.Slot()
@@ -290,19 +359,25 @@ class JobListWidget(ui.ListWidget):
         if not v:
             return
 
-        for n in range(self.count()):
-            if not v == self.item(n).text():
+        for n in range(self.model().rowCount()):
+            index = self.model().index(n, 0)
+
+            if not index.isValid():
                 continue
-            index = self.indexFromItem(self.item(n))
+            if not v == index.data(QtCore.Qt.DisplayRole):
+                continue
+
             self.selectionModel().select(
                 index,
                 QtCore.QItemSelectionModel.ClearAndSelect
             )
-            self.scrollToItem(
-                self.item(n), QtWidgets.QAbstractItemView.EnsureVisible)
+            self.scrollTo(
+                index,
+                QtWidgets.QAbstractItemView.EnsureVisible
+            )
 
     def contextMenuEvent(self, event):
-        item = self.itemAt(event.pos())
+        item = self.indexAt(event.pos())
         menu = JobContextMenu(item, parent=self)
         pos = event.pos()
         pos = self.mapToGlobal(pos)
@@ -322,108 +397,30 @@ class JobListWidget(ui.ListWidget):
         self.init_data()
         self.restore_current()
 
-    @QtCore.Slot()
-    def init_data(self, reset=True):
-        if reset:
+    @QtCore.Slot(QtCore.QItemSelection)
+    @QtCore.Slot(QtCore.QItemSelection)
+    def emit_job_changed(self, current, previous):
+        index = next((f for f in current.indexes()), QtCore.QModelIndex())
+        if not index.isValid():
             self.jobChanged.emit(None, None)
+            return
+        self.jobChanged.emit(
+            self.server,
+            index.data(QtCore.Qt.UserRole + 1)
+        )
 
-        self.blockSignals(True)
-        self.clear()
+    @QtCore.Slot()
+    def add(self):
+        """Open the widget used to add a new job to the server.
 
-        if not self.server or not QtCore.QFileInfo(self.server).exists():
-            self.blockSignals(False)
+        """
+        if not self.server:
             return
 
-        for entry in os.scandir(self.server):
-            if not entry.is_dir():
-                continue
-            file_info = QtCore.QFileInfo(entry.path)
-            if file_info.isHidden():
-                continue
+        widget = AddJobWidget(self.server, parent=self.window())
+        common.signals.templateExpanded.connect(widget.close)
+        widget.open()
 
-            item = QtWidgets.QListWidgetItem()
-            item.setData(
-                QtCore.Qt.DisplayRole,
-                entry.name
-            )
-            item.setData(
-                QtCore.Qt.UserRole,
-                QtCore.QFileInfo(entry.path).absoluteFilePath()
-            )
-
-            size = QtCore.QSize(
-                0,
-                common.size(common.WidthMargin) * 2
-            )
-            item.setSizeHint(size)
-            self.validate_item(item)
-            self.insertItem(self.count(), item)
-
-        self.blockSignals(False)
-
-    @QtCore.Slot(QtWidgets.QListWidgetItem)
-    def validate_item(self, item, emit=False):
-        self.blockSignals(True)
-
-        pixmap = get_job_thumbnail(item.data(QtCore.Qt.UserRole))
-        if pixmap.isNull():
-            pixmap = images.ImageCache.get_rsc_pixmap(
-                'icon', common.color(common.BackgroundDarkColor), common.size(common.HeightRow) * 0.8)
-            pixmap_selected = images.ImageCache.get_rsc_pixmap(
-                'icon', common.color(common.TextSelectedColor), common.size(common.HeightRow) * 0.8)
-            pixmap_disabled = images.ImageCache.get_rsc_pixmap(
-                'close', common.color(common.RedColor), common.size(common.HeightRow) * 0.8)
-        else:
-            pixmap_selected = pixmap
-            pixmap_disabled = pixmap
-
-        icon = QtGui.QIcon()
-
-        # Let's explicitly check read access by trying to get the
-        # files inside the folder
-        is_valid = False
-        try:
-            next(os.scandir(item.data(QtCore.Qt.UserRole)))
-            is_valid = True
-        except StopIteration:
-            is_valid = True
-        except OSError:
-            is_valid = False
-
-        file_info = QtCore.QFileInfo(item.data(QtCore.Qt.UserRole))
-        if (
-            file_info.exists() and
-            file_info.isReadable() and
-            file_info.isWritable() and
-            is_valid
-        ):
-            icon.addPixmap(pixmap, QtGui.QIcon.Normal)
-            icon.addPixmap(pixmap_selected, QtGui.QIcon.Selected)
-            icon.addPixmap(pixmap_selected, QtGui.QIcon.Active)
-            icon.addPixmap(pixmap_disabled, QtGui.QIcon.Disabled)
-            item.setFlags(
-                QtCore.Qt.ItemIsEnabled |
-                QtCore.Qt.ItemIsSelectable
-            )
-            r = True
-        else:
-            icon.addPixmap(pixmap_disabled, QtGui.QIcon.Normal)
-            icon.addPixmap(pixmap_disabled, QtGui.QIcon.Selected)
-            icon.addPixmap(pixmap_disabled, QtGui.QIcon.Active)
-            icon.addPixmap(pixmap_disabled, QtGui.QIcon.Disabled)
-            item.setFlags(
-                QtCore.Qt.NoItemFlags
-            )
-            r = False
-
-        item.setData(QtCore.Qt.DecorationRole, icon)
-        self.blockSignals(False)
-
-        if emit and r:
-            index = self.indexFromItem(item)
-            self.selectionModel().emitSelectionChanged(
-                QtCore.QItemSelection(index, index),
-                QtCore.QItemSelection()
-            )
-
-        return r
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Escape:
+            self._interrupt_requested = True

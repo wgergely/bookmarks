@@ -348,8 +348,9 @@ def draw_gradient_background(text_edge, *args):
             text_edge - rectangles[ThumbnailRect].right(),
             option.rect.height(),
         )
-        if rectangles[DataRect].center().x() + (rectangles[DataRect].height() * 2) >= text_edge:
-            start_x = text_edge - (rectangles[DataRect].height() * 2)
+        margin = rectangles[DataRect].width() * 0.1
+        if rectangles[DataRect].center().x() + margin >= text_edge:
+            start_x = text_edge - margin
         else:
             start_x = rectangles[DataRect].center().x()
 
@@ -1002,13 +1003,49 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         rect = QtCore.QRect(0, 0, common.size(
             common.WidthMargin), common.size(common.WidthMargin))
 
-        offset = QtCore.QPoint(common.size(common.WidthIndicator),
-                               common.size(common.WidthIndicator))
+        offset = QtCore.QPoint(
+            common.size(common.WidthIndicator),
+            common.size(common.WidthIndicator)
+        )
         rect.moveBottomRight(
             rectangles[ThumbnailRect].bottomRight() - offset)
+
         painter.setOpacity(0.9) if hover else painter.setOpacity(0.8)
+
         pixmap = images.ImageCache.get_rsc_pixmap(
             'sg', common.color(common.TextColor), common.size(common.WidthMargin))
+        painter.drawPixmap(rect, pixmap, pixmap.rect())
+
+    @paintmethod
+    def paint_slack_status(self, *args):
+        rectangles, painter, option, index, selected, focused, active, archived, favourite, hover, font, metrics, cursor_position = args
+        if not index.isValid():
+            return
+        if not index.data(QtCore.Qt.DisplayRole):
+            return
+        if not index.data(common.ParentPathRole):
+            return
+        if not index.data(common.SlackLinkedRole):
+            return
+
+        rect = QtCore.QRect(0, 0, common.size(
+            common.WidthMargin), common.size(common.WidthMargin))
+
+        offset = QtCore.QPoint(
+            common.size(common.WidthIndicator),
+            common.size(common.WidthIndicator)
+        )
+        rect.moveBottomRight(
+            rectangles[ThumbnailRect].bottomRight() - offset)
+
+        if index.data(common.ShotgunLinkedRole):
+            rect.moveLeft(
+                rect.left() - (common.size(common.WidthMargin) * 0.66))
+
+        painter.setOpacity(0.9) if hover else painter.setOpacity(0.8)
+
+        pixmap = images.ImageCache.get_rsc_pixmap(
+            'slack', common.color(common.TextColor), common.size(common.WidthMargin))
         painter.drawPixmap(rect, pixmap, pixmap.rect())
 
 
@@ -1023,9 +1060,9 @@ class BookmarksWidgetDelegate(BaseDelegate):
 
         self.paint_background(*args)
         self.paint_persistent(*args)
-        self.paint_thumbnail(*args)
         self.paint_thumbnail_shadow(*args)
         self.paint_name(*args)
+        self.paint_thumbnail(*args)
         self.paint_archived(*args)
         self.paint_inline_background(*args)
         self.paint_inline_background_shadow(*args)
@@ -1033,6 +1070,7 @@ class BookmarksWidgetDelegate(BaseDelegate):
         self.paint_description_editor_background(*args)
         self.paint_selection_indicator(*args)
         self.paint_thumbnail_drop_indicator(*args)
+        self.paint_slack_status(*args)
         self.paint_shotgun_status(*args)
 
     def get_description_rect(self, *args):
@@ -1214,9 +1252,9 @@ class AssetsWidgetDelegate(BaseDelegate):
         args = self.get_paint_arguments(
             painter, option, index, antialiasing=False)
         self.paint_background(*args)
-        self.paint_thumbnail(*args)
         self.paint_thumbnail_shadow(*args)
         self.paint_name(*args)
+        self.paint_thumbnail(*args)
         self.paint_archived(*args)
         self.paint_description_editor_background(*args)
         self.paint_inline_background(*args)
@@ -1377,12 +1415,12 @@ class FilesWidgetDelegate(BaseDelegate):
         elif p_role and b_hidden:
             self.paint_simple_background(*args)
 
-        self.paint_thumbnail(*args)
-
         if p_role and not b_hidden:
             self.paint_name(*args)
         elif p_role and b_hidden:
             self.paint_simple_name(*args)
+
+        self.paint_thumbnail(*args)
 
         self.paint_archived(*args)
         self.paint_inline_background(*args)

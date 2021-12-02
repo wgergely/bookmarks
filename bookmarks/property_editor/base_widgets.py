@@ -161,7 +161,8 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
     def __init__(self, server, job, root, size=THUMBNAIL_EDITOR_SIZE, source=None, fallback_thumb='placeholder', parent=None):
         super(ThumbnailEditorWidget, self).__init__(
             'pick_image',
-            (common.color(common.BlueColor), common.color(common.BackgroundDarkColor)),
+            (common.color(common.BlueColor),
+             common.color(common.BackgroundDarkColor)),
             size=size,
             description='Drag-and-drop an image to add, click to capture, or right-click to pick a custom thumbnail...',
             parent=parent

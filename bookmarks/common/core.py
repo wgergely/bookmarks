@@ -1,12 +1,10 @@
 import os
-import re
 import time
 import functools
 import sys
 import json
 import uuid
 import hashlib
-import collections
 import traceback
 import inspect
 
@@ -17,9 +15,6 @@ from .. import common
 
 CONFIG = 'config.json'
 
-# static_bookmarks_PATH = get_template_file_path(static_bookmarks)
-# DEFAULT_ASSET_SOURCE = get_template_file_path(DEFAULT_JOB_TEMPLATE)
-# DEFAULT_JOB_SOURCE = get_template_file_path(DEFAULT_ASSET_TEMPLATE)
 
 StandaloneMode = 'standalone'
 EmbeddedMode = 'embedded'
@@ -72,6 +67,8 @@ SortByLastModifiedRole = QtCore.Qt.ItemDataRole(SortByNameRole + 1)
 SortBySizeRole = QtCore.Qt.ItemDataRole(SortByLastModifiedRole + 1)
 SortByTypeRole = QtCore.Qt.ItemDataRole(SortBySizeRole + 1)
 ShotgunLinkedRole = QtCore.Qt.ItemDataRole(SortByTypeRole + 1)
+SlackLinkedRole = QtCore.Qt.ItemDataRole(ShotgunLinkedRole + 1)
+
 
 DEFAULT_SORT_VALUES = {
     SortByNameRole: 'Name',
@@ -86,145 +83,15 @@ FormatResource = 'formats'
 TemplateResource = 'templates'
 
 
-
 def get_rsc(rel_path):
+    """Return an resource item from the resource directory.
+
+    """
     v = '/'.join((__file__, os.pardir, os.pardir, 'rsc', rel_path))
     f = QtCore.QFileInfo(v)
     if not f.exists():
         raise RuntimeError(f'{f.absoluteFilePath()} does not exist.')
     return f.absoluteFilePath()
-
-
-def _init_config():
-    """Load the config values from CONFIG and set them in the `common` module as
-    public properties.
-
-    """
-    p = get_rsc(CONFIG)
-
-    with open(p, 'r', encoding='utf8') as f:
-        config = json.loads(f.read())
-
-    # Set config values in the common module
-    for k, v in config.items():
-        setattr(common, k, v)
-
-
-def initialize(mode):
-    """Initializes the components of the application required to run in
-    standalone mode.
-
-    Args:
-            mode (bool):    Bookmarks will run in *standalone* mode when `True`.
-
-    """
-    from . import verify_dependecies
-    verify_dependecies()
-
-    if common.init_mode is not None:
-        raise RuntimeError(f'Already initialized as "{common.init_mode}"!')
-    if mode not in (StandaloneMode, EmbeddedMode):
-        raise ValueError(
-            f'Invalid initalization mode. Got "{mode}", expected `StandaloneMode` or `EmbeddedMode`')
-
-    common.init_mode = mode
-
-    _init_config()
-
-    common.itemdata = DataDict()
-
-    if not os.path.isdir(temp_path()):
-        os.makedirs(os.path.normpath(temp_path()))
-
-    common.init_signals()
-    common.prune_lock()
-    common.init_lock()  # Sets the current active mode
-    common.init_settings()
-
-    _init_ui_scale()
-    _init_dpi()
-
-    common.cursor = QtGui.QCursor()
-
-    from .. import images
-    images.init_imagecache()
-    images.init_resources()
-
-    from .. import standalone
-    if not QtWidgets.QApplication.instance() and mode == common.StandaloneMode:
-        standalone.BookmarksApp([])
-    elif not QtWidgets.QApplication.instance():
-        raise RuntimeError('No QApplication instance found.')
-
-    images.init_pixel_ratio()
-    common.init_font()
-
-    if mode == common.StandaloneMode:
-        standalone.init()
-    elif mode == common.EmbeddedMode:
-        from .. import main
-        main.init()
-
-    common.init_monitor()
-
-
-def uninitialize():
-    """Closes and deletes all cached data and ui elements.
-
-    """
-    from .. threads import threads
-    threads.quit_threads()
-
-    try:
-        common.main_widget.close()
-        common.main_widget.deleteLater()
-    except:
-        pass
-    common.main_widget = None
-
-    if common.init_mode == common.StandaloneMode:
-        QtWidgets.QApplication.instance().quit()
-
-    for k, v in common.__initial_values__.items():
-        setattr(common, k, v)
-
-    from .. import images
-    for k, v in images.__initial_values__.items():
-        setattr(images, k, v)
-
-
-def _init_ui_scale():
-    v = common.settings.value(
-        common.SettingsSection,
-        common.UIScaleKey
-    )
-
-    if v is None or not isinstance(v, str):
-        common.ui_scale = 1.0
-        return
-
-    if '%' not in v:
-        v = 1.0
-    else:
-        v = v.strip('%')
-    try:
-        v = float(v) * 0.01
-    except:
-        v = 1.0
-
-    if not common.ui_scale_factors or v not in common.ui_scale_factors:
-        v = 1.0
-
-    common.ui_scale = v
-
-
-def _init_dpi():
-    if get_platform() == PlatformWindows:
-        common.dpi = 72.0
-    elif get_platform() == PlatformMacOS:
-        common.dpi = 96.0
-    elif get_platform() == PlatformUnsupported:
-        common.dpi = 72.0
 
 
 def check_type(value, _type):
@@ -296,7 +163,9 @@ def get_hash(key):
 
 
 def error(func):
-    """Decorator to create a menu set."""
+    """Function decorator used to handle exceptions and report them to the user.
+
+    """
     @functools.wraps(func)
     def func_wrapper(*args, **kwargs):
         try:
@@ -327,7 +196,10 @@ def error(func):
 
 
 def debug(func):
-    """Decorator to create a menu set."""
+    """Function decorator used to log a debug message.
+    No message will be logged, unless `common.debug` is set to True.
+
+    """
     DEBUG_MESSAGE = '{trace}(): Executed in {time} secs.'
     DEBUG_SEPARATOR = ' --> '
 
@@ -338,9 +210,8 @@ def debug(func):
             return func(*args, **kwargs)
 
         # Otherwise, get the callee, and the executing time and info
+        t = time.time()
         try:
-            if common.debug_on:
-                t = time.time()
             return func(*args, **kwargs)
         finally:
             if args and hasattr(args[0], '__class__'):
@@ -396,33 +267,6 @@ def get_username():
             v = os.environ['USER']
     v = v.replace('.', '')
     return v
-
-
-
-def local_user_bookmark():
-    """Return a location on the local system to store temporary files.
-    This is used to store thumbnails for starred items and other temporary items.
-
-    Returns:
-            tuple: A tuple of path segments.
-
-    """
-    return (
-        QtCore.QStandardPaths.writableLocation(
-            QtCore.QStandardPaths.GenericDataLocation),
-        common.product,
-        'temp',
-    )
-
-
-def temp_path():
-    """Path to the folder to store temporary files.
-
-    Returns:
-            str: Path to a directory.
-
-    """
-    return '/'.join(local_user_bookmark())
 
 
 def get_template_file_path(name):
@@ -506,8 +350,9 @@ def temp_path():
 
 
 class DataDict(dict):
-    """Subclassed dict type for weakref compatibility."""
+    """A weakref compatible dictionary used to store item data.
 
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._loaded = False
@@ -540,10 +385,8 @@ class DataDict(dict):
 
 
 class Timer(QtCore.QTimer):
-    """A custom QTimer.
-
     """
-
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         common.timers[repr(self)] = self

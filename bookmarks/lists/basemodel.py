@@ -502,7 +502,7 @@ class BaseModel(QtCore.QAbstractListModel):
         key = key if key else self.user_settings_key()
         if not key:
             return None
-        k = '{}/{}'.format(key_type, common.get_hash(key))
+        k = f'{key_type}/{common.get_hash(key)}'
         common.settings.setValue(section, k, v)
 
     def setData(self, index, data, role=QtCore.Qt.DisplayRole):

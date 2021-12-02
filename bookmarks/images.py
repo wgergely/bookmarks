@@ -34,7 +34,8 @@ oiio_cache = None
 BufferType = QtCore.Qt.UserRole
 PixmapType = BufferType + 1
 ImageType = PixmapType + 1
-ResourcePixmapType = ImageType + 1
+IconType = ImageType + 1
+ResourcePixmapType = IconType + 1
 ColorType = ResourcePixmapType + 1
 
 accepted_codecs = ('h.264', 'h264', 'mpeg-4', 'mpeg4')
@@ -49,6 +50,7 @@ INTERNAL_DATA = {
     BufferType: {},
     PixmapType: {},
     ImageType: {},
+    IconType: {},
     ResourcePixmapType: {},
     ColorType: {},
 }

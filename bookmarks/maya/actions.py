@@ -127,7 +127,8 @@ def save_scene(increment=False, type='mayaAscii'):
 
     # Check to make sure we're not overwriting anything
     if file_info.exists():
-        raise RuntimeError(f'Unable to save file because {result} already exists.')
+        raise RuntimeError(
+            f'Unable to save file because {result} already exists.')
 
     cmds.file(rename=result)
     cmds.file(force=True, save=True, type=type)

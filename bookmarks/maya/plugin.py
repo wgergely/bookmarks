@@ -26,13 +26,13 @@ maya_useNewAPI = True
 def init_environment(env_key, add_private=False):
     """Add the dependencies to the Python environment.
 
-    The method requires that BOOKMARKS_ENV_KEY is set. The key is usually set
+    The method requires that `env_key` is set. The key is usually set
     by the Bookmark installer to point to the install root directory.
     The
 
     Raises:
-            EnvironmentError: When the BOOKMARKS_ENV_KEY is not set.
-            RuntimeError: When the BOOKMARKS_ENV_KEY is invalid or a directory missing.
+            EnvironmentError: When the `env_key` is not set.
+            RuntimeError: When the `env_key` is invalid or a directory missing.
 
     """
     if env_key not in os.environ:

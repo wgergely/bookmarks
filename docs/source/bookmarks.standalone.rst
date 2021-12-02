@@ -1,7 +1,11 @@
 bookmarks.standalone
 ====================
 
+
 .. automodule:: bookmarks.standalone
+
+
+.. autofunction:: bookmarks.exec_
 
 
 .. autoclass:: bookmarks.standalone.BookmarksApp

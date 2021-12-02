@@ -27,9 +27,6 @@ instance:
 The current implementation needs to authenticate using an API Script Name/Key.
 These values must be set in the bookmark database before initiating a connection.
 
-
-
-
 https://developer.shotgunsoftware.com/python-api/reference.html
 
 """
@@ -72,7 +69,7 @@ fields = {
 
 
 SG_CONNECTIONS = {}
-connecting_message = None
+sg_connecting_message = None
 
 
 def sanitize_path(path, separator):
@@ -101,45 +98,6 @@ def sanitize_path(path, separator):
     return local_path
 
 
-class Signals(QtCore.QObject):
-    connectionAttemptStarted = QtCore.Signal()
-    connectionSuccessful = QtCore.Signal()
-    connectionFailed = QtCore.Signal(str)
-    connectionClosed = QtCore.Signal()
-
-    def __init__(self, parent=None):
-        super(Signals, self).__init__(parent=parent)
-        self._connect_signals()
-
-    def _connect_signals(self):
-        self.connectionAttemptStarted.connect(self.show_connecting_message)
-        self.connectionSuccessful.connect(self.hide_connecting_message)
-        self.connectionFailed.connect(self.hide_connecting_message)
-        self.connectionClosed.connect(self.hide_connecting_message)
-
-        self.connectionFailed.connect(self.hide_connecting_message)
-        self.connectionFailed.connect(self.show_error_message)
-
-    def show_error_message(self, v):
-        ui.ErrorBox(
-            '{domain}/detail/{entity_type}/{entity_id}',
-            v
-        ).open()
-
-    def show_connecting_message(self):
-        global connecting_message
-        connecting_message = ui.MessageBox(
-            '{domain}/detail/{entity_type}/{entity_id}', no_buttons=True)
-        connecting_message.open()
-        QtWidgets.QApplication.instance().processEvents()
-
-    def hide_connecting_message(self):
-        try:
-            connecting_message.hide()
-            QtWidgets.QApplication.instance().processEvents()
-        except:
-            pass
-
 
 @contextlib.contextmanager
 def connection(sg_properties):
@@ -158,7 +116,7 @@ def connection(sg_properties):
     if not sg_properties.verify(connection=True):
         s = 'Bookmark not yet configured to use Shotgun. You must enter a valid domain name, script name and api key before connecting.'
         if QtWidgets.QApplication.instance():
-            common.signals.connectionFailed.emit(s)
+            common.signals.sgConnectionFailed.emit(s)
 
     try:
         sg = get_sg(
@@ -167,19 +125,19 @@ def connection(sg_properties):
             sg_properties.key,
         )
         if QtWidgets.QApplication.instance():
-            common.signals.connectionAttemptStarted.emit()
+            common.signals.sgConnectionAttemptStarted.emit()
         sg.connect()
         if QtWidgets.QApplication.instance():
-            common.signals.connectionSuccessful.emit()
+            common.signals.sgConnectionSuccessful.emit()
         yield sg
     except Exception as e:
         if QtWidgets.QApplication.instance():
-            common.signals.connectionFailed.emit('{domain}/detail/{entity_type}/{entity_id}'.format(e))
+            common.signals.sgConnectionFailed.emit('{domain}/detail/{entity_type}/{entity_id}'.format(e))
         raise
     else:
         sg.close()
         if QtWidgets.QApplication.instance():
-            common.signals.connectionClosed.emit()
+            common.signals.sgConnectionClosed.emit()
 
 
 def get_sg(domain, script, key):
@@ -430,7 +388,7 @@ class EntityModel(QtCore.QAbstractItemModel):
         self.spinner_icon = self.get_spinner()
 
         from ..threads import threads
-        common.signals.shotgunEntityDataReady.connect(
+        common.signals.sgEntityDataReady.connect(
             self.entityDataReceived)
 
         self.entityDataRequested.connect(self.start_waiting_for_data)

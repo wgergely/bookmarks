@@ -13,7 +13,7 @@ from . import base
 
 class Test(base.BaseCase):
     def test_default_mode(self):
-        self.assertEqual(common.active_mode, common.SyncronisedActivePaths)
+        self.assertEqual(common.active_mode, common.SynchronisedActivePaths)
 
     def test_init(self):
         path = common.init_lock()
@@ -22,7 +22,7 @@ class Test(base.BaseCase):
         self.assertTrue(os.path.isfile(path))
         with open(path, 'r') as f:
             v = f.read()
-        self.assertIn(int(v), (common.SyncronisedActivePaths, common.PrivateActivePaths))
+        self.assertIn(int(v), (common.SynchronisedActivePaths, common.PrivateActivePaths))
 
         # init second lockfile
         pid = random.randrange(9999)
@@ -32,7 +32,7 @@ class Test(base.BaseCase):
         self.assertTrue(os.path.isfile(_path))
         self.assertNotEqual(_path, path)
 
-        # Mode should be private since there's already a Syncronised lock
+        # Mode should be private since there's already a Synchronised lock
         path_ = common.init_lock()
         self.assertIsNotNone(path_)
         self.assertIsInstance(path_, str)

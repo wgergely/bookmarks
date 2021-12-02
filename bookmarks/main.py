@@ -51,7 +51,7 @@ class MainWidget(QtWidgets.QWidget):
 
         super().__init__(parent=parent)
 
-        self._initialized = False
+        self.is_initialized = False
         self.init_progress = 'Loading...'
         self.shortcuts = []
 
@@ -71,7 +71,6 @@ class MainWidget(QtWidgets.QWidget):
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
         )
-
 
     @common.debug
     @common.error
@@ -172,7 +171,7 @@ class MainWidget(QtWidgets.QWidget):
         this method is called.
 
         """
-        if self._initialized:
+        if self.is_initialized:
             return
 
         self._init_shortcuts()
@@ -221,8 +220,8 @@ class MainWidget(QtWidgets.QWidget):
             if n > 2.0:
                 break
 
-        # Initialize the bookmarks model. This will initialise the
-        # connected models asset, task and file models.
+        # Initialize the bookmarks model. This will initialize the
+        # connected asset, task and file models.
         self.bookmarks_widget.model().sourceModel().reset_data()
 
         # Let's load our favourite items
@@ -230,7 +229,7 @@ class MainWidget(QtWidgets.QWidget):
 
         # We're done, let other componenets know, we have finished initializing
         # the base widget
-        self._initialized = True
+        self.is_initialized = True
         self.initialized.emit()
 
     def update_window_title(self):
@@ -320,7 +319,7 @@ class MainWidget(QtWidgets.QWidget):
         painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform)
 
         self._paint_background(painter)
-        if not self._initialized:
+        if not self.is_initialized:
             self._paint_loading(painter)
         painter.end()
 

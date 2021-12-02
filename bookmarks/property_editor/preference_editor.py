@@ -189,7 +189,7 @@ SECTIONS = {
             1: {
                 0: {
                     'name': 'Warn Workspace',
-                    'key': common.WorksapceWarningsKey,
+                    'key': common.WorkspaceWarningsKey,
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,

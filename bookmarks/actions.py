@@ -31,7 +31,7 @@ def add_server(v):
     """Add an item to the list of user specified servers.
 
     Args:
-        v (str): A path to server, eg. `Q:/jobs`.
+        v (str): A path to server, e.g. `Q:/jobs`.
 
     """
     # Disallow adding persistent servers
@@ -48,7 +48,7 @@ def remove_server(v):
     """Remove an item from the list of user specified servers.
 
     Args:
-        v (str): A path to server, eg. `Q:/jobs`.
+        v (str): A path to server, e.g. `Q:/jobs`.
 
     """
     # Disallow removing persistent servers
@@ -191,7 +191,7 @@ def export_favourites(destination=None):
     if destination is None:
         destination, _ = QtWidgets.QFileDialog.getSaveFileName(
             caption='Select where to save your favourites',
-            filter='*.{}'.format(common.FAVOURITE_FILE_FORMAT),
+            filter='*.{}'.format(common.favorite_file_ext),
             dir=QtCore.QStandardPaths.writableLocation(
                 QtCore.QStandardPaths.HomeLocation),
         )
@@ -202,7 +202,7 @@ def export_favourites(destination=None):
 
     data = common.favourites.copy()
 
-    # Assamble the zip file
+    # Assemble the zip file
     with zipfile.ZipFile(destination, 'w') as _zip:
 
         # Add thumbnail to zip
@@ -240,7 +240,7 @@ def export_favourites(destination=None):
             data,
             ensure_ascii=True,
         )
-        _zip.writestr(common.FAVOURITE_FILE_FORMAT, v)
+        _zip.writestr(common.favorite_file_ext, v)
 
     return destination
 
@@ -255,7 +255,7 @@ def import_favourites(source=None):
     if source is None:
         source, _ = QtWidgets.QFileDialog.getOpenFileName(
             caption='Select the favourites file to import',
-            filter='*.{}'.format(common.FAVOURITE_FILE_FORMAT)
+            filter='*.{}'.format(common.favorite_file_ext)
         )
         if not source:
             return
@@ -266,10 +266,10 @@ def import_favourites(source=None):
             raise RuntimeError(
                 'This zip archive seem corrupted: {}.'.format(corrupt))
 
-        if common.FAVOURITE_FILE_FORMAT not in _zip.namelist():
+        if common.favorite_file_ext not in _zip.namelist():
             raise RuntimeError('Invalid file.')
 
-        with _zip.open(common.FAVOURITE_FILE_FORMAT) as _f:
+        with _zip.open(common.favorite_file_ext) as _f:
             v = _f.read()
 
         data = json.loads(v)
@@ -339,16 +339,19 @@ def set_active(k, v):
     """Sets the given path as the active path segment for the given key.
 
     Args:
-        k (str): An active key, eg. `common.ServerKey`.
-        v (str): A path segment, eg. '//myserver/jobs'.
+        k (str): An active key, e.g. `common.ServerKey`.
+        v (str or None): A path segment, e.g. '//myserver/jobs'.
 
     """
+    common.check_type(k, str)
+    common.check_type(k, (str, None))
+
     if k not in common.ActiveSectionCacheKeys:
         raise ValueError('Invalid active key. Key must be the one of "{}"'.format(
             '", "'.join(common.ActiveSectionCacheKeys)))
 
     common.ActiveSectionCache[common.active_mode][k] = v
-    if common.active_mode == common.SyncronisedActivePaths:
+    if common.active_mode == common.SynchronisedActivePaths:
         common.settings.setValue(common.ActiveSection, k, v)
 
 
@@ -363,7 +366,7 @@ def set_task_folder(v):
 @common.error
 @common.debug
 def toggle_sequence():
-    if common.main_widget is None or not common.main_widget._initialized:
+    if common.main_widget is None or not common.main_widget.is_initialized:
         return
     if common.current_tab() not in (common.FileTab, common.FavouriteTab):
         return
@@ -379,7 +382,7 @@ def toggle_sequence():
 @common.error
 @common.debug
 def toggle_archived_items():
-    if common.main_widget is None or not common.main_widget._initialized:
+    if common.main_widget is None or not common.main_widget.is_initialized:
         return
     w = common.widget()
     proxy = w.model()
@@ -391,7 +394,7 @@ def toggle_archived_items():
 @common.error
 @common.debug
 def toggle_active_item():
-    if common.main_widget is None or not common.main_widget._initialized:
+    if common.main_widget is None or not common.main_widget.is_initialized:
         return
     w = common.widget()
     proxy = w.model()
@@ -403,7 +406,7 @@ def toggle_active_item():
 @common.error
 @common.debug
 def toggle_favourite_items():
-    if common.main_widget is None or not common.main_widget._initialized:
+    if common.main_widget is None or not common.main_widget.is_initialized:
         return
     w = common.widget()
     proxy = w.model()
@@ -415,7 +418,7 @@ def toggle_favourite_items():
 @common.error
 @common.debug
 def toggle_inline_icons():
-    if common.main_widget is None or not common.main_widget._initialized:
+    if common.main_widget is None or not common.main_widget.is_initialized:
         return
 
     widget = common.widget()
@@ -431,7 +434,7 @@ def toggle_inline_icons():
 @common.error
 @common.debug
 def toggle_make_thumbnails():
-    if common.main_widget is None or not common.main_widget._initialized:
+    if common.main_widget is None or not common.main_widget.is_initialized:
         return
     widget = common.widget()
     model = widget.model().sourceModel()
@@ -447,7 +450,7 @@ def toggle_make_thumbnails():
 
 @QtCore.Slot()
 def toggle_task_view():
-    if common.main_widget is None or not common.main_widget._initialized:
+    if common.main_widget is None or not common.main_widget.is_initialized:
         return
     if common.current_tab() != common.FileTab:
         return
@@ -457,7 +460,7 @@ def toggle_task_view():
 
 
 def toggle_filter_editor():
-    if common.main_widget is None or not common.main_widget._initialized:
+    if common.main_widget is None or not common.main_widget.is_initialized:
         return
     w = common.widget()
     if w.filter_editor.isHidden():
@@ -474,9 +477,9 @@ def asset_identifier_changed(table, source, key, value):
     """Refresh the assets model if the identifier changes.
 
     """
-    if common.main_widget is None or not common.main_widget._initialized:
+    if common.main_widget is None or not common.main_widget.is_initialized:
         return
-    # All shotgun fields should be prefix by 'shotgun_'
+    # All shotgun fields should be prefixed by 'shotgun_'
     if not (table == database.BookmarkTable and key == 'identifier'):
         return
     model = common.source_model(common.AssetTab)
@@ -490,7 +493,7 @@ def selection(func):
     """
     @functools.wraps(func)
     def func_wrapper():
-        if common.main_widget is None or not common.main_widget._initialized:
+        if common.main_widget is None or not common.main_widget.is_initialized:
             return None
         index = common.selected_index()
         if not index.isValid():
@@ -502,7 +505,7 @@ def selection(func):
 @common.error
 @common.debug
 def increase_row_size():
-    if common.main_widget is None or not common.main_widget._initialized:
+    if common.main_widget is None or not common.main_widget.is_initialized:
         return
     widget = common.widget()
     proxy = widget.model()
@@ -519,7 +522,7 @@ def increase_row_size():
 @common.error
 @common.debug
 def decrease_row_size():
-    if common.main_widget is None or not common.main_widget._initialized:
+    if common.main_widget is None or not common.main_widget.is_initialized:
         return
     widget = common.widget()
     proxy = widget.model()
@@ -536,7 +539,7 @@ def decrease_row_size():
 @common.error
 @common.debug
 def reset_row_size():
-    if common.main_widget is None or not common.main_widget._initialized:
+    if common.main_widget is None or not common.main_widget.is_initialized:
         return
     widget = common.widget()
     proxy = widget.model()
@@ -705,7 +708,7 @@ def show_slack():
     if token is None:
         raise RuntimeError('Slack is not yet configured.')
 
-    from . import slack
+    from . slack import slack
     widget = slack.show(token)
     return widget
 
@@ -796,8 +799,6 @@ def toggle_stays_on_top():
     if common.init_mode == common.EmbeddedMode:
         return
 
-    from . import standalone
-
     w = common.main_widget
     flags = w.windowFlags()
     state = flags & QtCore.Qt.WindowStaysOnTopHint
@@ -859,7 +860,7 @@ def exec_instance():
 @common.error
 @common.debug
 def change_tab(idx):
-    if common.main_widget is None or not common.main_widget._initialized:
+    if common.main_widget is None or not common.main_widget.is_initialized:
         return
     if common.current_tab() == idx:
         return
@@ -1069,7 +1070,7 @@ def show_asset(path):
     if not index or not index.isValid():
         return
 
-    # Check if the aded asset has been added to the currently active bookmark
+    # Check if the added asset has been added to the currently active bookmark
     if index.data(QtCore.Qt.StatusTipRole) not in path:
         return
 
@@ -1093,6 +1094,8 @@ def reveal(item):
         path = item.data(QtCore.Qt.StatusTipRole)
     elif isinstance(item, str):
         path = item
+    else:
+        return
 
     path = common.get_sequence_endpath(path)
     if common.get_platform() == common.PlatformWindows:
@@ -1125,7 +1128,7 @@ def reveal(item):
 def copy_path(path, mode=common.WindowsPath, first=True, copy=True):
     """Copy a file path to the clipboard.
 
-    The path will be conformed to the given `mode` (eg. forward slashes
+    The path will be conformed to the given `mode` (e.g. forward slashes
     converted to back-slashes for `WindowsPath`).
 
     Args:
@@ -1217,7 +1220,7 @@ def execute(index, first=False):
 @common.debug
 @common.error
 def test_slack_token(token):
-    from .external import slack
+    from . slack import slack
     client = slack.SlackClient(token)
     client.verify_token()
 
@@ -1414,7 +1417,7 @@ def paste_asset_properties(index):
 @common.error
 @common.debug
 def toggle_active_mode():
-    if common.main_widget is None or not common.main_widget._initialized:
+    if common.main_widget is None or not common.main_widget.is_initialized:
         return
     # Toggle the active mode
     common.active_mode = int(not bool(common.active_mode))
@@ -1433,14 +1436,13 @@ def import_asset_properties_from_json():
     if not source:
         return
 
-    from . import ui
-
     # Load config values from JSON
     with open(source, 'r', encoding='utf8') as f:
         v = f.read()
     import_data = json.loads(v)
 
     # Progress bar
+    from . import ui
     mbox = ui.MessageBox('Applying properties...', no_buttons=True)
     mbox.open()
 
@@ -1509,7 +1511,7 @@ def add_zip_template(source, mode, prompt=False):
 
     Args:
         source (str): Path to a source file.
-        mode (str): A template mode, eg. 'job' or 'asset'
+        mode (str): A template mode, e.g. 'job' or 'asset'
 
     Returns:
         str: Path to the saved template file, or `None`.
@@ -1518,7 +1520,6 @@ def add_zip_template(source, mode, prompt=False):
     common.check_type(source, str)
     common.check_type(mode, str)
 
-    from . import ui
 
     file_info = QtCore.QFileInfo(source)
     if not file_info.exists():
@@ -1545,6 +1546,7 @@ def add_zip_template(source, mode, prompt=False):
         raise RuntimeError(s)
 
     if file_info.exists():
+        from . import ui
         mbox = ui.MessageBox(
             s,
             'Do you want to overwrite the existing file?',
@@ -1556,7 +1558,7 @@ def add_zip_template(source, mode, prompt=False):
 
     # If copied successfully, let's reload the
     if not QtCore.QFile.copy(source, file_info.filePath()):
-        raise RuntimeError('An unknown error occured adding the template.')
+        raise RuntimeError('An unknown error occurred adding the template.')
 
     common.signals.templatesChanged.emit()
     return file_info.filePath()
@@ -1570,8 +1572,8 @@ def extract_zip_template(source, destination, name):
 
     Args:
         source (str):           Path to a *.zip archive.
-        description (str):      Path to a folder
-        name (str):             Name of the root folder where the arhive
+        destination (str):      Path to a folder
+        name (str):             Name of the root folder where the archive
                                     contents will be expanded to.
 
     Returns:
@@ -1629,14 +1631,13 @@ def remove_zip_template(source, prompt=True):
     """
     common.check_type(source, str)
 
-    from . import ui
-
     file_info = QtCore.QFileInfo(source)
 
     if not file_info.exists():
         raise RuntimeError('Template does not exist.')
 
     if prompt:
+        from . import ui
         mbox = ui.MessageBox(
             'Are you sure you want to delete this template?',
             buttons=[ui.CancelButton, ui.YesButton]
@@ -1660,7 +1661,7 @@ def pick_template(mode):
     folder.
 
     Args:
-        mode (str): A template mode, eg. `JobTemplateMode`.
+        mode (str): A template mode, e.g. `JobTemplateMode`.
 
     """
     common.check_type(mode, str)
@@ -1685,3 +1686,27 @@ def pick_template(mode):
         return
 
     add_zip_template(source, mode)
+
+
+def show_sg_error_message(v):
+    from . import ui
+    common.sg_error_message = ui.ErrorBox(
+        'An error occured.',
+        v
+    ).open()
+
+
+def show_sg_connecting_message():
+    from . import ui
+    common.sg_connecting_message = ui.MessageBox(
+        'Shotgun is connecting, please wait...', no_buttons=True)
+    common.sg_connecting_message.open()
+    QtWidgets.QApplication.instance().processEvents()
+
+
+def hide_sg_connecting_message():
+    try:
+        common.sg_connecting_message.hide()
+        QtWidgets.QApplication.instance().processEvents()
+    except:
+        pass

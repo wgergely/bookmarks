@@ -7,15 +7,14 @@ from PySide2 import QtCore
 from . import common
 
 
-
 def sort_data(ref, sortrole, sortorder):
     common.check_type(ref, weakref.ref)
     common.check_type(sortrole, QtCore.Qt.ItemDataRole)
     common.check_type(sortorder, bool)
 
-    def sort_key(idx):
+    def sort_key(_idx):
         # If sort_by_basename is `True` we'll use the base file name for sorting
-        v = ref().__getitem__(idx)
+        v = ref().__getitem__(_idx)
         if common.sort_by_basename and sortrole == common.SortByNameRole and isinstance(v[sortrole], list):
             return v[sortrole][-1]
         return v[sortrole]

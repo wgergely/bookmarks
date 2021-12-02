@@ -11,7 +11,7 @@ import functools
 import weakref
 import uuid
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtWidgets
 
 
 from .. import log
@@ -150,7 +150,7 @@ class BaseWorker(QtCore.QObject):
     updateRow = QtCore.Signal(weakref.ref)
     databaseValueUpdated = QtCore.Signal(str, str, str, object)
 
-    shotgunEntityDataReady = QtCore.Signal(str, list)
+    sgEntityDataReady = QtCore.Signal(str, list)
 
     def __init__(self, queue, parent=None):
         super(BaseWorker, self).__init__(parent=parent)
@@ -221,8 +221,8 @@ class BaseWorker(QtCore.QObject):
                 self.databaseValueUpdated, cnx)
 
         from ..shotgun import actions as sg_actions
-        self.shotgunEntityDataReady.connect(
-            common.signals.shotgunEntityDataReady, cnx)
+        self.sgEntityDataReady.connect(
+            common.signals.sgEntityDataReady, cnx)
 
     def update_changed_database_value(self, table, source, key, value):
         """Process changes when any bookmark database value changes.
@@ -451,6 +451,9 @@ class InfoWorker(BaseWorker):
                 if not is_valid():
                     return False
 
+                # Let's load an verify the slack status
+                self.update_slack_configured(pp, db, ref())
+
             if len(pp) > 3:
                 # I made a mistake and didn't realise I was settings things
                 # up so that bookmark descriptions won't be stored in
@@ -625,8 +628,12 @@ class InfoWorker(BaseWorker):
 
         sg_properties = shotgun.ShotgunProperties(server, job, root, asset)
         sg_properties.init(db=db)
+        data[common.ShotgunLinkedRole] = sg_properties.verify(connection=True)
 
-        data[common.ShotgunLinkedRole] = sg_properties.verify()
+    @staticmethod
+    def update_slack_configured(source_paths, db, data):
+        v = db.value(db.source(), 'slacktoken', table=database.BookmarkTable)
+        data[common.SlackLinkedRole] = True if v else False
 
     @staticmethod
     def count_assets(path, ASSET_IDENTIFIER):
@@ -657,9 +664,7 @@ class InfoWorker(BaseWorker):
         the bookmark.
 
         Args:
-            server (str):   Server name.
-            job (str):   Job name.
-            root (str):   Root folder name.
+            db (BookmarkDB):   A BookmarkDB instance.
 
         Returns:
             str:    The description of the bookmark.
@@ -954,7 +959,7 @@ class ShotgunWorker(BaseWorker):
                 entities = sg.find(entity_type, filters, fields=fields)
 
             # Emit the retrieved data so the ui componenets can fetch it
-            self.shotgunEntityDataReady.emit(idx, entities)
+            self.sgEntityDataReady.emit(idx, entities)
         except IndexError:
             pass  # ignore index errors
         except:

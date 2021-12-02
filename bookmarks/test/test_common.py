@@ -141,7 +141,7 @@ class Test(base.BaseCase):
         self.assertIsInstance(common.active_mode, int)
         self.assertIn(
             common.active_mode,
-            (common.SyncronisedActivePaths, common.PrivateActivePaths)
+            (common.SynchronisedActivePaths, common.PrivateActivePaths)
         )
 
     def test_init_font_db(self):

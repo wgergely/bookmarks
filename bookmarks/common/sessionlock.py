@@ -3,7 +3,7 @@
 files.
 
 Bookmarks understand two session locks related to how active paths are read and
-set. When `common.active_mode` is `common.SyncronisedActivePaths` bookmarks
+set. When `common.active_mode` is `common.SynchronisedActivePaths` bookmarks
 will save active paths in the `user_settings`, as expected.
 
 However, when multiple Bookmarks instances are running this poses a problem,
@@ -17,7 +17,7 @@ be modified. Instead, the paths will be saved into a private data container.
 To toggle between  private active paths, and the ones stored in `user_settings`
 see `actions.toggle_active_mode`.
 
-`ToggleSessionModeButton` is a UI element used by the user to togge between
+`ToggleSessionModeButton` is a UI element used by the user to toggle between
 these modes.
 
 """
@@ -80,8 +80,8 @@ def prune_lock():
 def init_lock():
     """Initialises the Bookmark's session lock.
 
-    We'll check all lockfiles and to see if there's already a
-    SyncronisedActivePaths session. As we want only one session controlling
+    We'll check all lock-files and to see if there's already a
+    SynchronisedActivePaths session. As we want only one session controlling
     the active path settings we'll set all subsequent application sessions
     to be PrivateActivePaths (when PrivateActivePaths is on, all active path
     settings will be kept in memory, instead of writing them out to the
@@ -111,15 +111,15 @@ def init_lock():
                 data = common.PrivateActivePaths
 
             # If we encounter any session locks that are currently
-            # set to `SyncronisedActivePaths`, we'll set this session to be
+            # set to `SynchronisedActivePaths`, we'll set this session to be
             # in PrivateActivePaths as we don't want sessions to be able
-            # to set their environent independently:
-            if data == common.SyncronisedActivePaths:
+            # to set their environment independently:
+            if data == common.SynchronisedActivePaths:
                 common.active_mode = common.PrivateActivePaths
                 return write_current_mode_to_lock()
 
     # Otherwise, set the default value
-    common.active_mode = common.SyncronisedActivePaths
+    common.active_mode = common.SynchronisedActivePaths
     return write_current_mode_to_lock()
 
 

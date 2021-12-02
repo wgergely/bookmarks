@@ -9,11 +9,14 @@ TaskItemMonitor = 1
 
 
 def init_monitor():
-    common.monitors = {}
-    common.monitors[FileItemMonitor] = QtCore.QFileSystemWatcher()
-    common.monitors[FileItemMonitor].directoryChanged.connect(functools.partial(directory_changed, FileItemMonitor))
-    common.monitors[TaskItemMonitor] = QtCore.QFileSystemWatcher()
-    common.monitors[TaskItemMonitor].directoryChanged.connect(functools.partial(directory_changed, TaskItemMonitor))
+    common.monitors = {
+        FileItemMonitor: QtCore.QFileSystemWatcher(),
+        TaskItemMonitor: QtCore.QFileSystemWatcher()
+    }
+    common.monitors[FileItemMonitor].directoryChanged.connect(
+        functools.partial(directory_changed, FileItemMonitor))
+    common.monitors[TaskItemMonitor].directoryChanged.connect(
+        functools.partial(directory_changed, TaskItemMonitor))
 
 
 def set_watchdirs(idx, paths):
@@ -27,7 +30,6 @@ def clear_watchdirs(idx):
         raise ValueError('Invalid monitor value.')
     for v in common.monitors[idx].directories():
         common.monitors[idx].removePath(v)
-
 
 
 @QtCore.Slot(str)

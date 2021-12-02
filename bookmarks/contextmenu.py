@@ -159,7 +159,7 @@ class BaseContextMenu(QtWidgets.QMenu):
                     _showEvent_override, submenu)
 
                 if f'{k}:icon' in menu and show_icons:
-                    submenu.setIcon(QtGui.QIcon(menu[f'{k}:icon']))
+                    submenu.setIcon(menu[f'{k}:icon'])
                 if f'{k}:text' in menu:
                     submenu.setTitle(menu[f'{k}:text'])
 

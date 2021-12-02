@@ -23,14 +23,14 @@ class Test(base.BaseCase):
             v = main.instance()
 
         v = main.MainWidget()
-        self.assertFalse(v._initialized)
+        self.assertFalse(v.is_initialized)
         self.assertIsInstance(v, main.MainWidget)
         self.assertIsInstance(main.instance(), main.MainWidget)
         v.initialize()
-        self.assertTrue(v._initialized)
+        self.assertTrue(v.is_initialized)
 
         common.quit()
-        self.assertFalse(v._initialized)
+        self.assertFalse(v.is_initialized)
 
         # import sys
         # self.assertLessEqual(sys.getrefcount(v), 3)

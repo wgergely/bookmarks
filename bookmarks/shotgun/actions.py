@@ -33,7 +33,7 @@ def link_asset_entity(server, job, root, asset, entity_type):
 def show_task_picker():
     from ..shotgun import tasks as editor
     widget = editor.show()
-    widget.entitySelected.connect(common.signals.entitySelected)
+    widget.sgEntitySelected.connect(common.signals.sgEntitySelected)
     return widget
 
 
@@ -42,7 +42,7 @@ def show_task_picker():
 def link_assets():
     from ..shotgun import link_assets as editor
     widget = editor.show()
-    widget.assetsLinked.connect(common.signals.assetsLinked)
+    widget.sgAssetsLinked.connect(common.signals.sgAssetsLinked)
     return widget
 
 
@@ -60,7 +60,7 @@ def upload_thumbnail(sg_properties, thumbnail_path):
     """Uploads an item thumbnail to shotgun.
 
     """
-    if not sg_properties.is_valid():
+    if not sg_properties.verify():
         return
 
     asset = sg_properties.asset

@@ -141,7 +141,7 @@ class LinkMultiple(QtWidgets.QDialog):
     counterparts.
 
     """
-    assetsLinked = QtCore.Signal()
+    sgAssetsLinked = QtCore.Signal()
     entityTypeFilterChanged = QtCore.Signal(str)
 
     def __init__(self, parent=None):
@@ -384,7 +384,7 @@ class LinkMultiple(QtWidgets.QDialog):
             super(LinkMultiple, self).done(result)
             return
         self.save_data()
-        self.assetsLinked.emit()
+        self.sgAssetsLinked.emit()
         super(LinkMultiple, self).done(result)
 
     def save_data(self):

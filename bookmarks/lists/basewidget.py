@@ -399,7 +399,6 @@ class BaseListWidget(QtWidgets.QListView):
         model.modelReset.connect(self.delay_restore_selection)
         proxy.invalidated.connect(self.delay_restore_selection)
 
-
     @QtCore.Slot(QtCore.QModelIndex)
     def update(self, index):
         """This slot is used by all threads to repaint/update the given index
@@ -625,7 +624,7 @@ class BaseListWidget(QtWidgets.QListView):
             proxy_k = common.proxy_path(k)
 
             if flag == common.MarkedAsActive:
-                pass # not implemented
+                pass  # not implemented
 
             elif flag == common.MarkedAsArchived:
                 db = database.get_db(*index.data(common.ParentPathRole)[0:3])
@@ -1640,7 +1639,6 @@ class BaseInlineIconWidget(BaseListWidget):
                 else:
                     common.signals.clearStatusBarMessage.emit()
                     self.update(index)
-
 
             rect = self.itemDelegate().get_description_rect(rectangles, index)
             if rect.contains(cursor_position):

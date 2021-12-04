@@ -1,11 +1,9 @@
-
 import functools
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
 from . import common
 from . import images
-
 
 _message_instance = None
 
@@ -498,7 +496,8 @@ class PaintedButton(QtWidgets.QPushButton):
 class PaintedLabel(QtWidgets.QLabel):
     """QLabel used for static aliased label."""
 
-    def __init__(self, text, color=common.color(common.TextColor), size=common.size(common.FontSizeMedium), parent=None):
+    def __init__(self, text, color=common.color(common.TextColor), size=common.size(common.FontSizeMedium),
+                 parent=None):
         super(PaintedLabel, self).__init__(text, parent=parent)
         self._size = size
         self._color = color
@@ -902,7 +901,6 @@ class ListWidget(QtWidgets.QListWidget):
         self.resized.emit(event.size())
 
 
-
 class ListViewOverlayWidget(QtWidgets.QWidget):
     """Widget used to display a status message over the list widget.
 
@@ -960,7 +958,6 @@ class ListViewOverlayWidget(QtWidgets.QWidget):
             text,
         )
         painter.end()
-
 
 
 class ListViewWidget(QtWidgets.QListView):
@@ -1062,13 +1059,12 @@ class ListViewWidget(QtWidgets.QListView):
         self.resized.emit(event.size())
 
 
-
 def get_icon(
-    name,
-    color=common.color(common.TextDisabledColor),
-    size=common.size(common.HeightRow),
-    opacity=1.0,
-    resource=common.GuiResource
+        name,
+        color=common.color(common.TextDisabledColor),
+        size=common.size(common.HeightRow),
+        opacity=1.0,
+        resource=common.GuiResource
 ):
     """Utility method for retuning a QIcon to use in the context menu.
 
@@ -1085,8 +1081,8 @@ def get_icon(
     """
     k = f'{name}/{color}/{size}/{opacity}/{resource}'
 
-    if k in images.INTERNAL_DATA[images.IconType]:
-        return images.INTERNAL_DATA[images.IconType][k]
+    if k in common.image_cache[images.IconType]:
+        return common.image_cache[images.IconType][k]
 
     icon = QtGui.QIcon()
 
@@ -1106,8 +1102,8 @@ def get_icon(
 
     icon.addPixmap(pixmap, mode=QtGui.QIcon.Disabled)
 
-    images.INTERNAL_DATA[images.IconType][k] = icon
-    return images.INTERNAL_DATA[images.IconType][k]
+    common.image_cache[images.IconType][k] = icon
+    return common.image_cache[images.IconType][k]
 
 
 def get_group(parent=None, vertical=True, margin=common.size(common.WidthMargin)):
@@ -1137,7 +1133,9 @@ def get_group(parent=None, vertical=True, margin=common.size(common.WidthMargin)
     return grp
 
 
-def add_row(label, color=common.color(common.TextSecondaryColor), parent=None, padding=common.size(common.WidthMargin), height=common.size(common.HeightRow), cls=None, vertical=False):
+def add_row(label, color=common.color(common.TextSecondaryColor), parent=None,
+            padding=common.size(common.WidthMargin), height=common.size(common.HeightRow), cls=None,
+            vertical=False):
     """Utility method for creating a row widget.
 
     Returns:
@@ -1215,7 +1213,8 @@ def add_line_edit(label, parent=None):
     return w
 
 
-def add_description(text, label=' ', color=common.color(common.TextSecondaryColor), padding=common.size(common.WidthMargin), parent=None):
+def add_description(text, label=' ', color=common.color(common.TextSecondaryColor),
+                    padding=common.size(common.WidthMargin), parent=None):
     """Utility method for adding a description field.
 
     Returns:

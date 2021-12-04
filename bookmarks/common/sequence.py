@@ -67,21 +67,21 @@ def proxy_path(v):
     of their frame-range notation.
 
     Args:
-            v (QModelIndex, dict or str): Data dict, index or filepath string.
+            v (QModelIndex, weakref.ref, dict or str): Data dict, index or filepath string.
 
     Returns:
             str: The key used to store the item's information in the local
             preferences and the bookmark item database.
 
     """
-    if isinstance(v, weakref.ref):
+    if isinstance(v, str):
+        pass
+    elif isinstance(v, weakref.ref):
         v = v()[QtCore.Qt.StatusTipRole]
-    if isinstance(v, dict):
+    elif isinstance(v, dict):
         v = v[QtCore.Qt.StatusTipRole]
     elif isinstance(v, QtCore.QModelIndex):
         v = v.data(QtCore.Qt.StatusTipRole)
-    elif isinstance(v, str):
-        pass
     else:
         raise TypeError(
             f'Invalid type, expected one of {weakref.ref}, {QtCore.QModelIndex}, {dict}, got {type(v)}')

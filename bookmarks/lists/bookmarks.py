@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-"""The widget, model and context menu needed for listing bookmarks stored
-in `user_settings`.
+"""The view and model used to display bookmark items.
 
 """
+import os
 from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
@@ -96,8 +96,6 @@ class BookmarksModel(basemodel.BaseModel):
         """Collects the data needed to populate the bookmarks model.
 
         """
-        common.settings.load_active_values()
-
         p = self.source_path()
         _k = self.task()
         t = self.data_type()
@@ -152,6 +150,11 @@ class BookmarksModel(basemodel.BaseModel):
             if idx >= common.max_list_items:
                 break  # Let's limit the maximum number of items we load
 
+            # Find the entry
+            for entry in os.scandir(file_info.dir().path()):
+                if entry.name == file_info.baseName():
+                    break
+
             data[idx] = common.DataDict({
                 QtCore.Qt.DisplayRole: text,
                 QtCore.Qt.EditRole: text,
@@ -169,10 +172,10 @@ class BookmarksModel(basemodel.BaseModel):
                 common.AssetCountRole: 0,
                 common.FileDetailsRole: None,
                 common.SequenceRole: None,
-                common.EntryRole: [],
+                common.EntryRole: [entry,],
                 common.FileInfoLoaded: False,
-                common.StartpathRole: None,
-                common.EndpathRole: None,
+                common.StartPathRole: None,
+                common.EndPathRole: None,
                 #
                 common.ThumbnailLoaded: False,
                 #

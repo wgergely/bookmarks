@@ -1,54 +1,31 @@
 # -*- coding: utf-8 -*-
-"""The module defines the base models and views used to list bookmark, asset and
-file items.
+"""The base view used to disp[aly bookmark, asset and file items.
 
-BaseModel:
-    The model is used to wrap data needed to display bookmark, asset and file
-    items. Data is stored in :const:`common.DATA` and populated by
-    :func:`.BaseModel.init_data`. The model can be initiated by the
-    `BaseModel.modelDataResetRequested` signal.
+The view uses :class:`~bookmarks.lists.basemodel.BaseModel` for getting the item data,
+:class:`~bookmarks.lists.delegate.rst.BaseDelegate` to paint the items.
 
-    The model refers to multiple data sets simultaneously. This is because file
-    items are stored as file sequences and individual items in two separate data
-    sets (both cached in the datacache module). The file model also keeps this
-    data in separate sets for each subfolder it encounters in an asset's root
-    folder.
-
-    The current data exposed to the model can be retrieved by
-    `BaseModel.model_data()`. To change/set the data set emit the `taskFolderChanged` and
-    `dataTypeChanged` signals with their apporpiate arguments.
-
-    Each `BaseModel` instance can be initiated with worker threads used to load
-    secondary file information, like custom descriptions and thumbnails. See
-    :mod:`.bookmarks.threads` for more information.
-
-    Data is filtered with QSortFilterProxyModels but we're not using the default
-    sorting mechanisms because of performance considerations. Instead, sorting
-    is implemented in the :class:`.BaseModel` directly.
-
+The base list is a customised QListView, :class:`.BaseInlineIconWidget` adds
+inline icon capabilities, and :class:`.ThreadedBaseWidget` implements data updating
+with the helper threads.
 
 """
+import functools
 import re
 import weakref
-import functools
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from .. import common
-from .. import ui
-from .. import database
-from .. import contextmenu
-
-from .. import images
-from .. import actions
-
-from ..threads import threads
-
-from . widgets import filter_editor
-from . widgets import description_editor
-
 from . import basemodel
 from . import delegate
+from . widgets import description_editor
+from . widgets import filter_editor
+from .. import actions
+from .. import common
+from .. import contextmenu
+from .. import database
+from .. import images
+from .. import ui
+from ..threads import threads
 
 
 BG_COLOR = QtGui.QColor(0, 0, 0, 50)
@@ -82,7 +59,7 @@ def get_visible_indexes(widget):
     return set(idxs)
 
 
-class TabsWidget(QtWidgets.QStackedWidget):
+class ListsWidget(QtWidgets.QStackedWidget):
     """Stacked widget used to hold and toggle the list widgets containing the
     bookmarks, assets, files and favourites."""
 
@@ -92,7 +69,7 @@ class TabsWidget(QtWidgets.QStackedWidget):
         common.signals.tabChanged.connect(self.setCurrentIndex)
 
     def setCurrentIndex(self, idx):
-        """Sets the current index of the ``TabsWidget``.
+        """Sets the current index of the ``ListsWidget``.
 
         Args:
             idx (int): The index of the widget to set.
@@ -562,6 +539,7 @@ class BaseListWidget(QtWidgets.QListView):
             str: The key used to find and match items.
 
         """
+
         def save_to_db(k, mode, flag):
             if not commit_now:
                 threads.queue_database_transaction(

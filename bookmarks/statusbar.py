@@ -95,7 +95,7 @@ class ThreadStatus(QtWidgets.QWidget):
             c += len(threads.queue(k))
         if not c:
             return ''
-        return 'Processing {} items'.format(c)
+        return f'Processing... ({c} items left)'
 
 class MessageWidget(QtWidgets.QStatusBar):
     """Bookmark's status bar, below the list widgets.

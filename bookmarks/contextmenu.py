@@ -1201,7 +1201,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         for _k in sorted(v, key=lambda k: v[k]['name']):
             try:
                 pixmap = QtGui.QPixmap(v[_k]['thumbnail'])
-                pixmap.setDevicePixelRatio(images.pixel_ratio)
+                pixmap.setDevicePixelRatio(common.pixel_ratio)
                 icon = QtGui.QIcon(pixmap)
             except:
                 icon = QtGui.QIcon()

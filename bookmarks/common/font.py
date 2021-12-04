@@ -1,8 +1,19 @@
-import os
+"""Defines :class:`.FontDatabase`, a utility class used to load and store fonts used by Bookmarks.
 
+The :class:`.FontDatabase` instance is saved at :attr:`bookmarks.common.font_db`.
+QFont and QFontMetrics instances can be retrieved using:
+
+.. code-block:: python
+
+    from bookmarks import common
+    font, metrics = common.font_db.primary_font(common.size(common.FontSizeSmall))
+
+"""
+import os
 from PySide2 import QtGui, QtWidgets
 
 from .. import common
+
 
 PrimaryFontRole = 0
 SecondaryFontRole = 1
@@ -10,7 +21,7 @@ MetricsRole = 2
 
 
 class FontDatabase(QtGui.QFontDatabase):
-    """Utility class for loading and getting the application's custom fonts.
+    """Custom ``QFontDatabase`` used to load and provide the fonts needed by Bookmarks.
 
     """
 

@@ -570,10 +570,6 @@ class SlackWidget(QtWidgets.QDialog):
 
         self.is_initialized = False
 
-        self.initialize_timer = common.Timer(parent=self)
-        self.initialize_timer.setInterval(50)
-        self.initialize_timer.setSingleShot(True)
-
         self.overlay = OverlayWidget(parent=self)
 
         self.send_button = None
@@ -628,8 +624,6 @@ class SlackWidget(QtWidgets.QDialog):
         self.users_group.layout().addWidget(self.users_widget, 1)
 
     def _connect_signals(self):
-        self.initialize_timer.timeout.connect(self.initialize)
-
         self.send_button.clicked.connect(self.send_message)
         self.send_button.clicked.connect(
             lambda: self.overlay.setText('Message sent.'))
@@ -682,7 +676,7 @@ class SlackWidget(QtWidgets.QDialog):
 
     def showEvent(self, event):
         if not self.is_initialized:
-            self.initialize_timer.start()
+            QtCore.QTimer.singleShot(100, self.initialize)
 
     @QtCore.Slot()
     def open_url(self):

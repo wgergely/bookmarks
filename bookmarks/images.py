@@ -2,34 +2,24 @@
 """Module for most image related classes and methods including the
 app's.
 
-Thumbnails:
-    We're relying on ``OpenImageIO`` to generate image and movie thumbnails.
-    Thumbnail operations are multi-threaded.
-
-    See ``ImageCache.oiio_make_thumbnail()`` for the OpenImageIO wrapper for
-    generating thubmanails.
-
-All generated thumbnails and ui resources are cached in ``ImageCache``.
+We're relying on ``OpenImageIO`` to generate image and movie thumbnails.
+All generated thumbnails and UI resources are cached by ``ImageCache`` into ``image_cache``.
 
 """
+import functools
 import os
 import time
-import functools
 
-from PySide2 import QtWidgets, QtGui, QtCore
 import OpenImageIO
+from PySide2 import QtWidgets, QtGui, QtCore
 
-from . import log
 from . import common
-
+from . import log
 
 QT_IMAGE_FORMATS = {f.data().decode('utf8')
                     for f in QtGui.QImageReader.supportedImageFormats()}
 
 mutex = QtCore.QMutex()
-
-pixel_ratio = None
-oiio_cache = None
 
 BufferType = QtCore.Qt.UserRole
 PixmapType = BufferType + 1
@@ -40,43 +30,34 @@ ColorType = ResourcePixmapType + 1
 
 accepted_codecs = ('h.264', 'h264', 'mpeg-4', 'mpeg4')
 
-RESOURCES = {
-    common.GuiResource: [],
-    common.ThumbnailResource: [],
-    common.FormatResource: [],
-}
-RESOURCE_DATA = {}
-INTERNAL_DATA = {
-    BufferType: {},
-    PixmapType: {},
-    ImageType: {},
-    IconType: {},
-    ResourcePixmapType: {},
-    ColorType: {},
-}
-
-__initial_values__ = {
-    'pixel_ratio': pixel_ratio,
-    'oiio_cache': oiio_cache,
-    'RESOURCES': RESOURCES,
-    'RESOURCE_DATA': RESOURCE_DATA,
-    'INTERNAL_DATA': INTERNAL_DATA
-}
-
 
 def init_imagecache():
-    global oiio_cache
-    oiio_cache = OpenImageIO.ImageCache(shared=True)
-    oiio_cache.attribute('max_memory_MB', 4096.0)
-    oiio_cache.attribute('max_open_files', 0)
-    oiio_cache.attribute('trust_file_extensions', 1)
+    common.oiio_cache = OpenImageIO.ImageCache(shared=True)
+    common.oiio_cache.attribute('max_memory_MB', 4096.0)
+    common.oiio_cache.attribute('max_open_files', 0)
+    common.oiio_cache.attribute('trust_file_extensions', 1)
+
+    common.image_resource_list = {
+        common.GuiResource: [],
+        common.ThumbnailResource: [],
+        common.FormatResource: [],
+    }
+    common.image_resource_data = {}
+    common.image_cache = {
+        BufferType: {},
+        PixmapType: {},
+        ImageType: {},
+        IconType: {},
+        ResourcePixmapType: {},
+        ColorType: {},
+    }
 
 
 def init_resources():
-    global RESOURCES
-    for _source, k in ((common.get_rsc(f), f) for f in (common.GuiResource, common.ThumbnailResource, common.FormatResource)):
+    for _source, k in ((common.get_rsc(f), f) for f in
+                       (common.GuiResource, common.ThumbnailResource, common.FormatResource)):
         for _entry in os.scandir(_source):
-            RESOURCES[k].append(_entry.name.split('.', maxsplit=1)[0])
+            common.image_resource_list[k].append(_entry.name.split('.', maxsplit=1)[0])
 
 
 def init_pixel_ratio():
@@ -85,11 +66,10 @@ def init_pixel_ratio():
         log.error(
             '`init_pixel_ratio()` was called before a QApplication was created.')
 
-    global pixel_ratio
-    if app and pixel_ratio is None:
-        pixel_ratio = app.primaryScreen().devicePixelRatio()
+    if app and common.pixel_ratio is None:
+        common.pixel_ratio = app.primaryScreen().devicePixelRatio()
     else:
-        pixel_ratio = 1.0
+        common.pixel_ratio = 1.0
 
 
 def wait_for_lock(source):
@@ -156,7 +136,8 @@ def check_for_thumbnail_image(source):
     return None
 
 
-def get_thumbnail(server, job, root, source, size=common.thumbnail_size, fallback_thumb='placeholder', get_path=False):
+def get_thumbnail(server, job, root, source, size=common.thumbnail_size, fallback_thumb='placeholder',
+                  get_path=False):
     """Get the thumbnail of a given item.
 
     When an item is missing a bespoke cached thumbnail file, we will try to load
@@ -203,7 +184,7 @@ def get_thumbnail(server, job, root, source, size=common.thumbnail_size, fallbac
 
         return (thumbnail_path, pixmap, color)
 
-    size = int(round(size * pixel_ratio))
+    size = int(round(size * common.pixel_ratio))
 
     args = (server, job, root)
 
@@ -247,7 +228,7 @@ def get_thumbnail(server, job, root, source, size=common.thumbnail_size, fallbac
                 return pixmap, color
 
     # Let's load a placeholder if there's no generated thumbnail or
-    # tumbnail file present in the source's root.
+    # thumbnail file present in the source's root.
     thumb_path = get_placeholder_path(source, fallback=fallback_thumb)
     pixmap = ImageCache.get_pixmap(thumb_path, size)
     if pixmap and not pixmap.isNull() and get_path:
@@ -317,14 +298,14 @@ def get_cached_thumbnail_path(server, job, root, source, proxy=False):
 def get_placeholder_path(file_path, fallback='placeholder'):
     """Returns an image path used to represent an item.
 
-    In absense of a custom user-set thumbnail, we'll try and find one based on
+    In absence of a custom user-set thumbnail, we'll try and find one based on
     the file's format extension.
 
     Args:
         file_path (str): Path to a file or folder.
 
     Returns:
-        str: Path to the placehoder image.
+        str: Path to the placeholder image.
 
     """
     common.check_type(file_path, str)
@@ -335,27 +316,29 @@ def get_placeholder_path(file_path, fallback='placeholder'):
     file_info = QtCore.QFileInfo(file_path)
     suffix = file_info.suffix().lower()
 
-    if suffix in RESOURCES[common.FormatResource]:
+    if suffix in common.image_resource_list[common.FormatResource]:
         path = path(common.FormatResource, suffix)
-    else:
-        if fallback in RESOURCES[common.FormatResource]:
-            path = path(common.FormatResource, fallback)
-        elif fallback in RESOURCES[common.ThumbnailResource]:
-            path = path(common.ThumbnailResource, fallback)
-        elif fallback in RESOURCES[common.GuiResource]:
-            path = path(common.GuiResource, fallback)
-        else:
-            path = path(common.GuiResource, 'placeholder')
+        return os.path.normpath(path)
 
-    return os.path.normpath(os.path.abspath(path)).replace('\\', '/')
+    if fallback in common.image_resource_list[common.FormatResource]:
+        path = path(common.FormatResource, fallback)
+    elif fallback in common.image_resource_list[common.ThumbnailResource]:
+        path = path(common.ThumbnailResource, fallback)
+    elif fallback in common.image_resource_list[common.GuiResource]:
+        path = path(common.GuiResource, fallback)
+    else:
+        path = path(common.GuiResource, 'placeholder')
+
+    return os.path.normpath(path)
 
 
 def invalidate(func):
     @functools.wraps(func)
     def func_wrapper(source, **kwargs):
         result = func(source, **kwargs)
-        oiio_cache.invalidate(source, force=True)
+        common.oiio_cache.invalidate(source, force=True)
         return result
+
     return func_wrapper
 
 
@@ -433,10 +416,10 @@ def oiio_get_qimage(source, buf=None, force=True):
     elif int(spec.nchannels) > 4:
         if spec.channelindex('A') > -1:
             b = OpenImageIO.ImageBufAlgo.channels(
-                b, ('R', 'G', 'B', 'A'), ('R', 'G', 'B', 'A'))
+                buf, ('R', 'G', 'B', 'A'), ('R', 'G', 'B', 'A'))
         else:
             b = OpenImageIO.ImageBufAlgo.channels(
-                b, ('R', 'G', 'B'), ('R', 'G', 'B'))
+                buf, ('R', 'G', 'B'), ('R', 'G', 'B'))
 
     np_arr = buf.get_pixels(OpenImageIO.UINT8)
     # np_arr = (np_arr / (1.0 / 255.0)).astype(np.uint8)
@@ -459,7 +442,7 @@ def oiio_get_qimage(source, buf=None, force=True):
         spec.width * spec.nchannels,  # scanlines
         _format
     )
-    image.setDevicePixelRatio(pixel_ratio)
+    image.setDevicePixelRatio(common.pixel_ratio)
 
     # As soon as the numpy array is garbage collected, the data for QImage becomes
     # unusable and Qt5 crashes. This could possibly be a bug, I would expect,
@@ -475,7 +458,7 @@ class ImageCache(QtCore.QObject):
     values are generated by `common.get_hash` based on input file paths and are
     used to associate multiple image cached image sizes with a source image.
 
-    All cached images are stored in ``ImageCache.INTERNAL_DATA`` using a image
+    All cached images are stored in ``common.image_cache`` using a image
     cache type value.
 
     Loading image resources is done by `ImageCache.get_image()` and
@@ -486,10 +469,11 @@ class ImageCache(QtCore.QObject):
     GUI resources should be loaded with ``ImageCache.get_rsc_pixmap()``.
 
     """
+
     @classmethod
     def contains(cls, hash, cache_type):
         """Checks if the given hash exists in the database."""
-        return hash in INTERNAL_DATA[cache_type]
+        return hash in common.image_cache[cache_type]
 
     @classmethod
     def value(cls, hash, cache_type, size=None):
@@ -503,10 +487,10 @@ class ImageCache(QtCore.QObject):
         if not cls.contains(hash, cache_type):
             return None
         if size is not None:
-            if size not in INTERNAL_DATA[cache_type][hash]:
+            if size not in common.image_cache[cache_type][hash]:
                 return None
-            return INTERNAL_DATA[cache_type][hash][size]
-        return INTERNAL_DATA[cache_type][hash]
+            return common.image_cache[cache_type][hash][size]
+        return common.image_cache[cache_type][hash]
 
     @classmethod
     def setValue(cls, hash, value, cache_type, size=None):
@@ -517,13 +501,13 @@ class ImageCache(QtCore.QObject):
 
         """
         if not cls.contains(hash, cache_type):
-            INTERNAL_DATA[cache_type][hash] = {}
+            common.image_cache[cache_type][hash] = {}
 
         if cache_type == BufferType:
             common.check_type(value, OpenImageIO.ImageBuf)
 
-            INTERNAL_DATA[BufferType][hash] = value
-            return INTERNAL_DATA[BufferType][hash]
+            common.image_cache[BufferType][hash] = value
+            return common.image_cache[BufferType][hash]
 
         elif cache_type == ImageType:
             common.check_type(value, QtGui.QImage)
@@ -534,8 +518,8 @@ class ImageCache(QtCore.QObject):
             if not isinstance(size, int):
                 size = int(size)
 
-            INTERNAL_DATA[cache_type][hash][size] = value
-            return INTERNAL_DATA[cache_type][hash][size]
+            common.image_cache[cache_type][hash][size] = value
+            return common.image_cache[cache_type][hash][size]
 
         elif cache_type in (PixmapType, ResourcePixmapType):
             common.check_type(value, QtGui.QPixmap)
@@ -543,14 +527,14 @@ class ImageCache(QtCore.QObject):
             if not isinstance(size, int):
                 size = int(size)
 
-            INTERNAL_DATA[cache_type][hash][size] = value
-            return INTERNAL_DATA[cache_type][hash][size]
+            common.image_cache[cache_type][hash][size] = value
+            return common.image_cache[cache_type][hash][size]
 
         elif cache_type == ColorType:
             common.check_type(value, QtGui.QColor)
 
-            INTERNAL_DATA[ColorType][hash] = value
-            return INTERNAL_DATA[ColorType][hash]
+            common.image_cache[ColorType][hash] = value
+            return common.image_cache[ColorType][hash]
 
         raise TypeError('`cache_type` is invalid.')
 
@@ -560,9 +544,9 @@ class ImageCache(QtCore.QObject):
 
         """
         hash = common.get_hash(source)
-        for k in INTERNAL_DATA:
-            if hash in INTERNAL_DATA[k]:
-                del INTERNAL_DATA[k][hash]
+        for k in common.image_cache:
+            if hash in common.image_cache[k]:
+                del common.image_cache[k][hash]
 
     @classmethod
     def get_pixmap(cls, source, size, hash=None, force=False, oiio=False):
@@ -571,7 +555,7 @@ class ImageCache(QtCore.QObject):
         When size is '-1' the full image will be loaded without resizing.
 
         The resource will be stored as a QPixmap instance in
-        `INTERNAL_DATA[PixmapType][hash]`. The hash value is generated using
+        `common.image_cache[PixmapType][hash]`. The hash value is generated using
         `source`'s value but this can be overwritten by explicitly setting
         `hash`.
 
@@ -625,7 +609,7 @@ class ImageCache(QtCore.QObject):
             return None
 
         pixmap = QtGui.QPixmap()
-        pixmap.setDevicePixelRatio(pixel_ratio)
+        pixmap.setDevicePixelRatio(common.pixel_ratio)
         pixmap.convertFromImage(image, flags=QtCore.Qt.ColorOnly)
         if pixmap.isNull():
             return None
@@ -648,7 +632,7 @@ class ImageCache(QtCore.QObject):
         return None
 
     @classmethod
-    def make_color(cls, source):
+    def make_color(cls, source, hash=None):
         """Calculate the average color of a source image."""
         locker = QtCore.QMutexLocker(mutex)
         wait_for_lock(source)
@@ -657,7 +641,8 @@ class ImageCache(QtCore.QObject):
         if not buf:
             return None
 
-        _hash = common.get_hash(source)
+        if hash is None:
+            hash = common.get_hash(source)
 
         stats = OpenImageIO.ImageBufAlgo.computePixelStats(buf)
         if not stats:
@@ -685,7 +670,7 @@ class ImageCache(QtCore.QObject):
         else:
             return None
 
-        cls.setValue(_hash, color, ColorType)
+        cls.setValue(hash, color, ColorType)
 
         return color
 
@@ -696,7 +681,7 @@ class ImageCache(QtCore.QObject):
         When size is '-1' the full image will be loaded without resizing.
 
         The resource will be stored as QImage instance at
-        `INTERNAL_DATA[ImageType][hash]`. The hash value is generated by default
+        `common.image_cache[ImageType][hash]`. The hash value is generated by default
         using `source`'s value but this can be overwritten by explicitly
         setting `hash`.
 
@@ -704,7 +689,7 @@ class ImageCache(QtCore.QObject):
             source (str):       Path to an OpenImageIO compliant image file.
             size (int):         The size of the requested image.
             hash (str):         Use this hash key instead source to store the data.
-            force (bool):       Force reload the image from the source.
+            force (bool):       Force reloads the image from the source.
             oiio (bool):        Use OpenImageIO to load the image data.
 
         Returns:
@@ -740,7 +725,7 @@ class ImageCache(QtCore.QObject):
             image = oiio_get_qimage(source)
         else:
             image = QtGui.QImage(source)
-            image.setDevicePixelRatio(pixel_ratio)
+            image.setDevicePixelRatio(common.pixel_ratio)
 
         if image.isNull():
             return None
@@ -760,8 +745,8 @@ class ImageCache(QtCore.QObject):
 
         # The loaded pixel values are cached by OpenImageIO automatically.
         # By invalidating the buf, we can ditch the cached data.
-        oiio_cache.invalidate(source, force=True)
-        oiio_cache.invalidate(buf.name, force=True)
+        common.oiio_cache.invalidate(source, force=True)
+        common.oiio_cache.invalidate(buf.name, force=True)
 
         return image
 
@@ -814,11 +799,11 @@ class ImageCache(QtCore.QObject):
         _color = color.name() if isinstance(color, QtGui.QColor) else 'null'
         k = 'rsc:' + name + ':' + str(int(size)) + ':' + _color
 
-        if k in RESOURCE_DATA:
-            return RESOURCE_DATA[k]
+        if k in common.image_resource_data:
+            return common.image_resource_data[k]
 
         image = QtGui.QImage()
-        image.setDevicePixelRatio(pixel_ratio)
+        image.setDevicePixelRatio(common.pixel_ratio)
         image.load(source)
         if image.isNull():
             return QtGui.QPixmap()
@@ -834,13 +819,13 @@ class ImageCache(QtCore.QObject):
             painter.drawRect(image.rect())
             painter.end()
 
-        image = cls.resize_image(image, size * pixel_ratio)
-        image.setDevicePixelRatio(pixel_ratio)
+        image = cls.resize_image(image, size * common.pixel_ratio)
+        image.setDevicePixelRatio(common.pixel_ratio)
 
         # Setting transparency
         if opacity < 1.0:
             _image = QtGui.QImage(image)
-            _image.setDevicePixelRatio(pixel_ratio)
+            _image.setDevicePixelRatio(common.pixel_ratio)
             _image.fill(QtCore.Qt.transparent)
 
             painter = QtGui.QPainter()
@@ -852,10 +837,10 @@ class ImageCache(QtCore.QObject):
 
         # Finally, we'll convert the image to a pixmap
         pixmap = QtGui.QPixmap()
-        pixmap.setDevicePixelRatio(pixel_ratio)
+        pixmap.setDevicePixelRatio(common.pixel_ratio)
         pixmap.convertFromImage(image, flags=QtCore.Qt.ColorOnly)
-        RESOURCE_DATA[k] = pixmap
-        return RESOURCE_DATA[k]
+        common.image_resource_data[k] = pixmap
+        return common.image_resource_data[k]
 
     @classmethod
     def oiio_make_thumbnail(cls, source, destination, size, nthreads=3):
@@ -940,7 +925,7 @@ class ImageCache(QtCore.QObject):
                 if not [f for f in accepted_codecs if f.lower() in codec_name.lower()]:
                     log.debug(
                         'Unsupported movie format: {}'.format(codec_name))
-                    oiio_cache.invalidate(source, force=True)
+                    common.oiio_cache.invalidate(source, force=True)
                     return False
 
         destination_spec = get_scaled_spec(source_spec)
@@ -978,8 +963,8 @@ class ImageCache(QtCore.QObject):
         _buf.set_write_format(OpenImageIO.UINT8)
 
         if not QtCore.QFileInfo(QtCore.QFileInfo(destination).path()).isWritable():
-            oiio_cache.invalidate(source, force=True)
-            oiio_cache.invalidate(destination, force=True)
+            common.oiio_cache.invalidate(source, force=True)
+            common.oiio_cache.invalidate(destination, force=True)
             log.error('Destination path is not writable')
             return False
 
@@ -999,10 +984,10 @@ class ImageCache(QtCore.QObject):
             if not QtCore.QFile(destination).remove():
                 log.error('Cleanup failed.')
 
-            oiio_cache.invalidate(source, force=True)
-            oiio_cache.invalidate(destination, force=True)
+            common.oiio_cache.invalidate(source, force=True)
+            common.oiio_cache.invalidate(destination, force=True)
             return False
 
-        oiio_cache.invalidate(source, force=True)
-        oiio_cache.invalidate(destination, force=True)
+        common.oiio_cache.invalidate(source, force=True)
+        common.oiio_cache.invalidate(destination, force=True)
         return True

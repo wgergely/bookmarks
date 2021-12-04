@@ -1,20 +1,21 @@
-import os
-import time
-import functools
-import sys
-import json
-import uuid
-import hashlib
-import traceback
-import inspect
+"""Common attributes, methods and flag values.
 
-from PySide2 import QtCore, QtGui, QtWidgets
+"""
+
+import functools
+import hashlib
+import inspect
+import os
+import sys
+import time
+import traceback
+import uuid
+
+from PySide2 import QtCore, QtWidgets
 
 from .. import common
 
-
 CONFIG = 'config.json'
-
 
 StandaloneMode = 'standalone'
 EmbeddedMode = 'embedded'
@@ -55,9 +56,9 @@ SequenceRole = QtCore.Qt.ItemDataRole(FileDetailsRole + 1)
 FramesRole = QtCore.Qt.ItemDataRole(SequenceRole + 1)
 FileInfoLoaded = QtCore.Qt.ItemDataRole(FramesRole + 1)
 ThumbnailLoaded = QtCore.Qt.ItemDataRole(FileInfoLoaded + 1)
-StartpathRole = QtCore.Qt.ItemDataRole(ThumbnailLoaded + 1)
-EndpathRole = QtCore.Qt.ItemDataRole(StartpathRole + 1)
-TypeRole = QtCore.Qt.ItemDataRole(EndpathRole + 1)
+StartPathRole = QtCore.Qt.ItemDataRole(ThumbnailLoaded + 1)
+EndPathRole = QtCore.Qt.ItemDataRole(StartPathRole + 1)
+TypeRole = QtCore.Qt.ItemDataRole(EndPathRole + 1)
 EntryRole = QtCore.Qt.ItemDataRole(TypeRole + 1)
 IdRole = QtCore.Qt.ItemDataRole(EntryRole + 1)
 QueueRole = QtCore.Qt.ItemDataRole(IdRole + 1)
@@ -69,11 +70,10 @@ SortByTypeRole = QtCore.Qt.ItemDataRole(SortBySizeRole + 1)
 ShotgunLinkedRole = QtCore.Qt.ItemDataRole(SortByTypeRole + 1)
 SlackLinkedRole = QtCore.Qt.ItemDataRole(ShotgunLinkedRole + 1)
 
-
 DEFAULT_SORT_VALUES = {
     SortByNameRole: 'Name',
-    SortBySizeRole: 'Date Modified',
-    SortByLastModifiedRole: 'Size',
+    SortBySizeRole: 'Size',
+    SortByLastModifiedRole: 'Last modified',
     SortByTypeRole: 'Type',
 }
 
@@ -84,22 +84,22 @@ TemplateResource = 'templates'
 
 
 def get_rsc(rel_path):
-    """Return an resource item from the resource directory.
+    """Return a resource item from the `rsc` directory.
 
     """
-    v = '/'.join((__file__, os.pardir, os.pardir, 'rsc', rel_path))
+    v = os.path.normpath('/'.join((__file__, os.pardir, os.pardir, 'rsc', rel_path)))
     f = QtCore.QFileInfo(v)
     if not f.exists():
-        raise RuntimeError(f'{f.absoluteFilePath()} does not exist.')
-    return f.absoluteFilePath()
+        raise RuntimeError(f'{f.filePath()} does not exist.')
+    return f.filePath()
 
 
 def check_type(value, _type):
-    """Verify the type of an object.
+    """Verify the type of object.
 
     Args:
-            value (object): An object of invalid type.
-            _type (type or tuple or types): The valid type.
+        value (object): An object of invalid type.
+        _type (type or tuple or types): The valid type.
 
     """
     if not common.typecheck_on:
@@ -128,7 +128,7 @@ def get_hash(key):
     In practice, we use this function to generate hashes for file paths. These
     hashes are used by the `ImageCache`, `user_settings` and `BookmarkDB` to
     associate data with the file items. Generated hashes are server agnostic,
-    meaning, if the passed string contains a server's name, we'll remove it
+    meaning, if the passed string contains a known server's name, we'll remove it
     before hashing.
 
     Args:
@@ -166,6 +166,7 @@ def error(func):
     """Function decorator used to handle exceptions and report them to the user.
 
     """
+
     @functools.wraps(func)
     def func_wrapper(*args, **kwargs):
         try:
@@ -192,12 +193,13 @@ def error(func):
                 except:
                     pass
             raise
+
     return func_wrapper
 
 
 def debug(func):
     """Function decorator used to log a debug message.
-    No message will be logged, unless `common.debug` is set to True.
+    No message will be logged, unless :attr:`bookmarks.common.debug_on` is set to True.
 
     """
     DEBUG_MESSAGE = '{trace}(): Executed in {time} secs.'
@@ -279,9 +281,9 @@ def get_template_file_path(name):
         str: The path to the template file.
 
     """
-    return os.path.normpath(os.path.abspath(os.path.sep.join((
+    return os.path.normpath(os.path.sep.join((
         __file__, os.pardir, os.pardir, 'rsc', 'templates', name
-    ))))
+    )))
 
 
 def get_path_to_executable(key):
@@ -353,6 +355,7 @@ class DataDict(dict):
     """A weakref compatible dictionary used to store item data.
 
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._loaded = False
@@ -387,6 +390,7 @@ class DataDict(dict):
 class Timer(QtCore.QTimer):
     """
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         common.timers[repr(self)] = self

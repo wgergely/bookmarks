@@ -1,12 +1,17 @@
+"""Various methods used to initialize Bookmarks.
+
+See :func:`.initialize()` and :func:`.uninitialize()`.
+
+"""
+import importlib
+import json
 import os
 import sys
-import json
-import importlib
+import time
 
 from PySide2 import QtWidgets, QtGui
 
 from .. import common
-
 
 dependencies = (
     'PySide2',
@@ -40,7 +45,7 @@ def initialize(mode):
     _init_config()
 
     common.cursor = QtGui.QCursor()
-    common.itemdata = common.DataDict()
+    common.item_data = common.DataDict()
 
     if not os.path.isdir(common.temp_path()):
         os.makedirs(os.path.normpath(common.temp_path()))
@@ -74,12 +79,30 @@ def initialize(mode):
 
     common.init_monitor()
 
+    # Start non-model linked worker threads
+    _threads = []
+    from bookmarks.threads import threads
+    thread = threads.get_thread(threads.QueuedDatabaseTransaction)
+    thread.start()
+    _threads.append(thread)
+    thread = threads.get_thread(threads.QueuedShotgunQuery)
+    thread.start()
+    _threads.append(thread)
+
+    # Wait for all threads to spin up before continuing
+    n = 0.0
+    while not all(f.isRunning() for f in _threads):
+        n += 0.1
+        time.sleep(0.1)
+        if n > 2.0:
+            break
+
 
 def uninitialize():
     """Uninitialize the components used by Bookmarks.
 
     """
-    from .. threads import threads
+    from ..threads import threads
     threads.quit_threads()
 
     try:
@@ -96,10 +119,6 @@ def uninitialize():
 
     for k, v in common.__initial_values__.items():
         setattr(common, k, v)
-
-    from .. import images
-    for k, v in images.__initial_values__.items():
-        setattr(images, k, v)
 
 
 def _init_config():

@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
-"""Defines the widget used to edit a bookmark item's asset_config.
+"""Defines the widgets used to edit asset config values.
 
-See the `:mod:asset_config` module for more information.
+See the :mod:`bookmarks.asset_config.asset_config` module for more information.
 
 """
 import functools
 
-from PySide2 import QtWidgets, QtCore, QtGui
+from PySide2 import QtWidgets, QtCore
 
 from . import asset_config
 from .. import common
 from .. import log
 from .. import ui
-from .. import images
 from ..property_editor import base
-
 
 SECTIONS = (
     (asset_config.FileNameConfig, 'File Names Templates'),

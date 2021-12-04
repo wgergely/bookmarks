@@ -350,7 +350,7 @@ def set_active(k, v):
         raise ValueError('Invalid active key. Key must be the one of "{}"'.format(
             '", "'.join(common.ActiveSectionCacheKeys)))
 
-    common.ActiveSectionCache[common.active_mode][k] = v
+    common.active_paths[common.active_mode][k] = v
     if common.active_mode == common.SynchronisedActivePaths:
         common.settings.setValue(common.ActiveSection, k, v)
 
@@ -1102,7 +1102,7 @@ def reveal(item):
         if QtCore.QFileInfo(path).isFile():
             args = ['/select,', QtCore.QDir.toNativeSeparators(path)]
         elif QtCore.QFileInfo(path).isDir():
-            path = os.path.normpath(os.path.abspath(path))
+            path = os.path.normpath(path)
             args = [path, ]
         else:
             args = ['/select,', QtCore.QDir.toNativeSeparators(path)]

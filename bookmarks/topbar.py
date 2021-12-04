@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
-"""The bar above the bookmark/asset/file widgets.
+"""Defines :class:`.TopBarWidget`, and all the buttons found on the bar located above the
+:class:`bookmarks.main.StackedWidget`.
+
 
 """
 import functools
+
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from . import log
-from . import common
-from . import ui
-from . import contextmenu
-from . import images
-
-from . import database
 from . import actions
+from . import common
+from . import contextmenu
+from . import database
+from . import images
 from . import shortcuts
-
-from .lists import delegate
+from . import ui
+from . lists import delegate
 
 
 class QuickSwitchMenu(contextmenu.BaseContextMenu):
@@ -148,7 +148,9 @@ class FilterHistoryMenu(contextmenu.BaseContextMenu):
 class BaseControlButton(ui.ClickableIconButton):
     """Base-class used for control buttons on the top bar."""
 
-    def __init__(self, pixmap, description, color=(common.color(common.TextSelectedColor), common.color(common.TextDisabledColor)), parent=None):
+    def __init__(self, pixmap, description,
+                 color=(common.color(common.TextSelectedColor), common.color(common.TextDisabledColor)),
+                 parent=None):
         super(BaseControlButton, self).__init__(
             pixmap,
             color,
@@ -215,7 +217,8 @@ class ToggleSequenceButton(BaseControlButton):
 
     def pixmap(self):
         if self.state():
-            return images.ImageCache.get_rsc_pixmap('collapse', self._on_color, common.size(common.WidthMargin))
+            return images.ImageCache.get_rsc_pixmap('collapse', self._on_color,
+                                                    common.size(common.WidthMargin))
         return images.ImageCache.get_rsc_pixmap('expand', self._off_color, common.size(common.WidthMargin))
 
     def state(self):
@@ -250,8 +253,10 @@ class ToggleArchivedButton(BaseControlButton):
 
     def pixmap(self):
         if self.state():
-            return images.ImageCache.get_rsc_pixmap('archivedVisible', self._on_color, common.size(common.WidthMargin))
-        return images.ImageCache.get_rsc_pixmap('archivedHidden', self._off_color, common.size(common.WidthMargin))
+            return images.ImageCache.get_rsc_pixmap('archivedVisible', self._on_color,
+                                                    common.size(common.WidthMargin))
+        return images.ImageCache.get_rsc_pixmap('archivedHidden', self._off_color,
+                                                common.size(common.WidthMargin))
 
     def state(self):
         if not common.widget():
@@ -526,7 +531,8 @@ class BaseTabButton(QtWidgets.QLabel):
                 pixmap.rect()
             )
         else:
-            if (metrics.horizontalAdvance(self.text()) + (common.size(common.WidthMargin) * 0.5)) < self.rect().width():
+            if (metrics.horizontalAdvance(self.text()) + (
+                    common.size(common.WidthMargin) * 0.5)) < self.rect().width():
                 # Draw label
                 width = metrics.horizontalAdvance(self.text())
                 x = (self.width() / 2.0) - (width / 2.0)
@@ -709,7 +715,8 @@ class SlackDropAreaWidget(QtWidgets.QWidget):
             self.rect(), common.size(common.WidthIndicator), common.size(common.WidthIndicator))
 
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'slack', common.color(common.GreenColor), self.rect().height() - (common.size(common.WidthIndicator) * 1.5))
+            'slack', common.color(common.GreenColor),
+            self.rect().height() - (common.size(common.WidthIndicator) * 1.5))
         rect = QtCore.QRect(0, 0, common.size(
             common.WidthMargin), common.size(common.WidthMargin))
         rect.moveCenter(self.rect().center())
@@ -777,7 +784,7 @@ class TopBarWidget(QtWidgets.QWidget):
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
 
         height = common.size(common.WidthMargin) + \
-            (common.size(common.WidthIndicator) * 3)
+                 (common.size(common.WidthIndicator) * 3)
         self.setFixedHeight(height)
 
         # Control view/model/button

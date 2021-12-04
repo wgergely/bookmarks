@@ -1,3 +1,6 @@
+"""QFileSystemWatcher used to monitor for file and directory changes.
+
+"""
 import functools
 from PySide2 import QtCore
 

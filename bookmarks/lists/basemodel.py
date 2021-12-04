@@ -1,44 +1,46 @@
+"""Defines the base model used to display bookmark, asset and files items.
+
+The model loads and reset data via the :meth:`BaseModel.init_data()` and :meth:`BaseModel.reset_data()`
+methods.
+
+
+The model itself does not store data, but all retrieved data is cached to
+:attr:`bookmarks.common.item_data`. The interface for getting and setting data can be found in the
+:mod:`bookmarks.common.data`. However, the model is responsible for populating the data cache. See
+:meth:`.BaseModel.item_iterator()`.
+
+
+The model exposes different datasets to the view using the :meth:`BaseModel.task` and
+:meth:`BaseModel.data_type` switches. This is because file items are stored as sequence and individual items
+simultaneously and because the file model also keeps separate data for each task folder it encounters.
+
+The currently exposed data can be retrieved by `BaseModel.model_data()`. To change/set the data set emit
+the :attr:`.BaseModel.taskFolderChanged` and :attr:`.BaseModel.dataTypeChanged` signals with their
+appropriate arguments.
+
+Actually, Bookmarks loads data in two passes. The model is responsible for discovering items,
+but will not populate the items with all the data, and instead we offload that onto threads.
+The model's associated threads are defined by overriding :attr:`.BaseModel.queues`.
+
+The base model implements data sorting via :meth:`BaseModel.sort_data` but the filtering
+is done using :class:`.FilterProxyModel`.
+
 """
-The model is used to wrap data needed to display bookmark, asset and file
-items. Data is stored in :const:`common.DATA` and populated by
-:func:`.BaseModel.init_data`. The model can be initiated by the
-`BaseModel.modelDataResetRequested` signal.
-
-The model refers to multiple data sets simultaneously. This is because file
-items are stored as file sequences and individual items in two separate data
-sets (both cached in the datacache module). The file model also keeps this
-data in separate sets for each subfolder it encounters in an asset's root
-folder.
-
-The current data exposed to the model can be retrieved by
-`BaseModel.model_data()`. To change/set the data set emit the `taskFolderChanged` and
-`dataTypeChanged` signals with their apporpiate arguments.
-
-Each `BaseModel` instance can be initiated with worker threads used to load
-secondary file information, like custom descriptions and thumbnails. See
-:mod:`.bookmarks.threads` for more information.
-
-Data is filtered with QSortFilterProxyModels but we're not using the default
-sorting mechanisms because of performance considerations. Instead, sorting
-is implemented in the :class:`.BaseModel` directly.
-
-"""
+import functools
 import re
 import weakref
-import functools
 
-from PySide2 import QtWidgets, QtGui, QtCore
+from PySide2 import QtWidgets, QtCore
 
 from .. import common
-from .. import log
 from .. import images
-
+from .. import log
 
 MAX_HISTORY = 20
 DEFAULT_ITEM_FLAGS = (
-    QtCore.Qt.ItemNeverHasChildren |
-    QtCore.Qt.ItemIsEnabled |
-    QtCore.Qt.ItemIsSelectable
+        QtCore.Qt.ItemNeverHasChildren |
+        QtCore.Qt.ItemIsEnabled |
+        QtCore.Qt.ItemIsSelectable
 )
 
 
@@ -49,9 +51,10 @@ def initdata(func):
     signals and sorting resulting data.
 
     """
+
     @functools.wraps(func)
     def func_wrapper(self, *args, **kwargs):
-        self.coreDataReset.emit()
+        common.settings.load_active_values()
 
         self.beginResetModel()
         self._interrupt_requested = False
@@ -83,8 +86,6 @@ class BaseModel(QtCore.QAbstractListModel):
     `source_path`, `task` and `data_type`.
 
     """
-    modelDataResetRequested = QtCore.Signal()  # Main signal to load model data
-
     coreDataLoaded = QtCore.Signal(weakref.ref, weakref.ref)
     coreDataReset = QtCore.Signal()
     dataTypeSorted = QtCore.Signal(int)
@@ -127,28 +128,15 @@ class BaseModel(QtCore.QAbstractListModel):
         self.init_generate_thumbnails_enabled()
         self.init_row_size()
 
-    @common.error
-    @common.debug
-    def data_type_sorted(self, data_type):
-        """Update the GUI model/views when a thread has resorted the underlying data structure.
+    def item_iterator(self):
+        """A generator method used by :func:`init_data` to yield the items the model should load.
+
+        Yields:
+            DirEntry: os.scandir DirEntry objects.
 
         """
-        if self.data_type() == data_type:
-            self.beginResetModel()
-            self.endResetModel()
-
-    @QtCore.Slot(bool)
-    @QtCore.Slot(int)
-    def set_sorting(self, role, order):
-        # Sorting is disabled until the model data is fully loaded
-        if not self.is_data_type_loaded(self.data_type()):
-            return
-        self.set_sort_role(role)
-        self.set_sort_order(order)
-        self.sort_data()
-
-    def row_size(self):
-        return self._row_size
+        raise NotImplementedError(
+            'Abstract method has to be implemented in subclass.')
 
     @common.debug
     @common.error
@@ -161,17 +149,6 @@ class BaseModel(QtCore.QAbstractListModel):
         :mod:`datacache` module to store item data.
 
         The individual items are returned by :func:`item_iterator`.
-
-        """
-        raise NotImplementedError(
-            'Abstract method has to be implemented in subclass.')
-
-    def item_iterator(self):
-        """A generator function used by :func:`init_data` find and yield the
-        items the model should load.
-
-        Eg. for assets, the function should return a series of `_scandir` entries
-        referring to folders, or for files a series of file entires.
 
         """
         raise NotImplementedError(
@@ -202,11 +179,13 @@ class BaseModel(QtCore.QAbstractListModel):
 
         if force:
             common.reset_data(p, k)
+            self.coreDataReset.emit()
             self.init_data()
             return
 
         d = common.get_task_data(p, k)
         if not d[common.FileItem]:
+            self.coreDataReset.emit()
             self.init_data()
 
         # The let's signal the model reset and emit the current active index
@@ -219,8 +198,37 @@ class BaseModel(QtCore.QAbstractListModel):
         if emit_active:
             self.set_active(index)
 
+    def row_size(self):
+        return self._row_size
+
+    @common.error
+    @common.debug
+    def data_type_sorted(self, data_type):
+        """Update the GUI model/views when a thread has resorted the underlying data structure.
+
+        """
+        if self.data_type() == data_type:
+            self.beginResetModel()
+            self.endResetModel()
+
+    @QtCore.Slot(bool)
+    @QtCore.Slot(int)
+    def set_sorting(self, role, order):
+        """Slot responsible for setting the sort role, order and sorting the model data.
+        Sorting won't be possible until the model data is fully loaded.
+
+        """
+        if not self.is_data_type_loaded(self.data_type()):
+            return
+        self.set_sort_role(role)
+        self.set_sort_order(order)
+        self.sort_data()
+
     def source_path(self):
         return ()
+
+    def default_row_size(self):
+        return QtCore.QSize(1, common.size(common.HeightRow))
 
     @common.debug
     @common.error
@@ -249,9 +257,6 @@ class BaseModel(QtCore.QAbstractListModel):
             section=common.UIStateSection
         )
         self._sortorder = val if isinstance(val, bool) else False
-
-    def default_row_size(self):
-        return QtCore.QSize(1, common.size(common.HeightRow))
 
     @common.debug
     @common.error
@@ -303,31 +308,12 @@ class BaseModel(QtCore.QAbstractListModel):
         """The currently set order of the items eg. 'descending'."""
         return self._sortorder
 
-    @common.debug
-    @common.error
-    @QtCore.Slot(int)
-    def set_sort_order(self, val):
-        """Sets and saves the sort-key."""
-        if val == self.sort_order():
-            return
-
-        self._sortorder = val
-        self.set_local_setting(
-            common.CurrentSortOrder,
-            val,
-            key=self.__class__.__name__,
-            section=common.UIStateSection
-        )
-
-    @common.debug
-    @common.error
     @common.status_bar_message('Sorting items...')
+    @common.debug
+    @common.error
     @QtCore.Slot()
     def sort_data(self, *args, **kwargs):
-        """Sorts the current data set using current `sort_role` and
-        `sort_order`.
-
-        """
+        """Sorts the model data using the current sort order and role."""
         sortrole = self.sort_role()
         sortorder = self.sort_order()
 
@@ -348,6 +334,22 @@ class BaseModel(QtCore.QAbstractListModel):
             log.error('Sorting error')
         finally:
             self.endResetModel()
+
+    @common.debug
+    @common.error
+    @QtCore.Slot(int)
+    def set_sort_order(self, val):
+        """Sets and saves the sort-key."""
+        if val == self.sort_order():
+            return
+
+        self._sortorder = val
+        self.set_local_setting(
+            common.CurrentSortOrder,
+            val,
+            key=self.__class__.__name__,
+            section=common.UIStateSection
+        )
 
     @QtCore.Slot()
     def set_interrupt_requested(self):
@@ -454,11 +456,11 @@ class BaseModel(QtCore.QAbstractListModel):
         return common.FileItem
 
     def task(self):
+        """The model's task folder. """
         return 'default'
 
     def user_settings_key(self):
-        """Should return a key to be used to associated current filter and item
-        selections when storing them in the the `user_settings`.
+        """Get the key used to by :meth:`.get_local_setting()` and :meth:`set_local_setting()`.
 
         Returns:
             str: A user_settings key value.
@@ -468,7 +470,7 @@ class BaseModel(QtCore.QAbstractListModel):
             'Abstract class "user_settings_key" has to be implemented in the subclasses.')
 
     def get_local_setting(self, key_type, key=None, section=common.ListFilterSection):
-        """Get a value stored in the local_common.
+        """Get a value stored in the user settings.
 
         Args:
             key_type (str): A filter key type.
@@ -838,8 +840,8 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
             if not ref():
                 return False
             searchable = ref()[idx][QtCore.Qt.StatusTipRole].lower() + '\n' + \
-                d.strip().lower() + '\n' + \
-                f.strip().lower()
+                         d.strip().lower() + '\n' + \
+                         f.strip().lower()
 
             if not self.filter_includes_row(filtertext, searchable):
                 return False

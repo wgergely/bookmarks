@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
-"""Defines the customized QSettings instance used to
-store user and app common.
+"""Defines the customized QSettings instance used to store user and app common.
 
 """
-import os
-import json
-import re
 import collections
+import json
+import os
+import re
 
 from PySide2 import QtCore
 
-from .. import log
 from .. import common
-
+from .. import log
 
 SynchronisedActivePaths = 0
 PrivateActivePaths = 1
@@ -52,7 +50,6 @@ SaveWarningsKey = 'SaveWarnings'
 PushCaptureToRVKey = 'PushCaptureToRV'
 RevealCaptureKey = 'RevealCapture'
 PublishCaptureKey = 'PublishCapture'
-
 
 ListFilterSection = 'ListFilters'
 ActiveFlagFilterKey = 'ActiveFilter'
@@ -98,14 +95,14 @@ SGTypeKey = 'SGType'
 
 
 def init_settings():
-    # Initialize the ActiveSectionCache object
-    common.ActiveSectionCache = {
+    # Initialize the active_paths object
+    common.active_paths = {
         SynchronisedActivePaths: collections.OrderedDict(),
         PrivateActivePaths: collections.OrderedDict(),
     }
-    for mode in common.ActiveSectionCache:
+    for mode in common.active_paths:
         for key in ActiveSectionCacheKeys:
-            common.ActiveSectionCache[mode][key] = None
+            common.active_paths[mode][key] = None
 
     # Create the setting object, this will load the previously saved active
     # paths from the ini file.
@@ -151,9 +148,9 @@ def _init_bookmarks():
     # Remove invalid values before adding
     for k in list(v.keys()):
         if (
-            ServerKey not in v[k]
-            or JobKey not in v[k]
-            or RootKey not in v[k]
+                ServerKey not in v[k]
+                or JobKey not in v[k]
+                or RootKey not in v[k]
         ):
             del v[k]
             continue
@@ -181,7 +178,7 @@ def active(k, path=False, args=False):
         _path = None
         _args = None
         idx = common.ActiveSectionCacheKeys.index(k)
-        v = tuple(common.ActiveSectionCache[common.active_mode][k]
+        v = tuple(common.active_paths[common.active_mode][k]
                   for k in common.ActiveSectionCacheKeys[:idx + 1])
 
         if path:
@@ -196,7 +193,7 @@ def active(k, path=False, args=False):
                 return (_path, _args)
             return _args
 
-    return common.ActiveSectionCache[common.active_mode][k]
+    return common.active_paths[common.active_mode][k]
 
 
 def get_user_settings_path():
@@ -280,7 +277,7 @@ class UserSettings(QtCore.QSettings):
         """
         self.sync()
         for k in ActiveSectionCacheKeys:
-            common.ActiveSectionCache[SynchronisedActivePaths][k] = self.value(
+            common.active_paths[SynchronisedActivePaths][k] = self.value(
                 ActiveSection, k)
         self.verify_active(SynchronisedActivePaths)
         self.verify_active(PrivateActivePaths)
@@ -296,17 +293,17 @@ class UserSettings(QtCore.QSettings):
         """
         p = str()
         for k in ActiveSectionCacheKeys:
-            if common.ActiveSectionCache[m][k]:
-                p += common.ActiveSectionCache[m][k]
+            if common.active_paths[m][k]:
+                p += common.active_paths[m][k]
             if not os.path.exists(p):
-                common.ActiveSectionCache[m][k] = None
+                common.active_paths[m][k] = None
                 if m == SynchronisedActivePaths:
                     self.setValue(ActiveSection, k, None)
             p += '/'
 
     def update_private_values(self):
         for k in ActiveSectionCacheKeys:
-            common.ActiveSectionCache[PrivateActivePaths][k] = common.ActiveSectionCache[SynchronisedActivePaths][k]
+            common.active_paths[PrivateActivePaths][k] = common.active_paths[SynchronisedActivePaths][k]
 
     def set_servers(self, v):
         common.check_type(v, dict)

@@ -23,12 +23,11 @@ these modes.
 """
 import os
 import re
-import psutil
 
+import psutil
 from PySide2 import QtCore
 
 from . import common
-
 
 FORMAT = 'lock'
 PREFIX = 'session_lock'

@@ -1,20 +1,17 @@
 # -*- coding: utf-8 -*-
-"""The asset config module allows basic folder and file-type definitions of
-asset items.
+"""The asset config module allows basic folder and file-type definitions of asset items.
 
-This information can be used to suggest default paths in DCCs (eg. what the
-default scene folder is called), to filter file-types when browsing task folders
-(eg. hide cache files when browsing the scenes folder), and to define the token
-values for generating templated file names (see `AssetConfig.expand_tokens()`).
+This information can be used to suggest default paths in DCCs (e.g. what the default scene folder is
+called), to filter file-types when browsing task folders (e.g. hide cache files when browsing the `scenes`
+folder), and to define the token values for generating templated file names (see
+:func:`common.asset_config.asset_config.AssetConfig.expand_tokens()`).
 
-The default values are stored in `asset_config.DEFAULT_ASSET_CONFIG` but each
-bookmark item can be configured independently using the
-`asset_config.asset_config_editor` widget. The custom configuration values are
-stored in the bookmark's database using `ASSET_CONFIG_KEY` column as encoded
-JSON data.
+The default values are stored in `asset_config.DEFAULT_ASSET_CONFIG` but each bookmark item can be
+configured independently using the `asset_config.asset_config_editor` widget. The custom configuration
+values are stored in the bookmark's database using `ASSET_CONFIG_KEY` column as encoded JSON data.
 
-The module is backed by a cache. Use `asset_config.get(server, job, root)` to
-retrieve asset_config instances.
+The module is backed by a cache. Use `asset_config.get(server, job, root)` to retrieve asset_config
+instances.
 
 
 Example:
@@ -34,25 +31,23 @@ Example:
         config.get_description('geo')
         config.dump_json('C:/temp/data.json')
 
-        s = asset_info.expand_tokens('{asset_root}/{scene}/{prefix}_{asset}_{task}_{user}_{version}.{ext}', ext='exr')
+        s = asset_info.expand_tokens(
+            '{asset_root}/{scene}/{prefix}_{asset}_{task}_{user}_{version}.{ext}', ext='exr')
 
 """
-import re
-import getpass
-import socket
-import json
-import string
 import collections
-
-from PySide2 import QtCore
+import getpass
+import json
+import re
+import socket
+import string
 
 import OpenImageIO
+from PySide2 import QtCore
 
 from .. import common
-from .. import log
 from .. import database
-from .. import images
-
+from .. import log
 
 ASSET_CONFIG_KEY = 'asset_config'
 
@@ -127,7 +122,8 @@ DEFAULT_ASSET_CONFIG = {
         0: {
             'name': 'Scene Formats',
             'flag': SceneFormat,
-            'value': _sort('aep, ai, eps, fla, ppj, prproj, psb, psd, psq, xfl, c4d, hud, hip, hiplc, hipnc, ma, mb, nk, nk~,spm, mocha, rv'),
+            'value': _sort(
+                'aep, ai, eps, fla, ppj, prproj, psb, psd, psq, xfl, c4d, hud, hip, hiplc, hipnc, ma, mb, nk, nk~,spm, mocha, rv'),
             'description': 'Scene file formats'
         },
         1: {
@@ -361,10 +357,10 @@ class AssetConfig(QtCore.QObject):
             )
             # Let's do some very basic sanity check for the returned data
             if (
-                isinstance(v, dict) and
-                FileFormatConfig in v and
-                FileNameConfig in v and
-                AssetFolderConfig in v
+                    isinstance(v, dict) and
+                    FileFormatConfig in v and
+                    FileNameConfig in v and
+                    AssetFolderConfig in v
             ):
                 self._data = v
             return self._data
@@ -442,7 +438,8 @@ class AssetConfig(QtCore.QObject):
                         return _v['description']
         return ''
 
-    def expand_tokens(self, s, user=getpass.getuser(), version='v001', host=socket.gethostname(), task='anim', ext=common.thumbnail_format, prefix=None, **_kwargs):
+    def expand_tokens(self, s, user=getpass.getuser(), version='v001', host=socket.gethostname(), task='anim',
+                      ext=common.thumbnail_format, prefix=None, **_kwargs):
         """Expands all valid tokens in the given string, based on the current
         asset config values.
 

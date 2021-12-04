@@ -105,7 +105,7 @@ class Test(base.BaseCase):
 
         self.assertFalse(v[0].isNull())
         m = max(v[0].size().height(), v[0].size().width())
-        self.assertEqual(m, common.thumbnail_size * images.pixel_ratio)
+        self.assertEqual(m, common.thumbnail_size * common.pixel_ratio)
 
         s = int(common.thumbnail_size)
         for f in os.listdir(common.temp_path()):
@@ -142,7 +142,7 @@ class Test(base.BaseCase):
             self.assertFalse(v[0].isNull())
 
             m = max(v[0].size().height(), v[0].size().width())
-            self.assertEqual(m, s * images.pixel_ratio)
+            self.assertEqual(m, s * common.pixel_ratio)
 
     def test_get_cached_thumbnail_path(self):
         from .. import images

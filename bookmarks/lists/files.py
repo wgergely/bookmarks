@@ -1,29 +1,44 @@
 # -*- coding: utf-8 -*-
-"""The view and model used to browse files.
+"""The view and model used to display file items.
 
 """
-import os
 import functools
+import os
 
 from PySide2 import QtWidgets, QtCore, QtGui
-
-from .. import contextmenu
-from .. import log
-from .. import common
-from ..threads import threads
-
-from .. import images
-from .. import actions
-
-from ..asset_config import asset_config
 
 from . import basemodel
 from . import basewidget
 from . import delegate
-
+from .. import actions
+from .. import common
+from .. import contextmenu
+from .. import images
+from .. import log
+from .. asset_config import asset_config
+from .. threads import threads
 
 FILTER_EXTENSIONS = False
 DEFAULT_SORT_BY_NAME_ROLE = [str()] * 8
+
+
+
+def add_path_to_mime(mime, path):
+    """Adds the given path to the mime data."""
+    common.check_type(path, str)
+
+    path = QtCore.QFileInfo(path).absoluteFilePath()
+    mime.setUrls(mime.urls() + [QtCore.QUrl.fromLocalFile(path), ])
+
+    path = QtCore.QDir.toNativeSeparators(path)
+    _bytes = QtCore.QByteArray(path.encode('utf-8'))
+
+    mime.setData(
+        'application/x-qt-windows-mime;value="FileName"', _bytes)
+    mime.setData(
+        'application/x-qt-windows-mime;value="FileNameW"', _bytes)
+
+    return mime
 
 
 class DropIndicatorWidget(QtWidgets.QWidget):
@@ -70,7 +85,8 @@ class ItemDrag(QtGui.QDrag):
         self.setMimeData(model.mimeData([index, ]))
 
         def get(s, color=common.color(common.GreenColor)):
-            return images.ImageCache.get_rsc_pixmap(s, color, common.size(common.WidthMargin) * images.pixel_ratio)
+            return images.ImageCache.get_rsc_pixmap(s, color,
+                                                    common.size(common.WidthMargin) * common.pixel_ratio)
 
         # Set drag icon
         self.setDragCursor(get('add_circle'), QtCore.Qt.CopyAction)
@@ -152,8 +168,8 @@ class DragPixmapFactory(QtWidgets.QWidget):
     def pixmap(cls, pixmap, text):
         """Returns the widget as a rendered pixmap."""
         w = cls(pixmap, text)
-        pixmap = QtGui.QPixmap(w.size() * images.pixel_ratio, )
-        pixmap.setDevicePixelRatio(images.pixel_ratio)
+        pixmap = QtGui.QPixmap(w.size() * common.pixel_ratio, )
+        pixmap.setDevicePixelRatio(common.pixel_ratio)
         pixmap.fill(QtCore.Qt.transparent)
         painter = QtGui.QPainter(pixmap)
         w.render(painter, QtCore.QPoint(), QtGui.QRegion())
@@ -250,30 +266,23 @@ class FilesWidgetContextMenu(contextmenu.BaseContextMenu):
 class FilesModel(basemodel.BaseModel):
     """Model used to list files in an asset.
 
-    The root of the asset folder is never read, instead, each asset is expected
-    to contain a series of subfolders - referred to here as `task folders`.
-
     The model will load files from one task folder at any given time. The
-    current task folder can be retrieved using `self.task()`. Switching
-    the task folders is done via the `taskFolderChanged.emit('my_task')`
-    signal.
+    current task folder can be retrieved by :meth:`task()`. Switching
+    tasks is done via emitting the :attr:`taskFolderChanged` signals.
 
-    Files & Sequences
-    -----------------
     The model will load the found files into two separate data sets, one
-    listing files individually, the other collects files into file sequences
-    if they have an incremental number element.
+    listing files individually, the other groups them into sequences.
+    See :mod:`bookmarks.common.sequences` for the rules that determine how
+    sequence items are identified.
 
-    Switching between the `FileItems` and `SequenceItems` is done by emitting
-    the `dataTypeChanged.emit(FileItem)` signal.
+    Switching between `FileItems` and `SequenceItems` is done by emitting
+    the :attr:`dataTypeChanged` signal.
 
-    File Format Filtering
-    ---------------------
+    Note:
 
-    If the current task folder has a curresponding configuration in the current
-    bookmark's asset config, we can determine which file formats should be
-    allowed to display in the folder.
-    See the `asset_config.py` module for details.
+        The model won't necessarily load all file item. If the parent bookmark
+        has a valid asset config set, certain file extension might be excluded.
+        See the :mod:`bookmarks.asset_config.asset_config` for details.
 
     """
     queues = (threads.FileInfo, threads.FileThumbnail)
@@ -400,20 +409,20 @@ class FilesModel(basemodel.BaseModel):
             # Getting the file's relative root folder
             # This data is used to display the clickable subfolders relative
             # to the current task folder
-            fileroot = filepath[:filepath.rfind('/')]
-            fileroot = fileroot[len(_source_path) + 1:]
+            file_root = filepath[:filepath.rfind('/')]
+            file_root = file_root[len(_source_path) + 1:]
 
             sort_by_name_role = DEFAULT_SORT_BY_NAME_ROLE.copy()
-            if fileroot:
+            if file_root:
                 # Save the file's parent folder for the file system watcher
-                _dir = _source_path + '/' + fileroot
-                _dirs.append(_source_path + '/' + fileroot)
+                _dir = _source_path + '/' + file_root
+                _dirs.append(_source_path + '/' + file_root)
                 # To sort by subfolders correctly, we'll a populate a fixed length
                 # list with the subfolders and file names. Sorting is do case
                 # insensitive:
-                _fileroot = fileroot.lower().split('/')
-                for idx in range(len(_fileroot)):
-                    sort_by_name_role[idx] = _fileroot[idx]
+                _file_root = file_root.lower().split('/')
+                for idx in range(len(_file_root)):
+                    sort_by_name_role[idx] = _file_root[idx]
                     if idx == 6:
                         break
             sort_by_name_role[7] = filename.lower()
@@ -430,11 +439,12 @@ class FilesModel(basemodel.BaseModel):
 
             if seq:
                 seqpath = seq.group(1) + common.SEQPROXY + \
-                    seq.group(3) + '.' + seq.group(4)
-            if (seq and (seqpath in common.favourites or filepath in common.favourites)) or (filepath in common.favourites):
+                          seq.group(3) + '.' + seq.group(4)
+            if (seq and (seqpath in common.favourites or filepath in common.favourites)) or (
+                    filepath in common.favourites):
                 flags = flags | common.MarkedAsFavourite
 
-            source_path_role = p + (k, fileroot)
+            source_path_role = p + (k, file_root)
 
             idx = len(data)
             if idx >= common.max_list_items:
@@ -458,8 +468,8 @@ class FilesModel(basemodel.BaseModel):
                 common.SequenceRole: seq,
                 common.FramesRole: [],
                 common.FileInfoLoaded: False,
-                common.StartpathRole: None,
-                common.EndpathRole: None,
+                common.StartPathRole: None,
+                common.EndPathRole: None,
                 #
                 common.ThumbnailLoaded: False,
                 #
@@ -507,8 +517,8 @@ class FilesModel(basemodel.BaseModel):
                         common.SequenceRole: seq,
                         common.FramesRole: [],
                         common.FileInfoLoaded: False,
-                        common.StartpathRole: None,
-                        common.EndpathRole: None,
+                        common.StartPathRole: None,
+                        common.EndPathRole: None,
                         #
                         common.ThumbnailLoaded: False,
                         #
@@ -544,10 +554,10 @@ class FilesModel(basemodel.BaseModel):
             if len(v[common.FramesRole]) == 1:
                 _seq = v[common.SequenceRole]
                 filepath = (
-                    _seq.group(1) +
-                    v[common.FramesRole][0] +
-                    _seq.group(3) +
-                    '.' + _seq.group(4)
+                        _seq.group(1) +
+                        v[common.FramesRole][0] +
+                        _seq.group(3) +
+                        '.' + _seq.group(4)
                 )
                 filename = filepath.split('/')[-1]
                 v[QtCore.Qt.DisplayRole] = filename
@@ -624,7 +634,7 @@ class FilesModel(basemodel.BaseModel):
 
         file_info = QtCore.QFileInfo(index.data(QtCore.Qt.StatusTipRole))
         filepath = parent_role[5] + '/' + \
-            common.get_sequence_endpath(file_info.fileName())
+                   common.get_sequence_endpath(file_info.fileName())
 
         actions.set_active(common.FileKey, filepath)
 
@@ -717,28 +727,11 @@ class FilesModel(basemodel.BaseModel):
         supporting drag and drop on all platforms.
 
         Note:
-            On windows, ``application/x-qt-windows-mime;value="FileName"`` and
+            On Windows, ``application/x-qt-windows-mime;value="FileName"`` and
             ``application/x-qt-windows-mime;value="FileNameW"`` types seems to be
-            necessary, but on MacOS a simple uri list seem to suffice.
+            necessary, but on macOS a simple uri list seem to suffice.
 
         """
-        def add_path_to_mime(mime, path):
-            """Adds the given path to the mime data."""
-            common.check_type(path, str)
-
-            path = QtCore.QFileInfo(path).absoluteFilePath()
-            mime.setUrls(mime.urls() + [QtCore.QUrl.fromLocalFile(path), ])
-
-            path = QtCore.QDir.toNativeSeparators(path)
-            _bytes = QtCore.QByteArray(path.encode('utf-8'))
-
-            mime.setData(
-                'application/x-qt-windows-mime;value="FileName"', _bytes)
-            mime.setData(
-                'application/x-qt-windows-mime;value="FileNameW"', _bytes)
-
-            return mime
-
         mime = QtCore.QMimeData()
         modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
         no_modifier = modifiers == QtCore.Qt.NoModifier

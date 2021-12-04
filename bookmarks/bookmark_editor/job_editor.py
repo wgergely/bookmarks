@@ -1,23 +1,20 @@
 # -*- coding: utf-8 -*-
-"""Sub-editor widget used by the Bookmark Editor to add and select jobs on on a
-server.
+"""Sub-editor widget used by :class:`bookmarks.bookmark_editor.bookmark_editor_widget.BookmarkEditorWidget`
+to add and select jobs a server.
 
 """
-import os
 import functools
+import os
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
+from .. import actions
 from .. import common
-from .. import ui
-from .. import images
 from .. import contextmenu
 from .. import shortcuts
-from .. import actions
 from .. import templates
-
+from .. import ui
 from .. property_editor import base
-
 
 SECTIONS = {
     0: {
@@ -290,10 +287,10 @@ class JobListWidget(ui.ListViewWidget):
 
             _name = (
                 name.
-                replace('_', ' ').
-                replace('  ', ' ').
-                replace('/', ':  ').
-                strip().upper()
+                    replace('_', ' ').
+                    replace('  ', ' ').
+                    replace('/', ':  ').
+                    strip().upper()
             )
 
             item.setData(_name, role=QtCore.Qt.DisplayRole)

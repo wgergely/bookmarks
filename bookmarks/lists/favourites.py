@@ -178,8 +178,8 @@ class FavouritesModel(files.FilesModel):
                 common.SequenceRole: seq,
                 common.FramesRole: [],
                 common.FileInfoLoaded: False,
-                common.StartpathRole: None,
-                common.EndpathRole: None,
+                common.StartPathRole: None,
+                common.EndPathRole: None,
                 #
                 common.ThumbnailLoaded: False,
                 #
@@ -227,8 +227,8 @@ class FavouritesModel(files.FilesModel):
                         common.SequenceRole: seq,
                         common.FramesRole: [],
                         common.FileInfoLoaded: False,
-                        common.StartpathRole: None,
-                        common.EndpathRole: None,
+                        common.StartPathRole: None,
+                        common.EndPathRole: None,
                         #
                         common.ThumbnailLoaded: False,
                         #

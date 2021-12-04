@@ -1,34 +1,33 @@
 # -*- coding: utf-8 -*-
-"""Bookmarks is a simple an asset manager designed to help VFX/Animation
-productions. It can help you create, browse, annotate shots, assets and project
-files.
+"""Bookmarks is a lightweight asset manager designed to browse project content of animation, VFX and film
+projects.
 
 
 Features
 --------
 
-Bookmarks can help provide an overview project files and makes it easy to hop
-between assets and shots. It organises items into separate ``bookmark``,
-``asset`` and ``file`` items that can be configured to link with ``ShotGrid``
-entities or to have properties, like frame-rate and resolution. These properties
-can be used to set up scene files in host applications, like Maya.
+To provide an overview, Bookmarks displays content as separate ``bookmark``, ``asset`` and ``file`` items.
+These items can be configured to link with ``ShotGrid`` entities or set up with properties, like frame-rate,
+resolution, and custom urls. These can be used, for instance, to quickly configure scenes in host
+applications, such as Maya.
+
+It utilises the brilliant OpenImageIO library to generate previews of image files. It also provides a
+simple interface to create job and asset items using on zip template files, and various tools to annotate
+and filter items.
 
 
-Getting Bookmarks
------------------
-
-The source can be downloaded from https://github.com/wgergely/bookmarks.
-
-Bookmarks is developed on Windows and the latest binary release is available at
-https://github.com/wgergely/bookmarks/releases.
-
-
-Requirements
+Installation
 ------------
 
-* ``Python3``: Tested against version 3.7 and 3.9.
-* ``PySide2``: Tested against Qt 5.15. https://pypi.org/project/PySide2
-* ``OpenImageIO``: We're using this brilliant library to generate thumbnails for image items. https://github.com/OpenImageIO/oiio
+Download the latest release from https://github.com/wgergely/bookmarks/releases.
+
+Whilst the code base should be compatible  with most systems, Windows is the only supported platform.
+If you'd like to try Bookmarks on another system, you'll have to make sure all the requirements
+are built and available:
+
+* ``Python3``: Tested with 3.7 and 3.9.
+* ``PySide2``: Tested with Qt 5.15.2. https://pypi.org/project/PySide2
+* ``OpenImageIO``: Used to generate thumbnails for image items. https://github.com/OpenImageIO/oiio
 * ``numpy``: https://pypi.org/project/numpy
 * ``slack_sdk``: https://pypi.org/project/slack_sdk
 * ``psutil``: https://pypi.org/project/psutil
@@ -39,38 +38,30 @@ Requirements
 Running Bookmarks
 -----------------
 
-Bookmarks can be initialized in ``standalone`` or ``embedded`` mode. To start
-the  ``standalone`` app, simply call :func:`.exec_`:
+If you downloaded the installer, you can run Bookmarks after installation as a standalone application.
+This will also install the Maya plugin and set the required environment values.
 
-    .. code-block:: python
-        :linenos:
+To start Bookmarks manually, it has to be initialized in ``standalone`` or ``embedded`` mode. To start the
+``standalone`` app, simply call :func:`.exec_`:
 
-        import bookmarks
-        bookmarks.exec_()
+.. code-block:: python
 
-        # The above is a shortcut of:
-        from bookmarks import common
-        common.initialize(common.StandaloneMode)
-        from bookmarks import standalone
-        standalone.show()
+    import bookmarks
+    bookmarks.exec_()
 
 
-To run it from a host application, you'll have to first initialize in
-``EmbeddedMode``:
+To run it from a host application, you'll have to first initialize in ``EmbeddedMode``:
 
-    .. code-block:: python
-        :linenos:
+.. code-block:: python
 
-        from bookmarks import common
-        common.initialize(common.EmbeddedMode)
+    from bookmarks import common
+    common.initialize(common.EmbeddedMode)
 
-Regardless of the initialization mode, the main widget instance will be saved to
-``common.main_widget``.
 
 """
-import sys
 import importlib
 import platform
+import sys
 
 from PySide2 import QtWidgets
 
@@ -79,7 +70,6 @@ __website__ = 'https://github.com/wgergely/bookmarks'
 __email__ = 'hello@gergely-wootsch.com'
 __version__ = '0.5.0'
 __copyright__ = f'Copyright (C) 2021  {__author__}'
-
 
 # Python 2 support has been dropped and the code base only supports Python 3.
 if sys.version_info[0] < 3 and sys.version_info[1] < 6:

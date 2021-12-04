@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-"""Defines the view and model used to display and pick subfolders found
-in an asset's root.
+"""The view and model used to display task folder items.
 
-Folders found in an asset's root are referred to as `task folders`. Bookmarks
-generally expects them to be associated with a task or data-type eg. ``render``,
-``comp``, ``textures``, etc.
+Hint:
 
-Core task folders are defined by `asset_config.py`.
+    Folders found in an asset's root are referred to as `task folders`. Bookmarks
+    generally expects them to be associated with a task or data-type eg. ``render``,
+    ``comp``, ``textures``, etc.
+
+    Some default task-folders are defined by :mod:`bookmarks.asset_config.asset_config`.
 
 """
 import os
@@ -294,8 +295,8 @@ class TaskFolderModel(basemodel.BaseModel):
                 common.FileDetailsRole: '',
                 common.SequenceRole: None,
                 common.FramesRole: [],
-                common.StartpathRole: None,
-                common.EndpathRole: None,
+                common.StartPathRole: None,
+                common.EndPathRole: None,
                 #
                 common.FileInfoLoaded: False,
                 common.ThumbnailLoaded: True,

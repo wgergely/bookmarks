@@ -1,27 +1,22 @@
 # -*- coding: utf-8 -*-
 """The main Bookmark Editor widget.
 
-The editor is used to add or remove bookmarks from the bookmark list.
+The editor is used to add or remove bookmarks from the user settings.
 The widget is also responsible for editing the list of servers and jobs that
-will contain the bookmarks.
-
-The definitions for the server, job and bookmark editor editors are found
-in the `bookmark_editor` submodule.
+will contain the bookmark items.
 
 """
 import functools
 
 from PySide2 import QtCore, QtWidgets
 
-from .. import common
-from .. import ui
-from .. import images
-from .. import actions
-
-from . import server_editor
-from . import job_editor
 from . import bookmark_editor
-
+from . import job_editor
+from . import server_editor
+from .. import actions
+from .. import common
+from .. import images
+from .. import ui
 
 instance = None
 
@@ -69,9 +64,9 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         super(BookmarkEditorWidget, self).__init__(
             parent=parent,
             f=QtCore.Qt.CustomizeWindowHint |
-            QtCore.Qt.WindowTitleHint |
-            QtCore.Qt.WindowCloseButtonHint |
-            QtCore.Qt.WindowMaximizeButtonHint
+              QtCore.Qt.WindowTitleHint |
+              QtCore.Qt.WindowCloseButtonHint |
+              QtCore.Qt.WindowMaximizeButtonHint
         )
 
         self.server_editor = None
@@ -290,12 +285,13 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         # =====================================================
 
         self.info_bar = QtWidgets.QLabel(parent=self)
-        self.info_bar.setStyleSheet('QLabel {{font-family: "{family}";font-size: {size}px;margin: {o} {o} {o} {o};}}'.format(
-            size=common.size(common.FontSizeSmall) * 0.2,
-            family=common.font_db.secondary_font(
-                common.FontSizeSmall)[0].family(),
-            o=common.size(common.WidthIndicator)
-        ))
+        self.info_bar.setStyleSheet(
+            'QLabel {{font-family: "{family}";font-size: {size}px;margin: {o} {o} {o} {o};}}'.format(
+                size=common.size(common.FontSizeSmall) * 0.2,
+                family=common.font_db.secondary_font(
+                    common.FontSizeSmall)[0].family(),
+                o=common.size(common.WidthIndicator)
+            ))
         self.info_bar.setWordWrap(False)
         self.info_bar.setFixedHeight(common.size(common.WidthMargin) * 2)
 
@@ -410,10 +406,11 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
     @QtCore.Slot(QtWidgets.QWidget)
     @QtCore.Slot(bool)
     def set_hidden(self, widget, v, *args, **kwargs):
-        if not v:
-            widget.setHidden(True)
-        else:
-            widget.setHidden(False)
+        return
+        # if not v:
+        #     widget.setHidden(True)
+        # else:
+        #     widget.setHidden(False)
 
     def showEvent(self, event):
         common.center_window(self)

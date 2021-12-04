@@ -1,24 +1,24 @@
 # -*- coding: utf-8 -*-
-"""The threads and associated worker classes.
+"""The threads and associated worker classes across Bookmarks.
+
+
 
 Thumbnail and file-load work on carried out on secondary threads.
 Each thread is assigned a single Worker - usually responsible for taking
 a *weakref.ref* from the thread's queue.
 
 """
-import os
 import functools
-import weakref
+import os
 import uuid
+import weakref
 
 from PySide2 import QtCore, QtWidgets
 
-
-from .. import log
 from .. import common
-from .. import images
 from .. import database
-
+from .. import images
+from .. import log
 from ..shotgun import shotgun
 
 
@@ -70,6 +70,7 @@ def process(func):
     and emits the `updateRow` signal if the data has been correctly loaded.
 
     """
+
     @functools.wraps(func)
     @common.error
     def func_wrapper(self, *args, **kwargs):
@@ -214,13 +215,11 @@ class BaseWorker(QtCore.QObject):
             self.updateRow.connect(widget.updateRow)
 
         if threads.THREADS[q]['preload'] and model and widget:
-            from .. import actions
             model.coreDataLoaded.connect(self.coreDataLoaded, cnx)
             self.dataTypeSorted.connect(model.dataTypeSorted, cnx)
             common.signals.databaseValueUpdated.connect(
                 self.databaseValueUpdated, cnx)
 
-        from ..shotgun import actions as sg_actions
         self.sgEntityDataReady.connect(
             common.signals.sgEntityDataReady, cnx)
 
@@ -384,6 +383,15 @@ class InfoWorker(BaseWorker):
     for the description, and file flags.
 
     """
+
+    def is_valid(self, ref):
+        return (
+            False if not ref() or
+                     self.interrupt or
+                     ref()[common.FileInfoLoaded] else
+            True
+        )
+
     @process
     @common.error
     @QtCore.Slot(weakref.ref)
@@ -397,243 +405,205 @@ class InfoWorker(BaseWorker):
             bool: `True` if all went well, `False` otherwise.
 
         """
-        def is_valid():
-            return (
-                False if not ref() or
-                self.interrupt or
-                ref()[common.FileInfoLoaded] else
-                True
-            )
-
-        if not is_valid():
-            return False
+        if not self.is_valid(ref):
+            return True
 
         try:
-            pp = ref()[common.ParentPathRole]
+            self._process_data(ref)
+            ref()[common.FileInfoLoaded] = True
+            return True
+        except TypeError:
+            return False
+        except (RuntimeError, AttributeError):
+            log.error(f'Failed to process item.')
+            return False
+        finally:
+            if ref():
+                ref()[common.FileInfoLoaded] = True
 
-            if not is_valid():
-                return False
+    def _process_bookmark_item(self, ref, db, pp):
+        if not self.is_valid(ref):
+            return False
 
-            collapsed = common.is_collapsed(ref()[QtCore.Qt.StatusTipRole])
-            seq = ref()[common.SequenceRole]
+        if len(pp) != 3:
+            return
 
-            if not is_valid():
-                return False
-            proxy_k = common.proxy_path(ref())
-            if collapsed:
-                k = proxy_k
-            else:
-                if not is_valid():
-                    return False
-                k = ref()[QtCore.Qt.StatusTipRole]
+        identifier = db.value(
+            db.source(),
+            'identifier',
+            table=database.BookmarkTable
+        )
+        description = self.get_bookmark_description(db)
+        count = self.count_assets(db.source(), identifier)
 
-            # Load values from the database
-            db = database.get_db(pp[0], pp[1], pp[2])
-            # Bookmark items
-            if len(pp) == 3:
-                identifier = db.value(
-                    db.source(),
-                    'identifier',
-                    table=database.BookmarkTable
-                )
-                count = self.count_assets(db.source(), identifier)
-                if not is_valid():
-                    return False
-                ref()[common.AssetCountRole] = count
+        if not self.is_valid(ref):
+            return False
+        ref()[common.AssetCountRole] = count
+        ref()[common.DescriptionRole] = description
+        ref()[QtCore.Qt.ToolTipRole] = description
 
-                description = self.get_bookmark_description(db)
-                if not is_valid():
-                    return False
-                ref()[common.DescriptionRole] = description
-                if not is_valid():
-                    return False
-                ref()[QtCore.Qt.ToolTipRole] = description
-                if not is_valid():
-                    return False
+        # Let's load and verify Slack status
+        self.update_slack_configured(pp, db, ref)
 
-                # Let's load an verify the slack status
-                self.update_slack_configured(pp, db, ref())
+    def _process_data(self, ref):
+        pp = ref()[common.ParentPathRole]
+        st = ref()[QtCore.Qt.StatusTipRole]
+        flags = ref()[common.FlagsRole] | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsDragEnabled
+        item_type = ref()[common.TypeRole]
 
+        collapsed = common.is_collapsed(st)
+
+        proxy_k = common.proxy_path(st)
+        k = proxy_k if collapsed else st
+
+        # Load values from the database
+        db = database.get_db(pp[0], pp[1], pp[2])
+
+        with db.connection():
             if len(pp) > 3:
                 # I made a mistake and didn't realise I was settings things
                 # up so that bookmark descriptions won't be stored in
                 # the asset table. Well. This just means, I'll have to make
                 # sure I won't overwrite the previously retrieved bookmark
                 # description here.
-                v = db.value(k, 'description')
-                if not is_valid():
-                    return False
-                ref()[common.DescriptionRole] = v
+                description = db.value(k, 'description')
+                ref()[common.DescriptionRole] = description
 
-            # Let's load an verify the shotgun status
-            self.update_shotgun_configured(pp, db, ref())
+            # Let's load and verify the shotgun status of bookmark and asset items
+            if len(pp) <= 4:
+                self.update_shotgun_configured(pp, db, ref)
 
-            v = self.count_todos(db, k)
-            if not is_valid():
-                return False
-            ref()[common.TodoCountRole] = v
+            # TodoCountRole
+            todos = self.count_todos(db, k)
+            ref()[common.TodoCountRole] = todos
 
-            # Item flags
-            if not is_valid():
-                return False
-            flags = ref()[
-                common.FlagsRole] | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsDragEnabled
-
-            v = db.value(k, 'flags', table=database.AssetTable)
-            if v:
-                flags = flags | v
-            v = db.value(proxy_k, 'flags', table=database.AssetTable)
-            if v:
-                flags = flags | v
-
-            if not is_valid():
-                return False
+            # FlagsRole
+            _flags = db.value(k, 'flags', table=database.AssetTable)
+            _proxy_flags = db.value(proxy_k, 'flags', table=database.AssetTable)
+            flags = flags | _flags if _flags else flags
+            flags = flags | _proxy_flags if _proxy_flags else flags
             ref()[common.FlagsRole] = QtCore.Qt.ItemFlags(flags)
 
-            # For sequences we will work out the name of the sequence based on
-            # the frames.
-            if not is_valid():
-                return False
-            if ref()[common.TypeRole] == common.SequenceItem:
-                if not is_valid():
-                    return False
-                frs = ref()[common.FramesRole]
-                intframes = [int(f) for f in frs]
-                padding = len(frs[0])
-                rangestring = self.get_ranges(intframes, padding)
+            self._process_bookmark_item(ref, db, pp)
 
-                if not is_valid():
-                    return False
-                seq = ref()[common.SequenceRole]
-                startpath = \
-                    seq.group(1) + \
-                    str(min(intframes)).zfill(padding) + \
-                    seq.group(3) + \
-                    '.' + \
-                    seq.group(4)
-                endpath = \
-                    seq.group(1) + \
-                    str(max(intframes)).zfill(padding) + \
-                    seq.group(3) + \
-                    '.' + \
-                    seq.group(4)
-                seqpath = \
-                    seq.group(1) + \
-                    common.SEQSTART + rangestring + common.SEQEND + \
-                    seq.group(3) + \
-                    '.' + \
-                    seq.group(4)
-                seqname = seqpath.split('/')[-1]
+        self._process_file_item(ref, item_type)
+        self._process_sequence_item(ref, item_type)
 
-                # Setting the path names
-                if not is_valid():
-                    return False
-                ref()[common.StartpathRole] = startpath
-                if not is_valid():
-                    return False
-                ref()[common.EndpathRole] = endpath
-                if not is_valid():
-                    return False
-                ref()[QtCore.Qt.StatusTipRole] = seqpath
-                if not is_valid():
-                    return False
-                ref()[QtCore.Qt.ToolTipRole] = seqpath
-                if not ref():
-                    return False
-                ref()[QtCore.Qt.DisplayRole] = seqname
-                if not is_valid():
-                    return False
-                ref()[QtCore.Qt.EditRole] = seqname
-                if not is_valid():
-                    return False
-                # We saved the DirEntry instances previously in `init_data` but
-                # only for the thread to extract the information from it.
-                if not is_valid():
-                    return False
-                er = ref()[common.EntryRole]
-                if er:
-                    mtime = 0
-                    for entry in er:
-                        stat = entry.stat()
-                        mtime = stat.st_mtime if stat.st_mtime > mtime else mtime
-                        if not is_valid():
-                            return False
-                        ref()[common.SortBySizeRole] += stat.st_size
-                    if not is_valid():
-                        return False
-                    ref()[common.SortByLastModifiedRole] = mtime
-                    mtime = _qlast_modified(mtime)
-
-                    if not is_valid():
-                        return False
-                    info_string = \
-                        str(len(intframes)) + 'f;' + \
-                        mtime.toString('dd') + '/' + \
-                        mtime.toString('MM') + '/' + \
-                        mtime.toString('yyyy') + ' ' + \
-                        mtime.toString('hh') + ':' + \
-                        mtime.toString('mm') + ';' + \
-                        self.byte_to_string(ref()[common.SortBySizeRole])
-                    if not is_valid():
-                        return False
-                    ref()[common.FileDetailsRole] = info_string
-
-            if not is_valid():
-                return False
-            if ref()[common.TypeRole] == common.FileItem:
-                if not is_valid():
-                    return False
-                er = ref()[common.EntryRole]
-                if er:
-                    stat = er[0].stat()
-                    mtime = stat.st_mtime
-                    ref()[common.SortByLastModifiedRole] = mtime
-                    mtime = _qlast_modified(mtime)
-                    ref()[common.SortBySizeRole] = stat.st_size
-                    info_string = \
-                        mtime.toString('dd') + '/' + \
-                        mtime.toString('MM') + '/' + \
-                        mtime.toString('yyyy') + ' ' + \
-                        mtime.toString('hh') + ':' + \
-                        mtime.toString('mm') + ';' + \
-                        self.byte_to_string(ref()[common.SortBySizeRole])
-                    if not is_valid():
-                        return False
-                    ref()[common.FileDetailsRole] = info_string
-                if not is_valid():
-                    return False
-
-            # Finally, set flag to mark this item loaded
-            if not is_valid():
-                return False
-            return True
-        except OSError:
-            log.error('Failed to retrieve the bookmark.')
+    def _process_sequence_item(self, ref, item_type):
+        if not self.is_valid(ref):
             return False
-        except:
-            log.error('Error processing file info.')
+        if item_type != common.SequenceItem:
+            return
+
+        seq = ref()[common.SequenceRole]
+        frs = ref()[common.FramesRole]
+        er = ref()[common.EntryRole]
+        size = ref()[common.SortBySizeRole]
+
+        intframes = [int(f) for f in frs]
+        padding = len(frs[0])
+        rangestring = self.get_ranges(intframes, padding)
+
+        startpath = \
+            seq.group(1) + \
+            str(min(intframes)).zfill(padding) + \
+            seq.group(3) + \
+            '.' + \
+            seq.group(4)
+        endpath = \
+            seq.group(1) + \
+            str(max(intframes)).zfill(padding) + \
+            seq.group(3) + \
+            '.' + \
+            seq.group(4)
+        seqpath = \
+            seq.group(1) + \
+            common.SEQSTART + rangestring + common.SEQEND + \
+            seq.group(3) + \
+            '.' + \
+            seq.group(4)
+        seqname = seqpath.split('/')[-1]
+
+        _mtime = 0
+        info_string = ''
+        if er:
+            for entry in er:
+                stat = entry.stat()
+                size += stat.st_size
+                _mtime = stat.st_mtime if stat.st_mtime > _mtime else _mtime
+
+            mtime = _qlast_modified(_mtime)
+            info_string += \
+                str(len(intframes)) + 'f;' + \
+                mtime.toString('dd') + '/' + \
+                mtime.toString('MM') + '/' + \
+                mtime.toString('yyyy') + ' ' + \
+                mtime.toString('hh') + ':' + \
+                mtime.toString('mm') + ';' + \
+                self.byte_to_pretty_string(size)
+
+        # Setting the path names
+        if not self.is_valid(ref):
             return False
-        finally:
-            if ref():
-                ref()[common.FileInfoLoaded] = True
+        ref()[common.StartPathRole] = startpath
+        ref()[common.EndPathRole] = endpath
+        ref()[QtCore.Qt.StatusTipRole] = seqpath
+        ref()[QtCore.Qt.ToolTipRole] = seqpath
+        ref()[QtCore.Qt.DisplayRole] = seqname
+        ref()[QtCore.Qt.EditRole] = seqname
+        ref()[common.SortByLastModifiedRole] = _mtime
+        ref()[common.SortBySizeRole] = size
+        ref()[common.FileDetailsRole] = info_string
+
+    def _process_file_item(self, ref, item_type):
+        if not self.is_valid(ref):
+            return False
+        if item_type != common.FileItem:
+            return
+
+        er = ref()[common.EntryRole]
+        if not er:
+            return
+
+        size = 0
+        if er:
+            stat = er[0].stat()
+            size = stat.st_size
+
+        _mtime = stat.st_mtime
+        mtime = _qlast_modified(_mtime)
+
+        info_string = \
+            mtime.toString('dd') + '/' + \
+            mtime.toString('MM') + '/' + \
+            mtime.toString('yyyy') + ' ' + \
+            mtime.toString('hh') + ':' + \
+            mtime.toString('mm') + ';' + \
+            self.byte_to_pretty_string(size)
+
+        if not self.is_valid(ref):
+            return False
+        ref()[common.SortByLastModifiedRole] = _mtime
+        ref()[common.FileDetailsRole] = info_string
+        ref()[common.SortBySizeRole] = size
 
     def count_todos(self, db, k):
         v = db.value(k, 'notes')
         return len(v) if isinstance(v, dict) else 0
 
     @staticmethod
-    def update_shotgun_configured(source_paths, db, data):
-        server, job, root = source_paths[0:3]
-        asset = None if len(source_paths) == 3 else source_paths[3]
+    def update_shotgun_configured(pp, db, ref):
+        server, job, root = pp[0:3]
+        asset = None if len(pp) == 3 else pp[3]
 
         sg_properties = shotgun.ShotgunProperties(server, job, root, asset)
         sg_properties.init(db=db)
-        data[common.ShotgunLinkedRole] = sg_properties.verify(connection=True)
+        ref()[common.ShotgunLinkedRole] = sg_properties.verify(connection=True)
 
     @staticmethod
-    def update_slack_configured(source_paths, db, data):
+    def update_slack_configured(source_paths, db, ref):
         v = db.value(db.source(), 'slacktoken', table=database.BookmarkTable)
-        data[common.SlackLinkedRole] = True if v else False
+        ref()[common.SlackLinkedRole] = True if v else False
 
     @staticmethod
     def count_assets(path, ASSET_IDENTIFIER):
@@ -682,7 +652,7 @@ class InfoWorker(BaseWorker):
             description = v['description'] + sep if v['description'] else ''
             width = v['width'] if (v['width'] and v['height']) else ''
             height = 'x{}px'.format(v['height']) if (
-                v['width'] and v['height']) else ''
+                    v['width'] and v['height']) else ''
             framerate = '{}{}fps'.format(
                 sep, v['framerate']) if v['framerate'] else ''
             prefix = '{}{}'.format(sep, v['prefix']) if v['prefix'] else ''
@@ -702,7 +672,7 @@ class InfoWorker(BaseWorker):
             return ''
 
     @staticmethod
-    def byte_to_string(num, suffix='B'):
+    def byte_to_pretty_string(num, suffix='B'):
         """Converts a numeric byte value to a human readable string.
 
         Args:
@@ -755,6 +725,7 @@ class ThumbnailWorker(BaseWorker):
     delegates to paint thumbnails.
 
     """
+
     @process
     @common.error
     @QtCore.Slot(weakref.ref)
@@ -773,8 +744,10 @@ class ThumbnailWorker(BaseWorker):
             ref or None: `ref` if loaded successfully, else `None`.
 
         """
-        def is_valid(): return False if not ref() or self.interrupt or ref()[
-            common.ThumbnailLoaded] or ref()[common.FlagsRole] & common.MarkedAsArchived else True
+
+        def is_valid():
+            return False if not ref() or self.interrupt or ref()[
+                common.ThumbnailLoaded] or ref()[common.FlagsRole] & common.MarkedAsArchived else True
 
         if not is_valid():
             return False
@@ -838,16 +811,11 @@ class ThumbnailWorker(BaseWorker):
 
             # We should never get here ideally, but if we do we'll mark the item
             # with a bespoke 'failed' thumbnail
-            fpath = common.get_rsc(
-                f'{common.GuiResource}/close.{common.thumbnail_format}')
-            res = images.ImageCache.oiio_make_thumbnail(
-                fpath,
-                destination,
-                common.thumbnail_size
-            )
-            if res:
-                images.ImageCache.get_image(destination, int(size), force=True)
-                images.ImageCache.make_color(destination)
+            fpath = common.get_rsc(f'{common.GuiResource}/failed.{common.thumbnail_format}')
+            hash = common.get_hash(fpath)
+
+            images.ImageCache.get_image(fpath, int(size), hash=hash)
+            images.ImageCache.make_color(fpath, hash=hash)
 
             ref()[common.ThumbnailLoaded] = True
             return True
@@ -881,7 +849,12 @@ class TaskFolderWorker(InfoWorker):
         except:
             return
 
+        n = 0
         while True:
+            n += 1
+            if n > 9999:
+                return
+
             try:
                 try:
                     entry = next(it)
@@ -905,6 +878,7 @@ class TaskFolderWorker(InfoWorker):
                 is_symlink = entry.is_symlink()
             except OSError:
                 is_symlink = False
+
             if not is_symlink:
                 for entry in cls.item_iterator(entry.path):
                     yield entry

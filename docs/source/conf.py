@@ -38,6 +38,9 @@ napoleon_google_docstring = True
 napoleon_use_param = False
 napoleon_use_ivar = False
 
+pygments_style = "vs"
+pygments_dark_style = "stata-dark"
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -56,9 +59,27 @@ html_theme = 'furo'
 html_theme_options = {
     "light_logo": "icon.png",
     "dark_logo": "icon_bw.png",
+    "light_css_variables": {
+        "color-brand-primary": "rgba(75, 180, 135, 1)",
+        "color-brand-content": "rgba(75, 180, 135, 1)",
+        "color-api-name": "rgba(0, 0, 0, 0.9)",
+        "color-api-pre-name": "rgba(75, 180, 135, 0.75)",
+        "api-font-size": "var(--font-size--normal)",
+    },
+    "dark_css_variables": {
+        "color-brand-primary": "rgba(90, 200, 155, 1)",
+        "color-brand-content": "rgba(90, 200, 155, 1)",
+        "color-api-name": "rgba(255, 255, 255, 0.9)",
+
+    },
+    "navigation_with_keys": True,
 }
+highlight_language = "python"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+
+autodoc_member_order = 'bysource'

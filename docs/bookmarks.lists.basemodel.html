@@ -1,0 +1,570 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="bookmarks.lists.basewidget" href="bookmarks.lists.basewidget.html" /><link rel="prev" title="bookmarks.lists" href="bookmarks.lists.html" />
+
+    <meta name="generator" content="sphinx-4.3.1, furo 2021.11.23"/>
+        <title>bookmarks.lists.basemodel - Bookmarks 0.5.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=7f0192ddeb2adecfbaa87ffbcf67d16358b30bc1" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=0af69da206d614734f649b27d4cdc2dd6c31f41d" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #ffffff;
+  --color-code-foreground: black;
+  --color-brand-primary: rgba(75, 180, 135, 1);
+  --color-brand-content: rgba(75, 180, 135, 1);
+  --color-api-name: rgba(0, 0, 0, 0.9);
+  --color-api-pre-name: rgba(75, 180, 135, 0.75);
+  --api-font-size: var(--font-size--normal);
+  
+  }
+  body[data-theme="dark"] {
+    --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+  }
+  @media (prefers-color-scheme: dark) {
+    body:not([data-theme="light"]) {
+      --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+    }
+  }
+</style></head>
+  <body>
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" />
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="10" y1="12" x2="20" y2="12" />
+      <line x1="6" y1="18" x2="20" y2="18" />
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">Bookmarks 0.5.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="_static/icon.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="_static/icon_bw.png" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Bookmarks 0.5.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="bookmarks.html">Introduction</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="api.html">Python Modules Documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="bookmarks.common.html">Common Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bookmarks.main.html">Main Widget</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="bookmarks.lists.html">Bookmark, Asset and File Tabs</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">bookmarks.lists.basemodel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bookmarks.lists.basewidget.html">bookmarks.lists.basewidget</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bookmarks.lists.delegate.html">bookmarks.lists.delegate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bookmarks.lists.items.html">Item Widgets</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="module-bookmarks.lists.basemodel">
+<span id="bookmarks-lists-basemodel"></span><h1>bookmarks.lists.basemodel<a class="headerlink" href="#module-bookmarks.lists.basemodel" title="Permalink to this headline">¶</a></h1>
+<p>Defines the base model used to display bookmark, asset and files items.</p>
+<p>The model loads and reset data via the <a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.init_data" title="bookmarks.lists.basemodel.BaseModel.init_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseModel.init_data()</span></code></a> and <a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.reset_data" title="bookmarks.lists.basemodel.BaseModel.reset_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseModel.reset_data()</span></code></a>
+methods.</p>
+<p>The model itself does not store data, but all retrieved data is cached to
+<a class="reference internal" href="bookmarks.common.html#bookmarks.common.item_data" title="bookmarks.common.item_data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">bookmarks.common.item_data</span></code></a>. The interface for getting and setting data can be found in the
+<a class="reference internal" href="bookmarks.common.html#module-bookmarks.common.data" title="bookmarks.common.data"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.common.data</span></code></a>. However, the model is responsible for populating the data cache. See
+<a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.item_iterator" title="bookmarks.lists.basemodel.BaseModel.item_iterator"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseModel.item_iterator()</span></code></a>.</p>
+<p>The model exposes different datasets to the view using the <a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.task" title="bookmarks.lists.basemodel.BaseModel.task"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseModel.task()</span></code></a> and
+<a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.data_type" title="bookmarks.lists.basemodel.BaseModel.data_type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseModel.data_type()</span></code></a> switches. This is because file items are stored as sequence and individual items
+simultaneously and because the file model also keeps separate data for each task folder it encounters.</p>
+<p>The currently exposed data can be retrieved by <cite>BaseModel.model_data()</cite>. To change/set the data set emit
+the <code class="xref py py-attr docutils literal notranslate"><span class="pre">BaseModel.taskFolderChanged</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">BaseModel.dataTypeChanged</span></code> signals with their
+appropriate arguments.</p>
+<p>Actually, Bookmarks loads data in two passes. The model is responsible for discovering items,
+but will not populate the items with all the data, and instead we offload that onto threads.
+The model’s associated threads are defined by overriding <code class="xref py py-attr docutils literal notranslate"><span class="pre">BaseModel.queues</span></code>.</p>
+<p>The base model implements data sorting via <code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseModel.sort_data()</span></code> but the filtering
+is done using <a class="reference internal" href="#bookmarks.lists.basemodel.FilterProxyModel" title="bookmarks.lists.basemodel.FilterProxyModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterProxyModel</span></code></a>.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.initdata">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.lists.basemodel.</span></span><span class="sig-name descname"><span class="pre">initdata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#initdata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.initdata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps <cite>init_data</cite> calls.</p>
+<p>The decorator is responsible for emiting the begin- and endResetModel
+signals and sorting resulting data.</p>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.lists.basemodel.</span></span><span class="sig-name descname"><span class="pre">BaseModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>The base model used for interacting with all bookmark, asset and
+file items.</p>
+<p>Data is stored in the datacache module that can be fetched using the model’s
+<cite>source_path</cite>, <cite>task</cite> and <cite>data_type</cite>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.item_iterator">
+<span class="sig-name descname"><span class="pre">item_iterator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.item_iterator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.item_iterator" title="Permalink to this definition">¶</a></dt>
+<dd><p>A generator method used by <a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.init_data" title="bookmarks.lists.basemodel.BaseModel.init_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">init_data()</span></code></a> to yield the items the model should load.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Yields</dt>
+<dd class="field-odd"><p><em>DirEntry</em> – os.scandir DirEntry objects.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.init_data">
+<span class="sig-name descname"><span class="pre">init_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.init_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.init_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>The main method used by the model to fetch and store item information
+from the file system.</p>
+<p>The model itself does not store any data, instead, we’re using the
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">datacache</span></code> module to store item data.</p>
+<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.item_iterator" title="bookmarks.lists.basemodel.BaseModel.item_iterator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_iterator()</span></code></a>.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.reset_data">
+<span class="sig-name descname"><span class="pre">reset_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">emit_active</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.reset_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.reset_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the model’s internal data.</p>
+<p>The underlying data is cached in the <code class="xref py py-mod docutils literal notranslate"><span class="pre">datacache</span></code> module, so here
+we’ll make sure the data is available for the model to use. When the
+optional <cite>force</cite> flag is set, we’ll use <cite>init_data</cite> to load the item
+data from disk.</p>
+<p>Otherwise, the method will check if our cached data is available and if
+not, uses <cite>init_data</cite> to fetch it.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.data_type_sorted">
+<span class="sig-name descname"><span class="pre">data_type_sorted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.data_type_sorted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.data_type_sorted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the GUI model/views when a thread has resorted the underlying data structure.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.set_sorting">
+<span class="sig-name descname"><span class="pre">set_sorting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.set_sorting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.set_sorting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Slot responsible for setting the sort role, order and sorting the model data.
+Sorting won’t be possible until the model data is fully loaded.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.init_sort_values">
+<span class="sig-name descname"><span class="pre">init_sort_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.init_sort_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.init_sort_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the current sort role from the local preferences.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.set_sort_role">
+<span class="sig-name descname"><span class="pre">set_sort_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.set_sort_role"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.set_sort_role" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets and saves the sort-key.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.sort_order">
+<span class="sig-name descname"><span class="pre">sort_order</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.sort_order"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.sort_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>The currently set order of the items eg. ‘descending’.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.set_sort_order">
+<span class="sig-name descname"><span class="pre">set_sort_order</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.set_sort_order"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.set_sort_order" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets and saves the sort-key.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.is_data_type_loaded">
+<span class="sig-name descname"><span class="pre">is_data_type_loaded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.is_data_type_loaded"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.is_data_type_loaded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the given data type is loaded.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.model_data">
+<span class="sig-name descname"><span class="pre">model_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.model_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.model_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>The pointer to the model’s internal data.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.active_index">
+<span class="sig-name descname"><span class="pre">active_index</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.active_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.active_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>The model’s active_index.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.set_active">
+<span class="sig-name descname"><span class="pre">set_active</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.set_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.set_active" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the given item as the model’s active item.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.save_active">
+<span class="sig-name descname"><span class="pre">save_active</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.save_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.save_active" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a newly activated item in globally active item.</p>
+<p>The active items are stored in <cite>common.active</cite> and are used by the
+models to locate items to load (see <cite>BaseModel.source_paths()</cite>).</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.unset_active">
+<span class="sig-name descname"><span class="pre">unset_active</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.unset_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.unset_active" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unsets the current data set’s active item.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.data_type">
+<span class="sig-name descname"><span class="pre">data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.data_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.data_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current key to the data dictionary.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.task">
+<span class="sig-name descname"><span class="pre">task</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.task" title="Permalink to this definition">¶</a></dt>
+<dd><p>The model’s task folder.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.user_settings_key">
+<span class="sig-name descname"><span class="pre">user_settings_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.user_settings_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.user_settings_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the key used to by <a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.get_local_setting" title="bookmarks.lists.basemodel.BaseModel.get_local_setting"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_local_setting()</span></code></a> and <a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.set_local_setting" title="bookmarks.lists.basemodel.BaseModel.set_local_setting"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_local_setting()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A user_settings key value.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.get_local_setting">
+<span class="sig-name descname"><span class="pre">get_local_setting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ListFilters'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.get_local_setting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.get_local_setting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a value stored in the user settings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key_type</strong> (<em>str</em>) – A filter key type.</p></li>
+<li><p><strong>key</strong> (<em>str</em>) – A key the value is associated with.</p></li>
+<li><p><strong>section</strong> (<em>str</em>) – A settings <cite>section</cite>. Defaults to <cite>common.ListFilterSection</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The value saved in <cite>user_settings</cite>, or <cite>None</cite> if not found.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.set_local_setting">
+<span class="sig-name descname"><span class="pre">set_local_setting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ListFilters'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.set_local_setting"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.set_local_setting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set a value to store in <cite>user_settings</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key_type</strong> (<em>str</em>) – A filter key type.</p></li>
+<li><p><strong>v</strong> (<em>any</em>) – A value to store.</p></li>
+<li><p><strong>key</strong> (<em>type</em>) – A key the value is associated with.</p></li>
+<li><p><strong>section</strong> (<em>type</em>) – A settings <cite>section</cite>. Defaults to <cite>common.ListFilterSection</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.setData">
+<span class="sig-name descname"><span class="pre">setData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">typing.Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PySide2.QtCore.Qt.ItemDataRole.EditRole</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.setData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.setData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.supportedDropActions">
+<span class="sig-name descname"><span class="pre">supportedDropActions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">PySide2.QtCore.Qt.DropActions</span></span></span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.supportedDropActions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.supportedDropActions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.canDropMimeData">
+<span class="sig-name descname"><span class="pre">canDropMimeData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QMimeData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.Qt.DropAction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.canDropMimeData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.canDropMimeData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.dropMimeData">
+<span class="sig-name descname"><span class="pre">dropMimeData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QMimeData</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.Qt.DropAction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.dropMimeData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.dropMimeData" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.columnCount">
+<span class="sig-name descname"><span class="pre">columnCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.columnCount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.columnCount" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.rowCount">
+<span class="sig-name descname"><span class="pre">rowCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Invalid(PySide2.QtCore.QModelIndex)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.rowCount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.rowCount" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.index">
+<span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Invalid(PySide2.QtCore.QModelIndex)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">PySide2.QtCore.QModelIndex</span></span></span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.data">
+<span class="sig-name descname"><span class="pre">data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PySide2.QtCore.Qt.ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">typing.Any</span></span></span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.flags">
+<span class="sig-name descname"><span class="pre">flags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">PySide2.QtCore.Qt.ItemFlags</span></span></span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.flags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.flags" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.parent">
+<span class="sig-name descname"><span class="pre">parent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">PySide2.QtCore.QObject</span></span></span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#BaseModel.parent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.parent" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">parent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">child</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">PySide2.QtCore.QModelIndex</span></span></span></dt>
+<dd></dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.FilterProxyModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.lists.basemodel.</span></span><span class="sig-name descname"><span class="pre">FilterProxyModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#FilterProxyModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.FilterProxyModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy model responsible for <strong>filtering</strong> data for the view.</p>
+<p>We can filter items based on the data contained in the
+<code class="docutils literal notranslate"><span class="pre">QtCore.Qt.StatusTipRole</span></code>, <code class="docutils literal notranslate"><span class="pre">common.DescriptionRole</span></code> and
+<code class="docutils literal notranslate"><span class="pre">common.FileDetailsRole</span></code> roles. Furthermore, based on flag values
+(<code class="docutils literal notranslate"><span class="pre">MarkedAsArchived</span></code>, <code class="docutils literal notranslate"><span class="pre">MarkedAsActive</span></code>, <code class="docutils literal notranslate"><span class="pre">MarkedAsFavourite</span></code> are implemented.)</p>
+<p>Because of perfomarnce snags, sorting function are not implemented in the proxy
+model, rather in the source <code class="docutils literal notranslate"><span class="pre">BaseModel</span></code>.</p>
+<dl class="simple">
+<dt>Signals:</dt><dd><p>filterFlagChanged (QtCore.Signal):  The signal emitted when the user changes a filter view setting
+filterTextChanged (QtCore.Signal):  The signal emitted when the user changes the filter text.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.FilterProxyModel.verify">
+<span class="sig-name descname"><span class="pre">verify</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#FilterProxyModel.verify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.FilterProxyModel.verify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify the filter model contents to make sure archived items
+remain hidden when they’re not meant to be visible.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.FilterProxyModel.invalidateFilter">
+<span class="sig-name descname"><span class="pre">invalidateFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#FilterProxyModel.invalidateFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.FilterProxyModel.invalidateFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instead of calling invalidate directly, we’ll pool consequent calls
+together.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.FilterProxyModel.invalidate">
+<span class="sig-name descname"><span class="pre">invalidate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#FilterProxyModel.invalidate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.FilterProxyModel.invalidate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.FilterProxyModel.sort">
+<span class="sig-name descname"><span class="pre">sort</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.Qt.SortOrder</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PySide2.QtCore.Qt.SortOrder.AscendingOrder</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#FilterProxyModel.sort"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.FilterProxyModel.sort" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.FilterProxyModel.init_filter_values">
+<span class="sig-name descname"><span class="pre">init_filter_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#FilterProxyModel.init_filter_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.FilterProxyModel.init_filter_values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the saved widget filters from <cite>user_settings</cite>.</p>
+<p>This determines if eg. archived items are visible in the view.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.FilterProxyModel.filter_text">
+<span class="sig-name descname"><span class="pre">filter_text</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#FilterProxyModel.filter_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.FilterProxyModel.filter_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters the list of items containing this path segment.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.FilterProxyModel.set_filter_text">
+<span class="sig-name descname"><span class="pre">set_filter_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#FilterProxyModel.set_filter_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.FilterProxyModel.set_filter_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Slot called when a filter text has been set by the filter text editor
+widget.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.FilterProxyModel.filter_flag">
+<span class="sig-name descname"><span class="pre">filter_flag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#FilterProxyModel.filter_flag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.FilterProxyModel.filter_flag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the current flag-filter.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.FilterProxyModel.set_filter_flag">
+<span class="sig-name descname"><span class="pre">set_filter_flag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#FilterProxyModel.set_filter_flag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.FilterProxyModel.set_filter_flag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save a widget filter state to <cite>user_settings</cite>.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.FilterProxyModel.filterAcceptsColumn">
+<span class="sig-name descname"><span class="pre">filterAcceptsColumn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#FilterProxyModel.filterAcceptsColumn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.FilterProxyModel.filterAcceptsColumn" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.FilterProxyModel.filterAcceptsRow">
+<span class="sig-name descname"><span class="pre">filterAcceptsRow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#FilterProxyModel.filterAcceptsRow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.FilterProxyModel.filterAcceptsRow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters rows of the proxy model based on the current flags and
+filter string.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.FilterProxyModel.filter_includes_row">
+<span class="sig-name descname"><span class="pre">filter_includes_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filtertext</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">searchable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/bookmarks/lists/basemodel.html#FilterProxyModel.filter_includes_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.FilterProxyModel.filter_includes_row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the filter string contains any double dashes (–) and if the
+the filter text is found in the searchable string.</p>
+<p>If both true, the row will be hidden.</p>
+</dd></dl>
+</dd></dl>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="bookmarks.lists.basewidget.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">bookmarks.lists.basewidget</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="bookmarks.lists.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">bookmarks.lists</div>
+                
+              </div>
+            </a>
+        </div>
+
+        <div class="related-information">
+              Copyright &#169; 2021, Gergely Wootsch |
+          Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+          <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
+            | <a class="muted-link" href="_sources/bookmarks.lists.basemodel.rst.txt"
+               rel="nofollow">
+              Show Source
+            </a>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/scripts/furo.js"></script>
+    </body>
+</html>

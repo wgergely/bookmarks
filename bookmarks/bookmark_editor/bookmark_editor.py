@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
-"""Sub-editor widget used by the Bookmark Editor to add and toggle bookmarks.
+"""Sub-editor widget used by :class:`bookmarks.bookmark_editor.bookmark_editor_widget.BookmarkEditorWidget`
+to add/remove bookmarks items to and from the user settings.
 
 """
-import os
 import functools
+import os
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtWidgets
 
-from .. import common
-from .. import log
-from .. import contextmenu
-from .. import ui
-from .. import shortcuts
 from .. import actions
+from .. import common
+from .. import contextmenu
+from .. import log
+from .. import shortcuts
+from .. import ui
 
 
 class BookmarkContextMenu(contextmenu.BaseContextMenu):

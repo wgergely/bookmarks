@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Various ui utility methods used to construct, and
-define ui elements.
+"""Collection of common utility methods used by UI elements.
+
+Bookmarks has some DPI awareness, although, I'm pretty confident it wasn't implemented correctly. Still,
+all size values must be queried using :func:`.size()` to get a DPI dependent pixel value.
 
 """
 from PySide2 import QtWidgets, QtGui, QtCore
@@ -22,9 +24,9 @@ def size(v):
 def color(v):
     """Get and cache a QColor."""
     r = repr(v)
-    if r not in common.COLOR_CACHE:
-        common.COLOR_CACHE[r] = QtGui.QColor(*v)
-    return common.COLOR_CACHE[r]
+    if r not in common.color_cache:
+        common.color_cache[r] = QtGui.QColor(*v)
+    return common.color_cache[r]
 
 
 def rgb(v):
@@ -52,7 +54,9 @@ def status_bar_message(message):
             result = function(*args, **kwargs)
             signals.showStatusBarMessage.emit('')
             return result
+
         return wrapper
+
     return decorator
 
 
@@ -245,7 +249,7 @@ def draw_aliased_text(painter, font, rect, text, align, color, elide=None):
     painter.setBrush(color)
     painter.setPen(QtCore.Qt.NoPen)
 
-    from .. lists import delegate
+    from ..lists import delegate
     path = delegate.get_painter_path(x, y, font, text)
     painter.drawPath(path)
 

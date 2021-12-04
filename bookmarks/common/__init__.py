@@ -1,28 +1,47 @@
-"""A list of core parameters, classes and methods
-used to define the look and behaviour of Bookmarks.
+"""Core attributes, classes and methods used to define the look and behaviour of Bookmarks.
 
-Submodules can be accessed directly from the top module. See below:
 
-.. code-block:: python
+See the :mod:`bookmarks.common.setup` module for the initialization methods.
+Common core properties are defined in :mod:`bookmarks.common.core` and in ``rsc/conf.json``,
+which contains configurable options, such as colours and size settings.
 
-    import bookmarks.common.setup
-    bookmarks.common.setup.initialize(common.EmbeddedMode)
 
-    # The above can be accessed directly
-    from bookmarks import common
-    common.initialize(common.EmbeddedMode)
+Tip:
+
+    Submodules can be accessed directly from this top module, like so:
+
+    .. code-block:: python
+
+        # bookmarks.common.setup.initialize(common.EmbeddedMode) can be imported as
+        from bookmarks import common
+        common.initialize(common.EmbeddedMode)
+
+
+Attributes:
+
+    debug_on (bool): Debug logging is on when True. See :func:`bookmarks.common.core.debug()`.
+    typecheck_on (bool): Type checking on when True. See :func:`bookmarks.common.core.check_type()`.
+    init_mode (int): Initialization mode. See :func:`bookmarks.common.setup.initialize()`
+    active_mode (int): Determines how the active paths are saved and loaded.
+        See :mod:`bookmarks.common.sessionlock` and :mod:`bookmarks.common.settings`.
+    signals (QtCore.QObject): A QObject that holds common application signals.
+        See :mod:`bookmarks.common.signals`.
+    settings (QtCore.QSettings): The user settings instance. See :mod:`bookmarks.common.settings`.
+    item_data (common.DataDict): Cache used to store item data. See :mod:`bookmarks.common.data`.
 
 """
-debug_on = False        # Print debug messages
-typecheck_on = True     # Check types
-init_mode = None        # App startup mode
-active_mode = None      # Session mode can be private or synchronised
-ui_scale_factor = 1.0   # Global ui scaling factor
+debug_on = False  # Print debug messages
+typecheck_on = True  # Check types
+init_mode = None  # App startup mode
+active_mode = None  # Session mode can be private or synchronised
+
+signals = None
+settings = None
+
+ui_scale_factor = 1.0  # Global ui scaling factor
 dpi = 72.0
 sort_by_basename = False  # Sort models by item basename instead of full name
 stylesheet = None
-signals = None
-settings = None
 cursor = None
 font_db = None
 
@@ -34,21 +53,31 @@ hashes = {}
 timers = {}
 font_cache = {}
 
-ActiveSectionCache = None
+active_paths = None
 
-itemdata = {}
+item_data = {}
 monitors = {}
 
-PATH_CACHE = {}
-RECTANGLE_CACHE = {}
-TEXT_SEGMENT_CACHE = {}
-DESCRIPTION_RECTS = {}
-SUBDIR_RECTS = {}
-SUBDIR_BG_RECTS = {}
-SUBDIR_BG_BRUSHES = {}
-COLOR_CACHE = {}
+delegate_paths = {}
+delegate_rectangles = {}
+delegate_text_segments = {}
+delegate_description_rects = {}
+delegate_subdir_rects = {}
+delegate_bg_subdir_rects = {}
+delegate_bg_brushes = {}
+
+color_cache = {}
 
 VIEWER_WIDGET_CACHE = {}
+
+pixel_ratio = None
+oiio_cache = None
+
+image_resource_list = {}
+image_resource_data = {}
+image_cache = {}
+
+
 
 # Values to be initialized by the config.json file.
 product = None
@@ -86,7 +115,6 @@ RedColor = None
 GreenColor = None
 OpaqueColor = None
 
-
 # Widget instance bindings
 main_widget = None
 tray_widget = None
@@ -98,17 +126,16 @@ sg_connecting_message = None
 sg_error_message = None
 
 # Save the initial module values for later use
-__initial_values__ = {k:v for (k,v) in locals().copy().items() if not k.startswith('__')}
+__initial_values__ = {k: (v.copy() if isinstance(v, dict) else v) for (k, v) in locals().copy().items() if not k.startswith('__')}
 
-
-from . core import *
-from . setup import *
-from . font import *
-from . settings import *
-from . signals import *
-from . sessionlock import *
-from . ui import *
-from . data import *
-from . sequence import *
-from . tabs import *
-from . filemonitor import *
+from .core import *
+from .data import *
+from .filemonitor import *
+from .font import *
+from .sequence import *
+from .sessionlock import *
+from .settings import *
+from .setup import *
+from .signals import *
+from .lists import *
+from .ui import *

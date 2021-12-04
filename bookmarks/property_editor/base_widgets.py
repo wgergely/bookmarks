@@ -177,7 +177,7 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         self._window_pos = None
 
         self._image = QtGui.QImage()
-        self._image.setDevicePixelRatio(images.pixel_ratio)
+        self._image.setDevicePixelRatio(common.pixel_ratio)
 
         self.setAcceptDrops(True)
         self._drag_in_progress = False
@@ -195,7 +195,7 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
     def set_image(self, image):
         if not isinstance(image, QtGui.QImage) or image.isNull():
             self._image = QtGui.QImage()
-            self._image.setDevicePixelRatio(images.pixel_ratio)
+            self._image.setDevicePixelRatio(common.pixel_ratio)
         else:
             self._image = image
         self.update()

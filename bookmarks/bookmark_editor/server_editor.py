@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
-"""Sub-editor widget used by the Bookmark Editor to add and select jobs on on a
-server.
+"""Sub-editor widget used by :class:`bookmarks.bookmark_editor.bookmark_editor_widget.BookmarkEditorWidget`
+to add a new server.
 
 """
 import functools
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
-from .. import common
-from .. import ui
-from .. import images
-from .. import contextmenu
-from .. import shortcuts
 from .. import actions
+from .. import common
+from .. import contextmenu
+from .. import images
+from .. import shortcuts
+from .. import ui
 
 
 class AddServerEditor(QtWidgets.QDialog):
@@ -136,7 +136,8 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
         if isinstance(self.index, QtWidgets.QListWidgetItem) and self.index.flags() & QtCore.Qt.ItemIsEnabled:
             self.reveal_menu()
             self.remove_menu()
-        elif isinstance(self.index, QtWidgets.QListWidgetItem) and not self.index.flags() & QtCore.Qt.ItemIsEnabled:
+        elif isinstance(self.index,
+                        QtWidgets.QListWidgetItem) and not self.index.flags() & QtCore.Qt.ItemIsEnabled:
             self.remove_menu()
         self.separator()
         self.refresh_menu()

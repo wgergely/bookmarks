@@ -1,30 +1,39 @@
 # -*- coding: utf-8 -*-
-"""The widget, model and context menu needed for interacting with assets.
+"""The view and model used to display asset items.
 
 """
+import functools
 import os
 import re
 
-import functools
-
 from PySide2 import QtCore, QtWidgets, QtGui
-
-from .. import common
-from ..threads import threads
-from .. import contextmenu
-from .. import database
-
-from .. import actions
-
-from .. import log
 
 from . import basemodel
 from . import basewidget
 from . import delegate
+from .. import actions
+from .. import common
+from .. import contextmenu
+from .. import database
+from .. import log
+from ..threads import threads
+
+
+def get_display_name(file_name):
+    """Transform a source file name to a display name.
+
+    Args:
+        file_name (str): Source file name.
+
+    Returns:
+        str: Display name.
+
+    """
+    return re.sub(r'[_]+', ' ', file_name).strip('_').strip('')
 
 
 class AssetsWidgetContextMenu(contextmenu.BaseContextMenu):
-    """The context menu associated with the AssetsWidget."""
+    """The context menu associated with :class:`AssetsWidget`."""
 
     @common.debug
     @common.error
@@ -78,8 +87,9 @@ class AssetsWidgetContextMenu(contextmenu.BaseContextMenu):
         self.quit_menu()
 
 
-class AssetModel(basemodel.BaseModel):
+class AssetsModel(basemodel.BaseModel):
     """The model containing all item information needed to represent assets.
+    Used in conjunction with :class:`.AssetsWidget`.
 
     """
     queues = (threads.AssetInfo, threads.AssetThumbnail)
@@ -93,15 +103,10 @@ class AssetModel(basemodel.BaseModel):
             lambda: self.blockSignals(False))
         common.signals.sgAssetsLinked.connect(self.sort_data)
 
-    @common.status_bar_message('Assets Bookmarks...')
+    @common.status_bar_message('Loading assets...')
     @basemodel.initdata
     def init_data(self):
-        """Collects the data needed to populate the bookmarks model by querrying
-        the active root folder.
-
-        Note:
-            Getting asset information is relatively cheap,
-            hence the model does not have any threads associated with it.
+        """Collects the data needed to populate the asset model.
 
         """
         common.settings.load_active_values()
@@ -118,7 +123,7 @@ class AssetModel(basemodel.BaseModel):
 
         # Let's get the identifier from the bookmark database
         db = database.get_db(*p)
-        ASSET_IDENTIFIER = db.value(
+        asset_identifier = db.value(
             source,
             'identifier',
             table=database.BookmarkTable
@@ -133,13 +138,13 @@ class AssetModel(basemodel.BaseModel):
 
             filepath = entry.path.replace('\\', '/')
 
-            if ASSET_IDENTIFIER:
-                identifier = filepath + '/' + ASSET_IDENTIFIER
+            if asset_identifier:
+                identifier = filepath + '/' + asset_identifier
                 if not os.path.isfile(identifier):
                     continue
 
             # Progress bar
-            c += 1
+            c += 9
             if not c % nth:
                 common.signals.showStatusBarMessage.emit(
                     f'Loading assets ({c} found)...')
@@ -157,7 +162,13 @@ class AssetModel(basemodel.BaseModel):
                 flags = flags | common.MarkedAsActive
 
             # Beautify the name
-            name = re.sub(r'[_]{1,}', ' ', filename).strip('_').strip('')
+            name = get_display_name(filename)
+
+            sort_by_name_role = [0, ] * 8
+            for i, n in enumerate(name.split(u'/')):
+                if i >= 8:
+                    break
+                sort_by_name_role[i] = n.lower()
 
             idx = len(data)
             if idx >= common.max_list_items:
@@ -180,15 +191,15 @@ class AssetModel(basemodel.BaseModel):
                 common.FileDetailsRole: '',
                 common.SequenceRole: None,
                 common.FramesRole: [],
-                common.StartpathRole: None,
-                common.EndpathRole: None,
+                common.StartPathRole: None,
+                common.EndPathRole: None,
                 #
                 common.FileInfoLoaded: False,
                 common.ThumbnailLoaded: False,
                 #
                 common.TypeRole: common.FileItem,
                 #
-                common.SortByNameRole: name.lower(),
+                common.SortByNameRole: sort_by_name_role,
                 common.SortByLastModifiedRole: 0,
                 common.SortBySizeRole: 0,
                 common.SortByTypeRole: name,
@@ -260,8 +271,8 @@ class AssetModel(basemodel.BaseModel):
 
 
 class AssetsWidget(basewidget.ThreadedBaseWidget):
-    """The view used to display the contents of a ``AssetModel`` instance."""
-    SourceModel = AssetModel
+    """A thread-supported view used to display the contents of :class:`.AssetsModel`."""
+    SourceModel = AssetsModel
     Delegate = delegate.AssetsWidgetDelegate
     ContextMenu = AssetsWidgetContextMenu
 

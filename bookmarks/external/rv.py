@@ -3,11 +3,11 @@
 
 """
 import subprocess
+
 from PySide2 import QtCore
 
 from .. import common
 from .. import log
-
 
 RV_PUSH_COMMAND = '"{RV}" -tag {PRODUCT} url \'rvlink:// -reuse 1 -inferSequence -l -play -fullscreen -nofloat -lookback 0 -nomb \"{PATH}\"\''
 

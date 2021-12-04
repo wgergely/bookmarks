@@ -1,4 +1,4 @@
-"""
+"""Common signals used across Bookmarks.
 
 """
 from PySide2 import QtCore
@@ -11,6 +11,9 @@ def init_signals():
 
 
 class CoreSignals(QtCore.QObject):
+    """A utility class used to keep application-wide signals.
+
+    """
     logChanged = QtCore.Signal()
 
     # Top Bar

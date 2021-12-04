@@ -7,8 +7,8 @@ __pycache__
 .Python
 .idea
 .DS_Store
-build/
-build
+docs/build/
+docs/build
 develop-eggs/
 dist/
 dest

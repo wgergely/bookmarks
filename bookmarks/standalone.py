@@ -623,7 +623,8 @@ class BookmarksAppWindow(main.MainWidget):
             self.save_window()
 
     def showEvent(self, event):
-        QtCore.QTimer.singleShot(1, self.initialize)
+        if not self.is_initialized:
+            QtCore.QTimer.singleShot(100, self.initialize)
 
 
 class BookmarksApp(QtWidgets.QApplication):

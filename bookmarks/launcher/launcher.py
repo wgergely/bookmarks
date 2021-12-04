@@ -139,7 +139,7 @@ class LauncherItemEditor(QtWidgets.QDialog):
             self.thumbnail_viewer_widget.setPixmap(QtGui.QPixmap())
             return
 
-        image.setDevicePixelRatio(images.pixel_ratio)
+        image.setDevicePixelRatio(common.pixel_ratio)
         image = images.ImageCache.resize_image(
             image, self.thumbnail_viewer_widget.width())
 
@@ -301,7 +301,7 @@ class LauncherListWidget(ui.ListWidget):
         item.setData(QtCore.Qt.UserRole, data)
 
         pixmap = QtGui.QPixmap(data['thumbnail'])
-        pixmap.setDevicePixelRatio(images.pixel_ratio)
+        pixmap.setDevicePixelRatio(common.pixel_ratio)
         icon = QtGui.QIcon(pixmap)
         item.setData(QtCore.Qt.DecorationRole, icon)
 
@@ -326,7 +326,7 @@ class LauncherListWidget(ui.ListWidget):
 
         size = QtCore.QSize(1, common.size(common.HeightRow))
         pixmap = QtGui.QPixmap(data['thumbnail'])
-        pixmap.setDevicePixelRatio(images.pixel_ratio)
+        pixmap.setDevicePixelRatio(common.pixel_ratio)
         icon = QtGui.QIcon(pixmap)
         item.setData(QtCore.Qt.DecorationRole, icon)
 

@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
-"""Common FFMpeg functionality."""
+"""Contains various utility methods, and :func:`.convert()`, the main method used to convert a source
+image sequence to a movie.
+
+FFMpeg also the associated UI element, :class:`bookmarks.external.ffmpeg_widget.FFMpegWidget`.
+
+"""
 import os
 import re
-from datetime import datetime
-import subprocess
 import string
-
+import subprocess
+from datetime import datetime
 
 from PySide2 import QtCore, QtWidgets
 
+from .. import common
+from .. import database
 from .. import images
 from .. import ui
-from .. import common
-
-from .. import database
 
 
 PROGRESS_MATCH = re.compile(r'frame=.+?([0-9]+).+?fps.*')
@@ -49,7 +52,6 @@ _preset_x264 = '\
 "{OUTPUT}"\
 '
 
-
 SIZE_PRESETS = {
     0: {
         'name': 'Original',
@@ -68,7 +70,6 @@ SIZE_PRESETS = {
         'value': (1920 * 2, 1080 * 2)
     },
 }
-
 
 PRESETS = {
     0: {
@@ -162,7 +163,7 @@ def _output_path_from_seq(seq, ext):
 
 
 def _get_framerate(server, job, root):
-    """Get the currently set framerate from the bookmark database.
+    """Get the currently set frame-rate from the bookmark item database.
     """
     db = database.get_db(server, job, root)
     v = db.value(
@@ -212,7 +213,8 @@ def _get_progress_bar(startframe, endframe):
 
 @common.error
 @common.debug
-def convert(path, preset, server=None, job=None, root=None, asset=None, task=None, size=(None, None), ext='mp4', timecode=False):
+def convert(path, preset, server=None, job=None, root=None, asset=None, task=None, size=(None, None),
+            ext='mp4', timecode=False):
     """Start a convert process using ffmpeg.
 
     Args:
@@ -244,7 +246,7 @@ def convert(path, preset, server=None, job=None, root=None, asset=None, task=Non
         raise RuntimeError('Could not find FFMpeg binary.')
     if not QtCore.QFileInfo(FFMPEG_BIN).exists():
         raise RuntimeError('FFMpeg is set but the file does not exist.')
-    FFMPEG_BIN = os.path.normpath(os.path.abspath(FFMPEG_BIN))
+    FFMPEG_BIN = os.path.normpath(FFMPEG_BIN)
 
     server = server if server else common.active(common.ServerKey)
     job = job if job else common.active(common.JobKey)
@@ -291,11 +293,11 @@ def convert(path, preset, server=None, job=None, root=None, asset=None, task=Non
     )
 
     with subprocess.Popen(
-        cmd,
-        bufsize=1,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        universal_newlines=True
+            cmd,
+            bufsize=1,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            universal_newlines=True
     ) as proc:
         pbar = _get_progress_bar(startframe, endframe)
         pbar.open()

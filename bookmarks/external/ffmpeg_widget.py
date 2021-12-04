@@ -1,11 +1,13 @@
+"""FFMpeg control widget used to convert a source image sequence to a movie.
+
+"""
 import functools
 
-from PySide2 import QtCore, QtWidgets, QtGui
+from PySide2 import QtCore, QtWidgets
 
+from . import ffmpeg
 from .. import common
 from ..property_editor import base
-from . import ffmpeg
-
 
 instance = None
 
@@ -61,7 +63,6 @@ SETTING_KEYS = (
     'ffmpeg_size',
     'ffmpeg_timecode',
 )
-
 
 SECTIONS = {
     0: {

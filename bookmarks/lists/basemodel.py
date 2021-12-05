@@ -47,8 +47,8 @@ DEFAULT_ITEM_FLAGS = (
 def initdata(func):
     """Wraps `init_data` calls.
 
-    The decorator is responsible for emiting the begin- and endResetModel
-    signals and sorting resulting data.
+    The decorator is responsible validating the current active paths, and emitting the ``beginResetModel``,
+    ``endResetModel`` and :attr:`.BaseModel.coreDataLoaded` signals.
 
     """
 
@@ -79,21 +79,39 @@ def initdata(func):
 
 
 class BaseModel(QtCore.QAbstractListModel):
-    """The base model used for interacting with all bookmark, asset and
-    file items.
+    """The base model used for interacting with all bookmark, asset and file items.
 
     Data is stored in the datacache module that can be fetched using the model's
     `source_path`, `task` and `data_type`.
 
+    Attributes:
+
+        coreDataLoaded (QtCore.Signal -> weakref.ref, weakref.ref): Signals that the
+            bare model data finished loading and that threads can start loading
+            missing data.
+        coreDataReset (QtCore.Signal):  Signals that the underlying model data has
+            been reset. Used by the thread workers to empty their queues.
+        dataTypeSorted (QtCore.Signal -> int):  Signals that the underlying model
+            data was sorted.
+        sortingChanged (QtCore.Signal -> int, bool): Emitted when the sorting
+            order or sorting role was changed by the user.
+        activeChanged (QtCore.Signal):  Signals :meth:`.BaseModel.active_index`
+            change.
+        dataTypeChanged (QtCore.Signal -> int): Emitted when the exposed data type
+            changes, e.g. from ``FileItem`` to ``SequenceItem``.
+        updateIndex (QtCore.Signal -> QtCore.QModelIndex): Emitted when an index
+            repaint is requested.
+        queues (tuple): A list of threads associated with the model.
+
     """
     coreDataLoaded = QtCore.Signal(weakref.ref, weakref.ref)
     coreDataReset = QtCore.Signal()
+
     dataTypeSorted = QtCore.Signal(int)
+    sortingChanged = QtCore.Signal(int, bool)  # (SortRole, SortOrder)
 
     activeChanged = QtCore.Signal(QtCore.QModelIndex)
     dataTypeChanged = QtCore.Signal(int)
-
-    sortingChanged = QtCore.Signal(int, bool)  # (SortRole, SortOrder)
 
     # Update signals
     updateIndex = QtCore.Signal(QtCore.QModelIndex)
@@ -104,32 +122,29 @@ class BaseModel(QtCore.QAbstractListModel):
         super().__init__(parent=parent)
         self.view = parent
 
-        # Custom data type for weakref compatibility
         self._interrupt_requested = False
-
         self._load_in_progress = False
         self._load_message = ''
-
-        self._generate_thumbnails_enabled = True
+        self._generate_thumbnails = True
         self._task = None
-        self._sortrole = None
-        self._sortorder = None
+        self._sort_role = None
+        self._sort_order = None
         self._row_size = QtCore.QSize(self.default_row_size())
 
         self._datatype = {}  # used  by the files model only
 
         self.sortingChanged.connect(self.set_sorting)
-        self.dataTypeSorted.connect(self.data_type_sorted)
+        self.dataTypeSorted.connect(self.emit_reset_model)
 
         self.modelAboutToBeReset.connect(common.signals.updateButtons)
         self.modelReset.connect(common.signals.updateButtons)
 
         self.init_sort_values()
-        self.init_generate_thumbnails_enabled()
         self.init_row_size()
 
     def item_iterator(self):
-        """A generator method used by :func:`init_data` to yield the items the model should load.
+        """A generator method used by :func:`init_data` to yield the items the model
+        should load.
 
         Yields:
             DirEntry: os.scandir DirEntry objects.
@@ -201,21 +216,18 @@ class BaseModel(QtCore.QAbstractListModel):
     def row_size(self):
         return self._row_size
 
-    @common.error
-    @common.debug
-    def data_type_sorted(self, data_type):
-        """Update the GUI model/views when a thread has resorted the underlying data structure.
-
-        """
-        if self.data_type() == data_type:
-            self.beginResetModel()
-            self.endResetModel()
+    @QtCore.Slot(int)
+    def emit_reset_model(self, data_type):
+        if self.data_type() != data_type:
+            return
+        self.beginResetModel()
+        self.endResetModel()
 
     @QtCore.Slot(bool)
     @QtCore.Slot(int)
     def set_sorting(self, role, order):
-        """Slot responsible for setting the sort role, order and sorting the model data.
-        Sorting won't be possible until the model data is fully loaded.
+        """Slot responsible for setting the sort role, order and sorting the model
+        data. Sorting is only possible when the model data is fully loaded.
 
         """
         if not self.is_data_type_loaded(self.data_type()):
@@ -225,6 +237,12 @@ class BaseModel(QtCore.QAbstractListModel):
         self.sort_data()
 
     def source_path(self):
+        """Source path of the model data as a tuple of path segments.
+
+        Returns:
+            tuple: A tuple of path segments.
+
+        """
         return ()
 
     def default_row_size(self):
@@ -249,14 +267,14 @@ class BaseModel(QtCore.QAbstractListModel):
         if isinstance(val, int):
             val = QtCore.Qt.ItemDataRole(val)
 
-        self._sortrole = val
+        self._sort_role = val
 
         val = self.get_local_setting(
             common.CurrentSortOrder,
             key=self.__class__.__name__,
             section=common.UIStateSection
         )
-        self._sortorder = val if isinstance(val, bool) else False
+        self._sort_order = val if isinstance(val, bool) else False
 
     @common.debug
     @common.error
@@ -274,19 +292,8 @@ class BaseModel(QtCore.QAbstractListModel):
 
         self._row_size.setHeight(val)
 
-    @common.debug
-    @common.error
-    def init_generate_thumbnails_enabled(self):
-        v = self.get_local_setting(
-            common.GenerateThumbnails,
-            key=self.__class__.__name__,
-            section=common.UIStateSection
-        )
-        v = True if v is None else v
-        self._generate_thumbnails_enabled = v
-
     def sort_role(self):
-        return self._sortrole
+        return self._sort_role
 
     @common.debug
     @common.error
@@ -296,7 +303,7 @@ class BaseModel(QtCore.QAbstractListModel):
         if val == self.sort_role():
             return
 
-        self._sortrole = val
+        self._sort_role = val
         self.set_local_setting(
             common.CurrentSortRole,
             val,
@@ -306,7 +313,7 @@ class BaseModel(QtCore.QAbstractListModel):
 
     def sort_order(self):
         """The currently set order of the items eg. 'descending'."""
-        return self._sortorder
+        return self._sort_order
 
     @common.status_bar_message('Sorting items...')
     @common.debug
@@ -314,8 +321,8 @@ class BaseModel(QtCore.QAbstractListModel):
     @QtCore.Slot()
     def sort_data(self, *args, **kwargs):
         """Sorts the model data using the current sort order and role."""
-        sortrole = self.sort_role()
-        sortorder = self.sort_order()
+        sort_role = self.sort_role()
+        sort_order = self.sort_order()
 
         p = self.source_path()
         k = self.task()
@@ -328,7 +335,7 @@ class BaseModel(QtCore.QAbstractListModel):
                 ref = common.get_data_ref(p, k, t)
                 if not ref():
                     continue
-                d = common.sort_data(ref, sortrole, sortorder)
+                d = common.sort_data(ref, sort_role, sort_order)
                 common.set_data(p, k, t, d)
         except:
             log.error('Sorting error')
@@ -343,7 +350,7 @@ class BaseModel(QtCore.QAbstractListModel):
         if val == self.sort_order():
             return
 
-        self._sortorder = val
+        self._sort_order = val
         self.set_local_setting(
             common.CurrentSortOrder,
             val,
@@ -366,19 +373,6 @@ class BaseModel(QtCore.QAbstractListModel):
             return False
 
         return common.is_data_loaded(p, k, t)
-
-    def generate_thumbnails_enabled(self):
-        return self._generate_thumbnails_enabled
-
-    @QtCore.Slot(bool)
-    def set_generate_thumbnails_enabled(self, val):
-        self.set_local_setting(
-            common.GenerateThumbnails,
-            val,
-            key=self.__class__.__name__,
-            section=common.UIStateSection
-        )
-        self._generate_thumbnails_enabled = val
 
     def model_data(self):
         """The pointer to the model's internal data.
@@ -412,7 +406,7 @@ class BaseModel(QtCore.QAbstractListModel):
         return self.index(idx, 0)
 
     def set_active(self, index):
-        """Set the given item as the model's active item.
+        """Set the given index as the model's :meth:`.active_index`.
 
         """
         if not index.isValid():
@@ -422,23 +416,16 @@ class BaseModel(QtCore.QAbstractListModel):
 
         data = self.model_data()
         idx = index.row()
-        data[idx][common.FlagsRole] = data[idx][common.FlagsRole] | common.MarkedAsActive
+        data[idx][common.FlagsRole] = (
+                data[idx][common.FlagsRole] | common.MarkedAsActive
+        )
 
         self.save_active()
         self.updateIndex.emit(index)
         self.activeChanged.emit(index)
 
-    def save_active(self):
-        """Set a newly activated item in globally active item.
-
-        The active items are stored in `common.active` and are used by the
-        models to locate items to load (see `BaseModel.source_paths()`).
-
-        """
-        pass
-
     def unset_active(self):
-        """Unsets the current data set's active item.
+        """Remove the model's :meth:`.active_index`.
 
         """
         idx = self._active_idx()
@@ -446,10 +433,18 @@ class BaseModel(QtCore.QAbstractListModel):
             return
 
         data = self.model_data()
-        data[idx][common.FlagsRole] = data[idx][common.FlagsRole] & ~common.MarkedAsActive
+        data[idx][common.FlagsRole] = (
+                data[idx][common.FlagsRole] & ~common.MarkedAsActive
+        )
 
         index = self.index(idx, 0)
         self.updateIndex.emit(index)
+
+    def save_active(self):
+        """Saves the model's active item to the user preferences.
+
+        """
+        pass
 
     def data_type(self):
         """Current key to the data dictionary."""
@@ -491,7 +486,8 @@ class BaseModel(QtCore.QAbstractListModel):
 
     @common.error
     @common.debug
-    def set_local_setting(self, key_type, v, key=None, section=common.ListFilterSection):
+    def set_local_setting(self, key_type, v, key=None,
+                          section=common.ListFilterSection):
         """Set a value to store in `user_settings`.
 
         Args:
@@ -520,7 +516,8 @@ class BaseModel(QtCore.QAbstractListModel):
     def supportedDropActions(self):
         return QtCore.Qt.CopyAction
 
-    def canDropMimeData(self, data, action, row, column, parent=QtCore.QModelIndex()):
+    def canDropMimeData(self, data, action, row, column,
+                        parent=QtCore.QModelIndex()):
         if not self.supportedDropActions() & action:
             return False
         if row == -1:

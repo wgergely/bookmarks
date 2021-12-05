@@ -4,18 +4,18 @@
 A list common actions used across `Bookmarks`.
 
 """
-import weakref
-import re
-import json
-import zipfile
-import os
-import subprocess
 import functools
+import json
+import os
+import re
+import subprocess
+import weakref
+import zipfile
 
 from PySide2 import QtCore, QtWidgets, QtGui
 
-from . import database
 from . import common
+from . import database
 from . import images
 
 
@@ -125,9 +125,9 @@ def remove_bookmark(server, job, root):
     # If the active bookmark is removed, make sure we're clearing the active
     # bookmark. This will cause all models to reset so show the bookmark tab.
     if (
-        common.active(common.ServerKey) == server and
-        common.active(common.JobKey) == job and
-        common.active(common.RootKey) == root
+            common.active(common.ServerKey) == server and
+            common.active(common.JobKey) == job and
+            common.active(common.RootKey) == root
     ):
         set_active(common.ServerKey, None)
         change_tab(common.BookmarkTab)
@@ -428,24 +428,27 @@ def toggle_inline_icons():
     widget.set_buttons_hidden(state)
 
     widget.model().sourceModel().sort_data()
-    # widget.reset()
 
 
 @common.error
 @common.debug
-def toggle_make_thumbnails():
+@QtCore.Slot()
+def generate_thumbnails_changed(state):
     if common.main_widget is None or not common.main_widget.is_initialized:
         return
-    widget = common.widget()
-    model = widget.model().sourceModel()
-    state = not model.generate_thumbnails_enabled()
-    model.set_generate_thumbnails_enabled(state)
+    if state == QtCore.Qt.Checked:
+        return
 
-    from .threads import threads
-    for k in widget.queues:
-        if threads.THREADS[k]['role'] != common.ThumbnailLoaded:
-            continue
-        widget.queue_visible_indexes(k)
+    from . threads import threads
+
+    for t in (common.FileTab, common.FavouriteTab):
+        w = common.widget(t)
+        for k in w.queues:
+            if state == QtCore.Qt.Checked:
+                threads.THREADS[k]['queue'].clear()
+            elif state == QtCore.Qt.Unchecked:
+                if threads.THREADS[k]['role'] == common.ThumbnailLoaded:
+                    w.queue_visible_indexes(k)
 
 
 @QtCore.Slot()
@@ -491,6 +494,7 @@ def selection(func):
     are in a valid state.
 
     """
+
     @functools.wraps(func)
     def func_wrapper():
         if common.main_widget is None or not common.main_widget.is_initialized:
@@ -499,6 +503,7 @@ def selection(func):
         if not index.isValid():
             return None
         return func(index)
+
     return func_wrapper
 
 
@@ -589,7 +594,7 @@ def show_add_file(asset=None, extension=None, file=None, create_file=True, incre
     if not all(args):
         return None
 
-    from . property_editor import file_editor as editor
+    from .property_editor import file_editor as editor
     widget = editor.show(
         server,
         job,
@@ -708,7 +713,7 @@ def show_slack():
     if token is None:
         raise RuntimeError('Slack is not yet configured.')
 
-    from . slack import slack
+    from .slack import slack
     widget = slack.show(token)
     return widget
 
@@ -819,8 +824,6 @@ def toggle_stays_on_top():
 def toggle_frameless():
     if common.init_mode == common.EmbeddedMode:
         return
-
-    from . import standalone
 
     w = common.main_widget
     flags = w.windowFlags()
@@ -977,7 +980,7 @@ def preview(index):
     source = common.get_sequence_startpath(source)
 
     if '.abc' in source.lower():
-        from . lists.widgets import alembic_widget
+        from .lists.widgets import alembic_widget
         editor = alembic_widget.AlembicPreviewWidget(source)
         common.widget().selectionModel().currentChanged.connect(editor.close)
         common.widget().selectionModel().currentChanged.connect(editor.deleteLater)
@@ -1006,7 +1009,7 @@ def preview(index):
     idx = model.mapToSource(index).row()
     ref = weakref.ref(data[idx])
 
-    from . lists.widgets import image_viewer
+    from .lists.widgets import image_viewer
     image_viewer.show(source, ref, common.widget())
 
 
@@ -1220,7 +1223,7 @@ def execute(index, first=False):
 @common.debug
 @common.error
 def test_slack_token(token):
-    from . slack import slack
+    from .slack import slack
     client = slack.SlackClient(token)
     client.verify_token()
 
@@ -1247,7 +1250,7 @@ def capture_thumbnail(index):
         common.main_widget.hide()
         common.main_widget.save_window()
 
-    from . lists.widgets import thumb_capture as editor
+    from .lists.widgets import thumb_capture as editor
     widget = editor.show(
         server=server,
         job=job,
@@ -1274,7 +1277,7 @@ def pick_thumbnail_from_file(index):
     server, job, root = index.data(common.ParentPathRole)[0:3]
     source = index.data(QtCore.Qt.StatusTipRole)
 
-    from . lists.widgets import thumb_picker as editor
+    from .lists.widgets import thumb_picker as editor
     widget = editor.show(
         server=server,
         job=job,
@@ -1294,7 +1297,7 @@ def pick_thumbnail_from_library(index):
     server, job, root = index.data(common.ParentPathRole)[0:3]
     source = index.data(QtCore.Qt.StatusTipRole)
 
-    from . lists.widgets import thumb_library as editor
+    from .lists.widgets import thumb_library as editor
     widget = editor.show(
         server=server,
         job=job,
@@ -1519,7 +1522,6 @@ def add_zip_template(source, mode, prompt=False):
     """
     common.check_type(source, str)
     common.check_type(mode, str)
-
 
     file_info = QtCore.QFileInfo(source)
     if not file_info.exists():

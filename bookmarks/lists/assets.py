@@ -71,7 +71,6 @@ class AssetsWidgetContextMenu(contextmenu.BaseContextMenu):
 
         self.separator()
 
-        self.set_generate_thumbnails_menu()
         self.row_size_menu()
         self.sort_menu()
         self.list_filter_menu()

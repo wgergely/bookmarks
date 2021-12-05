@@ -9,6 +9,7 @@ inline icon capabilities, and :class:`.ThreadedBaseWidget` implements data updat
 with the helper threads.
 
 """
+import collections
 import functools
 import re
 import weakref
@@ -245,7 +246,6 @@ class BaseListWidget(QtWidgets.QListView):
 
         self._thumbnail_drop = (-1, False)  # row, accepted
         self._background_icon = icon
-        self._generate_thumbnails_enabled = True
 
         self.progress_indicator_widget = ProgressWidget(parent=self)
         self.progress_indicator_widget.setHidden(True)
@@ -357,7 +357,6 @@ class BaseListWidget(QtWidgets.QListView):
         self.setModel(proxy)
 
         model.init_sort_values()
-        model.init_generate_thumbnails_enabled()
         model.init_row_size()
         proxy.init_filter_values()
 
@@ -1676,7 +1675,7 @@ class ThreadedBaseWidget(BaseInlineIconWidget):
 
     """
     workerInitialized = QtCore.Signal(str)
-    updateRow = QtCore.Signal(weakref.ref)
+    refUpdated = QtCore.Signal(weakref.ref)
     queueItems = QtCore.Signal(list)
 
     queues = ()
@@ -1687,6 +1686,13 @@ class ThreadedBaseWidget(BaseInlineIconWidget):
         self.delayed_queue_timer.setSingleShot(True)
 
         super().__init__(icon=icon, parent=parent)
+
+        self.update_queue = collections.deque([], common.max_list_items)
+        self.update_queue_timer = common.Timer()
+        self.update_queue_timer.setSingleShot(True)
+        self.update_queue_timer.setInterval(1)
+        self.update_queue_timer.timeout.connect(self.queued_row_update)
+
         self.init_threads()
 
     @common.debug
@@ -1708,7 +1714,7 @@ class ThreadedBaseWidget(BaseInlineIconWidget):
 
     def set_model(self, *args, **kwargs):
         super().set_model(*args, **kwargs)
-        self.updateRow.connect(self.update_row)
+        self.refUpdated.connect(self.update_row)
 
         self.model().invalidated.connect(self.delay_queue_visible_indexes)
 
@@ -1748,7 +1754,7 @@ class ThreadedBaseWidget(BaseInlineIconWidget):
             for q in self.queues:
                 role = threads.THREADS[q]['role']
 
-                # Skip queues that have their preloaded data already computed
+                # Skip queues that have their data already preloaded
                 if threads.THREADS[q]['preload'] and data.loaded:
                     continue
 
@@ -1775,17 +1781,25 @@ class ThreadedBaseWidget(BaseInlineIconWidget):
 
     @QtCore.Slot(int)
     def update_row(self, ref):
-        """Slot used to update the row associated with a data segment."""
+        """Queues an update request by the threads for later processing."""
         if not ref():
             return
-        if not ref()[common.DataTypeRole] == self.model().sourceModel().data_type():
+        if ref not in self.update_queue:
+            self.update_queue.append(ref)
+            self.update_queue_timer.start()
+
+    def queued_row_update(self):
+        """Process a repaint request."""
+        try:
+            ref = self.update_queue.popleft()
+        except IndexError:
             return
 
-        source_index = self.model().sourceModel().index(
-            ref()[common.IdRole], 0)
-        if not source_index.isValid():
+        if not ref():
             return
-        index = self.model().mapFromSource(source_index)
-        if not index.isValid():
-            return
-        super().update(index)
+        for idx in get_visible_indexes(self):
+            index = self.model().index(idx, 0)
+            if index.data(QtCore.Qt.StatusTipRole) == ref()[QtCore.Qt.StatusTipRole]:
+                super().update(index)
+
+        self.update_queue_timer.start()

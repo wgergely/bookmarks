@@ -1,0 +1,375 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Introduction" href="bookmarks.html" />
+
+    <meta name="generator" content="sphinx-4.3.1, furo 2021.11.23"/>
+        <title>Bookmarks 0.5.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=7f0192ddeb2adecfbaa87ffbcf67d16358b30bc1" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=0af69da206d614734f649b27d4cdc2dd6c31f41d" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #ffffff;
+  --color-code-foreground: black;
+  --color-brand-primary: rgba(75, 180, 135, 1);
+  --color-brand-content: rgba(75, 180, 135, 1);
+  --color-api-name: rgba(0, 0, 0, 0.9);
+  --color-api-pre-name: rgba(75, 180, 135, 0.75);
+  --api-font-size: var(--font-size--normal);
+  
+  }
+  body[data-theme="dark"] {
+    --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+  }
+  @media (prefers-color-scheme: dark) {
+    body:not([data-theme="light"]) {
+      --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+    }
+  }
+</style></head>
+  <body>
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" />
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="10" y1="12" x2="20" y2="12" />
+      <line x1="6" y1="18" x2="20" y2="18" />
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="#"><div class="brand">Bookmarks 0.5.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="_static/icon.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="_static/icon_bw.png" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Bookmarks 0.5.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="bookmarks.html">Introduction</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/common.html">common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/main.html">bookmarks.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/lists.html">lists</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="welcome-to-bookmarks">
+<h1>Welcome to Bookmarks!<a class="headerlink" href="#welcome-to-bookmarks" title="Permalink to this headline">¶</a></h1>
+<section id="module-bookmarks">
+<span id="introduction"></span><h2>Introduction<a class="headerlink" href="#module-bookmarks" title="Permalink to this headline">¶</a></h2>
+<p>Bookmarks is a lightweight asset manager designed to browse project content of animation, VFX and film
+projects.</p>
+<section id="features">
+<h3>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h3>
+<p>To provide an overview, Bookmarks displays content as separate <code class="docutils literal notranslate"><span class="pre">bookmark</span></code>, <code class="docutils literal notranslate"><span class="pre">asset</span></code> and <code class="docutils literal notranslate"><span class="pre">file</span></code> items.
+These items can be configured to link with <code class="docutils literal notranslate"><span class="pre">ShotGrid</span></code> entities or set up with properties, like frame-rate,
+resolution, and custom urls. These can be used, for instance, to quickly configure scenes in host
+applications, such as Maya.</p>
+<p>It utilises the brilliant OpenImageIO library to generate previews of image files. It also provides a
+simple interface to create job and asset items using on zip template files, and various tools to annotate
+and filter items.</p>
+</section>
+<section id="installation">
+<h3>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h3>
+<p>Download the latest release from <a class="reference external" href="https://github.com/wgergely/bookmarks/releases">https://github.com/wgergely/bookmarks/releases</a>.</p>
+<p>Whilst the code base should be compatible  with most systems, Windows is the only supported platform.
+If you’d like to try Bookmarks on another system, you’ll have to make sure all the requirements
+are built and available:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Python3</span></code>: Tested with 3.7 and 3.9.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PySide2</span></code>: Tested with Qt 5.15.2. <a class="reference external" href="https://pypi.org/project/PySide2">https://pypi.org/project/PySide2</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">OpenImageIO</span></code>: Used to generate thumbnails for image items. <a class="reference external" href="https://github.com/OpenImageIO/oiio">https://github.com/OpenImageIO/oiio</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">numpy</span></code>: <a class="reference external" href="https://pypi.org/project/numpy">https://pypi.org/project/numpy</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">slack_sdk</span></code>: <a class="reference external" href="https://pypi.org/project/slack_sdk">https://pypi.org/project/slack_sdk</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">psutil</span></code>: <a class="reference external" href="https://pypi.org/project/psutil">https://pypi.org/project/psutil</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shotgun_api3</span></code>: <a class="reference external" href="https://github.com/shotgunsoftware/python-api">https://github.com/shotgunsoftware/python-api</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">alembic</span></code>: Alembic’s Python library. <a class="reference external" href="https://github.com/alembic/alembic">https://github.com/alembic/alembic</a></p></li>
+</ul>
+</section>
+<section id="running-bookmarks">
+<h3>Running Bookmarks<a class="headerlink" href="#running-bookmarks" title="Permalink to this headline">¶</a></h3>
+<p>If you downloaded the installer, you can run Bookmarks after installation as a standalone application.
+This will also install the Maya plugin and set the required environment values.</p>
+<p>To start Bookmarks manually, it has to be initialized in <code class="docutils literal notranslate"><span class="pre">standalone</span></code> or <code class="docutils literal notranslate"><span class="pre">embedded</span></code> mode. To start the
+<code class="docutils literal notranslate"><span class="pre">standalone</span></code> app, simply call <a class="reference internal" href="api/main.html#bookmarks.exec_" title="bookmarks.exec_"><code class="xref py py-func docutils literal notranslate"><span class="pre">exec_()</span></code></a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">bookmarks</span>
+<span class="n">bookmarks</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>To run it from a host application, you’ll have to first initialize in <code class="docutils literal notranslate"><span class="pre">EmbeddedMode</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bookmarks</span> <span class="kn">import</span> <span class="n">common</span>
+<span class="n">common</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">EmbeddedMode</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="bookmarks.html">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="bookmarks.html#features">Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bookmarks.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bookmarks.html#running-bookmarks">Running Bookmarks</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Python Modules Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/common.html">common</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.setup">common.setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.core">common.core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.data">common.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.filemonitor">common.filemonitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.font">common.font</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.sequence">common.sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.settings">common.settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.sessionlock">common.sessionlock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.signals">common.signals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.lists">common.lists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.ui">common.ui</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/main.html">bookmarks.main</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/main.html#id1">bookmarks.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/main.html#module-bookmarks.standalone">bookmarks.standalone</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/lists.html">lists</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/lists.html#module-bookmarks.lists.basemodel">lists.basemodel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lists.html#module-bookmarks.lists.basewidget">lists.basewidget</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lists.html#module-bookmarks.lists.delegate">lists.delegate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lists.html#module-bookmarks.lists.bookmarks">lists.bookmarks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lists.html#module-bookmarks.lists.assets">lists.assets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lists.html#module-bookmarks.lists.files">lists.files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lists.html#module-bookmarks.lists.favourites">lists.favourites</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/lists.html#module-bookmarks.lists.tasks">lists.tasks</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<section id="indices-and-tables">
+<h3>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="bookmarks.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Introduction</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          
+        </div>
+
+        <div class="related-information">
+              Copyright &#169; 2021, Gergely Wootsch |
+          Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+          <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
+            | <a class="muted-link" href="_sources/index.rst.txt"
+               rel="nofollow">
+              Show Source
+            </a>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Welcome to Bookmarks!</a><ul>
+<li><a class="reference internal" href="#module-bookmarks">Introduction</a><ul>
+<li><a class="reference internal" href="#features">Features</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#running-bookmarks">Running Bookmarks</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/scripts/furo.js"></script>
+    </body>
+</html>

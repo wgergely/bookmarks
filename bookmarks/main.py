@@ -173,6 +173,8 @@ class MainWidget(QtWidgets.QWidget):
             )
         )
 
+        self.initialized.connect(b.model().sourceModel().reset_data)
+
     @QtCore.Slot()
     @common.error
     @common.debug
@@ -194,7 +196,6 @@ class MainWidget(QtWidgets.QWidget):
 
         self.aboutToInitialize.emit()
         QtWidgets.QApplication.instance().processEvents()
-
 
         # Update the window title to display the current active paths
         for n in range(3):
@@ -218,16 +219,10 @@ class MainWidget(QtWidgets.QWidget):
             f.filterFlagChanged.emit(flag, f.filter_flag(flag))
             ff.filterFlagChanged.emit(flag, ff.filter_flag(flag))
 
-        # Initialize the bookmarks model. This will initialize the
-        # connected asset, task and file models.
-        self.bookmarks_widget.model().sourceModel().reset_data()
-
-        QtWidgets.QApplication.instance().processEvents()
-
         # Let's load our favourite items
         common.signals.favouritesChanged.emit()
 
-        # We're done, let other componenets know, we have finished initializing
+        # We're done, let other components know, we have finished initializing
         # the base widget
         self.is_initialized = True
         self.initialized.emit()
@@ -294,8 +289,6 @@ class MainWidget(QtWidgets.QWidget):
             connect(shortcuts.FullScreen, actions.toggle_fullscreen)
             connect(shortcuts.OpenNewInstance, actions.exec_instance)
 
-        connect(shortcuts.ToggleGenerateThumbnails,
-                common.signals.toggleMakeThumbnailsButton)
         connect(shortcuts.ToggleSearch, common.signals.toggleFilterButton)
         connect(shortcuts.ToggleSequence, common.signals.toggleSequenceButton)
         connect(shortcuts.ToggleArchived, common.signals.toggleArchivedButton)

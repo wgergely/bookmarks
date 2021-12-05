@@ -330,16 +330,16 @@ class BaseContextMenu(QtWidgets.QMenu):
         item_on_icon = ui.get_icon('check', color=common.color(common.GreenColor))
 
         m = self.parent().model().sourceModel()
-        sortorder = m.sort_order()
-        sortrole = m.sort_role()
+        sort_order = m.sort_order()
+        sort_role = m.sort_role()
 
         k = 'Sort List'
         self.menu[k] = collections.OrderedDict()
         self.menu[f'{k}:icon'] = ui.get_icon('sort')
 
         self.menu[k][key()] = {
-            'text': 'Ascending' if not sortorder else 'Descending',
-            'icon': ui.get_icon('arrow_down') if not sortorder else ui.get_icon('arrow_up'),
+            'text': 'Ascending' if not sort_order else 'Descending',
+            'icon': ui.get_icon('arrow_down') if not sort_order else ui.get_icon('arrow_up'),
             'action': actions.toggle_sort_order,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
@@ -354,11 +354,11 @@ class BaseContextMenu(QtWidgets.QMenu):
         for _k, v in common.DEFAULT_SORT_VALUES.items():
             self.menu[k][key()] = {
                 'text': v,
-                'icon': item_on_icon if sortrole == _k else None,
+                'icon': item_on_icon if sort_role == _k else None,
                 'action': functools.partial(
                     actions.change_sorting,
                     _k,
-                    sortorder
+                    sort_order
                 )
             }
 
@@ -711,25 +711,6 @@ class BaseContextMenu(QtWidgets.QMenu):
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
                 shortcuts.Quit)
-        }
-
-    def set_generate_thumbnails_menu(self):
-        item_on_icon = ui.get_icon('check', color=common.color(common.GreenColor))
-        item_off_icon = ui.get_icon('spinner')
-
-        model = self.parent().model().sourceModel()
-        enabled = model.generate_thumbnails_enabled()
-
-        self.menu[key()] = {
-            'text': 'Generate Thumbnails',
-            'icon': item_on_icon if enabled else item_off_icon,
-            'action': common.signals.toggleMakeThumbnailsButton,
-            'shortcut': shortcuts.get(
-                shortcuts.MainWidgetShortcuts,
-                shortcuts.ToggleGenerateThumbnails).key(),
-            'description': shortcuts.hint(
-                shortcuts.MainWidgetShortcuts,
-                shortcuts.ToggleGenerateThumbnails),
         }
 
     def title(self):

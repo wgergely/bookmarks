@@ -46,8 +46,7 @@ Minimize = Quit + 1
 Maximize = Minimize + 1
 FullScreen = Maximize + 1
 
-ToggleGenerateThumbnails = FullScreen + 1
-ToggleSearch = ToggleGenerateThumbnails + 1
+ToggleSearch = FullScreen + 1
 ToggleSequence = ToggleSearch + 1
 ToggleArchived = ToggleSequence + 1
 ToggleFavourite = ToggleArchived + 1
@@ -254,13 +253,6 @@ MainWidgetShortcuts = {
         'default': QtGui.QKeySequence.FullScreen,
         'repeat': False,
         'description': 'Show Full Screen',
-        'shortcut': None,
-    },
-    ToggleGenerateThumbnails: {
-        'value': 'Alt+T',
-        'default': 'Alt+T',
-        'repeat': False,
-        'description': 'Create thumbnails from image files',
         'shortcut': None,
     },
     ToggleSearch: {

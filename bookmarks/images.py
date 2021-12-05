@@ -8,6 +8,7 @@ All generated thumbnails and UI resources are cached by ``ImageCache`` into ``im
 """
 import functools
 import os
+import threading
 import time
 
 import OpenImageIO
@@ -19,7 +20,7 @@ from . import log
 QT_IMAGE_FORMATS = {f.data().decode('utf8')
                     for f in QtGui.QImageReader.supportedImageFormats()}
 
-mutex = QtCore.QMutex()
+lock = threading.RLock()
 
 BufferType = QtCore.Qt.UserRole
 PixmapType = BufferType + 1
@@ -136,7 +137,8 @@ def check_for_thumbnail_image(source):
     return None
 
 
-def get_thumbnail(server, job, root, source, size=common.thumbnail_size, fallback_thumb='placeholder',
+def get_thumbnail(server, job, root, source, size=common.thumbnail_size,
+                  fallback_thumb='placeholder',
                   get_path=False):
     """Get the thumbnail of a given item.
 
@@ -358,7 +360,8 @@ def oiio_get_buf(source, hash=None, force=False):
     common.check_type(source, str)
 
     if hash is None:
-        hash = common.get_hash(source)
+        with lock:
+            hash = common.get_hash(source)
 
     if not force and ImageCache.contains(hash, BufferType):
         return ImageCache.value(hash, BufferType)
@@ -473,7 +476,8 @@ class ImageCache(QtCore.QObject):
     @classmethod
     def contains(cls, hash, cache_type):
         """Checks if the given hash exists in the database."""
-        return hash in common.image_cache[cache_type]
+        with lock:
+            return hash in common.image_cache[cache_type]
 
     @classmethod
     def value(cls, hash, cache_type, size=None):
@@ -486,11 +490,12 @@ class ImageCache(QtCore.QObject):
 
         if not cls.contains(hash, cache_type):
             return None
-        if size is not None:
-            if size not in common.image_cache[cache_type][hash]:
-                return None
-            return common.image_cache[cache_type][hash][size]
-        return common.image_cache[cache_type][hash]
+        with lock:
+            if size is not None:
+                if size not in common.image_cache[cache_type][hash]:
+                    return None
+                return common.image_cache[cache_type][hash][size]
+            return common.image_cache[cache_type][hash]
 
     @classmethod
     def setValue(cls, hash, value, cache_type, size=None):
@@ -501,40 +506,42 @@ class ImageCache(QtCore.QObject):
 
         """
         if not cls.contains(hash, cache_type):
-            common.image_cache[cache_type][hash] = {}
+            with lock:
+                common.image_cache[cache_type][hash] = {}
 
-        if cache_type == BufferType:
-            common.check_type(value, OpenImageIO.ImageBuf)
+        with lock:
+            if cache_type == BufferType:
+                common.check_type(value, OpenImageIO.ImageBuf)
 
-            common.image_cache[BufferType][hash] = value
-            return common.image_cache[BufferType][hash]
+                common.image_cache[BufferType][hash] = value
+                return common.image_cache[BufferType][hash]
 
-        elif cache_type == ImageType:
-            common.check_type(value, QtGui.QImage)
+            elif cache_type == ImageType:
+                common.check_type(value, QtGui.QImage)
 
-            if size is None:
-                raise ValueError('size cannot be `None`')
+                if size is None:
+                    raise ValueError('size cannot be `None`')
 
-            if not isinstance(size, int):
-                size = int(size)
+                if not isinstance(size, int):
+                    size = int(size)
 
-            common.image_cache[cache_type][hash][size] = value
-            return common.image_cache[cache_type][hash][size]
+                common.image_cache[cache_type][hash][size] = value
+                return common.image_cache[cache_type][hash][size]
 
-        elif cache_type in (PixmapType, ResourcePixmapType):
-            common.check_type(value, QtGui.QPixmap)
+            elif cache_type in (PixmapType, ResourcePixmapType):
+                common.check_type(value, QtGui.QPixmap)
 
-            if not isinstance(size, int):
-                size = int(size)
+                if not isinstance(size, int):
+                    size = int(size)
 
-            common.image_cache[cache_type][hash][size] = value
-            return common.image_cache[cache_type][hash][size]
+                common.image_cache[cache_type][hash][size] = value
+                return common.image_cache[cache_type][hash][size]
 
-        elif cache_type == ColorType:
-            common.check_type(value, QtGui.QColor)
+            elif cache_type == ColorType:
+                common.check_type(value, QtGui.QColor)
 
-            common.image_cache[ColorType][hash] = value
-            return common.image_cache[ColorType][hash]
+                common.image_cache[ColorType][hash] = value
+                return common.image_cache[ColorType][hash]
 
         raise TypeError('`cache_type` is invalid.')
 
@@ -544,9 +551,11 @@ class ImageCache(QtCore.QObject):
 
         """
         hash = common.get_hash(source)
-        for k in common.image_cache:
-            if hash in common.image_cache[k]:
-                del common.image_cache[k][hash]
+
+        with lock:
+            for k in common.image_cache:
+                if hash in common.image_cache[k]:
+                    del common.image_cache[k][hash]
 
     @classmethod
     def get_pixmap(cls, source, size, hash=None, force=False, oiio=False):
@@ -634,9 +643,6 @@ class ImageCache(QtCore.QObject):
     @classmethod
     def make_color(cls, source, hash=None):
         """Calculate the average color of a source image."""
-        locker = QtCore.QMutexLocker(mutex)
-        wait_for_lock(source)
-
         buf = oiio_get_buf(source)
         if not buf:
             return None
@@ -717,13 +723,16 @@ class ImageCache(QtCore.QObject):
 
         # If not yet stored, load and save the data
         if size != -1:
+            wait_for_lock(source)
             buf = oiio_get_buf(source, hash=hash, force=force)
         if not buf:
             return None
 
         if oiio:
+            wait_for_lock(source)
             image = oiio_get_qimage(source)
         else:
+            wait_for_lock(source)
             image = QtGui.QImage(source)
             image.setDevicePixelRatio(common.pixel_ratio)
 
@@ -773,7 +782,8 @@ class ImageCache(QtCore.QObject):
         return image.smoothScaled(round(w), round(h))
 
     @classmethod
-    def get_rsc_pixmap(cls, name, color, size, opacity=1.0, resource=common.GuiResource, get_path=False):
+    def get_rsc_pixmap(cls, name, color, size, opacity=1.0, resource=common.GuiResource,
+                       get_path=False):
         """Loads an image resource and returns it as a sized (and recolored) QPixmap.
 
         Args:
@@ -843,7 +853,7 @@ class ImageCache(QtCore.QObject):
         return common.image_resource_data[k]
 
     @classmethod
-    def oiio_make_thumbnail(cls, source, destination, size, nthreads=3):
+    def oiio_make_thumbnail(cls, source, destination, size, nthreads=2):
         """Converts `source` to an sRGB image fitting the bounds of `size`.
 
         Args:
@@ -915,7 +925,14 @@ class ImageCache(QtCore.QObject):
         buf = oiio_get_buf(source)
         if not buf:
             return False
+
         source_spec = buf.spec()
+
+        # The libpng seems to fussy about corrupted and invalid ICC profiles and
+        # OpenImageIO seems to interpret warning about these as errors that
+        # bring python down. Removing the ICC profile seems to fix the issue.
+        source_spec.erase_attribute('icc.*', casesensitive=False)
+
         if source_spec.get_int_attribute('oiio:Movie') == 1:
             codec_name = source_spec.get_string_attribute('ffmpeg:codec_name')
             # [BUG] Not all codec formats are supported by ffmpeg. There does
@@ -947,13 +964,8 @@ class ImageCache(QtCore.QObject):
         spec = buf.spec()
         buf.set_write_format(OpenImageIO.UINT8)
 
-        # The libpng seems to fussy about corrupted and invalid ICC profiles and
-        # OpenImageIO seems to interpret warning about these as errors that
-        # bring python down. Removing the ICC profile seems to fix the issue.
-        spec.erase_attribute('.*icc||ccp.*', casesensitive=True)
-
         # On some dpx images I'm getting "GammaCorrectedinf"
-        if spec.get_string_attribute('oiio:ColorSpace') == 'GammaCorrectedinf':
+        if 'gammacorrectedinf' in spec.get_string_attribute('oiio:ColorSpace').lower():
             spec['oiio:ColorSpace'] = 'sRGB'
             spec['oiio:Gamma'] = '0.454545'
 
@@ -962,17 +974,9 @@ class ImageCache(QtCore.QObject):
         _buf.copy_pixels(buf)
         _buf.set_write_format(OpenImageIO.UINT8)
 
-        if not QtCore.QFileInfo(QtCore.QFileInfo(destination).path()).isWritable():
-            common.oiio_cache.invalidate(source, force=True)
-            common.oiio_cache.invalidate(destination, force=True)
-            log.error('Destination path is not writable')
-            return False
-
         # Create a lock file before writing
-        with open(destination + '.lock', 'w', encoding='utf8') as _f:
-            pass
-
-        success = _buf.write(destination, dtype=OpenImageIO.UINT8)
+        with open(destination + '.lock', 'a', encoding='utf8') as _f:
+            success = _buf.write(destination, dtype=OpenImageIO.UINT8)
         os.remove(destination + '.lock')
 
         if not success:

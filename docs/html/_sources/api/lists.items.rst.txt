@@ -1,0 +1,41 @@
+bookmarks.lists
+===============
+
+
+lists.bookmarks
+---------------
+
+.. automodule:: bookmarks.lists.bookmarks
+    :members:
+
+
+lists.assets
+------------
+
+.. automodule:: bookmarks.lists.assets
+    :members:
+
+
+lists.files
+-----------
+
+.. automodule:: bookmarks.lists.files
+    :members:
+
+
+
+lists.favourites
+----------------
+
+.. automodule:: bookmarks.lists.favourites
+    :members:
+
+
+
+lists.tasks
+-----------
+
+.. automodule:: bookmarks.lists.tasks
+    :members:
+
+

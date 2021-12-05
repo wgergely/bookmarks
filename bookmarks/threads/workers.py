@@ -67,7 +67,7 @@ def process(func):
     """Decorator for worker `process_data` slots.
 
     Takes and passes the next available data in the queue for processing
-    and emits the `updateRow` signal if the data has been correctly loaded.
+    and emits the `refUpdated` signal if the data has been correctly loaded.
 
     """
 
@@ -91,6 +91,9 @@ def process(func):
             return
 
         try:
+            if not ref() or self.interrupt:
+                return
+
             # Let the source model know that we loaded a data segment fully
             if ref().data_type in (common.FileItem, common.SequenceItem):
                 # Mark the model loaded
@@ -109,7 +112,7 @@ def process(func):
             common.check_type(result, bool)
 
             # Let the models/views know the data has been processed ok and
-            # and request a row repaint
+            # request a row repaint
             if not ref() or self.interrupt or not result:
                 return
 
@@ -120,7 +123,7 @@ def process(func):
             if common.QueueRole not in ref():
                 return
             if self.queue in ref()[common.QueueRole]:
-                self.updateRow.emit(ref)
+                self.refUpdated.emit(ref)
 
         except:
             raise
@@ -148,7 +151,7 @@ class BaseWorker(QtCore.QObject):
     startTimer = QtCore.Signal()
     stopTimer = QtCore.Signal()
 
-    updateRow = QtCore.Signal(weakref.ref)
+    refUpdated = QtCore.Signal(weakref.ref)
     databaseValueUpdated = QtCore.Signal(str, str, str, object)
 
     sgEntityDataReady = QtCore.Signal(str, list)
@@ -212,7 +215,7 @@ class BaseWorker(QtCore.QObject):
         if widget:
             widget.queueItems.connect(self.queueItems, cnx)
             model.coreDataReset.connect(self.coreDataReset, cnx)
-            self.updateRow.connect(widget.updateRow)
+            self.refUpdated.connect(widget.refUpdated, cnx)
 
         if threads.THREADS[q]['preload'] and model and widget:
             model.coreDataLoaded.connect(self.coreDataLoaded, cnx)
@@ -331,8 +334,8 @@ class BaseWorker(QtCore.QObject):
         if not model:
             return
 
-        sortrole = model.sort_role()
-        sortorder = model.sort_order()
+        sort_role = model.sort_role()
+        sort_order = model.sort_order()
 
         p = model.source_path()
         k = model.task()
@@ -340,8 +343,8 @@ class BaseWorker(QtCore.QObject):
 
         d = common.sort_data(
             ref,
-            sortrole,
-            sortorder
+            sort_role,
+            sort_order
         )
 
         common.set_data(p, k, t, d)
@@ -385,12 +388,11 @@ class InfoWorker(BaseWorker):
     """
 
     def is_valid(self, ref):
-        return (
-            False if not ref() or
-                     self.interrupt or
-                     ref()[common.FileInfoLoaded] else
-            True
-        )
+        return False if (
+                not ref() or
+                self.interrupt or
+                ref()[common.FileInfoLoaded]
+        ) else True
 
     @process
     @common.error
@@ -406,11 +408,10 @@ class InfoWorker(BaseWorker):
 
         """
         if not self.is_valid(ref):
-            return True
+            return False
 
         try:
             self._process_data(ref)
-            ref()[common.FileInfoLoaded] = True
             return True
         except TypeError:
             return False
@@ -725,6 +726,14 @@ class ThumbnailWorker(BaseWorker):
     delegates to paint thumbnails.
 
     """
+    def is_valid(self, ref):
+        return False if (
+                not ref() or
+                self.interrupt or
+                ref()[common.ThumbnailLoaded] or
+                ref()[common.FlagsRole] & common.MarkedAsArchived
+        ) else True
+
 
     @process
     @common.error
@@ -745,19 +754,13 @@ class ThumbnailWorker(BaseWorker):
 
         """
 
-        def is_valid():
-            return False if not ref() or self.interrupt or ref()[
-                common.ThumbnailLoaded] or ref()[common.FlagsRole] & common.MarkedAsArchived else True
-
-        if not is_valid():
+        if not self.is_valid(ref):
             return False
         size = ref()[QtCore.Qt.SizeHintRole].height()
-
-        if not is_valid():
+        if not self.is_valid(ref):
             return False
         _p = ref()[common.ParentPathRole]
-
-        if not is_valid():
+        if not self.is_valid(ref):
             return False
         source = ref()[QtCore.Qt.StatusTipRole]
 
@@ -786,10 +789,10 @@ class ThumbnailWorker(BaseWorker):
 
             # If the items is a sequence, we'll use the first image of the
             # sequence to make the thumbnail.
-            if not is_valid():
+            if not self.is_valid(ref):
                 return False
             if ref()[common.TypeRole] == common.SequenceItem:
-                if not is_valid():
+                if not self.is_valid(ref):
                     return False
                 source = ref()[common.EntryRole][0].path.replace('\\', '/')
 
@@ -817,12 +820,23 @@ class ThumbnailWorker(BaseWorker):
             images.ImageCache.get_image(fpath, int(size), hash=hash)
             images.ImageCache.make_color(fpath, hash=hash)
 
-            ref()[common.ThumbnailLoaded] = True
             return True
+        except TypeError:
+            return False
         except:
-            ref()[common.ThumbnailLoaded] = True
             log.error('Failed to generate thumbnail')
             return False
+        finally:
+            if ref():
+                ref()[common.ThumbnailLoaded] = True
+
+    @common.error
+    def queue_items(self, refs):
+        v = common.settings.value(common.SettingsSection, common.DontGenerateThumbnailsKey)
+        v = False if v is None else v
+        if v:
+            return None
+        return super().queue_items(refs)
 
 
 class TaskFolderWorker(InfoWorker):
@@ -852,7 +866,7 @@ class TaskFolderWorker(InfoWorker):
         n = 0
         while True:
             n += 1
-            if n > 9999:
+            if n > 999:
                 return
 
             try:

@@ -15,12 +15,11 @@ from .. import common
 from .. import contextmenu
 from .. import images
 from .. import log
-from .. asset_config import asset_config
-from .. threads import threads
+from ..asset_config import asset_config
+from ..threads import threads
 
 FILTER_EXTENSIONS = False
 DEFAULT_SORT_BY_NAME_ROLE = [str()] * 8
-
 
 
 def add_path_to_mime(mime, path):
@@ -86,7 +85,8 @@ class ItemDrag(QtGui.QDrag):
 
         def get(s, color=common.color(common.GreenColor)):
             return images.ImageCache.get_rsc_pixmap(s, color,
-                                                    common.size(common.WidthMargin) * common.pixel_ratio)
+                                                    common.size(
+                                                        common.WidthMargin) * common.pixel_ratio)
 
         # Set drag icon
         self.setDragCursor(get('add_circle'), QtCore.Qt.CopyAction)
@@ -124,7 +124,8 @@ class ItemDrag(QtGui.QDrag):
         elif shift_modifier:
             source = common.get_sequence_startpath(source) + ', ++'
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'multiples_files', common.color(common.TextSecondaryColor), common.size(common.HeightRow))
+                'multiples_files', common.color(common.TextSecondaryColor),
+                common.size(common.HeightRow))
         else:
             return
 
@@ -248,7 +249,6 @@ class FilesWidgetContextMenu(contextmenu.BaseContextMenu):
 
         self.separator()
 
-        self.set_generate_thumbnails_menu()
         self.row_size_menu()
         self.sort_menu()
         self.list_filter_menu()
@@ -280,7 +280,7 @@ class FilesModel(basemodel.BaseModel):
 
     Note:
 
-        The model won't necessarily load all file item. If the parent bookmark
+        The model won't necessarily load all files it encounters. If the parent bookmark
         has a valid asset config set, certain file extension might be excluded.
         See the :mod:`bookmarks.asset_config.asset_config` for details.
 
@@ -289,7 +289,6 @@ class FilesModel(basemodel.BaseModel):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-
         self.dataTypeChanged.connect(self.set_data_type)
         self.dataTypeChanged.connect(common.signals.updateButtons)
 
@@ -654,15 +653,13 @@ class FilesModel(basemodel.BaseModel):
 
         """
         task = self.task()
+        if not task:
+            return common.FileItem
 
         if task not in self._datatype:
-            key = '{}/{}'.format(
-                self.__class__.__name__,
-                task
-            )
             val = self.get_local_setting(
                 common.CurrentDataType,
-                key=key,
+                key=f'{self.__class__.__name__}/{task}',
                 section=common.UIStateSection
             )
             val = common.SequenceItem if val not in (
@@ -679,6 +676,9 @@ class FilesModel(basemodel.BaseModel):
             raise ValueError(f'{val} is not a valid `data_type`.')
 
         task = self.task()
+        if not task:
+            task = common.FileItem
+
         if task not in self._datatype:
             self._datatype[task] = val
 
@@ -687,14 +687,10 @@ class FilesModel(basemodel.BaseModel):
             return
 
         # Set the data type to the user settings file
-        key = '{}/{}'.format(
-            self.__class__.__name__,
-            self.task()
-        )
         self.set_local_setting(
             common.CurrentDataType,
             val,
-            key=key,
+            key=f'{self.__class__.__name__}/{task}',
             section=common.UIStateSection
         )
 
@@ -820,26 +816,13 @@ class FilesWidget(basewidget.ThreadedBaseWidget):
             return 'Click the File tab to select a folder'
         return f'No files found in "{k}"'
 
-    @QtCore.Slot(str)
-    @QtCore.Slot(int)
-    @QtCore.Slot(object)
-    def update_model_value(self, source, role, v):
-        model = self.model().sourceModel()
-        data = model.model_data()
-        for idx in range(model.rowCount()):
-            if source != common.proxy_path(data[idx][QtCore.Qt.StatusTipRole]):
-                continue
-            data[idx][role] = v
-            self.update_row(idx)
-            break
-
     @common.error
     @common.debug
     @QtCore.Slot(str)
     def show_item(self, v, role=QtCore.Qt.DisplayRole, update=True, limit=10000):
         """This slot is called by the `itemAdded` signal.
 
-        For instance, whena new file is added, we'll use this method to reveal it
+        For instance, when new file is added we'll use this method to reveal it
         in the files tab.
 
         """

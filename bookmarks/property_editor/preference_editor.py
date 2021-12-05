@@ -146,6 +146,14 @@ SECTIONS = {
                     'placeholder': 'Check to show a generic thumbnail background color for transparent images',
                     'description': 'Check to show a generic thumbnail background color for transparent images',
                 },
+                3: {
+                    'name': 'Image Thumbnails',
+                    'key': common.DontGenerateThumbnailsKey,
+                    'validator': None,
+                    'widget': functools.partial(QtWidgets.QCheckBox, 'Don\'t Generate Thumbnails'),
+                    'placeholder': 'Check to disable generating thumbnails from image files',
+                    'description': 'Check to disable generating thumbnails from image files',
+                },
             },
             1: {
                 0: {
@@ -276,6 +284,8 @@ class PreferenceEditor(base.BasePropertyEditor):
         )
 
         self.debug_editor.stateChanged.connect(self.toggle_debug)
+        getattr(self, f'{common.DontGenerateThumbnailsKey}_editor').stateChanged.connect(actions.generate_thumbnails_changed)
+
         self.setWindowTitle('Preferences')
 
     def toggle_debug(self, state):

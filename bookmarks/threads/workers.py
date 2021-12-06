@@ -414,28 +414,74 @@ class InfoWorker(BaseWorker):
             self._process_data(ref)
             return True
         except TypeError:
+            log.error(f'Failed to process item.')
             return False
-        except (RuntimeError, AttributeError):
+        except:
             log.error(f'Failed to process item.')
             return False
         finally:
             if ref():
                 ref()[common.FileInfoLoaded] = True
 
-    def _process_bookmark_item(self, ref, db, pp):
+    def _process_data(self, ref):
+        pp = ref()[common.ParentPathRole]
+        st = ref()[QtCore.Qt.StatusTipRole]
+        flags = ref()[common.FlagsRole] | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsDragEnabled
+        item_type = ref()[common.TypeRole]
+
+        if not st:
+            raise RuntimeError('Not processable.')
+
+        if len(pp) > 4:
+            collapsed = common.is_collapsed(st)
+            proxy_k = common.proxy_path(st)
+            k = proxy_k if collapsed else st
+        else:
+            k = st
+
+        # Load values from the database
+        db = database.get_db(*pp[0:3])
+        asset_row_data = db.get_row(k, database.AssetTable)
+        bookmark_row_data = db.get_row(db.source(), database.BookmarkTable)
+        if len(pp) > 4:
+            _proxy_flags = db.value(proxy_k, 'flags', database.AssetTable)
+
+        # Description
+        if len(pp) > 3:
+            if asset_row_data:
+                ref()[common.DescriptionRole] = asset_row_data['description']
+        # Shotgun status
+        if len(pp) <= 4:
+            self.update_shotgun_configured(pp, bookmark_row_data, asset_row_data, ref)
+        # Note count
+        if asset_row_data:
+            ref()[common.TodoCountRole] = self.count_todos(asset_row_data)
+
+        # Flags
+        if asset_row_data:
+            _flags = asset_row_data['flags']
+        else:
+            _flags = 0
+        flags |= _flags if _flags else 0
+        if len(pp) > 4:
+            flags |= _proxy_flags if _proxy_flags else 0
+        ref()[common.FlagsRole] = QtCore.Qt.ItemFlags(flags)
+
+        self.count_items(ref, st)
+
+        self._process_bookmark_item(ref, db.source(), bookmark_row_data, pp)
+        self._process_file_item(ref, item_type)
+        self._process_sequence_item(ref, item_type)
+
+    def _process_bookmark_item(self, ref, source, bookmark_row_data, pp):
         if not self.is_valid(ref):
             return False
 
         if len(pp) != 3:
             return
 
-        identifier = db.value(
-            db.source(),
-            'identifier',
-            table=database.BookmarkTable
-        )
-        description = self.get_bookmark_description(db)
-        count = self.count_assets(db.source(), identifier)
+        description = self.get_bookmark_description(bookmark_row_data)
+        count = self.count_assets(source, bookmark_row_data['identifier'])
 
         if not self.is_valid(ref):
             return False
@@ -444,51 +490,7 @@ class InfoWorker(BaseWorker):
         ref()[QtCore.Qt.ToolTipRole] = description
 
         # Let's load and verify Slack status
-        self.update_slack_configured(pp, db, ref)
-
-    def _process_data(self, ref):
-        pp = ref()[common.ParentPathRole]
-        st = ref()[QtCore.Qt.StatusTipRole]
-        flags = ref()[common.FlagsRole] | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsDragEnabled
-        item_type = ref()[common.TypeRole]
-
-        collapsed = common.is_collapsed(st)
-
-        proxy_k = common.proxy_path(st)
-        k = proxy_k if collapsed else st
-
-        # Load values from the database
-        db = database.get_db(pp[0], pp[1], pp[2])
-
-        with db.connection():
-            if len(pp) > 3:
-                # I made a mistake and didn't realise I was settings things
-                # up so that bookmark descriptions won't be stored in
-                # the asset table. Well. This just means, I'll have to make
-                # sure I won't overwrite the previously retrieved bookmark
-                # description here.
-                description = db.value(k, 'description')
-                ref()[common.DescriptionRole] = description
-
-            # Let's load and verify the shotgun status of bookmark and asset items
-            if len(pp) <= 4:
-                self.update_shotgun_configured(pp, db, ref)
-
-            # TodoCountRole
-            todos = self.count_todos(db, k)
-            ref()[common.TodoCountRole] = todos
-
-            # FlagsRole
-            _flags = db.value(k, 'flags', table=database.AssetTable)
-            _proxy_flags = db.value(proxy_k, 'flags', table=database.AssetTable)
-            flags = flags | _flags if _flags else flags
-            flags = flags | _proxy_flags if _proxy_flags else flags
-            ref()[common.FlagsRole] = QtCore.Qt.ItemFlags(flags)
-
-            self._process_bookmark_item(ref, db, pp)
-
-        self._process_file_item(ref, item_type)
-        self._process_sequence_item(ref, item_type)
+        self.update_slack_configured(pp, bookmark_row_data, ref)
 
     def _process_sequence_item(self, ref, item_type):
         if not self.is_valid(ref):
@@ -588,23 +590,35 @@ class InfoWorker(BaseWorker):
         ref()[common.FileDetailsRole] = info_string
         ref()[common.SortBySizeRole] = size
 
-    def count_todos(self, db, k):
-        v = db.value(k, 'notes')
+    def count_todos(self, asset_row_data):
+        v = asset_row_data['notes']
         return len(v) if isinstance(v, dict) else 0
 
     @staticmethod
-    def update_shotgun_configured(pp, db, ref):
-        server, job, root = pp[0:3]
-        asset = None if len(pp) == 3 else pp[3]
+    def update_shotgun_configured(pp, b, a, ref):
+        if not all((pp, b, a, ref())):
+            return
+        b_conf = (b['shotgun_domain'], b['shotgun_scriptname'], b['shotgun_api_key'])
+        b_item_conf = (b['shotgun_id'], b['shotgun_name'], b['shotgun_type'])
+        if pp == 3:
+            if all(b_conf + b_item_conf):
+                ref()[common.ShotgunLinkedRole] = True
+                return
+        if pp == 4:
+            a_item_conf = (a['shotgun_id'], a['shotgun_name'], a['shotgun_type'])
+            if all(b_conf + b_item_conf + a_item_conf):
+                ref()[common.ShotgunLinkedRole] = True
+                return
 
-        sg_properties = shotgun.ShotgunProperties(server, job, root, asset)
-        sg_properties.init(db=db)
-        ref()[common.ShotgunLinkedRole] = sg_properties.verify(connection=True)
+        ref()[common.ShotgunLinkedRole] = False
 
     @staticmethod
-    def update_slack_configured(source_paths, db, ref):
-        v = db.value(db.source(), 'slacktoken', table=database.BookmarkTable)
+    def update_slack_configured(source_paths, bookmark_row_data, ref):
+        v = bookmark_row_data['slacktoken']
         ref()[common.SlackLinkedRole] = True if v else False
+
+    def count_items(self, ref, source):
+        pass
 
     @staticmethod
     def count_assets(path, ASSET_IDENTIFIER):
@@ -614,39 +628,35 @@ class InfoWorker(BaseWorker):
                 continue
             if not entry.is_dir():
                 continue
-
-            filepath = entry.path.replace('\\', '/')
-
             if not ASSET_IDENTIFIER:
                 n += 1
                 continue
-
-            identifier = '/'.join((filepath, ASSET_IDENTIFIER))
+            path = entry.path.replace('\\', '/')
+            identifier = '/'.join((path, ASSET_IDENTIFIER))
             if not QtCore.QFileInfo(identifier).exists():
                 continue
             n += 1
         return n
 
     @staticmethod
-    def get_bookmark_description(db):
-        """Utility method for contructing a short description for a bookmark item.
+    def get_bookmark_description(bookmark_row_data):
+        """Utility method for constructing a short description for a bookmark item.
 
         The description includes currently set properties and the description of
         the bookmark.
 
         Args:
-            db (BookmarkDB):   A BookmarkDB instance.
+            bookmark_row_data (dict): Data retrieved from the database.
 
         Returns:
             str:    The description of the bookmark.
 
         """
-        BOOKMARK_DESCRIPTION = '{description}{width}{height}{framerate}{prefix}'
         sep = '  |  '
         try:
             v = {}
             for k in ('description', 'width', 'height', 'framerate', 'prefix'):
-                _v = db.value(db.source(), k, table=database.BookmarkTable)
+                _v = bookmark_row_data[k]
                 _v = _v if _v else None
                 v[k] = _v
 
@@ -658,23 +668,17 @@ class InfoWorker(BaseWorker):
                 sep, v['framerate']) if v['framerate'] else ''
             prefix = '{}{}'.format(sep, v['prefix']) if v['prefix'] else ''
 
-            s = BOOKMARK_DESCRIPTION.format(
-                description=description,
-                width=width,
-                height=height,
-                framerate=framerate,
-                prefix=prefix
-            )
+            s = description + width + height + framerate + prefix
             s = s.replace(sep + sep, sep)
             s = s.strip(sep).strip()  # pylint: disable=E1310
             return s
         except:
-            log.error('Error constructing description.')
+            log.error('Could not get description.')
             return ''
 
     @staticmethod
     def byte_to_pretty_string(num, suffix='B'):
-        """Converts a numeric byte value to a human readable string.
+        """Converts a numeric byte value to a human-readable string.
 
         Args:
             num (int):          The number of bytes.
@@ -842,13 +846,16 @@ class ThumbnailWorker(BaseWorker):
 class TaskFolderWorker(InfoWorker):
     """Used by the TaskFolderModel to count the number of files in a folder."""
 
-    def count_todos(self, db, k):
+    def count_items(self, ref, source):
         count = 0
-        for _ in self.item_iterator(k):
+        for _ in self.item_iterator(source):
             count += 1
-            if count > 9999:
+            if count > 999:
                 break
-        return count
+
+        if not self.is_valid(ref):
+            return
+        ref()[common.TodoCountRole] = count
 
     @classmethod
     def item_iterator(cls, path):
@@ -866,7 +873,7 @@ class TaskFolderWorker(InfoWorker):
         n = 0
         while True:
             n += 1
-            if n > 999:
+            if n > 9999:
                 return
 
             try:

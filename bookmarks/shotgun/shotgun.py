@@ -266,21 +266,21 @@ class ShotgunProperties(object):
         t = database.BookmarkTable
         s = db.source()
 
-        self.domain = db.value(s, 'shotgun_domain', table=t)
-        self.key = db.value(s, 'shotgun_api_key', table=t)
-        self.script = db.value(s, 'shotgun_scriptname', table=t)
+        self.domain = db.value(s, 'shotgun_domain', t)
+        self.key = db.value(s, 'shotgun_api_key', t)
+        self.script = db.value(s, 'shotgun_scriptname', t)
 
-        self.bookmark_id = db.value(s, 'shotgun_id', table=t)
-        self.bookmark_name = db.value(s, 'shotgun_name', table=t)
+        self.bookmark_id = db.value(s, 'shotgun_id', t)
+        self.bookmark_name = db.value(s, 'shotgun_name', t)
 
         if not self.asset:
             return
 
         t = database.AssetTable
         s = db.source(self.asset)
-        self.asset_type = db.value(s, 'shotgun_type', table=t)
-        self.asset_id = db.value(s, 'shotgun_id', table=t)
-        self.asset_name = db.value(s, 'shotgun_name', table=t)
+        self.asset_type = db.value(s, 'shotgun_type', t)
+        self.asset_id = db.value(s, 'shotgun_id', t)
+        self.asset_name = db.value(s, 'shotgun_name', t)
 
     @common.debug
     @common.error

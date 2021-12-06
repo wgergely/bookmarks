@@ -169,7 +169,7 @@ def _get_framerate(server, job, root):
     v = db.value(
         db.source(),
         'framerate',
-        table=database.BookmarkTable
+        database.BookmarkTable
     )
 
     if not v:  # default framerate when not set

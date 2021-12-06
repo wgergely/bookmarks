@@ -364,7 +364,7 @@ class SlackButton(BaseControlButton):
         slacktoken = db.value(
             db.source(),
             'slacktoken',
-            table=database.BookmarkTable
+            database.BookmarkTable
         )
 
         if not slacktoken:

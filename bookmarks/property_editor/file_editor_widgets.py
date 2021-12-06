@@ -157,7 +157,7 @@ class AssetsModel(BaseModel):
         ASSET_IDENTIFIER = db.value(
             db.source(),
             'identifier',
-            table=database.BookmarkTable
+            database.BookmarkTable
         )
 
         for entry in os.scandir(db.source()):
@@ -442,7 +442,7 @@ class PrefixEditor(QtWidgets.QDialog):
         v = db.value(
             db.source(),
             'prefix',
-            table=database.BookmarkTable
+            database.BookmarkTable
         )
 
         if not v:

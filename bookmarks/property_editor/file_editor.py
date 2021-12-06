@@ -455,7 +455,7 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
             prefix = db.value(
                 db.source(),
                 'prefix',
-                table=database.BookmarkTable
+                database.BookmarkTable
             )
             if prefix:
                 self.prefix_editor.setText(prefix)
@@ -480,7 +480,7 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
             v = db.value(
                 self.db_source(),
                 'description',
-                table=database.AssetTable
+                database.AssetTable
             )
             v = v if v else ''
             self.description_editor.setText(v)

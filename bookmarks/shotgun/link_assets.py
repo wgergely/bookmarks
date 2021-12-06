@@ -248,7 +248,7 @@ class LinkMultiple(QtWidgets.QDialog):
         identifier = db.value(
             db.source(),
             'identifier',
-            table=database.BookmarkTable
+            database.BookmarkTable
         )
 
         if not sg_properties.verify(connection=True):
@@ -262,7 +262,7 @@ class LinkMultiple(QtWidgets.QDialog):
             flags = db.value(
                 db.source(entry.name),
                 'flags',
-                table=database.AssetTable
+                database.AssetTable
             )
             if flags and flags & common.MarkedAsArchived:
                 continue
@@ -282,13 +282,13 @@ class LinkMultiple(QtWidgets.QDialog):
             s = db.source(entry.name)
             t = database.AssetTable
             entity = {
-                'id': db.value(s, 'shotgun_id', table=t),
-                'code': db.value(s, 'shotgun_name', table=t),
-                'type': db.value(s, 'shotgun_type', table=t),
-                'cut_out': db.value(s, 'cut_out', table=t),
-                'cut_in': db.value(s, 'cut_in', table=t),
-                'cut_duration': db.value(s, 'cut_duration', table=t),
-                'description': db.value(s, 'description', table=t),
+                'id': db.value(s, 'shotgun_id', t),
+                'code': db.value(s, 'shotgun_name', t),
+                'type': db.value(s, 'shotgun_type', t),
+                'cut_out': db.value(s, 'cut_out', t),
+                'cut_in': db.value(s, 'cut_in', t),
+                'cut_duration': db.value(s, 'cut_duration', t),
+                'description': db.value(s, 'description', t),
             }
 
             # Add rows to the table widget

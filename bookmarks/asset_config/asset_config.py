@@ -353,7 +353,7 @@ class AssetConfig(QtCore.QObject):
             v = db.value(
                 db.source(),
                 ASSET_CONFIG_KEY,
-                table=database.BookmarkTable
+                database.BookmarkTable
             )
             # Let's do some very basic sanity check for the returned data
             if (
@@ -488,11 +488,11 @@ class AssetConfig(QtCore.QObject):
 
         def _get(k):
             if k not in kwargs or not kwargs[k]:
-                v = db.value(db.source(), k, table=database.BookmarkTable)
+                v = db.value(db.source(), k, database.BookmarkTable)
                 v = v if v else INVALID_TOKEN
                 tokens[k] = v
 
-        # We can also use some of the bookmark properties as tokens.
+        # We can also use some bookmark item properties as tokens.
         # Let's load the values from the database:
         db = database.get_db(self.server, self.job, self.root)
         _get('width')

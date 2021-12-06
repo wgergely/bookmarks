@@ -259,7 +259,7 @@ def copy_properties(server, job, root, asset=None, table=BookmarkTable):
     for k in TABLES[table]:
         if k == 'id':
             continue
-        data[k] = db.value(source, k, table=table)
+        data[k] = db.value(source, k, table)
 
     if data:
         global CLIPBOARD
@@ -315,11 +315,11 @@ def set_flag(server, job, root, k, mode, flag):
 
     """
     db = get_db(server, job, root)
-    f = db.value(k, 'flags', table=AssetTable)
+    f = db.value(k, 'flags', AssetTable)
     f = 0 if f is None else f
     f = f | flag if mode else f & ~flag
     with db.connection():
-        db.setValue(k, 'flags', f, table=AssetTable)
+        db.setValue(k, 'flags', f, AssetTable)
 
 
 def get_db(server, job, root, force=False):
@@ -386,6 +386,60 @@ def remove_db(server, job, root):
 def _get_thread_key(*args):
     t = repr(QtCore.QThread.currentThread())
     return '/'.join(args) + t
+
+
+def _verify_args(source, key, table, value=None):
+    common.check_type(source, (str, tuple))
+
+    if isinstance(key, str) and key not in TABLES[table]:
+        t = ', '.join(TABLES[table])
+        raise ValueError(f'Key "{key}" is invalid. Expected one of {t}.')
+    elif isinstance(key, tuple):
+        t = ', '.join(TABLES[table])
+        for k in key:
+            if k not in TABLES[table]:
+                raise ValueError(f'Key "{k}" is invalid. Expected one of {t}.')
+
+    # Check type
+    if value is None:
+        return
+
+    if isinstance(key, str):
+        common.check_type(value, TABLES[table][key]['type'])
+    elif isinstance(key, tuple):
+        for k in key:
+            common.check_type(value, TABLES[table][k]['type'])
+
+
+def convert_return_values(table, key, value):
+    if value is None:
+        return None
+    _type = TABLES[table][key]['type']
+    if _type is dict:
+        try:
+            value = json.loads(
+                b64decode(value.encode('utf-8')),
+                parse_int=int,
+                parse_float=float,
+            )
+        except Exception as e:
+            value = None
+    elif _type is str:
+        try:
+            value = b64decode(value.encode('utf-8'))
+        except:
+            value = None
+    elif _type is float:
+        try:
+            value = float(value)
+        except Exception as e:
+            value = None
+    elif _type is int:
+        try:
+            value = int(value)
+        except Exception as e:
+            value = None
+    return value
 
 
 class BookmarkDB(QtCore.QObject):
@@ -570,17 +624,6 @@ class BookmarkDB(QtCore.QObject):
                     raise
                 sleep()
 
-    def _verify_args(self, source, key, table, value=None):
-        common.check_type(source, str)
-        if key not in TABLES[table]:
-            raise ValueError('Key "{}" is invalid. Expected one of {}'.format(
-                key, ', '.join(TABLES[table])))
-
-        # Check type
-        if value is None:
-            return
-        common.check_type(value, (TABLES[table][key]['type']))
-
     def root(self):
         return self._bookmark_root
 
@@ -606,20 +649,45 @@ class BookmarkDB(QtCore.QObject):
             return self._bookmark + '/' + '/'.join(args)
         return self._bookmark
 
-    def value(self, source, key, table=AssetTable):
+    def get_row(self, source, table):
+        common.check_type(source, str)
+        common.check_type(table, str)
+
+        _hash = common.get_hash(source)
+        sql = f'SELECT * FROM {table} WHERE id=\'{_hash}\''
+
+        try:
+            cursor = self.connection().execute(sql)
+            columns = [f[0] for f in cursor.description]
+            row = cursor.fetchone()
+        except Exception as e:
+            log.error('Failed to get value from database.\n{}'.format(e))
+            raise
+
+        values = {}
+
+        if not row:
+            for key in columns:
+                # skip 'id'
+                if key == 'id':
+                    continue
+                values[key] = None
+            return values
+
+        for idx, key in enumerate(columns):
+            # skip 'id'
+            if key == 'id':
+                continue
+            values[key] = convert_return_values(table, key, row[idx])
+        return values
+
+    def value(self, source, key, table):
         """Returns a value from the `database`.
-
-        Example:
-
-            .. code-block:: python
-
-                source = 'server/job/my/file.txt'
-                v = db.value(source, 'description')
 
         Args:
             source (str):       Path to a file or folder.
-            key (str):          A column name.
-            table (str):        Optional table parameter, defaults to `AssetTable`.
+            key (str):  A column, or a list of columns.
+            table (str, optional): Optional table parameter, defaults to `AssetTable`.
 
         Returns:
             data:                   The requested value or `None`.
@@ -628,14 +696,10 @@ class BookmarkDB(QtCore.QObject):
         if not self.is_valid():
             return None
 
-        self._verify_args(source, key, table)
+        _verify_args(source, key, table, value=None)
 
         _hash = common.get_hash(source)
-        sql = 'SELECT {key} FROM {table} WHERE id=\'{id}\''.format(
-            table=table,
-            key=key,
-            id=_hash
-        )
+        sql = f'SELECT {key} FROM {table} WHERE id=\'{_hash}\''
 
         try:
             row = self.connection().execute(sql).fetchone()
@@ -647,50 +711,25 @@ class BookmarkDB(QtCore.QObject):
             return None
 
         value = row[0]
-        if value is None:
-            return None
-
-        # Type conversion
-        _type = TABLES[table][key]['type']
-        if _type is dict:
-            try:
-                value = json.loads(
-                    b64decode(value.encode('utf-8')),
-                    parse_int=int,
-                    parse_float=float,
-                )
-            except Exception as e:
-                value = None
-        elif _type is str:
-            value = b64decode(value.encode('utf-8'))
-        elif _type is float:
-            try:
-                value = float(value)
-            except Exception as e:
-                value = None
-        elif _type is int:
-            try:
-                value = int(value)
-            except Exception as e:
-                value = None
-        return value
+        return convert_return_values(table, key, value)
 
     def setValue(self, source, key, value, table=AssetTable):
         """Sets a value in the database.
 
         The method does NOT commit the transaction! Use ``transactions`` context
-        manager to issue a BEGIN statement. The transactions will be commited
+        manager to issue a BEGIN statement. The transactions will be committed
         once the context manager goes out of scope.
 
         Example:
 
-            .. code-block:: python
+        .. code-block:: python
 
-                with db.transactions:
-                    source = '//SERVER/MY_JOB/shots/sh0010/scenes/my_scene.ma'
-                    db.setValue(source, 'description', 'hello world')
+            with db.transactions:
+                source = '//SERVER/MY_JOB/shots/sh0010/scenes/my_scene.ma'
+                db.setValue(source, 'description', 'hello world')
 
         Args:
+            table:
             source (str):       A row id, usually a file or folder path.
             key (str):          A database column name.
             value (*):              The value to set.
@@ -699,7 +738,7 @@ class BookmarkDB(QtCore.QObject):
         if not self.is_valid():
             return
 
-        self._verify_args(source, key, table, value=value)
+        _verify_args(source, key, table, value=value)
 
         if isinstance(value, dict):
             try:

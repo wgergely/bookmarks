@@ -228,7 +228,7 @@ def export_favourites(destination=None):
             else:
                 table = database.AssetTable
 
-            v = db.value(source, k, table=table)
+            v = db.value(source, k, table)
             if v:
                 _zip.writestr(
                     file_info.baseName() + k,
@@ -708,7 +708,7 @@ def show_slack():
     token = db.value(
         db.source(),
         'slacktoken',
-        table=database.BookmarkTable
+        database.BookmarkTable
     )
     if token is None:
         raise RuntimeError('Slack is not yet configured.')
@@ -814,7 +814,7 @@ def toggle_stays_on_top():
         not state
     )
     w.hide()
-    w.init_window_flags()
+    w.update_window_flags()
     w.activateWindow()
     w.showNormal()
 
@@ -836,8 +836,7 @@ def toggle_frameless():
     )
 
     w.hide()
-    w.init_window_flags()
-    w.update_layout()
+    w.update_window_flags()
     w.activateWindow()
     w.showNormal()
 
@@ -1032,7 +1031,7 @@ def reveal_url(index):
 
     source = '/'.join(source_path)
     db = database.get_db(*source_path[0:3])
-    v = db.value(source, 'url1', table=table)
+    v = db.value(source, 'url1', table)
 
     if not v:
         return

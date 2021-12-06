@@ -267,9 +267,9 @@ def save_entity_data_to_db(server, job, root, source, table, entity, value_map):
 
             # If the entity has data and we have nothing set currently in our
             # database
-            cval = db.value(s, k, table=t)
+            cval = db.value(s, k, t)
             if not cval and _v:
-                db.setValue(s, k, _v, table=t)
+                db.setValue(s, k, _v, t)
 
 
 def get_status_codes(sg):

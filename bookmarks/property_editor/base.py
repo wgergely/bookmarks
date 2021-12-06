@@ -618,7 +618,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
                 continue
 
             editor = getattr(self, k + '_editor')
-            v = db.value(self.db_source(), k, table=self._db_table)
+            v = db.value(self.db_source(), k, self._db_table)
             if v is not None:
 
                 # Make sure the type loaded from the database maches the required type
@@ -662,7 +662,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
                 continue
 
             source = '{}/{}/{}'.format(self.server, self.job, self.root)
-            v = db.value(source, k, table=database.InfoTable)
+            v = db.value(source, k, database.InfoTable)
 
             if k == 'created':
                 try:

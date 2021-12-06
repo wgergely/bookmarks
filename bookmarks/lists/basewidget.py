@@ -609,7 +609,7 @@ class BaseListWidget(QtWidgets.QListView):
                 flags = db.value(
                     proxy_k,
                     'flags',
-                    table=database.AssetTable
+                    database.AssetTable
                 )
 
                 if not flags:

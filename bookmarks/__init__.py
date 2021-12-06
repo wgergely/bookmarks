@@ -65,11 +65,12 @@ import sys
 
 from PySide2 import QtWidgets
 
+
 __author__ = 'Gergely Wootsch'
 __website__ = 'https://github.com/wgergely/bookmarks'
 __email__ = 'hello@gergely-wootsch.com'
 __version__ = '0.5.0'
-__copyright__ = f'Copyright (C) 2021  {__author__}'
+__copyright__ = f'Copyright (C) 2021 {__author__}'
 
 # Python 2 support has been dropped and the code base only supports Python 3.
 if sys.version_info[0] < 3 and sys.version_info[1] < 6:

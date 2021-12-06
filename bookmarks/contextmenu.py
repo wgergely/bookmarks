@@ -394,12 +394,12 @@ class BaseContextMenu(QtWidgets.QMenu):
         primary_url = db.value(
             db.source(),
             'url1',
-            table=database.BookmarkTable
+            database.BookmarkTable
         )
         secondary_url = db.value(
             db.source(),
             'url2',
-            table=database.BookmarkTable
+            database.BookmarkTable
         )
 
         if not any((primary_url, secondary_url)):
@@ -437,8 +437,8 @@ class BaseContextMenu(QtWidgets.QMenu):
         asset = self.index.data(common.ParentPathRole)[3]
 
         db = database.get_db(server, job, root)
-        primary_url = db.value(db.source(asset), 'url1')
-        secondary_url = db.value(db.source(asset), 'url2')
+        primary_url = db.value(db.source(asset), 'url1', database.AssetTable)
+        secondary_url = db.value(db.source(asset), 'url2', database.AssetTable)
 
         if not any((primary_url, secondary_url)):
             return
@@ -1168,7 +1168,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             v = db.value(
                 db.source(),
                 'applications',
-                table=database.BookmarkTable
+                database.BookmarkTable
             )
 
         if not isinstance(v, dict) or not v:

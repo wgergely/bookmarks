@@ -580,13 +580,13 @@ class MayaProperties(object):
             self.data[k] = db.value(
                 db.source(),
                 k,
-                table=database.BookmarkTable
+                database.BookmarkTable
             )
         for k in DB_KEYS[database.AssetTable]:
             self.data[k] = db.value(
                 db.source(asset),
                 k,
-                table=database.AssetTable
+                database.AssetTable
             )
 
     @property

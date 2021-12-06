@@ -125,7 +125,7 @@ class AssetsModel(basemodel.BaseModel):
         asset_identifier = db.value(
             source,
             'identifier',
-            table=database.BookmarkTable
+            database.BookmarkTable
         )
 
         nth = 1

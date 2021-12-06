@@ -47,15 +47,15 @@ class Test(base.BaseCase):
 
         for t in (database.BookmarkTable, database.AssetTable):
             for k in database.TABLES[t]:
-                v = db.value(db.source(), k, table=t)
+                v = db.value(db.source(), k, t)
                 self.assertIsNone(v)
 
         with self.assertRaises(TypeError):
-            db.value(b'str', b'description', table=t)
+            db.value(b'str', b'description', t)
         with self.assertRaises(TypeError):
-            db.value(db.source(), base.random_ascii(), table=t)
+            db.value(db.source(), base.random_ascii(), t)
         with self.assertRaises(ValueError):
-            db.value(db.source(), base.random_str(36), table=t)
+            db.value(db.source(), base.random_str(36), t)
 
         for t in (database.BookmarkTable, database.AssetTable):
             for k in database.TABLES[t]:
@@ -71,8 +71,8 @@ class Test(base.BaseCase):
                     v = float(random.randrange(99999))
                 elif _type == dict:
                     v = {0: base.random_ascii(36), 0: base.random_str(36)}
-                    db.setValue(db.source(), k, v, table=t)
-                    _v = db.value(db.source(), k, table=t)
+                    db.setValue(db.source(), k, v, t)
+                    _v = db.value(db.source(), k, t)
                     self.assertNotEqual(v, _v)
 
                     v = {'0': base.random_ascii(
@@ -80,8 +80,8 @@ class Test(base.BaseCase):
                 else:
                     v = None
 
-                db.setValue(db.source(), k, v, table=t)
-                _v = db.value(db.source(), k, table=t)
+                db.setValue(db.source(), k, v, t)
+                _v = db.value(db.source(), k, t)
                 self.assertEqual(_v, v)
                 self.assertIsInstance(_v, _type)
 
@@ -114,8 +114,8 @@ class Test(base.BaseCase):
                 else:
                     v = None
 
-                db.setValue(db.source(), k, v, table=t)
-                _v = db.value(db.source(), k, table=t)
+                db.setValue(db.source(), k, v, t)
+                _v = db.value(db.source(), k, t)
                 self.assertIsNone(_v)
 
 
@@ -148,9 +148,9 @@ class Test(base.BaseCase):
                 else:
                     v = None
 
-                db.setValue(db.source(), k, v, table=t)
-                db.setValue(db.source('asset'), k, v, table=t)
-                _v = db.value(db.source(), k, table=t)
+                db.setValue(db.source(), k, v, t)
+                db.setValue(db.source('asset'), k, v, t)
+                _v = db.value(db.source(), k, t)
                 self.assertEqual(_v, v)
 
 

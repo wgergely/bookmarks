@@ -811,7 +811,7 @@ class TodoEditorWidget(QtWidgets.QDialog):
             source = common.proxy_path(self.index)
 
         db = database.get_db(*self.index.data(common.ParentPathRole)[0:3])
-        v = db.value(source, 'notes')
+        v = db.value(source, 'notes', database.AssetTable)
         if not v:
             return
 

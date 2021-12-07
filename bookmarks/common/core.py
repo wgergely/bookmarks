@@ -121,7 +121,7 @@ def check_type(value, _type):
             raise TypeError(
                 f'Invalid type. Expected {_type}, got {type(value)}')
 
-
+@functools.lru_cache()
 def get_hash(key):
     """Calculates the md5 hash of a string.
 

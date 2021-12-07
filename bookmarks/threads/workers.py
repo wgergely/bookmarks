@@ -757,7 +757,6 @@ class ThumbnailWorker(BaseWorker):
             ref or None: `ref` if loaded successfully, else `None`.
 
         """
-
         if not self.is_valid(ref):
             return False
         size = ref()[QtCore.Qt.SizeHintRole].height()
@@ -769,26 +768,28 @@ class ThumbnailWorker(BaseWorker):
         source = ref()[QtCore.Qt.StatusTipRole]
 
         # Resolve the thumbnail's path...
-        destination = images.get_cached_thumbnail_path(
-            _p[0],
-            _p[1],
-            _p[2],
-            source,
-        )
-        # ...and use it to load the resource
-        image = images.ImageCache.get_image(
-            destination,
-            int(size),
-            force=True  # force=True will refresh the cache
-        )
+        with images.lock:
+            destination = images.get_cached_thumbnail_path(
+                _p[0],
+                _p[1],
+                _p[2],
+                source,
+            )
+            # ...and use it to load the resource
+            image = images.ImageCache.get_image(
+                destination,
+                int(size),
+                force=True  # force=True will refresh the cache
+            )
+
+        # If the image successfully loads we can wrap things up here
+        if image and not image.isNull():
+            with images.lock:
+                # images.ImageCache.get_image(destination, int(size), force=True)
+                images.ImageCache.make_color(destination)
+            return True
 
         try:
-            # If the image successfully loads we can wrap things up here
-            if image and not image.isNull():
-                images.ImageCache.get_image(destination, int(size), force=True)
-                images.ImageCache.make_color(destination)
-                return True
-
             # Otherwise, we will try to generate a thumbnail using OpenImageIO
 
             # If the items is a sequence, we'll use the first image of the
@@ -800,7 +801,9 @@ class ThumbnailWorker(BaseWorker):
                     return False
                 source = ref()[common.EntryRole][0].path.replace('\\', '/')
 
-            buf = images.oiio_get_buf(source)
+            with images.lock:
+                buf = images.oiio_get_buf(source)
+
             if not buf:
                 return True
 
@@ -812,8 +815,9 @@ class ThumbnailWorker(BaseWorker):
                 common.thumbnail_size,
             )
             if res:
-                images.ImageCache.get_image(destination, int(size), force=True)
-                images.ImageCache.make_color(destination)
+                with images.lock:
+                    images.ImageCache.get_image(destination, int(size), force=True)
+                    images.ImageCache.make_color(destination)
                 return True
 
             # We should never get here ideally, but if we do we'll mark the item
@@ -821,8 +825,9 @@ class ThumbnailWorker(BaseWorker):
             fpath = common.get_rsc(f'{common.GuiResource}/failed.{common.thumbnail_format}')
             hash = common.get_hash(fpath)
 
-            images.ImageCache.get_image(fpath, int(size), hash=hash)
-            images.ImageCache.make_color(fpath, hash=hash)
+            with images.lock:
+                images.ImageCache.get_image(fpath, int(size), hash=hash)
+                images.ImageCache.make_color(fpath, hash=hash)
 
             return True
         except TypeError:

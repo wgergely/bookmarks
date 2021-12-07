@@ -108,8 +108,6 @@ class AssetsModel(basemodel.BaseModel):
         """Collects the data needed to populate the asset model.
 
         """
-        common.settings.load_active_values()
-
         p = self.source_path()
         k = self.task()
         t = self.data_type()

@@ -82,6 +82,7 @@ def wait_for_lock(source):
         t += 0.1
 
 
+@functools.lru_cache()
 def get_oiio_extensions():
     """Returns a list of extensions accepted by OpenImageIO.
 
@@ -93,6 +94,7 @@ def get_oiio_extensions():
     return sorted(extensions)
 
 
+@functools.lru_cache()
 def get_oiio_namefilters():
     """Gets all accepted formats from the oiio build as a namefilter list.
     Use the return value on the QFileDialog.setNameFilters() method.
@@ -173,16 +175,17 @@ def get_thumbnail(server, job, root, source, size=common.thumbnail_size,
         return (None, None)
 
     def get(server, job, root, source, proxy):
-        thumbnail_path = get_cached_thumbnail_path(
-            server, job, root, source, proxy=proxy)
+        with lock:
+            thumbnail_path = get_cached_thumbnail_path(
+                server, job, root, source, proxy=proxy)
 
-        pixmap = ImageCache.get_pixmap(thumbnail_path, size)
-        if not pixmap or pixmap.isNull():
-            return (thumbnail_path, None, None)
+            pixmap = ImageCache.get_pixmap(thumbnail_path, size)
+            if not pixmap or pixmap.isNull():
+                return (thumbnail_path, None, None)
 
-        color = ImageCache.get_color(thumbnail_path)
-        if not color:
-            return (thumbnail_path, pixmap, None)
+            color = ImageCache.get_color(thumbnail_path)
+            if not color:
+                return (thumbnail_path, pixmap, None)
 
         return (thumbnail_path, pixmap, color)
 
@@ -272,6 +275,7 @@ def load_thumbnail_from_image(server, job, root, source, image, proxy=False):
     ImageCache.flush(thumbnail_path)
 
 
+@functools.lru_cache()
 def get_cached_thumbnail_path(server, job, root, source, proxy=False):
     """Returns the path to a cached thumbnail file.
 
@@ -297,6 +301,7 @@ def get_cached_thumbnail_path(server, job, root, source, proxy=False):
     return server + '/' + job + '/' + root + '/' + common.bookmark_cache_dir + '/' + name
 
 
+@functools.lru_cache()
 def get_placeholder_path(file_path, fallback='placeholder'):
     """Returns an image path used to represent an item.
 
@@ -360,8 +365,7 @@ def oiio_get_buf(source, hash=None, force=False):
     common.check_type(source, str)
 
     if hash is None:
-        with lock:
-            hash = common.get_hash(source)
+        hash = common.get_hash(source)
 
     if not force and ImageCache.contains(hash, BufferType):
         return ImageCache.value(hash, BufferType)
@@ -476,8 +480,7 @@ class ImageCache(QtCore.QObject):
     @classmethod
     def contains(cls, hash, cache_type):
         """Checks if the given hash exists in the database."""
-        with lock:
-            return hash in common.image_cache[cache_type]
+        return hash in common.image_cache[cache_type]
 
     @classmethod
     def value(cls, hash, cache_type, size=None):
@@ -490,12 +493,11 @@ class ImageCache(QtCore.QObject):
 
         if not cls.contains(hash, cache_type):
             return None
-        with lock:
-            if size is not None:
-                if size not in common.image_cache[cache_type][hash]:
-                    return None
-                return common.image_cache[cache_type][hash][size]
-            return common.image_cache[cache_type][hash]
+        if size is not None:
+            if size not in common.image_cache[cache_type][hash]:
+                return None
+            return common.image_cache[cache_type][hash][size]
+        return common.image_cache[cache_type][hash]
 
     @classmethod
     def setValue(cls, hash, value, cache_type, size=None):
@@ -506,42 +508,40 @@ class ImageCache(QtCore.QObject):
 
         """
         if not cls.contains(hash, cache_type):
-            with lock:
-                common.image_cache[cache_type][hash] = {}
+            common.image_cache[cache_type][hash] = {}
 
-        with lock:
-            if cache_type == BufferType:
-                common.check_type(value, OpenImageIO.ImageBuf)
+        if cache_type == BufferType:
+            common.check_type(value, OpenImageIO.ImageBuf)
 
-                common.image_cache[BufferType][hash] = value
-                return common.image_cache[BufferType][hash]
+            common.image_cache[BufferType][hash] = value
+            return common.image_cache[BufferType][hash]
 
-            elif cache_type == ImageType:
-                common.check_type(value, QtGui.QImage)
+        elif cache_type == ImageType:
+            common.check_type(value, QtGui.QImage)
 
-                if size is None:
-                    raise ValueError('size cannot be `None`')
+            if size is None:
+                raise ValueError('size cannot be `None`')
 
-                if not isinstance(size, int):
-                    size = int(size)
+            if not isinstance(size, int):
+                size = int(size)
 
-                common.image_cache[cache_type][hash][size] = value
-                return common.image_cache[cache_type][hash][size]
+            common.image_cache[cache_type][hash][size] = value
+            return common.image_cache[cache_type][hash][size]
 
-            elif cache_type in (PixmapType, ResourcePixmapType):
-                common.check_type(value, QtGui.QPixmap)
+        elif cache_type in (PixmapType, ResourcePixmapType):
+            common.check_type(value, QtGui.QPixmap)
 
-                if not isinstance(size, int):
-                    size = int(size)
+            if not isinstance(size, int):
+                size = int(size)
 
-                common.image_cache[cache_type][hash][size] = value
-                return common.image_cache[cache_type][hash][size]
+            common.image_cache[cache_type][hash][size] = value
+            return common.image_cache[cache_type][hash][size]
 
-            elif cache_type == ColorType:
-                common.check_type(value, QtGui.QColor)
+        elif cache_type == ColorType:
+            common.check_type(value, QtGui.QColor)
 
-                common.image_cache[ColorType][hash] = value
-                return common.image_cache[ColorType][hash]
+            common.image_cache[ColorType][hash] = value
+            return common.image_cache[ColorType][hash]
 
         raise TypeError('`cache_type` is invalid.')
 
@@ -552,10 +552,9 @@ class ImageCache(QtCore.QObject):
         """
         hash = common.get_hash(source)
 
-        with lock:
-            for k in common.image_cache:
-                if hash in common.image_cache[k]:
-                    del common.image_cache[k][hash]
+        for k in common.image_cache:
+            if hash in common.image_cache[k]:
+                del common.image_cache[k][hash]
 
     @classmethod
     def get_pixmap(cls, source, size, hash=None, force=False, oiio=False):
@@ -610,20 +609,22 @@ class ImageCache(QtCore.QObject):
             if data:
                 return data
 
-        # We'll load a cache a QImage to use as the basis for the qpixmap. This
-        # is because of how the thread affinity of QPixmaps don't permit use
-        # outside the main gui thread
-        image = cls.get_image(source, size, hash=hash, force=force)
-        if not image:
-            return None
+        with lock:
+            wait_for_lock(source)
+            # We'll load a cache a QImage to use as the basis for the qpixmap. This
+            # is because of how the thread affinity of QPixmaps don't permit use
+            # outside the main gui thread
+            image = cls.get_image(source, size, hash=hash, force=force)
+            if not image:
+                return None
 
-        pixmap = QtGui.QPixmap()
-        pixmap.setDevicePixelRatio(common.pixel_ratio)
-        pixmap.convertFromImage(image, flags=QtCore.Qt.ColorOnly)
-        if pixmap.isNull():
-            return None
-        cls.setValue(hash, pixmap, PixmapType, size=size)
-        return pixmap
+            pixmap = QtGui.QPixmap()
+            pixmap.setDevicePixelRatio(common.pixel_ratio)
+            pixmap.convertFromImage(image, flags=QtCore.Qt.ColorOnly)
+            if pixmap.isNull():
+                return None
+            cls.setValue(hash, pixmap, PixmapType, size=size)
+            return pixmap
 
     @classmethod
     def get_color(cls, source, force=False):
@@ -723,16 +724,13 @@ class ImageCache(QtCore.QObject):
 
         # If not yet stored, load and save the data
         if size != -1:
-            wait_for_lock(source)
             buf = oiio_get_buf(source, hash=hash, force=force)
         if not buf:
             return None
 
         if oiio:
-            wait_for_lock(source)
             image = oiio_get_qimage(source)
         else:
-            wait_for_lock(source)
             image = QtGui.QImage(source)
             image.setDevicePixelRatio(common.pixel_ratio)
 

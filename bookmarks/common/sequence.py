@@ -1,5 +1,16 @@
+"""Common path methods to recognise sequence items.
+
+A sequence item is a file that has a number component that can be incremented.
+A 'collapsed' item is a single item that refers to a series of sequence items
+and is annotated by the SEQSTART and SEQEND markers.
+
+To determine if a path is a sequence, use :func:`get_sequence`.
+To determine if a path is a collapsed item, use :func:`is_collapsed`.
+
+"""
 import re
 import weakref
+import functools
 
 from PySide2 import QtCore
 
@@ -26,6 +37,7 @@ GetSequenceRegex = re.compile(
     flags=re.IGNORECASE | re.UNICODE)
 
 
+@functools.lru_cache(maxsize=4194304)
 def is_collapsed(s):
     """Check for the presence of the bracket-enclosed sequence markers.
 
@@ -51,13 +63,14 @@ def is_collapsed(s):
                suffix = match.group(3) # '_wgergely.png'
 
     Returns:
-            ``SRE_Match``: If the given name is indeed collpased it returns a ``SRE_Match`` object, otherwise ``None``.
+            ``SRE_Match``: If the given name is indeed collapsed it returns a ``SRE_Match`` object, otherwise ``None``.
 
     """
     common.check_type(s, str)
     return IsSequenceRegex.search(s)
 
 
+@functools.lru_cache(maxsize=4194304)
 def proxy_path(v):
     """Encompasses the logic used to associate preferences with items.
 
@@ -95,11 +108,12 @@ def proxy_path(v):
     return v
 
 
+@functools.lru_cache(maxsize=4194304)
 def get_sequence(s):
     """Check if the given text contains a sequence element.
 
     Strictly speaking, a sequence is any file that has a valid number element.
-    There can only be **one** incrementable element - it will always be the
+    There can only be **one** incremental element - it will always be the
     number closest to the end.
 
     The regex will understand sequences with the `v` prefix, eg *v001*, *v002*,

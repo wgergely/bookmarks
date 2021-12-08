@@ -82,7 +82,7 @@ def center_window(widget):
 
 def move_widget_to_available_geo(widget):
     """Moves the widget inside the available screen geometry, if any of the
-    edges fall outside of it.
+    edges fall outside it.
 
     """
     app = QtWidgets.QApplication.instance()

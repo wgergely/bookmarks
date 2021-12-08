@@ -414,7 +414,8 @@ class InfoWorker(BaseWorker):
             self._process_data(ref)
             return True
         except TypeError:
-            log.error(f'Failed to process item.')
+            if ref():
+                log.error(f'Failed to process item.')
             return False
         except:
             log.error(f'Failed to process item.')
@@ -853,7 +854,7 @@ class TaskFolderWorker(InfoWorker):
 
     def count_items(self, ref, source):
         count = 0
-        for _ in self.item_iterator(source):
+        for _ in self.item_generator(source):
             count += 1
             if count > 999:
                 break
@@ -863,7 +864,7 @@ class TaskFolderWorker(InfoWorker):
         ref()[common.TodoCountRole] = count
 
     @classmethod
-    def item_iterator(cls, path):
+    def item_generator(cls, path):
         """Used to iterate over all files in a given folder.
 
         Yields:
@@ -906,7 +907,7 @@ class TaskFolderWorker(InfoWorker):
                 is_symlink = False
 
             if not is_symlink:
-                for entry in cls.item_iterator(entry.path):
+                for entry in cls.item_generator(entry.path):
                     yield entry
 
 

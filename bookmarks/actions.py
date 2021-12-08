@@ -184,10 +184,12 @@ def clear_favourites(prompt=True):
     common.signals.favouritesChanged.emit()
 
 
-def export_favourites(destination=None):
+def export_favourites(*args, destination=None):
     """Saves all My File items as a zip archive.
 
     """
+    common.check_type(destination, (None, str))
+
     if destination is None:
         destination, _ = QtWidgets.QFileDialog.getSaveFileName(
             caption='Select where to save your favourites',
@@ -197,8 +199,6 @@ def export_favourites(destination=None):
         )
         if not destination:
             return
-
-    common.check_type(destination, str)
 
     data = common.favourites.copy()
 
@@ -245,13 +245,14 @@ def export_favourites(destination=None):
     return destination
 
 
-def import_favourites(source=None):
+def import_favourites(*args, source=None):
     """Import a previously exported favourites file.
 
     Args:
         source (str): Path to a file. Defaults to `None`.
 
     """
+    common.check_type(source, (None, str))
     if source is None:
         source, _ = QtWidgets.QFileDialog.getOpenFileName(
             caption='Select the favourites file to import',
@@ -678,12 +679,6 @@ def edit_file(f):
 
 @common.error
 @common.debug
-def edit_favourite(f):
-    raise NotImplementedError('Function not yet implemented.')
-
-
-@common.error
-@common.debug
 def show_preferences():
     from .property_editor import preference_editor as editor
     widget = editor.show()
@@ -736,23 +731,20 @@ def add_item():
 @common.debug
 @selection
 def edit_item(index):
-    idx = common.current_tab()
-    if idx == common.BookmarkTab:
+    pp = index.data(common.ParentPathRole)
+    if len(pp) == 3:
         server, job, root = index.data(common.ParentPathRole)[0:3]
         edit_bookmark(
             server=server,
             job=job,
             root=root,
         )
-    elif idx == common.AssetTab:
+    elif len(pp) == 4:
         v = index.data(common.ParentPathRole)[-1]
         edit_asset(asset=v)
-    elif idx == common.FileTab:
+    elif len(pp) >= 4:
         v = index.data(QtCore.Qt.StatusTipRole)
         edit_file(v)
-    elif idx == common.FavouriteTab:
-        v = index.data(QtCore.Qt.StatusTipRole)
-        edit_favourite(v)
 
 
 @common.error
@@ -854,9 +846,9 @@ def exec_instance():
             os.path.sep + 'bookmarks.exe'
         subprocess.Popen(p)
     elif common.get_platform() == common.PlatformMacOS:
-        raise NotImplementedError('Not yet implemented.')
+        raise NotImplementedError('Not implemented.')
     elif common.get_platform() == common.PlatformUnsupported:
-        raise NotImplementedError('Not yet implemented.')
+        raise NotImplementedError('Not implemented.')
 
 
 @common.error
@@ -1296,16 +1288,25 @@ def pick_thumbnail_from_library(index):
     server, job, root = index.data(common.ParentPathRole)[0:3]
     source = index.data(QtCore.Qt.StatusTipRole)
 
+    if not all((server, job, root, source)):
+        return
+
     from .lists.widgets import thumb_library as editor
-    widget = editor.show(
-        server=server,
-        job=job,
-        root=root,
-        source=source
-    )
-    widget.thumbnailSelected.connect(widget.save_image)
-    model = index.model().sourceModel()
-    widget.thumbnailSelected.connect(lambda x: model.updateIndex.emit(index))
+    widget = editor.show()
+
+    widget.itemSelected.connect(
+        lambda v: images.load_thumbnail_from_image(server, job, root, source, v))
+    widget.itemSelected.connect(
+        lambda _: index.model().sourceModel().updateIndex.emit(index))
+
+
+@common.debug
+@common.error
+def pick_launcher_item():
+    from .launcher import launcher_gallery as editor
+    widget = editor.show()
+    widget.itemSelected.connect(lambda v: execute(v))
+
 
 
 @common.debug

@@ -105,7 +105,7 @@ class BookmarksModel(basemodel.BaseModel):
 
         data = common.get_data(p, _k, t)
 
-        for k, v in self.item_iterator():
+        for k, v in self.item_generator():
             common.check_type(v, dict)
 
             if not all(v.values()):
@@ -146,6 +146,8 @@ class BookmarksModel(basemodel.BaseModel):
 
             text = f'{job}  |  {root}'
 
+            parent_path_role = (server, job, root)
+
             idx = len(data)
             if idx >= common.max_list_items:
                 break  # Let's limit the maximum number of items we load
@@ -166,7 +168,7 @@ class BookmarksModel(basemodel.BaseModel):
                 common.DataTypeRole: t,
                 #
                 common.FlagsRole: flags,
-                common.ParentPathRole: (server, job, root),
+                common.ParentPathRole: parent_path_role,
                 common.DescriptionRole: '',
                 common.TodoCountRole: 0,
                 common.AssetCountRole: 0,
@@ -197,7 +199,7 @@ class BookmarksModel(basemodel.BaseModel):
 
         self.activeChanged.emit(self.active_index())
 
-    def item_iterator(self):
+    def item_generator(self):
         for item in common.bookmarks.items():
             yield item
 

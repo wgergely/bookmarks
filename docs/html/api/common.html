@@ -662,6 +662,12 @@ QFont and QFontMetrics instances can be retrieved using:</p>
 </section>
 <section id="module-bookmarks.common.sequence">
 <span id="common-sequence"></span><h2>common.sequence<a class="headerlink" href="#module-bookmarks.common.sequence" title="Permalink to this headline">¶</a></h2>
+<p>Common path methods to recognise sequence items.</p>
+<p>A sequence item is a file that has a number component that can be incremented.
+A ‘collapsed’ item is a single item that refers to a series of sequence items
+and is annotated by the SEQSTART and SEQEND markers.</p>
+<p>To determine if a path is a sequence, use <a class="reference internal" href="#bookmarks.common.sequence.get_sequence" title="bookmarks.common.sequence.get_sequence"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_sequence()</span></code></a>.
+To determine if a path is a collapsed item, use <a class="reference internal" href="#bookmarks.common.sequence.is_collapsed" title="bookmarks.common.sequence.is_collapsed"><code class="xref py py-func docutils literal notranslate"><span class="pre">is_collapsed()</span></code></a>.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.common.sequence.is_collapsed">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.common.sequence.</span></span><span class="sig-name descname"><span class="pre">is_collapsed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/sequence.html#is_collapsed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.sequence.is_collapsed" title="Permalink to this definition">¶</a></dt>
@@ -692,7 +698,7 @@ group 3 (SRE_Match):    All the characters <strong>after</strong> the sequence m
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>If the given name is indeed collpased it returns a <code class="docutils literal notranslate"><span class="pre">SRE_Match</span></code> object, otherwise <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<dd class="field-odd"><p>If the given name is indeed collapsed it returns a <code class="docutils literal notranslate"><span class="pre">SRE_Match</span></code> object, otherwise <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">SRE_Match</span></code></p>
@@ -725,7 +731,7 @@ preferences and the bookmark item database.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.common.sequence.</span></span><span class="sig-name descname"><span class="pre">get_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/sequence.html#get_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.sequence.get_sequence" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if the given text contains a sequence element.</p>
 <p>Strictly speaking, a sequence is any file that has a valid number element.
-There can only be <strong>one</strong> incrementable element - it will always be the
+There can only be <strong>one</strong> incremental element - it will always be the
 number closest to the end.</p>
 <p>The regex will understand sequences with the <cite>v</cite> prefix, eg <em>v001</em>, <em>v002</em>,
 but works without the prefix as well. E.g. <strong>001</strong>, <strong>002</strong>. In the case of a
@@ -1006,7 +1012,7 @@ all size values must be queried using <a class="reference internal" href="#bookm
 <dt class="sig sig-object py" id="bookmarks.common.ui.move_widget_to_available_geo">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.common.ui.</span></span><span class="sig-name descname"><span class="pre">move_widget_to_available_geo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/ui.html#move_widget_to_available_geo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.ui.move_widget_to_available_geo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Moves the widget inside the available screen geometry, if any of the
-edges fall outside of it.</p>
+edges fall outside it.</p>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.common.ui.set_custom_stylesheet">

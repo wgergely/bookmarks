@@ -170,7 +170,10 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../bookmarks.html">Introduction</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">bookmarks.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
 </ul>
 </li>
 </ul>
@@ -221,7 +224,7 @@
 <span class="n">DEFAULT_ITEM_FLAGS</span> <span class="o">=</span> <span class="n">basemodel</span><span class="o">.</span><span class="n">DEFAULT_ITEM_FLAGS</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsDropEnabled</span>
 
 
-<div class="viewcode-block" id="BookmarksWidgetContextMenu"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.bookmarks.BookmarksWidgetContextMenu">[docs]</a><span class="k">class</span> <span class="nc">BookmarksWidgetContextMenu</span><span class="p">(</span><span class="n">contextmenu</span><span class="o">.</span><span class="n">BaseContextMenu</span><span class="p">):</span>
+<div class="viewcode-block" id="BookmarksWidgetContextMenu"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.bookmarks.BookmarksWidgetContextMenu">[docs]</a><span class="k">class</span> <span class="nc">BookmarksWidgetContextMenu</span><span class="p">(</span><span class="n">contextmenu</span><span class="o">.</span><span class="n">BaseContextMenu</span><span class="p">):</span>
     <span class="sd">"""Context menu associated with the BookmarksWidget.</span>
 
 <span class="sd">    Methods:</span>
@@ -229,7 +232,7 @@
 
 <span class="sd">    """</span>
 
-<div class="viewcode-block" id="BookmarksWidgetContextMenu.setup"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.bookmarks.BookmarksWidgetContextMenu.setup">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
+<div class="viewcode-block" id="BookmarksWidgetContextMenu.setup"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.bookmarks.BookmarksWidgetContextMenu.setup">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
@@ -277,7 +280,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">quit_menu</span><span class="p">()</span></div></div>
 
 
-<div class="viewcode-block" id="BookmarksModel"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.bookmarks.BookmarksModel">[docs]</a><span class="k">class</span> <span class="nc">BookmarksModel</span><span class="p">(</span><span class="n">basemodel</span><span class="o">.</span><span class="n">BaseModel</span><span class="p">):</span>
+<div class="viewcode-block" id="BookmarksModel"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.bookmarks.BookmarksModel">[docs]</a><span class="k">class</span> <span class="nc">BookmarksModel</span><span class="p">(</span><span class="n">basemodel</span><span class="o">.</span><span class="n">BaseModel</span><span class="p">):</span>
     <span class="sd">"""The model used store the data necessary to display bookmarks.</span>
 
 <span class="sd">    """</span>
@@ -307,7 +310,7 @@
 
         <span class="n">data</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">_k</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_iterator</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_generator</span><span class="p">():</span>
             <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
@@ -348,6 +351,8 @@
 
             <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">job</span><span class="si">}</span><span class="s1">  |  </span><span class="si">{</span><span class="n">root</span><span class="si">}</span><span class="s1">'</span>
 
+            <span class="n">parent_path_role</span> <span class="o">=</span> <span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+
             <span class="n">idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="n">common</span><span class="o">.</span><span class="n">max_list_items</span><span class="p">:</span>
                 <span class="k">break</span>  <span class="c1"># Let's limit the maximum number of items we load</span>
@@ -368,7 +373,7 @@
                 <span class="n">common</span><span class="o">.</span><span class="n">DataTypeRole</span><span class="p">:</span> <span class="n">t</span><span class="p">,</span>
                 <span class="c1">#</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">:</span> <span class="n">flags</span><span class="p">,</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">:</span> <span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">),</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">:</span> <span class="n">parent_path_role</span><span class="p">,</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">TodoCountRole</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">AssetCountRole</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
@@ -399,11 +404,11 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">activeChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">active_index</span><span class="p">())</span>
 
-<div class="viewcode-block" id="BookmarksModel.item_iterator"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.bookmarks.BookmarksModel.item_iterator">[docs]</a>    <span class="k">def</span> <span class="nf">item_iterator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BookmarksModel.item_generator"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.bookmarks.BookmarksModel.item_generator">[docs]</a>    <span class="k">def</span> <span class="nf">item_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">bookmarks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">yield</span> <span class="n">item</span></div>
 
-<div class="viewcode-block" id="BookmarksModel.save_active"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.bookmarks.BookmarksModel.save_active">[docs]</a>    <span class="k">def</span> <span class="nf">save_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BookmarksModel.save_active"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.bookmarks.BookmarksModel.save_active">[docs]</a>    <span class="k">def</span> <span class="nf">save_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">active_index</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
@@ -418,20 +423,20 @@
         <span class="n">actions</span><span class="o">.</span><span class="n">set_active</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">JobKey</span><span class="p">,</span> <span class="n">job</span><span class="p">)</span>
         <span class="n">actions</span><span class="o">.</span><span class="n">set_active</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">RootKey</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">source_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span><span class="s1">'bookmarks'</span><span class="p">,)</span>
+<div class="viewcode-block" id="BookmarksModel.source_path"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.bookmarks.BookmarksModel.source_path">[docs]</a>    <span class="k">def</span> <span class="nf">source_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s1">'bookmarks'</span><span class="p">,)</span></div>
 
-<div class="viewcode-block" id="BookmarksModel.data_type"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.bookmarks.BookmarksModel.data_type">[docs]</a>    <span class="k">def</span> <span class="nf">data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BookmarksModel.data_type"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.bookmarks.BookmarksModel.data_type">[docs]</a>    <span class="k">def</span> <span class="nf">data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">FileItem</span></div>
 
     <span class="k">def</span> <span class="nf">default_row_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSize</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">HeightBookmark</span><span class="p">))</span>
 
-<div class="viewcode-block" id="BookmarksModel.user_settings_key"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.bookmarks.BookmarksModel.user_settings_key">[docs]</a>    <span class="k">def</span> <span class="nf">user_settings_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BookmarksModel.user_settings_key"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.bookmarks.BookmarksModel.user_settings_key">[docs]</a>    <span class="k">def</span> <span class="nf">user_settings_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">BookmarksKey</span></div></div>
 
 
-<div class="viewcode-block" id="BookmarksWidget"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.bookmarks.BookmarksWidget">[docs]</a><span class="k">class</span> <span class="nc">BookmarksWidget</span><span class="p">(</span><span class="n">basewidget</span><span class="o">.</span><span class="n">ThreadedBaseWidget</span><span class="p">):</span>
+<div class="viewcode-block" id="BookmarksWidget"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.bookmarks.BookmarksWidget">[docs]</a><span class="k">class</span> <span class="nc">BookmarksWidget</span><span class="p">(</span><span class="n">basewidget</span><span class="o">.</span><span class="n">ThreadedBaseWidget</span><span class="p">):</span>
     <span class="sd">"""The view used to display the contents of a ``BookmarksModel`` instance."""</span>
     <span class="n">SourceModel</span> <span class="o">=</span> <span class="n">BookmarksModel</span>
     <span class="n">Delegate</span> <span class="o">=</span> <span class="n">delegate</span><span class="o">.</span><span class="n">BookmarksWidgetDelegate</span>
@@ -445,7 +450,7 @@
             <span class="n">parent</span><span class="o">=</span><span class="n">parent</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="BookmarksWidget.mouseReleaseEvent"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.bookmarks.BookmarksWidget.mouseReleaseEvent">[docs]</a>    <span class="k">def</span> <span class="nf">mouseReleaseEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="BookmarksWidget.mouseReleaseEvent"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.bookmarks.BookmarksWidget.mouseReleaseEvent">[docs]</a>    <span class="k">def</span> <span class="nf">mouseReleaseEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMouseEvent</span><span class="p">):</span>
             <span class="k">return</span>
 
@@ -472,7 +477,7 @@
             <span class="n">actions</span><span class="o">.</span><span class="n">edit_bookmark</span><span class="p">(</span><span class="n">server</span><span class="o">=</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="o">=</span><span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="n">root</span><span class="p">)</span>
             <span class="k">return</span></div>
 
-<div class="viewcode-block" id="BookmarksWidget.inline_icons_count"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.bookmarks.BookmarksWidget.inline_icons_count">[docs]</a>    <span class="k">def</span> <span class="nf">inline_icons_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BookmarksWidget.inline_icons_count"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.bookmarks.BookmarksWidget.inline_icons_count">[docs]</a>    <span class="k">def</span> <span class="nf">inline_icons_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""The number of row-icons an item has."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">buttons_hidden</span><span class="p">():</span>
             <span class="k">return</span> <span class="mi">0</span>

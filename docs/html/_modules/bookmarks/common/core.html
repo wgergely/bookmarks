@@ -170,7 +170,10 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../bookmarks.html">Introduction</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">bookmarks.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
 </ul>
 </li>
 </ul>
@@ -324,7 +327,8 @@
                 <span class="sa">f</span><span class="s1">'Invalid type. Expected </span><span class="si">{</span><span class="n">_type</span><span class="si">}</span><span class="s1">, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_hash"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.get_hash">[docs]</a><span class="k">def</span> <span class="nf">get_hash</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+<div class="viewcode-block" id="get_hash"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.get_hash">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_hash</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
     <span class="sd">"""Calculates the md5 hash of a string.</span>
 
 <span class="sd">    In practice, we use this function to generate hashes for file paths. These</span>

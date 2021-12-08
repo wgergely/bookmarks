@@ -237,11 +237,11 @@
 from the file system.</p>
 <p>The model itself does not store any data, instead, we’re using the
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">datacache</span></code> module to store item data.</p>
-<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.bookmarks.BookmarksModel.item_iterator" title="bookmarks.lists.bookmarks.BookmarksModel.item_iterator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_iterator()</span></code></a>.</p>
+<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.bookmarks.BookmarksModel.item_generator" title="bookmarks.lists.bookmarks.BookmarksModel.item_generator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_generator()</span></code></a>.</p>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.bookmarks.BookmarksModel.item_iterator">
-<span class="sig-name descname"><span class="pre">item_iterator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/bookmarks.html#BookmarksModel.item_iterator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.bookmarks.BookmarksModel.item_iterator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="bookmarks.lists.bookmarks.BookmarksModel.item_generator">
+<span class="sig-name descname"><span class="pre">item_generator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/bookmarks.html#BookmarksModel.item_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.bookmarks.BookmarksModel.item_generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>A generator method used by <a class="reference internal" href="#bookmarks.lists.bookmarks.BookmarksModel.init_data" title="bookmarks.lists.bookmarks.BookmarksModel.init_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">init_data()</span></code></a> to yield the items the model should load.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Yields</dt>
@@ -352,7 +352,7 @@ Used in conjunction with <a class="reference internal" href="#bookmarks.lists.as
 from the file system.</p>
 <p>The model itself does not store any data, instead, we’re using the
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">datacache</span></code> module to store item data.</p>
-<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.assets.AssetsModel.item_iterator" title="bookmarks.lists.assets.AssetsModel.item_iterator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_iterator()</span></code></a>.</p>
+<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.assets.AssetsModel.item_generator" title="bookmarks.lists.assets.AssetsModel.item_generator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_generator()</span></code></a>.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.assets.AssetsModel.source_path">
@@ -368,8 +368,8 @@ from the file system.</p>
 </dl>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.assets.AssetsModel.item_iterator">
-<span class="sig-name descname"><span class="pre">item_iterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/assets.html#AssetsModel.item_iterator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.assets.AssetsModel.item_iterator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="bookmarks.lists.assets.AssetsModel.item_generator">
+<span class="sig-name descname"><span class="pre">item_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/assets.html#AssetsModel.item_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.assets.AssetsModel.item_generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Yields DirEntry instances to be processed in init_data.</p>
 </dd></dl>
 <dl class="py method">
@@ -514,7 +514,7 @@ See the <code class="xref py py-mod docutils literal notranslate"><span class="p
 from the file system.</p>
 <p>The model itself does not store any data, instead, we’re using the
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">datacache</span></code> module to store item data.</p>
-<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.files.FilesModel.item_iterator" title="bookmarks.lists.files.FilesModel.item_iterator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_iterator()</span></code></a>.</p>
+<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.files.FilesModel.item_generator" title="bookmarks.lists.files.FilesModel.item_generator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_generator()</span></code></a>.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.files.FilesModel.disable_filter">
@@ -535,8 +535,8 @@ from the file system.</p>
 </dl>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.files.FilesModel.item_iterator">
-<span class="sig-name descname"><span class="pre">item_iterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/files.html#FilesModel.item_iterator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.files.FilesModel.item_iterator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="bookmarks.lists.files.FilesModel.item_generator">
+<span class="sig-name descname"><span class="pre">item_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/files.html#FilesModel.item_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.files.FilesModel.item_generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Recursive iterator for retrieving files from all subfolders.</p>
 </dd></dl>
 <dl class="py method">
@@ -656,7 +656,7 @@ favourite items.</p>
 from the file system.</p>
 <p>The model itself does not store any data, instead, we’re using the
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">datacache</span></code> module to store item data.</p>
-<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.favourites.FavouritesModel.item_iterator" title="bookmarks.lists.favourites.FavouritesModel.item_iterator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_iterator()</span></code></a>.</p>
+<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.favourites.FavouritesModel.item_generator" title="bookmarks.lists.favourites.FavouritesModel.item_generator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_generator()</span></code></a>.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.favourites.FavouritesModel.source_path">
@@ -672,8 +672,8 @@ from the file system.</p>
 </dl>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.favourites.FavouritesModel.item_iterator">
-<span class="sig-name descname"><span class="pre">item_iterator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/favourites.html#FavouritesModel.item_iterator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.favourites.FavouritesModel.item_iterator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="bookmarks.lists.favourites.FavouritesModel.item_generator">
+<span class="sig-name descname"><span class="pre">item_generator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/favourites.html#FavouritesModel.item_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.favourites.FavouritesModel.item_generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>We’re using the saved keys to find and return the DirEntries
 corresponding to the saved favourites.</p>
 </dd></dl>
@@ -836,7 +836,7 @@ changes in the model’s parent folder.</p>
 from the file system.</p>
 <p>The model itself does not store any data, instead, we’re using the
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">datacache</span></code> module to store item data.</p>
-<p>The individual items are returned by <code class="xref py py-func docutils literal notranslate"><span class="pre">item_iterator()</span></code>.</p>
+<p>The individual items are returned by <code class="xref py py-func docutils literal notranslate"><span class="pre">item_generator()</span></code>.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.tasks.TaskFolderModel.check_task">

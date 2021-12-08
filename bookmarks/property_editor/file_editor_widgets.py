@@ -51,7 +51,7 @@ class BaseModel(QtCore.QAbstractListModel):
 
     @init_data
     def init_data(self, source, server, job, root):
-        raise NotImplementedError('Must be overriden in subclass.')
+        raise NotImplementedError('Abstract method must be implemented by subclass.')
 
     def index(self, row, column, parent=QtCore.QModelIndex()):
         return self.createIndex(row, 0, parent=parent)

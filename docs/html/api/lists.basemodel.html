@@ -213,7 +213,7 @@ methods.</p>
 <p>The model itself does not store data, but all retrieved data is cached to
 <a class="reference internal" href="common.html#bookmarks.common.item_data" title="bookmarks.common.item_data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">bookmarks.common.item_data</span></code></a>. The interface for getting and setting data can be found in the
 <a class="reference internal" href="common.html#module-bookmarks.common.data" title="bookmarks.common.data"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.common.data</span></code></a>. However, the model is responsible for populating the data cache. See
-<a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.item_iterator" title="bookmarks.lists.basemodel.BaseModel.item_iterator"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseModel.item_iterator()</span></code></a>.</p>
+<a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.item_generator" title="bookmarks.lists.basemodel.BaseModel.item_generator"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseModel.item_generator()</span></code></a>.</p>
 <p>The model exposes different datasets to the view using the <a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.task" title="bookmarks.lists.basemodel.BaseModel.task"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseModel.task()</span></code></a> and
 <a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.data_type" title="bookmarks.lists.basemodel.BaseModel.data_type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseModel.data_type()</span></code></a> switches. This is because file items are stored as sequence and individual items
 simultaneously and because the file model also keeps separate data for each task folder it encounters.</p>
@@ -240,8 +240,8 @@ file items.</p>
 <p>Data is stored in the datacache module that can be fetched using the model’s
 <cite>source_path</cite>, <cite>task</cite> and <cite>data_type</cite>.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.item_iterator">
-<span class="sig-name descname"><span class="pre">item_iterator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/basemodel.html#BaseModel.item_iterator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.item_iterator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.item_generator">
+<span class="sig-name descname"><span class="pre">item_generator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/basemodel.html#BaseModel.item_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.item_generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>A generator method used by <a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.init_data" title="bookmarks.lists.basemodel.BaseModel.init_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">init_data()</span></code></a> to yield the items the model should load.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Yields</dt>
@@ -256,7 +256,7 @@ file items.</p>
 from the file system.</p>
 <p>The model itself does not store any data, instead, we’re using the
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">datacache</span></code> module to store item data.</p>
-<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.item_iterator" title="bookmarks.lists.basemodel.BaseModel.item_iterator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_iterator()</span></code></a>.</p>
+<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.item_generator" title="bookmarks.lists.basemodel.BaseModel.item_generator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_generator()</span></code></a>.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.reset_data">

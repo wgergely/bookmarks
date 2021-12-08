@@ -40,6 +40,52 @@ def add_path_to_mime(mime, path):
     return mime
 
 
+@functools.lru_cache(maxsize=1048576)
+def get_path_elements(name, path, _source_path):
+    """Utility method used to cache and retrieve path elements.
+
+    """
+    path = path.replace('\\', '/')
+
+    ext = name.split('.')[-1]
+
+    # Getting the file's relative root folder
+    # This data is used to display the clickable sub-folders relative
+    # to the current task folder
+    file_root = path[:path.rfind('/')][len(_source_path) + 1:]
+
+    sort_by_name_role = DEFAULT_SORT_BY_NAME_ROLE.copy()
+    _dir = None
+    if file_root:
+        # Save the file's parent folder for the file system watcher
+        _dir = _source_path + '/' + file_root
+        # To sort by folders correctly, we populate a fixed length
+        # list with the sub-folders and file names. Sorting is case-insensitive.
+        _file_root = file_root.lower().split('/')
+        for idx in range(len(_file_root)):
+            sort_by_name_role[idx] = _file_root[idx]
+            if idx == 6:
+                break
+    sort_by_name_role[7] = name.lower()
+
+    return path, ext, file_root, _dir, sort_by_name_role
+
+
+@functools.lru_cache(maxsize=4194304)
+def get_sequence_elements(filepath):
+    try:
+        seq = common.get_sequence(filepath)
+    except RuntimeError:
+        seq = None
+
+    sequence_path = None
+    if seq:
+        sequence_path = seq.group(1) + common.SEQPROXY + \
+                        seq.group(3) + '.' + seq.group(4)
+    return seq, sequence_path
+
+
+
 class DropIndicatorWidget(QtWidgets.QWidget):
     """Widgets responsible for drawing an overlay."""
 
@@ -330,7 +376,7 @@ class FilesModel(basemodel.BaseModel):
         fetched by thread workers.
 
         The method will iterate through all items returned by
-        ``self.item_iterator()`` and will gather information for both individual
+        ``self.item_generator()`` and will gather information for both individual
         ``FileItems`` and collapsed ``SequenceItems`` (switch between the two
         datasets using the ``dataTypeChanged`` signal with the desired data
         type).
@@ -369,28 +415,35 @@ class FilesModel(basemodel.BaseModel):
         nth = 987
         c = 0
 
-        for entry in self.item_iterator(_source_path):
+        for entry in self.item_generator(_source_path):
             if self._interrupt_requested:
                 break
 
             # Skipping directories
             if entry.is_dir():
                 continue
+
             filename = entry.name
-
-            # Skipping common hidden files
-            if filename[0] == '.':
-                continue
-            if 'thumbs.db' in filename:
-                continue
-
-            filepath = entry.path.replace('\\', '/')
 
             # Skip items without file extension
             if '.' not in filename:
                 continue
 
-            ext = filename.split('.')[-1]
+            # Skipping common hidden files
+            if filename[0] == '.':
+                continue
+
+            if 'thumbs.db' in filename:
+                continue
+
+            # These values will always resolve to be the same, and therefore we can use a cach
+            # to retrieve them
+            filepath, ext, file_root, _dir, sort_by_name_role = get_path_elements(
+                filename,
+                entry.path,
+                _source_path
+            )
+            _dirs.append(_dir)
 
             # We'll check against the current file extension against the allowed
             # extensions. If the task folder is not defined in the asset config,
@@ -405,45 +458,14 @@ class FilesModel(basemodel.BaseModel):
                     'Loading files (found ' + str(c) + ' items)...')
                 QtWidgets.QApplication.instance().processEvents()
 
-            # Getting the file's relative root folder
-            # This data is used to display the clickable subfolders relative
-            # to the current task folder
-            file_root = filepath[:filepath.rfind('/')]
-            file_root = file_root[len(_source_path) + 1:]
-
-            sort_by_name_role = DEFAULT_SORT_BY_NAME_ROLE.copy()
-            if file_root:
-                # Save the file's parent folder for the file system watcher
-                _dir = _source_path + '/' + file_root
-                _dirs.append(_source_path + '/' + file_root)
-                # To sort by subfolders correctly, we'll a populate a fixed length
-                # list with the subfolders and file names. Sorting is do case
-                # insensitive:
-                _file_root = file_root.lower().split('/')
-                for idx in range(len(_file_root)):
-                    sort_by_name_role[idx] = _file_root[idx]
-                    if idx == 6:
-                        break
-            sort_by_name_role[7] = filename.lower()
-
-            # If the file is named using our sequence denominators,
-            # we can't use and must skip it
-            try:
-                seq = common.get_sequence(filepath)
-            except RuntimeError:
-                log.error('"' + filename + '" named incorrectly. Skipping.')
-                continue
-
             flags = basemodel.DEFAULT_ITEM_FLAGS
+            seq, sequence_path = get_sequence_elements(filepath)
 
-            if seq:
-                seqpath = seq.group(1) + common.SEQPROXY + \
-                          seq.group(3) + '.' + seq.group(4)
-            if (seq and (seqpath in common.favourites or filepath in common.favourites)) or (
+            if (seq and (sequence_path in common.favourites or filepath in common.favourites)) or (
                     filepath in common.favourites):
                 flags = flags | common.MarkedAsFavourite
 
-            source_path_role = p + (k, file_root)
+            parent_path_role = p + (k, file_root)
 
             idx = len(data)
             if idx >= common.max_list_items:
@@ -460,7 +482,7 @@ class FilesModel(basemodel.BaseModel):
                 #
                 common.EntryRole: [entry, ],
                 common.FlagsRole: flags,
-                common.ParentPathRole: source_path_role,
+                common.ParentPathRole: parent_path_role,
                 common.DescriptionRole: '',
                 common.TodoCountRole: 0,
                 common.FileDetailsRole: '',
@@ -488,28 +510,28 @@ class FilesModel(basemodel.BaseModel):
             # to it in the sequence data dict
             if seq:
                 # If the sequence has not yet been added to our dictionary
-                # of seqeunces we add it here
-                if seqpath not in SEQUENCE_DATA:  # ... and create it if it doesn't exist
-                    seqname = seqpath.split('/')[-1]
+                # of sequences we add it here
+                if sequence_path not in SEQUENCE_DATA:  # ... and create it if it doesn't exist
+                    sequence_name = sequence_path.split('/')[-1]
                     flags = basemodel.DEFAULT_ITEM_FLAGS
 
-                    if seqpath in common.favourites:
+                    if sequence_path in common.favourites:
                         flags = flags | common.MarkedAsFavourite
 
                     sort_by_name_role = list(sort_by_name_role)
-                    sort_by_name_role[7] = seqname.lower()
+                    sort_by_name_role[7] = sequence_name.lower()
 
-                    SEQUENCE_DATA[seqpath] = common.DataDict({
-                        QtCore.Qt.DisplayRole: seqname,
-                        QtCore.Qt.EditRole: seqname,
-                        QtCore.Qt.StatusTipRole: seqpath,
+                    SEQUENCE_DATA[sequence_path] = common.DataDict({
+                        QtCore.Qt.DisplayRole: sequence_name,
+                        QtCore.Qt.EditRole: sequence_name,
+                        QtCore.Qt.StatusTipRole: sequence_path,
                         QtCore.Qt.SizeHintRole: self._row_size,
                         #
                         common.QueueRole: self.queues,
                         #
                         common.EntryRole: [],
                         common.FlagsRole: flags,
-                        common.ParentPathRole: source_path_role,
+                        common.ParentPathRole: parent_path_role,
                         common.DescriptionRole: '',
                         common.TodoCountRole: 0,
                         common.FileDetailsRole: '',
@@ -533,8 +555,8 @@ class FilesModel(basemodel.BaseModel):
                         common.ShotgunLinkedRole: False,
                     })
 
-                SEQUENCE_DATA[seqpath][common.FramesRole].append(seq.group(2))
-                SEQUENCE_DATA[seqpath][common.EntryRole].append(entry)
+                SEQUENCE_DATA[sequence_path][common.FramesRole].append(seq.group(2))
+                SEQUENCE_DATA[sequence_path][common.EntryRole].append(entry)
             else:
                 # Copy the existing file item
                 SEQUENCE_DATA[filepath] = common.DataDict(data[idx])
@@ -548,7 +570,7 @@ class FilesModel(basemodel.BaseModel):
             if idx >= common.max_list_items:
                 break  # Let's limit the maximum number of items we load
 
-            # A sequence with only one element is not a sequencemas far as
+            # A sequence with only one element is not a sequence far as
             # we're concerned
             if len(v[common.FramesRole]) == 1:
                 _seq = v[common.SequenceRole]
@@ -600,7 +622,7 @@ class FilesModel(basemodel.BaseModel):
             common.active(common.AssetKey)
         )
 
-    def item_iterator(self, path):
+    def item_generator(self, path):
         """Recursive iterator for retrieving files from all subfolders.
 
         """
@@ -612,7 +634,7 @@ class FilesModel(basemodel.BaseModel):
 
         for entry in it:
             if entry.is_dir():
-                for _entry in self.item_iterator(entry.path):
+                for _entry in self.item_generator(entry.path):
                     yield _entry
             else:
                 yield entry

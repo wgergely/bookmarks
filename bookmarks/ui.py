@@ -5,7 +5,6 @@ from PySide2 import QtCore, QtGui, QtWidgets
 from . import common
 from . import images
 
-_message_instance = None
 
 OkButton = 'Ok'
 YesButton = 'Yes'
@@ -49,6 +48,9 @@ QPushButton:pressed {{
 class MessageBox(QtWidgets.QDialog):
     """Informative message box used for notifying the user of an event.
 
+    Attributes:
+        buttonClicked (Signal -> str): Emitted when the user click a button.
+
     """
     primary_color = common.color(common.BlueLightColor)
     secondary_color = common.color(common.BlueColor).lighter(120)
@@ -58,15 +60,14 @@ class MessageBox(QtWidgets.QDialog):
 
     def __init__(self, *args, **kwargs):
 
-        global _message_instance
         try:
-            _message_instance.close()
-            _message_instance.deleteLater()
+            common.message_widget.close()
+            common.message_widget.deleteLater()
         except:
             pass
         finally:
-            _message_instance = None
-        _message_instance = self
+            common.message_widget = None
+        common.message_widget = self
 
         if 'parent' in kwargs:
             parent = kwargs['parent']
@@ -1045,7 +1046,7 @@ class ListViewWidget(QtWidgets.QListView):
             )
             item.setData(pixmap, role=QtCore.Qt.DecorationRole)
         elif isinstance(icon, (QtGui.QIcon, QtGui.QPixmap)):
-            item.setData(pixmap, role=QtCore.Qt.DecorationRole)
+            item.setData(icon, role=QtCore.Qt.DecorationRole)
         else:
             item.setFlags(
                 QtCore.Qt.ItemIsEnabled |
@@ -1228,3 +1229,253 @@ def add_description(text, label=' ', color=common.color(common.TextSecondaryColo
     row.layout().addWidget(label, 1)
     parent.layout().addWidget(row, 1)
     return row
+
+
+
+
+class GalleryItem(QtWidgets.QLabel):
+    """Custom QLabel used by the GalleryWidget to display an image.
+
+    Args:
+        label (str): An informative label.
+        data (str): The item's data. This will be emitted by the clicked signal.
+        thumbnail (str): Path to an image file.
+        height (int or float, optional): The item's width/height in pixels.
+
+    """
+    clicked = QtCore.Signal(str)
+
+    def __init__(self, label, data, thumbnail, height=common.size(common.HeightRow) * 2, parent=None):
+        super().__init__(parent=parent)
+        common.check_type(label, str)
+        common.check_type(data, str)
+        common.check_type(thumbnail, str)
+        common.check_type(height, (int, float))
+
+        self._pixmap = None
+        self._label = label
+        self._data = data
+        self._thumbnail = thumbnail
+        self._height = height
+
+        self.setAlignment(QtCore.Qt.AlignCenter)
+        self.setScaledContents(True)
+        self.setSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding,
+            QtWidgets.QSizePolicy.MinimumExpanding,
+        )
+
+        self.setMinimumSize(QtCore.QSize(self._height, self._height))
+
+    def enterEvent(self, event):
+        self.update()
+
+    def leaveEvent(self, event):
+        self.update()
+
+    def mouseReleaseEvent(self, event):
+        if not isinstance(event, QtGui.QMouseEvent):
+            return
+        self.clicked.emit(self._data)
+
+    def paintEvent(self, event):
+        option = QtWidgets.QStyleOption()
+        option.initFrom(self)
+        hover = option.state & QtWidgets.QStyle.State_MouseOver
+
+        painter = QtGui.QPainter()
+        painter.begin(self)
+        painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform)
+        painter.setRenderHint(QtGui.QPainter.Antialiasing)
+
+        o = 1.0 if hover else 0.7
+        painter.setOpacity(o)
+
+        if not self._pixmap:
+            self._pixmap = images.ImageCache.get_pixmap(
+                self._thumbnail,
+                self._height,
+                force=True
+            )
+            if not self._pixmap:
+                return
+
+        s = float(min((self.rect().height(), self.rect().width())))
+        longest_edge = float(max((self._pixmap.width(), self._pixmap.height())))
+        ratio = s / longest_edge
+        w = self._pixmap.width() * ratio
+        h = self._pixmap.height() * ratio
+        _rect = QtCore.QRect(0, 0, w, h)
+        _rect.moveCenter(self.rect().center())
+        painter.drawPixmap(
+            _rect,
+            self._pixmap,
+        )
+
+        if not hover:
+            painter.end()
+            return
+
+        # Paint the item's label when the mouse is over it
+        painter.setPen(common.color(common.TextColor))
+        rect = self.rect()
+        rect.moveTopLeft(rect.topLeft() + QtCore.QPoint(1, 1))
+
+        font, _ = common.font_db.primary_font(common.size(common.FontSizeMedium))
+
+        common.draw_aliased_text(
+            painter,
+            font,
+            rect,
+            self._label,
+            QtCore.Qt.AlignCenter,
+            QtGui.QColor(0, 0, 0, 255),
+        )
+
+        rect = self.rect()
+        common.draw_aliased_text(
+            painter,
+            font,
+            rect,
+            self._label,
+            QtCore.Qt.AlignCenter,
+            common.color(common.TextSelectedColor),
+        )
+
+        painter.end()
+
+
+
+class GalleryWidget(QtWidgets.QDialog):
+    """A generic gallery widget used to let the user pick an item.
+
+    Attributes:
+        itemSelected (Signal -> str): Emitted when the user clicks the item.
+
+    """
+    itemSelected = QtCore.Signal(str)
+
+    def __init__(self, columns=5, item_height=common.size(common.HeightRow) * 2, parent=None):
+        super().__init__(parent=parent)
+
+        self.scroll_area = None
+        self.columns = columns
+        self._item_height = item_height
+
+        self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.FramelessWindowHint)
+        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+        self.setWindowTitle('Select Item')
+
+        self._create_ui()
+        self.init_data()
+
+    def _create_ui(self):
+        if not self.parent():
+            common.set_custom_stylesheet(self)
+
+        QtWidgets.QVBoxLayout(self)
+        o = common.size(common.WidthMargin)
+
+        self.layout().setContentsMargins(o, o, o, o)
+        self.layout().setSpacing(0)
+        self.layout().setAlignment(QtCore.Qt.AlignCenter)
+
+        row = add_row(
+            None, height=common.size(common.HeightRow), padding=None, parent=self)
+        label = PaintedLabel(
+            'Select an item',
+            color=common.color(common.TextColor),
+            size=common.size(common.FontSizeLarge),
+            parent=self
+        )
+        row.layout().addWidget(label)
+
+        widget = QtWidgets.QWidget(parent=self)
+        widget.setStyleSheet(
+            'background-color: {}'.format(common.rgb(common.color(common.SeparatorColor))))
+
+        self.setMinimumWidth(
+            (common.size(common.WidthIndicator) * 2) +
+            (common.size(common.WidthMargin) * 2) +
+            (common.size(common.WidthIndicator) * (self.columns - 1)) +
+            self._item_height * self.columns
+        )
+        self.setMaximumWidth(
+            (common.size(common.WidthIndicator) * 2) +
+            (common.size(common.WidthMargin) * 2) +
+            (common.size(common.WidthIndicator) * (self.columns - 1)) +
+            self._item_height * self.columns
+        )
+        self.setMinimumHeight(
+            (common.size(common.WidthIndicator) * 2) +
+            (common.size(common.WidthMargin) * 2) +
+            self._item_height
+        )
+        self.setMaximumHeight(
+            (common.size(common.WidthIndicator) * 2) +
+            (common.size(common.WidthMargin) * 2) +
+            (common.size(common.WidthIndicator) * 9) +
+            (self._item_height * 10)
+        )
+
+        QtWidgets.QGridLayout(widget)
+        widget.layout().setAlignment(QtCore.Qt.AlignCenter)
+        widget.layout().setContentsMargins(
+            common.size(common.WidthIndicator),
+            common.size(common.WidthIndicator),
+            common.size(common.WidthIndicator),
+            common.size(common.WidthIndicator))
+        widget.layout().setSpacing(common.size(common.WidthIndicator))
+
+        self.scroll_area = QtWidgets.QScrollArea(parent=self)
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setWidget(widget)
+
+        self.layout().addWidget(self.scroll_area, 1)
+
+    def init_data(self):
+        row = 0
+        idx = 0
+
+        for label, path, thumbnail in self.item_generator():
+            item = GalleryItem(label, path, thumbnail, height=self._item_height, parent=self)
+
+            column = idx % self.columns
+            if column == 0:
+                row += 1
+
+            self.scroll_area.widget().layout().addWidget(item, row, column)
+            item.clicked.connect(self.itemSelected)
+            item.clicked.connect(self.close)
+
+            idx += 1
+
+    def item_generator(self):
+        """Abstract method used to generate the values needed to display items.
+
+        Yields:
+            tuple (str, str, str): An informative label, user data and thumbnail image path.
+
+        """
+        raise NotImplementedError('Abstract method must be implemented by subclass.')
+
+    def paintEvent(self, event):
+        painter = QtGui.QPainter()
+        painter.begin(self)
+        painter.setBrush(common.color(common.SeparatorColor))
+        pen = QtGui.QPen(QtGui.QColor(0, 0, 0, 150))
+        pen.setWidth(common.size(common.HeightSeparator))
+        painter.setPen(pen)
+        painter.setRenderHint(QtGui.QPainter.Antialiasing)
+        o = common.size(common.WidthIndicator) * 2.0
+        painter.drawRoundedRect(
+            self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o)),
+            o, o
+        )
+        painter.end()
+
+    def showEvent(self, event):
+        if not self.parent():
+            common.center_window(self)

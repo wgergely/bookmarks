@@ -245,6 +245,52 @@
     <span class="k">return</span> <span class="n">mime</span></div>
 
 
+<div class="viewcode-block" id="get_path_elements"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.files.get_path_elements">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">1048576</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_path_elements</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">_source_path</span><span class="p">):</span>
+    <span class="sd">"""Utility method used to cache and retrieve path elements.</span>
+
+<span class="sd">    """</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'</span><span class="se">\\</span><span class="s1">'</span><span class="p">,</span> <span class="s1">'/'</span><span class="p">)</span>
+
+    <span class="n">ext</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'.'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Getting the file's relative root folder</span>
+    <span class="c1"># This data is used to display the clickable sub-folders relative</span>
+    <span class="c1"># to the current task folder</span>
+    <span class="n">file_root</span> <span class="o">=</span> <span class="n">path</span><span class="p">[:</span><span class="n">path</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)][</span><span class="nb">len</span><span class="p">(</span><span class="n">_source_path</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
+
+    <span class="n">sort_by_name_role</span> <span class="o">=</span> <span class="n">DEFAULT_SORT_BY_NAME_ROLE</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">_dir</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">file_root</span><span class="p">:</span>
+        <span class="c1"># Save the file's parent folder for the file system watcher</span>
+        <span class="n">_dir</span> <span class="o">=</span> <span class="n">_source_path</span> <span class="o">+</span> <span class="s1">'/'</span> <span class="o">+</span> <span class="n">file_root</span>
+        <span class="c1"># To sort by folders correctly, we populate a fixed length</span>
+        <span class="c1"># list with the sub-folders and file names. Sorting is case-insensitive.</span>
+        <span class="n">_file_root</span> <span class="o">=</span> <span class="n">file_root</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_file_root</span><span class="p">)):</span>
+            <span class="n">sort_by_name_role</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">_file_root</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+                <span class="k">break</span>
+    <span class="n">sort_by_name_role</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">path</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">file_root</span><span class="p">,</span> <span class="n">_dir</span><span class="p">,</span> <span class="n">sort_by_name_role</span></div>
+
+
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_sequence_elements</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_sequence</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+        <span class="n">seq</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">sequence_path</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">seq</span><span class="p">:</span>
+        <span class="n">sequence_path</span> <span class="o">=</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">common</span><span class="o">.</span><span class="n">SEQPROXY</span> <span class="o">+</span> \
+                        <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'.'</span> <span class="o">+</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">seq</span><span class="p">,</span> <span class="n">sequence_path</span>
+
+
+
 <div class="viewcode-block" id="DropIndicatorWidget"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.files.DropIndicatorWidget">[docs]</a><span class="k">class</span> <span class="nc">DropIndicatorWidget</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
     <span class="sd">"""Widgets responsible for drawing an overlay."""</span>
 
@@ -535,7 +581,7 @@
 <span class="sd">        fetched by thread workers.</span>
 
 <span class="sd">        The method will iterate through all items returned by</span>
-<span class="sd">        ``self.item_iterator()`` and will gather information for both individual</span>
+<span class="sd">        ``self.item_generator()`` and will gather information for both individual</span>
 <span class="sd">        ``FileItems`` and collapsed ``SequenceItems`` (switch between the two</span>
 <span class="sd">        datasets using the ``dataTypeChanged`` signal with the desired data</span>
 <span class="sd">        type).</span>
@@ -574,28 +620,35 @@
         <span class="n">nth</span> <span class="o">=</span> <span class="mi">987</span>
         <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_iterator</span><span class="p">(</span><span class="n">_source_path</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_generator</span><span class="p">(</span><span class="n">_source_path</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interrupt_requested</span><span class="p">:</span>
                 <span class="k">break</span>
 
             <span class="c1"># Skipping directories</span>
             <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
                 <span class="k">continue</span>
+
             <span class="n">filename</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span>
-
-            <span class="c1"># Skipping common hidden files</span>
-            <span class="k">if</span> <span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'.'</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="s1">'thumbs.db'</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="n">filepath</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'</span><span class="se">\\</span><span class="s1">'</span><span class="p">,</span> <span class="s1">'/'</span><span class="p">)</span>
 
             <span class="c1"># Skip items without file extension</span>
             <span class="k">if</span> <span class="s1">'.'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="n">ext</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'.'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># Skipping common hidden files</span>
+            <span class="k">if</span> <span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'.'</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="s1">'thumbs.db'</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># These values will always resolve to be the same, and therefore we can use a cach</span>
+            <span class="c1"># to retrieve them</span>
+            <span class="n">filepath</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">file_root</span><span class="p">,</span> <span class="n">_dir</span><span class="p">,</span> <span class="n">sort_by_name_role</span> <span class="o">=</span> <span class="n">get_path_elements</span><span class="p">(</span>
+                <span class="n">filename</span><span class="p">,</span>
+                <span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+                <span class="n">_source_path</span>
+            <span class="p">)</span>
+            <span class="n">_dirs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_dir</span><span class="p">)</span>
 
             <span class="c1"># We'll check against the current file extension against the allowed</span>
             <span class="c1"># extensions. If the task folder is not defined in the asset config,</span>
@@ -610,45 +663,14 @@
                     <span class="s1">'Loading files (found '</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="s1">' items)...'</span><span class="p">)</span>
                 <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">processEvents</span><span class="p">()</span>
 
-            <span class="c1"># Getting the file's relative root folder</span>
-            <span class="c1"># This data is used to display the clickable subfolders relative</span>
-            <span class="c1"># to the current task folder</span>
-            <span class="n">file_root</span> <span class="o">=</span> <span class="n">filepath</span><span class="p">[:</span><span class="n">filepath</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)]</span>
-            <span class="n">file_root</span> <span class="o">=</span> <span class="n">file_root</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">_source_path</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
-
-            <span class="n">sort_by_name_role</span> <span class="o">=</span> <span class="n">DEFAULT_SORT_BY_NAME_ROLE</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">file_root</span><span class="p">:</span>
-                <span class="c1"># Save the file's parent folder for the file system watcher</span>
-                <span class="n">_dir</span> <span class="o">=</span> <span class="n">_source_path</span> <span class="o">+</span> <span class="s1">'/'</span> <span class="o">+</span> <span class="n">file_root</span>
-                <span class="n">_dirs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_source_path</span> <span class="o">+</span> <span class="s1">'/'</span> <span class="o">+</span> <span class="n">file_root</span><span class="p">)</span>
-                <span class="c1"># To sort by subfolders correctly, we'll a populate a fixed length</span>
-                <span class="c1"># list with the subfolders and file names. Sorting is do case</span>
-                <span class="c1"># insensitive:</span>
-                <span class="n">_file_root</span> <span class="o">=</span> <span class="n">file_root</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_file_root</span><span class="p">)):</span>
-                    <span class="n">sort_by_name_role</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">_file_root</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
-                        <span class="k">break</span>
-            <span class="n">sort_by_name_role</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-
-            <span class="c1"># If the file is named using our sequence denominators,</span>
-            <span class="c1"># we can't use and must skip it</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">seq</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_sequence</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">'"'</span> <span class="o">+</span> <span class="n">filename</span> <span class="o">+</span> <span class="s1">'" named incorrectly. Skipping.'</span><span class="p">)</span>
-                <span class="k">continue</span>
-
             <span class="n">flags</span> <span class="o">=</span> <span class="n">basemodel</span><span class="o">.</span><span class="n">DEFAULT_ITEM_FLAGS</span>
+            <span class="n">seq</span><span class="p">,</span> <span class="n">sequence_path</span> <span class="o">=</span> <span class="n">get_sequence_elements</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">seq</span><span class="p">:</span>
-                <span class="n">seqpath</span> <span class="o">=</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">common</span><span class="o">.</span><span class="n">SEQPROXY</span> <span class="o">+</span> \
-                          <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'.'</span> <span class="o">+</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">seq</span> <span class="ow">and</span> <span class="p">(</span><span class="n">seqpath</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span> <span class="ow">or</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">seq</span> <span class="ow">and</span> <span class="p">(</span><span class="n">sequence_path</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span> <span class="ow">or</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span>
                     <span class="n">filepath</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">):</span>
                 <span class="n">flags</span> <span class="o">=</span> <span class="n">flags</span> <span class="o">|</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsFavourite</span>
 
-            <span class="n">source_path_role</span> <span class="o">=</span> <span class="n">p</span> <span class="o">+</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">file_root</span><span class="p">)</span>
+            <span class="n">parent_path_role</span> <span class="o">=</span> <span class="n">p</span> <span class="o">+</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">file_root</span><span class="p">)</span>
 
             <span class="n">idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="n">common</span><span class="o">.</span><span class="n">max_list_items</span><span class="p">:</span>
@@ -665,7 +687,7 @@
                 <span class="c1">#</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">EntryRole</span><span class="p">:</span> <span class="p">[</span><span class="n">entry</span><span class="p">,</span> <span class="p">],</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">:</span> <span class="n">flags</span><span class="p">,</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">:</span> <span class="n">source_path_role</span><span class="p">,</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">:</span> <span class="n">parent_path_role</span><span class="p">,</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">TodoCountRole</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">FileDetailsRole</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
@@ -693,28 +715,28 @@
             <span class="c1"># to it in the sequence data dict</span>
             <span class="k">if</span> <span class="n">seq</span><span class="p">:</span>
                 <span class="c1"># If the sequence has not yet been added to our dictionary</span>
-                <span class="c1"># of seqeunces we add it here</span>
-                <span class="k">if</span> <span class="n">seqpath</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SEQUENCE_DATA</span><span class="p">:</span>  <span class="c1"># ... and create it if it doesn't exist</span>
-                    <span class="n">seqname</span> <span class="o">=</span> <span class="n">seqpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="c1"># of sequences we add it here</span>
+                <span class="k">if</span> <span class="n">sequence_path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SEQUENCE_DATA</span><span class="p">:</span>  <span class="c1"># ... and create it if it doesn't exist</span>
+                    <span class="n">sequence_name</span> <span class="o">=</span> <span class="n">sequence_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                     <span class="n">flags</span> <span class="o">=</span> <span class="n">basemodel</span><span class="o">.</span><span class="n">DEFAULT_ITEM_FLAGS</span>
 
-                    <span class="k">if</span> <span class="n">seqpath</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">sequence_path</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">:</span>
                         <span class="n">flags</span> <span class="o">=</span> <span class="n">flags</span> <span class="o">|</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsFavourite</span>
 
                     <span class="n">sort_by_name_role</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sort_by_name_role</span><span class="p">)</span>
-                    <span class="n">sort_by_name_role</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="n">seqname</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                    <span class="n">sort_by_name_role</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="n">sequence_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
-                    <span class="n">SEQUENCE_DATA</span><span class="p">[</span><span class="n">seqpath</span><span class="p">]</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">DataDict</span><span class="p">({</span>
-                        <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">:</span> <span class="n">seqname</span><span class="p">,</span>
-                        <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">:</span> <span class="n">seqname</span><span class="p">,</span>
-                        <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">:</span> <span class="n">seqpath</span><span class="p">,</span>
+                    <span class="n">SEQUENCE_DATA</span><span class="p">[</span><span class="n">sequence_path</span><span class="p">]</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">DataDict</span><span class="p">({</span>
+                        <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">:</span> <span class="n">sequence_name</span><span class="p">,</span>
+                        <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">:</span> <span class="n">sequence_name</span><span class="p">,</span>
+                        <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">:</span> <span class="n">sequence_path</span><span class="p">,</span>
                         <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_size</span><span class="p">,</span>
                         <span class="c1">#</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">QueueRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">queues</span><span class="p">,</span>
                         <span class="c1">#</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">EntryRole</span><span class="p">:</span> <span class="p">[],</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">:</span> <span class="n">flags</span><span class="p">,</span>
-                        <span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">:</span> <span class="n">source_path_role</span><span class="p">,</span>
+                        <span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">:</span> <span class="n">parent_path_role</span><span class="p">,</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">TodoCountRole</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">FileDetailsRole</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
@@ -738,8 +760,8 @@
                         <span class="n">common</span><span class="o">.</span><span class="n">ShotgunLinkedRole</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
                     <span class="p">})</span>
 
-                <span class="n">SEQUENCE_DATA</span><span class="p">[</span><span class="n">seqpath</span><span class="p">][</span><span class="n">common</span><span class="o">.</span><span class="n">FramesRole</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-                <span class="n">SEQUENCE_DATA</span><span class="p">[</span><span class="n">seqpath</span><span class="p">][</span><span class="n">common</span><span class="o">.</span><span class="n">EntryRole</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+                <span class="n">SEQUENCE_DATA</span><span class="p">[</span><span class="n">sequence_path</span><span class="p">][</span><span class="n">common</span><span class="o">.</span><span class="n">FramesRole</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+                <span class="n">SEQUENCE_DATA</span><span class="p">[</span><span class="n">sequence_path</span><span class="p">][</span><span class="n">common</span><span class="o">.</span><span class="n">EntryRole</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Copy the existing file item</span>
                 <span class="n">SEQUENCE_DATA</span><span class="p">[</span><span class="n">filepath</span><span class="p">]</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">DataDict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
@@ -753,7 +775,7 @@
             <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="n">common</span><span class="o">.</span><span class="n">max_list_items</span><span class="p">:</span>
                 <span class="k">break</span>  <span class="c1"># Let's limit the maximum number of items we load</span>
 
-            <span class="c1"># A sequence with only one element is not a sequencemas far as</span>
+            <span class="c1"># A sequence with only one element is not a sequence far as</span>
             <span class="c1"># we're concerned</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">FramesRole</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">_seq</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">SequenceRole</span><span class="p">]</span>
@@ -805,7 +827,7 @@
             <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">AssetKey</span><span class="p">)</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="FilesModel.item_iterator"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.files.FilesModel.item_iterator">[docs]</a>    <span class="k">def</span> <span class="nf">item_iterator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="FilesModel.item_generator"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.files.FilesModel.item_generator">[docs]</a>    <span class="k">def</span> <span class="nf">item_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="sd">"""Recursive iterator for retrieving files from all subfolders.</span>
 
 <span class="sd">        """</span>
@@ -817,7 +839,7 @@
 
         <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
-                <span class="k">for</span> <span class="n">_entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_iterator</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">_entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_generator</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="p">):</span>
                     <span class="k">yield</span> <span class="n">_entry</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">yield</span> <span class="n">entry</span></div>

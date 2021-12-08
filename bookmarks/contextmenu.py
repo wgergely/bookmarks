@@ -108,8 +108,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         Call the methods to define which menu items should be showing.
 
         """
-        raise NotImplementedError(
-            'Abstract method must be overriden in subclass.')
+        raise NotImplementedError('Abstract method must be implemented by subclass.')
 
     @common.debug
     @common.error
@@ -1153,45 +1152,29 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def launcher_menu(self):
-        if not self.index.isValid():
-            server = common.active(common.ServerKey)
-            job = common.active(common.JobKey)
-            root = common.active(common.RootKey)
-        else:
-            server, job, root = self.index.data(common.ParentPathRole)[0:3]
+        # server = common.active(common.ServerKey)
+        # job = common.active(common.JobKey)
+        # root = common.active(common.RootKey)
+        #
+        # if not all((server, job, root)):
+        #     return
+        #
+        # db = database.get_db(server, job, root)
+        # with db.connection():
+        #     v = db.value(
+        #         db.source(),
+        #         'applications',
+        #         database.BookmarkTable
+        #     )
+        #
+        # if not isinstance(v, dict) or not v:
+        #     return
 
-        if not all((server, job, root)):
-            return
-
-        db = database.get_db(server, job, root)
-        with db.connection():
-            v = db.value(
-                db.source(),
-                'applications',
-                database.BookmarkTable
-            )
-
-        if not isinstance(v, dict) or not v:
-            return
-
-        k = 'Launcher'
-        if k not in self.menu:
-            self.menu[k] = collections.OrderedDict()
-            self.menu['{}:icon'.format(k)] = ui.get_icon('icon_bw')
-
-        for _k in sorted(v, key=lambda k: v[k]['name']):
-            try:
-                pixmap = QtGui.QPixmap(v[_k]['thumbnail'])
-                pixmap.setDevicePixelRatio(common.pixel_ratio)
-                icon = QtGui.QIcon(pixmap)
-            except:
-                icon = QtGui.QIcon()
-
-            self.menu[k][key()] = {
-                'icon': icon,
-                'text': v[_k]['name'],
-                'action': functools.partial(actions.execute, v[_k]['path']),
-            }
+        self.menu[key()] = {
+            'icon': ui.get_icon('icon'),
+            'text': 'Application Launcher',
+            'action': actions.pick_launcher_item,
+        }
 
     def sg_thumbnail_menu(self):
         if not self.index.isValid():

@@ -212,7 +212,7 @@
 <span class="sd">The model itself does not store data, but all retrieved data is cached to</span>
 <span class="sd">:attr:`bookmarks.common.item_data`. The interface for getting and setting data can be found in the</span>
 <span class="sd">:mod:`bookmarks.common.data`. However, the model is responsible for populating the data cache. See</span>
-<span class="sd">:meth:`.BaseModel.item_iterator()`.</span>
+<span class="sd">:meth:`.BaseModel.item_generator()`.</span>
 
 
 <span class="sd">The model exposes different datasets to the view using the :meth:`BaseModel.task` and</span>
@@ -347,7 +347,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">init_sort_values</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_row_size</span><span class="p">()</span>
 
-<div class="viewcode-block" id="BaseModel.item_iterator"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basemodel.BaseModel.item_iterator">[docs]</a>    <span class="k">def</span> <span class="nf">item_iterator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseModel.item_generator"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basemodel.BaseModel.item_generator">[docs]</a>    <span class="k">def</span> <span class="nf">item_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""A generator method used by :func:`init_data` to yield the items the model</span>
 <span class="sd">        should load.</span>
 
@@ -355,8 +355,7 @@
 <span class="sd">            DirEntry: os.scandir DirEntry objects.</span>
 
 <span class="sd">        """</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s1">'Abstract method has to be implemented in subclass.'</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">'Abstract method must be implemented by subclass.'</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BaseModel.init_data"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basemodel.BaseModel.init_data">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
@@ -368,11 +367,10 @@
 <span class="sd">        The model itself does not store any data, instead, we're using the</span>
 <span class="sd">        :mod:`datacache` module to store item data.</span>
 
-<span class="sd">        The individual items are returned by :func:`item_iterator`.</span>
+<span class="sd">        The individual items are returned by :func:`item_generator`.</span>
 
 <span class="sd">        """</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s1">'Abstract method has to be implemented in subclass.'</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">'Abstract method must be implemented by subclass.'</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BaseModel.reset_data"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basemodel.BaseModel.reset_data">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
@@ -666,8 +664,7 @@
 <span class="sd">            str: A user_settings key value.</span>
 
 <span class="sd">        """</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s1">'Abstract class "user_settings_key" has to be implemented in the subclasses.'</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">'Abstract method must be implemented by subclass.'</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BaseModel.get_local_setting"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basemodel.BaseModel.get_local_setting">[docs]</a>    <span class="k">def</span> <span class="nf">get_local_setting</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key_type</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">ListFilterSection</span><span class="p">):</span>
         <span class="sd">"""Get a value stored in the user settings.</span>
@@ -917,8 +914,7 @@
         <span class="k">return</span> <span class="n">result</span>
 
 <div class="viewcode-block" id="FilterProxyModel.sort"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basemodel.FilterProxyModel.sort">[docs]</a>    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AscendingOrder</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-            <span class="s1">'Sorting on the proxy model is not implemented.'</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">'Sorting is not implemented.'</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FilterProxyModel.init_filter_values"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basemodel.FilterProxyModel.init_filter_values">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>

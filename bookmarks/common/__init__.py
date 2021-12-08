@@ -121,6 +121,9 @@ tray_widget = None
 maya_widget = None
 maya_button_widget = None
 slack_widget = None
+gallery_widget = None
+launcher_widget = None
+message_widget = None
 
 sg_connecting_message = None
 sg_error_message = None

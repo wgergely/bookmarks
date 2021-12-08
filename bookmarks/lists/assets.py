@@ -129,7 +129,7 @@ class AssetsModel(basemodel.BaseModel):
         nth = 1
         c = 0
 
-        for entry in self.item_iterator(source):
+        for entry in self.item_generator(source):
             if self._interrupt_requested:
                 break
 
@@ -167,6 +167,8 @@ class AssetsModel(basemodel.BaseModel):
                     break
                 sort_by_name_role[i] = n.lower()
 
+            parent_path_role = p + (filename,)
+
             idx = len(data)
             if idx >= common.max_list_items:
                 break  # Let's limit the maximum number of items we load
@@ -182,7 +184,7 @@ class AssetsModel(basemodel.BaseModel):
                 #
                 common.EntryRole: [entry, ],
                 common.FlagsRole: flags,
-                common.ParentPathRole: p + (filename,),
+                common.ParentPathRole: parent_path_role,
                 common.DescriptionRole: '',
                 common.TodoCountRole: 0,
                 common.FileDetailsRole: '',
@@ -222,7 +224,7 @@ class AssetsModel(basemodel.BaseModel):
             common.active(common.RootKey),
         )
 
-    def item_iterator(self, path):
+    def item_generator(self, path):
         """Yields DirEntry instances to be processed in init_data.
 
         """

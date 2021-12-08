@@ -313,8 +313,6 @@
         <span class="sd">"""Collects the data needed to populate the asset model.</span>
 
 <span class="sd">        """</span>
-        <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">load_active_values</span><span class="p">()</span>
-
         <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_path</span><span class="p">()</span>
         <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="p">()</span>
         <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span><span class="p">()</span>
@@ -330,13 +328,13 @@
         <span class="n">asset_identifier</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">value</span><span class="p">(</span>
             <span class="n">source</span><span class="p">,</span>
             <span class="s1">'identifier'</span><span class="p">,</span>
-            <span class="n">table</span><span class="o">=</span><span class="n">database</span><span class="o">.</span><span class="n">BookmarkTable</span>
+            <span class="n">database</span><span class="o">.</span><span class="n">BookmarkTable</span>
         <span class="p">)</span>
 
         <span class="n">nth</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_iterator</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_generator</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interrupt_requested</span><span class="p">:</span>
                 <span class="k">break</span>
 
@@ -374,6 +372,8 @@
                     <span class="k">break</span>
                 <span class="n">sort_by_name_role</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
+            <span class="n">parent_path_role</span> <span class="o">=</span> <span class="n">p</span> <span class="o">+</span> <span class="p">(</span><span class="n">filename</span><span class="p">,)</span>
+
             <span class="n">idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="n">common</span><span class="o">.</span><span class="n">max_list_items</span><span class="p">:</span>
                 <span class="k">break</span>  <span class="c1"># Let's limit the maximum number of items we load</span>
@@ -389,7 +389,7 @@
                 <span class="c1">#</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">EntryRole</span><span class="p">:</span> <span class="p">[</span><span class="n">entry</span><span class="p">,</span> <span class="p">],</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">:</span> <span class="n">flags</span><span class="p">,</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">:</span> <span class="n">p</span> <span class="o">+</span> <span class="p">(</span><span class="n">filename</span><span class="p">,),</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">:</span> <span class="n">parent_path_role</span><span class="p">,</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">TodoCountRole</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">FileDetailsRole</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
@@ -429,7 +429,7 @@
             <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">RootKey</span><span class="p">),</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="AssetsModel.item_iterator"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.assets.AssetsModel.item_iterator">[docs]</a>    <span class="k">def</span> <span class="nf">item_iterator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<div class="viewcode-block" id="AssetsModel.item_generator"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.assets.AssetsModel.item_generator">[docs]</a>    <span class="k">def</span> <span class="nf">item_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="sd">"""Yields DirEntry instances to be processed in init_data.</span>
 
 <span class="sd">        """</span>

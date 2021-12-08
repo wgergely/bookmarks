@@ -170,7 +170,10 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../bookmarks.html">Introduction</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">bookmarks.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
 </ul>
 </li>
 </ul>
@@ -200,8 +203,19 @@
         </div>
         <article role="main">
           <h1>Source code for bookmarks.common.sequence</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">re</span>
+<span></span><span class="sd">"""Common path methods to recognise sequence items.</span>
+
+<span class="sd">A sequence item is a file that has a number component that can be incremented.</span>
+<span class="sd">A 'collapsed' item is a single item that refers to a series of sequence items</span>
+<span class="sd">and is annotated by the SEQSTART and SEQEND markers.</span>
+
+<span class="sd">To determine if a path is a sequence, use :func:`get_sequence`.</span>
+<span class="sd">To determine if a path is a collapsed item, use :func:`is_collapsed`.</span>
+
+<span class="sd">"""</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">weakref</span>
+<span class="kn">import</span> <span class="nn">functools</span>
 
 <span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtCore</span>
 
@@ -228,7 +242,8 @@
     <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">UNICODE</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="is_collapsed"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.is_collapsed">[docs]</a><span class="k">def</span> <span class="nf">is_collapsed</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<div class="viewcode-block" id="is_collapsed"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.is_collapsed">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">is_collapsed</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
     <span class="sd">"""Check for the presence of the bracket-enclosed sequence markers.</span>
 
 <span class="sd">    When Bookmarks is displaying a sequence of files as a single item,</span>
@@ -253,14 +268,15 @@
 <span class="sd">               suffix = match.group(3) # '_wgergely.png'</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">            ``SRE_Match``: If the given name is indeed collpased it returns a ``SRE_Match`` object, otherwise ``None``.</span>
+<span class="sd">            ``SRE_Match``: If the given name is indeed collapsed it returns a ``SRE_Match`` object, otherwise ``None``.</span>
 
 <span class="sd">    """</span>
     <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">IsSequenceRegex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">s</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="proxy_path"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.proxy_path">[docs]</a><span class="k">def</span> <span class="nf">proxy_path</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+<div class="viewcode-block" id="proxy_path"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.proxy_path">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">proxy_path</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
     <span class="sd">"""Encompasses the logic used to associate preferences with items.</span>
 
 <span class="sd">    Sequence items need a generic key to save values as the sequence notation</span>
@@ -297,11 +313,12 @@
     <span class="k">return</span> <span class="n">v</span></div>
 
 
-<div class="viewcode-block" id="get_sequence"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.get_sequence">[docs]</a><span class="k">def</span> <span class="nf">get_sequence</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+<div class="viewcode-block" id="get_sequence"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.get_sequence">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_sequence</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
     <span class="sd">"""Check if the given text contains a sequence element.</span>
 
 <span class="sd">    Strictly speaking, a sequence is any file that has a valid number element.</span>
-<span class="sd">    There can only be **one** incrementable element - it will always be the</span>
+<span class="sd">    There can only be **one** incremental element - it will always be the</span>
 <span class="sd">    number closest to the end.</span>
 
 <span class="sd">    The regex will understand sequences with the `v` prefix, eg *v001*, *v002*,</span>

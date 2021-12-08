@@ -214,7 +214,7 @@ methods.</p>
 <p>The model itself does not store data, but all retrieved data is cached to
 <a class="reference internal" href="common.html#bookmarks.common.item_data" title="bookmarks.common.item_data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">bookmarks.common.item_data</span></code></a>. The interface for getting and setting data can be found in the
 <a class="reference internal" href="common.html#module-bookmarks.common.data" title="bookmarks.common.data"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.common.data</span></code></a>. However, the model is responsible for populating the data cache. See
-<a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.item_iterator" title="bookmarks.lists.basemodel.BaseModel.item_iterator"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseModel.item_iterator()</span></code></a>.</p>
+<a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.item_generator" title="bookmarks.lists.basemodel.BaseModel.item_generator"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseModel.item_generator()</span></code></a>.</p>
 <p>The model exposes different datasets to the view using the <a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.task" title="bookmarks.lists.basemodel.BaseModel.task"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseModel.task()</span></code></a> and
 <a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.data_type" title="bookmarks.lists.basemodel.BaseModel.data_type"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseModel.data_type()</span></code></a> switches. This is because file items are stored as sequence and individual items
 simultaneously and because the file model also keeps separate data for each task folder it encounters.</p>
@@ -328,8 +328,8 @@ repaint is requested.</p>
 </dl>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.item_iterator">
-<span class="sig-name descname"><span class="pre">item_iterator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/basemodel.html#BaseModel.item_iterator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.item_iterator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.item_generator">
+<span class="sig-name descname"><span class="pre">item_generator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/basemodel.html#BaseModel.item_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basemodel.BaseModel.item_generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>A generator method used by <a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.init_data" title="bookmarks.lists.basemodel.BaseModel.init_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">init_data()</span></code></a> to yield the items the model
 should load.</p>
 <dl class="field-list simple">
@@ -345,7 +345,7 @@ should load.</p>
 from the file system.</p>
 <p>The model itself does not store any data, instead, we’re using the
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">datacache</span></code> module to store item data.</p>
-<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.item_iterator" title="bookmarks.lists.basemodel.BaseModel.item_iterator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_iterator()</span></code></a>.</p>
+<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.basemodel.BaseModel.item_generator" title="bookmarks.lists.basemodel.BaseModel.item_generator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_generator()</span></code></a>.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.basemodel.BaseModel.reset_data">
@@ -1043,6 +1043,53 @@ inline icons and the source rectangle.</p>
 </dl>
 </dd></dl>
 <dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.lists.delegate.get_file_text_segments">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.lists.delegate.</span></span><span class="sig-name descname"><span class="pre">get_file_text_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#get_file_text_segments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.get_file_text_segments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the <cite>FilesWidget</cite> item <cite>DisplayRole</cite> segments associated with
+custom colors. It is used to paint the FilesWidget items’ extension,
+name, and sequence.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>index</strong> (<em>QModelIndex</em>) – The index currently being painted.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary of tuples. (str, QtGui.QColor)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.lists.delegate.get_filedetail_text_segments">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.lists.delegate.</span></span><span class="sig-name descname"><span class="pre">get_filedetail_text_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#get_filedetail_text_segments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.get_filedetail_text_segments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the <cite>FilesWidget</cite> item <cite>common.FileDetailsRole</cite> segments
+associated with custom colors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>index</strong> (<em>QModelIndex</em>) – The index currently being painted.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dictionary of tuples “{0: (str, QtGui.QColor)}”.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.lists.delegate.get_asset_text_segments">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.lists.delegate.</span></span><span class="sig-name descname"><span class="pre">get_asset_text_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#get_asset_text_segments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.get_asset_text_segments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get asset text segments.</p>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.lists.delegate.get_bookmark_text_segments">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.lists.delegate.</span></span><span class="sig-name descname"><span class="pre">get_bookmark_text_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#get_bookmark_text_segments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.get_bookmark_text_segments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a tuple of text and colour information to be used to mimick
+rich-text like colouring of individual text elements.</p>
+<p>Used by the list delegate to paint the job name and root folder.</p>
+</dd></dl>
+<dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.lists.delegate.draw_subdirs">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.lists.delegate.</span></span><span class="sig-name descname"><span class="pre">draw_subdirs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bg_rect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clickable_rectangles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_text</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#draw_subdirs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.draw_subdirs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper method used to draw the subdirectories of file items.</p>
@@ -1071,6 +1118,11 @@ inline icons and the source rectangle.</p>
 <span class="sig-name descname"><span class="pre">paint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">painter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtGui.QPainter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtWidgets.QStyleOptionViewItem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#BaseDelegate.paint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.BaseDelegate.paint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.delegate.BaseDelegate.get_file_description_rect">
+<span class="sig-name descname"><span class="pre">get_file_description_rect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rectangles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#BaseDelegate.get_file_description_rect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.BaseDelegate.get_file_description_rect" title="Permalink to this definition">¶</a></dt>
+<dd><p>The description rectangle of a file item.</p>
+</dd></dl>
+<dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.delegate.BaseDelegate.get_paint_arguments">
 <span class="sig-name descname"><span class="pre">get_paint_arguments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">painter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">antialiasing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#BaseDelegate.get_paint_arguments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.BaseDelegate.get_paint_arguments" title="Permalink to this definition">¶</a></dt>
 <dd><p>A utility class for gathering all the arguments needed to paint
@@ -1098,6 +1150,16 @@ only already cached result when a request is made.</p>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.delegate.BaseDelegate.get_subdir_rectangles">
+<span class="sig-name descname"><span class="pre">get_subdir_rectangles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">option</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rectangles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#BaseDelegate.get_subdir_rectangles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.BaseDelegate.get_subdir_rectangles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the available mode rectangles for FileWidget index.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.delegate.BaseDelegate.get_asset_description_rect">
+<span class="sig-name descname"><span class="pre">get_asset_description_rect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rectangles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#BaseDelegate.get_asset_description_rect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.BaseDelegate.get_asset_description_rect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the description area of an <code class="docutils literal notranslate"><span class="pre">AssetsWidget</span></code> item.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.delegate.BaseDelegate.paint_description_editor_background">
@@ -1146,6 +1208,32 @@ by the delegate. at <cite>self.fallback_thumb</cite>.</p>
 <span class="sig-name descname"><span class="pre">paint_persistent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#BaseDelegate.paint_persistent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.BaseDelegate.paint_persistent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Paints a gray overlay when an item is archived.</p>
 </dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.delegate.BaseDelegate.paint_simple_name">
+<span class="sig-name descname"><span class="pre">paint_simple_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#BaseDelegate.paint_simple_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.BaseDelegate.paint_simple_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Paints an the current file-names in a simpler form, with only the
+filename and the description visible.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.delegate.BaseDelegate.paint_drag_source">
+<span class="sig-name descname"><span class="pre">paint_drag_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#BaseDelegate.paint_drag_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.BaseDelegate.paint_drag_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overlay do indicate the source of a drag operation.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.delegate.BaseDelegate.paint_bookmark_name">
+<span class="sig-name descname"><span class="pre">paint_bookmark_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#BaseDelegate.paint_bookmark_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.BaseDelegate.paint_bookmark_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Paints name of the <code class="docutils literal notranslate"><span class="pre">BookmarkWidget</span></code>’s items.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.delegate.BaseDelegate.paint_asset_name">
+<span class="sig-name descname"><span class="pre">paint_asset_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#BaseDelegate.paint_asset_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.BaseDelegate.paint_asset_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Paints name of the <code class="docutils literal notranslate"><span class="pre">AssetWidget</span></code>’s items.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.lists.delegate.BaseDelegate.paint_file_name">
+<span class="sig-name descname"><span class="pre">paint_file_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#BaseDelegate.paint_file_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.BaseDelegate.paint_file_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Paints the subfolders and the filename of the current file inside the <code class="docutils literal notranslate"><span class="pre">FilesWidget</span></code>.</p>
+</dd></dl>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.lists.delegate.BookmarksWidgetDelegate">
@@ -1155,23 +1243,6 @@ by the delegate. at <cite>self.fallback_thumb</cite>.</p>
 <dt class="sig sig-object py" id="bookmarks.lists.delegate.BookmarksWidgetDelegate.paint">
 <span class="sig-name descname"><span class="pre">paint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">painter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#BookmarksWidgetDelegate.paint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.BookmarksWidgetDelegate.paint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines how the <code class="docutils literal notranslate"><span class="pre">BookmarksWidget</span></code> should be painted.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.delegate.BookmarksWidgetDelegate.get_description_rect">
-<span class="sig-name descname"><span class="pre">get_description_rect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#BookmarksWidgetDelegate.get_description_rect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.BookmarksWidgetDelegate.get_description_rect" title="Permalink to this definition">¶</a></dt>
-<dd><p>We don’t have editable descriptions for bookmark items.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.delegate.BookmarksWidgetDelegate.get_text_segments">
-<span class="sig-name descname"><span class="pre">get_text_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#BookmarksWidgetDelegate.get_text_segments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.BookmarksWidgetDelegate.get_text_segments" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a tuple of text and colour information to be used to mimick
-rich-text like colouring of individual text elements.</p>
-<p>Used by the list delegate to paint the job name and root folder.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.delegate.BookmarksWidgetDelegate.paint_name">
-<span class="sig-name descname"><span class="pre">paint_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#BookmarksWidgetDelegate.paint_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.BookmarksWidgetDelegate.paint_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Paints name of the <code class="docutils literal notranslate"><span class="pre">BookmarkWidget</span></code>’s items.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.delegate.BookmarksWidgetDelegate.sizeHint">
@@ -1188,21 +1259,6 @@ rich-text like colouring of individual text elements.</p>
 <dd><p>Defines how the <code class="docutils literal notranslate"><span class="pre">AssetsWidget</span></code>’s’ items should be painted.</p>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.delegate.AssetsWidgetDelegate.get_description_rect">
-<span class="sig-name descname"><span class="pre">get_description_rect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rectangles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#AssetsWidgetDelegate.get_description_rect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.AssetsWidgetDelegate.get_description_rect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the description area of an <code class="docutils literal notranslate"><span class="pre">AssetsWidget</span></code> item.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.delegate.AssetsWidgetDelegate.paint_name">
-<span class="sig-name descname"><span class="pre">paint_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#AssetsWidgetDelegate.paint_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.AssetsWidgetDelegate.paint_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Paints name of the <code class="docutils literal notranslate"><span class="pre">AssetWidget</span></code>’s items.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.delegate.AssetsWidgetDelegate.get_text_segments">
-<span class="sig-name descname"><span class="pre">get_text_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#AssetsWidgetDelegate.get_text_segments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.AssetsWidgetDelegate.get_text_segments" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get asset text segments.</p>
-</dd></dl>
-<dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.delegate.AssetsWidgetDelegate.sizeHint">
 <span class="sig-name descname"><span class="pre">sizeHint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtWidgets.QStyleOptionViewItem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">PySide2.QtCore.QSize</span></span></span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#AssetsWidgetDelegate.sizeHint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.AssetsWidgetDelegate.sizeHint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1217,67 +1273,6 @@ rich-text like colouring of individual text elements.</p>
 <dd><p>Defines how the <code class="docutils literal notranslate"><span class="pre">FilesWidget</span></code>’s’ items should be painted.</p>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.delegate.FilesWidgetDelegate.get_description_rect">
-<span class="sig-name descname"><span class="pre">get_description_rect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rectangles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#FilesWidgetDelegate.get_description_rect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.FilesWidgetDelegate.get_description_rect" title="Permalink to this definition">¶</a></dt>
-<dd><p>The description rectangle of a file item.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.delegate.FilesWidgetDelegate.paint_name">
-<span class="sig-name descname"><span class="pre">paint_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#FilesWidgetDelegate.paint_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.FilesWidgetDelegate.paint_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Paints the subfolders and the filename of the current file inside the <code class="docutils literal notranslate"><span class="pre">FilesWidget</span></code>.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.delegate.FilesWidgetDelegate.paint_simple_name">
-<span class="sig-name descname"><span class="pre">paint_simple_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#FilesWidgetDelegate.paint_simple_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.FilesWidgetDelegate.paint_simple_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Paints an the current file-names in a simpler form, with only the
-filename and the description visible.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.delegate.FilesWidgetDelegate.paint_drag_source">
-<span class="sig-name descname"><span class="pre">paint_drag_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#FilesWidgetDelegate.paint_drag_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.FilesWidgetDelegate.paint_drag_source" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overlay do indicate the source of a drag operation.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.delegate.FilesWidgetDelegate.get_text_segments">
-<span class="sig-name descname"><span class="pre">get_text_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#FilesWidgetDelegate.get_text_segments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.FilesWidgetDelegate.get_text_segments" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the <cite>FilesWidget</cite> item <cite>DisplayRole</cite> segments associated with
-custom colors. It is used to paint the FilesWidget items’ extension,
-name, and sequence.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>index</strong> (<em>QModelIndex</em>) – The index currently being painted.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A dictionary of tuples. (str, QtGui.QColor)</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.delegate.FilesWidgetDelegate.get_filedetail_text_segments">
-<span class="sig-name descname"><span class="pre">get_filedetail_text_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#FilesWidgetDelegate.get_filedetail_text_segments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.FilesWidgetDelegate.get_filedetail_text_segments" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the <cite>FilesWidget</cite> item <cite>common.FileDetailsRole</cite> segments
-associated with custom colors.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>index</strong> (<em>QModelIndex</em>) – The index currently being painted.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A dictionary of tuples “{0: (str, QtGui.QColor)}”.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.delegate.FilesWidgetDelegate.get_subdir_rectangles">
-<span class="sig-name descname"><span class="pre">get_subdir_rectangles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">option</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rectangles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#FilesWidgetDelegate.get_subdir_rectangles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.FilesWidgetDelegate.get_subdir_rectangles" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the available mode rectangles for FileWidget index.</p>
-</dd></dl>
-<dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.delegate.FilesWidgetDelegate.sizeHint">
 <span class="sig-name descname"><span class="pre">sizeHint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtWidgets.QStyleOptionViewItem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">→</span> <span class="sig-return-typehint"><span class="pre">PySide2.QtCore.QSize</span></span></span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#FilesWidgetDelegate.sizeHint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.FilesWidgetDelegate.sizeHint" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1285,17 +1280,7 @@ associated with custom colors.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.lists.delegate.FavouritesWidgetDelegate">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.lists.delegate.</span></span><span class="sig-name descname"><span class="pre">FavouritesWidgetDelegate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#FavouritesWidgetDelegate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.FavouritesWidgetDelegate" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.delegate.FavouritesWidgetDelegate.paint_name">
-<span class="sig-name descname"><span class="pre">paint_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#FavouritesWidgetDelegate.paint_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.FavouritesWidgetDelegate.paint_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Paints the subfolders and the filename of the current file inside the <code class="docutils literal notranslate"><span class="pre">FilesWidget</span></code>.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.delegate.FavouritesWidgetDelegate.paint_background">
-<span class="sig-name descname"><span class="pre">paint_background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#FavouritesWidgetDelegate.paint_background"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.FavouritesWidgetDelegate.paint_background" title="Permalink to this definition">¶</a></dt>
-<dd><p>Paints the background for all list items.</p>
-</dd></dl>
-</dd></dl>
+<dd></dd></dl>
 </section>
 <section id="module-bookmarks.lists.bookmarks">
 <span id="lists-bookmarks"></span><h2>lists.bookmarks<a class="headerlink" href="#module-bookmarks.lists.bookmarks" title="Permalink to this headline">¶</a></h2>
@@ -1327,11 +1312,11 @@ associated with custom colors.</p>
 from the file system.</p>
 <p>The model itself does not store any data, instead, we’re using the
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">datacache</span></code> module to store item data.</p>
-<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.bookmarks.BookmarksModel.item_iterator" title="bookmarks.lists.bookmarks.BookmarksModel.item_iterator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_iterator()</span></code></a>.</p>
+<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.bookmarks.BookmarksModel.item_generator" title="bookmarks.lists.bookmarks.BookmarksModel.item_generator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_generator()</span></code></a>.</p>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.bookmarks.BookmarksModel.item_iterator">
-<span class="sig-name descname"><span class="pre">item_iterator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/bookmarks.html#BookmarksModel.item_iterator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.bookmarks.BookmarksModel.item_iterator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="bookmarks.lists.bookmarks.BookmarksModel.item_generator">
+<span class="sig-name descname"><span class="pre">item_generator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/bookmarks.html#BookmarksModel.item_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.bookmarks.BookmarksModel.item_generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>A generator method used by <a class="reference internal" href="#bookmarks.lists.bookmarks.BookmarksModel.init_data" title="bookmarks.lists.bookmarks.BookmarksModel.init_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">init_data()</span></code></a> to yield the items the model
 should load.</p>
 <dl class="field-list simple">
@@ -1454,7 +1439,7 @@ Used in conjunction with <a class="reference internal" href="#bookmarks.lists.as
 from the file system.</p>
 <p>The model itself does not store any data, instead, we’re using the
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">datacache</span></code> module to store item data.</p>
-<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.assets.AssetsModel.item_iterator" title="bookmarks.lists.assets.AssetsModel.item_iterator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_iterator()</span></code></a>.</p>
+<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.assets.AssetsModel.item_generator" title="bookmarks.lists.assets.AssetsModel.item_generator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_generator()</span></code></a>.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.assets.AssetsModel.source_path">
@@ -1470,8 +1455,8 @@ from the file system.</p>
 </dl>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.assets.AssetsModel.item_iterator">
-<span class="sig-name descname"><span class="pre">item_iterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/assets.html#AssetsModel.item_iterator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.assets.AssetsModel.item_iterator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="bookmarks.lists.assets.AssetsModel.item_generator">
+<span class="sig-name descname"><span class="pre">item_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/assets.html#AssetsModel.item_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.assets.AssetsModel.item_generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Yields DirEntry instances to be processed in init_data.</p>
 </dd></dl>
 <dl class="py method">
@@ -1545,6 +1530,11 @@ clicked.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.lists.files.</span></span><span class="sig-name descname"><span class="pre">add_path_to_mime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/files.html#add_path_to_mime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.files.add_path_to_mime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds the given path to the mime data.</p>
 </dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.lists.files.get_path_elements">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.lists.files.</span></span><span class="sig-name descname"><span class="pre">get_path_elements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_source_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/files.html#get_path_elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.files.get_path_elements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Utility method used to cache and retrieve path elements.</p>
+</dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.lists.files.DropIndicatorWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.lists.files.</span></span><span class="sig-name descname"><span class="pre">DropIndicatorWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/files.html#DropIndicatorWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.files.DropIndicatorWidget" title="Permalink to this definition">¶</a></dt>
@@ -1614,7 +1604,7 @@ See the <code class="xref py py-mod docutils literal notranslate"><span class="p
 from the file system.</p>
 <p>The model itself does not store any data, instead, we’re using the
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">datacache</span></code> module to store item data.</p>
-<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.files.FilesModel.item_iterator" title="bookmarks.lists.files.FilesModel.item_iterator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_iterator()</span></code></a>.</p>
+<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.files.FilesModel.item_generator" title="bookmarks.lists.files.FilesModel.item_generator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_generator()</span></code></a>.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.files.FilesModel.disable_filter">
@@ -1635,8 +1625,8 @@ from the file system.</p>
 </dl>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.files.FilesModel.item_iterator">
-<span class="sig-name descname"><span class="pre">item_iterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/files.html#FilesModel.item_iterator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.files.FilesModel.item_iterator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="bookmarks.lists.files.FilesModel.item_generator">
+<span class="sig-name descname"><span class="pre">item_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/files.html#FilesModel.item_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.files.FilesModel.item_generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Recursive iterator for retrieving files from all subfolders.</p>
 </dd></dl>
 <dl class="py method">
@@ -1754,7 +1744,7 @@ favourite items.</p>
 from the file system.</p>
 <p>The model itself does not store any data, instead, we’re using the
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">datacache</span></code> module to store item data.</p>
-<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.favourites.FavouritesModel.item_iterator" title="bookmarks.lists.favourites.FavouritesModel.item_iterator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_iterator()</span></code></a>.</p>
+<p>The individual items are returned by <a class="reference internal" href="#bookmarks.lists.favourites.FavouritesModel.item_generator" title="bookmarks.lists.favourites.FavouritesModel.item_generator"><code class="xref py py-func docutils literal notranslate"><span class="pre">item_generator()</span></code></a>.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.favourites.FavouritesModel.source_path">
@@ -1770,8 +1760,8 @@ from the file system.</p>
 </dl>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.favourites.FavouritesModel.item_iterator">
-<span class="sig-name descname"><span class="pre">item_iterator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/favourites.html#FavouritesModel.item_iterator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.favourites.FavouritesModel.item_iterator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="bookmarks.lists.favourites.FavouritesModel.item_generator">
+<span class="sig-name descname"><span class="pre">item_generator</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/favourites.html#FavouritesModel.item_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.favourites.FavouritesModel.item_generator" title="Permalink to this definition">¶</a></dt>
 <dd><p>We’re using the saved keys to find and return the DirEntries
 corresponding to the saved favourites.</p>
 </dd></dl>
@@ -1812,16 +1802,6 @@ corresponding to the saved favourites.</p>
 <dt class="sig sig-object py" id="bookmarks.lists.favourites.FavouritesWidget.ContextMenu">
 <span class="sig-name descname"><span class="pre">ContextMenu</span></span><a class="headerlink" href="#bookmarks.lists.favourites.FavouritesWidget.ContextMenu" title="Permalink to this definition">¶</a></dt>
 <dd><p>alias of <a class="reference internal" href="#bookmarks.lists.favourites.FavouritesWidgetContextMenu" title="bookmarks.lists.favourites.FavouritesWidgetContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.lists.favourites.FavouritesWidgetContextMenu</span></code></a></p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.favourites.FavouritesWidget.buttons_hidden">
-<span class="sig-name descname"><span class="pre">buttons_hidden</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/favourites.html#FavouritesWidget.buttons_hidden"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.favourites.FavouritesWidget.buttons_hidden" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the visibility of the inline icon buttons.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.favourites.FavouritesWidget.inline_icons_count">
-<span class="sig-name descname"><span class="pre">inline_icons_count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/favourites.html#FavouritesWidget.inline_icons_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.favourites.FavouritesWidget.inline_icons_count" title="Permalink to this definition">¶</a></dt>
-<dd><p>The numberof inline icons.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.favourites.FavouritesWidget.toggle_item_flag">
@@ -1947,7 +1927,7 @@ changes in the model’s parent folder.</p>
 from the file system.</p>
 <p>The model itself does not store any data, instead, we’re using the
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">datacache</span></code> module to store item data.</p>
-<p>The individual items are returned by <code class="xref py py-func docutils literal notranslate"><span class="pre">item_iterator()</span></code>.</p>
+<p>The individual items are returned by <code class="xref py py-func docutils literal notranslate"><span class="pre">item_generator()</span></code>.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.tasks.TaskFolderModel.check_task">

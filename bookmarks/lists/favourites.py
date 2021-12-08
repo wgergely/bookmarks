@@ -2,20 +2,18 @@
 """Classes responsible for viewing and editing items marked as favourites.
 
 """
-import os
 import functools
+import os
 
-from PySide2 import QtWidgets, QtCore, QtGui
+from PySide2 import QtCore
 
-from .. import log
-from .. import common
-from .. threads import threads
-from .. import contextmenu
-from .. import actions
-
+from . import basemodel
 from . import delegate
 from . import files
-from . import basemodel
+from .. import actions
+from .. import common
+from .. import contextmenu
+from ..threads import threads
 
 
 def _check_sequence(path):
@@ -25,7 +23,7 @@ def _check_sequence(path):
     if not seq:
         return path
 
-    # Let's see if we can find more than one members
+    # Let's see if we can find more than one member
     file_info = QtCore.QFileInfo(path)
     frames = 0
     for entry in os.scandir(file_info.dir().path()):
@@ -86,74 +84,48 @@ class FavouritesModel(files.FilesModel):
     @common.status_bar_message('Loading My Files...')
     @basemodel.initdata
     def init_data(self):
-        p = self.source_path()
-        k = self.task()
-        if not k:
-            return
+        __p = self.source_path()
+        __k = self.task()
         t = common.FileItem
-        data = common.get_data(p, k, t)
+        data = common.get_data(__p, __k, t)
 
         SEQUENCE_DATA = common.DataDict()
 
         nth = 1
         c = 0
-        for entry, source_paths in self.item_iterator():
-            _source_path = '/'.join(source_paths)
-
+        for entry, source_paths in self.item_generator():
             if self._interrupt_requested:
                 break
 
-            if '.' in entry.name:
-                ext = entry.name.split('.')[-1]
+            if len(source_paths) == 3:
+                p = source_paths[0:3]
+            elif len(source_paths) == 4:
+                p = source_paths[0:4]
+
+            if len(source_paths) <= 4:
+                k = 'default'
             else:
-                ext = '0'
+                k = source_paths[4]
 
+            _source_path = '/'.join(source_paths)
             filename = entry.name
-
-            # Skipping common hidden files
-            if filename[0] == '.':
-                continue
-            if 'thumbs.db' in filename:
-                continue
-
-            filepath = entry.path.replace('\\', '/')
-
-            # Progress bar
-            c += 1
-            if not c % nth:
-                common.signals.showStatusBarMessage.emit(
-                    'Loading files (found ' + str(c) + ' items)...')
-                QtWidgets.QApplication.instance().processEvents()
-
-            # Getting the fileroot
-            fileroot = filepath.replace(_source_path, '').strip('/')
-            fileroot = '/'.join(fileroot.split('/')[:-1])
-
-            # To sort by subfolders correctly, we'll have to populate a list
-            # with all subfolders and file names. The list must be of fixed
-            # length and we'll do case insensitive comparisons:
-            sort_by_name_role = files.DEFAULT_SORT_BY_NAME_ROLE.copy()
-            if fileroot:
-                _fileroot = fileroot.lower().split('/')
-                for idx in range(len(_fileroot)):
-                    sort_by_name_role[idx] = _fileroot[idx]
-                    if idx == 6:
-                        break
-            sort_by_name_role[7] = filename.lower()
-
-            try:
-                seq = common.get_sequence(filepath)
-            except RuntimeError:
-                log.error('"' + filename + '" named incorrectly. Skipping.')
-                continue
-
+            filepath, ext, file_root, _dir, sort_by_name_role = files.get_path_elements(
+                filename,
+                entry.path,
+                _source_path
+            )
             flags = basemodel.DEFAULT_ITEM_FLAGS
+            seq, sequence_path = files.get_sequence_elements(filepath)
 
-            if seq:
-                seqpath = seq.group(1) + common.SEQPROXY + \
-                    seq.group(3) + '.' + seq.group(4)
-            if (seq and (seqpath in common.favourites or filepath in common.favourites)) or (filepath in common.favourites):
+            if (seq and (sequence_path in common.favourites or filepath in common.favourites)) or (
+                    filepath in common.favourites):
                 flags = flags | common.MarkedAsFavourite
+
+            parent_path_role = source_paths
+
+            if '.' not in filename:
+                for idx in range(6):
+                    sort_by_name_role[idx] = 'zzzz'
 
             # Let's limit the maximum number of items we load
             idx = len(data)
@@ -171,7 +143,7 @@ class FavouritesModel(files.FilesModel):
                 #
                 common.EntryRole: [entry, ],
                 common.FlagsRole: flags,
-                common.ParentPathRole: source_paths,
+                common.ParentPathRole: parent_path_role,
                 common.DescriptionRole: '',
                 common.TodoCountRole: 0,
                 common.FileDetailsRole: '',
@@ -199,28 +171,28 @@ class FavouritesModel(files.FilesModel):
             # to it in the sequence data dict
             if seq:
                 # If the sequence has not yet been added to our dictionary
-                # of seqeunces we add it here
-                if seqpath not in SEQUENCE_DATA:  # ... and create it if it doesn't exist
-                    seqname = seqpath.split('/')[-1]
+                # of sequences we add it here
+                if sequence_path not in SEQUENCE_DATA:  # ... and create it if it doesn't exist
+                    sequence_name = sequence_path.split('/')[-1]
                     flags = basemodel.DEFAULT_ITEM_FLAGS
 
-                    if seqpath in common.favourites:
+                    if sequence_path in common.favourites:
                         flags = flags | common.MarkedAsFavourite
 
                     sort_by_name_role = list(sort_by_name_role)
-                    sort_by_name_role[7] = seqname.lower()
+                    sort_by_name_role[7] = sequence_name.lower()
 
-                    SEQUENCE_DATA[seqpath] = common.DataDict({
-                        QtCore.Qt.DisplayRole: seqname,
-                        QtCore.Qt.EditRole: seqname,
-                        QtCore.Qt.StatusTipRole: seqpath,
+                    SEQUENCE_DATA[sequence_path] = common.DataDict({
+                        QtCore.Qt.DisplayRole: sequence_name,
+                        QtCore.Qt.EditRole: sequence_name,
+                        QtCore.Qt.StatusTipRole: sequence_path,
                         QtCore.Qt.SizeHintRole: self._row_size,
                         #
                         common.QueueRole: self.queues,
                         #
                         common.EntryRole: [],
                         common.FlagsRole: flags,
-                        common.ParentPathRole: source_paths,
+                        common.ParentPathRole: parent_path_role,
                         common.DescriptionRole: '',
                         common.TodoCountRole: 0,
                         common.FileDetailsRole: '',
@@ -244,8 +216,8 @@ class FavouritesModel(files.FilesModel):
                         common.ShotgunLinkedRole: False,
                     })
 
-                SEQUENCE_DATA[seqpath][common.FramesRole].append(seq.group(2))
-                SEQUENCE_DATA[seqpath][common.EntryRole].append(entry)
+                SEQUENCE_DATA[sequence_path][common.FramesRole].append(seq.group(2))
+                SEQUENCE_DATA[sequence_path][common.EntryRole].append(entry)
             else:
                 # Copy the existing file item
                 SEQUENCE_DATA[filepath] = common.DataDict(data[idx])
@@ -253,7 +225,7 @@ class FavouritesModel(files.FilesModel):
 
         # Cast the sequence data back onto the model
         t = common.SequenceItem
-        data = common.get_data(p, k, t)
+        data = common.get_data(__p, __k, t)
 
         # Casting the sequence data back onto the model
         for idx, v in enumerate(SEQUENCE_DATA.values()):
@@ -264,10 +236,10 @@ class FavouritesModel(files.FilesModel):
                 # A sequence with only one element is not a sequence
                 _seq = v[common.SequenceRole]
                 filepath = (
-                    _seq.group(1) +
-                    v[common.FramesRole][0] +
-                    _seq.group(3) +
-                    '.' + _seq.group(4)
+                        _seq.group(1) +
+                        v[common.FramesRole][0] +
+                        _seq.group(3) +
+                        '.' + _seq.group(4)
                 )
                 filename = filepath.split('/')[-1]
                 v[QtCore.Qt.DisplayRole] = filename
@@ -298,7 +270,7 @@ class FavouritesModel(files.FilesModel):
         """
         return common.pseudo_local_bookmark()
 
-    def item_iterator(self):
+    def item_generator(self):
         """We're using the saved keys to find and return the DirEntries
         corresponding to the saved favourites.
 
@@ -312,7 +284,7 @@ class FavouritesModel(files.FilesModel):
             if not QtCore.QFileInfo(_path).exists():
                 continue
 
-            source_paths = common.favourites[k]
+            source_paths = tuple(f for f in common.favourites[k] if f and f is not 'default')
             for entry in os.scandir(_path):
                 path = entry.path.replace('\\', '/')
                 if path == k:
@@ -345,13 +317,6 @@ class FavouritesWidget(files.FilesWidget):
             icon=icon,
             parent=parent
         )
-
-    def buttons_hidden(self):
-        """Returns the visibility of the inline icon buttons."""
-        return True
-
-    def inline_icons_count(self):
-        return 3
 
     def toggle_item_flag(self, index, flag, state=None, commit_now=True):
         if flag != common.MarkedAsFavourite:

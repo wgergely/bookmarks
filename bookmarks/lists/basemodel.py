@@ -7,7 +7,7 @@ methods.
 The model itself does not store data, but all retrieved data is cached to
 :attr:`bookmarks.common.item_data`. The interface for getting and setting data can be found in the
 :mod:`bookmarks.common.data`. However, the model is responsible for populating the data cache. See
-:meth:`.BaseModel.item_iterator()`.
+:meth:`.BaseModel.item_generator()`.
 
 
 The model exposes different datasets to the view using the :meth:`BaseModel.task` and
@@ -142,7 +142,7 @@ class BaseModel(QtCore.QAbstractListModel):
         self.init_sort_values()
         self.init_row_size()
 
-    def item_iterator(self):
+    def item_generator(self):
         """A generator method used by :func:`init_data` to yield the items the model
         should load.
 
@@ -150,8 +150,7 @@ class BaseModel(QtCore.QAbstractListModel):
             DirEntry: os.scandir DirEntry objects.
 
         """
-        raise NotImplementedError(
-            'Abstract method has to be implemented in subclass.')
+        raise NotImplementedError('Abstract method must be implemented by subclass.')
 
     @common.debug
     @common.error
@@ -163,11 +162,10 @@ class BaseModel(QtCore.QAbstractListModel):
         The model itself does not store any data, instead, we're using the
         :mod:`datacache` module to store item data.
 
-        The individual items are returned by :func:`item_iterator`.
+        The individual items are returned by :func:`item_generator`.
 
         """
-        raise NotImplementedError(
-            'Abstract method has to be implemented in subclass.')
+        raise NotImplementedError('Abstract method must be implemented by subclass.')
 
     @common.error
     @common.debug
@@ -461,8 +459,7 @@ class BaseModel(QtCore.QAbstractListModel):
             str: A user_settings key value.
 
         """
-        raise NotImplementedError(
-            'Abstract class "user_settings_key" has to be implemented in the subclasses.')
+        raise NotImplementedError('Abstract method must be implemented by subclass.')
 
     def get_local_setting(self, key_type, key=None, section=common.ListFilterSection):
         """Get a value stored in the user settings.
@@ -712,8 +709,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         return result
 
     def sort(self, column, order=QtCore.Qt.AscendingOrder):
-        raise NotImplementedError(
-            'Sorting on the proxy model is not implemented.')
+        raise NotImplementedError('Sorting is not implemented.')
 
     @common.error
     @common.debug

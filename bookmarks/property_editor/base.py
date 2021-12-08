@@ -752,22 +752,21 @@ class BasePropertyEditor(QtWidgets.QDialog):
         Eg. in the case of assets this is `server/job/root/asset`
 
         """
-        raise NotImplementedError('Must be overridden in subclass.')
+        raise NotImplementedError('Abstract method must be implemented by subclass.')
 
     @QtCore.Slot()
     def init_data(self):
         """Initialises the current/default values.
 
         """
-        raise NotImplementedError(
-            'Init data must be overriden in the subclass.')
+        raise NotImplementedError('Abstract method must be implemented by subclass.')
 
     @QtCore.Slot()
     def save_changes(self):
         """Abstract method responsible for saving changed data.
 
         """
-        raise NotImplementedError('Must be overriden in the subclass.')
+        raise NotImplementedError('Abstract method must be implemented by subclass.')
 
     @QtCore.Slot()
     def done(self, result):

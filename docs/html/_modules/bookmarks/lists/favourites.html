@@ -170,7 +170,10 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../bookmarks.html">Introduction</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">bookmarks.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
 </ul>
 </li>
 </ul>
@@ -204,20 +207,18 @@
 <span class="sd">"""Classes responsible for viewing and editing items marked as favourites.</span>
 
 <span class="sd">"""</span>
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtCore</span>
 
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">common</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="n">threads</span> <span class="kn">import</span> <span class="nn">threads</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">contextmenu</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">actions</span>
-
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">basemodel</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">delegate</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">files</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">basemodel</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">actions</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">common</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">contextmenu</span>
+<span class="kn">from</span> <span class="nn">..threads</span> <span class="kn">import</span> <span class="n">threads</span>
 
 
 <span class="k">def</span> <span class="nf">_check_sequence</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
@@ -227,7 +228,7 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">seq</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">path</span>
 
-    <span class="c1"># Let's see if we can find more than one members</span>
+    <span class="c1"># Let's see if we can find more than one member</span>
     <span class="n">file_info</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileInfo</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">frames</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="n">file_info</span><span class="o">.</span><span class="n">dir</span><span class="p">()</span><span class="o">.</span><span class="n">path</span><span class="p">()):</span>
@@ -243,8 +244,8 @@
     <span class="k">return</span> <span class="n">path</span>
 
 
-<div class="viewcode-block" id="FavouritesWidgetContextMenu"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.favourites.FavouritesWidgetContextMenu">[docs]</a><span class="k">class</span> <span class="nc">FavouritesWidgetContextMenu</span><span class="p">(</span><span class="n">contextmenu</span><span class="o">.</span><span class="n">BaseContextMenu</span><span class="p">):</span>
-<div class="viewcode-block" id="FavouritesWidgetContextMenu.setup"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.favourites.FavouritesWidgetContextMenu.setup">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
+<div class="viewcode-block" id="FavouritesWidgetContextMenu"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.favourites.FavouritesWidgetContextMenu">[docs]</a><span class="k">class</span> <span class="nc">FavouritesWidgetContextMenu</span><span class="p">(</span><span class="n">contextmenu</span><span class="o">.</span><span class="n">BaseContextMenu</span><span class="p">):</span>
+<div class="viewcode-block" id="FavouritesWidgetContextMenu.setup"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.favourites.FavouritesWidgetContextMenu.setup">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">control_favourites_menu</span><span class="p">()</span>
@@ -260,7 +261,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">refresh_menu</span><span class="p">()</span></div></div>
 
 
-<div class="viewcode-block" id="FavouritesModel"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.favourites.FavouritesModel">[docs]</a><span class="k">class</span> <span class="nc">FavouritesModel</span><span class="p">(</span><span class="n">files</span><span class="o">.</span><span class="n">FilesModel</span><span class="p">):</span>
+<div class="viewcode-block" id="FavouritesModel"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.favourites.FavouritesModel">[docs]</a><span class="k">class</span> <span class="nc">FavouritesModel</span><span class="p">(</span><span class="n">files</span><span class="o">.</span><span class="n">FilesModel</span><span class="p">):</span>
     <span class="sd">"""The model responsible for displaying the saved favourites."""</span>
     <span class="n">queues</span> <span class="o">=</span> <span class="p">(</span><span class="n">threads</span><span class="o">.</span><span class="n">FavouriteInfo</span><span class="p">,</span> <span class="n">threads</span><span class="o">.</span><span class="n">FavouriteThumbnail</span><span class="p">)</span>
 
@@ -276,7 +277,7 @@
         <span class="p">)</span>
         <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">favouritesChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queued_model_reset</span><span class="p">)</span>
 
-<div class="viewcode-block" id="FavouritesModel.queued_model_reset"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.favourites.FavouritesModel.queued_model_reset">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+<div class="viewcode-block" id="FavouritesModel.queued_model_reset"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.favourites.FavouritesModel.queued_model_reset">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">queued_model_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Starts/reset the timer responsible for reloading the list of</span>
 <span class="sd">        favourite items.</span>
@@ -288,74 +289,48 @@
     <span class="nd">@common</span><span class="o">.</span><span class="n">status_bar_message</span><span class="p">(</span><span class="s1">'Loading My Files...'</span><span class="p">)</span>
     <span class="nd">@basemodel</span><span class="o">.</span><span class="n">initdata</span>
     <span class="k">def</span> <span class="nf">init_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_path</span><span class="p">()</span>
-        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">k</span><span class="p">:</span>
-            <span class="k">return</span>
+        <span class="n">__p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_path</span><span class="p">()</span>
+        <span class="n">__k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="p">()</span>
         <span class="n">t</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">FileItem</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">__p</span><span class="p">,</span> <span class="n">__k</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
 
         <span class="n">SEQUENCE_DATA</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">DataDict</span><span class="p">()</span>
 
         <span class="n">nth</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">entry</span><span class="p">,</span> <span class="n">source_paths</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_iterator</span><span class="p">():</span>
-            <span class="n">_source_path</span> <span class="o">=</span> <span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">source_paths</span><span class="p">)</span>
-
+        <span class="k">for</span> <span class="n">entry</span><span class="p">,</span> <span class="n">source_paths</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_generator</span><span class="p">():</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interrupt_requested</span><span class="p">:</span>
                 <span class="k">break</span>
 
-            <span class="k">if</span> <span class="s1">'.'</span> <span class="ow">in</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
-                <span class="n">ext</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'.'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">source_paths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">source_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">source_paths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">source_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">source_paths</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="s1">'default'</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">ext</span> <span class="o">=</span> <span class="s1">'0'</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="n">source_paths</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
 
+            <span class="n">_source_path</span> <span class="o">=</span> <span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">source_paths</span><span class="p">)</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span>
-
-            <span class="c1"># Skipping common hidden files</span>
-            <span class="k">if</span> <span class="n">filename</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'.'</span><span class="p">:</span>
-                <span class="k">continue</span>
-            <span class="k">if</span> <span class="s1">'thumbs.db'</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="n">filepath</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'</span><span class="se">\\</span><span class="s1">'</span><span class="p">,</span> <span class="s1">'/'</span><span class="p">)</span>
-
-            <span class="c1"># Progress bar</span>
-            <span class="n">c</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span> <span class="o">%</span> <span class="n">nth</span><span class="p">:</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">showStatusBarMessage</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span>
-                    <span class="s1">'Loading files (found '</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="s1">' items)...'</span><span class="p">)</span>
-                <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">processEvents</span><span class="p">()</span>
-
-            <span class="c1"># Getting the fileroot</span>
-            <span class="n">fileroot</span> <span class="o">=</span> <span class="n">filepath</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">_source_path</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)</span>
-            <span class="n">fileroot</span> <span class="o">=</span> <span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fileroot</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-
-            <span class="c1"># To sort by subfolders correctly, we'll have to populate a list</span>
-            <span class="c1"># with all subfolders and file names. The list must be of fixed</span>
-            <span class="c1"># length and we'll do case insensitive comparisons:</span>
-            <span class="n">sort_by_name_role</span> <span class="o">=</span> <span class="n">files</span><span class="o">.</span><span class="n">DEFAULT_SORT_BY_NAME_ROLE</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">fileroot</span><span class="p">:</span>
-                <span class="n">_fileroot</span> <span class="o">=</span> <span class="n">fileroot</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_fileroot</span><span class="p">)):</span>
-                    <span class="n">sort_by_name_role</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">_fileroot</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
-                        <span class="k">break</span>
-            <span class="n">sort_by_name_role</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">seq</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_sequence</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">'"'</span> <span class="o">+</span> <span class="n">filename</span> <span class="o">+</span> <span class="s1">'" named incorrectly. Skipping.'</span><span class="p">)</span>
-                <span class="k">continue</span>
-
+            <span class="n">filepath</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">file_root</span><span class="p">,</span> <span class="n">_dir</span><span class="p">,</span> <span class="n">sort_by_name_role</span> <span class="o">=</span> <span class="n">files</span><span class="o">.</span><span class="n">get_path_elements</span><span class="p">(</span>
+                <span class="n">filename</span><span class="p">,</span>
+                <span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+                <span class="n">_source_path</span>
+            <span class="p">)</span>
             <span class="n">flags</span> <span class="o">=</span> <span class="n">basemodel</span><span class="o">.</span><span class="n">DEFAULT_ITEM_FLAGS</span>
+            <span class="n">seq</span><span class="p">,</span> <span class="n">sequence_path</span> <span class="o">=</span> <span class="n">files</span><span class="o">.</span><span class="n">get_sequence_elements</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">seq</span><span class="p">:</span>
-                <span class="n">seqpath</span> <span class="o">=</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">common</span><span class="o">.</span><span class="n">SEQPROXY</span> <span class="o">+</span> \
-                    <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'.'</span> <span class="o">+</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">seq</span> <span class="ow">and</span> <span class="p">(</span><span class="n">seqpath</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span> <span class="ow">or</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">filepath</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">seq</span> <span class="ow">and</span> <span class="p">(</span><span class="n">sequence_path</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span> <span class="ow">or</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span>
+                    <span class="n">filepath</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">):</span>
                 <span class="n">flags</span> <span class="o">=</span> <span class="n">flags</span> <span class="o">|</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsFavourite</span>
+
+            <span class="n">parent_path_role</span> <span class="o">=</span> <span class="n">source_paths</span>
+
+            <span class="k">if</span> <span class="s1">'.'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
+                    <span class="n">sort_by_name_role</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'zzzz'</span>
 
             <span class="c1"># Let's limit the maximum number of items we load</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -373,7 +348,7 @@
                 <span class="c1">#</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">EntryRole</span><span class="p">:</span> <span class="p">[</span><span class="n">entry</span><span class="p">,</span> <span class="p">],</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">:</span> <span class="n">flags</span><span class="p">,</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">:</span> <span class="n">source_paths</span><span class="p">,</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">:</span> <span class="n">parent_path_role</span><span class="p">,</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">TodoCountRole</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">FileDetailsRole</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
@@ -401,28 +376,28 @@
             <span class="c1"># to it in the sequence data dict</span>
             <span class="k">if</span> <span class="n">seq</span><span class="p">:</span>
                 <span class="c1"># If the sequence has not yet been added to our dictionary</span>
-                <span class="c1"># of seqeunces we add it here</span>
-                <span class="k">if</span> <span class="n">seqpath</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SEQUENCE_DATA</span><span class="p">:</span>  <span class="c1"># ... and create it if it doesn't exist</span>
-                    <span class="n">seqname</span> <span class="o">=</span> <span class="n">seqpath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="c1"># of sequences we add it here</span>
+                <span class="k">if</span> <span class="n">sequence_path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SEQUENCE_DATA</span><span class="p">:</span>  <span class="c1"># ... and create it if it doesn't exist</span>
+                    <span class="n">sequence_name</span> <span class="o">=</span> <span class="n">sequence_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                     <span class="n">flags</span> <span class="o">=</span> <span class="n">basemodel</span><span class="o">.</span><span class="n">DEFAULT_ITEM_FLAGS</span>
 
-                    <span class="k">if</span> <span class="n">seqpath</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">sequence_path</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">:</span>
                         <span class="n">flags</span> <span class="o">=</span> <span class="n">flags</span> <span class="o">|</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsFavourite</span>
 
                     <span class="n">sort_by_name_role</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">sort_by_name_role</span><span class="p">)</span>
-                    <span class="n">sort_by_name_role</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="n">seqname</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                    <span class="n">sort_by_name_role</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="n">sequence_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
-                    <span class="n">SEQUENCE_DATA</span><span class="p">[</span><span class="n">seqpath</span><span class="p">]</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">DataDict</span><span class="p">({</span>
-                        <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">:</span> <span class="n">seqname</span><span class="p">,</span>
-                        <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">:</span> <span class="n">seqname</span><span class="p">,</span>
-                        <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">:</span> <span class="n">seqpath</span><span class="p">,</span>
+                    <span class="n">SEQUENCE_DATA</span><span class="p">[</span><span class="n">sequence_path</span><span class="p">]</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">DataDict</span><span class="p">({</span>
+                        <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">:</span> <span class="n">sequence_name</span><span class="p">,</span>
+                        <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">:</span> <span class="n">sequence_name</span><span class="p">,</span>
+                        <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">:</span> <span class="n">sequence_path</span><span class="p">,</span>
                         <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_size</span><span class="p">,</span>
                         <span class="c1">#</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">QueueRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">queues</span><span class="p">,</span>
                         <span class="c1">#</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">EntryRole</span><span class="p">:</span> <span class="p">[],</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">:</span> <span class="n">flags</span><span class="p">,</span>
-                        <span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">:</span> <span class="n">source_paths</span><span class="p">,</span>
+                        <span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">:</span> <span class="n">parent_path_role</span><span class="p">,</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">TodoCountRole</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">FileDetailsRole</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
@@ -446,8 +421,8 @@
                         <span class="n">common</span><span class="o">.</span><span class="n">ShotgunLinkedRole</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
                     <span class="p">})</span>
 
-                <span class="n">SEQUENCE_DATA</span><span class="p">[</span><span class="n">seqpath</span><span class="p">][</span><span class="n">common</span><span class="o">.</span><span class="n">FramesRole</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-                <span class="n">SEQUENCE_DATA</span><span class="p">[</span><span class="n">seqpath</span><span class="p">][</span><span class="n">common</span><span class="o">.</span><span class="n">EntryRole</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
+                <span class="n">SEQUENCE_DATA</span><span class="p">[</span><span class="n">sequence_path</span><span class="p">][</span><span class="n">common</span><span class="o">.</span><span class="n">FramesRole</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+                <span class="n">SEQUENCE_DATA</span><span class="p">[</span><span class="n">sequence_path</span><span class="p">][</span><span class="n">common</span><span class="o">.</span><span class="n">EntryRole</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Copy the existing file item</span>
                 <span class="n">SEQUENCE_DATA</span><span class="p">[</span><span class="n">filepath</span><span class="p">]</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">DataDict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
@@ -455,7 +430,7 @@
 
         <span class="c1"># Cast the sequence data back onto the model</span>
         <span class="n">t</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">SequenceItem</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">__p</span><span class="p">,</span> <span class="n">__k</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
 
         <span class="c1"># Casting the sequence data back onto the model</span>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">SEQUENCE_DATA</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
@@ -466,10 +441,10 @@
                 <span class="c1"># A sequence with only one element is not a sequence</span>
                 <span class="n">_seq</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">SequenceRole</span><span class="p">]</span>
                 <span class="n">filepath</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">_seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span>
-                    <span class="n">v</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">FramesRole</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span>
-                    <span class="n">_seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span>
-                    <span class="s1">'.'</span> <span class="o">+</span> <span class="n">_seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+                        <span class="n">_seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span>
+                        <span class="n">v</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">FramesRole</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span>
+                        <span class="n">_seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span>
+                        <span class="s1">'.'</span> <span class="o">+</span> <span class="n">_seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
                 <span class="p">)</span>
                 <span class="n">filename</span> <span class="o">=</span> <span class="n">filepath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                 <span class="n">v</span><span class="p">[</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span>
@@ -491,7 +466,7 @@
             <span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="n">common</span><span class="o">.</span><span class="n">IdRole</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
             <span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="n">common</span><span class="o">.</span><span class="n">DataTypeRole</span><span class="p">]</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">SequenceItem</span>
 
-<div class="viewcode-block" id="FavouritesModel.source_path"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.favourites.FavouritesModel.source_path">[docs]</a>    <span class="k">def</span> <span class="nf">source_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FavouritesModel.source_path"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.favourites.FavouritesModel.source_path">[docs]</a>    <span class="k">def</span> <span class="nf">source_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""The model's parent folder path segments.</span>
 
 <span class="sd">        Returns:</span>
@@ -500,7 +475,7 @@
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">pseudo_local_bookmark</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="FavouritesModel.item_iterator"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.favourites.FavouritesModel.item_iterator">[docs]</a>    <span class="k">def</span> <span class="nf">item_iterator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FavouritesModel.item_generator"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.favourites.FavouritesModel.item_generator">[docs]</a>    <span class="k">def</span> <span class="nf">item_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""We're using the saved keys to find and return the DirEntries</span>
 <span class="sd">        corresponding to the saved favourites.</span>
 
@@ -514,7 +489,7 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileInfo</span><span class="p">(</span><span class="n">_path</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
                 <span class="k">continue</span>
 
-            <span class="n">source_paths</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">source_paths</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">and</span> <span class="n">f</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s1">'default'</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="n">_path</span><span class="p">):</span>
                 <span class="n">path</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'</span><span class="se">\\</span><span class="s1">'</span><span class="p">,</span> <span class="s1">'/'</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">path</span> <span class="o">==</span> <span class="n">k</span><span class="p">:</span>
@@ -527,14 +502,14 @@
         <span class="k">for</span> <span class="n">args</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">args</span></div>
 
-<div class="viewcode-block" id="FavouritesModel.task"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.favourites.FavouritesModel.task">[docs]</a>    <span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FavouritesModel.task"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.favourites.FavouritesModel.task">[docs]</a>    <span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s1">'favourites'</span></div>
 
-<div class="viewcode-block" id="FavouritesModel.user_settings_key"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.favourites.FavouritesModel.user_settings_key">[docs]</a>    <span class="k">def</span> <span class="nf">user_settings_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FavouritesModel.user_settings_key"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.favourites.FavouritesModel.user_settings_key">[docs]</a>    <span class="k">def</span> <span class="nf">user_settings_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="p">()</span></div></div>
 
 
-<div class="viewcode-block" id="FavouritesWidget"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.favourites.FavouritesWidget">[docs]</a><span class="k">class</span> <span class="nc">FavouritesWidget</span><span class="p">(</span><span class="n">files</span><span class="o">.</span><span class="n">FilesWidget</span><span class="p">):</span>
+<div class="viewcode-block" id="FavouritesWidget"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.favourites.FavouritesWidget">[docs]</a><span class="k">class</span> <span class="nc">FavouritesWidget</span><span class="p">(</span><span class="n">files</span><span class="o">.</span><span class="n">FilesWidget</span><span class="p">):</span>
     <span class="sd">"""The widget responsible for showing all the items marked as favourites."""</span>
     <span class="n">SourceModel</span> <span class="o">=</span> <span class="n">FavouritesModel</span>
     <span class="n">Delegate</span> <span class="o">=</span> <span class="n">delegate</span><span class="o">.</span><span class="n">FavouritesWidgetDelegate</span>
@@ -548,14 +523,7 @@
             <span class="n">parent</span><span class="o">=</span><span class="n">parent</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="FavouritesWidget.buttons_hidden"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.favourites.FavouritesWidget.buttons_hidden">[docs]</a>    <span class="k">def</span> <span class="nf">buttons_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""Returns the visibility of the inline icon buttons."""</span>
-        <span class="k">return</span> <span class="kc">True</span></div>
-
-<div class="viewcode-block" id="FavouritesWidget.inline_icons_count"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.favourites.FavouritesWidget.inline_icons_count">[docs]</a>    <span class="k">def</span> <span class="nf">inline_icons_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="mi">3</span></div>
-
-<div class="viewcode-block" id="FavouritesWidget.toggle_item_flag"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.favourites.FavouritesWidget.toggle_item_flag">[docs]</a>    <span class="k">def</span> <span class="nf">toggle_item_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">flag</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">commit_now</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="FavouritesWidget.toggle_item_flag"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.favourites.FavouritesWidget.toggle_item_flag">[docs]</a>    <span class="k">def</span> <span class="nf">toggle_item_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">flag</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">commit_now</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">flag</span> <span class="o">!=</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsFavourite</span><span class="p">:</span>
             <span class="k">return</span>
 
@@ -566,7 +534,7 @@
             <span class="n">commit_now</span><span class="o">=</span><span class="n">commit_now</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="FavouritesWidget.dragEnterEvent"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.favourites.FavouritesWidget.dragEnterEvent">[docs]</a>    <span class="k">def</span> <span class="nf">dragEnterEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="FavouritesWidget.dragEnterEvent"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.favourites.FavouritesWidget.dragEnterEvent">[docs]</a>    <span class="k">def</span> <span class="nf">dragEnterEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">source</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="p">:</span>
             <span class="k">return</span>
 
@@ -575,14 +543,14 @@
             <span class="k">return</span> <span class="n">event</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">indicatorwidget</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="FavouritesWidget.dragLeaveEvent"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.favourites.FavouritesWidget.dragLeaveEvent">[docs]</a>    <span class="k">def</span> <span class="nf">dragLeaveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="FavouritesWidget.dragLeaveEvent"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.favourites.FavouritesWidget.dragLeaveEvent">[docs]</a>    <span class="k">def</span> <span class="nf">dragLeaveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">indicatorwidget</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="FavouritesWidget.dragMoveEvent"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.favourites.FavouritesWidget.dragMoveEvent">[docs]</a>    <span class="k">def</span> <span class="nf">dragMoveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="FavouritesWidget.dragMoveEvent"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.favourites.FavouritesWidget.dragMoveEvent">[docs]</a>    <span class="k">def</span> <span class="nf">dragMoveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">mimeData</span><span class="p">()</span><span class="o">.</span><span class="n">hasUrls</span><span class="p">():</span>
             <span class="n">event</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="FavouritesWidget.dropEvent"><a class="viewcode-back" href="../../../api/lists.items.html#bookmarks.lists.favourites.FavouritesWidget.dropEvent">[docs]</a>    <span class="k">def</span> <span class="nf">dropEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="FavouritesWidget.dropEvent"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.favourites.FavouritesWidget.dropEvent">[docs]</a>    <span class="k">def</span> <span class="nf">dropEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">"""Event responsible for adding the dropped file to the favourites."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">indicatorwidget</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
 

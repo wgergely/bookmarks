@@ -177,7 +177,7 @@ class AssetsModel(basemodel.BaseModel):
                 QtCore.Qt.DisplayRole: name,
                 QtCore.Qt.EditRole: filename,
                 QtCore.Qt.StatusTipRole: filepath,
-                QtCore.Qt.SizeHintRole: self.row_size(),
+                QtCore.Qt.SizeHintRole: self.row_size,
                 #
                 common.QueueRole: self.queues,
                 common.DataTypeRole: t,
@@ -288,8 +288,8 @@ class AssetsWidget(basewidget.ThreadedBaseWidget):
                 role=QtCore.Qt.StatusTipRole,
             )
         )
-        common.signals.assetAdded.connect(self.queue_visible_indexes)
-        common.signals.sgAssetsLinked.connect(self.queue_visible_indexes)
+        common.signals.assetAdded.connect(self.start_delayed_queue_timer)
+        common.signals.sgAssetsLinked.connect(self.start_delayed_queue_timer)
 
     def inline_icons_count(self):
         """The number of icons on the right - hand side."""

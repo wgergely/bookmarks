@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-"""Defines the customized QSettings instance used to store user and app common.
+"""Defines a customized QSettings object used to store user settings.
+
+The user settings are stored in an ini file stored at :func:`.get_user_settings_path`.
+The current ui state, current active paths and application settings are all stored in here.
 
 """
 import collections
@@ -108,7 +111,7 @@ def init_settings():
     # paths from the ini file.
     common.settings = UserSettings()
     common.settings.load_active_values()
-    common.settings.update_private_values()
+    common.update_private_values()
 
     v = common.settings.value(CurrentUserPicksSection, ServersKey)
     if not isinstance(v, dict):
@@ -166,12 +169,12 @@ def active(k, path=False, args=False):
     Args:
         k (str): The name of the path segment, eg. `common.ServerKey`.
         path (bool, optional): If True, will return a path to the active item.
-        args (bool, optional): If `True`, will return all components that make up the path.
+        args (bool, optional): If `True`, will return all components that make up the active path.
 
     Returns:
-        str: The name of the active item.
-        str (when path=True): Path to the active item.
-        tuple (when args=True): Active path elements.
+        * str: The name of the active item.
+        * str (when path=True): Path to the active item.
+        * tuple (when args=True): Active path elements.
 
     """
     if path or args:
@@ -197,6 +200,7 @@ def active(k, path=False, args=False):
 
 
 def get_user_settings_path():
+    """Returns the path to the user settings file."""
     v = QtCore.QStandardPaths.writableLocation(
         QtCore.QStandardPaths.GenericDataLocation)
     return f'{v}/{common.product}/{common.user_settings}'
@@ -236,6 +240,11 @@ def bookmark_key(*args):
     return k
 
 
+def update_private_values():
+    for k in ActiveSectionCacheKeys:
+        common.active_paths[PrivateActivePaths][k] = common.active_paths[SynchronisedActivePaths][k]
+
+
 class UserSettings(QtCore.QSettings):
     """An `ini` config file to store all local user common.
 
@@ -269,7 +278,7 @@ class UserSettings(QtCore.QSettings):
         self.verify_timer.timeout.connect(self.load_active_values)
 
     def load_active_values(self):
-        """Load previously saved active path elements from the `ini` file.
+        """Load previously saved active path elements from the settings file.
 
         If the resulting path is invalid, we'll progressively unset the invalid
         path segments until we find a valid path.
@@ -285,10 +294,10 @@ class UserSettings(QtCore.QSettings):
         # for m in (SynchronisedActivePaths, PrivateActivePaths):
 
     def verify_active(self, m):
-        """Verify the load active section values.
+        """Verify the active path values and unset any item, that refers to an invalid path.
 
         Args:
-                m (int): The active mode.
+            m (int): The active mode.
 
         """
         p = str()
@@ -301,10 +310,6 @@ class UserSettings(QtCore.QSettings):
                     self.setValue(ActiveSection, k, None)
             p += '/'
 
-    def update_private_values(self):
-        for k in ActiveSectionCacheKeys:
-            common.active_paths[PrivateActivePaths][k] = common.active_paths[SynchronisedActivePaths][k]
-
     def set_servers(self, v):
         common.check_type(v, dict)
         common.servers = v
@@ -316,14 +321,11 @@ class UserSettings(QtCore.QSettings):
         self.setValue(CurrentUserPicksSection, BookmarksKey, v)
 
     def set_favourites(self, v):
-        """Adds the given list to the currently saved favourites.
-
-        """
         common.check_type(v, dict)
         self.setValue(CurrentUserPicksSection, FavouritesKey, v)
 
     def value(self, section, key):
-        """Used to retrieve a values from the user settings object.
+        """Get a values from the user settings file.
 
         Overrides the default `value()` method to provide type checking.
         Types are saved in `{key}_type`.

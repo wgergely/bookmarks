@@ -203,14 +203,32 @@
         </div>
         <article role="main">
           <h1>Source code for bookmarks.common.sequence</h1><div class="highlight"><pre>
-<span></span><span class="sd">"""Common path methods to recognise sequence items.</span>
+<span></span><span class="sd">"""Common methods used to work with sequentially numbered file items.</span>
 
-<span class="sd">A sequence item is a file that has a number component that can be incremented.</span>
-<span class="sd">A 'collapsed' item is a single item that refers to a series of sequence items</span>
-<span class="sd">and is annotated by the SEQSTART and SEQEND markers.</span>
+<span class="sd">A sequence item is a file that has a number component that can be incremented. See</span>
+<span class="sd">:func:`get_sequence`. E.g.:</span>
 
-<span class="sd">To determine if a path is a sequence, use :func:`get_sequence`.</span>
-<span class="sd">To determine if a path is a collapsed item, use :func:`is_collapsed`.</span>
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    s = 'C:/test/my_image_sequence_0001.png'</span>
+<span class="sd">    seq = common.get_sequence(s)</span>
+
+
+<span class="sd">A collapsed item is a single item that refers to a series of sequence items</span>
+<span class="sd">and is marked by the :attr:`.SEQSTART`, sequence range and :attr:`.SEQEND` characters. See</span>
+<span class="sd">:func:`is_collapsed`. E.g.:</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    s = 'C:/test/my_image_sequence_{1-200}.png'</span>
+<span class="sd">    common.is_collapsed(s) # = True</span>
+
+
+<span class="sd">Attributes:</span>
+<span class="sd">    SEQSTART (str): Character used to encapsulate the sequence range of collapsed items.</span>
+<span class="sd">    SEQEND (str): Character used to encapsulate the sequence range of collapsed items.</span>
+<span class="sd">    SEQPROXY (str): Placeholder sequence marker used to associate settings and database values</span>
+<span class="sd">        with sequence items.</span>
 
 <span class="sd">"""</span>
 <span class="kn">import</span> <span class="nn">re</span>
@@ -244,73 +262,34 @@
 
 <div class="viewcode-block" id="is_collapsed"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.is_collapsed">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">is_collapsed</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-    <span class="sd">"""Check for the presence of the bracket-enclosed sequence markers.</span>
+    <span class="sd">"""Checks the presence :attr:`.SEQSTART` and :attr:`.SEQEND` markers.</span>
 
 <span class="sd">    When Bookmarks is displaying a sequence of files as a single item,</span>
-<span class="sd">    the item is *collapsed*. Every collapsed item contains a start and an end number</span>
-<span class="sd">    enclosed in brackets. For instance: ``image_sequence_[001-233].png``</span>
+<span class="sd">    the item is *collapsed*. Every collapsed item contains the :attr:`.SEQEND`, sequence range and</span>
+<span class="sd">    :attr:`.SEQSTART` elements. For instance: ``image_sequence_{001-233}.png`` is a collapsed item.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            filename = 'job_sh010_animation_[001-299]_gw.png'</span>
+<span class="sd">            m = is_collapsed(filename)</span>
+<span class="sd">            prefix = match.group(1) # = 'job_sh010_animation_'</span>
+<span class="sd">            sequence_string = match.group(2) # = '[001-299]'</span>
+<span class="sd">            suffix = match.group(3) # = '_gw.png'</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">            s (str): A file path.</span>
+<span class="sd">        s (str): A file path.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">            group 1 (SRE_Match):    All the characters **before** the sequence marker.</span>
-<span class="sd">            group 2 (SRE_Match):    The sequence marker(e.g. ``{01-50}``), as a string.</span>
-<span class="sd">            group 3 (SRE_Match):    All the characters **after** the sequence marker.</span>
-
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">       filename = 'job_sh010_animation_[001-299]_wgergely.png'</span>
-<span class="sd">       m = is_collapsed(filename)</span>
-<span class="sd">       if m:</span>
-<span class="sd">               prefix = match.group(1) # 'job_sh010_animation_'</span>
-<span class="sd">               sequence_string = match.group(2) # '[001-299]'</span>
-<span class="sd">               suffix = match.group(3) # '_wgergely.png'</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">            ``SRE_Match``: If the given name is indeed collapsed it returns a ``SRE_Match`` object, otherwise ``None``.</span>
+<span class="sd">        SRE_Match:</span>
+<span class="sd">            * group(1) - All the characters **before** the sequence marker.</span>
+<span class="sd">            * group(2) - The sequence marker, e.g. ``{01-50}``.</span>
+<span class="sd">            * group(3) - All characters **after** the sequence marker.</span>
 
 <span class="sd">    """</span>
     <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">IsSequenceRegex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">s</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="proxy_path"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.proxy_path">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">proxy_path</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-    <span class="sd">"""Encompasses the logic used to associate preferences with items.</span>
-
-<span class="sd">    Sequence items need a generic key to save values as the sequence notation</span>
-<span class="sd">    might change as files are added/removed to image sequences. Any `FileItem`</span>
-<span class="sd">    will use their file path as the key and SequenceItems will use `[0]` in place</span>
-<span class="sd">    of their frame-range notation.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">            v (QModelIndex, weakref.ref, dict or str): Data dict, index or filepath string.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">            str: The key used to store the item's information in the local</span>
-<span class="sd">            preferences and the bookmark item database.</span>
-
-<span class="sd">    """</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">pass</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">):</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="p">()[</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">):</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">'Invalid type, expected one of </span><span class="si">{</span><span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="nb">dict</span><span class="si">}</span><span class="s1">, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
-
-    <span class="n">collapsed</span> <span class="o">=</span> <span class="n">is_collapsed</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">collapsed</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">collapsed</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">SEQPROXY</span> <span class="o">+</span> <span class="n">collapsed</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-    <span class="n">seq</span> <span class="o">=</span> <span class="n">get_sequence</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">seq</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">SEQPROXY</span> <span class="o">+</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'.'</span> <span class="o">+</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">v</span></div>
 
 
 <div class="viewcode-block" id="get_sequence"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.get_sequence">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
@@ -359,15 +338,57 @@
     <span class="k">return</span> <span class="n">GetSequenceRegex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">s</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="get_sequence_startpath"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.get_sequence_startpath">[docs]</a><span class="k">def</span> <span class="nf">get_sequence_startpath</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="sd">"""Checks the given string and if it denotes a sequence returns the path for</span>
-<span class="sd">    the first file.</span>
+<div class="viewcode-block" id="proxy_path"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.proxy_path">[docs]</a><span class="k">def</span> <span class="nf">proxy_path</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+    <span class="sd">"""Encompasses the logic used to associate preferences with items.</span>
+
+<span class="sd">    Sequence items need a generic key to save values as the sequence notation</span>
+<span class="sd">    might change as files are added/removed to image sequences. Any `FileItem`</span>
+<span class="sd">    will use their file path as the key and SequenceItems will use `[0]` in place</span>
+<span class="sd">    of their frame-range notation.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">            path (str): A collapsed sequence name.</span>
+<span class="sd">            v (QModelIndex, weakref.ref, dict or str): Data dict, index or filepath string.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">            str: The path to the first file of the sequence.</span>
+<span class="sd">            str: The key used to store the item's information in the local</span>
+<span class="sd">            preferences and the bookmark item database.</span>
+
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">):</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="p">()[</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">):</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">'Invalid type, expected one of </span><span class="si">{</span><span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="nb">dict</span><span class="si">}</span><span class="s1">, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_proxy_path</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+
+
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_proxy_path</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+    <span class="n">collapsed</span> <span class="o">=</span> <span class="n">is_collapsed</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">collapsed</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">collapsed</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">SEQPROXY</span> <span class="o">+</span> <span class="n">collapsed</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">seq</span> <span class="o">=</span> <span class="n">get_sequence</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">seq</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">SEQPROXY</span> <span class="o">+</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'.'</span> <span class="o">+</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">v</span>
+
+
+<div class="viewcode-block" id="get_sequence_startpath"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.get_sequence_startpath">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_sequence_startpath</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">"""Checks if given string is collapsed, and if so, returns the path of</span>
+<span class="sd">    the first item of the sequence.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path (str): A collapsed sequence name.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The path to the first file of the sequence.</span>
 
 <span class="sd">    """</span>
     <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
@@ -381,15 +402,16 @@
     <span class="k">return</span> <span class="n">path</span></div>
 
 
-<div class="viewcode-block" id="get_sequence_endpath"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.get_sequence_endpath">[docs]</a><span class="k">def</span> <span class="nf">get_sequence_endpath</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="sd">"""Checks the given string and if it denotes a sequence returns the path for</span>
-<span class="sd">    the last file.</span>
+<div class="viewcode-block" id="get_sequence_endpath"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.get_sequence_endpath">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_sequence_endpath</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">"""Checks if given string is collapsed, and if so, returns the path of</span>
+<span class="sd">    the last item of the sequence.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">            path (str): A collapsed sequence name.</span>
+<span class="sd">        path (str): A collapsed sequence name.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">            str: The path to the last file of the sequence.</span>
+<span class="sd">        str: The path to the last file of the sequence.</span>
 
 <span class="sd">    """</span>
     <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
@@ -402,7 +424,8 @@
     <span class="k">return</span> <span class="n">path</span></div>
 
 
-<div class="viewcode-block" id="get_sequence_paths"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.get_sequence_paths">[docs]</a><span class="k">def</span> <span class="nf">get_sequence_paths</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="get_sequence_paths"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.get_sequence_paths">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_sequence_paths</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
     <span class="sd">"""Given the index, returns a tuple of filenames referring to the</span>
 <span class="sd">    individual sequence items.</span>
 

@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="lists" href="lists.html" /><link rel="prev" title="common" href="common.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="lists" href="lists.html" /><link rel="prev" title="images" href="images.html" />
 
     <meta name="generator" content="sphinx-4.3.1, furo 2021.11.23"/>
-        <title>bookmarks.main - Bookmarks 0.5.0 documentation</title>
+        <title>main - Bookmarks 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=7f0192ddeb2adecfbaa87ffbcf67d16358b30bc1" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=0af69da206d614734f649b27d4cdc2dd6c31f41d" />
@@ -173,7 +173,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../bookmarks.html">Introduction</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">Python Modules Documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="common.html">common</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">bookmarks.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html">database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="images.html">images</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lists.html">lists</a></li>
 </ul>
 </li>
@@ -203,14 +205,15 @@
           </label>
         </div>
         <article role="main">
-          <section id="bookmarks-main">
-<h1>bookmarks.main<a class="headerlink" href="#bookmarks-main" title="Permalink to this headline">¶</a></h1>
+          <section id="main">
+<h1>main<a class="headerlink" href="#main" title="Permalink to this headline">¶</a></h1>
 <section id="id1">
-<h2>bookmarks.main<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>main<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-bookmarks.main"></span><p>Bookmarks’ main widget.</p>
 <p><a class="reference internal" href="#bookmarks.main.MainWidget" title="bookmarks.main.MainWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">MainWidget</span></code></a> consist of <code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.topbar.TopBarWidget</span></code>,
-<code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.statusbar.StatusBarWidget</span></code>, and <a class="reference internal" href="lists.html#bookmarks.lists.basewidget.ListsWidget" title="bookmarks.lists.basewidget.ListsWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.lists.basewidget.ListsWidget</span></code></a>. The latter
-is the container for the three main list item widgets: <a class="reference internal" href="lists.html#bookmarks.lists.bookmarks.BookmarksWidget" title="bookmarks.lists.bookmarks.BookmarksWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.lists.bookmarks.BookmarksWidget</span></code></a>,
+<code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.statusbar.StatusBarWidget</span></code>,
+and <a class="reference internal" href="lists.html#bookmarks.lists.basewidget.ListsWidget" title="bookmarks.lists.basewidget.ListsWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.lists.basewidget.ListsWidget</span></code></a>. The latter is the container for the three
+main list item widgets: <a class="reference internal" href="lists.html#bookmarks.lists.bookmarks.BookmarksWidget" title="bookmarks.lists.bookmarks.BookmarksWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.lists.bookmarks.BookmarksWidget</span></code></a>,
 <a class="reference internal" href="lists.html#bookmarks.lists.assets.AssetsWidget" title="bookmarks.lists.assets.AssetsWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.lists.assets.AssetsWidget</span></code></a> and <a class="reference internal" href="lists.html#bookmarks.lists.files.FilesWidget" title="bookmarks.lists.files.FilesWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.lists.files.FilesWidget</span></code></a>.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
@@ -244,7 +247,7 @@ be initialized.</p>
 </dd></dl>
 </section>
 <section id="module-bookmarks.standalone">
-<span id="bookmarks-standalone"></span><h2>bookmarks.standalone<a class="headerlink" href="#module-bookmarks.standalone" title="Permalink to this headline">¶</a></h2>
+<span id="standalone"></span><h2>standalone<a class="headerlink" href="#module-bookmarks.standalone" title="Permalink to this headline">¶</a></h2>
 <p>The module contains the elements used when initialized in <code class="docutils literal notranslate"><span class="pre">StandaloneMode</span></code>.</p>
 <p>It defines <a class="reference internal" href="#bookmarks.standalone.BookmarksApp" title="bookmarks.standalone.BookmarksApp"><code class="xref py py-class docutils literal notranslate"><span class="pre">BookmarksApp</span></code></a>, Bookmark’s custom QApplication, and
 <a class="reference internal" href="#bookmarks.standalone.BookmarksAppWindow" title="bookmarks.standalone.BookmarksAppWindow"><code class="xref py py-class docutils literal notranslate"><span class="pre">BookmarksAppWindow</span></code></a>, a modified <a class="reference internal" href="#bookmarks.main.MainWidget" title="bookmarks.main.MainWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">main.MainWidget</span></code></a>.</p>
@@ -373,14 +376,14 @@ widget’s geometry.</p>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="common.html">
+          <a class="prev-page" href="images.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">common</div>
+                <div class="title">images</div>
                 
               </div>
             </a>
@@ -410,9 +413,9 @@ widget’s geometry.</p>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">bookmarks.main</a><ul>
-<li><a class="reference internal" href="#id1">bookmarks.main</a></li>
-<li><a class="reference internal" href="#module-bookmarks.standalone">bookmarks.standalone</a></li>
+<li><a class="reference internal" href="#">main</a><ul>
+<li><a class="reference internal" href="#id1">main</a></li>
+<li><a class="reference internal" href="#module-bookmarks.standalone">standalone</a></li>
 </ul>
 </li>
 </ul>

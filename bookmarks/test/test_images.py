@@ -57,7 +57,7 @@ class Test(base.BaseCase):
         for ext in ('ma', 'aep'):
             p = base.random_str(32) + '.' + ext
 
-            v = images.get_placeholder_path(p)
+            v = images.get_placeholder_path(p, 'placeholder')
             self.assertIsInstance(v, str)
             self.assertTrue(os.path.isfile(v))
 

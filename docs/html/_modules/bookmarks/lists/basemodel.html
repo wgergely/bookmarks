@@ -172,7 +172,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../bookmarks.html">Introduction</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">bookmarks.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/database.html">database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
 </ul>
 </li>
@@ -283,6 +285,60 @@
     <span class="k">return</span> <span class="n">func_wrapper</span></div>
 
 
+<div class="viewcode-block" id="filter_includes_row"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basemodel.filter_includes_row">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">filter_includes_row</span><span class="p">(</span><span class="n">filtertext</span><span class="p">,</span> <span class="n">searchable</span><span class="p">):</span>
+    <span class="sd">"""Checks if the filter string contains any double dashes (--) and if the</span>
+<span class="sd">    the filter text is found in the searchable string.</span>
+
+<span class="sd">    If both true, the row will be hidden.</span>
+
+<span class="sd">    """</span>
+    <span class="n">_filtertext</span> <span class="o">=</span> <span class="n">filtertext</span>
+    <span class="n">it</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span>
+        <span class="sa">r</span><span class="s1">'(--[^\"</span><span class="se">\'</span><span class="s1">\[\]\*\s]+)'</span><span class="p">,</span>
+        <span class="n">filtertext</span><span class="p">,</span>
+        <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span>
+    <span class="p">)</span>
+    <span class="n">it_quoted</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span>
+        <span class="sa">r</span><span class="s1">'(--".*?")'</span><span class="p">,</span>
+        <span class="n">filtertext</span><span class="p">,</span>
+        <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
+        <span class="n">_filtertext</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="s1">''</span><span class="p">,</span> <span class="n">_filtertext</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">it_quoted</span><span class="p">:</span>
+        <span class="n">_filtertext</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="s1">''</span><span class="p">,</span> <span class="n">_filtertext</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">_filtertext</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">'"'</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">text</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">searchable</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">filter_excludes_row</span><span class="p">(</span><span class="n">filtertext</span><span class="p">,</span> <span class="n">searchable</span><span class="p">):</span>
+    <span class="n">it</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span>
+        <span class="sa">r</span><span class="s1">'--([^\"</span><span class="se">\'</span><span class="s1">\[\]\*\s]+)'</span><span class="p">,</span>
+        <span class="n">filtertext</span><span class="p">,</span>
+        <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span>
+    <span class="p">)</span>
+    <span class="n">it_quoted</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span>
+        <span class="sa">r</span><span class="s1">'--"(.*?)"'</span><span class="p">,</span>
+        <span class="n">filtertext</span><span class="p">,</span>
+        <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span>
+    <span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">searchable</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">it_quoted</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">searchable</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="kc">False</span>
+
+
 <div class="viewcode-block" id="BaseModel"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basemodel.BaseModel">[docs]</a><span class="k">class</span> <span class="nc">BaseModel</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QAbstractListModel</span><span class="p">):</span>
     <span class="sd">"""The base model used for interacting with all bookmark, asset and file items.</span>
 
@@ -334,7 +390,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sort_role</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_sort_order</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_row_size</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_row_size</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_size</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_row_size</span><span class="p">())</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_datatype</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># used  by the files model only</span>
 
@@ -416,9 +472,6 @@
         <span class="k">if</span> <span class="n">emit_active</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">set_active</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">row_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_size</span>
-
     <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">emit_reset_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_type</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span><span class="p">()</span> <span class="o">!=</span> <span class="n">data_type</span><span class="p">:</span>
@@ -493,7 +546,7 @@
         <span class="n">val</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">thumbnail_size</span><span class="p">)</span> <span class="k">if</span> <span class="n">val</span> <span class="o">&gt;=</span> <span class="nb">int</span><span class="p">(</span>
             <span class="n">common</span><span class="o">.</span><span class="n">thumbnail_size</span><span class="p">)</span> <span class="k">else</span> <span class="n">val</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_row_size</span><span class="o">.</span><span class="n">setHeight</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">row_size</span><span class="o">.</span><span class="n">setHeight</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">sort_role</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sort_role</span>
@@ -801,19 +854,19 @@
 
 
 <div class="viewcode-block" id="FilterProxyModel"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basemodel.FilterProxyModel">[docs]</a><span class="k">class</span> <span class="nc">FilterProxyModel</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QSortFilterProxyModel</span><span class="p">):</span>
-    <span class="sd">"""Proxy model responsible for **filtering** data for the view.</span>
+    <span class="sd">"""Proxy model responsible for data filtering.</span>
 
-<span class="sd">    We can filter items based on the data contained in the</span>
-<span class="sd">    ``QtCore.Qt.StatusTipRole``, ``common.DescriptionRole`` and</span>
-<span class="sd">    ``common.FileDetailsRole`` roles. Furthermore, based on flag values</span>
-<span class="sd">    (``MarkedAsArchived``, ``MarkedAsActive``, ``MarkedAsFavourite`` are implemented.)</span>
+<span class="sd">    We filter items using item flags defined in :mod:`bookmarks.common.core` and their</span>
+<span class="sd">    display and description roles. Sorting is not implemented by this model, and instead is</span>
+<span class="sd">    we're sorting the underlying data directly using :func:`common.data.sort_data`</span>
 
-<span class="sd">    Because of perfomarnce snags, sorting function are not implemented in the proxy</span>
-<span class="sd">    model, rather in the source ``BaseModel``.</span>
 
-<span class="sd">    Signals:</span>
-<span class="sd">        filterFlagChanged (QtCore.Signal):  The signal emitted when the user changes a filter view setting</span>
-<span class="sd">        filterTextChanged (QtCore.Signal):  The signal emitted when the user changes the filter text.</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        filterFlagChanged (QtCore.Signal -&gt; int, bool):  Emitted when the user changes the</span>
+<span class="sd">            current filter flags.</span>
+<span class="sd">        filterTextChanged (QtCore.Signal -&gt; str):  Emitted when the user changes the current filter</span>
+<span class="sd">            text.</span>
+<span class="sd">        invalidated (QtCore.Signal):  Emitted after the model has been reset or invalidated.</span>
 
 <span class="sd">    """</span>
     <span class="n">filterFlagChanged</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span>  <span class="c1"># FilterFlag, value</span>
@@ -837,9 +890,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">queued_invalidate_timer</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Timer</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">queued_invalidate_timer</span><span class="o">.</span><span class="n">setSingleShot</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">queued_invalidate_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">150</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">parentwidget</span> <span class="o">=</span> <span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queued_invalidate_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_filter_text</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_filter_flags</span> <span class="o">=</span> <span class="p">{</span>
@@ -863,7 +914,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">filterFlagChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">updateButtons</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">updateButtons</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">queued_invalidate_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_invalidateFilter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queued_invalidate_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delayed_invalidate</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FilterProxyModel.verify"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basemodel.FilterProxyModel.verify">[docs]</a>    <span class="k">def</span> <span class="nf">verify</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Verify the filter model contents to make sure archived items</span>
@@ -894,14 +945,14 @@
 <span class="sd">        together.</span>
 
 <span class="sd">        """</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">queued_invalidate_timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">queued_invalidate_timer</span><span class="o">.</span><span class="n">interval</span><span class="p">())</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queued_invalidate_timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queued_invalidate_timer</span><span class="o">.</span><span class="n">interval</span><span class="p">())</span></div>
 
-    <span class="k">def</span> <span class="nf">_invalidateFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="FilterProxyModel.delayed_invalidate"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basemodel.FilterProxyModel.delayed_invalidate">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">delayed_invalidate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">"""Slot called by the queued invalidate timer's timeout signal."""</span>
         <span class="n">result</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">FilterProxyModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">invalidateFilter</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">invalidated</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">result</span></div>
 
 <div class="viewcode-block" id="FilterProxyModel.invalidate"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basemodel.FilterProxyModel.invalidate">[docs]</a>    <span class="k">def</span> <span class="nf">invalidate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">result</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">FilterProxyModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">invalidate</span><span class="p">()</span>
@@ -1041,9 +1092,9 @@
                          <span class="n">d</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span> <span class="o">+</span> \
                          <span class="n">f</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_includes_row</span><span class="p">(</span><span class="n">filtertext</span><span class="p">,</span> <span class="n">searchable</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">filter_includes_row</span><span class="p">(</span><span class="n">filtertext</span><span class="p">,</span> <span class="n">searchable</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">False</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_excludes_row</span><span class="p">(</span><span class="n">filtertext</span><span class="p">,</span> <span class="n">searchable</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">filter_excludes_row</span><span class="p">(</span><span class="n">filtertext</span><span class="p">,</span> <span class="n">searchable</span><span class="p">):</span>
                 <span class="k">return</span> <span class="kc">False</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_flag</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">MarkedAsActive</span><span class="p">)</span> <span class="ow">and</span> <span class="n">active</span><span class="p">:</span>
@@ -1054,57 +1105,7 @@
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">favourite</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_flag</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">MarkedAsFavourite</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="kc">True</span></div>
-
-<div class="viewcode-block" id="FilterProxyModel.filter_includes_row"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basemodel.FilterProxyModel.filter_includes_row">[docs]</a>    <span class="k">def</span> <span class="nf">filter_includes_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filtertext</span><span class="p">,</span> <span class="n">searchable</span><span class="p">):</span>
-        <span class="sd">"""Checks if the filter string contains any double dashes (--) and if the</span>
-<span class="sd">        the filter text is found in the searchable string.</span>
-
-<span class="sd">        If both true, the row will be hidden.</span>
-
-<span class="sd">        """</span>
-        <span class="n">_filtertext</span> <span class="o">=</span> <span class="n">filtertext</span>
-        <span class="n">it</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span>
-            <span class="sa">r</span><span class="s1">'(--[^\"</span><span class="se">\'</span><span class="s1">\[\]\*\s]+)'</span><span class="p">,</span>
-            <span class="n">filtertext</span><span class="p">,</span>
-            <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span>
-        <span class="p">)</span>
-        <span class="n">it_quoted</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span>
-            <span class="sa">r</span><span class="s1">'(--".*?")'</span><span class="p">,</span>
-            <span class="n">filtertext</span><span class="p">,</span>
-            <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span>
-        <span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
-            <span class="n">_filtertext</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="s1">''</span><span class="p">,</span> <span class="n">_filtertext</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">it_quoted</span><span class="p">:</span>
-            <span class="n">_filtertext</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="s1">''</span><span class="p">,</span> <span class="n">_filtertext</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">_filtertext</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">'"'</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">text</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">searchable</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="kc">True</span></div>
-
-    <span class="k">def</span> <span class="nf">filter_excludes_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filtertext</span><span class="p">,</span> <span class="n">searchable</span><span class="p">):</span>
-        <span class="n">it</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span>
-            <span class="sa">r</span><span class="s1">'--([^\"</span><span class="se">\'</span><span class="s1">\[\]\*\s]+)'</span><span class="p">,</span>
-            <span class="n">filtertext</span><span class="p">,</span>
-            <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span>
-        <span class="p">)</span>
-        <span class="n">it_quoted</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span>
-            <span class="sa">r</span><span class="s1">'--"(.*?)"'</span><span class="p">,</span>
-            <span class="n">filtertext</span><span class="p">,</span>
-            <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span>
-        <span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">searchable</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">it_quoted</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">searchable</span><span class="p">:</span>
-                <span class="k">return</span> <span class="kc">True</span>
-        <span class="k">return</span> <span class="kc">False</span></div>
+        <span class="k">return</span> <span class="kc">True</span></div></div>
 </pre></div>
         </article>
       </div>

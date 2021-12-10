@@ -47,8 +47,8 @@ def sort_data(ref, sort_role, sort_order):
     for n, idx in enumerate(sorted_idxs):
         if not ref():
             raise RuntimeError('Model mutated during sorting.')
-        ref()[n][common.IdRole] = idx
         d[n] = ref()[idx]
+        d[n][common.IdRole] = n
     return d
 
 

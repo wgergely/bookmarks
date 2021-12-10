@@ -170,7 +170,10 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../bookmarks.html">Introduction</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">bookmarks.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
 </ul>
 </li>
 </ul>
@@ -204,23 +207,18 @@
 <span class="sd">"""Module defines the classes and methods needed to set and edit session lock</span>
 <span class="sd">files.</span>
 
-<span class="sd">Bookmarks understand two session locks related to how active paths are read and</span>
-<span class="sd">set. When `common.active_mode` is `common.SynchronisedActivePaths` bookmarks</span>
-<span class="sd">will save active paths in the `user_settings`, as expected.</span>
+<span class="sd">Bookmarks has two session modes. When `common.active_mode` is `common.SynchronisedActivePaths`,</span>
+<span class="sd">Bookmarks will save active paths in the user settings file. However, when multiple Bookmarks</span>
+<span class="sd">instances are running this poses a problem, because instances will mutually overwrite each</span>
+<span class="sd">other's active paths.</span>
 
-<span class="sd">However, when multiple Bookmarks instances are running this poses a problem,</span>
-<span class="sd">because instances will mutually overwrite each other's active path common.</span>
+<span class="sd">Hence, when a second Bookmarks instance is launched `common.active_mode` is automatically set to</span>
+<span class="sd">`common.PrivateActivePaths`. When this mode is active, the initial active path values are read</span>
+<span class="sd">from the user settings, but active paths changes won't be saved to the user settings.</span>
+<span class="sd">Instead, the paths will be stored in a private data container.</span>
 
-<span class="sd">Hence, when a second Bookmarks instance is launched `common.active_mode` is</span>
-<span class="sd">automatically set to `common.PrivateActivePaths`. When this mode is active, the</span>
-<span class="sd">initial active path values are read on startup `user_settings` will no longer</span>
-<span class="sd">be modified. Instead, the paths will be saved into a private data container.</span>
-
-<span class="sd">To toggle between  private active paths, and the ones stored in `user_settings`</span>
-<span class="sd">see `actions.toggle_active_mode`.</span>
-
-<span class="sd">`ToggleSessionModeButton` is a UI element used by the user to toggle between</span>
-<span class="sd">these modes.</span>
+<span class="sd">To toggle between the two modes see :func:`bookmarks.actions.toggle_active_mode` and</span>
+<span class="sd">:class:`bookmarks.statusbar.ToggleSessionModeButton`.</span>
 
 <span class="sd">"""</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -237,7 +235,8 @@
 <span class="n">LOCK_DIR</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{root}</span><span class="s1">/</span><span class="si">{product}</span><span class="s1">'</span>
 
 
-<span class="k">def</span> <span class="nf">get_lock_path</span><span class="p">():</span>
+<div class="viewcode-block" id="get_lock_path"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sessionlock.get_lock_path">[docs]</a><span class="k">def</span> <span class="nf">get_lock_path</span><span class="p">():</span>
+    <span class="sd">"""Returns the path to the current session's lock file."""</span>
     <span class="k">return</span> <span class="n">LOCK_PATH</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
         <span class="n">root</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QStandardPaths</span><span class="o">.</span><span class="n">writableLocation</span><span class="p">(</span>
             <span class="n">QtCore</span><span class="o">.</span><span class="n">QStandardPaths</span><span class="o">.</span><span class="n">GenericDataLocation</span><span class="p">),</span>
@@ -245,11 +244,11 @@
         <span class="n">prefix</span><span class="o">=</span><span class="n">PREFIX</span><span class="p">,</span>
         <span class="n">pid</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getpid</span><span class="p">(),</span>
         <span class="n">ext</span><span class="o">=</span><span class="n">FORMAT</span>
-    <span class="p">)</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="prune_lock"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sessionlock.prune_lock">[docs]</a><span class="k">def</span> <span class="nf">prune_lock</span><span class="p">():</span>
-    <span class="sd">"""Removes stale lock files not associated with current PIDs.</span>
+    <span class="sd">"""Removes stale lock files not associated with running PIDs.</span>
 
 <span class="sd">    """</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">LOCK_DIR</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -282,9 +281,9 @@
     <span class="sd">"""Initialises the Bookmark's session lock.</span>
 
 <span class="sd">    We'll check all lock-files and to see if there's already a</span>
-<span class="sd">    SynchronisedActivePaths session. As we want only one session controlling</span>
+<span class="sd">    ``SynchronisedActivePaths`` session. As we want only one session controlling</span>
 <span class="sd">    the active path settings we'll set all subsequent application sessions</span>
-<span class="sd">    to be PrivateActivePaths (when PrivateActivePaths is on, all active path</span>
+<span class="sd">    to be ``PrivateActivePaths`` (when ``PrivateActivePaths`` is on, all active path</span>
 <span class="sd">    settings will be kept in memory, instead of writing them out to the</span>
 <span class="sd">    disk).</span>
 
@@ -328,7 +327,7 @@
 <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
 <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
 <span class="k">def</span> <span class="nf">write_current_mode_to_lock</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">"""Write the current mode this session's lock file.</span>
+    <span class="sd">"""Write this session's current mode to the lock file.</span>
 
 <span class="sd">    """</span>
     <span class="c1"># Create our lockfile</span>

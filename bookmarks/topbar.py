@@ -15,10 +15,14 @@ from . import database
 from . import images
 from . import shortcuts
 from . import ui
-from . lists import delegate
+from .lists import delegate
 
 
 class QuickSwitchMenu(contextmenu.BaseContextMenu):
+    """A context menu used to quickly change the active bookmark or asset.
+
+    """
+
     def add_switch_menu(self, idx, label):
         """Adds the items needed to quickly change bookmarks or assets."""
         off_pixmap = images.ImageCache.get_rsc_pixmap(
@@ -55,7 +59,6 @@ class QuickSwitchMenu(contextmenu.BaseContextMenu):
                 'icon': icon,
                 'action': functools.partial(common.widget(idx).activate, index)
             }
-        return
 
 
 class SwitchBookmarkMenu(QuickSwitchMenu):
@@ -149,7 +152,8 @@ class BaseControlButton(ui.ClickableIconButton):
     """Base-class used for control buttons on the top bar."""
 
     def __init__(self, pixmap, description,
-                 color=(common.color(common.TextSelectedColor), common.color(common.TextDisabledColor)),
+                 color=(
+                 common.color(common.TextSelectedColor), common.color(common.TextDisabledColor)),
                  parent=None):
         super(BaseControlButton, self).__init__(
             pixmap,
@@ -219,7 +223,8 @@ class ToggleSequenceButton(BaseControlButton):
         if self.state():
             return images.ImageCache.get_rsc_pixmap('collapse', self._on_color,
                                                     common.size(common.WidthMargin))
-        return images.ImageCache.get_rsc_pixmap('expand', self._off_color, common.size(common.WidthMargin))
+        return images.ImageCache.get_rsc_pixmap('expand', self._off_color,
+                                                common.size(common.WidthMargin))
 
     def state(self):
         if not common.widget():

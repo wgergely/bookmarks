@@ -42,3 +42,5 @@ def directory_changed(idx, path):
             model = common.source_model(common.FileTab)
             model.set_refresh_needed(True)
             common.widget(common.FileTab).filter_indicator_widget.repaint()
+    if idx == TaskItemMonitor:
+        common.widget(common.TaskTab).model().sourceModel().reset_data(force=True)

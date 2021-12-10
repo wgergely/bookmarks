@@ -32,33 +32,6 @@ from ..threads import threads
 BG_COLOR = QtGui.QColor(0, 0, 0, 50)
 
 
-def get_visible_indexes(widget):
-    def index_below(r):
-        r.moveTop(r.top() + r.height())
-        return widget.indexAt(r.topLeft())
-
-    # Find the first visible index
-    r = widget.rect()
-    index = widget.indexAt(r.topLeft())
-    if not index.isValid():
-        return []
-
-    rect = widget.visualRect(index)
-    i = 0
-    idxs = [index.data(common.IdRole), ]
-    while r.intersects(rect):
-        if i >= 999:  # Don't check more than 999 items
-            break
-        i += 1
-
-        idx = index.data(common.IdRole)
-        idxs.append(idx)
-
-        index = index_below(rect)
-        if not index.isValid():
-            break
-    return set(idxs)
-
 
 class ListsWidget(QtWidgets.QStackedWidget):
     """Stacked widget used to hold and toggle the list widgets containing the
@@ -229,6 +202,12 @@ class BaseListWidget(QtWidgets.QListView):
 
     def __init__(self, icon='icon_bw', parent=None):
         super().__init__(parent=parent)
+        self.visible_rows = {
+            'source_rows': [],
+            'ids': [],
+            'proxy_rows': []
+        }
+
         self.setDragDropOverwriteMode(False)
         self.setDropIndicatorShown(True)
         self.viewport().setAcceptDrops(True)
@@ -238,8 +217,7 @@ class BaseListWidget(QtWidgets.QListView):
         self.delayed_layout_timer.setObjectName('DelayedLayoutTimer')
         self.delayed_layout_timer.setSingleShot(True)
         self.delayed_layout_timer.setInterval(33)
-        self.delayed_layout_timer.timeout.connect(
-            self.scheduleDelayedItemsLayout)
+        self.delayed_layout_timer.timeout.connect(self.scheduleDelayedItemsLayout)
         self.delayed_layout_timer.timeout.connect(self.repaint_visible_rows)
 
         self._buttons_hidden = False
@@ -306,8 +284,9 @@ class BaseListWidget(QtWidgets.QListView):
 
         self.init_buttons_state()
 
-    @common.debug
+
     @common.error
+    @common.debug
     def init_buttons_state(self):
         """Restore the previous state of the inline icon buttons.
 
@@ -341,6 +320,8 @@ class BaseListWidget(QtWidgets.QListView):
         )
         self._buttons_hidden = val
 
+    @common.error
+    @common.debug
     def set_model(self, model):
         """Add a model to the view.
 
@@ -374,6 +355,10 @@ class BaseListWidget(QtWidgets.QListView):
 
         model.modelReset.connect(self.delay_restore_selection)
         proxy.invalidated.connect(self.delay_restore_selection)
+
+        model.modelReset.connect(self.save_visible_rows)
+        proxy.modelReset.connect(self.save_visible_rows)
+        proxy.invalidated.connect(self.save_visible_rows)
 
     @QtCore.Slot(QtCore.QModelIndex)
     def update(self, index):
@@ -520,9 +505,6 @@ class BaseListWidget(QtWidgets.QListView):
             index, QtCore.QItemSelectionModel.ClearAndSelect)
         self.scrollTo(index, QtWidgets.QAbstractItemView.PositionAtCenter)
 
-    def add_pending_trasaction(self, server, job, root, k, mode, flag):
-        pass
-
     def toggle_item_flag(self, index, flag, state=None, commit_now=True):
         """Sets the index's `flag` value based on `state`.
 
@@ -533,6 +515,7 @@ class BaseListWidget(QtWidgets.QListView):
             index (QModelIndex): The index containing the
             flag (type): Description of parameter `flag`.
             state (type): Description of parameter `state`. Defaults to None.
+            commit_now (bool): Save changes immediately to the database.
 
         Returns:
             str: The key used to find and match items.
@@ -687,12 +670,12 @@ class BaseListWidget(QtWidgets.QListView):
         return k
 
     def key_space(self):
-        actions.preview()
+        actions.preview_thumbnail()
 
     def key_down(self):
         """Custom action on  `down` arrow key-press.
 
-        We're implementing a continous 'scroll' function: reaching the last
+        We're implementing a continuous 'scroll' function: reaching the last
         item in the list will automatically jump to the beginning to the list
         and vice-versa.
 
@@ -851,7 +834,7 @@ class BaseListWidget(QtWidgets.QListView):
         rect = QtCore.QRect(
             0, 0,
             self.viewport().rect().width(),
-            model.row_size().height()
+            model.row_size.height()
         )
 
         while self.rect().intersects(rect):
@@ -903,32 +886,12 @@ class BaseListWidget(QtWidgets.QListView):
         if QtWidgets.QApplication.instance().mouseButtons() != QtCore.Qt.NoButton:
             return
 
-        def _next(rect):
-            rect.moveTop(rect.top() + rect.height())
-            return self.indexAt(rect.topLeft())
-
-        proxy = self.model()
-        if not proxy.rowCount():
-            return
-
-        viewport_rect = self.viewport().rect()
-        index = self.indexAt(viewport_rect.topLeft())
-        if not index.isValid():
-            return
-
-        index_rect = self.visualRect(index)
-        n = 0
-        while viewport_rect.intersects(index_rect):
-            if n > 99:  # manuel limit on how many items we will repaint
-                break
+        for idx in self.visible_rows['proxy_rows']:
+            index = self.model().index(idx, 0)
             super().update(index)
-            index = _next(index_rect)
-            if not index.isValid():
-                break
-            n += 1
 
-    @common.debug
     @common.error
+    @common.debug
     @QtCore.Slot()
     def reset_row_layout(self, *args, **kwargs):
         """Reinitializes the rows to apply size any row height changes.
@@ -936,13 +899,18 @@ class BaseListWidget(QtWidgets.QListView):
         """
         proxy = self.model()
         index = self.selectionModel().currentIndex()
+
+        # Save the current selection
         row = -1
         if self.selectionModel().hasSelection() and index.isValid():
             row = index.row()
 
+        # Update the layout
         self.scheduleDelayedItemsLayout()
+        self.save_visible_rows()
         self.repaint_visible_rows()
 
+        # Restore the selection
         if row >= 0:
             index = proxy.index(row, 0)
             self.selectionModel().setCurrentIndex(
@@ -955,7 +923,7 @@ class BaseListWidget(QtWidgets.QListView):
         proxy = self.model()
         model = proxy.sourceModel()
 
-        model._row_size.setHeight(int(v))
+        model.row_size.setHeight(int(v))
         model.set_local_setting(
             common.CurrentRowHeight,
             int(v),
@@ -1236,7 +1204,7 @@ class BaseListWidget(QtWidgets.QListView):
             shift_modifier = event.modifiers() & QtCore.Qt.ShiftModifier
 
             # Adjust the scroll amount based on thw row size
-            if self.model().sourceModel()._row_size.height() > (common.size(common.HeightRow) * 2):
+            if self.model().sourceModel().row_size.height() > (common.size(common.HeightRow) * 2):
                 o = 9 if shift_modifier else 1
             else:
                 o = 9 if shift_modifier else 3
@@ -1617,6 +1585,10 @@ class BaseInlineIconWidget(BaseListWidget):
                     common.signals.clearStatusBarMessage.emit()
                     self.update(index)
 
+            if not index.isValid():
+                app.restoreOverrideCursor()
+                return
+
             rect = self.itemDelegate().get_description_rect(rectangles, index)
             if rect.contains(cursor_position):
                 self.update(index)
@@ -1682,7 +1654,7 @@ class ThreadedBaseWidget(BaseInlineIconWidget):
 
     def __init__(self, icon='bw_icon', parent=None):
         self.delayed_queue_timer = common.Timer()
-        self.delayed_queue_timer.setInterval(300)
+        self.delayed_queue_timer.setInterval(100)
         self.delayed_queue_timer.setSingleShot(True)
 
         super().__init__(icon=icon, parent=parent)
@@ -1712,27 +1684,33 @@ class ThreadedBaseWidget(BaseInlineIconWidget):
             if n > 2.0:
                 break
 
+    @common.error
+    @common.debug
     def set_model(self, *args, **kwargs):
         super().set_model(*args, **kwargs)
         self.refUpdated.connect(self.update_row)
 
-        self.model().invalidated.connect(self.delay_queue_visible_indexes)
-
-        self.model().sourceModel().modelReset.connect(self.delay_queue_visible_indexes)
+        self.delayed_queue_timer.timeout.connect(self.save_visible_rows)
         self.delayed_queue_timer.timeout.connect(self.queue_visible_indexes)
 
-        self.verticalScrollBar().valueChanged.connect(self.delay_queue_visible_indexes)
-        self.verticalScrollBar().sliderReleased.connect(self.delay_queue_visible_indexes)
+        self.model().invalidated.connect(self.start_delayed_queue_timer)
+        self.model().sourceModel().modelReset.connect(self.start_delayed_queue_timer)
 
-        self.model().filterTextChanged.connect(self.delay_queue_visible_indexes)
-        self.model().filterFlagChanged.connect(self.delay_queue_visible_indexes)
+        self.verticalScrollBar().valueChanged.connect(self.start_delayed_queue_timer)
+        self.verticalScrollBar().sliderReleased.connect(self.start_delayed_queue_timer)
 
-        common.signals.tabChanged.connect(self.queue_visible_indexes)
+        self.model().filterTextChanged.connect(self.start_delayed_queue_timer)
+        self.model().filterFlagChanged.connect(self.start_delayed_queue_timer)
 
-    def delay_queue_visible_indexes(self, *args, **kwargs):
+        common.signals.tabChanged.connect(self.start_delayed_queue_timer)
+
+    @QtCore.Slot()
+    @common.debug
+    def start_delayed_queue_timer(self, *args, **kwargs):
         self.delayed_queue_timer.start(self.delayed_queue_timer.interval())
 
     @common.status_bar_message('Updating items...')
+    @common.debug
     def queue_visible_indexes(self, *args, **kwargs):
         """This method will send all currently visible items to the worker
         threads for processing.
@@ -1750,7 +1728,6 @@ class ThreadedBaseWidget(BaseInlineIconWidget):
         show_archived = proxy.filter_flag(common.MarkedAsArchived)
 
         try:
-            idxs = get_visible_indexes(self)
             for q in self.queues:
                 role = threads.THREADS[q]['role']
 
@@ -1759,7 +1736,7 @@ class ThreadedBaseWidget(BaseInlineIconWidget):
                     continue
 
                 refs = []
-                for idx in idxs:
+                for idx in self.visible_rows['source_rows']:
 
                     # Item is already loaded, skip
                     if data[idx][role]:
@@ -1786,7 +1763,7 @@ class ThreadedBaseWidget(BaseInlineIconWidget):
             return
         if ref not in self.update_queue:
             self.update_queue.append(ref)
-            self.update_queue_timer.start()
+            self.update_queue_timer.start(self.update_queue_timer.interval())
 
     def queued_row_update(self):
         """Process a repaint request."""
@@ -1797,9 +1774,50 @@ class ThreadedBaseWidget(BaseInlineIconWidget):
 
         if not ref():
             return
-        for idx in get_visible_indexes(self):
-            index = self.model().index(idx, 0)
+
+        if ref()[common.TypeRole] != self.model().sourceModel().data_type():
+            return
+
+        for row in self.visible_rows['proxy_rows']:
+            index = self.model().index(row, 0)
             if index.data(QtCore.Qt.StatusTipRole) == ref()[QtCore.Qt.StatusTipRole]:
                 super().update(index)
 
-        self.update_queue_timer.start()
+        self.update_queue_timer.start(self.update_queue_timer.interval())
+
+    @QtCore.Slot()
+    @common.debug
+    def save_visible_rows(self, *args, **kwargs):
+        """Cache the currently visible rows.
+
+        """
+        self.visible_rows = {
+            'source_rows': [],
+            'ids': [],
+            'proxy_rows': [],
+        }
+
+        # Find the first visible index
+        r = self.rect()
+        index = self.indexAt(r.topLeft())
+        if not index.isValid():
+            return
+
+        model = index.model()
+
+        rect = self.visualRect(index)
+        i = 0
+
+        while r.intersects(rect):
+            if i >= 999:  # Don't check more than 999 items
+                break
+            i += 1
+
+            self.visible_rows['proxy_rows'].append(index.row())
+            # self.visible_rows['source_rows'].append(model.mapToSource(index).row())
+            self.visible_rows['source_rows'].append(index.data(common.IdRole))
+
+            rect.moveTop(rect.top() + rect.height())
+            index = self.indexAt(rect.topLeft())
+            if not index.isValid():
+                break

@@ -341,7 +341,7 @@ class UsersModel(QtCore.QAbstractItemModel):
     def __init__(self, token, parent=None):
         super(UsersModel, self).__init__(parent=parent)
         self.token = token
-        self._row_size = QtCore.QSize(1, common.size(common.HeightRow))
+        self.row_size = QtCore.QSize(1, common.size(common.HeightRow))
 
         self.INTERNAL_USER_DATA = common.DataDict()
 
@@ -354,7 +354,7 @@ class UsersModel(QtCore.QAbstractItemModel):
         pixmap = images.ImageCache.get_rsc_pixmap(
             'slack',
             common.color(common.TextSecondaryColor),
-            self._row_size.height()
+            self.row_size.height()
         )
         icon = QtGui.QIcon()
         icon.addPixmap(pixmap)
@@ -367,7 +367,7 @@ class UsersModel(QtCore.QAbstractItemModel):
                 self.INTERNAL_USER_DATA[idx] = common.DataDict({
                     QtCore.Qt.DisplayRole: 'Channel:  ' + channel['name'],
                     QtCore.Qt.DecorationRole: icon,
-                    QtCore.Qt.SizeHintRole: self._row_size,
+                    QtCore.Qt.SizeHintRole: self.row_size,
                     QtCore.Qt.FontRole: common.font_db.primary_font(common.size(common.FontSizeSmall))[0],
                     IdRole: channel['id'],
                     ThumbnailHashRole: None,
@@ -383,7 +383,7 @@ class UsersModel(QtCore.QAbstractItemModel):
                 self.INTERNAL_USER_DATA[idx] = common.DataDict({
                     QtCore.Qt.DisplayRole: self.get_pretty_name(profile),
                     QtCore.Qt.DecorationRole: icon,
-                    QtCore.Qt.SizeHintRole: self._row_size,
+                    QtCore.Qt.SizeHintRole: self.row_size,
                     QtCore.Qt.FontRole: common.font_db.primary_font(common.size(common.FontSizeSmall))[0],
                     IdRole: profile['id'],
                     ThumbnailHashRole: profile['profile']['avatar_hash'],

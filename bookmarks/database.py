@@ -1,36 +1,46 @@
 # -*- coding: utf-8 -*-
-"""BookmarkDB stores all item information Bookmarks needs
-to work.
+"""Defines :class:`BookmarkDB`, the sqlite3 database interface used to store item properties,
+such as custom descriptions, flags, ``width``, ``height``, :mod:`bookmarks.asset_config.asset_config`
+values, etc.
 
-This includes file descriptions, properties like `width`, `height`, asset
-configs, etc. The database file itself is stored in the given bookmark's root,
-at `//server/job/root/.bookmark/bookmark.db`
+Each bookmark item has its own database file and are stored in ``common.bookmark_cache_dir``, in
+the root of the bookmark item. E.g.:
 
-The sqlite3 database table definitions are stored in `database.json`.
+.. code-block:: python
 
-Usage
------
+    path = f'//server/job/root/{common.bookmark_cache_dir}/{common.bookmark_database}'
 
-    Use the thread-safe `database.get_db()` to create thread-specific
-    connections to a database
 
-The bookmark databases have currently 3 tables. The `data` table is used to
-store information about folders and files, e.g. assets would store their
-visibility flags, cut information and Shotgun data here.
-The `info` and `properties` tables are linked to the bookmark.
+The database table layout is defined in :attr:`.TABLES`, which defines the sqlite and python types
+for each column.
+
+
+Don't create DatabaseDB instances directly, instead use :func:`.get_db` to get cached,
+thread-specific database controllers. E.g.:
+
+.. code-block:: python
+
+    from bookmarks import database
+    db = database.get_db(server, job, root)
+    with db.connection():
+        v = db.value(*args)
+
+
+Attributes:
+    TABLES (dict):  Bookmark database tables and column definitions.
 
 """
-import time
+import base64
+import functools
+import json
 import platform
 import sqlite3
-import base64
-import json
+import time
 
 from PySide2 import QtCore, QtWidgets
 
-from . import log
 from . import common
-
+from . import log
 
 AssetTable = 'AssetData'
 BookmarkTable = 'BookmarkData'
@@ -40,10 +50,7 @@ IdColumn = 'id'
 DescriptionColumn = 'description'
 NotesColumn = 'notes'
 
-DATABASE = 'bookmark.db'
-
 database_connect_retries = 100
-
 
 TABLES = {
     AssetTable: {
@@ -218,34 +225,90 @@ TABLES = {
         }
     }
 }
-
-__DB_CONNECTIONS = {}
-
 CLIPBOARD = {
     BookmarkTable: {},
     AssetTable: {},
 }
 
 
-def close():
-    """Closes and deletes all connections to the bookmark database files.
+def get_db(server, job, root, force=False):
+    """Creates a database controller associated with a bookmark item.
+
+    SQLite cannot share the same connection instance between threads, hence we
+    create and cache controllers per thread. The cached entries are stored
+    in `common.db_connections`.
+
+    Args:
+        server (str): The name of the `server`.
+        job (str): The name of the `job`.
+        root (str): The name of the `root`.
+        force (bool): Force retry connecting to the database.
+
+    Returns:
+        BookmarkDB:     Database controller instance.
+
+    Raises:
+        RuntimeError:   When the database is locked.
+        OSError:        When the database is missing.
 
     """
-    for k in list(__DB_CONNECTIONS):
-        __DB_CONNECTIONS[k].close()
-        __DB_CONNECTIONS[k].deleteLater()
-        del __DB_CONNECTIONS[k]
+    for k in (server, job, root):
+        common.check_type(k, str)
+
+    key = _get_thread_key(server, job, root)
+
+    if key in common.db_connections:
+        if force:
+            common.db_connections[key].connect_with_retries()
+        return common.db_connections[key]
+
+    db = BookmarkDB(server, job, root)
+    common.db_connections[key] = db
+    return common.db_connections[key]
+
+
+def remove_db(server, job, root):
+    """Removes and closes a cached a bookmark database connection.
+
+    Args:
+        server (str):   A server.
+        job (str):      A job.
+        root (str):     A root.
+
+    """
+    key = '/'.join((server, job, root))
+
+    for k in list(common.db_connections):
+        if key.lower() not in k.lower():
+            continue
+
+        try:
+            common.db_connections[k].close()
+            common.db_connections[k].deleteLater()
+            del common.db_connections[k]
+        except:
+            log.error('Error removing the database.')
+
+
+def remove_all_connections():
+    """Closes and deletes all database controller instances."""
+    for k in list(common.db_connections):
+        common.db_connections[k].close()
+        common.db_connections[k].deleteLater()
+        del common.db_connections[k]
 
 
 @common.debug
 @common.error
 def copy_properties(server, job, root, asset=None, table=BookmarkTable):
-    """Copies the given bookmark's properties from the database to `CLIPBOARD`.
+    """Copies the database properties from the specified item to ``CLIPBOARD``.
 
     Args:
-        server (str):   The server's name.
-        job (str):   The job's name.
-        root (str):   The root's name.
+        server (str): Source server name.
+        job (str): Source job name.
+        root (str): Source root name.
+        asset (str, optional): Source asset name.
+        table (str, optional): Source table name.
 
     """
     data = {}
@@ -271,8 +334,14 @@ def copy_properties(server, job, root, asset=None, table=BookmarkTable):
 @common.debug
 @common.error
 def paste_properties(server, job, root, asset=None, table=BookmarkTable):
-    """Pastes the saved bookmark properties from `CLIPBOARD` to the given
-    bookmark's properties.
+    """Loads the copied item properties from CLIPBOARD and saves it in the target item's database.
+
+    Args:
+        server (str): The target server name.
+        job (str): The target job name.
+        root (str): The target root name.
+        asset (str, optional): The target asset name.
+        table (str, optional): Target database table.
 
     """
     if not CLIPBOARD[table]:
@@ -289,20 +358,19 @@ def paste_properties(server, job, root, asset=None, table=BookmarkTable):
             db.setValue(source, k, CLIPBOARD[table][k], table=table)
 
 
+@functools.lru_cache(maxsize=4194304)
 def b64encode(v):
     common.check_type(v, str)
     return base64.b64encode(v.encode('utf-8')).decode('utf-8')
 
 
+@functools.lru_cache(maxsize=4194304)
 def b64decode(v):
     common.check_type(v, bytes)
     return base64.b64decode(v).decode('utf-8')
 
 
 def sleep():
-    """Waits a little before trying to open the database.
-
-    """
     app = QtWidgets.QApplication.instance()
     if app and app.thread() == QtCore.QThread.currentThread():
         QtCore.QThread.msleep(25)
@@ -320,67 +388,6 @@ def set_flag(server, job, root, k, mode, flag):
     f = f | flag if mode else f & ~flag
     with db.connection():
         db.setValue(k, 'flags', f, AssetTable)
-
-
-def get_db(server, job, root, force=False):
-    """Creates a database controller associated with a bookmark item.
-
-    SQLite cannot share the same connection between different threads, hence we
-    will create and cache controllers per thread. The cached entries are stored
-    in `__DB_CONNECTIONS`.
-
-    Args:
-        server (str): The name of the `server`.
-        job (str): The name of the `job`.
-        root (str): The name of the `root`.
-        force (bool): Force retry connecting to the database.
-
-    Returns:
-        BookmarkDB:     Database controller instance.
-
-    Raises:
-        RuntimeError:   When the database is locked.
-        OSError:        When the database is missing.
-
-    """
-    for k in (server, job, root):
-        common.check_type(k, str)
-
-    key = _get_thread_key(server, job, root)
-
-    global __DB_CONNECTIONS
-    if key in __DB_CONNECTIONS:
-        if force:
-            __DB_CONNECTIONS[key]._connect_with_retries()
-        return __DB_CONNECTIONS[key]
-
-    db = BookmarkDB(server, job, root)
-    __DB_CONNECTIONS[key] = db
-    return __DB_CONNECTIONS[key]
-
-
-def remove_db(server, job, root):
-    """Removes and closes a cached a bookmark database connection.
-
-    Args:
-        server (str):   A server.
-        job (str):      A job.
-        root (str):     A root.
-
-    """
-    global __DB_CONNECTIONS
-    key = '/'.join((server, job, root))
-
-    for k in list(__DB_CONNECTIONS):
-        if key.lower() not in k.lower():
-            continue
-
-        try:
-            __DB_CONNECTIONS[k].close()
-            __DB_CONNECTIONS[k].deleteLater()
-            del __DB_CONNECTIONS[k]
-        except:
-            log.error('Error removing the database.')
 
 
 def _get_thread_key(*args):
@@ -411,17 +418,22 @@ def _verify_args(source, key, table, value=None):
             common.check_type(value, TABLES[table][k]['type'])
 
 
+@functools.lru_cache(maxsize=4194304)
+def load_json(value):
+    return json.loads(
+        b64decode(value.encode('utf-8')),
+        parse_int=int,
+        parse_float=float,
+    )
+
+
 def convert_return_values(table, key, value):
     if value is None:
         return None
     _type = TABLES[table][key]['type']
     if _type is dict:
         try:
-            value = json.loads(
-                b64decode(value.encode('utf-8')),
-                parse_int=int,
-                parse_float=float,
-            )
+            value = load_json(value)
         except Exception as e:
             value = None
     elif _type is str:
@@ -443,9 +455,7 @@ def convert_return_values(table, key, value):
 
 
 class BookmarkDB(QtCore.QObject):
-    """Database connector used to interface with the SQLite database.
-
-    Use `BookmarkDB.value()` and `BookmarkDB.setValue()` to get and set data.
+    """Database connector used to interface with the bookmark item's SQLite database.
 
     """
 
@@ -457,20 +467,16 @@ class BookmarkDB(QtCore.QObject):
         self._is_valid = False
         self._connection = None
 
-        self._server = server.encode('utf-8')
-        self._server_u = server
-        self._job = job.encode('utf-8')
-        self._job_u = job
-        self._root = root.encode('utf-8')
-        self._root_u = root
+        self._server = server
+        self._job = job
+        self._root = root
 
         self._bookmark = '/'.join((server, job, root))
-        self._bookmark_root = '{}/{}'.format(
-            self._bookmark, common.bookmark_cache_dir)
-        self._database_path = '{}/{}'.format(self._bookmark_root, DATABASE)
+        self._bookmark_root = f'{self._bookmark}/{common.bookmark_cache_dir}'
+        self._database_path = f'{self._bookmark_root}/{common.bookmark_database}'
 
         if self._create_bookmark_dir():
-            self._connect_with_retries()
+            self.connect_with_retries()
         else:
             self._connect_to_memory_db()
 
@@ -479,8 +485,11 @@ class BookmarkDB(QtCore.QObject):
         self.destroyed.connect(self.close)
 
     def _connect_to_memory_db(self):
-        """Creates in-memory database used, when we're unable to connect to the
-        bookmark database.
+        """Creates an in-memory database when we're unable to connect to the
+        physical database.
+
+        This is so that Bookmarks keeps running uninterrupted even when the database is unreachable.
+        Data saved the in-memory database won't be saved to disk.
 
         """
         self._connection = sqlite3.connect(
@@ -491,16 +500,16 @@ class BookmarkDB(QtCore.QObject):
         self._is_valid = False
         return self._connection
 
-    def _connect_with_retries(self):
+    def connect_with_retries(self):
         """Connects to the database file.
 
         The database can be locked for a brief period of time whilst it is being
-        used by an another controller instance in another thread. This normally
-        will raise an exception, but it is safe to wait on this a little and try
-        a few times before deeming it permanently unopenable.
+        used by another other controller instance in another thread. This might
+        raise an exception, but it is safe to wait on a little and re-try before deeming
+        the operation unsuccessful.
 
-        When a database is unopenable, we'll create an in-memory database, and
-        mark the instance invalid (`self.is_valid()` returns `False`).
+        When a database is unreachable, we'll create an in-memory database instead, and
+        mark the instance ``invalid`` (:meth:`BookmarkDB.is_valid` will return `False`).
 
         """
         n = 0
@@ -518,17 +527,18 @@ class BookmarkDB(QtCore.QObject):
                     self._connect_to_memory_db()
                     return self._connection
                 sleep()
+                log.error('Error.')
                 n += 1
             except (RuntimeError, ValueError, TypeError, OSError):
                 log.error('Error.')
                 raise
 
     def _create_bookmark_dir(self):
-        """Creates the `bookmark_cache_dir` if does not yet exist.
+        """Creates the `bookmark_cache_dir` if it does not yet exist.
 
         Returns:
-            bool:   `True` if the folder already exists, or successfully created.
-                    `False` if can't create the folder.
+            bool: `True` if the folder already exists, or successfully created, or `False` when
+                can't create the folder.
 
         """
         file_info = QtCore.QFileInfo(self.root())
@@ -540,7 +550,7 @@ class BookmarkDB(QtCore.QObject):
         return False
 
     def _create_table(self, table):
-        """Creates a table based on the TABLES definition.
+        """Creates a table based on the passed table definition.
 
         """
         args = []
@@ -590,9 +600,9 @@ class BookmarkDB(QtCore.QObject):
             )
         ).format(
             id=common.get_hash(self._bookmark),
-            server=b64encode(self._server_u),
-            job=b64encode(self._job_u),
-            root=b64encode(self._root_u),
+            server=b64encode(self._server),
+            job=b64encode(self._job),
+            root=b64encode(self._root),
             user=b64encode(common.get_username()),
             host=b64encode(platform.node()),
             created=time.time(),
@@ -628,6 +638,12 @@ class BookmarkDB(QtCore.QObject):
         return self._bookmark_root
 
     def is_valid(self):
+        """Returns the database's status.
+
+        Returns:
+            bool: True if the database is valid, False otherwise.
+
+        """
         if not self._connection:
             return False
         return self._is_valid
@@ -645,6 +661,15 @@ class BookmarkDB(QtCore.QObject):
             self._connection = None
 
     def source(self, *args):
+        """The source path of the database.
+
+        Args:
+            args (tuple): A tuple of path segments to be added to the base path.
+
+        Returns:
+            str: The source path of the bookmark database.
+
+        """
         if args:
             return self._bookmark + '/' + '/'.join(args)
         return self._bookmark
@@ -698,13 +723,17 @@ class BookmarkDB(QtCore.QObject):
 
         _verify_args(source, key, table, value=None)
 
-        _hash = common.get_hash(source)
-        sql = f'SELECT {key} FROM {table} WHERE id=\'{_hash}\''
+        @functools.lru_cache(maxsize=4194304)
+        def _get_sql(_source, _key, _table):
+            _hash = common.get_hash(_source)
+            return f'SELECT {_key} FROM {_table} WHERE id=\'{_hash}\''
+
+        sql = _get_sql(source, key, table)
 
         try:
             row = self.connection().execute(sql).fetchone()
         except Exception as e:
-            log.error('Failed to get value from database.\n{}'.format(e))
+            log.error(f'Failed to get value from database.\n{e}')
             raise
 
         if not row:
@@ -714,25 +743,22 @@ class BookmarkDB(QtCore.QObject):
         return convert_return_values(table, key, value)
 
     def setValue(self, source, key, value, table=AssetTable):
-        """Sets a value in the database.
-
-        The method does NOT commit the transaction! Use ``transactions`` context
-        manager to issue a BEGIN statement. The transactions will be committed
-        once the context manager goes out of scope.
+        """Set a value in the database.
 
         Example:
 
         .. code-block:: python
 
-            with db.transactions:
-                source = '//SERVER/MY_JOB/shots/sh0010/scenes/my_scene.ma'
+            db = database.get_db(server, job, root)
+            with db.connection():
+                source = f'//{server}/{job}/{root}/sh0010/scenes/my_scene.ma'
                 db.setValue(source, 'description', 'hello world')
 
         Args:
-            table:
-            source (str):       A row id, usually a file or folder path.
-            key (str):          A database column name.
-            value (*):              The value to set.
+            source (str): Source file path.
+            key (str): A database column name.
+            value (object): The value to set in the database.
+            table (str): A database table.
 
         """
         if not self.is_valid():

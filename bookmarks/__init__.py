@@ -118,7 +118,7 @@ def exec_():
     """
     print(info())
     from . import common
-    common.verify_dependecies()
+    common.verify_dependencies()
     common.initialize(common.StandaloneMode)
     from . import standalone
     standalone.show()

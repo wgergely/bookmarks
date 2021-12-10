@@ -78,6 +78,60 @@ def initdata(func):
     return func_wrapper
 
 
+@functools.lru_cache(maxsize=4194304)
+def filter_includes_row(filtertext, searchable):
+    """Checks if the filter string contains any double dashes (--) and if the
+    the filter text is found in the searchable string.
+
+    If both true, the row will be hidden.
+
+    """
+    _filtertext = filtertext
+    it = re.finditer(
+        r'(--[^\"\'\[\]\*\s]+)',
+        filtertext,
+        flags=re.IGNORECASE | re.MULTILINE
+    )
+    it_quoted = re.finditer(
+        r'(--".*?")',
+        filtertext,
+        flags=re.IGNORECASE | re.MULTILINE
+    )
+
+    for match in it:
+        _filtertext = re.sub(match.group(1), '', _filtertext)
+    for match in it_quoted:
+        _filtertext = re.sub(match.group(1), '', _filtertext)
+
+    for text in _filtertext.split():
+        text = text.strip('"')
+        if text not in searchable:
+            return False
+    return True
+
+
+@functools.lru_cache(maxsize=4194304)
+def filter_excludes_row(filtertext, searchable):
+    it = re.finditer(
+        r'--([^\"\'\[\]\*\s]+)',
+        filtertext,
+        flags=re.IGNORECASE | re.MULTILINE
+    )
+    it_quoted = re.finditer(
+        r'--"(.*?)"',
+        filtertext,
+        flags=re.IGNORECASE | re.MULTILINE
+    )
+
+    for match in it:
+        if match.group(1).lower() in searchable:
+            return True
+    for match in it_quoted:
+        if match.group(1).lower() in searchable:
+            return True
+    return False
+
+
 class BaseModel(QtCore.QAbstractListModel):
     """The base model used for interacting with all bookmark, asset and file items.
 
@@ -129,7 +183,7 @@ class BaseModel(QtCore.QAbstractListModel):
         self._task = None
         self._sort_role = None
         self._sort_order = None
-        self._row_size = QtCore.QSize(self.default_row_size())
+        self.row_size = QtCore.QSize(self.default_row_size())
 
         self._datatype = {}  # used  by the files model only
 
@@ -211,9 +265,6 @@ class BaseModel(QtCore.QAbstractListModel):
         if emit_active:
             self.set_active(index)
 
-    def row_size(self):
-        return self._row_size
-
     @QtCore.Slot(int)
     def emit_reset_model(self, data_type):
         if self.data_type() != data_type:
@@ -288,7 +339,7 @@ class BaseModel(QtCore.QAbstractListModel):
         val = int(common.thumbnail_size) if val >= int(
             common.thumbnail_size) else val
 
-        self._row_size.setHeight(val)
+        self.row_size.setHeight(int(val))
 
     def sort_role(self):
         return self._sort_role
@@ -596,19 +647,19 @@ class BaseModel(QtCore.QAbstractListModel):
 
 
 class FilterProxyModel(QtCore.QSortFilterProxyModel):
-    """Proxy model responsible for **filtering** data for the view.
+    """Proxy model responsible for data filtering.
 
-    We can filter items based on the data contained in the
-    ``QtCore.Qt.StatusTipRole``, ``common.DescriptionRole`` and
-    ``common.FileDetailsRole`` roles. Furthermore, based on flag values
-    (``MarkedAsArchived``, ``MarkedAsActive``, ``MarkedAsFavourite`` are implemented.)
+    We filter items using item flags defined in :mod:`bookmarks.common.core` and their
+    display and description roles. Sorting is not implemented by this model, and instead is
+    we're sorting the underlying data directly using :func:`common.data.sort_data`
 
-    Because of perfomarnce snags, sorting function are not implemented in the proxy
-    model, rather in the source ``BaseModel``.
 
-    Signals:
-        filterFlagChanged (QtCore.Signal):  The signal emitted when the user changes a filter view setting
-        filterTextChanged (QtCore.Signal):  The signal emitted when the user changes the filter text.
+    Attributes:
+        filterFlagChanged (QtCore.Signal -> int, bool):  Emitted when the user changes the
+            current filter flags.
+        filterTextChanged (QtCore.Signal -> str):  Emitted when the user changes the current filter
+            text.
+        invalidated (QtCore.Signal):  Emitted after the model has been reset or invalidated.
 
     """
     filterFlagChanged = QtCore.Signal(int, bool)  # FilterFlag, value
@@ -632,9 +683,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
         self.queued_invalidate_timer = common.Timer()
         self.queued_invalidate_timer.setSingleShot(True)
-        self.queued_invalidate_timer.setInterval(150)
-
-        self.parentwidget = parent
+        self.queued_invalidate_timer.setInterval(100)
 
         self._filter_text = None
         self._filter_flags = {
@@ -658,7 +707,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         self.filterFlagChanged.connect(common.signals.updateButtons)
         self.modelReset.connect(common.signals.updateButtons)
 
-        self.queued_invalidate_timer.timeout.connect(self._invalidateFilter)
+        self.queued_invalidate_timer.timeout.connect(self.delayed_invalidate)
 
     def verify(self):
         """Verify the filter model contents to make sure archived items
@@ -689,10 +738,10 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         together.
 
         """
-        self.queued_invalidate_timer.start(
-            self.queued_invalidate_timer.interval())
+        self.queued_invalidate_timer.start(self.queued_invalidate_timer.interval())
 
-    def _invalidateFilter(self, *args, **kwargs):
+    @QtCore.Slot()
+    def delayed_invalidate(self, *args, **kwargs):
         """Slot called by the queued invalidate timer's timeout signal."""
         result = super(FilterProxyModel, self).invalidateFilter()
         self.invalidated.emit()
@@ -836,9 +885,9 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
                          d.strip().lower() + '\n' + \
                          f.strip().lower()
 
-            if not self.filter_includes_row(filtertext, searchable):
+            if not filter_includes_row(filtertext, searchable):
                 return False
-            if self.filter_excludes_row(filtertext, searchable):
+            if filter_excludes_row(filtertext, searchable):
                 return False
 
         if self.filter_flag(common.MarkedAsActive) and active:
@@ -850,53 +899,3 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         if not favourite and self.filter_flag(common.MarkedAsFavourite):
             return False
         return True
-
-    def filter_includes_row(self, filtertext, searchable):
-        """Checks if the filter string contains any double dashes (--) and if the
-        the filter text is found in the searchable string.
-
-        If both true, the row will be hidden.
-
-        """
-        _filtertext = filtertext
-        it = re.finditer(
-            r'(--[^\"\'\[\]\*\s]+)',
-            filtertext,
-            flags=re.IGNORECASE | re.MULTILINE
-        )
-        it_quoted = re.finditer(
-            r'(--".*?")',
-            filtertext,
-            flags=re.IGNORECASE | re.MULTILINE
-        )
-
-        for match in it:
-            _filtertext = re.sub(match.group(1), '', _filtertext)
-        for match in it_quoted:
-            _filtertext = re.sub(match.group(1), '', _filtertext)
-
-        for text in _filtertext.split():
-            text = text.strip('"')
-            if text not in searchable:
-                return False
-        return True
-
-    def filter_excludes_row(self, filtertext, searchable):
-        it = re.finditer(
-            r'--([^\"\'\[\]\*\s]+)',
-            filtertext,
-            flags=re.IGNORECASE | re.MULTILINE
-        )
-        it_quoted = re.finditer(
-            r'--"(.*?)"',
-            filtertext,
-            flags=re.IGNORECASE | re.MULTILINE
-        )
-
-        for match in it:
-            if match.group(1).lower() in searchable:
-                return True
-        for match in it_quoted:
-            if match.group(1).lower() in searchable:
-                return True
-        return False

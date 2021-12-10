@@ -3,14 +3,14 @@
 
 """
 import functools
+
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from . import common
 from . import actions
+from . import common
 from . import images
 from . import ui
 from .threads import threads
-
 
 HEIGHT = common.size(common.WidthMargin) + (common.size(common.WidthIndicator) * 2)
 
@@ -38,13 +38,15 @@ class ThreadStatus(QtWidgets.QWidget):
         super(ThreadStatus, self).__init__(parent=parent)
         self.update_timer = common.Timer(parent=self)
         self.update_timer.setObjectName('ThreadStatusTimer')
-        self.update_timer.setInterval(500)
+        self.update_timer.setInterval(100)
         self.update_timer.setSingleShot(False)
         self.update_timer.timeout.connect(self.update)
 
         self.setFixedHeight(HEIGHT)
-
         self.metrics = common.font_db.primary_font(common.size(common.FontSizeSmall))[1]
+
+        cnx = QtCore.Qt.QueuedConnection
+        common.signals.threadItemsQueued.connect(self.update_timer.start, cnx)
 
     def show_debug_info(self):
         editor = QtWidgets.QTextBrowser(parent=self)
@@ -65,12 +67,6 @@ class ThreadStatus(QtWidgets.QWidget):
             return
         self.show_debug_info()
 
-    def showEvent(self, event):
-        self.update_timer.start()
-
-    def hideEvent(self, event):
-        self.update_timer.stop()
-
     def paintEvent(self, event):
         painter = QtGui.QPainter()
         painter.begin(self)
@@ -85,17 +81,19 @@ class ThreadStatus(QtWidgets.QWidget):
         painter.end()
 
     def update(self):
-        self.setFixedWidth(self.metrics.horizontalAdvance(self.text()) + common.size(common.WidthMargin))
+        self.setFixedWidth(
+            self.metrics.horizontalAdvance(self.text()) + common.size(common.WidthMargin))
         super(ThreadStatus, self).update()
 
-    @staticmethod
-    def text():
+    def text(self):
         c = 0
         for k in threads.THREADS:
             c += len(threads.queue(k))
         if not c:
+            self.update_timer.stop()
             return ''
         return f'Processing... ({c} items left)'
+
 
 class MessageWidget(QtWidgets.QStatusBar):
     """Bookmark's status bar, below the list widgets.
@@ -156,10 +154,13 @@ class ToggleSessionModeButton(ui.ClickableIconButton):
 
     def pixmap(self):
         if common.active_mode == common.SynchronisedActivePaths:
-            return images.ImageCache.get_rsc_pixmap('check', common.color(common.GreenColor), self._size)
+            return images.ImageCache.get_rsc_pixmap('check', common.color(common.GreenColor),
+                                                    self._size)
         if common.active_mode == common.PrivateActivePaths:
-            return images.ImageCache.get_rsc_pixmap('crossed', common.color(common.RedColor), self._size)
-        return images.ImageCache.get_rsc_pixmap('crossed', common.color(common.RedColor), self._size)
+            return images.ImageCache.get_rsc_pixmap('crossed', common.color(common.RedColor),
+                                                    self._size)
+        return images.ImageCache.get_rsc_pixmap('crossed', common.color(common.RedColor),
+                                                self._size)
 
     def statusTip(self):
         if common.active_mode == common.SynchronisedActivePaths:

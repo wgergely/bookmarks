@@ -218,27 +218,18 @@ def debug(func):
             return func(*args, **kwargs)
         finally:
             if args and hasattr(args[0], '__class__'):
-                funcname = f'{args[0].__class__}.{func.func_name}'
+                name = f'{args[0].__class__}.{func.__name__}'
             else:
-                funcname = func.func_name
+                name = func.__name__
 
-            if common.debug_on:
-                trace = []
-                for frame in reversed(inspect.stack()):
-                    if frame[3] == '<module>':
-                        continue
-                    mod = inspect.getmodule(frame[0]).__name__
-                    _funcname = f'{mod}.{frame[3]}'
-                    trace.append(_funcname)
-                trace.append(funcname)
-
-                from .. import log
-                log.debug(
-                    DEBUG_MESSAGE.format(
-                        trace=DEBUG_SEPARATOR.join(trace),
-                        time=time.time() - t
-                    )
+            trace = [name,]
+            from .. import log
+            log.debug(
+                DEBUG_MESSAGE.format(
+                    trace=DEBUG_SEPARATOR.join(trace),
+                    time=time.time() - t
                 )
+            )
 
     return func_wrapper
 

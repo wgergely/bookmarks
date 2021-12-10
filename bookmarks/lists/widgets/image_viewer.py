@@ -16,14 +16,14 @@ from ... import common
 from ... import images
 
 
-def show(path, ref, parent):
+def show(path, ref, parent, oiio=False):
     k = repr(parent)
     if k not in common.VIEWER_WIDGET_CACHE:
         common.VIEWER_WIDGET_CACHE[k] = ImageViewer(parent=parent)
 
     common.VIEWER_WIDGET_CACHE[k].show()
     QtCore.QTimer.singleShot(1, functools.partial(
-        common.VIEWER_WIDGET_CACHE[k].set_image, path, ref))
+        common.VIEWER_WIDGET_CACHE[k].set_image, path, ref, oiio=oiio))
 
 
 def get_item_info(ref):
@@ -200,7 +200,7 @@ class ImageViewer(QtWidgets.QWidget):
 
     @QtCore.Slot(str)
     @QtCore.Slot(weakref.ref)
-    def set_image(self, source, ref):
+    def set_image(self, source, ref, oiio=False):
         """Loads an image using OpenImageIO and displays the contents as a
         QPixmap item.
 
@@ -208,22 +208,25 @@ class ImageViewer(QtWidgets.QWidget):
         self._source = source
         self._ref = ref
 
-        oiio = QtCore.QFileInfo(source).suffix(
-        ).lower() in images.QT_IMAGE_FORMATS
-        pixmap = images.ImageCache.get_pixmap(source, -1, oiio=oiio)
+        if oiio is False and QtCore.QFileInfo(source).suffix().lower() not in images.QT_IMAGE_FORMATS:
+            raise RuntimeError('Qt cannot display the source image.')
 
         # Wait for the thread to finish loading the thumbnail
         images.wait_for_lock(source)
+        with images.lock:
+            pixmap = images.ImageCache.get_pixmap(source, -1, oiio=oiio)
+
 
         if pixmap and not pixmap.isNull():
-            images.ImageCache.flush(source)
-            self.viewer.item.setPixmap(pixmap)
+            with images.lock:
+                images.ImageCache.flush(source)
+                self.viewer.item.setPixmap(pixmap)
             self.viewer.repaint()
             return
 
-        size = self.viewer.item.pixmap().size()
-        if size.height() > self.height() or size.width() > self.width():
-            self.fitInView(self.viewer.item, QtCore.Qt.KeepAspectRatio)
+        # size = self.viewer.item.pixmap().size()
+        # if size.height() > self.height() or size.width() > self.width():
+        #     self.fitInView(self.viewer.item, QtCore.Qt.KeepAspectRatio)
 
     def paintEvent(self, event):
         painter = QtGui.QPainter()

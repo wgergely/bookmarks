@@ -1,11 +1,29 @@
-"""Common path methods to recognise sequence items.
+"""Common methods used to work with sequentially numbered file items.
 
-A sequence item is a file that has a number component that can be incremented.
-A 'collapsed' item is a single item that refers to a series of sequence items
-and is annotated by the SEQSTART and SEQEND markers.
+A sequence item is a file that has a number component that can be incremented. See
+:func:`get_sequence`. E.g.:
 
-To determine if a path is a sequence, use :func:`get_sequence`.
-To determine if a path is a collapsed item, use :func:`is_collapsed`.
+.. code-block:: python
+
+    s = 'C:/test/my_image_sequence_0001.png'
+    seq = common.get_sequence(s)
+
+
+A collapsed item is a single item that refers to a series of sequence items
+and is marked by the :attr:`.SEQSTART`, sequence range and :attr:`.SEQEND` characters. See
+:func:`is_collapsed`. E.g.:
+
+.. code-block:: python
+
+    s = 'C:/test/my_image_sequence_{1-200}.png'
+    common.is_collapsed(s) # = True
+
+
+Attributes:
+    SEQSTART (str): Character used to encapsulate the sequence range of collapsed items.
+    SEQEND (str): Character used to encapsulate the sequence range of collapsed items.
+    SEQPROXY (str): Placeholder sequence marker used to associate settings and database values
+        with sequence items.
 
 """
 import re
@@ -39,73 +57,34 @@ GetSequenceRegex = re.compile(
 
 @functools.lru_cache(maxsize=4194304)
 def is_collapsed(s):
-    """Check for the presence of the bracket-enclosed sequence markers.
+    """Checks the presence :attr:`.SEQSTART` and :attr:`.SEQEND` markers.
 
     When Bookmarks is displaying a sequence of files as a single item,
-    the item is *collapsed*. Every collapsed item contains a start and an end number
-    enclosed in brackets. For instance: ``image_sequence_[001-233].png``
+    the item is *collapsed*. Every collapsed item contains the :attr:`.SEQEND`, sequence range and
+    :attr:`.SEQSTART` elements. For instance: ``image_sequence_{001-233}.png`` is a collapsed item.
+
+    Example:
+
+        .. code-block:: python
+
+            filename = 'job_sh010_animation_[001-299]_gw.png'
+            m = is_collapsed(filename)
+            prefix = match.group(1) # = 'job_sh010_animation_'
+            sequence_string = match.group(2) # = '[001-299]'
+            suffix = match.group(3) # = '_gw.png'
 
     Args:
-            s (str): A file path.
+        s (str): A file path.
 
     Returns:
-            group 1 (SRE_Match):    All the characters **before** the sequence marker.
-            group 2 (SRE_Match):    The sequence marker(e.g. ``{01-50}``), as a string.
-            group 3 (SRE_Match):    All the characters **after** the sequence marker.
-
-    .. code-block:: python
-
-       filename = 'job_sh010_animation_[001-299]_wgergely.png'
-       m = is_collapsed(filename)
-       if m:
-               prefix = match.group(1) # 'job_sh010_animation_'
-               sequence_string = match.group(2) # '[001-299]'
-               suffix = match.group(3) # '_wgergely.png'
-
-    Returns:
-            ``SRE_Match``: If the given name is indeed collapsed it returns a ``SRE_Match`` object, otherwise ``None``.
+        SRE_Match:
+            * group(1) - All the characters **before** the sequence marker.
+            * group(2) - The sequence marker, e.g. ``{01-50}``.
+            * group(3) - All characters **after** the sequence marker.
 
     """
     common.check_type(s, str)
     return IsSequenceRegex.search(s)
-
-
-@functools.lru_cache(maxsize=4194304)
-def proxy_path(v):
-    """Encompasses the logic used to associate preferences with items.
-
-    Sequence items need a generic key to save values as the sequence notation
-    might change as files are added/removed to image sequences. Any `FileItem`
-    will use their file path as the key and SequenceItems will use `[0]` in place
-    of their frame-range notation.
-
-    Args:
-            v (QModelIndex, weakref.ref, dict or str): Data dict, index or filepath string.
-
-    Returns:
-            str: The key used to store the item's information in the local
-            preferences and the bookmark item database.
-
-    """
-    if isinstance(v, str):
-        pass
-    elif isinstance(v, weakref.ref):
-        v = v()[QtCore.Qt.StatusTipRole]
-    elif isinstance(v, dict):
-        v = v[QtCore.Qt.StatusTipRole]
-    elif isinstance(v, QtCore.QModelIndex):
-        v = v.data(QtCore.Qt.StatusTipRole)
-    else:
-        raise TypeError(
-            f'Invalid type, expected one of {weakref.ref}, {QtCore.QModelIndex}, {dict}, got {type(v)}')
-
-    collapsed = is_collapsed(v)
-    if collapsed:
-        return collapsed.group(1) + SEQPROXY + collapsed.group(3)
-    seq = get_sequence(v)
-    if seq:
-        return seq.group(1) + SEQPROXY + seq.group(3) + '.' + seq.group(4)
-    return v
 
 
 @functools.lru_cache(maxsize=4194304)
@@ -154,15 +133,57 @@ def get_sequence(s):
     return GetSequenceRegex.search(s)
 
 
-def get_sequence_startpath(path):
-    """Checks the given string and if it denotes a sequence returns the path for
-    the first file.
+def proxy_path(v):
+    """Encompasses the logic used to associate preferences with items.
+
+    Sequence items need a generic key to save values as the sequence notation
+    might change as files are added/removed to image sequences. Any `FileItem`
+    will use their file path as the key and SequenceItems will use `[0]` in place
+    of their frame-range notation.
 
     Args:
-            path (str): A collapsed sequence name.
+            v (QModelIndex, weakref.ref, dict or str): Data dict, index or filepath string.
 
     Returns:
-            str: The path to the first file of the sequence.
+            str: The key used to store the item's information in the local
+            preferences and the bookmark item database.
+
+    """
+    if isinstance(v, str):
+        pass
+    elif isinstance(v, weakref.ref):
+        v = v()[QtCore.Qt.StatusTipRole]
+    elif isinstance(v, dict):
+        v = v[QtCore.Qt.StatusTipRole]
+    elif isinstance(v, QtCore.QModelIndex):
+        v = v.data(QtCore.Qt.StatusTipRole)
+    else:
+        raise TypeError(
+            f'Invalid type, expected one of {weakref.ref}, {QtCore.QModelIndex}, {dict}, got {type(v)}')
+    return _proxy_path(v)
+
+
+@functools.lru_cache(maxsize=4194304)
+def _proxy_path(v):
+    collapsed = is_collapsed(v)
+    if collapsed:
+        return collapsed.group(1) + SEQPROXY + collapsed.group(3)
+    seq = get_sequence(v)
+    if seq:
+        return seq.group(1) + SEQPROXY + seq.group(3) + '.' + seq.group(4)
+    return v
+
+
+@functools.lru_cache(maxsize=4194304)
+def get_sequence_startpath(path):
+    """Checks if given string is collapsed, and if so, returns the path of
+    the first item of the sequence.
+
+    Args:
+        path (str): A collapsed sequence name.
+
+    Returns:
+        str: The path to the first file of the sequence.
 
     """
     common.check_type(path, str)
@@ -176,15 +197,16 @@ def get_sequence_startpath(path):
     return path
 
 
+@functools.lru_cache(maxsize=4194304)
 def get_sequence_endpath(path):
-    """Checks the given string and if it denotes a sequence returns the path for
-    the last file.
+    """Checks if given string is collapsed, and if so, returns the path of
+    the last item of the sequence.
 
     Args:
-            path (str): A collapsed sequence name.
+        path (str): A collapsed sequence name.
 
     Returns:
-            str: The path to the last file of the sequence.
+        str: The path to the last file of the sequence.
 
     """
     common.check_type(path, str)
@@ -197,6 +219,7 @@ def get_sequence_endpath(path):
     return path
 
 
+@functools.lru_cache(maxsize=4194304)
 def get_sequence_paths(index):
     """Given the index, returns a tuple of filenames referring to the
     individual sequence items.

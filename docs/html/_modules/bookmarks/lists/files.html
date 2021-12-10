@@ -290,7 +290,6 @@
     <span class="k">return</span> <span class="n">seq</span><span class="p">,</span> <span class="n">sequence_path</span>
 
 
-
 <div class="viewcode-block" id="DropIndicatorWidget"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.files.DropIndicatorWidget">[docs]</a><span class="k">class</span> <span class="nc">DropIndicatorWidget</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
     <span class="sd">"""Widgets responsible for drawing an overlay."""</span>
 
@@ -328,6 +327,10 @@
 
 
 <div class="viewcode-block" id="ItemDrag"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.files.ItemDrag">[docs]</a><span class="k">class</span> <span class="nc">ItemDrag</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDrag</span><span class="p">):</span>
+    <span class="sd">"""A utility class used to start a drag operation.</span>
+<span class="sd">    </span>
+<span class="sd">    """</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ItemDrag</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
 
@@ -641,7 +644,7 @@
             <span class="k">if</span> <span class="s1">'thumbs.db'</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="c1"># These values will always resolve to be the same, and therefore we can use a cach</span>
+            <span class="c1"># These values will always resolve to be the same, and therefore we can use a cache</span>
             <span class="c1"># to retrieve them</span>
             <span class="n">filepath</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">file_root</span><span class="p">,</span> <span class="n">_dir</span><span class="p">,</span> <span class="n">sort_by_name_role</span> <span class="o">=</span> <span class="n">get_path_elements</span><span class="p">(</span>
                 <span class="n">filename</span><span class="p">,</span>
@@ -680,7 +683,7 @@
                 <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">:</span> <span class="n">filename</span><span class="p">,</span>
                 <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">:</span> <span class="n">filename</span><span class="p">,</span>
                 <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">:</span> <span class="n">filepath</span><span class="p">,</span>
-                <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_size</span><span class="p">,</span>
+                <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_size</span><span class="p">,</span>
                 <span class="c1">#</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">QueueRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">queues</span><span class="p">,</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">DataTypeRole</span><span class="p">:</span> <span class="n">common</span><span class="o">.</span><span class="n">FileItem</span><span class="p">,</span>
@@ -730,7 +733,7 @@
                         <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">:</span> <span class="n">sequence_name</span><span class="p">,</span>
                         <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">:</span> <span class="n">sequence_name</span><span class="p">,</span>
                         <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">:</span> <span class="n">sequence_path</span><span class="p">,</span>
-                        <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_size</span><span class="p">,</span>
+                        <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_size</span><span class="p">,</span>
                         <span class="c1">#</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">QueueRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">queues</span><span class="p">,</span>
                         <span class="c1">#</span>
@@ -828,7 +831,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="FilesModel.item_generator"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.files.FilesModel.item_generator">[docs]</a>    <span class="k">def</span> <span class="nf">item_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-        <span class="sd">"""Recursive iterator for retrieving files from all subfolders.</span>
+        <span class="sd">"""Recursive iterator for retrieving files from all sub-folders.</span>
 
 <span class="sd">        """</span>
         <span class="k">try</span><span class="p">:</span>
@@ -867,8 +870,7 @@
 <div class="viewcode-block" id="FilesModel.task"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.files.FilesModel.task">[docs]</a>    <span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TaskKey</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="FilesModel.data_type"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.files.FilesModel.data_type">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
-    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
+<div class="viewcode-block" id="FilesModel.data_type"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.files.FilesModel.data_type">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="k">def</span> <span class="nf">data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Data type refers to the internal data set exposed to the model.</span>
 
@@ -997,8 +999,8 @@
             <span class="n">icon</span><span class="o">=</span><span class="n">icon</span><span class="p">,</span>
             <span class="n">parent</span><span class="o">=</span><span class="n">parent</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">indicatorwidget</span> <span class="o">=</span> <span class="n">DropIndicatorWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">indicatorwidget</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drop_indicator_widget</span> <span class="o">=</span> <span class="n">DropIndicatorWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drop_indicator_widget</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">drag_source_index</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setDragDropMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">DragDrop</span><span class="p">)</span>

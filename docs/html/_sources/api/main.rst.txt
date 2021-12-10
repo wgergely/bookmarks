@@ -1,15 +1,15 @@
-bookmarks.main
-==============
+main
+====
 
-bookmarks.main
---------------
+main
+----
 
 .. automodule:: bookmarks.main
     :members:
 
 
-bookmarks.standalone
---------------------
+standalone
+----------
 
 
 .. automodule:: bookmarks.standalone

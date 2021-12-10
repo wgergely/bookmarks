@@ -282,6 +282,7 @@ class BaseWorker(QtCore.QObject):
 
             threads.THREADS[q]['queue'].append(ref)
         self.queue_timer.start()
+        common.signals.threadItemsQueued.emit()
 
     @common.error
     @QtCore.Slot(weakref.ref)
@@ -379,6 +380,136 @@ class BaseWorker(QtCore.QObject):
         return True
 
 
+def byte_to_pretty_string(num, suffix='B'):
+    """Converts a numeric byte value to a human-readable string.
+
+    Args:
+        num (int):          The number of bytes.
+        suffix (str):   A custom suffix.
+
+    Returns:
+        str:            Human readable byte value.
+
+    """
+    for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
+        if abs(num) < 1024.0:
+            return u"%3.1f%s%s" % (num, unit, suffix)
+        num /= 1024.0
+    return u"%.1f%s%s" % (num, 'Yi', suffix)
+
+
+def count_todos(asset_row_data):
+    v = asset_row_data['notes']
+    return len(v) if isinstance(v, dict) else 0
+
+
+def count_assets(path, ASSET_IDENTIFIER):
+    n = 0
+    for entry in os.scandir(path):
+        if entry.name.startswith('.'):
+            continue
+        if not entry.is_dir():
+            continue
+        if not ASSET_IDENTIFIER:
+            n += 1
+            continue
+        path = entry.path.replace('\\', '/')
+        identifier = '/'.join((path, ASSET_IDENTIFIER))
+        if not QtCore.QFileInfo(identifier).exists():
+            continue
+        n += 1
+    return n
+
+
+def get_bookmark_description(bookmark_row_data):
+    """Utility method for constructing a short description for a bookmark item.
+
+    The description includes currently set properties and the description of
+    the bookmark.
+
+    Args:
+        bookmark_row_data (dict): Data retrieved from the database.
+
+    Returns:
+        str:    The description of the bookmark.
+
+    """
+    sep = '  |  '
+    try:
+        v = {}
+        for k in ('description', 'width', 'height', 'framerate', 'prefix'):
+            _v = bookmark_row_data[k]
+            _v = _v if _v else None
+            v[k] = _v
+
+        description = v['description'] + sep if v['description'] else ''
+        width = v['width'] if (v['width'] and v['height']) else ''
+        height = 'x{}px'.format(v['height']) if (
+                v['width'] and v['height']) else ''
+        framerate = '{}{}fps'.format(
+            sep, v['framerate']) if v['framerate'] else ''
+        prefix = '{}{}'.format(sep, v['prefix']) if v['prefix'] else ''
+
+        s = description + width + height + framerate + prefix
+        s = s.replace(sep + sep, sep)
+        s = s.strip(sep).strip()  # pylint: disable=E1310
+        return s
+    except:
+        log.error('Could not get description.')
+        return ''
+
+
+def get_ranges(arr, padding):
+    """Given an array of numbers the method will return a string representation of
+    the ranges contained in the array.
+
+    Args:
+        arr(list):       An array of numbers.
+        padding(int):    The number of leading zeros before the number.
+
+    Returns:
+        str: A string representation of the given array.
+
+    """
+    arr = sorted(list(set(arr)))
+    blocks = {}
+    k = 0
+    for idx, n in enumerate(arr):  # blocks
+        zfill = str(n).zfill(padding)
+
+        if k not in blocks:
+            blocks[k] = []
+        blocks[k].append(zfill)
+
+        if idx + 1 != len(arr):
+            if arr[idx + 1] != n + 1:  # break coming up
+                k += 1
+    return ','.join(['-'.join(sorted(list(set([blocks[k][0], blocks[k][-1]])))) for k in blocks])
+
+
+def update_slack_configured(source_paths, bookmark_row_data, ref):
+    v = bookmark_row_data['slacktoken']
+    ref()[common.SlackLinkedRole] = True if v else False
+
+
+def update_shotgun_configured(pp, b, a, ref):
+    if not all((pp, b, a, ref())):
+        return
+    b_conf = (b['shotgun_domain'], b['shotgun_scriptname'], b['shotgun_api_key'])
+    b_item_conf = (b['shotgun_id'], b['shotgun_name'], b['shotgun_type'])
+    if pp == 3:
+        if all(b_conf + b_item_conf):
+            ref()[common.ShotgunLinkedRole] = True
+            return
+    if pp == 4:
+        a_item_conf = (a['shotgun_id'], a['shotgun_name'], a['shotgun_type'])
+        if all(b_conf + b_item_conf + a_item_conf):
+            ref()[common.ShotgunLinkedRole] = True
+            return
+
+    ref()[common.ShotgunLinkedRole] = False
+
+
 class InfoWorker(BaseWorker):
     """A worker used to retrieve file information.
 
@@ -453,10 +584,10 @@ class InfoWorker(BaseWorker):
                 ref()[common.DescriptionRole] = asset_row_data['description']
         # Shotgun status
         if len(pp) <= 4:
-            self.update_shotgun_configured(pp, bookmark_row_data, asset_row_data, ref)
+            update_shotgun_configured(pp, bookmark_row_data, asset_row_data, ref)
         # Note count
         if asset_row_data:
-            ref()[common.TodoCountRole] = self.count_todos(asset_row_data)
+            ref()[common.TodoCountRole] = count_todos(asset_row_data)
 
         # Flags
         if asset_row_data:
@@ -481,8 +612,8 @@ class InfoWorker(BaseWorker):
         if len(pp) != 3:
             return
 
-        description = self.get_bookmark_description(bookmark_row_data)
-        count = self.count_assets(source, bookmark_row_data['identifier'])
+        description = get_bookmark_description(bookmark_row_data)
+        count = count_assets(source, bookmark_row_data['identifier'])
 
         if not self.is_valid(ref):
             return False
@@ -491,7 +622,7 @@ class InfoWorker(BaseWorker):
         ref()[QtCore.Qt.ToolTipRole] = description
 
         # Let's load and verify Slack status
-        self.update_slack_configured(pp, bookmark_row_data, ref)
+        update_slack_configured(pp, bookmark_row_data, ref)
 
     def _process_sequence_item(self, ref, item_type):
         if not self.is_valid(ref):
@@ -506,7 +637,7 @@ class InfoWorker(BaseWorker):
 
         intframes = [int(f) for f in frs]
         padding = len(frs[0])
-        rangestring = self.get_ranges(intframes, padding)
+        rangestring = get_ranges(intframes, padding)
 
         startpath = \
             seq.group(1) + \
@@ -544,7 +675,7 @@ class InfoWorker(BaseWorker):
                 mtime.toString('yyyy') + ' ' + \
                 mtime.toString('hh') + ':' + \
                 mtime.toString('mm') + ';' + \
-                self.byte_to_pretty_string(size)
+                byte_to_pretty_string(size)
 
         # Setting the path names
         if not self.is_valid(ref):
@@ -583,7 +714,7 @@ class InfoWorker(BaseWorker):
             mtime.toString('yyyy') + ' ' + \
             mtime.toString('hh') + ':' + \
             mtime.toString('mm') + ';' + \
-            self.byte_to_pretty_string(size)
+            byte_to_pretty_string(size)
 
         if not self.is_valid(ref):
             return False
@@ -591,137 +722,8 @@ class InfoWorker(BaseWorker):
         ref()[common.FileDetailsRole] = info_string
         ref()[common.SortBySizeRole] = size
 
-    def count_todos(self, asset_row_data):
-        v = asset_row_data['notes']
-        return len(v) if isinstance(v, dict) else 0
-
-    @staticmethod
-    def update_shotgun_configured(pp, b, a, ref):
-        if not all((pp, b, a, ref())):
-            return
-        b_conf = (b['shotgun_domain'], b['shotgun_scriptname'], b['shotgun_api_key'])
-        b_item_conf = (b['shotgun_id'], b['shotgun_name'], b['shotgun_type'])
-        if pp == 3:
-            if all(b_conf + b_item_conf):
-                ref()[common.ShotgunLinkedRole] = True
-                return
-        if pp == 4:
-            a_item_conf = (a['shotgun_id'], a['shotgun_name'], a['shotgun_type'])
-            if all(b_conf + b_item_conf + a_item_conf):
-                ref()[common.ShotgunLinkedRole] = True
-                return
-
-        ref()[common.ShotgunLinkedRole] = False
-
-    @staticmethod
-    def update_slack_configured(source_paths, bookmark_row_data, ref):
-        v = bookmark_row_data['slacktoken']
-        ref()[common.SlackLinkedRole] = True if v else False
-
     def count_items(self, ref, source):
         pass
-
-    @staticmethod
-    def count_assets(path, ASSET_IDENTIFIER):
-        n = 0
-        for entry in os.scandir(path):
-            if entry.name.startswith('.'):
-                continue
-            if not entry.is_dir():
-                continue
-            if not ASSET_IDENTIFIER:
-                n += 1
-                continue
-            path = entry.path.replace('\\', '/')
-            identifier = '/'.join((path, ASSET_IDENTIFIER))
-            if not QtCore.QFileInfo(identifier).exists():
-                continue
-            n += 1
-        return n
-
-    @staticmethod
-    def get_bookmark_description(bookmark_row_data):
-        """Utility method for constructing a short description for a bookmark item.
-
-        The description includes currently set properties and the description of
-        the bookmark.
-
-        Args:
-            bookmark_row_data (dict): Data retrieved from the database.
-
-        Returns:
-            str:    The description of the bookmark.
-
-        """
-        sep = '  |  '
-        try:
-            v = {}
-            for k in ('description', 'width', 'height', 'framerate', 'prefix'):
-                _v = bookmark_row_data[k]
-                _v = _v if _v else None
-                v[k] = _v
-
-            description = v['description'] + sep if v['description'] else ''
-            width = v['width'] if (v['width'] and v['height']) else ''
-            height = 'x{}px'.format(v['height']) if (
-                    v['width'] and v['height']) else ''
-            framerate = '{}{}fps'.format(
-                sep, v['framerate']) if v['framerate'] else ''
-            prefix = '{}{}'.format(sep, v['prefix']) if v['prefix'] else ''
-
-            s = description + width + height + framerate + prefix
-            s = s.replace(sep + sep, sep)
-            s = s.strip(sep).strip()  # pylint: disable=E1310
-            return s
-        except:
-            log.error('Could not get description.')
-            return ''
-
-    @staticmethod
-    def byte_to_pretty_string(num, suffix='B'):
-        """Converts a numeric byte value to a human-readable string.
-
-        Args:
-            num (int):          The number of bytes.
-            suffix (str):   A custom suffix.
-
-        Returns:
-            str:            Human readable byte value.
-
-        """
-        for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
-            if abs(num) < 1024.0:
-                return u"%3.1f%s%s" % (num, unit, suffix)
-            num /= 1024.0
-        return u"%.1f%s%s" % (num, 'Yi', suffix)
-
-    @staticmethod
-    def get_ranges(arr, padding):
-        """Given an array of numbers the method will return a string representation of
-        the ranges contained in the array.
-
-        Args:
-            arr(list):       An array of numbers.
-            padding(int):    The number of leading zeros before the number.
-
-        Returns:
-            str: A string representation of the given array.
-
-        """
-        arr = sorted(list(set(arr)))
-        blocks = {}
-        k = 0
-        for idx, n in enumerate(arr):  # blocks
-            zfill = str(n).zfill(padding)
-
-            if k not in blocks:
-                blocks[k] = []
-            blocks[k].append(zfill)
-
-            if idx + 1 != len(arr):
-                if arr[idx + 1] != n + 1:  # break coming up
-                    k += 1
-        return ','.join(['-'.join(sorted(list(set([blocks[k][0], blocks[k][-1]])))) for k in blocks])
 
 
 class ThumbnailWorker(BaseWorker):
@@ -769,13 +771,14 @@ class ThumbnailWorker(BaseWorker):
         source = ref()[QtCore.Qt.StatusTipRole]
 
         # Resolve the thumbnail's path...
+        destination = images.get_cached_thumbnail_path(
+            _p[0],
+            _p[1],
+            _p[2],
+            source,
+        )
+
         with images.lock:
-            destination = images.get_cached_thumbnail_path(
-                _p[0],
-                _p[1],
-                _p[2],
-                source,
-            )
             # ...and use it to load the resource
             image = images.ImageCache.get_image(
                 destination,
@@ -786,7 +789,6 @@ class ThumbnailWorker(BaseWorker):
         # If the image successfully loads we can wrap things up here
         if image and not image.isNull():
             with images.lock:
-                # images.ImageCache.get_image(destination, int(size), force=True)
                 images.ImageCache.make_color(destination)
             return True
 
@@ -810,6 +812,7 @@ class ThumbnailWorker(BaseWorker):
 
             if QtCore.QFileInfo(source).size() >= pow(1024, 3) * 2:
                 return True
+
             res = images.ImageCache.oiio_make_thumbnail(
                 source,
                 destination,

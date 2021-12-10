@@ -2,8 +2,9 @@
 """Bookmarks' main widget.
 
 :class:`.MainWidget` consist of :class:`bookmarks.topbar.TopBarWidget`,
-:class:`bookmarks.statusbar.StatusBarWidget`, and :class:`bookmarks.lists.basewidget.ListsWidget`. The latter
-is the container for the three main list item widgets: :class:`bookmarks.lists.bookmarks.BookmarksWidget`,
+:class:`bookmarks.statusbar.StatusBarWidget`,
+and :class:`bookmarks.lists.basewidget.ListsWidget`. The latter is the container for the three
+main list item widgets: :class:`bookmarks.lists.bookmarks.BookmarksWidget`,
 :class:`bookmarks.lists.assets.AssetsWidget` and :class:`bookmarks.lists.files.FilesWidget`.
 
 Important:
@@ -24,12 +25,12 @@ from . import images
 from . import shortcuts
 from . import statusbar
 from . import topbar
-from . lists import assets
-from . lists import basewidget
-from . lists import bookmarks
-from . lists import favourites
-from . lists import files
-from . lists import tasks
+from .lists import assets
+from .lists import basewidget
+from .lists import bookmarks
+from .lists import favourites
+from .lists import files
+from .lists import tasks
 
 
 def init():
@@ -141,13 +142,16 @@ class MainWidget(QtWidgets.QWidget):
         # Asset -> File
         a.model().sourceModel().activeChanged.connect(
             f.model().sourceModel().reset_data)
+        # Asset -> Task
+        a.model().sourceModel().activeChanged.connect(
+            l.model().sourceModel().reset_data)
         #####################################################
         # Stacked widget navigation
         b.activated.connect(
             lambda: common.signals.tabChanged.emit(common.AssetTab))
         a.activated.connect(
             lambda: common.signals.tabChanged.emit(common.FileTab))
-        a.activated.connect(l.model().sourceModel().check_task)
+
 
         ########################################################################
         b.model().sourceModel().activeChanged.connect(lc.slack_button.check_token)

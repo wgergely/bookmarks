@@ -85,7 +85,6 @@ def get_sequence_elements(filepath):
     return seq, sequence_path
 
 
-
 class DropIndicatorWidget(QtWidgets.QWidget):
     """Widgets responsible for drawing an overlay."""
 
@@ -123,6 +122,10 @@ class DropIndicatorWidget(QtWidgets.QWidget):
 
 
 class ItemDrag(QtGui.QDrag):
+    """A utility class used to start a drag operation.
+    
+    """
+
     def __init__(self, index, widget):
         super(ItemDrag, self).__init__(widget)
 
@@ -436,7 +439,7 @@ class FilesModel(basemodel.BaseModel):
             if 'thumbs.db' in filename:
                 continue
 
-            # These values will always resolve to be the same, and therefore we can use a cach
+            # These values will always resolve to be the same, and therefore we can use a cache
             # to retrieve them
             filepath, ext, file_root, _dir, sort_by_name_role = get_path_elements(
                 filename,
@@ -475,7 +478,7 @@ class FilesModel(basemodel.BaseModel):
                 QtCore.Qt.DisplayRole: filename,
                 QtCore.Qt.EditRole: filename,
                 QtCore.Qt.StatusTipRole: filepath,
-                QtCore.Qt.SizeHintRole: self._row_size,
+                QtCore.Qt.SizeHintRole: self.row_size,
                 #
                 common.QueueRole: self.queues,
                 common.DataTypeRole: common.FileItem,
@@ -525,7 +528,7 @@ class FilesModel(basemodel.BaseModel):
                         QtCore.Qt.DisplayRole: sequence_name,
                         QtCore.Qt.EditRole: sequence_name,
                         QtCore.Qt.StatusTipRole: sequence_path,
-                        QtCore.Qt.SizeHintRole: self._row_size,
+                        QtCore.Qt.SizeHintRole: self.row_size,
                         #
                         common.QueueRole: self.queues,
                         #
@@ -623,7 +626,7 @@ class FilesModel(basemodel.BaseModel):
         )
 
     def item_generator(self, path):
-        """Recursive iterator for retrieving files from all subfolders.
+        """Recursive iterator for retrieving files from all sub-folders.
 
         """
         try:
@@ -662,7 +665,6 @@ class FilesModel(basemodel.BaseModel):
     def task(self):
         return common.active(common.TaskKey)
 
-    @common.debug
     @common.error
     def data_type(self):
         """Data type refers to the internal data set exposed to the model.
@@ -792,8 +794,8 @@ class FilesWidget(basewidget.ThreadedBaseWidget):
             icon=icon,
             parent=parent
         )
-        self.indicatorwidget = DropIndicatorWidget(parent=self)
-        self.indicatorwidget.hide()
+        self.drop_indicator_widget = DropIndicatorWidget(parent=self)
+        self.drop_indicator_widget.hide()
 
         self.drag_source_index = QtCore.QModelIndex()
         self.setDragDropMode(QtWidgets.QAbstractItemView.DragDrop)

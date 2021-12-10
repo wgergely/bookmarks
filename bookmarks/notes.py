@@ -1,23 +1,17 @@
 # -*- coding: utf-8 -*-
-"""Interface to add notes and todo-like annotations for an bookmark or an asset
-item.
+"""Widget used to edit item notes.
 
 """
-import json
-import base64
-import time
-import functools
 import re
+import time
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from . import log
+from . import actions
 from . import common
-from . import ui
 from . import database
 from . import images
-from . import actions
-
+from . import ui
 
 NoHighlightFlag = 0b000000
 HeadingHighlight = 0b000001
@@ -25,7 +19,6 @@ QuoteHighlight = 0b000010
 ItalicsHighlight = 0b001000
 BoldHighlight = 0b010000
 PathHighlight = 0b100000
-
 
 HIGHLIGHT_RULES = {
     'url': {
@@ -99,11 +92,9 @@ class Highlighter(QtGui.QSyntaxHighlighter):
     """Class responsible for highlighting urls"""
 
     def highlightBlock(self, text):
-        """The highlighting cases are defined in the common module.
-        In general we're tying to replicate the ``Markdown`` syntax rendering.
+        """Highlights the given text.
 
         Args:
-            case (str): HIGHLIGHT_RULES dicy key.
             text (str): The text to assess.
 
         Returns:
@@ -405,7 +396,8 @@ class DragIndicatorButton(QtWidgets.QLabel):
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'drag_indicator', common.color(common.TextSecondaryColor), common.size(common.WidthMargin))
+            'drag_indicator', common.color(common.TextSecondaryColor),
+            common.size(common.WidthMargin))
         self.setPixmap(pixmap)
 
     def mousePressEvent(self, event):
@@ -468,7 +460,6 @@ class DragIndicatorButton(QtWidgets.QLabel):
         overlay_widget.close()
         overlay_widget.deleteLater()
         parent_widget.parent().separator.setHidden(True)
-
 
 
 class Separator(QtWidgets.QLabel):
@@ -599,16 +590,16 @@ class TodoEditors(QtWidgets.QWidget):
                 continue
 
             line = (
-                self.items[n - 1].geometry().bottom() +
-                self.items[n].geometry().top()
-            ) / 2.0
+                           self.items[n - 1].geometry().bottom() +
+                           self.items[n].geometry().top()
+                   ) / 2.0
             lines.append(line)
 
             if n == len(self.items) - 1:  # last
                 line = ((
-                    self.items[n - 1].geometry().bottom() +
-                    self.items[n].geometry().top()
-                ) / 2.0)
+                                self.items[n - 1].geometry().bottom() +
+                                self.items[n].geometry().top()
+                        ) / 2.0)
                 lines.append(line)
                 line = self.items[n].geometry().bottom()
                 lines.append(line)
@@ -698,7 +689,6 @@ class TodoEditorWidget(QtWidgets.QDialog):
 
         self.init_lock()
 
-
     def _create_UI(self):
         """Creates the ui layout."""
         QtWidgets.QVBoxLayout(self)
@@ -735,7 +725,8 @@ class TodoEditorWidget(QtWidgets.QDialog):
         # Name label
         text = 'Notes'
         label = ui.PaintedLabel(
-            text, color=common.color(common.TextSecondaryColor), size=common.size(common.FontSizeLarge), parent=self)
+            text, color=common.color(common.TextSecondaryColor),
+            size=common.size(common.FontSizeLarge), parent=self)
         label.setFixedHeight(height)
 
         self.refresh_button = ui.ClickableIconButton(
@@ -764,12 +755,12 @@ class TodoEditorWidget(QtWidgets.QDialog):
         row = ui.add_row(None, height=height, parent=self)
 
         text = 'Add Note'
-        self.add_label = ui.PaintedLabel(text, color=common.color(common.TextSecondaryColor), parent=row)
+        self.add_label = ui.PaintedLabel(text, color=common.color(common.TextSecondaryColor),
+                                         parent=row)
 
         row.layout().addWidget(self.add_button, 0)
         row.layout().addWidget(self.add_label, 0)
         row.layout().addStretch(1)
-
 
         self.todoeditors_widget = TodoEditors(parent=self)
         self.setMinimumHeight(common.size(common.HeightRow) * 3.0)
@@ -852,7 +843,8 @@ class TodoEditorWidget(QtWidgets.QDialog):
             text = 'Click the plus icon on the top to add a note'
             text = text if not len(self.todoeditors_widget.items) else ''
             common.draw_aliased_text(
-                painter, font, rect, text, QtCore.Qt.AlignCenter, common.color(common.BackgroundDarkColor))
+                painter, font, rect, text, QtCore.Qt.AlignCenter,
+                common.color(common.BackgroundDarkColor))
             painter.end()
         return False
 
@@ -897,7 +889,7 @@ class TodoEditorWidget(QtWidgets.QDialog):
             self.scrollarea.ensureWidgetVisible(
                 editor, ymargin=editor.height())
 
-    def key_return(self,):
+    def key_return(self, ):
         for item in self.todoeditors_widget.items:
             editor = item.findChild(TodoItemEditor)
 

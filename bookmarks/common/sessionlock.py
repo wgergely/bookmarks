@@ -2,23 +2,18 @@
 """Module defines the classes and methods needed to set and edit session lock
 files.
 
-Bookmarks understand two session locks related to how active paths are read and
-set. When `common.active_mode` is `common.SynchronisedActivePaths` bookmarks
-will save active paths in the `user_settings`, as expected.
+Bookmarks has two session modes. When `common.active_mode` is `common.SynchronisedActivePaths`,
+Bookmarks will save active paths in the user settings file. However, when multiple Bookmarks
+instances are running this poses a problem, because instances will mutually overwrite each
+other's active paths.
 
-However, when multiple Bookmarks instances are running this poses a problem,
-because instances will mutually overwrite each other's active path common.
+Hence, when a second Bookmarks instance is launched `common.active_mode` is automatically set to
+`common.PrivateActivePaths`. When this mode is active, the initial active path values are read
+from the user settings, but active paths changes won't be saved to the user settings.
+Instead, the paths will be stored in a private data container.
 
-Hence, when a second Bookmarks instance is launched `common.active_mode` is
-automatically set to `common.PrivateActivePaths`. When this mode is active, the
-initial active path values are read on startup `user_settings` will no longer
-be modified. Instead, the paths will be saved into a private data container.
-
-To toggle between  private active paths, and the ones stored in `user_settings`
-see `actions.toggle_active_mode`.
-
-`ToggleSessionModeButton` is a UI element used by the user to toggle between
-these modes.
+To toggle between the two modes see :func:`bookmarks.actions.toggle_active_mode` and
+:class:`bookmarks.statusbar.ToggleSessionModeButton`.
 
 """
 import os
@@ -36,6 +31,7 @@ LOCK_DIR = '{root}/{product}'
 
 
 def get_lock_path():
+    """Returns the path to the current session's lock file."""
     return LOCK_PATH.format(
         root=QtCore.QStandardPaths.writableLocation(
             QtCore.QStandardPaths.GenericDataLocation),
@@ -47,7 +43,7 @@ def get_lock_path():
 
 
 def prune_lock():
-    """Removes stale lock files not associated with current PIDs.
+    """Removes stale lock files not associated with running PIDs.
 
     """
     path = LOCK_DIR.format(
@@ -80,9 +76,9 @@ def init_lock():
     """Initialises the Bookmark's session lock.
 
     We'll check all lock-files and to see if there's already a
-    SynchronisedActivePaths session. As we want only one session controlling
+    ``SynchronisedActivePaths`` session. As we want only one session controlling
     the active path settings we'll set all subsequent application sessions
-    to be PrivateActivePaths (when PrivateActivePaths is on, all active path
+    to be ``PrivateActivePaths`` (when ``PrivateActivePaths`` is on, all active path
     settings will be kept in memory, instead of writing them out to the
     disk).
 
@@ -126,7 +122,7 @@ def init_lock():
 @common.error
 @common.debug
 def write_current_mode_to_lock(*args, **kwargs):
-    """Write the current mode this session's lock file.
+    """Write this session's current mode to the lock file.
 
     """
     # Create our lockfile

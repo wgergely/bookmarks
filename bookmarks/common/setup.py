@@ -25,14 +25,14 @@ dependencies = (
 
 
 def initialize(mode):
-    """Initializes the components required to run Bookmarks.
+    """Initialize the components required to run Bookmarks.
 
     Args:
             mode (int):    The initialization mode. One of ``common.StandaloneMode`` or ``common.EmbeddedMode``.
 
     """
-    from . import verify_dependecies
-    verify_dependecies()
+    from . import verify_dependencies
+    verify_dependencies()
 
     if common.init_mode is not None:
         raise RuntimeError(f'Already initialized as "{common.init_mode}"!')
@@ -105,6 +105,9 @@ def uninitialize():
     from ..threads import threads
     threads.quit_threads()
 
+    from .. import database
+    database.remove_all_connections()
+
     try:
         common.main_widget.hide()
         common.main_widget.deleteLater()
@@ -122,8 +125,7 @@ def uninitialize():
 
 
 def _init_config():
-    """Load the config values from common.CONFIG and set them in the `common` module as
-    public properties.
+    """Load the config values from common.CONFIG and set them in the `common` module as properties.
 
     """
     p = common.get_rsc(common.CONFIG)
@@ -212,7 +214,7 @@ def init_environment(env_key, add_private=False):
     sys.path.append(v)
 
 
-def verify_dependecies():
+def verify_dependencies():
     """Checks the presence of all required python modules.
 
     Raises:

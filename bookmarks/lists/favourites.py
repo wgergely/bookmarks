@@ -136,7 +136,7 @@ class FavouritesModel(files.FilesModel):
                 QtCore.Qt.DisplayRole: filename,
                 QtCore.Qt.EditRole: filename,
                 QtCore.Qt.StatusTipRole: filepath,
-                QtCore.Qt.SizeHintRole: self._row_size,
+                QtCore.Qt.SizeHintRole: self.row_size,
                 #
                 common.QueueRole: self.queues,
                 common.DataTypeRole: t,
@@ -186,7 +186,7 @@ class FavouritesModel(files.FilesModel):
                         QtCore.Qt.DisplayRole: sequence_name,
                         QtCore.Qt.EditRole: sequence_name,
                         QtCore.Qt.StatusTipRole: sequence_path,
-                        QtCore.Qt.SizeHintRole: self._row_size,
+                        QtCore.Qt.SizeHintRole: self.row_size,
                         #
                         common.QueueRole: self.queues,
                         #
@@ -334,12 +334,12 @@ class FavouritesWidget(files.FilesWidget):
             return
 
         if event.mimeData().hasUrls():
-            self.indicatorwidget.show()
+            self.drop_indicator_widget.show()
             return event.accept()
-        self.indicatorwidget.hide()
+        self.drop_indicator_widget.hide()
 
     def dragLeaveEvent(self, event):
-        self.indicatorwidget.hide()
+        self.drop_indicator_widget.hide()
 
     def dragMoveEvent(self, event):
         if event.mimeData().hasUrls():
@@ -347,7 +347,7 @@ class FavouritesWidget(files.FilesWidget):
 
     def dropEvent(self, event):
         """Event responsible for adding the dropped file to the favourites."""
-        self.indicatorwidget.hide()
+        self.drop_indicator_widget.hide()
 
         if event.source() == self:
             return  # Won't allow dropping an item from itself

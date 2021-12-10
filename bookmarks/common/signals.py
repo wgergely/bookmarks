@@ -74,6 +74,8 @@ class CoreSignals(QtCore.QObject):
 
     taskFolderChanged = QtCore.Signal(str)
 
+    threadItemsQueued = QtCore.Signal()
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 

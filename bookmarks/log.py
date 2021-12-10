@@ -5,13 +5,11 @@
 import time
 import traceback
 
-from PySide2 import QtGui, QtCore, QtWidgets
+from PySide2 import QtCore
 
 from . import common
 
-
 mutex = QtCore.QMutex()
-
 
 HEADER = (0b000000001, '\033[95m')
 OKBLUE = (0b000000010, '\033[94m')

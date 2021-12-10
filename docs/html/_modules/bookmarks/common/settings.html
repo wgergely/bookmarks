@@ -204,7 +204,10 @@
         <article role="main">
           <h1>Source code for bookmarks.common.settings</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">"""Defines the customized QSettings instance used to store user and app common.</span>
+<span class="sd">"""Defines a customized QSettings object used to store user settings.</span>
+
+<span class="sd">The user settings are stored in an ini file stored at :func:`.get_user_settings_path`.</span>
+<span class="sd">The current ui state, current active paths and application settings are all stored in here.</span>
 
 <span class="sd">"""</span>
 <span class="kn">import</span> <span class="nn">collections</span>
@@ -313,7 +316,7 @@
     <span class="c1"># paths from the ini file.</span>
     <span class="n">common</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="n">UserSettings</span><span class="p">()</span>
     <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">load_active_values</span><span class="p">()</span>
-    <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">update_private_values</span><span class="p">()</span>
+    <span class="n">common</span><span class="o">.</span><span class="n">update_private_values</span><span class="p">()</span>
 
     <span class="n">v</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">CurrentUserPicksSection</span><span class="p">,</span> <span class="n">ServersKey</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -371,12 +374,12 @@
 <span class="sd">    Args:</span>
 <span class="sd">        k (str): The name of the path segment, eg. `common.ServerKey`.</span>
 <span class="sd">        path (bool, optional): If True, will return a path to the active item.</span>
-<span class="sd">        args (bool, optional): If `True`, will return all components that make up the path.</span>
+<span class="sd">        args (bool, optional): If `True`, will return all components that make up the active path.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        str: The name of the active item.</span>
-<span class="sd">        str (when path=True): Path to the active item.</span>
-<span class="sd">        tuple (when args=True): Active path elements.</span>
+<span class="sd">        * str: The name of the active item.</span>
+<span class="sd">        * str (when path=True): Path to the active item.</span>
+<span class="sd">        * tuple (when args=True): Active path elements.</span>
 
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="n">path</span> <span class="ow">or</span> <span class="n">args</span><span class="p">:</span>
@@ -401,10 +404,11 @@
     <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">active_paths</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">active_mode</span><span class="p">][</span><span class="n">k</span><span class="p">]</span></div>
 
 
-<span class="k">def</span> <span class="nf">get_user_settings_path</span><span class="p">():</span>
+<div class="viewcode-block" id="get_user_settings_path"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.get_user_settings_path">[docs]</a><span class="k">def</span> <span class="nf">get_user_settings_path</span><span class="p">():</span>
+    <span class="sd">"""Returns the path to the user settings file."""</span>
     <span class="n">v</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QStandardPaths</span><span class="o">.</span><span class="n">writableLocation</span><span class="p">(</span>
         <span class="n">QtCore</span><span class="o">.</span><span class="n">QStandardPaths</span><span class="o">.</span><span class="n">GenericDataLocation</span><span class="p">)</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">product</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">user_settings</span><span class="si">}</span><span class="s1">'</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">product</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">user_settings</span><span class="si">}</span><span class="s1">'</span></div>
 
 
 <div class="viewcode-block" id="get_static_bookmarks"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.get_static_bookmarks">[docs]</a><span class="k">def</span> <span class="nf">get_static_bookmarks</span><span class="p">():</span>
@@ -441,6 +445,11 @@
     <span class="k">return</span> <span class="n">k</span>
 
 
+<span class="k">def</span> <span class="nf">update_private_values</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ActiveSectionCacheKeys</span><span class="p">:</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">active_paths</span><span class="p">[</span><span class="n">PrivateActivePaths</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">active_paths</span><span class="p">[</span><span class="n">SynchronisedActivePaths</span><span class="p">][</span><span class="n">k</span><span class="p">]</span>
+
+
 <div class="viewcode-block" id="UserSettings"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.UserSettings">[docs]</a><span class="k">class</span> <span class="nc">UserSettings</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QSettings</span><span class="p">):</span>
     <span class="sd">"""An `ini` config file to store all local user common.</span>
 
@@ -474,7 +483,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">verify_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">load_active_values</span><span class="p">)</span>
 
 <div class="viewcode-block" id="UserSettings.load_active_values"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.UserSettings.load_active_values">[docs]</a>    <span class="k">def</span> <span class="nf">load_active_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""Load previously saved active path elements from the `ini` file.</span>
+        <span class="sd">"""Load previously saved active path elements from the settings file.</span>
 
 <span class="sd">        If the resulting path is invalid, we'll progressively unset the invalid</span>
 <span class="sd">        path segments until we find a valid path.</span>
@@ -490,10 +499,10 @@
         <span class="c1"># for m in (SynchronisedActivePaths, PrivateActivePaths):</span>
 
 <div class="viewcode-block" id="UserSettings.verify_active"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.UserSettings.verify_active">[docs]</a>    <span class="k">def</span> <span class="nf">verify_active</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
-        <span class="sd">"""Verify the load active section values.</span>
+        <span class="sd">"""Verify the active path values and unset any item, that refers to an invalid path.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">                m (int): The active mode.</span>
+<span class="sd">            m (int): The active mode.</span>
 
 <span class="sd">        """</span>
         <span class="n">p</span> <span class="o">=</span> <span class="nb">str</span><span class="p">()</span>
@@ -506,10 +515,6 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">ActiveSection</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="n">p</span> <span class="o">+=</span> <span class="s1">'/'</span></div>
 
-    <span class="k">def</span> <span class="nf">update_private_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ActiveSectionCacheKeys</span><span class="p">:</span>
-            <span class="n">common</span><span class="o">.</span><span class="n">active_paths</span><span class="p">[</span><span class="n">PrivateActivePaths</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">active_paths</span><span class="p">[</span><span class="n">SynchronisedActivePaths</span><span class="p">][</span><span class="n">k</span><span class="p">]</span>
-
     <span class="k">def</span> <span class="nf">set_servers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
         <span class="n">common</span><span class="o">.</span><span class="n">servers</span> <span class="o">=</span> <span class="n">v</span>
@@ -520,15 +525,12 @@
         <span class="n">common</span><span class="o">.</span><span class="n">bookmarks</span> <span class="o">=</span> <span class="n">v</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">CurrentUserPicksSection</span><span class="p">,</span> <span class="n">BookmarksKey</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
-<div class="viewcode-block" id="UserSettings.set_favourites"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.UserSettings.set_favourites">[docs]</a>    <span class="k">def</span> <span class="nf">set_favourites</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="sd">"""Adds the given list to the currently saved favourites.</span>
-
-<span class="sd">        """</span>
+    <span class="k">def</span> <span class="nf">set_favourites</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">CurrentUserPicksSection</span><span class="p">,</span> <span class="n">FavouritesKey</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">CurrentUserPicksSection</span><span class="p">,</span> <span class="n">FavouritesKey</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
 <div class="viewcode-block" id="UserSettings.value"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.UserSettings.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="sd">"""Used to retrieve a values from the user settings object.</span>
+        <span class="sd">"""Get a values from the user settings file.</span>
 
 <span class="sd">        Overrides the default `value()` method to provide type checking.</span>
 <span class="sd">        Types are saved in `{key}_type`.</span>

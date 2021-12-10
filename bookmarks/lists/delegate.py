@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
-"""The delegate used to visualise bookmark, asset and file items derived from
-`base.BaseListWidget`.
+"""The delegate used to draw bookmark, asset and file items.
 
-The delegate is responsible for painting the thumbnails, names, and clickable
-buttons of the list items. The base list widget has a number of custom features,
-such as, clickable in-line-buttons that the deleagate is aware of.
+The list widgets have a number of custom features, such as clickable in-line icons, folder names,
+custom thumbnails that the delegate implements. All items are made up of a series of rectangles
+that the pain methods use to place drawn elements. See :func:`get_rectangles`.
 
-We're painting text using `QPainterPaths` for a high-quality, aliased display
-but the approach comes with a huge performance hit and therefore any
-QPainterPath paint operation is backed by a cache (see `common.delegate_paths`).
+The downside of painting everything manually is that the paint performance is poor. For this
+reason the delegate tries to cache as much of the information as possible.
 
 """
 import functools
@@ -69,18 +67,20 @@ def subdir_bg_rect_key(index, option):
 
 
 def get_painter_path(x, y, font, text):
-    """Creates, populates and caches a QPainterPath instance."""
+    """Creates, populates and caches QPainterPath instances.
+
+    """
     k = f'{x}{y}{font}{text}'
-    if k not in common.delegate_paths:
-        path = QtGui.QPainterPath()
-        path.addText(x, y, font, text)
-        common.delegate_paths[k] = path
+    if k in common.delegate_paths:
+        return common.delegate_paths[k]
+    path = QtGui.QPainterPath()
+    path.addText(x, y, font, text)
+    common.delegate_paths[k] = path
     return common.delegate_paths[k]
 
 
 def get_rectangles(rectangle, count):
-    """Returns the paintable/clickable regions based on the number of
-    inline icons and the source rectangle.
+    """Return all rectangles needed to paint an item.
 
     Args:
         rectangle (QtCore.QRect):   An list item's visual rectangle.
@@ -150,25 +150,21 @@ def get_rectangles(rectangle, count):
     return common.delegate_rectangles[k]
 
 
-def get_file_text_segments(index):
-    """Returns the `FilesWidget` item `DisplayRole` segments associated with
-    custom colors. It is used to paint the FilesWidget items' extension,
-    name, and sequence.
+@functools.lru_cache(maxsize=4194304)
+def get_pixmap_rect(rect_height, pixmap_width, pixmap_height):
+    s = float(rect_height)
+    longest_edge = float(max((pixmap_width, pixmap_height)))
+    ratio = s / longest_edge
+    w = pixmap_width * ratio
+    h = pixmap_height * ratio
+    return QtCore.QRect(0, 0, int(w), int(h))
 
-    Args:
-        index (QModelIndex): The index currently being painted.
 
-    Returns:
-        dict: A dictionary of tuples. (str, QtGui.QColor)
-
-    """
-    if not index.isValid():
-        return {}
-    s = index.data(QtCore.Qt.DisplayRole)
+@functools.lru_cache(maxsize=4194304)
+def get_file_text_segments(s, k, f):
     if not s:
         return {}
 
-    k = index.data(QtCore.Qt.StatusTipRole)
     if k in common.delegate_text_segments:
         return common.delegate_text_segments[k]
 
@@ -187,7 +183,7 @@ def get_file_text_segments(index):
         s = regex_remove_seq_marker.sub('', s)
         if len(s) > 17:
             s = s[0:8] + '...' + s[-8:]
-        if len(index.data(common.FramesRole)) > 1:
+        if len(f) > 1:
             d[len(d)] = (s, common.color(common.RedColor))
         else:
             d[len(d)] = (s, common.color(common.TextColor))
@@ -218,7 +214,7 @@ def get_file_text_segments(index):
         common.delegate_text_segments[k] = d
         return d
 
-    # Items is not collapsed and it isn't a sequence either
+    # Item is not collapsed, and isn't a sequence either
     s = s.split('.')
     if len(s) > 1:
         s = '.'.join(s[:-1]).upper() + '.' + s[-1].lower()
@@ -282,16 +278,10 @@ def get_asset_subdir_bg(rectangles, metrics, text):
     return rect, r
 
 
-def get_asset_text_segments(index):
-    """Get asset text segments.
-
-    """
-    if not index.isValid():
-        return {}
-    text = index.data(QtCore.Qt.DisplayRole)
+@functools.lru_cache(maxsize=4194304)
+def get_asset_text_segments(text, description):
     if not text:
         return {}
-    description = index.data(common.DescriptionRole)
     description = description if description else ''
 
     k = text + description
@@ -324,17 +314,16 @@ def get_asset_text_segments(index):
     return common.delegate_text_segments[k]
 
 
-def get_bookmark_text_segments(index):
-    """Returns a tuple of text and colour information to be used to mimick
+@functools.lru_cache(maxsize=4194304)
+def get_bookmark_text_segments(text, description):
+    """Returns a tuple of text and colour information to be used to mimic
     rich-text like colouring of individual text elements.
 
     Used by the list delegate to paint the job name and root folder.
 
     """
-    text = index.data(QtCore.Qt.DisplayRole)
     if not text:
         return {}
-    description = index.data(common.DescriptionRole)
     description = description if description else ''
 
     k = text + description
@@ -429,7 +418,7 @@ def draw_subdirs(bg_rect, clickable_rectangles, filter_text, *args):
     font, metrics = common.font_db.primary_font(
         common.size(common.FontSizeSmall))
 
-    # Paint the background rectangle of the subfolder
+    # Paint the background rectangle of the sub-folder
     modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
     alt_modifier = modifiers & QtCore.Qt.AltModifier
     shift_modifier = modifiers & QtCore.Qt.ShiftModifier
@@ -674,14 +663,13 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
     fallback_thumb = 'placeholder'
 
     def __init__(self, parent=None):
-        super(BaseDelegate, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self._clickable_rectangles = {}
 
     def paint(self, painter, option, index):
         raise NotImplementedError('Abstract method must be implemented by subclass.')
 
     def get_file_description_rect(self, rectangles, index):
-        """The description rectangle of a file item."""
         k = '/'.join([repr(v) for v in rectangles.values()])
         if k in common.delegate_description_rects:
             return common.delegate_description_rects[k]
@@ -751,6 +739,9 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
 
     def get_description_rect(self, rectangles, index):
         pp = index.data(common.ParentPathRole)
+        if not pp:
+            return QtCore.QRect()
+
         if len(pp) == 3:
             return QtCore.QRect()
         elif len(pp) == 4:
@@ -760,26 +751,34 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
 
     def get_text_segments(self, index):
         pp = index.data(common.ParentPathRole)
-        if len(pp) == 3:
-            return get_bookmark_text_segments(index)
-        elif len(pp) == 4:
-            return get_asset_text_segments(index)
-        elif len(pp) > 4:
-            return get_file_text_segments(index)
+        if not pp:
+            return {}
 
-    def get_paint_arguments(self, painter, option, index, antialiasing=True):
+        if len(pp) == 3:
+            return get_bookmark_text_segments(
+                index.data(QtCore.Qt.DisplayRole),
+                index.data(common.DescriptionRole)
+            )
+        elif len(pp) == 4:
+            return get_asset_text_segments(
+                index.data(QtCore.Qt.DisplayRole),
+                index.data(common.DescriptionRole)
+            )
+        elif len(pp) > 4:
+            return get_file_text_segments(
+                index.data(QtCore.Qt.DisplayRole),
+                index.data(QtCore.Qt.StatusTipRole),
+                tuple(index.data(common.FramesRole))
+            )
+
+    def get_paint_arguments(self, painter, option, index, antialiasing=False):
         """A utility class for gathering all the arguments needed to paint
         the individual list elements.
 
         """
-        if antialiasing:
-            painter.setRenderHint(QtGui.QPainter.Antialiasing, on=True)
-            painter.setRenderHint(
-                QtGui.QPainter.SmoothPixmapTransform, on=True)
-        else:
-            painter.setRenderHint(QtGui.QPainter.Antialiasing, on=False)
-            painter.setRenderHint(
-                QtGui.QPainter.SmoothPixmapTransform, on=False)
+        painter.setRenderHint(QtGui.QPainter.Antialiasing, on=antialiasing)
+        painter.setRenderHint(QtGui.QPainter.TextAntialiasing, on=antialiasing)
+        painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, on=antialiasing)
 
         painter.setPen(QtCore.Qt.NoPen)
         painter.setBrush(QtCore.Qt.NoBrush)
@@ -818,22 +817,22 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         return args
 
     def get_clickable_rectangles(self, index):
-        """Clickable rectangles are used by the the QListView to identify
+        """Clickable rectangles are used by the QListView to identify
         interactive/clickable regions.
 
         The delegate is responsible for painting any pseudo item buttons, such
         as item names or in-line buttons and hence, we rely on the delegate
-        to calculate where these rectagles are.
+        to calculate where these rectangles are.
 
         Because calculating these rectangles on each paint operation would come with
         a performance hit we back the operation with a cache and return
         only already cached result when a request is made.
 
         Args:
-            index (QtCore.QModelIndex):
+            index (QtCore.QModelIndex): The item's index.
 
         Returns:
-            dict: A list of QRects where clickable regions are found.
+            dict: The item's clickable areas as QRect objects.
 
         """
         if index.row() in self._clickable_rectangles:
@@ -879,7 +878,6 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         return common.delegate_subdir_rects[k]
 
     def get_asset_description_rect(self, rectangles, index):
-        """Returns the description area of an ``AssetsWidget`` item."""
         k = '/'.join([repr(v) for v in rectangles.values()])
         if k in common.delegate_description_rects:
             return common.delegate_description_rects[k]
@@ -905,7 +903,9 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
 
     @paintmethod
     def paint_name(self, *args):
-        _, _, _, index, _, _, _, _, _, _, _, _, _ = args
+        _, painter, _, index, _, _, _, _, _, _, _, _, _ = args
+        painter.setRenderHint(QtGui.QPainter.Antialiasing, on=True)
+
         pp = index.data(common.ParentPathRole)
         if len(pp) == 3:
             return self.paint_bookmark_name(*args)
@@ -914,10 +914,8 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         elif len(pp) > 4:
             return self.paint_file_name(*args)
 
-
     @paintmethod
     def paint_description_editor_background(self, *args, **kwargs):
-        """Overlay do indicate the source of a drag operation."""
         rectangles, painter, option, index, selected, focused, active, archived, favourite, hover, font, metrics, cursor_position = args
 
         if index != self.parent().selectionModel().currentIndex():
@@ -938,14 +936,14 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         """Paints an item's thumbnail.
 
         If a requested QPixmap has never been drawn before we will create and
-        store it by calling `images.get_thumbnail(*args)`. This method is backed
-        by `images.ImageCache` and stores the requested pixmaps for future use.
+        store it by calling :func:`bookmarks.images.get_thumbnail`. This method is backed
+        by :class:`bookmarks.images.ImageCache` and stores the requested pixmap for future use.
 
         If no associated image data is available, we will use a generic
         thumbnail associated with the item's type, or a fallback thumbnail set
-        by the delegate. at `self.fallback_thumb`.
+        by the delegate.
 
-        See the `images` module for implementation details.
+        See the :mod:`bookmarks.images` module for implementation details.
 
         """
         rectangles, painter, option, index, selected, focused, active, archived, favourite, hover, font, metrics, cursor_position = args
@@ -953,23 +951,25 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         painter.setBrush(common.color(common.SeparatorColor))
         painter.drawRect(rectangles[ThumbnailRect])
 
+        if self.parent().verticalScrollBar().isSliderDown():
+            return
+
         if not index.data(common.ParentPathRole):
             return
 
         server, job, root = index.data(common.ParentPathRole)[0:3]
         source = index.data(QtCore.Qt.StatusTipRole)
 
-        _h = index.data(QtCore.Qt.SizeHintRole)
-        if not source or not _h:
+        size_role = index.data(QtCore.Qt.SizeHintRole)
+        if not source or not size_role:
             return
-        size = _h.height()
 
         pixmap, color = images.get_thumbnail(
             server,
             job,
             root,
             source,
-            size,
+            size_role.height(),
             fallback_thumb=self.fallback_thumb
         )
 
@@ -990,13 +990,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
 
         # Let's make sure the image is fully fitted, even if the image's size
         # doesn't match ThumbnailRect
-        s = float(rectangles[ThumbnailRect].height())
-        longest_edge = float(max((pixmap.width(), pixmap.height())))
-        ratio = s / longest_edge
-        w = pixmap.width() * ratio
-        h = pixmap.height() * ratio
-
-        _rect = QtCore.QRect(0, 0, int(w), int(h))
+        _rect = get_pixmap_rect(rectangles[ThumbnailRect].height(), pixmap.width(), pixmap.height())
         _rect.moveCenter(rectangles[ThumbnailRect].center())
         painter.drawPixmap(_rect, pixmap, pixmap.rect())
 
@@ -1047,8 +1041,6 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         rect = QtCore.QRect(rectangles[BackgroundRect])
         if index.row() == (self.parent().model().rowCount() - 1):
             rect.setHeight(rect.height() + common.size(common.HeightSeparator))
-
-        painter.setRenderHint(QtGui.QPainter.Antialiasing)
 
         color = common.color(common.BackgroundLightColor) if selected else common.color(
             common.BackgroundColor)
@@ -1214,6 +1206,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
     @paintmethod
     def _paint_inline_todo(self, *args):
         rectangles, painter, option, index, selected, focused, active, archived, favourite, hover, font, metrics, cursor_position = args
+
         rect = rectangles[TodoRect]
         if not rect or archived:
             return
@@ -1267,13 +1260,14 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         painter.drawPixmap(rect, pixmap)
 
     def paint_count(self, painter, rect, cursor_position, count, icon):
+        painter.setRenderHint(QtGui.QPainter.Antialiasing, on=True)
+
         if not isinstance(count, (float, int)):
             return
 
         size = common.size(common.FontSizeLarge)
         count_rect = QtCore.QRect(0, 0, size, size)
         count_rect.moveCenter(rect.bottomRight())
-        painter.setRenderHint(QtGui.QPainter.Antialiasing, on=True)
 
         if rect.contains(cursor_position):
             pixmap = images.ImageCache.get_rsc_pixmap(
@@ -1312,7 +1306,6 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
 
     @paintmethod
     def paint_thumbnail_shadow(self, *args):
-        """Paints a drop-shadow"""
         rectangles, painter, option, index, selected, focused, active, archived, favourite, hover, font, metrics, cursor_position = args
         rect = QtCore.QRect(rectangles[ThumbnailRect])
         rect.moveLeft(rect.right() + 1)
@@ -1433,11 +1426,8 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
 
     @paintmethod
     def paint_simple_name(self, *args):
-        """Paints an the current file-names in a simpler form, with only the
-        filename and the description visible.
-
-        """
         rectangles, painter, option, index, selected, focused, active, archived, favourite, hover, font, metrics, cursor_position = args
+
         painter.setRenderHint(QtGui.QPainter.Antialiasing, on=True)
 
         rect = QtCore.QRect(rectangles[DataRect])
@@ -1601,7 +1591,6 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         pen.setWidth(common.size(common.HeightSeparator))
         painter.setPen(pen)
 
-        painter.setRenderHint(QtGui.QPainter.Antialiasing, on=True)
         painter.drawRoundedRect(
             r, common.size(common.WidthIndicator), common.size(common.WidthIndicator))
 
@@ -1631,7 +1620,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
             painter.setBrush(color)
             x = _r.x()
             y = _r.bottom()
-            path = path = get_painter_path(x, y, font, text)
+            path = get_painter_path(x, y, font, text)
             painter.drawPath(path)
 
             offset += width
@@ -1648,8 +1637,6 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
             return
         if not index.data(common.ParentPathRole):
             return
-
-        painter.setRenderHint(QtGui.QPainter.Antialiasing, on=True)
 
         # The description rectangle for bookmark items is not clickable,
         # unlike on asset and files items
@@ -1741,7 +1728,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
             painter.setBrush(color)
             x = _r.x()
             y = _r.bottom()
-            path = path = get_painter_path(x, y, font, text)
+            path = get_painter_path(x, y, font, text)
             painter.drawPath(path)
 
             offset += width
@@ -1757,7 +1744,6 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         # slider_down = self.parent().verticalScrollBar().isSliderDown()
         # if slider_down:
 
-        painter.setRenderHint(QtGui.QPainter.Antialiasing, on=True)
         font, metrics = common.font_db.primary_font(
             common.size(common.FontSizeSmall) + 1)
         offset = 0
@@ -1810,8 +1796,7 @@ class BookmarksWidgetDelegate(BaseDelegate):
 
     def paint(self, painter, option, index):
         """Defines how the ``BookmarksWidget`` should be painted."""
-        args = self.get_paint_arguments(
-            painter, option, index, antialiasing=False)
+        args = self.get_paint_arguments(painter, option, index)
 
         self.paint_background(*args)
         self.paint_persistent(*args)
@@ -1829,7 +1814,7 @@ class BookmarksWidgetDelegate(BaseDelegate):
         self.paint_shotgun_status(*args)
 
     def sizeHint(self, option, index):
-        return self.parent().model().sourceModel().row_size()
+        return self.parent().model().sourceModel().row_size
 
 
 class AssetsWidgetDelegate(BaseDelegate):
@@ -1841,8 +1826,7 @@ class AssetsWidgetDelegate(BaseDelegate):
         # The index might still be populated...
         if index.data(QtCore.Qt.DisplayRole) is None:
             return
-        args = self.get_paint_arguments(
-            painter, option, index, antialiasing=False)
+        args = self.get_paint_arguments(painter, option, index)
         self.paint_background(*args)
         self.paint_thumbnail_shadow(*args)
         self.paint_name(*args)
@@ -1857,7 +1841,7 @@ class AssetsWidgetDelegate(BaseDelegate):
         self.paint_shotgun_status(*args)
 
     def sizeHint(self, option, index):
-        return self.parent().model().sourceModel().row_size()
+        return self.parent().model().sourceModel().row_size
 
 
 class FilesWidgetDelegate(BaseDelegate):
@@ -1871,8 +1855,7 @@ class FilesWidgetDelegate(BaseDelegate):
     def paint(self, painter, option, index):
         """Defines how the ``FilesWidget``'s' items should be painted."""
 
-        args = self.get_paint_arguments(
-            painter, option, index, antialiasing=False)
+        args = self.get_paint_arguments(painter, option, index)
 
         if not index.data(QtCore.Qt.DisplayRole):
             return
@@ -1900,7 +1883,7 @@ class FilesWidgetDelegate(BaseDelegate):
         self.paint_drag_source(*args)
 
     def sizeHint(self, option, index):
-        return self.parent().model().sourceModel().row_size()
+        return self.parent().model().sourceModel().row_size
 
 
 class FavouritesWidgetDelegate(FilesWidgetDelegate):

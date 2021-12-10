@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="bookmarks.main" href="main.html" /><link rel="prev" title="Python Modules Documentation" href="../api.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="database" href="database.html" /><link rel="prev" title="Python Modules Documentation" href="../api.html" />
 
     <meta name="generator" content="sphinx-4.3.1, furo 2021.11.23"/>
         <title>common - Bookmarks 0.5.0 documentation</title>
@@ -173,7 +173,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../bookmarks.html">Introduction</a></li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">Python Modules Documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="main.html">bookmarks.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="database.html">database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lists.html">lists</a></li>
 </ul>
 </li>
@@ -206,9 +208,9 @@
           <section id="module-bookmarks.common">
 <span id="common"></span><h1>common<a class="headerlink" href="#module-bookmarks.common" title="Permalink to this headline">¶</a></h1>
 <p>Core attributes, classes and methods used to define the look and behaviour of Bookmarks.</p>
-<p>See the <a class="reference internal" href="#module-bookmarks.common.setup" title="bookmarks.common.setup"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.common.setup</span></code></a> module for the initialization methods.
-Common core properties are defined in <a class="reference internal" href="#module-bookmarks.common.core" title="bookmarks.common.core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.common.core</span></code></a> and in <code class="docutils literal notranslate"><span class="pre">rsc/conf.json</span></code>,
-which contains configurable options, such as colours and size settings.</p>
+<p>See the <a class="reference internal" href="#module-bookmarks.common.setup" title="bookmarks.common.setup"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.common.setup</span></code></a> module for the initialization methods. Hard-coded default
+properties are defined in <a class="reference internal" href="#module-bookmarks.common.core" title="bookmarks.common.core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.common.core</span></code></a>. Configurable properties, such as colours and
+size settings are loaded from <code class="docutils literal notranslate"><span class="pre">./rsc/conf.json</span></code> at runtime.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>Submodules can be accessed directly from this top module, like so:</p>
@@ -297,7 +299,7 @@ See <a class="reference internal" href="#module-bookmarks.common.signals" title=
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.common.setup.initialize">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.common.setup.</span></span><span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/setup.html#initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.setup.initialize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initializes the components required to run Bookmarks.</p>
+<dd><p>Initialize the components required to run Bookmarks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>mode</strong> (<em>int</em>) – The initialization mode. One of <code class="docutils literal notranslate"><span class="pre">common.StandaloneMode</span></code> or <code class="docutils literal notranslate"><span class="pre">common.EmbeddedMode</span></code>.</p>
@@ -326,8 +328,8 @@ The</p>
 </dl>
 </dd></dl>
 <dl class="py function">
-<dt class="sig sig-object py" id="bookmarks.common.setup.verify_dependecies">
-<span class="sig-prename descclassname"><span class="pre">bookmarks.common.setup.</span></span><span class="sig-name descname"><span class="pre">verify_dependecies</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/setup.html#verify_dependecies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.setup.verify_dependecies" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="bookmarks.common.setup.verify_dependencies">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.common.setup.</span></span><span class="sig-name descname"><span class="pre">verify_dependencies</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/setup.html#verify_dependencies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.setup.verify_dependencies" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks the presence of all required python modules.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Raises</dt>
@@ -662,67 +664,80 @@ QFont and QFontMetrics instances can be retrieved using:</p>
 </section>
 <section id="module-bookmarks.common.sequence">
 <span id="common-sequence"></span><h2>common.sequence<a class="headerlink" href="#module-bookmarks.common.sequence" title="Permalink to this headline">¶</a></h2>
-<p>Common path methods to recognise sequence items.</p>
-<p>A sequence item is a file that has a number component that can be incremented.
-A ‘collapsed’ item is a single item that refers to a series of sequence items
-and is annotated by the SEQSTART and SEQEND markers.</p>
-<p>To determine if a path is a sequence, use <a class="reference internal" href="#bookmarks.common.sequence.get_sequence" title="bookmarks.common.sequence.get_sequence"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_sequence()</span></code></a>.
-To determine if a path is a collapsed item, use <a class="reference internal" href="#bookmarks.common.sequence.is_collapsed" title="bookmarks.common.sequence.is_collapsed"><code class="xref py py-func docutils literal notranslate"><span class="pre">is_collapsed()</span></code></a>.</p>
+<p>Common methods used to work with sequentially numbered file items.</p>
+<p>A sequence item is a file that has a number component that can be incremented. See
+<a class="reference internal" href="#bookmarks.common.sequence.get_sequence" title="bookmarks.common.sequence.get_sequence"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_sequence()</span></code></a>. E.g.:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="s1">'C:/test/my_image_sequence_0001.png'</span>
+<span class="n">seq</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_sequence</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A collapsed item is a single item that refers to a series of sequence items
+and is marked by the <a class="reference internal" href="#bookmarks.common.sequence.SEQSTART" title="bookmarks.common.sequence.SEQSTART"><code class="xref py py-attr docutils literal notranslate"><span class="pre">SEQSTART</span></code></a>, sequence range and <a class="reference internal" href="#bookmarks.common.sequence.SEQEND" title="bookmarks.common.sequence.SEQEND"><code class="xref py py-attr docutils literal notranslate"><span class="pre">SEQEND</span></code></a> characters. See
+<a class="reference internal" href="#bookmarks.common.sequence.is_collapsed" title="bookmarks.common.sequence.is_collapsed"><code class="xref py py-func docutils literal notranslate"><span class="pre">is_collapsed()</span></code></a>. E.g.:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="s1">'C:/test/my_image_sequence_{1-200}.png'</span>
+<span class="n">common</span><span class="o">.</span><span class="n">is_collapsed</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="c1"># = True</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.common.sequence.SEQSTART">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.common.sequence.</span></span><span class="sig-name descname"><span class="pre">SEQSTART</span></span><a class="headerlink" href="#bookmarks.common.sequence.SEQSTART" title="Permalink to this definition">¶</a></dt>
+<dd><p>Character used to encapsulate the sequence range of collapsed items.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.common.sequence.SEQEND">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.common.sequence.</span></span><span class="sig-name descname"><span class="pre">SEQEND</span></span><a class="headerlink" href="#bookmarks.common.sequence.SEQEND" title="Permalink to this definition">¶</a></dt>
+<dd><p>Character used to encapsulate the sequence range of collapsed items.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.common.sequence.SEQPROXY">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.common.sequence.</span></span><span class="sig-name descname"><span class="pre">SEQPROXY</span></span><a class="headerlink" href="#bookmarks.common.sequence.SEQPROXY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Placeholder sequence marker used to associate settings and database values
+with sequence items.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.common.sequence.is_collapsed">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.common.sequence.</span></span><span class="sig-name descname"><span class="pre">is_collapsed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/sequence.html#is_collapsed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.sequence.is_collapsed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check for the presence of the bracket-enclosed sequence markers.</p>
+<dd><p>Checks the presence <a class="reference internal" href="#bookmarks.common.sequence.SEQSTART" title="bookmarks.common.sequence.SEQSTART"><code class="xref py py-attr docutils literal notranslate"><span class="pre">SEQSTART</span></code></a> and <a class="reference internal" href="#bookmarks.common.sequence.SEQEND" title="bookmarks.common.sequence.SEQEND"><code class="xref py py-attr docutils literal notranslate"><span class="pre">SEQEND</span></code></a> markers.</p>
 <p>When Bookmarks is displaying a sequence of files as a single item,
-the item is <em>collapsed</em>. Every collapsed item contains a start and an end number
-enclosed in brackets. For instance: <code class="docutils literal notranslate"><span class="pre">image_sequence_[001-233].png</span></code></p>
+the item is <em>collapsed</em>. Every collapsed item contains the <a class="reference internal" href="#bookmarks.common.sequence.SEQEND" title="bookmarks.common.sequence.SEQEND"><code class="xref py py-attr docutils literal notranslate"><span class="pre">SEQEND</span></code></a>, sequence range and
+<a class="reference internal" href="#bookmarks.common.sequence.SEQSTART" title="bookmarks.common.sequence.SEQSTART"><code class="xref py py-attr docutils literal notranslate"><span class="pre">SEQSTART</span></code></a> elements. For instance: <code class="docutils literal notranslate"><span class="pre">image_sequence_{001-233}.png</span></code> is a collapsed item.</p>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">filename</span> <span class="o">=</span> <span class="s1">'job_sh010_animation_[001-299]_gw.png'</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">is_collapsed</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+<span class="n">prefix</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># = 'job_sh010_animation_'</span>
+<span class="n">sequence_string</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># = '[001-299]'</span>
+<span class="n">suffix</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="c1"># = '_gw.png'</span>
+</pre></div>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>s</strong> (<em>str</em>) – A file path.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>All the characters <strong>before</strong> the sequence marker.
-group 2 (SRE_Match):    The sequence marker(e.g. <code class="docutils literal notranslate"><span class="pre">{01-50}</span></code>), as a string.
-group 3 (SRE_Match):    All the characters <strong>after</strong> the sequence marker.</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p>group(1) - All the characters <strong>before</strong> the sequence marker.</p></li>
+<li><p>group(2) - The sequence marker, e.g. <code class="docutils literal notranslate"><span class="pre">{01-50}</span></code>.</p></li>
+<li><p>group(3) - All characters <strong>after</strong> the sequence marker.</p></li>
+</ul>
+</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>group 1 (SRE_Match)</p>
-</dd>
-</dl>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">filename</span> <span class="o">=</span> <span class="s1">'job_sh010_animation_[001-299]_wgergely.png'</span>
-<span class="n">m</span> <span class="o">=</span> <span class="n">is_collapsed</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-<span class="k">if</span> <span class="n">m</span><span class="p">:</span>
-        <span class="n">prefix</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># 'job_sh010_animation_'</span>
-        <span class="n">sequence_string</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># '[001-299]'</span>
-        <span class="n">suffix</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="c1"># '_wgergely.png'</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>If the given name is indeed collapsed it returns a <code class="docutils literal notranslate"><span class="pre">SRE_Match</span></code> object, otherwise <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">SRE_Match</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="bookmarks.common.sequence.proxy_path">
-<span class="sig-prename descclassname"><span class="pre">bookmarks.common.sequence.</span></span><span class="sig-name descname"><span class="pre">proxy_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/sequence.html#proxy_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.sequence.proxy_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Encompasses the logic used to associate preferences with items.</p>
-<p>Sequence items need a generic key to save values as the sequence notation
-might change as files are added/removed to image sequences. Any <cite>FileItem</cite>
-will use their file path as the key and SequenceItems will use <cite>[0]</cite> in place
-of their frame-range notation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>v</strong> (<em>QModelIndex, weakref.ref, dict or str</em>) – Data dict, index or filepath string.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The key used to store the item’s information in the local
-preferences and the bookmark item database.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-odd"><p>SRE_Match</p>
 </dd>
 </dl>
 </dd></dl>
@@ -772,10 +787,31 @@ group 4 (SRE_Match):    The file extension <strong>without</strong> the ‘.’ 
 </dl>
 </dd></dl>
 <dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.common.sequence.proxy_path">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.common.sequence.</span></span><span class="sig-name descname"><span class="pre">proxy_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/sequence.html#proxy_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.sequence.proxy_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encompasses the logic used to associate preferences with items.</p>
+<p>Sequence items need a generic key to save values as the sequence notation
+might change as files are added/removed to image sequences. Any <cite>FileItem</cite>
+will use their file path as the key and SequenceItems will use <cite>[0]</cite> in place
+of their frame-range notation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>v</strong> (<em>QModelIndex, weakref.ref, dict or str</em>) – Data dict, index or filepath string.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The key used to store the item’s information in the local
+preferences and the bookmark item database.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.common.sequence.get_sequence_startpath">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.common.sequence.</span></span><span class="sig-name descname"><span class="pre">get_sequence_startpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/sequence.html#get_sequence_startpath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.sequence.get_sequence_startpath" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks the given string and if it denotes a sequence returns the path for
-the first file.</p>
+<dd><p>Checks if given string is collapsed, and if so, returns the path of
+the first item of the sequence.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – A collapsed sequence name.</p>
@@ -791,8 +827,8 @@ the first file.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.common.sequence.get_sequence_endpath">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.common.sequence.</span></span><span class="sig-name descname"><span class="pre">get_sequence_endpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/sequence.html#get_sequence_endpath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.sequence.get_sequence_endpath" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks the given string and if it denotes a sequence returns the path for
-the last file.</p>
+<dd><p>Checks if given string is collapsed, and if so, returns the path of
+the last item of the sequence.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – A collapsed sequence name.</p>
@@ -819,7 +855,9 @@ individual sequence items.</p>
 </section>
 <section id="module-bookmarks.common.settings">
 <span id="common-settings"></span><h2>common.settings<a class="headerlink" href="#module-bookmarks.common.settings" title="Permalink to this headline">¶</a></h2>
-<p>Defines the customized QSettings instance used to store user and app common.</p>
+<p>Defines a customized QSettings object used to store user settings.</p>
+<p>The user settings are stored in an ini file stored at <a class="reference internal" href="#bookmarks.common.settings.get_user_settings_path" title="bookmarks.common.settings.get_user_settings_path"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_user_settings_path()</span></code></a>.
+The current ui state, current active paths and application settings are all stored in here.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.common.settings.active">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.common.settings.</span></span><span class="sig-name descname"><span class="pre">active</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/settings.html#active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.settings.active" title="Permalink to this definition">¶</a></dt>
@@ -829,18 +867,26 @@ individual sequence items.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>k</strong> (<em>str</em>) – The name of the path segment, eg. <cite>common.ServerKey</cite>.</p></li>
 <li><p><strong>path</strong> (<em>bool, optional</em>) – If True, will return a path to the active item.</p></li>
-<li><p><strong>args</strong> (<em>bool, optional</em>) – If <cite>True</cite>, will return all components that make up the path.</p></li>
+<li><p><strong>args</strong> (<em>bool, optional</em>) – If <cite>True</cite>, will return all components that make up the active path.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The name of the active item.
-str (when path=True): Path to the active item.
-tuple (when args=True): Active path elements.</p>
+* str (when path=True): Path to the active item.
+* tuple (when args=True): Active path elements.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>str</p>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>str</p></li>
+</ul>
+</p>
 </dd>
 </dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.common.settings.get_user_settings_path">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.common.settings.</span></span><span class="sig-name descname"><span class="pre">get_user_settings_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/settings.html#get_user_settings_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.settings.get_user_settings_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the path to the user settings file.</p>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.common.settings.get_static_bookmarks">
@@ -876,14 +922,14 @@ assets and files and other widget states are kept.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.common.settings.UserSettings.load_active_values">
 <span class="sig-name descname"><span class="pre">load_active_values</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/settings.html#UserSettings.load_active_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.settings.UserSettings.load_active_values" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load previously saved active path elements from the <cite>ini</cite> file.</p>
+<dd><p>Load previously saved active path elements from the settings file.</p>
 <p>If the resulting path is invalid, we’ll progressively unset the invalid
 path segments until we find a valid path.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.common.settings.UserSettings.verify_active">
 <span class="sig-name descname"><span class="pre">verify_active</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/settings.html#UserSettings.verify_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.settings.UserSettings.verify_active" title="Permalink to this definition">¶</a></dt>
-<dd><p>Verify the load active section values.</p>
+<dd><p>Verify the active path values and unset any item, that refers to an invalid path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>m</strong> (<em>int</em>) – The active mode.</p>
@@ -891,14 +937,9 @@ path segments until we find a valid path.</p>
 </dl>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.common.settings.UserSettings.set_favourites">
-<span class="sig-name descname"><span class="pre">set_favourites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/settings.html#UserSettings.set_favourites"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.settings.UserSettings.set_favourites" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds the given list to the currently saved favourites.</p>
-</dd></dl>
-<dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.common.settings.UserSettings.value">
 <span class="sig-name descname"><span class="pre">value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/settings.html#UserSettings.value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.settings.UserSettings.value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Used to retrieve a values from the user settings object.</p>
+<dd><p>Get a values from the user settings file.</p>
 <p>Overrides the default <cite>value()</cite> method to provide type checking.
 Types are saved in <cite>{key}_type</cite>.</p>
 <dl class="field-list simple">
@@ -923,39 +964,41 @@ Types are saved in <cite>{key}_type</cite>.</p>
 <span id="common-sessionlock"></span><h2>common.sessionlock<a class="headerlink" href="#module-bookmarks.common.sessionlock" title="Permalink to this headline">¶</a></h2>
 <p>Module defines the classes and methods needed to set and edit session lock
 files.</p>
-<p>Bookmarks understand two session locks related to how active paths are read and
-set. When <cite>common.active_mode</cite> is <cite>common.SynchronisedActivePaths</cite> bookmarks
-will save active paths in the <cite>user_settings</cite>, as expected.</p>
-<p>However, when multiple Bookmarks instances are running this poses a problem,
-because instances will mutually overwrite each other’s active path common.</p>
-<p>Hence, when a second Bookmarks instance is launched <cite>common.active_mode</cite> is
-automatically set to <cite>common.PrivateActivePaths</cite>. When this mode is active, the
-initial active path values are read on startup <cite>user_settings</cite> will no longer
-be modified. Instead, the paths will be saved into a private data container.</p>
-<p>To toggle between  private active paths, and the ones stored in <cite>user_settings</cite>
-see <cite>actions.toggle_active_mode</cite>.</p>
-<p><cite>ToggleSessionModeButton</cite> is a UI element used by the user to toggle between
-these modes.</p>
+<p>Bookmarks has two session modes. When <cite>common.active_mode</cite> is <cite>common.SynchronisedActivePaths</cite>,
+Bookmarks will save active paths in the user settings file. However, when multiple Bookmarks
+instances are running this poses a problem, because instances will mutually overwrite each
+other’s active paths.</p>
+<p>Hence, when a second Bookmarks instance is launched <cite>common.active_mode</cite> is automatically set to
+<cite>common.PrivateActivePaths</cite>. When this mode is active, the initial active path values are read
+from the user settings, but active paths changes won’t be saved to the user settings.
+Instead, the paths will be stored in a private data container.</p>
+<p>To toggle between the two modes see <code class="xref py py-func docutils literal notranslate"><span class="pre">bookmarks.actions.toggle_active_mode()</span></code> and
+<code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.statusbar.ToggleSessionModeButton</span></code>.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.common.sessionlock.get_lock_path">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.common.sessionlock.</span></span><span class="sig-name descname"><span class="pre">get_lock_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/sessionlock.html#get_lock_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.sessionlock.get_lock_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the path to the current session’s lock file.</p>
+</dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.common.sessionlock.prune_lock">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.common.sessionlock.</span></span><span class="sig-name descname"><span class="pre">prune_lock</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/sessionlock.html#prune_lock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.sessionlock.prune_lock" title="Permalink to this definition">¶</a></dt>
-<dd><p>Removes stale lock files not associated with current PIDs.</p>
+<dd><p>Removes stale lock files not associated with running PIDs.</p>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.common.sessionlock.init_lock">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.common.sessionlock.</span></span><span class="sig-name descname"><span class="pre">init_lock</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/sessionlock.html#init_lock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.sessionlock.init_lock" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialises the Bookmark’s session lock.</p>
 <p>We’ll check all lock-files and to see if there’s already a
-SynchronisedActivePaths session. As we want only one session controlling
+<code class="docutils literal notranslate"><span class="pre">SynchronisedActivePaths</span></code> session. As we want only one session controlling
 the active path settings we’ll set all subsequent application sessions
-to be PrivateActivePaths (when PrivateActivePaths is on, all active path
+to be <code class="docutils literal notranslate"><span class="pre">PrivateActivePaths</span></code> (when <code class="docutils literal notranslate"><span class="pre">PrivateActivePaths</span></code> is on, all active path
 settings will be kept in memory, instead of writing them out to the
 disk).</p>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.common.sessionlock.write_current_mode_to_lock">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.common.sessionlock.</span></span><span class="sig-name descname"><span class="pre">write_current_mode_to_lock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/sessionlock.html#write_current_mode_to_lock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.sessionlock.write_current_mode_to_lock" title="Permalink to this definition">¶</a></dt>
-<dd><p>Write the current mode this session’s lock file.</p>
+<dd><p>Write this session’s current mode to the lock file.</p>
 </dd></dl>
 </section>
 <section id="module-bookmarks.common.signals">
@@ -970,7 +1013,90 @@ disk).</p>
 <section id="module-bookmarks.common.lists">
 <span id="common-lists"></span><h2>common.lists<a class="headerlink" href="#module-bookmarks.common.lists" title="Permalink to this headline">¶</a></h2>
 <p>A set of shortcuts to the main list widgets and their models’.</p>
-<p>The main item widgets</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.common.lists.widget">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.common.lists.</span></span><span class="sig-name descname"><span class="pre">widget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/lists.html#widget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.lists.widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the currently visible list widget if idx is None,
+otherwise, returns the specified widget.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idx</strong> (<em>int, optional</em>) – A tab index number, e.g. <code class="docutils literal notranslate"><span class="pre">common.FileTab</span></code>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list widget.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="lists.html#bookmarks.lists.basewidget.BaseListWidget" title="bookmarks.lists.basewidget.BaseListWidget">BaseListWidget</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.common.lists.model">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.common.lists.</span></span><span class="sig-name descname"><span class="pre">model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/lists.html#model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.lists.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a list widget’s proxy model.</p>
+<p>If idx is None, it returns the currently visible items’ model,
+otherwise, returns the specified widget’s model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idx</strong> (<em>int, optional</em>) – A tab index number, e.g. <code class="docutils literal notranslate"><span class="pre">common.FileTab</span></code>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list widget’s proxy model.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="lists.html#bookmarks.lists.basemodel.FilterProxyModel" title="bookmarks.lists.basemodel.FilterProxyModel">FilterProxyModel</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.common.lists.source_model">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.common.lists.</span></span><span class="sig-name descname"><span class="pre">source_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/lists.html#source_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.lists.source_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a list widget’s source model.</p>
+<p>If idx is None, it returns the currently visible items’ source model,
+otherwise, returns the specified widget’s source model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idx</strong> (<em>int, optional</em>) – A tab index number, e.g. <code class="docutils literal notranslate"><span class="pre">common.FileTab</span></code>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list widget’s source model.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="lists.html#bookmarks.lists.basemodel.BaseModel" title="bookmarks.lists.basemodel.BaseModel">BaseModel</a></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.common.lists.selected_index">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.common.lists.</span></span><span class="sig-name descname"><span class="pre">selected_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/lists.html#selected_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.lists.selected_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves a list widget’s active index.</p>
+<p>If idx is None, it returns the currently visible items’ active index,
+otherwise, returns the specified widget’s active index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>idx</strong> (<em>int, optional</em>) – A tab index number, e.g. <code class="docutils literal notranslate"><span class="pre">common.FileTab</span></code>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list widget’s active index.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>QtCore.QModelIndex</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.common.lists.current_tab">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.common.lists.</span></span><span class="sig-name descname"><span class="pre">current_tab</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/lists.html#current_tab"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.lists.current_tab" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current tab index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The currently visible tab’s index.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
 </section>
 <section id="module-bookmarks.common.ui">
 <span id="common-ui"></span><h2>common.ui<a class="headerlink" href="#module-bookmarks.common.ui" title="Permalink to this headline">¶</a></h2>
@@ -1065,12 +1191,12 @@ the given text to the width of the given rectangle.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="main.html">
+          <a class="next-page" href="database.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">bookmarks.main</div>
+                <div class="title">database</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>

@@ -2,6 +2,7 @@
 	"product": "Bookmarks",
 	"env_key": "BOOKMARKS_ROOT",
 	"bookmark_cache_dir": ".bookmark",
+	"bookmark_database": "bookmark.db",
 	"favorite_file_ext": "bfav",
   	"user_settings": "common.ini",
 	"stylesheet_file": "stylesheet.qss",

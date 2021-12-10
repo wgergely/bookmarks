@@ -1,10 +1,9 @@
 """Core attributes, classes and methods used to define the look and behaviour of Bookmarks.
 
 
-See the :mod:`bookmarks.common.setup` module for the initialization methods.
-Common core properties are defined in :mod:`bookmarks.common.core` and in ``rsc/conf.json``,
-which contains configurable options, such as colours and size settings.
-
+See the :mod:`bookmarks.common.setup` module for the initialization methods. Hard-coded default
+properties are defined in :mod:`bookmarks.common.core`. Configurable properties, such as colours and
+size settings are loaded from ``./rsc/conf.json`` at runtime.
 
 Tip:
 
@@ -30,10 +29,10 @@ Attributes:
     item_data (common.DataDict): Cache used to store item data. See :mod:`bookmarks.common.data`.
 
 """
-debug_on = False  # Print debug messages
-typecheck_on = True  # Check types
-init_mode = None  # App startup mode
-active_mode = None  # Session mode can be private or synchronised
+debug_on = False
+typecheck_on = True
+init_mode = None
+active_mode = None
 
 signals = None
 settings = None
@@ -52,6 +51,7 @@ favourites = {}
 hashes = {}
 timers = {}
 font_cache = {}
+db_connections = {}
 
 active_paths = None
 

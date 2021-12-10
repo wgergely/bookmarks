@@ -341,7 +341,7 @@
                 <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">:</span> <span class="n">filename</span><span class="p">,</span>
                 <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">:</span> <span class="n">filename</span><span class="p">,</span>
                 <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">:</span> <span class="n">filepath</span><span class="p">,</span>
-                <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_size</span><span class="p">,</span>
+                <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_size</span><span class="p">,</span>
                 <span class="c1">#</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">QueueRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">queues</span><span class="p">,</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">DataTypeRole</span><span class="p">:</span> <span class="n">t</span><span class="p">,</span>
@@ -391,7 +391,7 @@
                         <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">:</span> <span class="n">sequence_name</span><span class="p">,</span>
                         <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">:</span> <span class="n">sequence_name</span><span class="p">,</span>
                         <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">:</span> <span class="n">sequence_path</span><span class="p">,</span>
-                        <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_row_size</span><span class="p">,</span>
+                        <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_size</span><span class="p">,</span>
                         <span class="c1">#</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">QueueRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">queues</span><span class="p">,</span>
                         <span class="c1">#</span>
@@ -539,12 +539,12 @@
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">mimeData</span><span class="p">()</span><span class="o">.</span><span class="n">hasUrls</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">indicatorwidget</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">drop_indicator_widget</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">event</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">indicatorwidget</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drop_indicator_widget</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="FavouritesWidget.dragLeaveEvent"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.favourites.FavouritesWidget.dragLeaveEvent">[docs]</a>    <span class="k">def</span> <span class="nf">dragLeaveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">indicatorwidget</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drop_indicator_widget</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="FavouritesWidget.dragMoveEvent"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.favourites.FavouritesWidget.dragMoveEvent">[docs]</a>    <span class="k">def</span> <span class="nf">dragMoveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">mimeData</span><span class="p">()</span><span class="o">.</span><span class="n">hasUrls</span><span class="p">():</span>
@@ -552,7 +552,7 @@
 
 <div class="viewcode-block" id="FavouritesWidget.dropEvent"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.favourites.FavouritesWidget.dropEvent">[docs]</a>    <span class="k">def</span> <span class="nf">dropEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">"""Event responsible for adding the dropped file to the favourites."""</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">indicatorwidget</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">drop_indicator_widget</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">source</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="p">:</span>
             <span class="k">return</span>  <span class="c1"># Won't allow dropping an item from itself</span>

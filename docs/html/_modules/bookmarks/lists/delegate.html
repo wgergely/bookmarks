@@ -172,7 +172,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../bookmarks.html">Introduction</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">bookmarks.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/database.html">database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
 </ul>
 </li>
@@ -204,16 +206,14 @@
         <article role="main">
           <h1>Source code for bookmarks.lists.delegate</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">"""The delegate used to visualise bookmark, asset and file items derived from</span>
-<span class="sd">`base.BaseListWidget`.</span>
+<span class="sd">"""The delegate used to draw bookmark, asset and file items.</span>
 
-<span class="sd">The delegate is responsible for painting the thumbnails, names, and clickable</span>
-<span class="sd">buttons of the list items. The base list widget has a number of custom features,</span>
-<span class="sd">such as, clickable in-line-buttons that the deleagate is aware of.</span>
+<span class="sd">The list widgets have a number of custom features, such as clickable in-line icons, folder names,</span>
+<span class="sd">custom thumbnails that the delegate implements. All items are made up of a series of rectangles</span>
+<span class="sd">that the pain methods use to place drawn elements. See :func:`get_rectangles`.</span>
 
-<span class="sd">We're painting text using `QPainterPaths` for a high-quality, aliased display</span>
-<span class="sd">but the approach comes with a huge performance hit and therefore any</span>
-<span class="sd">QPainterPath paint operation is backed by a cache (see `common.delegate_paths`).</span>
+<span class="sd">The downside of painting everything manually is that the paint performance is poor. For this</span>
+<span class="sd">reason the delegate tries to cache as much of the information as possible.</span>
 
 <span class="sd">"""</span>
 <span class="kn">import</span> <span class="nn">functools</span>
@@ -274,18 +274,20 @@
 
 
 <div class="viewcode-block" id="get_painter_path"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.get_painter_path">[docs]</a><span class="k">def</span> <span class="nf">get_painter_path</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-    <span class="sd">"""Creates, populates and caches a QPainterPath instance."""</span>
+    <span class="sd">"""Creates, populates and caches QPainterPath instances.</span>
+
+<span class="sd">    """</span>
     <span class="n">k</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">x</span><span class="si">}{</span><span class="n">y</span><span class="si">}{</span><span class="n">font</span><span class="si">}{</span><span class="n">text</span><span class="si">}</span><span class="s1">'</span>
-    <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">delegate_paths</span><span class="p">:</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainterPath</span><span class="p">()</span>
-        <span class="n">path</span><span class="o">.</span><span class="n">addText</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
-        <span class="n">common</span><span class="o">.</span><span class="n">delegate_paths</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
+    <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">delegate_paths</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">delegate_paths</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainterPath</span><span class="p">()</span>
+    <span class="n">path</span><span class="o">.</span><span class="n">addText</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+    <span class="n">common</span><span class="o">.</span><span class="n">delegate_paths</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">path</span>
     <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">delegate_paths</span><span class="p">[</span><span class="n">k</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="get_rectangles"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.get_rectangles">[docs]</a><span class="k">def</span> <span class="nf">get_rectangles</span><span class="p">(</span><span class="n">rectangle</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
-    <span class="sd">"""Returns the paintable/clickable regions based on the number of</span>
-<span class="sd">    inline icons and the source rectangle.</span>
+    <span class="sd">"""Return all rectangles needed to paint an item.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        rectangle (QtCore.QRect):   An list item's visual rectangle.</span>
@@ -355,25 +357,21 @@
     <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">delegate_rectangles</span><span class="p">[</span><span class="n">k</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="get_file_text_segments"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.get_file_text_segments">[docs]</a><span class="k">def</span> <span class="nf">get_file_text_segments</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
-    <span class="sd">"""Returns the `FilesWidget` item `DisplayRole` segments associated with</span>
-<span class="sd">    custom colors. It is used to paint the FilesWidget items' extension,</span>
-<span class="sd">    name, and sequence.</span>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_pixmap_rect</span><span class="p">(</span><span class="n">rect_height</span><span class="p">,</span> <span class="n">pixmap_width</span><span class="p">,</span> <span class="n">pixmap_height</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">rect_height</span><span class="p">)</span>
+    <span class="n">longest_edge</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">max</span><span class="p">((</span><span class="n">pixmap_width</span><span class="p">,</span> <span class="n">pixmap_height</span><span class="p">)))</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="n">s</span> <span class="o">/</span> <span class="n">longest_edge</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">pixmap_width</span> <span class="o">*</span> <span class="n">ratio</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">pixmap_height</span> <span class="o">*</span> <span class="n">ratio</span>
+    <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">w</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        index (QModelIndex): The index currently being painted.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        dict: A dictionary of tuples. (str, QtGui.QColor)</span>
-
-<span class="sd">    """</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
-        <span class="k">return</span> <span class="p">{}</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_file_text_segments</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">s</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{}</span>
 
-    <span class="n">k</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">delegate_text_segments</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">delegate_text_segments</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
 
@@ -392,7 +390,7 @@
         <span class="n">s</span> <span class="o">=</span> <span class="n">regex_remove_seq_marker</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">''</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">17</span><span class="p">:</span>
             <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">8</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'...'</span> <span class="o">+</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">8</span><span class="p">:]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FramesRole</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">RedColor</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextColor</span><span class="p">))</span>
@@ -423,7 +421,7 @@
         <span class="n">common</span><span class="o">.</span><span class="n">delegate_text_segments</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span>
         <span class="k">return</span> <span class="n">d</span>
 
-    <span class="c1"># Items is not collapsed and it isn't a sequence either</span>
+    <span class="c1"># Item is not collapsed, and isn't a sequence either</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'.'</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">s</span> <span class="o">=</span> <span class="s1">'.'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="o">+</span> <span class="s1">'.'</span> <span class="o">+</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
@@ -431,7 +429,7 @@
         <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
     <span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextSelectedColor</span><span class="p">))</span>
     <span class="n">common</span><span class="o">.</span><span class="n">delegate_text_segments</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span>
-    <span class="k">return</span> <span class="n">d</span></div>
+    <span class="k">return</span> <span class="n">d</span>
 
 
 <div class="viewcode-block" id="get_filedetail_text_segments"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.get_filedetail_text_segments">[docs]</a><span class="k">def</span> <span class="nf">get_filedetail_text_segments</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
@@ -487,16 +485,10 @@
     <span class="k">return</span> <span class="n">rect</span><span class="p">,</span> <span class="n">r</span>
 
 
-<div class="viewcode-block" id="get_asset_text_segments"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.get_asset_text_segments">[docs]</a><span class="k">def</span> <span class="nf">get_asset_text_segments</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
-    <span class="sd">"""Get asset text segments.</span>
-
-<span class="sd">    """</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
-        <span class="k">return</span> <span class="p">{}</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span>
+<span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_asset_text_segments</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{}</span>
-    <span class="n">description</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">)</span>
     <span class="n">description</span> <span class="o">=</span> <span class="n">description</span> <span class="k">if</span> <span class="n">description</span> <span class="k">else</span> <span class="s1">''</span>
 
     <span class="n">k</span> <span class="o">=</span> <span class="n">text</span> <span class="o">+</span> <span class="n">description</span>
@@ -526,20 +518,19 @@
         <span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="n">description</span><span class="p">,</span> <span class="n">s_color</span><span class="p">)</span>
 
     <span class="n">common</span><span class="o">.</span><span class="n">delegate_text_segments</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span>
-    <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">delegate_text_segments</span><span class="p">[</span><span class="n">k</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">delegate_text_segments</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="get_bookmark_text_segments"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.get_bookmark_text_segments">[docs]</a><span class="k">def</span> <span class="nf">get_bookmark_text_segments</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
-    <span class="sd">"""Returns a tuple of text and colour information to be used to mimick</span>
+<div class="viewcode-block" id="get_bookmark_text_segments"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.get_bookmark_text_segments">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_bookmark_text_segments</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
+    <span class="sd">"""Returns a tuple of text and colour information to be used to mimic</span>
 <span class="sd">    rich-text like colouring of individual text elements.</span>
 
 <span class="sd">    Used by the list delegate to paint the job name and root folder.</span>
 
 <span class="sd">    """</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{}</span>
-    <span class="n">description</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">)</span>
     <span class="n">description</span> <span class="o">=</span> <span class="n">description</span> <span class="k">if</span> <span class="n">description</span> <span class="k">else</span> <span class="s1">''</span>
 
     <span class="n">k</span> <span class="o">=</span> <span class="n">text</span> <span class="o">+</span> <span class="n">description</span>
@@ -634,7 +625,7 @@
     <span class="n">font</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">primary_font</span><span class="p">(</span>
         <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FontSizeSmall</span><span class="p">))</span>
 
-    <span class="c1"># Paint the background rectangle of the subfolder</span>
+    <span class="c1"># Paint the background rectangle of the sub-folder</span>
     <span class="n">modifiers</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">keyboardModifiers</span><span class="p">()</span>
     <span class="n">alt_modifier</span> <span class="o">=</span> <span class="n">modifiers</span> <span class="o">&amp;</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AltModifier</span>
     <span class="n">shift_modifier</span> <span class="o">=</span> <span class="n">modifiers</span> <span class="o">&amp;</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ShiftModifier</span>
@@ -879,14 +870,13 @@
     <span class="n">fallback_thumb</span> <span class="o">=</span> <span class="s1">'placeholder'</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">BaseDelegate</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_clickable_rectangles</span> <span class="o">=</span> <span class="p">{}</span>
 
 <div class="viewcode-block" id="BaseDelegate.paint"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.BaseDelegate.paint">[docs]</a>    <span class="k">def</span> <span class="nf">paint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">'Abstract method must be implemented by subclass.'</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BaseDelegate.get_file_description_rect"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.BaseDelegate.get_file_description_rect">[docs]</a>    <span class="k">def</span> <span class="nf">get_file_description_rect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rectangles</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="sd">"""The description rectangle of a file item."""</span>
+    <span class="k">def</span> <span class="nf">get_file_description_rect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rectangles</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="n">k</span> <span class="o">=</span> <span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">repr</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">rectangles</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
         <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">delegate_description_rects</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">delegate_description_rects</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
@@ -901,7 +891,7 @@
                 <span class="n">rect</span> <span class="o">=</span> <span class="n">clickable</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="n">common</span><span class="o">.</span><span class="n">delegate_description_rects</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">rect</span>
-        <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">delegate_description_rects</span><span class="p">[</span><span class="n">k</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">delegate_description_rects</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">get_simple_description_rectangle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rectangles</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
@@ -956,6 +946,9 @@
 
     <span class="k">def</span> <span class="nf">get_description_rect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rectangles</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="n">pp</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pp</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">()</span>
+
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">()</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
@@ -965,26 +958,34 @@
 
     <span class="k">def</span> <span class="nf">get_text_segments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="n">pp</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">get_bookmark_text_segments</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">get_asset_text_segments</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">get_file_text_segments</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pp</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
 
-<div class="viewcode-block" id="BaseDelegate.get_paint_arguments"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.BaseDelegate.get_paint_arguments">[docs]</a>    <span class="k">def</span> <span class="nf">get_paint_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">antialiasing</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">get_bookmark_text_segments</span><span class="p">(</span>
+                <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">),</span>
+                <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">get_asset_text_segments</span><span class="p">(</span>
+                <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">),</span>
+                <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">get_file_text_segments</span><span class="p">(</span>
+                <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">),</span>
+                <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">),</span>
+                <span class="nb">tuple</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FramesRole</span><span class="p">))</span>
+            <span class="p">)</span>
+
+<div class="viewcode-block" id="BaseDelegate.get_paint_arguments"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.BaseDelegate.get_paint_arguments">[docs]</a>    <span class="k">def</span> <span class="nf">get_paint_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">antialiasing</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">"""A utility class for gathering all the arguments needed to paint</span>
 <span class="sd">        the individual list elements.</span>
 
 <span class="sd">        """</span>
-        <span class="k">if</span> <span class="n">antialiasing</span><span class="p">:</span>
-            <span class="n">painter</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">painter</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span>
-                <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="o">.</span><span class="n">SmoothPixmapTransform</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">painter</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="n">painter</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span>
-                <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="o">.</span><span class="n">SmoothPixmapTransform</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">antialiasing</span><span class="p">)</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="o">.</span><span class="n">TextAntialiasing</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">antialiasing</span><span class="p">)</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="o">.</span><span class="n">SmoothPixmapTransform</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">antialiasing</span><span class="p">)</span>
 
         <span class="n">painter</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoPen</span><span class="p">)</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoBrush</span><span class="p">)</span>
@@ -1023,22 +1024,22 @@
         <span class="k">return</span> <span class="n">args</span></div>
 
 <div class="viewcode-block" id="BaseDelegate.get_clickable_rectangles"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.BaseDelegate.get_clickable_rectangles">[docs]</a>    <span class="k">def</span> <span class="nf">get_clickable_rectangles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="sd">"""Clickable rectangles are used by the the QListView to identify</span>
+        <span class="sd">"""Clickable rectangles are used by the QListView to identify</span>
 <span class="sd">        interactive/clickable regions.</span>
 
 <span class="sd">        The delegate is responsible for painting any pseudo item buttons, such</span>
 <span class="sd">        as item names or in-line buttons and hence, we rely on the delegate</span>
-<span class="sd">        to calculate where these rectagles are.</span>
+<span class="sd">        to calculate where these rectangles are.</span>
 
 <span class="sd">        Because calculating these rectangles on each paint operation would come with</span>
 <span class="sd">        a performance hit we back the operation with a cache and return</span>
 <span class="sd">        only already cached result when a request is made.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            index (QtCore.QModelIndex):</span>
+<span class="sd">            index (QtCore.QModelIndex): The item's index.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            dict: A list of QRects where clickable regions are found.</span>
+<span class="sd">            dict: The item's clickable areas as QRect objects.</span>
 
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clickable_rectangles</span><span class="p">:</span>
@@ -1083,8 +1084,7 @@
 
         <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">delegate_subdir_rects</span><span class="p">[</span><span class="n">k</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="BaseDelegate.get_asset_description_rect"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.BaseDelegate.get_asset_description_rect">[docs]</a>    <span class="k">def</span> <span class="nf">get_asset_description_rect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rectangles</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="sd">"""Returns the description area of an ``AssetsWidget`` item."""</span>
+    <span class="k">def</span> <span class="nf">get_asset_description_rect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rectangles</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="n">k</span> <span class="o">=</span> <span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">repr</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">rectangles</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
         <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">delegate_description_rects</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">delegate_description_rects</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
@@ -1106,11 +1106,13 @@
         <span class="n">_rect</span><span class="o">.</span><span class="n">setRight</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">right</span><span class="p">()</span> <span class="o">-</span> <span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthMargin</span><span class="p">))</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
 
         <span class="n">common</span><span class="o">.</span><span class="n">delegate_description_rects</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">_rect</span>
-        <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">delegate_description_rects</span><span class="p">[</span><span class="n">k</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">delegate_description_rects</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
 
     <span class="nd">@paintmethod</span>
     <span class="k">def</span> <span class="nf">paint_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
         <span class="n">pp</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">paint_bookmark_name</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
@@ -1119,10 +1121,8 @@
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">paint_file_name</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="BaseDelegate.paint_description_editor_background"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.BaseDelegate.paint_description_editor_background">[docs]</a>    <span class="nd">@paintmethod</span>
+    <span class="nd">@paintmethod</span>
     <span class="k">def</span> <span class="nf">paint_description_editor_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">"""Overlay do indicate the source of a drag operation."""</span>
         <span class="n">rectangles</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">selected</span><span class="p">,</span> <span class="n">focused</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">archived</span><span class="p">,</span> <span class="n">favourite</span><span class="p">,</span> <span class="n">hover</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">cursor_position</span> <span class="o">=</span> <span class="n">args</span>
 
         <span class="k">if</span> <span class="n">index</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">():</span>
@@ -1136,21 +1136,21 @@
         <span class="n">rect</span><span class="o">.</span><span class="n">setLeft</span><span class="p">(</span><span class="n">rectangles</span><span class="p">[</span><span class="n">ThumbnailRect</span><span class="p">]</span><span class="o">.</span><span class="n">right</span><span class="p">())</span>
 
         <span class="n">o</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthIndicator</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
-        <span class="n">painter</span><span class="o">.</span><span class="n">drawRoundedRect</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span></div>
+        <span class="n">painter</span><span class="o">.</span><span class="n">drawRoundedRect</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
 
 <div class="viewcode-block" id="BaseDelegate.paint_thumbnail"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.BaseDelegate.paint_thumbnail">[docs]</a>    <span class="nd">@paintmethod</span>
     <span class="k">def</span> <span class="nf">paint_thumbnail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">"""Paints an item's thumbnail.</span>
 
 <span class="sd">        If a requested QPixmap has never been drawn before we will create and</span>
-<span class="sd">        store it by calling `images.get_thumbnail(*args)`. This method is backed</span>
-<span class="sd">        by `images.ImageCache` and stores the requested pixmaps for future use.</span>
+<span class="sd">        store it by calling :func:`bookmarks.images.get_thumbnail`. This method is backed</span>
+<span class="sd">        by :class:`bookmarks.images.ImageCache` and stores the requested pixmap for future use.</span>
 
 <span class="sd">        If no associated image data is available, we will use a generic</span>
 <span class="sd">        thumbnail associated with the item's type, or a fallback thumbnail set</span>
-<span class="sd">        by the delegate. at `self.fallback_thumb`.</span>
+<span class="sd">        by the delegate.</span>
 
-<span class="sd">        See the `images` module for implementation details.</span>
+<span class="sd">        See the :mod:`bookmarks.images` module for implementation details.</span>
 
 <span class="sd">        """</span>
         <span class="n">rectangles</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">selected</span><span class="p">,</span> <span class="n">focused</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">archived</span><span class="p">,</span> <span class="n">favourite</span><span class="p">,</span> <span class="n">hover</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">cursor_position</span> <span class="o">=</span> <span class="n">args</span>
@@ -1158,23 +1158,25 @@
         <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">SeparatorColor</span><span class="p">))</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">drawRect</span><span class="p">(</span><span class="n">rectangles</span><span class="p">[</span><span class="n">ThumbnailRect</span><span class="p">])</span>
 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">verticalScrollBar</span><span class="p">()</span><span class="o">.</span><span class="n">isSliderDown</span><span class="p">():</span>
+            <span class="k">return</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">):</span>
             <span class="k">return</span>
 
         <span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">)[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
         <span class="n">source</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">)</span>
 
-        <span class="n">_h</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">source</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">_h</span><span class="p">:</span>
+        <span class="n">size_role</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">source</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">size_role</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="n">size</span> <span class="o">=</span> <span class="n">_h</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
 
         <span class="n">pixmap</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">get_thumbnail</span><span class="p">(</span>
             <span class="n">server</span><span class="p">,</span>
             <span class="n">job</span><span class="p">,</span>
             <span class="n">root</span><span class="p">,</span>
             <span class="n">source</span><span class="p">,</span>
-            <span class="n">size</span><span class="p">,</span>
+            <span class="n">size_role</span><span class="o">.</span><span class="n">height</span><span class="p">(),</span>
             <span class="n">fallback_thumb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fallback_thumb</span>
         <span class="p">)</span>
 
@@ -1195,13 +1197,7 @@
 
         <span class="c1"># Let's make sure the image is fully fitted, even if the image's size</span>
         <span class="c1"># doesn't match ThumbnailRect</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">rectangles</span><span class="p">[</span><span class="n">ThumbnailRect</span><span class="p">]</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
-        <span class="n">longest_edge</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">max</span><span class="p">((</span><span class="n">pixmap</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="n">pixmap</span><span class="o">.</span><span class="n">height</span><span class="p">())))</span>
-        <span class="n">ratio</span> <span class="o">=</span> <span class="n">s</span> <span class="o">/</span> <span class="n">longest_edge</span>
-        <span class="n">w</span> <span class="o">=</span> <span class="n">pixmap</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">*</span> <span class="n">ratio</span>
-        <span class="n">h</span> <span class="o">=</span> <span class="n">pixmap</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">*</span> <span class="n">ratio</span>
-
-        <span class="n">_rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">w</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
+        <span class="n">_rect</span> <span class="o">=</span> <span class="n">get_pixmap_rect</span><span class="p">(</span><span class="n">rectangles</span><span class="p">[</span><span class="n">ThumbnailRect</span><span class="p">]</span><span class="o">.</span><span class="n">height</span><span class="p">(),</span> <span class="n">pixmap</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="n">pixmap</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
         <span class="n">_rect</span><span class="o">.</span><span class="n">moveCenter</span><span class="p">(</span><span class="n">rectangles</span><span class="p">[</span><span class="n">ThumbnailRect</span><span class="p">]</span><span class="o">.</span><span class="n">center</span><span class="p">())</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">drawPixmap</span><span class="p">(</span><span class="n">_rect</span><span class="p">,</span> <span class="n">pixmap</span><span class="p">,</span> <span class="n">pixmap</span><span class="o">.</span><span class="n">rect</span><span class="p">())</span></div>
 
@@ -1252,8 +1248,6 @@
         <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">rectangles</span><span class="p">[</span><span class="n">BackgroundRect</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()</span> <span class="o">==</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
             <span class="n">rect</span><span class="o">.</span><span class="n">setHeight</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">+</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">HeightSeparator</span><span class="p">))</span>
-
-        <span class="n">painter</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">)</span>
 
         <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">BackgroundLightColor</span><span class="p">)</span> <span class="k">if</span> <span class="n">selected</span> <span class="k">else</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span>
             <span class="n">common</span><span class="o">.</span><span class="n">BackgroundColor</span><span class="p">)</span>
@@ -1419,6 +1413,7 @@
     <span class="nd">@paintmethod</span>
     <span class="k">def</span> <span class="nf">_paint_inline_todo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="n">rectangles</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">selected</span><span class="p">,</span> <span class="n">focused</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">archived</span><span class="p">,</span> <span class="n">favourite</span><span class="p">,</span> <span class="n">hover</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">cursor_position</span> <span class="o">=</span> <span class="n">args</span>
+
         <span class="n">rect</span> <span class="o">=</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">TodoRect</span><span class="p">]</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">rect</span> <span class="ow">or</span> <span class="n">archived</span><span class="p">:</span>
             <span class="k">return</span>
@@ -1472,13 +1467,14 @@
         <span class="n">painter</span><span class="o">.</span><span class="n">drawPixmap</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">pixmap</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">paint_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">rect</span><span class="p">,</span> <span class="n">cursor_position</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
             <span class="k">return</span>
 
         <span class="n">size</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FontSizeLarge</span><span class="p">)</span>
         <span class="n">count_rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
         <span class="n">count_rect</span><span class="o">.</span><span class="n">moveCenter</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">bottomRight</span><span class="p">())</span>
-        <span class="n">painter</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">rect</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">):</span>
             <span class="n">pixmap</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">get_rsc_pixmap</span><span class="p">(</span>
@@ -1515,9 +1511,8 @@
         <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">drawRect</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BaseDelegate.paint_thumbnail_shadow"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.BaseDelegate.paint_thumbnail_shadow">[docs]</a>    <span class="nd">@paintmethod</span>
+    <span class="nd">@paintmethod</span>
     <span class="k">def</span> <span class="nf">paint_thumbnail_shadow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">"""Paints a drop-shadow"""</span>
         <span class="n">rectangles</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">selected</span><span class="p">,</span> <span class="n">focused</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">archived</span><span class="p">,</span> <span class="n">favourite</span><span class="p">,</span> <span class="n">hover</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">cursor_position</span> <span class="o">=</span> <span class="n">args</span>
         <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">rectangles</span><span class="p">[</span><span class="n">ThumbnailRect</span><span class="p">])</span>
         <span class="n">rect</span><span class="o">.</span><span class="n">moveLeft</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">right</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
@@ -1532,7 +1527,7 @@
         <span class="n">rect</span><span class="o">.</span><span class="n">setWidth</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthMargin</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">drawPixmap</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">pixmap</span><span class="p">,</span> <span class="n">pixmap</span><span class="o">.</span><span class="n">rect</span><span class="p">())</span>
         <span class="n">rect</span><span class="o">.</span><span class="n">setWidth</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthMargin</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.5</span><span class="p">)</span>
-        <span class="n">painter</span><span class="o">.</span><span class="n">drawPixmap</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">pixmap</span><span class="p">,</span> <span class="n">pixmap</span><span class="o">.</span><span class="n">rect</span><span class="p">())</span></div>
+        <span class="n">painter</span><span class="o">.</span><span class="n">drawPixmap</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">pixmap</span><span class="p">,</span> <span class="n">pixmap</span><span class="o">.</span><span class="n">rect</span><span class="p">())</span>
 
 <div class="viewcode-block" id="BaseDelegate.paint_inline_background_shadow"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.BaseDelegate.paint_inline_background_shadow">[docs]</a>    <span class="nd">@paintmethod</span>
     <span class="k">def</span> <span class="nf">paint_inline_background_shadow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
@@ -1636,13 +1631,10 @@
             <span class="s1">'slack'</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextColor</span><span class="p">),</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthMargin</span><span class="p">))</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">drawPixmap</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">pixmap</span><span class="p">,</span> <span class="n">pixmap</span><span class="o">.</span><span class="n">rect</span><span class="p">())</span>
 
-<div class="viewcode-block" id="BaseDelegate.paint_simple_name"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.BaseDelegate.paint_simple_name">[docs]</a>    <span class="nd">@paintmethod</span>
+    <span class="nd">@paintmethod</span>
     <span class="k">def</span> <span class="nf">paint_simple_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">"""Paints an the current file-names in a simpler form, with only the</span>
-<span class="sd">        filename and the description visible.</span>
-
-<span class="sd">        """</span>
         <span class="n">rectangles</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">selected</span><span class="p">,</span> <span class="n">focused</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">archived</span><span class="p">,</span> <span class="n">favourite</span><span class="p">,</span> <span class="n">hover</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">cursor_position</span> <span class="o">=</span> <span class="n">args</span>
+
         <span class="n">painter</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">rectangles</span><span class="p">[</span><span class="n">DataRect</span><span class="p">])</span>
@@ -1701,7 +1693,7 @@
 
             <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">get_painter_path</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
-            <span class="n">painter</span><span class="o">.</span><span class="n">drawPath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+            <span class="n">painter</span><span class="o">.</span><span class="n">drawPath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
 <div class="viewcode-block" id="BaseDelegate.paint_drag_source"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.BaseDelegate.paint_drag_source">[docs]</a>    <span class="nd">@paintmethod</span>
     <span class="k">def</span> <span class="nf">paint_drag_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1806,7 +1798,6 @@
         <span class="n">pen</span><span class="o">.</span><span class="n">setWidth</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">HeightSeparator</span><span class="p">))</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">pen</span><span class="p">)</span>
 
-        <span class="n">painter</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">drawRoundedRect</span><span class="p">(</span>
             <span class="n">r</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthIndicator</span><span class="p">),</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthIndicator</span><span class="p">))</span>
 
@@ -1836,7 +1827,7 @@
             <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">_r</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">_r</span><span class="o">.</span><span class="n">bottom</span><span class="p">()</span>
-            <span class="n">path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">=</span> <span class="n">get_painter_path</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">get_painter_path</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
             <span class="n">painter</span><span class="o">.</span><span class="n">drawPath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
             <span class="n">offset</span> <span class="o">+=</span> <span class="n">width</span>
@@ -1853,8 +1844,6 @@
             <span class="k">return</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">):</span>
             <span class="k">return</span>
-
-        <span class="n">painter</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># The description rectangle for bookmark items is not clickable,</span>
         <span class="c1"># unlike on asset and files items</span>
@@ -1946,7 +1935,7 @@
             <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">_r</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">_r</span><span class="o">.</span><span class="n">bottom</span><span class="p">()</span>
-            <span class="n">path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">=</span> <span class="n">get_painter_path</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">get_painter_path</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
             <span class="n">painter</span><span class="o">.</span><span class="n">drawPath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
             <span class="n">offset</span> <span class="o">+=</span> <span class="n">width</span>
@@ -1962,7 +1951,6 @@
         <span class="c1"># slider_down = self.parent().verticalScrollBar().isSliderDown()</span>
         <span class="c1"># if slider_down:</span>
 
-        <span class="n">painter</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">font</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">primary_font</span><span class="p">(</span>
             <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FontSizeSmall</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
@@ -2015,8 +2003,7 @@
 
 <div class="viewcode-block" id="BookmarksWidgetDelegate.paint"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.BookmarksWidgetDelegate.paint">[docs]</a>    <span class="k">def</span> <span class="nf">paint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">"""Defines how the ``BookmarksWidget`` should be painted."""</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_paint_arguments</span><span class="p">(</span>
-            <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">antialiasing</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_paint_arguments</span><span class="p">(</span><span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">paint_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">paint_persistent</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
@@ -2034,7 +2021,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">paint_shotgun_status</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BookmarksWidgetDelegate.sizeHint"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.BookmarksWidgetDelegate.sizeHint">[docs]</a>    <span class="k">def</span> <span class="nf">sizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">row_size</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">row_size</span></div></div>
 
 
 <div class="viewcode-block" id="AssetsWidgetDelegate"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.AssetsWidgetDelegate">[docs]</a><span class="k">class</span> <span class="nc">AssetsWidgetDelegate</span><span class="p">(</span><span class="n">BaseDelegate</span><span class="p">):</span>
@@ -2046,8 +2033,7 @@
         <span class="c1"># The index might still be populated...</span>
         <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_paint_arguments</span><span class="p">(</span>
-            <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">antialiasing</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_paint_arguments</span><span class="p">(</span><span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">paint_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">paint_thumbnail_shadow</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">paint_name</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
@@ -2062,7 +2048,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">paint_shotgun_status</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="AssetsWidgetDelegate.sizeHint"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.AssetsWidgetDelegate.sizeHint">[docs]</a>    <span class="k">def</span> <span class="nf">sizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">row_size</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">row_size</span></div></div>
 
 
 <div class="viewcode-block" id="FilesWidgetDelegate"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.FilesWidgetDelegate">[docs]</a><span class="k">class</span> <span class="nc">FilesWidgetDelegate</span><span class="p">(</span><span class="n">BaseDelegate</span><span class="p">):</span>
@@ -2076,8 +2062,7 @@
 <div class="viewcode-block" id="FilesWidgetDelegate.paint"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.FilesWidgetDelegate.paint">[docs]</a>    <span class="k">def</span> <span class="nf">paint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">"""Defines how the ``FilesWidget``'s' items should be painted."""</span>
 
-        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_paint_arguments</span><span class="p">(</span>
-            <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">antialiasing</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_paint_arguments</span><span class="p">(</span><span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">):</span>
             <span class="k">return</span>
@@ -2105,7 +2090,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">paint_drag_source</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FilesWidgetDelegate.sizeHint"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.FilesWidgetDelegate.sizeHint">[docs]</a>    <span class="k">def</span> <span class="nf">sizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">row_size</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">row_size</span></div></div>
 
 
 <div class="viewcode-block" id="FavouritesWidgetDelegate"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.delegate.FavouritesWidgetDelegate">[docs]</a><span class="k">class</span> <span class="nc">FavouritesWidgetDelegate</span><span class="p">(</span><span class="n">FilesWidgetDelegate</span><span class="p">):</span>

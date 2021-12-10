@@ -172,7 +172,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../bookmarks.html">Introduction</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api/common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/main.html">bookmarks.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/database.html">database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/lists.html">lists</a></li>
 </ul>
 </li>
@@ -207,8 +209,9 @@
 <span class="sd">"""Bookmarks' main widget.</span>
 
 <span class="sd">:class:`.MainWidget` consist of :class:`bookmarks.topbar.TopBarWidget`,</span>
-<span class="sd">:class:`bookmarks.statusbar.StatusBarWidget`, and :class:`bookmarks.lists.basewidget.ListsWidget`. The latter</span>
-<span class="sd">is the container for the three main list item widgets: :class:`bookmarks.lists.bookmarks.BookmarksWidget`,</span>
+<span class="sd">:class:`bookmarks.statusbar.StatusBarWidget`,</span>
+<span class="sd">and :class:`bookmarks.lists.basewidget.ListsWidget`. The latter is the container for the three</span>
+<span class="sd">main list item widgets: :class:`bookmarks.lists.bookmarks.BookmarksWidget`,</span>
 <span class="sd">:class:`bookmarks.lists.assets.AssetsWidget` and :class:`bookmarks.lists.files.FilesWidget`.</span>
 
 <span class="sd">Important:</span>
@@ -229,12 +232,12 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">shortcuts</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">statusbar</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">topbar</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="n">lists</span> <span class="kn">import</span> <span class="nn">assets</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="n">lists</span> <span class="kn">import</span> <span class="nn">basewidget</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="n">lists</span> <span class="kn">import</span> <span class="nn">bookmarks</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="n">lists</span> <span class="kn">import</span> <span class="nn">favourites</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="n">lists</span> <span class="kn">import</span> <span class="nn">files</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="n">lists</span> <span class="kn">import</span> <span class="nn">tasks</span>
+<span class="kn">from</span> <span class="nn">.lists</span> <span class="kn">import</span> <span class="n">assets</span>
+<span class="kn">from</span> <span class="nn">.lists</span> <span class="kn">import</span> <span class="n">basewidget</span>
+<span class="kn">from</span> <span class="nn">.lists</span> <span class="kn">import</span> <span class="n">bookmarks</span>
+<span class="kn">from</span> <span class="nn">.lists</span> <span class="kn">import</span> <span class="n">favourites</span>
+<span class="kn">from</span> <span class="nn">.lists</span> <span class="kn">import</span> <span class="n">files</span>
+<span class="kn">from</span> <span class="nn">.lists</span> <span class="kn">import</span> <span class="n">tasks</span>
 
 
 <span class="k">def</span> <span class="nf">init</span><span class="p">():</span>
@@ -346,13 +349,16 @@
         <span class="c1"># Asset -&gt; File</span>
         <span class="n">a</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">activeChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
             <span class="n">f</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">reset_data</span><span class="p">)</span>
+        <span class="c1"># Asset -&gt; Task</span>
+        <span class="n">a</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">activeChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="n">l</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">reset_data</span><span class="p">)</span>
         <span class="c1">#####################################################</span>
         <span class="c1"># Stacked widget navigation</span>
         <span class="n">b</span><span class="o">.</span><span class="n">activated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
             <span class="k">lambda</span><span class="p">:</span> <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">tabChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">AssetTab</span><span class="p">))</span>
         <span class="n">a</span><span class="o">.</span><span class="n">activated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
             <span class="k">lambda</span><span class="p">:</span> <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">tabChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FileTab</span><span class="p">))</span>
-        <span class="n">a</span><span class="o">.</span><span class="n">activated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">l</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">check_task</span><span class="p">)</span>
+
 
         <span class="c1">########################################################################</span>
         <span class="n">b</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">activeChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">slack_button</span><span class="o">.</span><span class="n">check_token</span><span class="p">)</span>

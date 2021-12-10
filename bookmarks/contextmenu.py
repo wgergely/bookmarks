@@ -749,9 +749,14 @@ class BaseContextMenu(QtWidgets.QMenu):
         )
 
         self.menu[key()] = {
-            'text': 'Preview',
+            'text': 'Preview Thumbnail',
             'icon': ui.get_icon('image'),
-            'action': actions.preview
+            'action': actions.preview_thumbnail
+        }
+        self.menu[key()] = {
+            'text': 'Preview Image',
+            'icon': ui.get_icon('image'),
+            'action': actions.preview_image
         }
 
         self.separator()

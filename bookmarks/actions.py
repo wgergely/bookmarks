@@ -440,7 +440,7 @@ def generate_thumbnails_changed(state):
     if state == QtCore.Qt.Checked:
         return
 
-    from . threads import threads
+    from .threads import threads
 
     for t in (common.FileTab, common.FavouriteTab):
         w = common.widget(t)
@@ -449,7 +449,7 @@ def generate_thumbnails_changed(state):
                 threads.THREADS[k]['queue'].clear()
             elif state == QtCore.Qt.Unchecked:
                 if threads.THREADS[k]['role'] == common.ThumbnailLoaded:
-                    w.queue_visible_indexes(k)
+                    w.start_delayed_queue_timer()
 
 
 @QtCore.Slot()
@@ -460,7 +460,6 @@ def toggle_task_view():
         return
     common.widget(common.TaskTab).setHidden(
         not common.widget(common.TaskTab).isHidden())
-    common.signals.taskViewToggled.emit()
 
 
 def toggle_filter_editor():
@@ -517,7 +516,7 @@ def increase_row_size():
     proxy = widget.model()
     model = proxy.sourceModel()
 
-    v = model.row_size().height() + common.size(common.thumbnail_size / 15)
+    v = model.row_size.height() + common.size(common.thumbnail_size / 15)
     if v >= common.thumbnail_size:
         return
 
@@ -534,7 +533,7 @@ def decrease_row_size():
     proxy = widget.model()
     model = proxy.sourceModel()
 
-    v = model.row_size().height() - common.size(common.thumbnail_size / 15)
+    v = model.row_size.height() - common.size(common.thumbnail_size / 15)
     if v <= model.default_row_size().height():
         v = model.default_row_size().height()
 
@@ -955,7 +954,7 @@ def show_todos(index):
 @common.debug
 @common.error
 @selection
-def preview(index):
+def preview_thumbnail(index):
     """Displays a preview of the currently selected item.
 
     For alembic archives, this is the hierarchy of the archive file. For
@@ -1001,7 +1000,30 @@ def preview(index):
     ref = weakref.ref(data[idx])
 
     from .lists.widgets import image_viewer
-    image_viewer.show(source, ref, common.widget())
+    image_viewer.show(source, ref, common.widget(), oiio=False)
+
+
+@common.debug
+@common.error
+@selection
+def preview_image(index):
+    if not index.isValid():
+        return
+
+    source = index.data(QtCore.Qt.StatusTipRole)
+    source = common.get_sequence_startpath(source)
+
+    if QtCore.QFileInfo(source).suffix() not in images.get_oiio_extensions():
+        raise RuntimeError(f'{source} is not a valid image file.')
+
+    # Let's get a weakref to the model data
+    model = index.model()
+    data = model.sourceModel().model_data()
+    idx = model.mapToSource(index).row()
+    ref = weakref.ref(data[idx])
+
+    from .lists.widgets import image_viewer
+    image_viewer.show(source, ref, common.widget(), oiio=True)
 
 
 @common.debug
@@ -1306,7 +1328,6 @@ def pick_launcher_item():
     from .launcher import launcher_gallery as editor
     widget = editor.show()
     widget.itemSelected.connect(lambda v: execute(v))
-
 
 
 @common.debug

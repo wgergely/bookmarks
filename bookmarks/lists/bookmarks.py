@@ -162,7 +162,7 @@ class BookmarksModel(basemodel.BaseModel):
                 QtCore.Qt.EditRole: text,
                 QtCore.Qt.StatusTipRole: filepath,
                 QtCore.Qt.ToolTipRole: filepath,
-                QtCore.Qt.SizeHintRole: self.row_size(),
+                QtCore.Qt.SizeHintRole: self.row_size,
                 #
                 common.QueueRole: self.queues,
                 common.DataTypeRole: t,

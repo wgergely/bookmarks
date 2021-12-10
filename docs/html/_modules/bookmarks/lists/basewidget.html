@@ -172,7 +172,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../bookmarks.html">Introduction</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">bookmarks.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/database.html">database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
 </ul>
 </li>
@@ -236,33 +238,6 @@
 
 <span class="n">BG_COLOR</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
 
-
-<span class="k">def</span> <span class="nf">get_visible_indexes</span><span class="p">(</span><span class="n">widget</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">index_below</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
-        <span class="n">r</span><span class="o">.</span><span class="n">moveTop</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">top</span><span class="p">()</span> <span class="o">+</span> <span class="n">r</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
-        <span class="k">return</span> <span class="n">widget</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">topLeft</span><span class="p">())</span>
-
-    <span class="c1"># Find the first visible index</span>
-    <span class="n">r</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span>
-    <span class="n">index</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">topLeft</span><span class="p">())</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
-        <span class="k">return</span> <span class="p">[]</span>
-
-    <span class="n">rect</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">visualRect</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="n">idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">IdRole</span><span class="p">),</span> <span class="p">]</span>
-    <span class="k">while</span> <span class="n">r</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">rect</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">999</span><span class="p">:</span>  <span class="c1"># Don't check more than 999 items</span>
-            <span class="k">break</span>
-        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
-
-        <span class="n">idx</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">IdRole</span><span class="p">)</span>
-        <span class="n">idxs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
-
-        <span class="n">index</span> <span class="o">=</span> <span class="n">index_below</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
-            <span class="k">break</span>
-    <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="ListsWidget"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basewidget.ListsWidget">[docs]</a><span class="k">class</span> <span class="nc">ListsWidget</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QStackedWidget</span><span class="p">):</span>
@@ -434,6 +409,12 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="o">=</span><span class="s1">'icon_bw'</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visible_rows</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">'source_rows'</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">'ids'</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">'proxy_rows'</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">setDragDropOverwriteMode</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setDropIndicatorShown</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">setAcceptDrops</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
@@ -443,8 +424,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s1">'DelayedLayoutTimer'</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span><span class="o">.</span><span class="n">setSingleShot</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">33</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">scheduleDelayedItemsLayout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scheduleDelayedItemsLayout</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repaint_visible_rows</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_buttons_hidden</span> <span class="o">=</span> <span class="kc">False</span>
@@ -511,8 +491,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">init_buttons_state</span><span class="p">()</span>
 
-<div class="viewcode-block" id="BaseListWidget.init_buttons_state"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basewidget.BaseListWidget.init_buttons_state">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
-    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
+
+<div class="viewcode-block" id="BaseListWidget.init_buttons_state"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basewidget.BaseListWidget.init_buttons_state">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
+    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="k">def</span> <span class="nf">init_buttons_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Restore the previous state of the inline icon buttons.</span>
 
@@ -546,7 +527,9 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buttons_hidden</span> <span class="o">=</span> <span class="n">val</span></div>
 
-<div class="viewcode-block" id="BaseListWidget.set_model"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basewidget.BaseListWidget.set_model">[docs]</a>    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseListWidget.set_model"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basewidget.BaseListWidget.set_model">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
+    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
+    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="sd">"""Add a model to the view.</span>
 
 <span class="sd">        The BaseModel subclasses are wrapped in a QSortFilterProxyModel. All</span>
@@ -578,7 +561,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">filter_editor</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">set_filter_text</span><span class="p">)</span>
 
         <span class="n">model</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delay_restore_selection</span><span class="p">)</span>
-        <span class="n">proxy</span><span class="o">.</span><span class="n">invalidated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delay_restore_selection</span><span class="p">)</span></div>
+        <span class="n">proxy</span><span class="o">.</span><span class="n">invalidated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delay_restore_selection</span><span class="p">)</span>
+
+        <span class="n">model</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_visible_rows</span><span class="p">)</span>
+        <span class="n">proxy</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_visible_rows</span><span class="p">)</span>
+        <span class="n">proxy</span><span class="o">.</span><span class="n">invalidated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_visible_rows</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BaseListWidget.update"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basewidget.BaseListWidget.update">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
@@ -725,9 +712,6 @@
             <span class="n">index</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QItemSelectionModel</span><span class="o">.</span><span class="n">ClearAndSelect</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scrollTo</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">PositionAtCenter</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">add_pending_trasaction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">flag</span><span class="p">):</span>
-        <span class="k">pass</span>
-
 <div class="viewcode-block" id="BaseListWidget.toggle_item_flag"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basewidget.BaseListWidget.toggle_item_flag">[docs]</a>    <span class="k">def</span> <span class="nf">toggle_item_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">flag</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">commit_now</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">"""Sets the index's `flag` value based on `state`.</span>
 
@@ -738,6 +722,7 @@
 <span class="sd">            index (QModelIndex): The index containing the</span>
 <span class="sd">            flag (type): Description of parameter `flag`.</span>
 <span class="sd">            state (type): Description of parameter `state`. Defaults to None.</span>
+<span class="sd">            commit_now (bool): Save changes immediately to the database.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            str: The key used to find and match items.</span>
@@ -892,12 +877,12 @@
         <span class="k">return</span> <span class="n">k</span></div>
 
     <span class="k">def</span> <span class="nf">key_space</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">actions</span><span class="o">.</span><span class="n">preview</span><span class="p">()</span>
+        <span class="n">actions</span><span class="o">.</span><span class="n">preview_thumbnail</span><span class="p">()</span>
 
 <div class="viewcode-block" id="BaseListWidget.key_down"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basewidget.BaseListWidget.key_down">[docs]</a>    <span class="k">def</span> <span class="nf">key_down</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Custom action on  `down` arrow key-press.</span>
 
-<span class="sd">        We're implementing a continous 'scroll' function: reaching the last</span>
+<span class="sd">        We're implementing a continuous 'scroll' function: reaching the last</span>
 <span class="sd">        item in the list will automatically jump to the beginning to the list</span>
 <span class="sd">        and vice-versa.</span>
 
@@ -1056,7 +1041,7 @@
         <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span>
             <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span>
-            <span class="n">model</span><span class="o">.</span><span class="n">row_size</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">row_size</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
         <span class="p">)</span>
 
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">rect</span><span class="p">):</span>
@@ -1108,32 +1093,12 @@
         <span class="k">if</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">mouseButtons</span><span class="p">()</span> <span class="o">!=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoButton</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="k">def</span> <span class="nf">_next</span><span class="p">(</span><span class="n">rect</span><span class="p">):</span>
-            <span class="n">rect</span><span class="o">.</span><span class="n">moveTop</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">top</span><span class="p">()</span> <span class="o">+</span> <span class="n">rect</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">topLeft</span><span class="p">())</span>
-
-        <span class="n">proxy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">proxy</span><span class="o">.</span><span class="n">rowCount</span><span class="p">():</span>
-            <span class="k">return</span>
-
-        <span class="n">viewport_rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">viewport_rect</span><span class="o">.</span><span class="n">topLeft</span><span class="p">())</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
-            <span class="k">return</span>
-
-        <span class="n">index_rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visualRect</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">while</span> <span class="n">viewport_rect</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">index_rect</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">99</span><span class="p">:</span>  <span class="c1"># manuel limit on how many items we will repaint</span>
-                <span class="k">break</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">visible_rows</span><span class="p">[</span><span class="s1">'proxy_rows'</span><span class="p">]:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="n">_next</span><span class="p">(</span><span class="n">index_rect</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
-                <span class="k">break</span>
-            <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
 
-<div class="viewcode-block" id="BaseListWidget.reset_row_layout"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basewidget.BaseListWidget.reset_row_layout">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
-    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
+<div class="viewcode-block" id="BaseListWidget.reset_row_layout"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basewidget.BaseListWidget.reset_row_layout">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
+    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">reset_row_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">"""Reinitializes the rows to apply size any row height changes.</span>
@@ -1141,13 +1106,18 @@
 <span class="sd">        """</span>
         <span class="n">proxy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span>
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+
+        <span class="c1"># Save the current selection</span>
         <span class="n">row</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">hasSelection</span><span class="p">()</span> <span class="ow">and</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
             <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()</span>
 
+        <span class="c1"># Update the layout</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scheduleDelayedItemsLayout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_visible_rows</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">repaint_visible_rows</span><span class="p">()</span>
 
+        <span class="c1"># Restore the selection</span>
         <span class="k">if</span> <span class="n">row</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">index</span> <span class="o">=</span> <span class="n">proxy</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span>
@@ -1160,7 +1130,7 @@
         <span class="n">proxy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">proxy</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span>
 
-        <span class="n">model</span><span class="o">.</span><span class="n">_row_size</span><span class="o">.</span><span class="n">setHeight</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">row_size</span><span class="o">.</span><span class="n">setHeight</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
         <span class="n">model</span><span class="o">.</span><span class="n">set_local_setting</span><span class="p">(</span>
             <span class="n">common</span><span class="o">.</span><span class="n">CurrentRowHeight</span><span class="p">,</span>
             <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">),</span>
@@ -1441,7 +1411,7 @@
             <span class="n">shift_modifier</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">modifiers</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ShiftModifier</span>
 
             <span class="c1"># Adjust the scroll amount based on thw row size</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">_row_size</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">HeightRow</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">row_size</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">HeightRow</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">):</span>
                 <span class="n">o</span> <span class="o">=</span> <span class="mi">9</span> <span class="k">if</span> <span class="n">shift_modifier</span> <span class="k">else</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">o</span> <span class="o">=</span> <span class="mi">9</span> <span class="k">if</span> <span class="n">shift_modifier</span> <span class="k">else</span> <span class="mi">3</span>
@@ -1822,6 +1792,10 @@
                     <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">clearStatusBarMessage</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+                <span class="n">app</span><span class="o">.</span><span class="n">restoreOverrideCursor</span><span class="p">()</span>
+                <span class="k">return</span>
+
             <span class="n">rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">itemDelegate</span><span class="p">()</span><span class="o">.</span><span class="n">get_description_rect</span><span class="p">(</span><span class="n">rectangles</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">rect</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
@@ -1887,7 +1861,7 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="o">=</span><span class="s1">'bw_icon'</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_queue_timer</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Timer</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_queue_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">300</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_queue_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_queue_timer</span><span class="o">.</span><span class="n">setSingleShot</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">icon</span><span class="o">=</span><span class="n">icon</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
@@ -1917,27 +1891,33 @@
             <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mf">2.0</span><span class="p">:</span>
                 <span class="k">break</span></div>
 
-<div class="viewcode-block" id="ThreadedBaseWidget.set_model"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basewidget.ThreadedBaseWidget.set_model">[docs]</a>    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ThreadedBaseWidget.set_model"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basewidget.ThreadedBaseWidget.set_model">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
+    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
+    <span class="k">def</span> <span class="nf">set_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_model</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">refUpdated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_row</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">invalidated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delay_queue_visible_indexes</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delay_queue_visible_indexes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_queue_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_visible_rows</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_queue_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queue_visible_indexes</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">verticalScrollBar</span><span class="p">()</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delay_queue_visible_indexes</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">verticalScrollBar</span><span class="p">()</span><span class="o">.</span><span class="n">sliderReleased</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delay_queue_visible_indexes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">invalidated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_delayed_queue_timer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_delayed_queue_timer</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">filterTextChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delay_queue_visible_indexes</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">filterFlagChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delay_queue_visible_indexes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verticalScrollBar</span><span class="p">()</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_delayed_queue_timer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verticalScrollBar</span><span class="p">()</span><span class="o">.</span><span class="n">sliderReleased</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_delayed_queue_timer</span><span class="p">)</span>
 
-        <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">tabChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queue_visible_indexes</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">filterTextChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_delayed_queue_timer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">filterFlagChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_delayed_queue_timer</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">delay_queue_visible_indexes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">tabChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">start_delayed_queue_timer</span><span class="p">)</span></div>
+
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
+    <span class="k">def</span> <span class="nf">start_delayed_queue_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_queue_timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delayed_queue_timer</span><span class="o">.</span><span class="n">interval</span><span class="p">())</span>
 
     <span class="nd">@common</span><span class="o">.</span><span class="n">status_bar_message</span><span class="p">(</span><span class="s1">'Updating items...'</span><span class="p">)</span>
+    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="k">def</span> <span class="nf">queue_visible_indexes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">"""This method will send all currently visible items to the worker</span>
 <span class="sd">        threads for processing.</span>
@@ -1955,7 +1935,6 @@
         <span class="n">show_archived</span> <span class="o">=</span> <span class="n">proxy</span><span class="o">.</span><span class="n">filter_flag</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">idxs</span> <span class="o">=</span> <span class="n">get_visible_indexes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">queues</span><span class="p">:</span>
                 <span class="n">role</span> <span class="o">=</span> <span class="n">threads</span><span class="o">.</span><span class="n">THREADS</span><span class="p">[</span><span class="n">q</span><span class="p">][</span><span class="s1">'role'</span><span class="p">]</span>
 
@@ -1964,7 +1943,7 @@
                     <span class="k">continue</span>
 
                 <span class="n">refs</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">idxs</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">visible_rows</span><span class="p">[</span><span class="s1">'source_rows'</span><span class="p">]:</span>
 
                     <span class="c1"># Item is already loaded, skip</span>
                     <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="n">role</span><span class="p">]:</span>
@@ -1991,7 +1970,7 @@
             <span class="k">return</span>
         <span class="k">if</span> <span class="n">ref</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_queue</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">update_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">interval</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="ThreadedBaseWidget.queued_row_update"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basewidget.ThreadedBaseWidget.queued_row_update">[docs]</a>    <span class="k">def</span> <span class="nf">queued_row_update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Process a repaint request."""</span>
@@ -2002,12 +1981,53 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">ref</span><span class="p">():</span>
             <span class="k">return</span>
-        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">get_visible_indexes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ref</span><span class="p">()[</span><span class="n">common</span><span class="o">.</span><span class="n">TypeRole</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">data_type</span><span class="p">():</span>
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">visible_rows</span><span class="p">[</span><span class="s1">'proxy_rows'</span><span class="p">]:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">)</span> <span class="o">==</span> <span class="n">ref</span><span class="p">()[</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">]:</span>
                 <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">interval</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="ThreadedBaseWidget.save_visible_rows"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basewidget.ThreadedBaseWidget.save_visible_rows">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
+    <span class="k">def</span> <span class="nf">save_visible_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">"""Cache the currently visible rows.</span>
+
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visible_rows</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">'source_rows'</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">'ids'</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s1">'proxy_rows'</span><span class="p">:</span> <span class="p">[],</span>
+        <span class="p">}</span>
+
+        <span class="c1"># Find the first visible index</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">topLeft</span><span class="p">())</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="k">return</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">model</span><span class="p">()</span>
+
+        <span class="n">rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visualRect</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">while</span> <span class="n">r</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">rect</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">999</span><span class="p">:</span>  <span class="c1"># Don't check more than 999 items</span>
+                <span class="k">break</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">visible_rows</span><span class="p">[</span><span class="s1">'proxy_rows'</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">())</span>
+            <span class="c1"># self.visible_rows['source_rows'].append(model.mapToSource(index).row())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">visible_rows</span><span class="p">[</span><span class="s1">'source_rows'</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">IdRole</span><span class="p">))</span>
+
+            <span class="n">rect</span><span class="o">.</span><span class="n">moveTop</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">top</span><span class="p">()</span> <span class="o">+</span> <span class="n">rect</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">topLeft</span><span class="p">())</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+                <span class="k">break</span></div></div>
 </pre></div>
         </article>
       </div>

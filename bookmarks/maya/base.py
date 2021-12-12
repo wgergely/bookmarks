@@ -2,19 +2,16 @@
 """Maya methods and values.
 
 """
+import string
 import sys
 import time
-import string
-
-from PySide2 import QtWidgets, QtCore, QtGui
 
 import maya.cmds as cmds  # pylint: disable=E0401
+from PySide2 import QtWidgets, QtCore
 
 from .. import common
 from .. import database
-
-from ..asset_config import asset_config
-
+from ..tokens import tokens
 
 MAYA_FPS = {
     'hour': 2.777777777777778e-4,
@@ -63,7 +60,6 @@ MAYA_FPS = {
     '44100fps': 44100.0,
     '48000fps': 48000.0,
 }
-
 
 DisplayOptions = {
     "displayGradient": True,
@@ -121,14 +117,15 @@ CaptureOptions = {
 
 DefaultPadding = 4
 
-CACHE_PATH = '{workspace}/{exportdir}/{set}/{set}_v001.{ext}'
-DEFAULT_CACHE_DIR = '{exportdir}/{ext}'
+CACHE_PATH = '{workspace}/{export_dir}/{set}/{set}_v001.{ext}'
+DEFAULT_CACHE_DIR = '{export_dir}/{ext}'
 DEFAULT_CAPTURE_DIR = 'capture'
-CACHE_LAYER_PATH = '{workspace}/{exportdir}/{set}/{set}_{layer}_v001.{ext}'
+CACHE_LAYER_PATH = '{workspace}/{export_dir}/{set}/{set}_{layer}_v001.{ext}'
 CAPTURE_DESTINATION = '{workspace}/{capture_folder}/{scene}/{scene}'
 CAPTURE_FILE = '{workspace}/{capture_folder}/{scene}/{scene}.{frame}.{ext}'
 CAPTURE_PUBLISH_DIR = '{workspace}/{capture_folder}/latest'
-AGNOSTIC_CAPTURE_FILE = '{workspace}/{capture_folder}/latest/{asset}_capture_{frame}.{ext}'
+AGNOSTIC_CAPTURE_FILE = '{workspace}/{capture_folder}/latest/{asset}_capture_{' \
+                        'frame}.{ext}'
 
 EXPORT_FILE_RULES = {
     'ass export': 'ass',
@@ -147,12 +144,12 @@ EXPORT_FILE_RULES = {
     'fbx import': 'fbx',
 }
 
-RENDER_NAME_TEMPLATE = '<RenderLayer>/<Version>/<RenderPass>/<RenderLayer>_<RenderPass>_<Version>'
+RENDER_NAME_TEMPLATE = '<RenderLayer>/<Version>/<RenderPass>/<RenderLayer>_' \
+                       '<RenderPass>_<Version>'
 
 SUFFIX_LABEL = 'Select a suffix for this import.\n\n\
 Suffixes are always unique and help differentiate imports when the same file \
 is imported mutiple times.'
-
 
 DB_KEYS = {
     database.BookmarkTable: (
@@ -171,7 +168,7 @@ DB_KEYS = {
 
 
 def get_export_dir():
-    """Find the name of the export folder.
+    """Find the name of the ``export`` folder.
 
     """
     server = common.active(common.ServerKey)
@@ -181,15 +178,14 @@ def get_export_dir():
     if not all((server, job, root)):
         raise RuntimeError('No active bookmark item found.')
 
-    config = asset_config.get(server, job, root)
+    config = tokens.get(server, job, root)
     return config.get_export_dir()
 
 
 def get_export_subdir(v):
-    """Find the name of the export folder.
+    """Find the name of the subdirectories of the ``export`` folder.
 
     """
-
     server = common.active(common.ServerKey)
     job = common.active(common.JobKey)
     root = common.active(common.RootKey)
@@ -197,20 +193,27 @@ def get_export_subdir(v):
     if not all((server, job, root)):
         raise RuntimeError('No active bookmark item found.')
 
-    config = asset_config.get(server, job, root)
+    config = tokens.get(server, job, root)
     return config.get_export_subdir(v)
 
 
 def patch_workspace_file_rules():
-    """Patches the current maya project to use the export directories defined
-    in the asset config.
+    """Patches the current maya project to use the ``export`` directory defined
+    in the current token config.
 
     """
-    exportdir = get_export_dir()
+    export_dir = get_export_dir()
+
+    if not export_dir:
+        return
+
     for rule, ext in EXPORT_FILE_RULES.items():
+        sub_dir = get_export_subdir(ext)
+        if not sub_dir:
+            continue
         v = DEFAULT_CACHE_DIR.format(
-            exportdir=exportdir,
-            ext=get_export_subdir(ext)
+            export_dir=export_dir,
+            ext=sub_dir
         )
         cmds.workspace(fr=(rule, v))
 
@@ -385,15 +388,18 @@ def _add_suffix_attribute(rfn, suffix, reference=True):
         nodes = cmds.namespaceInfo(rfn, listNamespace=True)
 
     for node in nodes:
-        # Conflict of duplicate name would prefent import... this is a hackish, yikes, workaround!
+        # Conflict of duplicate name would prefent import... this is a hackish,
+        # yikes, workaround!
         _node = cmds.ls(node, long=True)[0]
         if cmds.nodeType(_node) != 'transform':
             continue
         if cmds.listRelatives(_node, parent=True) is None:
             if cmds.attributeQuery('instance_suffix', node=node, exists=True):
                 continue
-            cmds.addAttr(_node, ln='instance_suffix', at='enum',
-                         en=':'.join(string.ascii_uppercase))
+            cmds.addAttr(
+                _node, ln='instance_suffix', at='enum',
+                en=':'.join(string.ascii_uppercase)
+            )
             cmds.setAttr('{}.instance_suffix'.format(_node), _id)
 
 
@@ -450,7 +456,8 @@ def report_export_progress(start, current, end, start_time):
         int(progress)
     )
 
-    msg = '# Exporting frame {current} of {end}\n# {progress}\n# Elapsed: {elapsed}\n'.format(
+    msg = '# Exporting frame {current} of {end}\n# {progress}\n# Elapsed: {' \
+          'elapsed}\n'.format(
         current=current,
         end=end,
         progress=progress,
@@ -468,11 +475,13 @@ def outliner_sets():
         dict: key is the set's name, the value is the contained meshes.
 
     """
+
     def _is_set_created_by_user(name):
         """From the good folks at cgsociety - filters the in-scene sets to return
         the user-created items only.
 
-        https://forums.cgsociety.org/t/maya-mel-python-list-object-sets-visible-in-the-dag/1586067/2
+        https://forums.cgsociety.org/t/maya-mel-python-list-object-sets-visible-in
+        -the-dag/1586067/2
 
         Returns:
             bool: True if the user created the set, otherwise False.
@@ -507,8 +516,12 @@ def outliner_sets():
 
         # We also do not want any sets with restrictions
         restrictionAttrs = ["verticesOnlySet", "edgesOnlySet",
-                            "facetsOnlySet", "editPointsOnlySet", "renderableOnlySet"]
-        if any(cmds.getAttr("{0}.{1}".format(name, attr)) for attr in restrictionAttrs):
+                            "facetsOnlySet", "editPointsOnlySet",
+                            "renderableOnlySet"]
+        if any(
+                cmds.getAttr("{0}.{1}".format(name, attr)) for attr in
+                restrictionAttrs
+        ):
             return False
 
         # Do not show layers
@@ -534,7 +547,8 @@ def outliner_sets():
 
         # We can ignore this group is it does not contain any shapes
         members = [
-            cmds.ls(f, long=True)[-1] for f in dag_set_members if cmds.listRelatives(f, shapes=True, fullPath=True)]
+            cmds.ls(f, long=True)[-1] for f in dag_set_members if
+            cmds.listRelatives(f, shapes=True, fullPath=True)]
         if not members:
             continue
 
@@ -648,17 +662,21 @@ class MayaProperties(object):
 
     def get_info(self):
         duration = self.endframe - self.startframe
-        info = 'Resolution:  {w}{h}\nFramerate:  {fps}\nCut:  {start}{duration}'.format(
+        info = 'Resolution:  {w}{h}\nFramerate:  {fps}\nCut:  {start}{' \
+               'duration}'.format(
             w='{}'.format(int(self.width)) if (
-                self.width and self.height) else '',
+                    self.width and self.height) else '',
             h='x{}px'.format(int(self.height)) if (
-                self.width and self.height) else '',
+                    self.width and self.height) else '',
             fps='{}fps'.format(
-                self.framerate) if self.framerate else '',
+                self.framerate
+            ) if self.framerate else '',
             start='{}'.format(
-                int(self.startframe)) if self.startframe else '',
+                int(self.startframe)
+            ) if self.startframe else '',
             duration='-{} ({} frames)'.format(
                 int(self.startframe) + int(duration),
-                int(duration) if duration else '') if duration else ''
+                int(duration) if duration else ''
+            ) if duration else ''
         )
         return info

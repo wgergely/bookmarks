@@ -1,0 +1,1136 @@
+<!doctype html>
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
+
+    <meta name="generator" content="sphinx-4.3.1, furo 2021.11.23"/>
+        <title>bookmarks.editor.base - Bookmarks 0.5.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=7f0192ddeb2adecfbaa87ffbcf67d16358b30bc1" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=0af69da206d614734f649b27d4cdc2dd6c31f41d" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #ffffff;
+  --color-code-foreground: black;
+  --color-brand-primary: rgba(75, 180, 135, 1);
+  --color-brand-content: rgba(75, 180, 135, 1);
+  --color-api-name: rgba(0, 0, 0, 0.9);
+  --color-api-pre-name: rgba(75, 180, 135, 0.75);
+  --api-font-size: var(--font-size--normal);
+  
+  }
+  body[data-theme="dark"] {
+    --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+  }
+  @media (prefers-color-scheme: dark) {
+    body:not([data-theme="light"]) {
+      --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+    }
+  }
+</style></head>
+  <body>
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" />
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="10" y1="12" x2="20" y2="12" />
+      <line x1="6" y1="18" x2="20" y2="18" />
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.5.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../../../_static/icon.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Bookmarks 0.5.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../bookmarks.html">Introduction</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/database.html">database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/tokens.html">tokens</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <h1>Source code for bookmarks.property_editor.base</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">"""The module contains the base class used by property editors across Bookmarks.</span>
+
+<span class="sd">The property editor's layout is defined by a previously specified SECTIONS dictionary,</span>
+<span class="sd">that contains the sections, rows and editor widget definitions - and any linkage</span>
+<span class="sd">information needed to associate editors with a bookmark database or user settings.</span>
+
+<span class="sd">The :class:`BasePropertyEditor` is relatively flexible and has a number of</span>
+<span class="sd">abstract methods that need implementing in subclasses depending on the desired</span>
+<span class="sd">functionality. Namely, :meth:`BasePropertyEditor.db_source()`,</span>
+<span class="sd">:meth:`BasePropertyEditor.init_data()` and :meth:`BasePropertyEditor.save_changes()`</span>
+<span class="sd">are the main function needed to get and save data.</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    editor = BasePropertyEditor(</span>
+<span class="sd">        SECTIONS,</span>
+<span class="sd">        server,</span>
+<span class="sd">        job,</span>
+<span class="sd">        root,</span>
+<span class="sd">        asset=asset,</span>
+<span class="sd">        alignment=QtCore.Qt.AlignLeft,</span>
+<span class="sd">        fallback_thumb='file_sm',</span>
+<span class="sd">        db_table=database.AssetTable,</span>
+<span class="sd">    )</span>
+<span class="sd">    editor.open()</span>
+
+<span class="sd">"""</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+
+<span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtWidgets</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">base_widgets</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">common</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">database</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">images</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">log</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ui</span>
+
+<span class="n">floatvalidator</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">()</span>
+<span class="n">floatvalidator</span><span class="o">.</span><span class="n">setRegExp</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRegExp</span><span class="p">(</span><span class="sa">r</span><span class="s1">'[0-9]+[\.]?[0-9]*'</span><span class="p">))</span>
+<span class="n">intvalidator</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">()</span>
+<span class="n">intvalidator</span><span class="o">.</span><span class="n">setRegExp</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRegExp</span><span class="p">(</span><span class="sa">r</span><span class="s1">'[0-9]+'</span><span class="p">))</span>
+<span class="n">textvalidator</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">()</span>
+<span class="n">textvalidator</span><span class="o">.</span><span class="n">setRegExp</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRegExp</span><span class="p">(</span><span class="sa">r</span><span class="s1">'[a-zA-Z0-9]+'</span><span class="p">))</span>
+<span class="n">namevalidator</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">()</span>
+<span class="n">namevalidator</span><span class="o">.</span><span class="n">setRegExp</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRegExp</span><span class="p">(</span><span class="sa">r</span><span class="s1">'[a-zA-Z0-9\-\_]+'</span><span class="p">))</span>
+<span class="n">domainvalidator</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">()</span>
+<span class="n">domainvalidator</span><span class="o">.</span><span class="n">setRegExp</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRegExp</span><span class="p">(</span><span class="sa">r</span><span class="s1">'[a-zA-Z0-9/:\.]+'</span><span class="p">))</span>
+<span class="n">versionvalidator</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">()</span>
+<span class="n">versionvalidator</span><span class="o">.</span><span class="n">setRegExp</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRegExp</span><span class="p">(</span><span class="sa">r</span><span class="s1">'[v]?[0-9]{1,4}'</span><span class="p">))</span>
+<span class="n">tokenvalidator</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">()</span>
+<span class="n">tokenvalidator</span><span class="o">.</span><span class="n">setRegExp</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRegExp</span><span class="p">(</span><span class="sa">r</span><span class="s1">'[0-0a-zA-Z\_\-\.\{\}]*'</span><span class="p">))</span>
+
+<span class="n">span</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">'start'</span><span class="p">:</span> <span class="s1">'&lt;span style="color:</span><span class="si">{}</span><span class="s1">"&gt;'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">rgb</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">GreenColor</span><span class="p">))</span>
+    <span class="p">),</span>
+    <span class="s1">'end'</span><span class="p">:</span> <span class="s1">'&lt;/span&gt;'</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="add_section"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.add_section">[docs]</a><span class="k">def</span> <span class="nf">add_section</span><span class="p">(</span><span class="n">icon</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">"""Used to a new section with an icon and a title to a widget.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        icon (str):         The name of a rsc image.</span>
+<span class="sd">        label (str):        The name of the section.</span>
+<span class="sd">        parent (QWidget):   A widget to add the section to.</span>
+<span class="sd">        color (QColor):     The color of the icon. Defaults to `None`.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        QWidget:            A widget to add editors to.</span>
+
+<span class="sd">    """</span>
+    <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">icon</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span>
+    <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">)</span>
+    <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+    <span class="n">h</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">HeightRow</span><span class="p">)</span>
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s1">''</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vertical</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">any</span><span class="p">((</span><span class="n">icon</span><span class="p">,</span> <span class="n">label</span><span class="p">)):</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s1">''</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignTop</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">icon</span><span class="p">:</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">pixmap</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">get_rsc_pixmap</span><span class="p">(</span><span class="n">icon</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">h</span> <span class="o">*</span> <span class="mf">0.8</span><span class="p">)</span>
+        <span class="n">w</span><span class="o">.</span><span class="n">setPixmap</span><span class="p">(</span><span class="n">pixmap</span><span class="p">)</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">label</span><span class="p">:</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">PaintedLabel</span><span class="p">(</span>
+            <span class="n">label</span><span class="p">,</span>
+            <span class="n">size</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FontSizeLarge</span><span class="p">),</span>
+            <span class="n">color</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextColor</span><span class="p">),</span>
+            <span class="n">parent</span><span class="o">=</span><span class="n">parent</span>
+        <span class="p">)</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">any</span><span class="p">((</span><span class="n">icon</span><span class="p">,</span> <span class="n">label</span><span class="p">)):</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addStretch</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parent</span></div>
+
+
+<span class="k">def</span> <span class="nf">_save_local_value</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">CurrentUserPicksSection</span><span class="p">,</span>
+        <span class="n">key</span><span class="p">,</span>
+        <span class="n">value</span>
+    <span class="p">)</span>
+
+
+<div class="viewcode-block" id="BasePropertyEditor"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor">[docs]</a><span class="k">class</span> <span class="nc">BasePropertyEditor</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">):</span>
+    <span class="sd">"""Base class for constructing a property editor widget.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sections (dict):        The data needed to construct the ui layout.</span>
+<span class="sd">        server (str):           A server.</span>
+<span class="sd">        job (str):              A job.</span>
+<span class="sd">        root (str):             A root folder.</span>
+<span class="sd">        asset (str):            An optional asset. Defaults to `None`.</span>
+<span class="sd">        db_table (str):         An optional name of a bookmark database table.</span>
+<span class="sd">                                When not `None`, the editor will load and save data</span>
+<span class="sd">                                to the database. Defaults to `None`.</span>
+<span class="sd">        buttons (tuple):        Button labels. Defaults to `('Save', 'Cancel')`.</span>
+<span class="sd">        alignment (int):        Text alignment. Defaults to `QtCore.Qt.AlignRight`.</span>
+<span class="sd">        fallback_thumb (str):   An image name. Defaults to `'placeholder'`.</span>
+
+<span class="sd">    """</span>
+    <span class="n">itemCreated</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="n">itemUpdated</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">thumbnailUpdated</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">sections</span><span class="p">,</span>
+            <span class="n">server</span><span class="p">,</span>
+            <span class="n">job</span><span class="p">,</span>
+            <span class="n">root</span><span class="p">,</span>
+            <span class="n">asset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">db_table</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">buttons</span><span class="o">=</span><span class="p">(</span><span class="s1">'Save'</span><span class="p">,</span> <span class="s1">'Cancel'</span><span class="p">),</span>
+            <span class="n">alignment</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignRight</span><span class="p">,</span>
+            <span class="n">fallback_thumb</span><span class="o">=</span><span class="s1">'placeholder'</span><span class="p">,</span>
+            <span class="n">hide_thumbnail_editor</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">parent</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">sections</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span>
+            <span class="n">f</span><span class="o">=</span><span class="p">(</span>
+                    <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">CustomizeWindowHint</span> <span class="o">|</span>
+                    <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowTitleHint</span> <span class="o">|</span>
+                    <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowSystemMenuHint</span> <span class="o">|</span>
+                    <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowMinMaxButtonsHint</span> <span class="o">|</span>
+                    <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowCloseButtonHint</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fallback_thumb</span> <span class="o">=</span> <span class="n">fallback_thumb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_alignment</span> <span class="o">=</span> <span class="n">alignment</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sections</span> <span class="o">=</span> <span class="n">sections</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_section_widgets</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_buttons</span> <span class="o">=</span> <span class="n">buttons</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span> <span class="o">=</span> <span class="n">db_table</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="n">server</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">job</span> <span class="o">=</span> <span class="n">job</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">asset</span> <span class="o">=</span> <span class="n">asset</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">thumbnail_editor</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hide_thumbnail_editor</span> <span class="o">=</span> <span class="n">hide_thumbnail_editor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">section_headers_widget</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">():</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">set_custom_stylesheet</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">changed_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scroll_area</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_button</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cancel_button</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_DeleteOnClose</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setMinimumWidth</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">DefaultWidth</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setMinimumHeight</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">DefaultHeight</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">all</span><span class="p">((</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">asset</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span>
+                    <span class="s1">'</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span>
+                    <span class="s1">'</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">asset</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_ui</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connect_signals</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_create_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">o</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthMargin</span><span class="p">)</span>
+
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setSpacing</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">:</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="s1">''</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">asset</span><span class="p">:</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">asset</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">thumbnail_editor</span> <span class="o">=</span> <span class="n">base_widgets</span><span class="o">.</span><span class="n">ThumbnailEditorWidget</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span>
+            <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span>
+            <span class="n">fallback_thumb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fallback_thumb</span><span class="p">,</span>
+            <span class="n">parent</span><span class="o">=</span><span class="bp">self</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Separator pixmap</span>
+        <span class="n">pixmap</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">get_rsc_pixmap</span><span class="p">(</span>
+            <span class="s1">'gradient3'</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthMargin</span><span class="p">),</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.5</span>
+        <span class="p">)</span>
+        <span class="n">separator</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">separator</span><span class="o">.</span><span class="n">setScaledContents</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">separator</span><span class="o">.</span><span class="n">setPixmap</span><span class="p">(</span><span class="n">pixmap</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_row</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hide_thumbnail_editor</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">left_row</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_row</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span>
+            <span class="s1">'background-color: </span><span class="si">{}</span><span class="s1">;'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">rgb</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">SeparatorColor</span><span class="p">))</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left_row</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setSpacing</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_row</span><span class="o">.</span><span class="n">setSizePolicy</span><span class="p">(</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Maximum</span><span class="p">,</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Minimum</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">left_row</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">section_headers_widget</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">section_headers_widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">section_headers_widget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">section_headers_widget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setSpacing</span><span class="p">(</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthIndicator</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">parent</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">parent</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
+
+        <span class="n">parent</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thumbnail_editor</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">parent</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">section_headers_widget</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">parent</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addStretch</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">left_row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_row</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vertical</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span>
+            <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignTop</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignHCenter</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_row</span><span class="o">.</span><span class="n">setSizePolicy</span><span class="p">(</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">MinimumExpanding</span><span class="p">,</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Minimum</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">scroll_area</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QScrollArea</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scroll_area</span><span class="o">.</span><span class="n">setWidgetResizable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">right_row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scroll_area</span><span class="p">)</span>
+
+        <span class="n">parent</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">parent</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignHCenter</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignTop</span><span class="p">)</span>
+        <span class="n">parent</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
+        <span class="n">parent</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setSpacing</span><span class="p">(</span><span class="n">o</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scroll_area</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_sections</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_buttons</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_create_sections</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Translates the section data into a UI layout.</span>
+
+<span class="sd">        """</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scroll_area</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sections</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">grp</span> <span class="o">=</span> <span class="n">add_section</span><span class="p">(</span>
+                <span class="n">section</span><span class="p">[</span><span class="s1">'icon'</span><span class="p">],</span>
+                <span class="n">section</span><span class="p">[</span><span class="s1">'name'</span><span class="p">],</span>
+                <span class="n">parent</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">=</span><span class="n">section</span><span class="p">[</span><span class="s1">'color'</span><span class="p">],</span>
+            <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_section_header_button</span><span class="p">(</span><span class="n">section</span><span class="p">[</span><span class="s1">'name'</span><span class="p">],</span> <span class="n">grp</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">section</span><span class="p">[</span><span class="s1">'groups'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">_grp</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">grp</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_add_row</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">grp</span><span class="p">,</span> <span class="n">_grp</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_add_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">grp</span><span class="p">,</span> <span class="n">_grp</span><span class="p">):</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">'name'</span><span class="p">],</span> <span class="n">parent</span><span class="o">=</span><span class="n">_grp</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">'description'</span> <span class="ow">in</span> <span class="n">v</span> <span class="ow">and</span> <span class="n">v</span><span class="p">[</span><span class="s1">'description'</span><span class="p">]:</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">'description'</span><span class="p">])</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">'description'</span><span class="p">])</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">setWhatsThis</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">'description'</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="s1">'widget'</span> <span class="ow">in</span> <span class="n">v</span> <span class="ow">and</span> <span class="n">v</span><span class="p">[</span><span class="s1">'widget'</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="s1">'no_group'</span> <span class="ow">in</span> <span class="n">v</span> <span class="ow">and</span> <span class="n">v</span><span class="p">[</span><span class="s1">'no_group'</span><span class="p">]:</span>
+                <span class="n">editor</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="s1">'widget'</span><span class="p">](</span><span class="n">parent</span><span class="o">=</span><span class="n">grp</span><span class="p">)</span>
+                <span class="n">grp</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">insertWidget</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">editor</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">editor</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="s1">'widget'</span><span class="p">](</span><span class="n">parent</span><span class="o">=</span><span class="n">row</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">):</span>
+                    <span class="c1"># We don't want checkboxes to fully extend across a</span>
+                    <span class="c1"># row</span>
+                    <span class="n">editor</span><span class="o">.</span><span class="n">setSizePolicy</span><span class="p">(</span>
+                        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Maximum</span><span class="p">,</span>
+                        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Maximum</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addStretch</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+            <span class="c1"># Set the editor as an attribute on the widget for later</span>
+            <span class="c1"># access</span>
+            <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="s1">'key'</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="p">,</span>
+                    <span class="n">v</span><span class="p">[</span><span class="s1">'key'</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'_editor'</span><span class="p">,</span>
+                    <span class="n">editor</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="p">,</span>
+                    <span class="n">v</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s1">'_editor'</span><span class="p">,</span>
+                    <span class="n">editor</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'setAlignment'</span><span class="p">):</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_alignment</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">v</span><span class="p">[</span><span class="s1">'key'</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span> <span class="ow">in</span> <span class="n">database</span><span class="o">.</span><span class="n">TABLES</span> <span class="ow">and</span>
+                    <span class="n">v</span><span class="p">[</span><span class="s1">'key'</span><span class="p">]</span> <span class="ow">in</span> <span class="n">database</span><span class="o">.</span><span class="n">TABLES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span><span class="p">]</span>
+            <span class="p">):</span>
+                <span class="n">_type</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">TABLES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span><span class="p">][</span><span class="n">v</span><span class="p">[</span><span class="s1">'key'</span><span class="p">]][</span><span class="s1">'type'</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_connect_editor_signals</span><span class="p">(</span>
+                    <span class="n">v</span><span class="p">[</span><span class="s1">'key'</span><span class="p">],</span> <span class="n">_type</span><span class="p">,</span> <span class="n">editor</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="s1">'validator'</span> <span class="ow">in</span> <span class="n">v</span> <span class="ow">and</span> <span class="n">v</span><span class="p">[</span><span class="s1">'validator'</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'setValidator'</span><span class="p">):</span>
+                    <span class="n">editor</span><span class="o">.</span><span class="n">setValidator</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">'validator'</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="s1">'placeholder'</span> <span class="ow">in</span> <span class="n">v</span> <span class="ow">and</span> <span class="n">v</span><span class="p">[</span><span class="s1">'placeholder'</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'setPlaceholderText'</span><span class="p">):</span>
+                    <span class="n">editor</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">'placeholder'</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="s1">'protect'</span> <span class="ow">in</span> <span class="n">v</span> <span class="ow">and</span> <span class="n">v</span><span class="p">[</span><span class="s1">'protect'</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'setEchoMode'</span><span class="p">):</span>
+                    <span class="n">editor</span><span class="o">.</span><span class="n">setEchoMode</span><span class="p">(</span>
+                        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="o">.</span><span class="n">Password</span>
+                    <span class="p">)</span>
+
+            <span class="k">if</span> <span class="s1">'description'</span> <span class="ow">in</span> <span class="n">v</span> <span class="ow">and</span> <span class="n">v</span><span class="p">[</span><span class="s1">'description'</span><span class="p">]:</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">'description'</span><span class="p">])</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">'description'</span><span class="p">])</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">setWhatsThis</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">'description'</span><span class="p">])</span>
+
+                <span class="n">row</span><span class="o">.</span><span class="n">setStatusTip</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">'description'</span><span class="p">])</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">'description'</span><span class="p">])</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">setWhatsThis</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="s1">'description'</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="s1">'help'</span> <span class="ow">in</span> <span class="n">v</span> <span class="ow">and</span> <span class="n">v</span><span class="p">[</span><span class="s1">'help'</span><span class="p">]:</span>
+            <span class="n">ui</span><span class="o">.</span><span class="n">add_description</span><span class="p">(</span>
+                <span class="n">v</span><span class="p">[</span><span class="s1">'help'</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">_grp</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">'button'</span> <span class="ow">in</span> <span class="n">v</span> <span class="ow">and</span> <span class="n">v</span><span class="p">[</span><span class="s1">'button'</span><span class="p">]:</span>
+            <span class="n">button</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">PaintedButton</span><span class="p">(</span>
+                <span class="n">v</span><span class="p">[</span><span class="s1">'button'</span><span class="p">],</span> <span class="n">parent</span><span class="o">=</span><span class="n">row</span>
+            <span class="p">)</span>
+            <span class="n">button</span><span class="o">.</span><span class="n">setFixedHeight</span><span class="p">(</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">HeightRow</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.8</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="s1">'key'</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s1">'key'</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'_button_clicked'</span><span class="p">):</span>
+                    <span class="n">button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                        <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s1">'key'</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'_button_clicked'</span><span class="p">)</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s1">'_button_clicked'</span><span class="p">):</span>
+                    <span class="n">button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                        <span class="nb">getattr</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s1">'_button_clicked'</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">button</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">'button2'</span> <span class="ow">in</span> <span class="n">v</span> <span class="ow">and</span> <span class="n">v</span><span class="p">[</span><span class="s1">'button2'</span><span class="p">]:</span>
+            <span class="n">button2</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">PaintedButton</span><span class="p">(</span>
+                <span class="n">v</span><span class="p">[</span><span class="s1">'button2'</span><span class="p">],</span> <span class="n">parent</span><span class="o">=</span><span class="n">row</span>
+            <span class="p">)</span>
+            <span class="n">button2</span><span class="o">.</span><span class="n">setFixedHeight</span><span class="p">(</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">HeightRow</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.8</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="s1">'key'</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s1">'key'</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'_button2_clicked'</span><span class="p">):</span>
+                    <span class="n">button2</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                        <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s1">'key'</span><span class="p">]</span> <span class="o">+</span> <span class="s1">'_button2_clicked'</span><span class="p">)</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s1">'_button2_clicked'</span><span class="p">):</span>
+                    <span class="n">button2</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                        <span class="nb">getattr</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">+</span> <span class="s1">'_button2_clicked'</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">button2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BasePropertyEditor.add_section_header_button"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.add_section_header_button">[docs]</a>    <span class="k">def</span> <span class="nf">add_section_header_button</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">"""Add a header button to help reveal the given section widget.</span>
+
+<span class="sd">        """</span>
+        <span class="n">button</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">PaintedButton</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">height</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthMargin</span><span class="p">),</span>
+            <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">section_headers_widget</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">section_headers_widget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
+        <span class="n">button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scroll_to_section</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_add_buttons</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buttons</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">HeightRow</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_button</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">PaintedButton</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_buttons</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_button</span><span class="o">.</span><span class="n">setFixedHeight</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cancel_button</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">PaintedButton</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_buttons</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cancel_button</span><span class="o">.</span><span class="n">setFixedHeight</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+
+        <span class="n">row</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span>
+            <span class="kc">None</span><span class="p">,</span> <span class="n">padding</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">h</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">right_row</span>
+        <span class="p">)</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">)</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addSpacing</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthMargin</span><span class="p">))</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_button</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cancel_button</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addSpacing</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthMargin</span><span class="p">))</span>
+
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">scroll_to_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="n">point</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">mapTo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scroll_area</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scroll_area</span><span class="o">.</span><span class="n">verticalScrollBar</span><span class="p">()</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span>
+            <span class="n">point</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">scroll_area</span><span class="o">.</span><span class="n">verticalScrollBar</span><span class="p">()</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_connect_editor_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">_type</span><span class="p">,</span> <span class="n">editor</span><span class="p">):</span>
+        <span class="sd">"""Utility method for connecting an editor's change signal to `data_changed`.</span>
+
+<span class="sd">        `data_changed` will save the changed current value internally. This data</span>
+<span class="sd">        later can be used, for instance, to save the changed values to the</span>
+<span class="sd">        database.</span>
+
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'dataUpdated'</span><span class="p">):</span>
+            <span class="n">editor</span><span class="o">.</span><span class="n">dataUpdated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data_changed</span><span class="p">,</span>
+                    <span class="n">key</span><span class="p">,</span>
+                    <span class="n">_type</span><span class="p">,</span>
+                    <span class="n">editor</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'textChanged'</span><span class="p">):</span>
+            <span class="n">editor</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data_changed</span><span class="p">,</span>
+                    <span class="n">key</span><span class="p">,</span>
+                    <span class="n">_type</span><span class="p">,</span>
+                    <span class="n">editor</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'currentTextChanged'</span><span class="p">):</span>
+            <span class="n">editor</span><span class="o">.</span><span class="n">currentTextChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data_changed</span><span class="p">,</span>
+                    <span class="n">key</span><span class="p">,</span>
+                    <span class="n">_type</span><span class="p">,</span>
+                    <span class="n">editor</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'stateChanged'</span><span class="p">):</span>
+            <span class="n">editor</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data_changed</span><span class="p">,</span>
+                    <span class="n">key</span><span class="p">,</span>
+                    <span class="n">_type</span><span class="p">,</span>
+                    <span class="n">editor</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_connect_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cancel_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">done</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="n">Rejected</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">done</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="n">Accepted</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_connect_settings_save_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+        <span class="sd">"""Utility method for connecting editor signals to save their current</span>
+<span class="sd">        value in the user common.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            keys (tuple):   A list of editor keys that save their current value</span>
+<span class="sd">                            in the user common.</span>
+
+<span class="sd">        """</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span> <span class="o">+</span> <span class="s1">'_editor'</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="n">editor</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span> <span class="o">+</span> <span class="s1">'_editor'</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'currentTextChanged'</span><span class="p">):</span>
+                <span class="n">signal</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'currentTextChanged'</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'textChanged'</span><span class="p">):</span>
+                <span class="n">signal</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'textChanged'</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'stateChanged'</span><span class="p">):</span>
+                <span class="n">signal</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'stateChanged'</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">signal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">_save_local_value</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+
+<div class="viewcode-block" id="BasePropertyEditor.load_saved_user_settings"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.load_saved_user_settings">[docs]</a>    <span class="k">def</span> <span class="nf">load_saved_user_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+        <span class="sd">"""Utility method will load user setting values and apply them to the</span>
+<span class="sd">        corresponding editors.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            keys (tuple):   A list of editor keys that save their current value</span>
+<span class="sd">                            in the user common.</span>
+
+<span class="sd">        """</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span> <span class="o">+</span> <span class="s1">'_editor'</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="n">v</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">value</span><span class="p">(</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">CurrentUserPicksSection</span><span class="p">,</span>
+                <span class="n">k</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">editor</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span> <span class="o">+</span> <span class="s1">'_editor'</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'setCurrentText'</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">setCurrentText</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'setText'</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'setCheckState'</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'setCheckState'</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">CheckState</span><span class="p">)):</span>
+                    <span class="k">continue</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">CheckState</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">continue</span></div>
+
+<div class="viewcode-block" id="BasePropertyEditor.set_thumbnail_source"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.set_thumbnail_source">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">set_thumbnail_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Slot connected to the update timer and used to set the source value</span>
+<span class="sd">        of the thumbnail editor.</span>
+
+<span class="sd">        """</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnail_editor</span><span class="o">.</span><span class="n">source</span>
+        <span class="n">_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_source</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">thumbnail_editor</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">_source</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="o">!=</span> <span class="n">_source</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">thumbnail_editor</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BasePropertyEditor.init_db_data"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.init_db_data">[docs]</a>    <span class="k">def</span> <span class="nf">init_db_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Method will load data from the bookmark database.</span>
+
+<span class="sd">        To be able to load data, the `db_table`, `server`, `job` and `root`</span>
+<span class="sd">        values must have all been specified when the class was initialised.</span>
+
+<span class="sd">        Call this method from `init_data()` when the widget is associated with</span>
+<span class="sd">        a bookmark database.</span>
+
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s1">'To load data from the database, the `db_table`, `server`, '</span>
+                <span class="s1">'`job` andd `root` must all be specified.'</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">database</span><span class="o">.</span><span class="n">TABLES</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span><span class="si">}</span><span class="s1">" is not a valid database table.'</span>
+            <span class="p">)</span>
+
+        <span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get_db</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">database</span><span class="o">.</span><span class="n">TABLES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span><span class="p">]:</span>
+            <span class="c1"># Skip items that don't have editors</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span> <span class="o">+</span> <span class="s1">'_editor'</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># If the source is not returning a valid value we won't  be able to</span>
+            <span class="c1"># load data from the database.</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_source</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">continue</span>
+
+            <span class="n">editor</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span> <span class="o">+</span> <span class="s1">'_editor'</span><span class="p">)</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_source</span><span class="p">(),</span> <span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+                <span class="c1"># Make sure the type loaded from the database maches the required</span>
+                <span class="c1"># type</span>
+                <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sections</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                    <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">section</span><span class="p">[</span><span class="s1">'groups'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">group</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                            <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="s1">'key'</span><span class="p">]</span> <span class="o">!=</span> <span class="n">k</span><span class="p">:</span>
+                                <span class="k">continue</span>
+
+                            <span class="c1"># Get the required type</span>
+                            <span class="n">_type</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">TABLES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span><span class="p">][</span><span class="n">item</span><span class="p">[</span><span class="s1">'key'</span><span class="p">]][</span>
+                                <span class="s1">'type'</span><span class="p">]</span>
+
+                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">_type</span><span class="p">):</span>
+                                <span class="k">continue</span>  <span class="c1"># Nothing to do if already the right type</span>
+
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">v</span> <span class="o">=</span> <span class="n">_type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+            <span class="c1"># Add value to `current_data`</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_data</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'setValue'</span><span class="p">):</span>
+                    <span class="n">editor</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="n">v</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'setText'</span><span class="p">):</span>
+                    <span class="n">editor</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'setCurrentText'</span><span class="p">):</span>
+                    <span class="n">editor</span><span class="o">.</span><span class="n">setCurrentText</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'setCurrentText'</span><span class="p">):</span>
+                    <span class="n">editor</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">database</span><span class="o">.</span><span class="n">TABLES</span><span class="p">[</span><span class="n">database</span><span class="o">.</span><span class="n">InfoTable</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">'id'</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">source</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">database</span><span class="o">.</span><span class="n">InfoTable</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">'created'</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">v</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">fromtimestamp</span><span class="p">(</span>
+                        <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">'%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S'</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">v</span> <span class="o">=</span> <span class="s1">'error'</span>
+
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span> <span class="o">+</span> <span class="s1">'_editor'</span><span class="p">):</span>
+                <span class="n">editor</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span> <span class="o">+</span> <span class="s1">'_editor'</span><span class="p">)</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BasePropertyEditor.save_changed_data_to_db"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.save_changed_data_to_db">[docs]</a>    <span class="k">def</span> <span class="nf">save_changed_data_to_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""This will save changed data to the bookmark database.</span>
+
+<span class="sd">        To be able to save data, the `_db_table`, `server`, `job` and `root`</span>
+<span class="sd">        values must have all been specified.</span>
+
+<span class="sd">        Call this method from `save_data()` when the editor is used to edit</span>
+<span class="sd">        database values.</span>
+
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s1">'To load data fomr the database, the `table`, `server`, `job`, '</span>
+                <span class="s1">'`root` must all be specified.'</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">database</span><span class="o">.</span><span class="n">TABLES</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span><span class="si">}</span><span class="s1">" is not a valid database table.'</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Can't save if db_source is not returning a valid value</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_source</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get_db</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">db</span><span class="o">.</span><span class="n">connection</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">changed_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">db</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">db_source</span><span class="p">(),</span>
+                    <span class="n">k</span><span class="p">,</span>
+                    <span class="n">v</span><span class="p">,</span>
+                    <span class="n">table</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span>
+                <span class="p">)</span></div>
+
+<div class="viewcode-block" id="BasePropertyEditor.data_changed"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.data_changed">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">type</span><span class="p">)</span>
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">)</span>
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">data_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">_type</span><span class="p">,</span> <span class="n">editor</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="sd">"""Signal called when the user changes a value in the editor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key (str):          The database key.</span>
+<span class="sd">            _type (type):           The data type.</span>
+<span class="sd">            editor (QWidget):       The editor widget.</span>
+
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="s1">''</span><span class="p">:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">_type</span><span class="p">)</span> <span class="ow">and</span> <span class="n">v</span> <span class="o">!=</span> <span class="s1">''</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">_type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">'Type conversion failed.'</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+        <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_data</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">changed_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">):</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span>
+                    <span class="s1">'color: </span><span class="si">{}</span><span class="s1">;'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">rgb</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">GreenColor</span><span class="p">)))</span>
+                <span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">changed_data</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">changed_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">):</span>
+            <span class="n">editor</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span>
+                <span class="s1">'color: </span><span class="si">{}</span><span class="s1">;'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">rgb</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextColor</span><span class="p">)))</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="BasePropertyEditor.db_source"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.db_source">[docs]</a>    <span class="k">def</span> <span class="nf">db_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""The path of the file database values are associated with.</span>
+
+<span class="sd">        Eg. in the case of assets this is `server/job/root/asset`</span>
+
+<span class="sd">        """</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">'Abstract method must be implemented by subclass.'</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BasePropertyEditor.init_data"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.init_data">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">init_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Initialises the current/default values.</span>
+
+<span class="sd">        """</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">'Abstract method must be implemented by subclass.'</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BasePropertyEditor.save_changes"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.save_changes">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">save_changes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""Abstract method responsible for saving changed data.</span>
+
+<span class="sd">        """</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">'Abstract method must be implemented by subclass.'</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BasePropertyEditor.done"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.done">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">done</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="n">Rejected</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">changed_data</span><span class="p">:</span>
+                <span class="n">mbox</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">MessageBox</span><span class="p">(</span>
+                    <span class="s1">'Are you sure you want to close the editor?'</span><span class="p">,</span>
+                    <span class="s1">'Your changes will be lost.'</span><span class="p">,</span>
+                    <span class="n">buttons</span><span class="o">=</span><span class="p">[</span><span class="n">ui</span><span class="o">.</span><span class="n">YesButton</span><span class="p">,</span> <span class="n">ui</span><span class="o">.</span><span class="n">NoButton</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">mbox</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Rejected</span><span class="p">:</span>
+                    <span class="k">return</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">BasePropertyEditor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">done</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_changes</span><span class="p">():</span>
+            <span class="k">return</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">BasePropertyEditor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">done</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BasePropertyEditor.showEvent"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.showEvent">[docs]</a>    <span class="k">def</span> <span class="nf">showEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="n">QtCore</span><span class="o">.</span><span class="n">QTimer</span><span class="o">.</span><span class="n">singleShot</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_data</span><span class="p">)</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">center_window</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BasePropertyEditor.sizeHint"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.sizeHint">[docs]</a>    <span class="k">def</span> <span class="nf">sizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSize</span><span class="p">(</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">DefaultWidth</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.33</span><span class="p">,</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">DefaultHeight</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.5</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="BasePropertyEditor.update_changed_database_value"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.update_changed_database_value">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">update_changed_database_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">"""Slot responsible updating the gui when  database value is updated.</span>
+
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_source</span><span class="p">():</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">'_editor'</span><span class="p">):</span>
+            <span class="k">return</span>
+        <span class="n">editor</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">'_editor'</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">changed_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="s1">''</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'setText'</span><span class="p">):</span>
+            <span class="n">editor</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">editor</span><span class="o">.</span><span class="n">textChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">'setCurrentText'</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">value</span><span class="p">:</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">setCurrentText</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">currentTextChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
+
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">url1_button_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">url1_editor</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">QtGui</span><span class="o">.</span><span class="n">QDesktopServices</span><span class="o">.</span><span class="n">openUrl</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">url2_button_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">url2_editor</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">QtGui</span><span class="o">.</span><span class="n">QDesktopServices</span><span class="o">.</span><span class="n">openUrl</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+
+        <div class="related-information">
+              Copyright &#169; 2021, Gergely Wootsch |
+          Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+          <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/scripts/furo.js"></script>
+    </body>
+</html>

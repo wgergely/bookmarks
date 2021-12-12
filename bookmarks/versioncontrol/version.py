@@ -1,14 +1,11 @@
 # This file is dual licensed under the terms of the Apache License, Version
 # 2.0, and the BSD License. See the LICENSE file in the root of this repository
 # for complete details.
-from __future__ import absolute_import, division, print_function
 import collections
 import itertools
 import re
 
-__all__ = ["parse", "Version", "LegacyVersion",
-           "InvalidVersion", "VERSION_PATTERN"]
-
+__all__ = ["parse", "Version", "LegacyVersion", "InvalidVersion", "VERSION_PATTERN"]
 
 _Version = collections.namedtuple(
     "_Version", ["epoch", "release", "dev", "pre", "post", "local"]
@@ -183,15 +180,11 @@ class LegacyVersion(_BaseVersion):
 
 
 _legacy_version_component_re = re.compile(
-    r"(\d+ | [a-z]+ | \.| -)", re.VERBOSE)
+    r"(\d+ | [a-z]+ | \.| -)", re.VERBOSE
+)
 
-_legacy_version_replacement_map = {
-    "pre": "c",
-    "preview": "c",
-    "-": "final-",
-    "rc": "c",
-    "dev": "@",
-}
+_legacy_version_replacement_map = {"pre": "c", "preview": "c", "-": "final-",
+    "rc": "c", "dev": "@", }
 
 
 def _parse_version_parts(s):
@@ -273,9 +266,9 @@ VERSION_PATTERN = r"""
 
 
 class Version(_BaseVersion):
-
-    _regex = re.compile(r"^\s*" + VERSION_PATTERN +
-                        r"\s*$", re.VERBOSE | re.IGNORECASE)
+    _regex = re.compile(
+        r"^\s*" + VERSION_PATTERN + r"\s*$", re.VERBOSE | re.IGNORECASE
+        )
 
     def __init__(self, version):
         # Validate the version and parse it into pieces
@@ -288,25 +281,19 @@ class Version(_BaseVersion):
             epoch=int(match.group("epoch")) if match.group("epoch") else 0,
             release=tuple(int(i) for i in match.group("release").split(".")),
             pre=_parse_letter_version(
-                match.group("pre_l"), match.group("pre_n")),
-            post=_parse_letter_version(
+                match.group("pre_l"), match.group("pre_n")
+            ), post=_parse_letter_version(
                 match.group("post_l"), match.group(
-                    "post_n1") or match.group("post_n2")
-            ),
-            dev=_parse_letter_version(
-                match.group("dev_l"), match.group("dev_n")),
-            local=_parse_local_version(match.group("local")),
-        )
+                    "post_n1"
+                ) or match.group("post_n2")
+            ), dev=_parse_letter_version(
+                match.group("dev_l"), match.group("dev_n")
+            ), local=_parse_local_version(match.group("local")), )
 
         # Generate a key which will be used for sorting
         self._key = _cmpkey(
-            self._version.epoch,
-            self._version.release,
-            self._version.pre,
-            self._version.post,
-            self._version.dev,
-            self._version.local,
-        )
+            self._version.epoch, self._version.release, self._version.pre,
+            self._version.post, self._version.dev, self._version.local, )
 
     def __repr__(self):
         return "<Version({0})>".format(repr(str(self)))
@@ -435,8 +422,8 @@ def _parse_local_version(local):
     """
     if local is not None:
         return tuple(
-            part.lower() if not part.isdigit() else int(part)
-            for part in _local_version_separators.split(local)
+            part.lower() if not part.isdigit() else int(part) for part in
+            _local_version_separators.split(local)
         )
 
 
@@ -480,7 +467,8 @@ def _cmpkey(epoch, release, pre, post, dev, local):
         # - Numeric segments sort numerically
         # - Shorter versions sort before longer versions when the prefixes
         #   match exactly
-        local = tuple((i, "") if isinstance(i, int)
-                      else (-Infinity, i) for i in local)
+        local = tuple(
+            (i, "") if isinstance(i, int) else (-Infinity, i) for i in local
+        )
 
     return epoch, release, pre, post, dev, local

@@ -81,7 +81,7 @@ def initialize(mode):
 
     # Start non-model linked worker threads
     _threads = []
-    from bookmarks.threads import threads
+    from ..threads import threads
     thread = threads.get_thread(threads.QueuedDatabaseTransaction)
     thread.start()
     _threads.append(thread)

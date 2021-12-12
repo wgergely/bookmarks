@@ -44,10 +44,11 @@ accepted_codecs = ('h.264', 'h264', 'mpeg-4', 'mpeg4')
 
 
 def init_imagecache():
-    common.oiio_cache = OpenImageIO.ImageCache(shared=True)
+    common.oiio_cache = OpenImageIO.ImageCache(True)
     common.oiio_cache.attribute('max_memory_MB', 4096.0)
     common.oiio_cache.attribute('max_open_files', 0)
     common.oiio_cache.attribute('trust_file_extensions', 1)
+    common.oiio_cache.attribute('forcefloat', 1)
 
     common.image_resource_list = {
         common.GuiResource: [],
@@ -353,19 +354,10 @@ def get_placeholder_path(file_path, fallback):
     return os.path.normpath(path)
 
 
-def invalidate(func):
-    @functools.wraps(func)
-    def func_wrapper(source, **kwargs):
-        result = func(source, **kwargs)
-        common.oiio_cache.invalidate(source, force=True)
-        return result
 
-    return func_wrapper
-
-
-@invalidate
 def oiio_get_buf(source, hash=None, force=False):
     """Check and load a source image with OpenImageIO's format reader.
+
 
     Args:
         source (str):       Path to an OpenImageIO compatible image file.
@@ -373,7 +365,7 @@ def oiio_get_buf(source, hash=None, force=False):
         force (bool):       When `true`, forces the buffer to be re-cached.
 
     Returns:
-        ImageBuf: An `ImageBuf` instance or `None` if the file is invalid.
+        ImageBuf: An `ImageBuf` instance or `None` if the image cannot be read.
 
     """
     common.check_type(source, str)
@@ -389,18 +381,21 @@ def oiio_get_buf(source, hash=None, force=False):
     if '.' not in source:
         return None
     ext = source.split('.').pop().lower()
-    i = OpenImageIO.ImageInput.create(ext)
-    if not i:
+    if ext not in get_oiio_extensions():
         return None
-    if not i.valid_file(source):
+    i = OpenImageIO.ImageInput.create(ext)
+    if not i or not i.valid_file(source):
         i.close()
         return None
 
     # If all went well, we can initiate an ImageBuf
-    i.close()
+    config = OpenImageIO.ImageSpec()
+    config.format = OpenImageIO.TypeDesc(OpenImageIO.FLOAT)
+
     buf = OpenImageIO.ImageBuf()
-    buf.reset(source, 0, 0)
+    buf.reset(source, 0, 0, config=config)
     if buf.has_error:
+        print(buf.geterror())
         return None
 
     ImageCache.setValue(hash, buf, BufferType)
@@ -570,12 +565,6 @@ class ImageCache(QtCore.QObject):
 
         # ...and store
         cls.setValue(hash, image, ImageType, size=size)
-
-        # The loaded pixel values are cached by OpenImageIO automatically.
-        # By invalidating the buf, we can ditch the cached data.
-        common.oiio_cache.invalidate(source, force=True)
-        common.oiio_cache.invalidate(buf.name, force=True)
-
         return image
 
     @classmethod
@@ -648,9 +637,9 @@ class ImageCache(QtCore.QObject):
         return pixmap
 
     @classmethod
-    def contains(cls, hash, cache_type):
+    def contains(cls, _hash, cache_type):
         """Checks if the given hash exists in the database."""
-        return hash in common.image_cache[cache_type]
+        return _hash in common.image_cache[cache_type]
 
     @classmethod
     def value(cls, hash, cache_type, size=None):
@@ -872,11 +861,11 @@ class ImageCache(QtCore.QObject):
         return common.image_resource_data[k]
 
     @classmethod
-    def oiio_make_thumbnail(cls, source, destination, size, nthreads=4):
-        """Converts ``source`` image to an sRGB image fitting the bounds of ``size`` and saves it
-        to ``desination``.
+    def oiio_make_thumbnail(cls, source, destination, size, nthreads=2):
+        """Converts the `source` image to an sRGB image fitting the bounds of `size` and saves it
+        to `destination`.
 
-        If size is ``-1``, the image won't be resized.
+        If size is `-1`, the image won't be resized.
 
         Args:
             source (str): Source image's file path.
@@ -921,23 +910,23 @@ class ImageCache(QtCore.QObject):
                         buf, ('R', 'G', 'B'), ('R', 'G', 'B'))
             return buf
 
-        def resize(buf, source_spec):
-            buf = OpenImageIO.ImageBufAlgo.resample(
+        def resize(buf, destination_spec):
+            return OpenImageIO.ImageBufAlgo.resample(
                 buf, roi=destination_spec.roi, interpolate=True, nthreads=nthreads)
-            return buf
 
         def flatten(buf, source_spec):
+            if source_spec.get_int_attribute('oiio:Movie') == 1:
+                return buf
             if source_spec.deep:
                 buf = OpenImageIO.ImageBufAlgo.flatten(buf, nthreads=nthreads)
             return buf
 
         def colorconvert(buf, source_spec):
+            if source_spec.get_int_attribute('oiio:Movie') == 1:
+                return buf
             colorspace = source_spec.get_string_attribute('oiio:ColorSpace')
-
-            if source_spec.get_string_attribute('oiio:Movie') == 1:
-                return
             try:
-                if colorspace != 'sRGB':
+                if colorspace == 'linear':
                     buf = OpenImageIO.ImageBufAlgo.colorconvert(
                         buf, colorspace, 'sRGB')
             except:
@@ -950,39 +939,40 @@ class ImageCache(QtCore.QObject):
 
         source_spec = buf.spec()
 
-        # The LibPNG seems to fussy about corrupted and invalid ICC profiles and
+        # The LibPNG seems to be fussy about corrupted and invalid ICC profiles and
         # OpenImageIO seems to interpret warning about these as errors that
         # bring python down. Removing the ICC profile seems to fix the issue.
-        source_spec.erase_attribute('icc.*', casesensitive=False)
+        if source_spec.getattribute('ICCProfile'):
+            source_spec.erase_attribute('ICCProfile')
 
-        if source_spec.get_int_attribute('oiio:Movie') == 1:
-            codec_name = source_spec.get_string_attribute('ffmpeg:codec_name')
-            # [BUG] Not all codec formats are supported by ffmpeg. There does
-            # not seem to be (?) error handling and an unsupported codec will
-            # crash ffmpeg and the rest of the app.
-            if codec_name:
-                if not [f for f in accepted_codecs if f.lower() in codec_name.lower()]:
-                    log.debug(
-                        'Unsupported movie format: {}'.format(codec_name))
-                    common.oiio_cache.invalidate(source, force=True)
-                    return False
+        # if source_spec.get_int_attribute('oiio:Movie') == 1:
+        #     codec_name = source_spec.get_string_attribute('ffmpeg:codec_name')
+        #     # [BUG] Not all codec formats are supported by ffmpeg. There does
+        #     # not seem to be (?) error handling and an unsupported codec will
+        #     # crash ffmpeg and the rest of the app.
+        #     if codec_name:
+        #         if not [f for f in accepted_codecs if f.lower() in codec_name.lower()]:
+        #             log.debug(
+        #                 'Unsupported movie format: {codec_name}')
+        #             common.oiio_cache.invalidate(source, force=True)
+        #             return False
 
         destination_spec = get_scaled_spec(source_spec)
+        if size != -1:
+            buf = resize(buf, destination_spec)
         buf = shuffle_channels(buf, source_spec)
         buf = flatten(buf, source_spec)
-        # buf = colorconvert(buf, source_spec)
-        if size != -1:
-            buf = resize(buf, source_spec)
+        buf = colorconvert(buf, source_spec)
 
-        # if buf.nchannels > 3:
-        # background_buf = OpenImageIO.ImageBuf(destination_spec)
-        # OpenImageIO.ImageBufAlgo.checker(
-        #     background_buf,
-        #     12, 12, 1,
-        #     (0.3, 0.3, 0.3),
-        #     (0.2, 0.2, 0.2)
-        # )
-        # buf = OpenImageIO.ImageBufAlgo.over(buf, background_buf)
+        if buf.nchannels > 3:
+            background_buf = OpenImageIO.ImageBuf(destination_spec)
+            OpenImageIO.ImageBufAlgo.checker(
+                background_buf,
+                12, 12, 1,
+                (0.3, 0.3, 0.3),
+                (0.2, 0.2, 0.2)
+            )
+            buf = OpenImageIO.ImageBufAlgo.over(buf, background_buf)
 
         spec = buf.spec()
         buf.set_write_format(OpenImageIO.UINT8)
@@ -993,28 +983,23 @@ class ImageCache(QtCore.QObject):
             spec['oiio:Gamma'] = '0.454545'
 
         # Initiating a new spec with the modified spec
-        _buf = OpenImageIO.ImageBuf(spec)
-        _buf.copy_pixels(buf)
-        _buf.set_write_format(OpenImageIO.UINT8)
+        # _buf = OpenImageIO.ImageBuf(spec)
+        # _buf.copy_pixels(buf)
+        # _buf.set_write_format(OpenImageIO.UINT8)
 
         # Create a lock file before writing
         with open(destination + '.lock', 'a', encoding='utf8') as _f:
-            success = _buf.write(destination, dtype=OpenImageIO.UINT8)
+            success = buf.write(destination, dtype=OpenImageIO.UINT8)
         os.remove(destination + '.lock')
 
         if not success:
-            s = '{}\n{}'.format(
-                buf.geterror(),
-                OpenImageIO.geterror())
-            log.error(s)
+            log.error(f'{buf.geterror()}\n{OpenImageIO.geterror()}')
 
             if not QtCore.QFile(destination).remove():
                 log.error('Cleanup failed.')
 
             common.oiio_cache.invalidate(source, force=True)
-            common.oiio_cache.invalidate(destination, force=True)
             return False
 
         common.oiio_cache.invalidate(source, force=True)
-        common.oiio_cache.invalidate(destination, force=True)
         return True

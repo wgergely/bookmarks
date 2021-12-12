@@ -175,6 +175,8 @@
 <li class="toctree-l2"><a class="reference internal" href="api/images.html">images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/lists.html">lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/tokens.html">tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/property_editor.html">property_editor</a></li>
 </ul>
 </li>
 </ul>
@@ -352,8 +354,6 @@
           <li><a href="api/database.html#module-bookmarks.database">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     bookmarks.images
 
@@ -361,6 +361,8 @@
           <li><a href="api/images.html#module-bookmarks.images">module</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     bookmarks.lists
 
@@ -436,6 +438,27 @@
 
         <ul>
           <li><a href="api/main.html#module-bookmarks.standalone">module</a>
+</li>
+        </ul></li>
+        <li>
+    bookmarks.tokens
+
+        <ul>
+          <li><a href="api/tokens.html#module-bookmarks.tokens">module</a>
+</li>
+        </ul></li>
+        <li>
+    bookmarks.tokens.tokens
+
+        <ul>
+          <li><a href="api/tokens.html#module-bookmarks.tokens.tokens">module</a>
+</li>
+        </ul></li>
+        <li>
+    bookmarks.tokens.tokens_editor
+
+        <ul>
+          <li><a href="api/tokens.html#module-bookmarks.tokens.tokens_editor">module</a>
 </li>
         </ul></li>
         <li><a href="api/main.html#bookmarks.standalone.BookmarksApp">BookmarksApp (class in bookmarks.standalone)</a>
@@ -521,7 +544,11 @@
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.BaseModel.data">data() (bookmarks.lists.basemodel.BaseModel method)</a>
+
+        <ul>
+          <li><a href="api/tokens.html#bookmarks.tokens.tokens.TokenConfig.data">(bookmarks.tokens.tokens.TokenConfig method)</a>
 </li>
+        </ul></li>
         <li><a href="api/common.html#bookmarks.common.data.data_count">data_count() (in module bookmarks.common.data)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.assets.AssetsModel.data_type">data_type() (bookmarks.lists.assets.AssetsModel method)</a>
@@ -545,6 +572,8 @@
         <li><a href="api/common.html#bookmarks.common.core.debug">debug() (in module bookmarks.common.core)</a>
 </li>
         <li><a href="api/common.html#bookmarks.common.debug_on">debug_on (in module bookmarks.common)</a>
+</li>
+        <li><a href="api/tokens.html#bookmarks.tokens.tokens.DEFAULT_TOKEN_CONFIG">DEFAULT_TOKEN_CONFIG (in module bookmarks.tokens.tokens)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.FilterProxyModel.delayed_invalidate">delayed_invalidate() (bookmarks.lists.basemodel.FilterProxyModel method)</a>
 </li>
@@ -606,6 +635,8 @@
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.BaseModel.dropMimeData">dropMimeData() (bookmarks.lists.basemodel.BaseModel method)</a>
 </li>
+        <li><a href="api/tokens.html#bookmarks.tokens.tokens.TokenConfig.dump_json">dump_json() (bookmarks.tokens.tokens.TokenConfig method)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -618,15 +649,17 @@
 </li>
         <li><a href="api/common.html#bookmarks.common.core.error">error() (in module bookmarks.common.core)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.eventFilter">eventFilter() (bookmarks.lists.basewidget.BaseListWidget method)</a>
 
         <ul>
           <li><a href="api/lists.html#bookmarks.lists.tasks.TaskFolderWidget.eventFilter">(bookmarks.lists.tasks.TaskFolderWidget method)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/main.html#bookmarks.exec_">exec_() (in module bookmarks)</a>
+</li>
+        <li><a href="api/tokens.html#bookmarks.tokens.tokens.TokenConfig.expand_tokens">expand_tokens() (bookmarks.tokens.tokens.TokenConfig method)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -656,10 +689,10 @@
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.filter_includes_row">filter_includes_row() (in module bookmarks.lists.basemodel)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.FilterProxyModel.filter_text">filter_text() (bookmarks.lists.basemodel.FilterProxyModel method)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.FilterProxyModel.filterAcceptsColumn">filterAcceptsColumn() (bookmarks.lists.basemodel.FilterProxyModel method)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.FilterProxyModel.filterAcceptsRow">filterAcceptsRow() (bookmarks.lists.basemodel.FilterProxyModel method)</a>
@@ -680,6 +713,8 @@
 </li>
         <li><a href="api/common.html#bookmarks.common.font.FontDatabase">FontDatabase (class in bookmarks.common.font)</a>
 </li>
+        <li><a href="api/tokens.html#bookmarks.tokens.tokens_editor.FormatEditor">FormatEditor (class in bookmarks.tokens.tokens_editor)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -688,6 +723,10 @@
   <h2>G</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/tokens.html#bookmarks.tokens.tokens.get">get() (in module bookmarks.tokens.tokens)</a>
+</li>
+        <li><a href="api/tokens.html#bookmarks.tokens.tokens.TokenConfig.get_asset_folder_name">get_asset_folder_name() (bookmarks.tokens.tokens.TokenConfig method)</a>
+</li>
         <li><a href="api/lists.html#bookmarks.lists.delegate.get_bookmark_text_segments">get_bookmark_text_segments() (in module bookmarks.lists.delegate)</a>
 </li>
         <li><a href="api/images.html#bookmarks.images.get_cached_thumbnail_path">get_cached_thumbnail_path() (in module bookmarks.images)</a>
@@ -700,7 +739,11 @@
 </li>
         <li><a href="api/database.html#bookmarks.database.get_db">get_db() (in module bookmarks.database)</a>
 </li>
+        <li><a href="api/tokens.html#bookmarks.tokens.tokens.TokenConfig.get_description">get_description() (bookmarks.tokens.tokens.TokenConfig method)</a>
+</li>
         <li><a href="api/lists.html#bookmarks.lists.assets.get_display_name">get_display_name() (in module bookmarks.lists.assets)</a>
+</li>
+        <li><a href="api/tokens.html#bookmarks.tokens.tokens.TokenConfig.get_extensions">get_extensions() (bookmarks.tokens.tokens.TokenConfig method)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.delegate.get_filedetail_text_segments">get_filedetail_text_segments() (in module bookmarks.lists.delegate)</a>
 </li>
@@ -722,10 +765,10 @@
 </li>
         <li><a href="api/lists.html#bookmarks.lists.files.get_path_elements">get_path_elements() (in module bookmarks.lists.files)</a>
 </li>
-        <li><a href="api/common.html#bookmarks.common.core.get_path_to_executable">get_path_to_executable() (in module bookmarks.common.core)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/common.html#bookmarks.common.core.get_path_to_executable">get_path_to_executable() (in module bookmarks.common.core)</a>
+</li>
         <li><a href="api/images.html#bookmarks.images.ImageCache.get_pixmap">get_pixmap() (bookmarks.images.ImageCache class method)</a>
 </li>
         <li><a href="api/images.html#bookmarks.images.get_placeholder_path">get_placeholder_path() (in module bookmarks.images)</a>
@@ -754,9 +797,13 @@
 </li>
         <li><a href="api/common.html#bookmarks.common.data.get_task_data">get_task_data() (in module bookmarks.common.data)</a>
 </li>
+        <li><a href="api/tokens.html#bookmarks.tokens.tokens.TokenConfig.get_task_extensions">get_task_extensions() (bookmarks.tokens.tokens.TokenConfig method)</a>
+</li>
         <li><a href="api/common.html#bookmarks.common.core.get_template_file_path">get_template_file_path() (in module bookmarks.common.core)</a>
 </li>
         <li><a href="api/images.html#bookmarks.images.get_thumbnail">get_thumbnail() (in module bookmarks.images)</a>
+</li>
+        <li><a href="api/tokens.html#bookmarks.tokens.tokens.TokenConfig.get_tokens">get_tokens() (bookmarks.tokens.tokens.TokenConfig method)</a>
 </li>
         <li><a href="api/common.html#bookmarks.common.settings.get_user_settings_path">get_user_settings_path() (in module bookmarks.common.settings)</a>
 </li>
@@ -840,6 +887,8 @@
           <li><a href="api/lists.html#bookmarks.lists.tasks.TaskFolderWidget.inline_icons_count">(bookmarks.lists.tasks.TaskFolderWidget method)</a>
 </li>
         </ul></li>
+        <li><a href="api/tokens.html#bookmarks.tokens.tokens.invalid_token">invalid_token (in module bookmarks.tokens.tokens)</a>
+</li>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.FilterProxyModel.invalidate">invalidate() (bookmarks.lists.basemodel.FilterProxyModel method)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.FilterProxyModel.invalidated">invalidated (bookmarks.lists.basemodel.FilterProxyModel attribute)</a>
@@ -983,6 +1032,12 @@
           <li><a href="api/main.html#module-bookmarks.main">bookmarks.main</a>
 </li>
           <li><a href="api/main.html#module-bookmarks.standalone">bookmarks.standalone</a>
+</li>
+          <li><a href="api/tokens.html#module-bookmarks.tokens">bookmarks.tokens</a>
+</li>
+          <li><a href="api/tokens.html#module-bookmarks.tokens.tokens">bookmarks.tokens.tokens</a>
+</li>
+          <li><a href="api/tokens.html#module-bookmarks.tokens.tokens_editor">bookmarks.tokens.tokens_editor</a>
 </li>
         </ul></li>
     </ul></td>
@@ -1193,6 +1248,8 @@
           <li><a href="api/lists.html#bookmarks.lists.files.FilesModel.save_active">(bookmarks.lists.files.FilesModel method)</a>
 </li>
         </ul></li>
+        <li><a href="api/tokens.html#bookmarks.tokens.tokens_editor.TokenConfigEditor.save_changes">save_changes() (bookmarks.tokens.tokens_editor.TokenConfigEditor method)</a>
+</li>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.save_selection">save_selection() (bookmarks.lists.basewidget.BaseListWidget method)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.ThreadedBaseWidget.save_visible_rows">save_visible_rows() (bookmarks.lists.basewidget.ThreadedBaseWidget method)</a>
@@ -1217,8 +1274,12 @@
 </li>
         <li><a href="api/common.html#bookmarks.common.ui.set_custom_stylesheet">set_custom_stylesheet() (in module bookmarks.common.ui)</a>
 </li>
-        <li><a href="api/common.html#bookmarks.common.data.set_data">set_data() (in module bookmarks.common.data)</a>
+        <li><a href="api/tokens.html#bookmarks.tokens.tokens.TokenConfig.set_data">set_data() (bookmarks.tokens.tokens.TokenConfig method)</a>
+
+        <ul>
+          <li><a href="api/common.html#bookmarks.common.data.set_data">(in module bookmarks.common.data)</a>
 </li>
+        </ul></li>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.FilterProxyModel.set_filter_flag">set_filter_flag() (bookmarks.lists.basemodel.FilterProxyModel method)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.FilterProxyModel.set_filter_text">set_filter_text() (bookmarks.lists.basemodel.FilterProxyModel method)</a>
@@ -1267,8 +1328,6 @@
           <li><a href="api/main.html#bookmarks.standalone.TrayMenu.setup">(bookmarks.standalone.TrayMenu method)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/common.html#bookmarks.common.settings.UserSettings.setValue">setValue() (bookmarks.common.settings.UserSettings method)</a>
 
         <ul>
@@ -1277,6 +1336,8 @@
           <li><a href="api/images.html#bookmarks.images.ImageCache.setValue">(bookmarks.images.ImageCache class method)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/lists.html#bookmarks.lists.files.DropIndicatorWidget.show">show() (bookmarks.lists.files.DropIndicatorWidget method)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.show_item">show_item() (bookmarks.lists.basewidget.BaseListWidget method)</a>
@@ -1300,6 +1361,8 @@
 </li>
           <li><a href="api/main.html#bookmarks.standalone.BookmarksAppWindow.showEvent">(bookmarks.standalone.BookmarksAppWindow method)</a>
 </li>
+          <li><a href="api/tokens.html#bookmarks.tokens.tokens_editor.TokenEditor.showEvent">(bookmarks.tokens.tokens_editor.TokenEditor method)</a>
+</li>
         </ul></li>
         <li><a href="api/common.html#bookmarks.common.signals">signals (in module bookmarks.common)</a>
 </li>
@@ -1315,6 +1378,8 @@
           <li><a href="api/lists.html#bookmarks.lists.tasks.TaskFolderWidgetDelegate.sizeHint">(bookmarks.lists.tasks.TaskFolderWidgetDelegate method)</a>
 </li>
           <li><a href="api/main.html#bookmarks.main.MainWidget.sizeHint">(bookmarks.main.MainWidget method)</a>
+</li>
+          <li><a href="api/tokens.html#bookmarks.tokens.tokens_editor.TokenEditor.sizeHint">(bookmarks.tokens.tokens_editor.TokenEditor method)</a>
 </li>
         </ul></li>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.FilterProxyModel.sort">sort() (bookmarks.lists.basemodel.FilterProxyModel method)</a>
@@ -1359,6 +1424,8 @@
         </ul></li>
         <li><a href="api/lists.html#bookmarks.lists.files.FilesWidget.startDrag">startDrag() (bookmarks.lists.files.FilesWidget method)</a>
 </li>
+        <li><a href="api/tokens.html#bookmarks.tokens.tokens_editor.SubfolderEditor">SubfolderEditor (class in bookmarks.tokens.tokens_editor)</a>
+</li>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.BaseModel.supportedDropActions">supportedDropActions() (bookmarks.lists.basemodel.BaseModel method)</a>
 </li>
     </ul></td>
@@ -1389,12 +1456,14 @@
 </li>
         <li><a href="api/common.html#bookmarks.common.core.temp_path">temp_path() (in module bookmarks.common.core)</a>
 </li>
+        <li><a href="api/tokens.html#bookmarks.tokens.tokens_editor.TokenConfigEditor.text_changed">text_changed() (bookmarks.tokens.tokens_editor.TokenConfigEditor method)</a>
+</li>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.ThreadedBaseWidget">ThreadedBaseWidget (class in bookmarks.lists.basewidget)</a>
+</li>
+        <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.ThumbnailContextMenu">ThumbnailContextMenu (bookmarks.lists.basewidget.BaseListWidget attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.ThumbnailContextMenu">ThumbnailContextMenu (bookmarks.lists.basewidget.BaseListWidget attribute)</a>
-</li>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.ThumbnailsContextMenu">ThumbnailsContextMenu (class in bookmarks.lists.basewidget)</a>
 </li>
         <li><a href="api/common.html#bookmarks.common.core.Timer">Timer (class in bookmarks.common.core)</a>
@@ -1407,6 +1476,14 @@
           <li><a href="api/lists.html#bookmarks.lists.favourites.FavouritesWidget.toggle_item_flag">(bookmarks.lists.favourites.FavouritesWidget method)</a>
 </li>
         </ul></li>
+        <li><a href="api/tokens.html#bookmarks.tokens.tokens.TokenConfig">TokenConfig (class in bookmarks.tokens.tokens)</a>
+</li>
+        <li><a href="api/tokens.html#bookmarks.tokens.tokens_editor.TokenConfigEditor">TokenConfigEditor (class in bookmarks.tokens.tokens_editor)</a>
+</li>
+        <li><a href="api/tokens.html#bookmarks.tokens.tokens_editor.TokenEditor">TokenEditor (class in bookmarks.tokens.tokens_editor)</a>
+</li>
+        <li><a href="api/tokens.html#bookmarks.tokens.tokens.TOKENS_DB_KEY">TOKENS_DB_KEY (in module bookmarks.tokens.tokens)</a>
+</li>
         <li><a href="api/main.html#bookmarks.standalone.Tray">Tray (class in bookmarks.standalone)</a>
 </li>
         <li><a href="api/main.html#bookmarks.standalone.TrayMenu.tray_menu">tray_menu() (bookmarks.standalone.TrayMenu method)</a>

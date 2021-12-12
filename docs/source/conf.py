@@ -41,6 +41,7 @@ extensions = [
     'sphinx.ext.autosectionlabel',
     'sphinx.ext.githubpages'
 ]
+
 napoleon_google_docstring = True
 napoleon_use_param = False
 napoleon_use_ivar = False

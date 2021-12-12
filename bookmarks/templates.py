@@ -287,23 +287,34 @@ class TemplateListWidget(ui.ListWidget):
 
     @QtCore.Slot(QtCore.QModelIndex)
     def update_name(self, index):
-        """Updates the model data when a template's name has been edited."""
-        oldpath = index.data(TemplatePathRole)
-        oldname = QtCore.QFileInfo(oldpath).baseName()
+        """Updates the model data when a template's name has been edited.
+
+        """
+        if not index.isValid():
+            return
+
+        previous_path = index.data(TemplatePathRole)
+        if not previous_path:
+            return
+        previous_name = QtCore.QFileInfo(previous_path).baseName()
 
         name = index.data(QtCore.Qt.DisplayRole)
         name = name.replace('.zip', '')
 
-        newpath = '{}/{}.zip'.format(
+        new_path = '{}/{}.zip'.format(
             get_template_folder(self.mode()),
             name.replace(' ', '_')
         )
-        if QtCore.QFile.rename(oldpath, newpath):
+
+        if not new_path:
+            return
+
+        if QtCore.QFile.rename(previous_path, new_path):
             self.model().setData(index, name, QtCore.Qt.DisplayRole)
-            self.model().setData(index, newpath, TemplatePathRole)
+            self.model().setData(index, new_path, TemplatePathRole)
         else:
-            self.model().setData(index, oldname, QtCore.Qt.DisplayRole)
-            self.model().setData(index, oldpath, TemplatePathRole)
+            self.model().setData(index, previous_name, QtCore.Qt.DisplayRole)
+            self.model().setData(index, previous_path, TemplatePathRole)
 
     def supportedDropActions(self):
         return QtCore.Qt.CopyAction | QtCore.Qt.MoveAction
@@ -353,6 +364,8 @@ class TemplateListWidget(ui.ListWidget):
                 return True
 
         if event.type() == QtCore.QEvent.Paint:
+            if widget != self.viewport():
+                return False
             option = QtWidgets.QStyleOption()
             option.initFrom(self)
             hover = option.state & QtWidgets.QStyle.State_MouseOver
@@ -391,6 +404,7 @@ class TemplateListWidget(ui.ListWidget):
             painter.setPen(common.color(common.TextColor))
 
             if self.count() > 0:
+                painter.end()
                 return False
 
             painter.drawText(
@@ -400,7 +414,7 @@ class TemplateListWidget(ui.ListWidget):
                 boundingRect=self.rect(),
             )
             painter.end()
-
+            return True
         return False
 
     def showEvent(self, event):

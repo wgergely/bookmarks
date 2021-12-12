@@ -7,7 +7,7 @@ from PySide2 import QtCore, QtWidgets
 
 from . import ffmpeg
 from .. import common
-from ..property_editor import base
+from ..editor import base
 
 instance = None
 

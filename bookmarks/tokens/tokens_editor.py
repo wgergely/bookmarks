@@ -1,23 +1,23 @@
 # -*- coding: utf-8 -*-
-"""Defines the widgets used to edit asset config values.
+"""Various widgets used to edit token values.
 
-See the :mod:`bookmarks.asset_config.asset_config` module for more information.
+See the :mod:`bookmarks.tokens.tokens` for the interface details.
 
 """
 import functools
 
 from PySide2 import QtWidgets, QtCore
 
-from . import asset_config
+from . import tokens
 from .. import common
 from .. import log
 from .. import ui
-from ..property_editor import base
+from ..editor import base
 
 SECTIONS = (
-    (asset_config.FileNameConfig, 'File Names Templates'),
-    (asset_config.AssetFolderConfig, 'Asset Folders'),
-    (asset_config.FileFormatConfig, 'Accepted File Formats'),
+    (tokens.FileNameConfig, 'File Names Templates'),
+    (tokens.AssetFolderConfig, 'Primary Asset Folders'),
+    (tokens.FileFormatConfig, 'File Formats'),
 )
 
 
@@ -68,13 +68,15 @@ class TokenEditor(QtWidgets.QDialog):
         editor.setSpacing(0)
 
         editor.itemClicked.connect(
-            lambda x: self.tokenSelected.emit(x.data(QtCore.Qt.DisplayRole)))
+            lambda x: self.tokenSelected.emit(x.data(QtCore.Qt.DisplayRole))
+        )
         editor.itemClicked.connect(
-            lambda x: self.done(QtWidgets.QDialog.Accepted))
+            lambda x: self.done(QtWidgets.QDialog.Accepted)
+        )
 
         self.layout().addWidget(editor, 0)
 
-        config = asset_config.get(self.server, self.job, self.root)
+        config = tokens.get(self.server, self.job, self.root)
         v = config.get_tokens(
             user='MyName',
             version='v001',
@@ -153,15 +155,20 @@ class FormatEditor(QtWidgets.QDialog):
         self.save_button = ui.PaintedButton('Save')
         self.cancel_button = ui.PaintedButton('Cancel')
 
-        row = ui.add_row(None, height=common.size(
-            common.HeightRow), parent=self)
+        row = ui.add_row(
+            None, height=common.size(
+                common.HeightRow
+            ), parent=self
+        )
         row.layout().addWidget(self.save_button, 1)
         row.layout().addWidget(self.cancel_button, 0)
 
         self.save_button.clicked.connect(
-            lambda: self.done(QtWidgets.QDialog.Accepted))
+            lambda: self.done(QtWidgets.QDialog.Accepted)
+        )
         self.cancel_button.clicked.connect(
-            lambda: self.done(QtWidgets.QDialog.Rejected))
+            lambda: self.done(QtWidgets.QDialog.Rejected)
+        )
 
 
 class SubfolderEditor(QtWidgets.QDialog):
@@ -185,10 +192,12 @@ class SubfolderEditor(QtWidgets.QDialog):
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
 
-        maingroup = base.add_section('', 'Edit Subfolders', self)
-        grp = ui.get_group(parent=maingroup)
+        main_grp = base.add_section('', 'Edit Subfolders', self)
+        grp = ui.get_group(parent=main_grp)
 
-        for _k, _v in sorted(self.v['subfolders'].items(), key=lambda x: x[1]['name']):
+        for _k, _v in sorted(
+                self.v['subfolders'].items(), key=lambda x: x[1]['name']
+        ):
             if not isinstance(_v, dict):
                 log.error('Invalid data. Key: {}, Value: {}'.format(_k, _v))
                 continue
@@ -201,7 +210,8 @@ class SubfolderEditor(QtWidgets.QDialog):
             self.parent().current_data[key] = _v['value']
 
             editor.textChanged.connect(
-                functools.partial(self.parent().text_changed, key, editor))
+                functools.partial(self.parent().text_changed, key, editor)
+            )
 
             _row.layout().addWidget(editor, 1)
             _row.setStatusTip(_v['description'])
@@ -211,24 +221,29 @@ class SubfolderEditor(QtWidgets.QDialog):
         self.save_button = ui.PaintedButton('Save')
         self.cancel_button = ui.PaintedButton('Cancel')
 
-        row = ui.add_row(None, height=common.size(
-            common.HeightRow), parent=self)
+        row = ui.add_row(
+            None, height=common.size(
+                common.HeightRow
+            ), parent=self
+        )
         row.layout().addWidget(self.save_button, 1)
         row.layout().addWidget(self.cancel_button, 0)
 
         self.save_button.clicked.connect(
-            lambda: self.done(QtWidgets.QDialog.Accepted))
+            lambda: self.done(QtWidgets.QDialog.Accepted)
+        )
         self.cancel_button.clicked.connect(
-            lambda: self.done(QtWidgets.QDialog.Rejected))
+            lambda: self.done(QtWidgets.QDialog.Rejected)
+        )
 
 
-class AssetConfigEditor(QtWidgets.QWidget):
-    """The widget used to display and edit a bookmark's asset configuration.
+class TokenConfigEditor(QtWidgets.QWidget):
+    """The widget used to display and edit a bookmark's token configuration.
 
     """
 
     def __init__(self, server, job, root, parent=None):
-        super(AssetConfigEditor, self).__init__(parent=parent)
+        super(TokenConfigEditor, self).__init__(parent=parent)
         self.server = server
         self.job = job
         self.root = root
@@ -236,10 +251,11 @@ class AssetConfigEditor(QtWidgets.QWidget):
         self.current_data = {}
         self.changed_data = {}
 
-        self._section_widgets = []
-        self.scrollarea = None
+        self.header_buttons = []
 
-        self.asset_config = asset_config.get(server, job, root)
+        self.scroll_area = None
+
+        self.tokens = tokens.get(server, job, root)
 
         self._create_ui()
         self._connect_signals()
@@ -253,8 +269,9 @@ class AssetConfigEditor(QtWidgets.QWidget):
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(o)
 
-        # Refetching the config data from the database
-        data = self.asset_config.data(force=True)
+        # Re-fetch the config data from the database
+        data = self.tokens.data(force=True)
+
         for section, section_name in SECTIONS:
             if section not in data:
                 continue
@@ -262,24 +279,31 @@ class AssetConfigEditor(QtWidgets.QWidget):
                 log.error('Invalid data.')
                 return
             for k, v in data[section].items():
-                if not isinstance(v, dict) or 'name' not in v or 'description' not in v:
+                if not isinstance(
+                        v, dict
+                ) or 'name' not in v or 'description' not in v:
                     log.error('Invalid data. Key: {}, value: {}'.format(k, v))
                     return
 
-            maingroup = base.add_section(
+            main_grp = base.add_section(
                 '',
                 section_name,
                 self,
                 color=common.color(common.BackgroundDarkColor)
             )
 
-            _grp = ui.get_group(parent=maingroup)
-            for k, v in sorted(data[section].items(), key=lambda x: x[1]['name']):
+            # Save header data for later use
+            self.header_buttons.append((section_name, main_grp))
+
+            _grp = ui.get_group(parent=main_grp)
+            for k, v in data[section].items():
                 _name = v['name'].title()
                 _name = '{} Folder'.format(
-                    _name) if section == asset_config.AssetFolderConfig else _name
+                    _name
+                ) if section == tokens.AssetFolderConfig else _name
                 row = ui.add_row(
-                    _name, padding=None, height=h, parent=_grp)
+                    _name, padding=None, height=h, parent=_grp
+                )
                 row.setStatusTip(v['description'])
                 row.setWhatsThis(v['description'])
                 row.setToolTip(v['description'])
@@ -294,18 +318,20 @@ class AssetConfigEditor(QtWidgets.QWidget):
                 self.current_data[key] = v['value']
 
                 editor.textChanged.connect(
-                    functools.partial(self.text_changed, key, editor))
+                    functools.partial(self.text_changed, key, editor)
+                )
 
                 row.layout().addWidget(editor)
 
-                if section == asset_config.FileNameConfig:
+                if section == tokens.FileNameConfig:
                     editor.setValidator(base.tokenvalidator)
                     button = ui.PaintedButton('+', parent=row)
                     button.clicked.connect(
-                        functools.partial(self.show_token_editor, editor))
+                        functools.partial(self.show_token_editor, editor)
+                    )
                     row.layout().addWidget(button, 0)
 
-                if section != asset_config.AssetFolderConfig:
+                if section != tokens.AssetFolderConfig:
                     continue
 
                 button = ui.PaintedButton('Formats', parent=row)
@@ -314,7 +340,8 @@ class AssetConfigEditor(QtWidgets.QWidget):
                     key = '{}/{}/filter'.format(section, k)
                     self.current_data[key] = v['filter']
                     button.clicked.connect(
-                        functools.partial(self.show_filter_editor, key, v, data))
+                        functools.partial(self.show_filter_editor, key, v, data)
+                    )
                 else:
                     button.setDisabled(True)
 
@@ -322,7 +349,10 @@ class AssetConfigEditor(QtWidgets.QWidget):
                 row.layout().addWidget(button, 0)
                 if 'subfolders' in v and isinstance(v['subfolders'], dict):
                     button.clicked.connect(
-                        functools.partial(self.show_subfolders_editor, section, k, v, data))
+                        functools.partial(
+                            self.show_subfolders_editor, section, k, v, data
+                        )
+                    )
                 else:
                     button.setDisabled(True)
 
@@ -332,16 +362,17 @@ class AssetConfigEditor(QtWidgets.QWidget):
     def show_filter_editor(self, key, v, data):
         editor = FormatEditor(parent=self)
         editor.listwidget.itemClicked.connect(
-            functools.partial(self.filter_changed, key, editor))
-        for _v in data[asset_config.FileFormatConfig].values():
+            functools.partial(self.filter_changed, key, editor)
+        )
+
+        for _v in data[tokens.FileFormatConfig].values():
             editor.listwidget.addItem(_v['name'])
 
             item = editor.listwidget.item(editor.listwidget.count() - 1)
             item.setData(QtCore.Qt.UserRole, _v['flag'])
             item.setData(QtCore.Qt.StatusTipRole, _v['description'])
             item.setData(QtCore.Qt.ToolTipRole, _v['description'])
-            item.setData(QtCore.Qt.AccessibleDescriptionRole,
-                         _v['description'])
+            item.setData(QtCore.Qt.AccessibleDescriptionRole, _v['description'])
             item.setData(QtCore.Qt.WhatsThisRole, _v['description'])
 
             if _v['flag'] & v['filter']:
@@ -349,8 +380,10 @@ class AssetConfigEditor(QtWidgets.QWidget):
             else:
                 item.setCheckState(QtCore.Qt.Unchecked)
 
-        editor.finished.connect(lambda x: self.save_changes(
-        ) if x == QtWidgets.QDialog.Accepted else None)
+        editor.finished.connect(
+            lambda x: self.save_changes(
+            ) if x == QtWidgets.QDialog.Accepted else None
+        )
         editor.exec_()
 
     @QtCore.Slot(str)
@@ -358,8 +391,10 @@ class AssetConfigEditor(QtWidgets.QWidget):
     @QtCore.Slot(dict)
     def show_subfolders_editor(self, section, k, v, data):
         editor = SubfolderEditor(section, k, v, data, parent=self)
-        editor.finished.connect(lambda x: self.save_changes(
-        ) if x == QtWidgets.QDialog.Accepted else None)
+        editor.finished.connect(
+            lambda x: self.save_changes(
+            ) if x == QtWidgets.QDialog.Accepted else None
+        )
         editor.exec_()
 
     @QtCore.Slot(QtWidgets.QWidget)
@@ -392,13 +427,15 @@ class AssetConfigEditor(QtWidgets.QWidget):
         if v != self.current_data[key]:
             self.changed_data[key] = v
             editor.setStyleSheet(
-                'color: {};'.format(common.rgb(common.color(common.GreenColor))))
+                'color: {};'.format(common.rgb(common.color(common.GreenColor)))
+            )
             return
 
         if key in self.changed_data:
             del self.changed_data[key]
         editor.setStyleSheet(
-            'color: {};'.format(common.rgb(common.color(common.TextColor))))
+            'color: {};'.format(common.rgb(common.color(common.TextColor)))
+        )
 
     @QtCore.Slot()
     def save_changes(self):
@@ -407,11 +444,11 @@ class AssetConfigEditor(QtWidgets.QWidget):
         """
         if not self.changed_data:
             return
-        data = self.asset_config.data()
+        data = self.tokens.data()
         for keys, v in self.changed_data.copy().items():
             _set(data, keys, v)
             del self.changed_data[keys]
-        self.asset_config.set_data(data)
+        self.tokens.set_data(data)
 
     def _connect_signals(self):
         pass

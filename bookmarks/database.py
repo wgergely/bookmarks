@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """Defines :class:`BookmarkDB`, the sqlite3 database interface used to store item properties,
-such as custom descriptions, flags, ``width``, ``height``, :mod:`bookmarks.asset_config.asset_config`
+such as custom descriptions, flags, ``width``, ``height``, :mod:`bookmarks.tokens.tokens`
 values, etc.
 
 Each bookmark item has its own database file and are stored in ``common.bookmark_cache_dir``, in
@@ -215,7 +215,7 @@ TABLES = {
             'sql': 'TEXT',
             'type': str
         },
-        'asset_config': {
+        'tokens': {
             'sql': 'TEXT',
             'type': dict
         },
@@ -255,7 +255,7 @@ def get_db(server, job, root, force=False):
     for k in (server, job, root):
         common.check_type(k, str)
 
-    key = _get_thread_key(server, job, root)
+    key = common.get_thread_key(server, job, root)
 
     if key in common.db_connections:
         if force:
@@ -390,11 +390,6 @@ def set_flag(server, job, root, k, mode, flag):
         db.setValue(k, 'flags', f, AssetTable)
 
 
-def _get_thread_key(*args):
-    t = repr(QtCore.QThread.currentThread())
-    return '/'.join(args) + t
-
-
 def _verify_args(source, key, table, value=None):
     common.check_type(source, (str, tuple))
 
@@ -429,6 +424,8 @@ def load_json(value):
 
 def convert_return_values(table, key, value):
     if value is None:
+        return None
+    if key not in TABLES[table]:
         return None
     _type = TABLES[table][key]['type']
     if _type is dict:

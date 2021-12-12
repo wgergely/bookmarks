@@ -251,10 +251,11 @@
 
 
 <span class="k">def</span> <span class="nf">init_imagecache</span><span class="p">():</span>
-    <span class="n">common</span><span class="o">.</span><span class="n">oiio_cache</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageCache</span><span class="p">(</span><span class="n">shared</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">common</span><span class="o">.</span><span class="n">oiio_cache</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageCache</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">common</span><span class="o">.</span><span class="n">oiio_cache</span><span class="o">.</span><span class="n">attribute</span><span class="p">(</span><span class="s1">'max_memory_MB'</span><span class="p">,</span> <span class="mf">4096.0</span><span class="p">)</span>
     <span class="n">common</span><span class="o">.</span><span class="n">oiio_cache</span><span class="o">.</span><span class="n">attribute</span><span class="p">(</span><span class="s1">'max_open_files'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">common</span><span class="o">.</span><span class="n">oiio_cache</span><span class="o">.</span><span class="n">attribute</span><span class="p">(</span><span class="s1">'trust_file_extensions'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">common</span><span class="o">.</span><span class="n">oiio_cache</span><span class="o">.</span><span class="n">attribute</span><span class="p">(</span><span class="s1">'forcefloat'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="n">common</span><span class="o">.</span><span class="n">image_resource_list</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">common</span><span class="o">.</span><span class="n">GuiResource</span><span class="p">:</span> <span class="p">[],</span>
@@ -560,19 +561,10 @@
     <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">invalidate</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">func_wrapper</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">common</span><span class="o">.</span><span class="n">oiio_cache</span><span class="o">.</span><span class="n">invalidate</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">return</span> <span class="n">func_wrapper</span>
-
-
-<div class="viewcode-block" id="oiio_get_buf"><a class="viewcode-back" href="../../api/images.html#bookmarks.images.oiio_get_buf">[docs]</a><span class="nd">@invalidate</span>
-<span class="k">def</span> <span class="nf">oiio_get_buf</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">hash</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="oiio_get_buf"><a class="viewcode-back" href="../../api/images.html#bookmarks.images.oiio_get_buf">[docs]</a><span class="k">def</span> <span class="nf">oiio_get_buf</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">hash</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">"""Check and load a source image with OpenImageIO's format reader.</span>
+
 
 <span class="sd">    Args:</span>
 <span class="sd">        source (str):       Path to an OpenImageIO compatible image file.</span>
@@ -580,7 +572,7 @@
 <span class="sd">        force (bool):       When `true`, forces the buffer to be re-cached.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        ImageBuf: An `ImageBuf` instance or `None` if the file is invalid.</span>
+<span class="sd">        ImageBuf: An `ImageBuf` instance or `None` if the image cannot be read.</span>
 
 <span class="sd">    """</span>
     <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
@@ -596,18 +588,21 @@
     <span class="k">if</span> <span class="s1">'.'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">source</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="n">ext</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'.'</span><span class="p">)</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    <span class="n">i</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageInput</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">ext</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">get_oiio_extensions</span><span class="p">():</span>
         <span class="k">return</span> <span class="kc">None</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span><span class="o">.</span><span class="n">valid_file</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageInput</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">i</span><span class="o">.</span><span class="n">valid_file</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
         <span class="n">i</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="c1"># If all went well, we can initiate an ImageBuf</span>
-    <span class="n">i</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageSpec</span><span class="p">()</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">TypeDesc</span><span class="p">(</span><span class="n">OpenImageIO</span><span class="o">.</span><span class="n">FLOAT</span><span class="p">)</span>
+
     <span class="n">buf</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageBuf</span><span class="p">()</span>
-    <span class="n">buf</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">buf</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">buf</span><span class="o">.</span><span class="n">has_error</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">geterror</span><span class="p">())</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="n">ImageCache</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="nb">hash</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">BufferType</span><span class="p">)</span>
@@ -777,12 +772,6 @@
 
         <span class="c1"># ...and store</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="nb">hash</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">ImageType</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
-
-        <span class="c1"># The loaded pixel values are cached by OpenImageIO automatically.</span>
-        <span class="c1"># By invalidating the buf, we can ditch the cached data.</span>
-        <span class="n">common</span><span class="o">.</span><span class="n">oiio_cache</span><span class="o">.</span><span class="n">invalidate</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">common</span><span class="o">.</span><span class="n">oiio_cache</span><span class="o">.</span><span class="n">invalidate</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
         <span class="k">return</span> <span class="n">image</span></div>
 
 <div class="viewcode-block" id="ImageCache.get_pixmap"><a class="viewcode-back" href="../../api/images.html#bookmarks.images.ImageCache.get_pixmap">[docs]</a>    <span class="nd">@classmethod</span>
@@ -855,9 +844,9 @@
         <span class="k">return</span> <span class="n">pixmap</span></div>
 
 <div class="viewcode-block" id="ImageCache.contains"><a class="viewcode-back" href="../../api/images.html#bookmarks.images.ImageCache.contains">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">hash</span><span class="p">,</span> <span class="n">cache_type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">contains</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_hash</span><span class="p">,</span> <span class="n">cache_type</span><span class="p">):</span>
         <span class="sd">"""Checks if the given hash exists in the database."""</span>
-        <span class="k">return</span> <span class="nb">hash</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">image_cache</span><span class="p">[</span><span class="n">cache_type</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="n">_hash</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">image_cache</span><span class="p">[</span><span class="n">cache_type</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="ImageCache.value"><a class="viewcode-back" href="../../api/images.html#bookmarks.images.ImageCache.value">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="nb">hash</span><span class="p">,</span> <span class="n">cache_type</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -1079,11 +1068,11 @@
         <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">image_resource_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span></div>
 
 <div class="viewcode-block" id="ImageCache.oiio_make_thumbnail"><a class="viewcode-back" href="../../api/images.html#bookmarks.images.ImageCache.oiio_make_thumbnail">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">oiio_make_thumbnail</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
-        <span class="sd">"""Converts ``source`` image to an sRGB image fitting the bounds of ``size`` and saves it</span>
-<span class="sd">        to ``desination``.</span>
+    <span class="k">def</span> <span class="nf">oiio_make_thumbnail</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">"""Converts the `source` image to an sRGB image fitting the bounds of `size` and saves it</span>
+<span class="sd">        to `destination`.</span>
 
-<span class="sd">        If size is ``-1``, the image won't be resized.</span>
+<span class="sd">        If size is `-1`, the image won't be resized.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            source (str): Source image's file path.</span>
@@ -1128,23 +1117,23 @@
                         <span class="n">buf</span><span class="p">,</span> <span class="p">(</span><span class="s1">'R'</span><span class="p">,</span> <span class="s1">'G'</span><span class="p">,</span> <span class="s1">'B'</span><span class="p">),</span> <span class="p">(</span><span class="s1">'R'</span><span class="p">,</span> <span class="s1">'G'</span><span class="p">,</span> <span class="s1">'B'</span><span class="p">))</span>
             <span class="k">return</span> <span class="n">buf</span>
 
-        <span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">source_spec</span><span class="p">):</span>
-            <span class="n">buf</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageBufAlgo</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span>
+        <span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">destination_spec</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageBufAlgo</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span>
                 <span class="n">buf</span><span class="p">,</span> <span class="n">roi</span><span class="o">=</span><span class="n">destination_spec</span><span class="o">.</span><span class="n">roi</span><span class="p">,</span> <span class="n">interpolate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="n">nthreads</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">buf</span>
 
         <span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">source_spec</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">get_int_attribute</span><span class="p">(</span><span class="s1">'oiio:Movie'</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">buf</span>
             <span class="k">if</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">deep</span><span class="p">:</span>
                 <span class="n">buf</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageBufAlgo</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="n">nthreads</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">buf</span>
 
         <span class="k">def</span> <span class="nf">colorconvert</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">source_spec</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">get_int_attribute</span><span class="p">(</span><span class="s1">'oiio:Movie'</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">buf</span>
             <span class="n">colorspace</span> <span class="o">=</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">get_string_attribute</span><span class="p">(</span><span class="s1">'oiio:ColorSpace'</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">get_string_attribute</span><span class="p">(</span><span class="s1">'oiio:Movie'</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">return</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">colorspace</span> <span class="o">!=</span> <span class="s1">'sRGB'</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">colorspace</span> <span class="o">==</span> <span class="s1">'linear'</span><span class="p">:</span>
                     <span class="n">buf</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageBufAlgo</span><span class="o">.</span><span class="n">colorconvert</span><span class="p">(</span>
                         <span class="n">buf</span><span class="p">,</span> <span class="n">colorspace</span><span class="p">,</span> <span class="s1">'sRGB'</span><span class="p">)</span>
             <span class="k">except</span><span class="p">:</span>
@@ -1157,39 +1146,40 @@
 
         <span class="n">source_spec</span> <span class="o">=</span> <span class="n">buf</span><span class="o">.</span><span class="n">spec</span><span class="p">()</span>
 
-        <span class="c1"># The LibPNG seems to fussy about corrupted and invalid ICC profiles and</span>
+        <span class="c1"># The LibPNG seems to be fussy about corrupted and invalid ICC profiles and</span>
         <span class="c1"># OpenImageIO seems to interpret warning about these as errors that</span>
         <span class="c1"># bring python down. Removing the ICC profile seems to fix the issue.</span>
-        <span class="n">source_spec</span><span class="o">.</span><span class="n">erase_attribute</span><span class="p">(</span><span class="s1">'icc.*'</span><span class="p">,</span> <span class="n">casesensitive</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">getattribute</span><span class="p">(</span><span class="s1">'ICCProfile'</span><span class="p">):</span>
+            <span class="n">source_spec</span><span class="o">.</span><span class="n">erase_attribute</span><span class="p">(</span><span class="s1">'ICCProfile'</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">get_int_attribute</span><span class="p">(</span><span class="s1">'oiio:Movie'</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">codec_name</span> <span class="o">=</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">get_string_attribute</span><span class="p">(</span><span class="s1">'ffmpeg:codec_name'</span><span class="p">)</span>
-            <span class="c1"># [BUG] Not all codec formats are supported by ffmpeg. There does</span>
-            <span class="c1"># not seem to be (?) error handling and an unsupported codec will</span>
-            <span class="c1"># crash ffmpeg and the rest of the app.</span>
-            <span class="k">if</span> <span class="n">codec_name</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">accepted_codecs</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">codec_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()]:</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-                        <span class="s1">'Unsupported movie format: </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">codec_name</span><span class="p">))</span>
-                    <span class="n">common</span><span class="o">.</span><span class="n">oiio_cache</span><span class="o">.</span><span class="n">invalidate</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                    <span class="k">return</span> <span class="kc">False</span>
+        <span class="c1"># if source_spec.get_int_attribute('oiio:Movie') == 1:</span>
+        <span class="c1">#     codec_name = source_spec.get_string_attribute('ffmpeg:codec_name')</span>
+        <span class="c1">#     # [BUG] Not all codec formats are supported by ffmpeg. There does</span>
+        <span class="c1">#     # not seem to be (?) error handling and an unsupported codec will</span>
+        <span class="c1">#     # crash ffmpeg and the rest of the app.</span>
+        <span class="c1">#     if codec_name:</span>
+        <span class="c1">#         if not [f for f in accepted_codecs if f.lower() in codec_name.lower()]:</span>
+        <span class="c1">#             log.debug(</span>
+        <span class="c1">#                 'Unsupported movie format: {codec_name}')</span>
+        <span class="c1">#             common.oiio_cache.invalidate(source, force=True)</span>
+        <span class="c1">#             return False</span>
 
         <span class="n">destination_spec</span> <span class="o">=</span> <span class="n">get_scaled_spec</span><span class="p">(</span><span class="n">source_spec</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">size</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">buf</span> <span class="o">=</span> <span class="n">resize</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">destination_spec</span><span class="p">)</span>
         <span class="n">buf</span> <span class="o">=</span> <span class="n">shuffle_channels</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">source_spec</span><span class="p">)</span>
         <span class="n">buf</span> <span class="o">=</span> <span class="n">flatten</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">source_spec</span><span class="p">)</span>
-        <span class="c1"># buf = colorconvert(buf, source_spec)</span>
-        <span class="k">if</span> <span class="n">size</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="n">buf</span> <span class="o">=</span> <span class="n">resize</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">source_spec</span><span class="p">)</span>
+        <span class="n">buf</span> <span class="o">=</span> <span class="n">colorconvert</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">source_spec</span><span class="p">)</span>
 
-        <span class="c1"># if buf.nchannels &gt; 3:</span>
-        <span class="c1"># background_buf = OpenImageIO.ImageBuf(destination_spec)</span>
-        <span class="c1"># OpenImageIO.ImageBufAlgo.checker(</span>
-        <span class="c1">#     background_buf,</span>
-        <span class="c1">#     12, 12, 1,</span>
-        <span class="c1">#     (0.3, 0.3, 0.3),</span>
-        <span class="c1">#     (0.2, 0.2, 0.2)</span>
-        <span class="c1"># )</span>
-        <span class="c1"># buf = OpenImageIO.ImageBufAlgo.over(buf, background_buf)</span>
+        <span class="k">if</span> <span class="n">buf</span><span class="o">.</span><span class="n">nchannels</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">background_buf</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageBuf</span><span class="p">(</span><span class="n">destination_spec</span><span class="p">)</span>
+            <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageBufAlgo</span><span class="o">.</span><span class="n">checker</span><span class="p">(</span>
+                <span class="n">background_buf</span><span class="p">,</span>
+                <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">),</span>
+                <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">buf</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageBufAlgo</span><span class="o">.</span><span class="n">over</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">background_buf</span><span class="p">)</span>
 
         <span class="n">spec</span> <span class="o">=</span> <span class="n">buf</span><span class="o">.</span><span class="n">spec</span><span class="p">()</span>
         <span class="n">buf</span><span class="o">.</span><span class="n">set_write_format</span><span class="p">(</span><span class="n">OpenImageIO</span><span class="o">.</span><span class="n">UINT8</span><span class="p">)</span>
@@ -1200,30 +1190,25 @@
             <span class="n">spec</span><span class="p">[</span><span class="s1">'oiio:Gamma'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'0.454545'</span>
 
         <span class="c1"># Initiating a new spec with the modified spec</span>
-        <span class="n">_buf</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageBuf</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
-        <span class="n">_buf</span><span class="o">.</span><span class="n">copy_pixels</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span>
-        <span class="n">_buf</span><span class="o">.</span><span class="n">set_write_format</span><span class="p">(</span><span class="n">OpenImageIO</span><span class="o">.</span><span class="n">UINT8</span><span class="p">)</span>
+        <span class="c1"># _buf = OpenImageIO.ImageBuf(spec)</span>
+        <span class="c1"># _buf.copy_pixels(buf)</span>
+        <span class="c1"># _buf.set_write_format(OpenImageIO.UINT8)</span>
 
         <span class="c1"># Create a lock file before writing</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">destination</span> <span class="o">+</span> <span class="s1">'.lock'</span><span class="p">,</span> <span class="s1">'a'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf8'</span><span class="p">)</span> <span class="k">as</span> <span class="n">_f</span><span class="p">:</span>
-            <span class="n">success</span> <span class="o">=</span> <span class="n">_buf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">OpenImageIO</span><span class="o">.</span><span class="n">UINT8</span><span class="p">)</span>
+            <span class="n">success</span> <span class="o">=</span> <span class="n">buf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">OpenImageIO</span><span class="o">.</span><span class="n">UINT8</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">destination</span> <span class="o">+</span> <span class="s1">'.lock'</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">success</span><span class="p">:</span>
-            <span class="n">s</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">buf</span><span class="o">.</span><span class="n">geterror</span><span class="p">(),</span>
-                <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">geterror</span><span class="p">())</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">buf</span><span class="o">.</span><span class="n">geterror</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">OpenImageIO</span><span class="o">.</span><span class="n">geterror</span><span class="p">()</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFile</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span><span class="o">.</span><span class="n">remove</span><span class="p">():</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">'Cleanup failed.'</span><span class="p">)</span>
 
             <span class="n">common</span><span class="o">.</span><span class="n">oiio_cache</span><span class="o">.</span><span class="n">invalidate</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">common</span><span class="o">.</span><span class="n">oiio_cache</span><span class="o">.</span><span class="n">invalidate</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span>
 
         <span class="n">common</span><span class="o">.</span><span class="n">oiio_cache</span><span class="o">.</span><span class="n">invalidate</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">common</span><span class="o">.</span><span class="n">oiio_cache</span><span class="o">.</span><span class="n">invalidate</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span></div></div>
 </pre></div>
         </article>

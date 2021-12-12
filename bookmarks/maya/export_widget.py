@@ -3,7 +3,7 @@ import functools
 from PySide2 import QtCore, QtWidgets, QtGui
 
 from .. import common
-from ..property_editor import base
+from ..editor import base
 from . import ffmpeg
 
 

@@ -172,8 +172,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../bookmarks.html">Introduction</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">bookmarks.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/database.html">database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/tokens.html">tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/property_editor.html">property_editor</a></li>
 </ul>
 </li>
 </ul>
@@ -220,7 +224,7 @@
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">contextmenu</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">images</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">..asset_config</span> <span class="kn">import</span> <span class="n">asset_config</span>
+<span class="kn">from</span> <span class="nn">..tokens</span> <span class="kn">import</span> <span class="n">tokens</span>
 <span class="kn">from</span> <span class="nn">..threads</span> <span class="kn">import</span> <span class="n">threads</span>
 
 <span class="n">FILTER_EXTENSIONS</span> <span class="o">=</span> <span class="kc">False</span>
@@ -520,23 +524,23 @@
 <div class="viewcode-block" id="FilesModel"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.files.FilesModel">[docs]</a><span class="k">class</span> <span class="nc">FilesModel</span><span class="p">(</span><span class="n">basemodel</span><span class="o">.</span><span class="n">BaseModel</span><span class="p">):</span>
     <span class="sd">"""Model used to list files in an asset.</span>
 
-<span class="sd">    The model will load files from one task folder at any given time. The</span>
-<span class="sd">    current task folder can be retrieved by :meth:`task()`. Switching</span>
-<span class="sd">    tasks is done via emitting the :attr:`taskFolderChanged` signals.</span>
+<span class="sd">    The model will load files from one task folder at any given time. The current</span>
+<span class="sd">    task folder can be retrieved by :meth:`task()`. Switching tasks is done via</span>
+<span class="sd">    emitting the :attr:`taskFolderChanged` signals.</span>
 
-<span class="sd">    The model will load the found files into two separate data sets, one</span>
-<span class="sd">    listing files individually, the other groups them into sequences.</span>
-<span class="sd">    See :mod:`bookmarks.common.sequences` for the rules that determine how</span>
-<span class="sd">    sequence items are identified.</span>
+<span class="sd">    The model will load the found files into two separate data sets, one listing</span>
+<span class="sd">    files individually, the other groups them into sequences. See</span>
+<span class="sd">    :mod:`bookmarks.common.sequences` for the rules that determine how sequence</span>
+<span class="sd">    items are identified.</span>
 
-<span class="sd">    Switching between `FileItems` and `SequenceItems` is done by emitting</span>
-<span class="sd">    the :attr:`dataTypeChanged` signal.</span>
+<span class="sd">    Switching between `FileItems` and `SequenceItems` is done by emitting the</span>
+<span class="sd">    :attr:`dataTypeChanged` signal.</span>
 
 <span class="sd">    Note:</span>
 
-<span class="sd">        The model won't necessarily load all files it encounters. If the parent bookmark</span>
-<span class="sd">        has a valid asset config set, certain file extension might be excluded.</span>
-<span class="sd">        See the :mod:`bookmarks.asset_config.asset_config` for details.</span>
+<span class="sd">        The model won't necessarily load all files it encounters. If the parent</span>
+<span class="sd">        bookmark item has a valid token config set, certain file extension might be</span>
+<span class="sd">        excluded. See the :mod:`bookmarks.tokens.tokens` for details.</span>
 
 <span class="sd">    """</span>
     <span class="n">queues</span> <span class="o">=</span> <span class="p">(</span><span class="n">threads</span><span class="o">.</span><span class="n">FileInfo</span><span class="p">,</span> <span class="n">threads</span><span class="o">.</span><span class="n">FileThumbnail</span><span class="p">)</span>
@@ -610,14 +614,15 @@
             <span class="k">return</span>
         <span class="n">_dirs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_source_path</span><span class="p">)</span>
 
-        <span class="c1"># Let' get the asset config instance to check what extensions are</span>
+        <span class="c1"># Let's get the token config instance to check what extensions are</span>
         <span class="c1"># currently allowed to be displayed in the task folder</span>
-        <span class="n">config</span> <span class="o">=</span> <span class="n">asset_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">tokens</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
         <span class="n">is_valid_task</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">check_task</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">is_valid_task</span><span class="p">:</span>
             <span class="n">valid_extensions</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get_task_extensions</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">valid_extensions</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">valid_extensions</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get_extensions</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">AllFormat</span><span class="p">)</span>
+
         <span class="n">disable_filter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">disable_filter</span><span class="p">()</span>
 
         <span class="n">nth</span> <span class="o">=</span> <span class="mi">987</span>
@@ -654,9 +659,9 @@
             <span class="n">_dirs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_dir</span><span class="p">)</span>
 
             <span class="c1"># We'll check against the current file extension against the allowed</span>
-            <span class="c1"># extensions. If the task folder is not defined in the asset config,</span>
+            <span class="c1"># extensions. If the task folder is not defined in the token config,</span>
             <span class="c1"># we'll allow all extensions</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">disable_filter</span> <span class="ow">and</span> <span class="n">is_valid_task</span> <span class="ow">and</span> <span class="n">ext</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_extensions</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">disable_filter</span> <span class="ow">and</span> <span class="n">ext</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_extensions</span><span class="p">:</span>
                 <span class="k">continue</span>
 
             <span class="c1"># Progress bar</span>
@@ -813,7 +818,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">set_refresh_needed</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FilesModel.disable_filter"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.files.FilesModel.disable_filter">[docs]</a>    <span class="k">def</span> <span class="nf">disable_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""Overrides the asset config and disables file filters."""</span>
+        <span class="sd">"""Overrides the token config and disables file filters."""</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="FilesModel.source_path"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.files.FilesModel.source_path">[docs]</a>    <span class="k">def</span> <span class="nf">source_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

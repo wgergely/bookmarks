@@ -166,14 +166,14 @@ def export_set_to_ass(set_name, set_members, frame=True):
         query=True, currentRenderLayer=True)
     ext = 'ass'
 
-    exportdir = base.DEFAULT_CACHE_DIR.format(
-        exportdir=base.get_export_dir(),
+    export_dir = base.DEFAULT_CACHE_DIR.format(
+        export_dir=base.get_export_dir(),
         ext=base.get_export_subdir(ext)
     )
 
     file_path = base.CACHE_LAYER_PATH.format(
         workspace=cmds.workspace(q=True, fn=True),
-        exportdir=exportdir,
+        export_dir=export_dir,
         set=set_name,
         layer=layer,
         ext=ext
@@ -283,14 +283,14 @@ def export_set_to_abc(set_name, set_members, frame=False):
     set_name = re.sub(r'[0-9]*$', '', set_name)
     ext = 'abc'
 
-    exportdir = base.DEFAULT_CACHE_DIR.format(
-        exportdir=base.get_export_dir(),
+    export_dir = base.DEFAULT_CACHE_DIR.format(
+        export_dir=base.get_export_dir(),
         ext=base.get_export_subdir(ext)
     )
 
     file_path = base.CACHE_PATH.format(
         workspace=cmds.workspace(q=True, fn=True),
-        exportdir=exportdir,
+        export_dir=export_dir,
         set=set_name,
         ext=ext
     )
@@ -385,14 +385,14 @@ def export_set_to_obj(set_name, set_members, frame=False):
     set_name = re.sub(r'[0-9]*$', '', set_name)
     ext = 'obj'
 
-    exportdir = base.DEFAULT_CACHE_DIR.format(
-        exportdir=base.get_export_dir(),
+    export_dir = base.DEFAULT_CACHE_DIR.format(
+        export_dir=base.get_export_dir(),
         ext=base.get_export_subdir(ext)
     )
 
     file_path = base.CACHE_PATH.format(
         workspace=cmds.workspace(q=True, fn=True),
-        exportdir=exportdir,
+        export_dir=export_dir,
         set=set_name,
         ext=ext
     )

@@ -8,6 +8,7 @@
         <title>bookmarks - Bookmarks 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=7f0192ddeb2adecfbaa87ffbcf67d16358b30bc1" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/searchbox.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=0af69da206d614734f649b27d4cdc2dd6c31f41d" />
     
     
@@ -172,8 +173,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../bookmarks.html">Introduction</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../api/common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/main.html">bookmarks.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/database.html">database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/lists.html">lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/tokens.html">tokens</a></li>
 </ul>
 </li>
 </ul>
@@ -204,21 +208,22 @@
         <article role="main">
           <h1>Source code for bookmarks</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">"""Bookmarks is a lightweight asset manager designed to browse project content of animation, VFX and film</span>
-<span class="sd">projects.</span>
+<span class="sd">"""Bookmarks is a lightweight asset manager designed to browse project content of</span>
+<span class="sd">animation, VFX and film projects.</span>
 
 
 <span class="sd">Features</span>
 <span class="sd">--------</span>
 
-<span class="sd">To provide an overview, Bookmarks displays content as separate ``bookmark``, ``asset`` and ``file`` items.</span>
-<span class="sd">These items can be configured to link with ``ShotGrid`` entities or set up with properties, like frame-rate,</span>
-<span class="sd">resolution, and custom urls. These can be used, for instance, to quickly configure scenes in host</span>
-<span class="sd">applications, such as Maya.</span>
+<span class="sd">To provide an overview, Bookmarks displays content as separate ``bookmark``,</span>
+<span class="sd">``asset`` and ``file`` items. These items can be configured to link with</span>
+<span class="sd">``ShotGrid`` entities or set up with properties, like frame-rate, resolution,</span>
+<span class="sd">and custom urls. These can be used, for instance, to quickly configure scenes in</span>
+<span class="sd">host applications, such as Maya.</span>
 
-<span class="sd">It utilises the brilliant OpenImageIO library to generate previews of image files. It also provides a</span>
-<span class="sd">simple interface to create job and asset items using on zip template files, and various tools to annotate</span>
-<span class="sd">and filter items.</span>
+<span class="sd">Bookmarks provides a simple tools to create job and asset items using on zipped</span>
+<span class="sd">templates, and options to annotate and filter items. It can also preview</span>
+<span class="sd">images files thanks to OpenImageIO</span>
 
 
 <span class="sd">Installation</span>
@@ -226,9 +231,9 @@
 
 <span class="sd">Download the latest release from https://github.com/wgergely/bookmarks/releases.</span>
 
-<span class="sd">Whilst the code base should be compatible  with most systems, Windows is the only supported platform.</span>
-<span class="sd">If you'd like to try Bookmarks on another system, you'll have to make sure all the requirements</span>
-<span class="sd">are built and available:</span>
+<span class="sd">Whilst the code base should be compatible  with most systems, Windows is the only</span>
+<span class="sd">supported platform at the moment. If you'd like to try Bookmarks on another</span>
+<span class="sd">system, you'll have to make sure all the requirements are built and available:</span>
 
 <span class="sd">* ``Python3``: Tested with 3.7 and 3.9.</span>
 <span class="sd">* ``PySide2``: Tested with Qt 5.15.2. https://pypi.org/project/PySide2</span>
@@ -239,30 +244,6 @@
 <span class="sd">* ``shotgun_api3``: https://github.com/shotgunsoftware/python-api</span>
 <span class="sd">* ``alembic``: Alembic's Python library. https://github.com/alembic/alembic</span>
 
-
-<span class="sd">Running Bookmarks</span>
-<span class="sd">-----------------</span>
-
-<span class="sd">If you downloaded the installer, you can run Bookmarks after installation as a standalone application.</span>
-<span class="sd">This will also install the Maya plugin and set the required environment values.</span>
-
-<span class="sd">To start Bookmarks manually, it has to be initialized in ``standalone`` or ``embedded`` mode. To start the</span>
-<span class="sd">``standalone`` app, simply call :func:`.exec_`:</span>
-
-<span class="sd">.. code-block:: python</span>
-
-<span class="sd">    import bookmarks</span>
-<span class="sd">    bookmarks.exec_()</span>
-
-
-<span class="sd">To run it from a host application, you'll have to first initialize in ``EmbeddedMode``:</span>
-
-<span class="sd">.. code-block:: python</span>
-
-<span class="sd">    from bookmarks import common</span>
-<span class="sd">    common.initialize(common.EmbeddedMode)</span>
-
-
 <span class="sd">"""</span>
 <span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">import</span> <span class="nn">platform</span>
@@ -270,16 +251,16 @@
 
 <span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
 
-
 <span class="n">__author__</span> <span class="o">=</span> <span class="s1">'Gergely Wootsch'</span>
 <span class="n">__website__</span> <span class="o">=</span> <span class="s1">'https://github.com/wgergely/bookmarks'</span>
 <span class="n">__email__</span> <span class="o">=</span> <span class="s1">'hello@gergely-wootsch.com'</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s1">'0.5.0'</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Copyright (C) 2021 </span><span class="si">{</span><span class="n">__author__</span><span class="si">}</span><span class="s1">'</span>
 
-<span class="c1"># Python 2 support has been dropped and the code base only supports Python 3.</span>
-<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'Bookmarks requires Python 3.6.0 or later.'</span><span class="p">)</span>
+
+<span class="c1"># Python 2 is not supported</span>
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">7</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'Bookmarks requires Python 3.7.0 or later.'</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">info</span><span class="p">():</span>
@@ -357,5 +338,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/scripts/furo.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/0.6.0/lunr.min.js"></script>
+    <script src="../_static/js/searchbox.js"></script>
     </body>
 </html>

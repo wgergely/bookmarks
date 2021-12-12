@@ -177,6 +177,8 @@
 <li class="toctree-l2"><a class="reference internal" href="api/images.html">images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/lists.html">lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/tokens.html">tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/property_editor.html">property_editor</a></li>
 </ul>
 </li>
 </ul>
@@ -209,24 +211,25 @@
 <h1>Welcome to Bookmarks!<a class="headerlink" href="#welcome-to-bookmarks" title="Permalink to this headline">¶</a></h1>
 <section id="module-bookmarks">
 <span id="introduction"></span><h2>Introduction<a class="headerlink" href="#module-bookmarks" title="Permalink to this headline">¶</a></h2>
-<p>Bookmarks is a lightweight asset manager designed to browse project content of animation, VFX and film
-projects.</p>
+<p>Bookmarks is a lightweight asset manager designed to browse project content of
+animation, VFX and film projects.</p>
 <section id="features">
 <h3>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h3>
-<p>To provide an overview, Bookmarks displays content as separate <code class="docutils literal notranslate"><span class="pre">bookmark</span></code>, <code class="docutils literal notranslate"><span class="pre">asset</span></code> and <code class="docutils literal notranslate"><span class="pre">file</span></code> items.
-These items can be configured to link with <code class="docutils literal notranslate"><span class="pre">ShotGrid</span></code> entities or set up with properties, like frame-rate,
-resolution, and custom urls. These can be used, for instance, to quickly configure scenes in host
-applications, such as Maya.</p>
-<p>It utilises the brilliant OpenImageIO library to generate previews of image files. It also provides a
-simple interface to create job and asset items using on zip template files, and various tools to annotate
-and filter items.</p>
+<p>To provide an overview, Bookmarks displays content as separate <code class="docutils literal notranslate"><span class="pre">bookmark</span></code>,
+<code class="docutils literal notranslate"><span class="pre">asset</span></code> and <code class="docutils literal notranslate"><span class="pre">file</span></code> items. These items can be configured to link with
+<code class="docutils literal notranslate"><span class="pre">ShotGrid</span></code> entities or set up with properties, like frame-rate, resolution,
+and custom urls. These can be used, for instance, to quickly configure scenes in
+host applications, such as Maya.</p>
+<p>Bookmarks provides a simple tools to create job and asset items using on zipped
+templates, and options to annotate and filter items. It can also preview
+images files thanks to OpenImageIO</p>
 </section>
 <section id="installation">
 <h3>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h3>
 <p>Download the latest release from <a class="reference external" href="https://github.com/wgergely/bookmarks/releases">https://github.com/wgergely/bookmarks/releases</a>.</p>
-<p>Whilst the code base should be compatible  with most systems, Windows is the only supported platform.
-If you’d like to try Bookmarks on another system, you’ll have to make sure all the requirements
-are built and available:</p>
+<p>Whilst the code base should be compatible  with most systems, Windows is the only
+supported platform at the moment. If you’d like to try Bookmarks on another
+system, you’ll have to make sure all the requirements are built and available:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">Python3</span></code>: Tested with 3.7 and 3.9.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">PySide2</span></code>: Tested with Qt 5.15.2. <a class="reference external" href="https://pypi.org/project/PySide2">https://pypi.org/project/PySide2</a></p></li>
@@ -238,28 +241,11 @@ are built and available:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">alembic</span></code>: Alembic’s Python library. <a class="reference external" href="https://github.com/alembic/alembic">https://github.com/alembic/alembic</a></p></li>
 </ul>
 </section>
-<section id="running-bookmarks">
-<h3>Running Bookmarks<a class="headerlink" href="#running-bookmarks" title="Permalink to this headline">¶</a></h3>
-<p>If you downloaded the installer, you can run Bookmarks after installation as a standalone application.
-This will also install the Maya plugin and set the required environment values.</p>
-<p>To start Bookmarks manually, it has to be initialized in <code class="docutils literal notranslate"><span class="pre">standalone</span></code> or <code class="docutils literal notranslate"><span class="pre">embedded</span></code> mode. To start the
-<code class="docutils literal notranslate"><span class="pre">standalone</span></code> app, simply call <a class="reference internal" href="api/main.html#bookmarks.exec_" title="bookmarks.exec_"><code class="xref py py-func docutils literal notranslate"><span class="pre">exec_()</span></code></a>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">bookmarks</span>
-<span class="n">bookmarks</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>To run it from a host application, you’ll have to first initialize in <code class="docutils literal notranslate"><span class="pre">EmbeddedMode</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bookmarks</span> <span class="kn">import</span> <span class="n">common</span>
-<span class="n">common</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">EmbeddedMode</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="bookmarks.html">Introduction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="bookmarks.html#features">Features</a></li>
 <li class="toctree-l2"><a class="reference internal" href="bookmarks.html#installation">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="bookmarks.html#running-bookmarks">Running Bookmarks</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Python Modules Documentation</a><ul>
@@ -293,6 +279,16 @@ This will also install the Maya plugin and set the required environment values.<
 <li class="toctree-l3"><a class="reference internal" href="api/lists.html#module-bookmarks.lists.files">lists.files</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/lists.html#module-bookmarks.lists.favourites">lists.favourites</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/lists.html#module-bookmarks.lists.tasks">lists.tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/tokens.html">tokens</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/tokens.html#tokens-tokens">tokens.tokens</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/tokens.html#module-bookmarks.tokens.tokens_editor">tokens.tokens_editor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/property_editor.html">property_editor</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/property_editor.html#property-editor-base">property_editor.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/property_editor.html#property-editor-base-widgets">property_editor.base_widgets</a></li>
 </ul>
 </li>
 </ul>
@@ -355,7 +351,6 @@ This will also install the Maya plugin and set the required environment values.<
 <li><a class="reference internal" href="#module-bookmarks">Introduction</a><ul>
 <li><a class="reference internal" href="#features">Features</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
-<li><a class="reference internal" href="#running-bookmarks">Running Bookmarks</a></li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 </li>

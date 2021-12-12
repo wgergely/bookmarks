@@ -1,19 +1,20 @@
 # -*- coding: utf-8 -*-
-"""Bookmarks is a lightweight asset manager designed to browse project content of animation, VFX and film
-projects.
+"""Bookmarks is a lightweight asset manager designed to browse project content of
+animation, VFX and film projects.
 
 
 Features
 --------
 
-To provide an overview, Bookmarks displays content as separate ``bookmark``, ``asset`` and ``file`` items.
-These items can be configured to link with ``ShotGrid`` entities or set up with properties, like frame-rate,
-resolution, and custom urls. These can be used, for instance, to quickly configure scenes in host
-applications, such as Maya.
+To provide an overview, Bookmarks displays content as separate ``bookmark``,
+``asset`` and ``file`` items. These items can be configured to link with
+``ShotGrid`` entities or set up with properties, like frame-rate, resolution,
+and custom urls. These can be used, for instance, to quickly configure scenes in
+host applications, such as Maya.
 
-It utilises the brilliant OpenImageIO library to generate previews of image files. It also provides a
-simple interface to create job and asset items using on zip template files, and various tools to annotate
-and filter items.
+Bookmarks provides a simple tools to create job and asset items using on zipped
+templates, and options to annotate and filter items. It can also preview
+images files thanks to OpenImageIO
 
 
 Installation
@@ -21,9 +22,9 @@ Installation
 
 Download the latest release from https://github.com/wgergely/bookmarks/releases.
 
-Whilst the code base should be compatible  with most systems, Windows is the only supported platform.
-If you'd like to try Bookmarks on another system, you'll have to make sure all the requirements
-are built and available:
+Whilst the code base should be compatible  with most systems, Windows is the only
+supported platform at the moment. If you'd like to try Bookmarks on another
+system, you'll have to make sure all the requirements are built and available:
 
 * ``Python3``: Tested with 3.7 and 3.9.
 * ``PySide2``: Tested with Qt 5.15.2. https://pypi.org/project/PySide2
@@ -34,30 +35,6 @@ are built and available:
 * ``shotgun_api3``: https://github.com/shotgunsoftware/python-api
 * ``alembic``: Alembic's Python library. https://github.com/alembic/alembic
 
-
-Running Bookmarks
------------------
-
-If you downloaded the installer, you can run Bookmarks after installation as a standalone application.
-This will also install the Maya plugin and set the required environment values.
-
-To start Bookmarks manually, it has to be initialized in ``standalone`` or ``embedded`` mode. To start the
-``standalone`` app, simply call :func:`.exec_`:
-
-.. code-block:: python
-
-    import bookmarks
-    bookmarks.exec_()
-
-
-To run it from a host application, you'll have to first initialize in ``EmbeddedMode``:
-
-.. code-block:: python
-
-    from bookmarks import common
-    common.initialize(common.EmbeddedMode)
-
-
 """
 import importlib
 import platform
@@ -65,16 +42,16 @@ import sys
 
 from PySide2 import QtWidgets
 
-
 __author__ = 'Gergely Wootsch'
 __website__ = 'https://github.com/wgergely/bookmarks'
 __email__ = 'hello@gergely-wootsch.com'
 __version__ = '0.5.0'
 __copyright__ = f'Copyright (C) 2021 {__author__}'
 
-# Python 2 support has been dropped and the code base only supports Python 3.
-if sys.version_info[0] < 3 and sys.version_info[1] < 6:
-    raise RuntimeError('Bookmarks requires Python 3.6.0 or later.')
+
+# Python 2 is not supported
+if sys.version_info[0] < 3 and sys.version_info[1] < 7:
+    raise RuntimeError('Bookmarks requires Python 3.7.0 or later.')
 
 
 def info():

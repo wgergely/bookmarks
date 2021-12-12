@@ -1,50 +1,40 @@
 # -*- coding: utf-8 -*-
-"""The module contains the definition of `FileBasePropertyEditor`, the main
-widget used by Bookmarks to create versioned template files.
+"""The module contains the definition of :class:`FileSaverWidget`, the main widget
+used by Bookmarks to create versioned template files.
 
 The suggested save destination will be partially dependent on the extension
-selected, the current asset config values as well as the active bookmark and
-asset items.
+specified, the current token config values as well as the active bookmark and asset
+items.
 
-File Name
----------
+The final file name is generated from a filename template. The editor widgets
+defined in `file_saver_widgets.py` are used to edit the values needed to expand
+the tokens of in the selected file name template.
 
-    The final file name is generated from a filename template. The editor
-    widgets defined in `file_editor_widgets.py` are used to edit the values
-    needed to expand the tokens of in the selected file name template.
+See the `tokens.py` and `bookmark_properties.py` modules for more information.
 
-    See the `asset_config.py` and `bookmark_editor.py` modules for
-    more information.
+.. code-block:: python
 
-
-Example
--------
-
-    .. code-block:: python
-
-            editor = FileBasePropertyEditor(
-                server,
-                job,
-                root,
-                asset=asset,
-                extension='fbx'
-            ).open()
+    editor = FileSaverWidget(
+        server,
+        job,
+        root,
+        asset=asset,
+        extension='fbx'
+    ).open()
 
 """
-import re
 import os
+import re
 
-from PySide2 import QtWidgets, QtGui, QtCore
+from PySide2 import QtWidgets, QtCore
 
-from .. import ui
+from . import file_saver_widgets
+from .. import actions
 from .. import common
 from .. import database
-from .. import actions
-
-from . import base
-from . import file_editor_widgets
-from ..asset_config import asset_config
-
+from .. import ui
+from ..editor import base
+from ..tokens import tokens
 
 instance = None
 
@@ -61,11 +51,14 @@ def close():
     instance = None
 
 
-def show(server, job, root, asset, extension=None, file=None, create_file=True, increment=False):
+def show(
+        server, job, root, asset, extension=None, file=None, create_file=True,
+        increment=False
+):
     global instance
 
     close()
-    instance = FileBasePropertyEditor(
+    instance = FileSaverWidget(
         server,
         job,
         root,
@@ -88,7 +81,7 @@ SETTING_KEYS = (
     'template'
 )
 
-INActiveSectionCacheKeys = (
+INACTIVE_KEYS = (
     'bookmark',
     'asset',
     'task',
@@ -99,7 +92,6 @@ INActiveSectionCacheKeys = (
     'user',
     'template',
 )
-
 
 SECTIONS = {
     0: {
@@ -112,7 +104,7 @@ SECTIONS = {
                     'name': 'Bookmark',
                     'key': 'bookmark',
                     'validator': None,
-                    'widget': file_editor_widgets.BookmarkComboBox,
+                    'widget': file_saver_widgets.BookmarkComboBox,
                     'placeholder': None,
                     'description': 'The current bookmark item.',
                 },
@@ -120,7 +112,7 @@ SECTIONS = {
                     'name': 'Asset',
                     'key': 'asset',
                     'validator': None,
-                    'widget': file_editor_widgets.AssetComboBox,
+                    'widget': file_saver_widgets.AssetComboBox,
                     'placeholder': None,
                     'description': 'The current asset item.',
                 },
@@ -128,7 +120,7 @@ SECTIONS = {
                     'name': 'Task',
                     'key': 'task',
                     'validator': None,
-                    'widget': file_editor_widgets.TaskComboBox,
+                    'widget': file_saver_widgets.TaskComboBox,
                     'placeholder': None,
                     'description': 'The current task item.',
                     'button': 'Pick'
@@ -141,7 +133,9 @@ SECTIONS = {
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'A short description, eg. \'Compositing files\'',
-                    'description': 'A short description of the file\'s contents.\nIndicate significant changes and notes here.',
+                    'description': 'A short description of the file\'s '
+                                   'contents.\nIndicate significant changes and '
+                                   'notes here.',
                 },
             },
             2: {
@@ -151,7 +145,8 @@ SECTIONS = {
                     'validator': base.textvalidator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Prefix not yet set!',
-                    'description': 'A short prefix used to identify the job eg.\'MYB\'.',
+                    'description': 'A short prefix used to identify the job '
+                                   'eg.\'MYB\'.',
                     'button': 'Edit'
                 },
                 1: {
@@ -160,7 +155,8 @@ SECTIONS = {
                     'validator': base.textvalidator,
                     'widget': ui.LineEdit,
                     'placeholder': 'The element being saved, eg. \'CastleInterior\'',
-                    'description': 'The name of the element being saved. Eg., \'ForegroundTower\', or \'BackgroundElements\'',
+                    'description': 'The name of the element being saved. Eg., '
+                                   '\'ForegroundTower\', or \'BackgroundElements\'',
                 },
                 2: {
                     'name': 'Version',
@@ -168,7 +164,8 @@ SECTIONS = {
                     'validator': base.versionvalidator,
                     'widget': ui.LineEdit,
                     'placeholder': 'A version number, eg. \'v001\'',
-                    'description': 'A version number with, or without, a preceeding \'v\'. Eg. \'v001\'.',
+                    'description': 'A version number with, or without, '
+                                   'a preceeding \'v\'. Eg. \'v001\'.',
                     'button': '+',
                     'button2': '-',
                 },
@@ -178,15 +175,17 @@ SECTIONS = {
                     'validator': base.textvalidator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Your name, eg. \'JohnDoe\'',
-                    'description': 'The name of the current user, eg. \'JohnDoe\', or \'JD\'',
+                    'description': 'The name of the current user, eg. \'JohnDoe\','
+                                   ' or \'JD\'',
                 },
                 4: {
                     'name': 'Format',
                     'key': 'extension',
                     'validator': None,
-                    'widget': file_editor_widgets.ExtensionComboBox,
+                    'widget': file_saver_widgets.ExtensionComboBox,
                     'placeholder': 'File extension, eg. \'exr\'',
-                    'description': 'A file extension, without the leading dot. Eg. \'ma\'',
+                    'description': 'A file extension, without the leading dot. Eg.'
+                                   ' \'ma\'',
                 },
             },
             3: {
@@ -194,9 +193,12 @@ SECTIONS = {
                     'name': 'Template',
                     'key': 'template',
                     'validator': base.textvalidator,
-                    'widget': file_editor_widgets.TemplateComboBox,
+                    'widget': file_saver_widgets.TemplateComboBox,
                     'placeholder': 'Custom prefix, eg. \'MYB\'',
-                    'description': 'A short name of the bookmark (or job) used when saving files.\n\nEg. \'MYB_sh0010_anim_v001.ma\' where \'MYB\' is the prefix specified here.',
+                    'description': 'A short name of the bookmark (or job) used '
+                                   'when saving files.\n\nEg. '
+                                   '\'MYB_sh0010_anim_v001.ma\' where \'MYB\' is '
+                                   'the prefix specified here.',
                     'button': 'Edit'
                 },
             },
@@ -217,12 +219,15 @@ SECTIONS = {
 }
 
 
-class FileBasePropertyEditor(base.BasePropertyEditor):
+class FileSaverWidget(base.BasePropertyEditor):
     """The main widget used to create template files.
 
     """
 
-    def __init__(self, server, job, root, asset, extension=None, file=None, create_file=True, increment=False, parent=None):
+    def __init__(
+            self, server, job, root, asset, extension=None, file=None,
+            create_file=True, increment=False, parent=None
+    ):
         super().__init__(
             SECTIONS,
             server,
@@ -278,10 +283,11 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
                 # Te file exists and we requested an incremented version number
                 if self._increment and file_info.exists():
                     v = self.increment_version(
-                        v, self.parent_folder(), name, max, 1)
+                        v, self.parent_folder(), name, max, 1
+                    )
                     self.version_editor.setText(v)
                     file = seq.group(1) + v + seq.group(3) + \
-                        '.' + seq.group(4)
+                           '.' + seq.group(4)
             else:
                 self.version_editor.setText('')
 
@@ -294,7 +300,7 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
         self.thumbnail_editor.source = file
         self.thumbnail_editor.update()
 
-        for k in INActiveSectionCacheKeys:
+        for k in INACTIVE_KEYS:
             if not hasattr(self, k + '_editor'):
                 continue
             editor = getattr(self, k + '_editor')
@@ -304,7 +310,7 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
         self.filename_editor.setText(QtCore.QFileInfo(file).fileName())
 
     def _connect_signals(self):
-        super(FileBasePropertyEditor, self)._connect_signals()
+        super(FileSaverWidget, self)._connect_signals()
         self._connect_settings_save_signals(SETTING_KEYS)
 
     def name(self):
@@ -320,16 +326,16 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
         asset_root = '/'.join((self.server, self.job, self.root, self.asset))
 
         template = self.template_editor.currentData(QtCore.Qt.UserRole)
-        config = asset_config.get(self.server, self.job, self.root)
+        config = tokens.get(self.server, self.job, self.root)
 
         def _strip(s):
             return (
                 s.
-                strip('-').
-                strip('_').
-                strip().
-                replace('__', '_').
-                replace('_.', '.')
+                    strip('-').
+                    strip('_').
+                    strip().
+                    replace('__', '_').
+                    replace('_.', '.')
             )
 
         def _get(k):
@@ -377,7 +383,11 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
         )
         v = _strip(v)
         v = v.replace(
-            '{invalid_token}', '<span style="color:{}">{{invalid_token}}</span>'.format(common.rgb(common.color(common.RedColor))))
+            '{invalid_token}',
+            '<span style="color:{}">{{invalid_token}}</span>'.format(
+                common.rgb(common.color(common.RedColor))
+            )
+        )
 
         self.filename_editor.setText(v)
 
@@ -393,10 +403,12 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
 
         if self._filelist[self.db_source()]:
             self.filename_editor.setStyleSheet(
-                'color:{};'.format(common.rgb(common.color(common.RedColor))))
+                'color:{};'.format(common.rgb(common.color(common.RedColor)))
+            )
         else:
             self.filename_editor.setStyleSheet(
-                'color:{};'.format(common.rgb(common.color(common.GreenColor))))
+                'color:{};'.format(common.rgb(common.color(common.GreenColor)))
+            )
 
     def parent_folder(self):
         """The folder where the new file is about to be saved.
@@ -498,28 +510,30 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
         if QtCore.QFileInfo(self.db_source()).exists():
             v = self.version_editor.text()
             v = self.increment_version(
-                v, self.parent_folder(), self.name(), max, 1)
+                v, self.parent_folder(), self.name(), max, 1
+            )
             self.version_editor.setText(v)
 
         self.update_timer.start()
 
     @QtCore.Slot(str)
     def update_tasks(self, ext):
-        """Update the available task folder options based on the given file extension.
+        """Update the available task folder options based on the given file
+        extension.
 
         """
         ext = ext.lower()
-        config = asset_config.get(self.server, self.job, self.root)
+        config = tokens.get(self.server, self.job, self.root)
 
-        if ext in config.get_extensions(asset_config.CacheFormat):
-            self.task_editor.set_mode(file_editor_widgets.CacheMode)
-        elif ext in config.get_extensions(asset_config.SceneFormat):
-            self.task_editor.set_mode(file_editor_widgets.SceneMode)
+        if ext in config.get_extensions(tokens.CacheFormat):
+            self.task_editor.set_mode(file_saver_widgets.CacheMode)
+        elif ext in config.get_extensions(tokens.SceneFormat):
+            self.task_editor.set_mode(file_saver_widgets.SceneMode)
         else:
-            self.task_editor.set_mode(file_editor_widgets.NoMode)
+            self.task_editor.set_mode(file_saver_widgets.NoMode)
 
     def exec_(self):
-        result = super(FileBasePropertyEditor, self).exec_()
+        result = super(FileSaverWidget, self).exec_()
         if result == QtWidgets.QDialog.Rejected:
             return QtWidgets.QDialog.Rejected
         if result == QtWidgets.QDialog.Accepted:
@@ -567,7 +581,10 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
         file_info = QtCore.QFileInfo(self.db_source())
         if file_info.exists():
             raise RuntimeError(
-                '{} already exists. Try incrementing the version number.'.format(name))
+                '{} already exists. Try incrementing the version number.'.format(
+                    name
+                )
+            )
 
         path = file_info.absoluteFilePath()
         open(os.path.normpath(path), 'a').close()
@@ -587,7 +604,9 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
             parent=self,
             caption='Select a folder...',
             dir=source,
-            options=QtWidgets.QFileDialog.ShowDirsOnly | QtWidgets.QFileDialog.DontResolveSymlinks | QtWidgets.QFileDialog.DontUseCustomDirectoryIcons
+            options=QtWidgets.QFileDialog.ShowDirsOnly |
+                    QtWidgets.QFileDialog.DontResolveSymlinks |
+                    QtWidgets.QFileDialog.DontUseCustomDirectoryIcons
         )
         if not _dir:
             return
@@ -637,9 +656,12 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
             mbox.setIcon(QtWidgets.QMessageBox.Warning)
             mbox.setText('Destination folder does not exist.')
             mbox.setInformativeText(
-                'The destination folder does not yet exist. Do you want to create it now?')
+                'The destination folder does not yet exist. Do you want to create '
+                'it now?'
+            )
             button = mbox.addButton(
-                'Create folder', QtWidgets.QMessageBox.AcceptRole)
+                'Create folder', QtWidgets.QMessageBox.AcceptRole
+            )
             mbox.setDefaultButton(button)
             mbox.addButton('Cancel', QtWidgets.QMessageBox.RejectRole)
 
@@ -647,14 +669,15 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
                 return
             if not _dir.mkpath('.'):
                 ui.ErrorBox(
-                    'Could not create destination folder.').open()
+                    'Could not create destination folder.'
+                ).open()
                 return
 
         actions.reveal(_dir.path())
 
     @QtCore.Slot()
     def prefix_button_clicked(self):
-        editor = file_editor_widgets.PrefixEditor(parent=self)
+        editor = file_saver_widgets.PrefixEditor(parent=self)
         editor.open()
 
     @QtCore.Slot()
@@ -664,7 +687,8 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
         """
         v = self.version_editor.text()
         v = self.increment_version(
-            v, self.parent_folder(), self.name(), max, 1)
+            v, self.parent_folder(), self.name(), max, 1
+        )
         self.version_editor.setText(v)
 
     @QtCore.Slot()
@@ -674,7 +698,8 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
         """
         v = self.version_editor.text()
         v = self.increment_version(
-            v, self.parent_folder(), self.name(), min, -1)
+            v, self.parent_folder(), self.name(), min, -1
+        )
         self.version_editor.setText(v)
 
     def increment_version(self, v, dir, name, func, increment):
@@ -698,7 +723,8 @@ class FileBasePropertyEditor(base.BasePropertyEditor):
         _dir = QtCore.QDir(dir)
 
         if not _dir.exists():
-            # We can freely increment the version number as there won't be any conflicts
+            # We can freely increment the version number as there won't be any
+            # conflicts
             n += increment
             if n < 0:
                 n = 0

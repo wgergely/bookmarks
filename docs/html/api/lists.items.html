@@ -504,8 +504,8 @@ the <code class="xref py py-attr docutils literal notranslate"><span class="pre"
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The model won’t necessarily load all file item. If the parent bookmark
-has a valid asset config set, certain file extension might be excluded.
-See the <code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.asset_config.asset_config</span></code> for details.</p>
+has a valid token config set, certain file extension might be excluded.
+See the <code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.tokens.tokens</span></code> for details.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.files.FilesModel.init_data">
@@ -519,7 +519,7 @@ from the file system.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.files.FilesModel.disable_filter">
 <span class="sig-name descname"><span class="pre">disable_filter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/files.html#FilesModel.disable_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.files.FilesModel.disable_filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overrides the asset config and disables file filters.</p>
+<dd><p>Overrides the token config and disables file filters.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.files.FilesModel.source_path">
@@ -774,7 +774,7 @@ changes to the database or the local config file.</p>
 <p>Folders found in an asset’s root are referred to as <cite>task folders</cite>. Bookmarks
 generally expects them to be associated with a task or data-type eg. <code class="docutils literal notranslate"><span class="pre">render</span></code>,
 <code class="docutils literal notranslate"><span class="pre">comp</span></code>, <code class="docutils literal notranslate"><span class="pre">textures</span></code>, etc.</p>
-<p>Some default task-folders are defined by <code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.asset_config.asset_config</span></code>.</p>
+<p>Some default task-folders are defined by <code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.tokens.tokens</span></code>.</p>
 </div>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.lists.tasks.TaskFolderContextMenu">

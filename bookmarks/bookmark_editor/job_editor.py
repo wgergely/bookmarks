@@ -14,7 +14,7 @@ from .. import contextmenu
 from .. import shortcuts
 from .. import templates
 from .. import ui
-from .. property_editor import base
+from .. editor import base
 
 SECTIONS = {
     0: {

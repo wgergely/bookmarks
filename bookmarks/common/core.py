@@ -4,8 +4,8 @@
 
 import functools
 import hashlib
-import inspect
 import os
+import re
 import sys
 import time
 import traceback
@@ -105,21 +105,19 @@ def check_type(value, _type):
     if not common.typecheck_on:
         return
 
-    it = None
-    try:
-        it = iter(_type)
-    except:
-        pass
-
-    if it:
-        if not any(isinstance(value, type(f) if f is None else f) for f in it):
-            _types = ' or '.join([repr(type(f)) for f in _type])
+    if isinstance(_type, tuple):
+        if not any([isinstance(value, type(f) if f is None else f) for f in _type]):
+            _types = '" or "'.join([f.__name__ for f in _type])
             raise TypeError(
-                f'Invalid type. Expected {_types}, got {type(value)}')
+                f'Invalid type. Expected "{_types}", got "{type(value).__name__}"'
+            )
     else:
-        if not isinstance(value, type(_type) if _type is None else _type):
+        _type = type(_type) if _type is None else _type
+        if not isinstance(value, _type):
             raise TypeError(
-                f'Invalid type. Expected {_type}, got {type(value)}')
+                f'Invalid type. Expected "{_type.__name__}", got "'
+                f'{type(value).__name__}"'
+            )
 
 
 @functools.lru_cache(maxsize=4194304)
@@ -184,13 +182,15 @@ def error(func):
 
             # So we can use the method in threads too
             app = QtWidgets.QApplication.instance()
-            if app and QtCore.QThread.currentThread() == QtWidgets.QApplication.instance().thread():
+            if app and QtCore.QThread.currentThread() == \
+                    QtWidgets.QApplication.instance().thread():
                 try:
                     if QtWidgets.QApplication.instance():
                         from .. import ui
                         ui.ErrorBox(info[1].__str__(), limit=1).open()
                     common.signals.showStatusBarMessage.emit(
-                        'An error occured. See log for more details.')
+                        'An error occured. See log for more details.'
+                    )
                 except:
                     pass
             raise
@@ -200,7 +200,8 @@ def error(func):
 
 def debug(func):
     """Function decorator used to log a debug message.
-    No message will be logged, unless :attr:`bookmarks.common.debug_on` is set to True.
+    No message will be logged, unless :attr:`bookmarks.common.debug_on` is set to
+    True.
 
     """
     DEBUG_MESSAGE = '{trace}(): Executed in {time} secs.'
@@ -222,7 +223,7 @@ def debug(func):
             else:
                 name = func.__name__
 
-            trace = [name,]
+            trace = [name, ]
             from .. import log
             log.debug(
                 DEBUG_MESSAGE.format(
@@ -273,9 +274,13 @@ def get_template_file_path(name):
         str: The path to the template file.
 
     """
-    return os.path.normpath(os.path.sep.join((
-        __file__, os.pardir, os.pardir, 'rsc', 'templates', name
-    )))
+    return os.path.normpath(
+        os.path.sep.join(
+            (
+                __file__, os.pardir, os.pardir, 'rsc', 'templates', name
+            )
+        )
+    )
 
 
 def get_path_to_executable(key):
@@ -327,7 +332,8 @@ def pseudo_local_bookmark():
     """
     return (
         QtCore.QStandardPaths.writableLocation(
-            QtCore.QStandardPaths.GenericDataLocation),
+            QtCore.QStandardPaths.GenericDataLocation
+        ),
         common.product,
         'temp',
     )
@@ -341,6 +347,15 @@ def temp_path():
 
     """
     return '/'.join(pseudo_local_bookmark())
+
+
+def get_thread_key(*args):
+    t = repr(QtCore.QThread.currentThread())
+    return '/'.join(args) + t
+
+
+def sort_words(s):
+    return ', '.join(sorted(re.findall(r"[\w']+", s)))
 
 
 class DataDict(dict):

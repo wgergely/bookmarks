@@ -15,7 +15,7 @@ from .. import common
 from .. import contextmenu
 from .. import images
 from .. import log
-from ..asset_config import asset_config
+from ..tokens import tokens
 from ..threads import threads
 
 FILTER_EXTENSIONS = False
@@ -315,23 +315,23 @@ class FilesWidgetContextMenu(contextmenu.BaseContextMenu):
 class FilesModel(basemodel.BaseModel):
     """Model used to list files in an asset.
 
-    The model will load files from one task folder at any given time. The
-    current task folder can be retrieved by :meth:`task()`. Switching
-    tasks is done via emitting the :attr:`taskFolderChanged` signals.
+    The model will load files from one task folder at any given time. The current
+    task folder can be retrieved by :meth:`task()`. Switching tasks is done via
+    emitting the :attr:`taskFolderChanged` signals.
 
-    The model will load the found files into two separate data sets, one
-    listing files individually, the other groups them into sequences.
-    See :mod:`bookmarks.common.sequences` for the rules that determine how
-    sequence items are identified.
+    The model will load the found files into two separate data sets, one listing
+    files individually, the other groups them into sequences. See
+    :mod:`bookmarks.common.sequences` for the rules that determine how sequence
+    items are identified.
 
-    Switching between `FileItems` and `SequenceItems` is done by emitting
-    the :attr:`dataTypeChanged` signal.
+    Switching between `FileItems` and `SequenceItems` is done by emitting the
+    :attr:`dataTypeChanged` signal.
 
     Note:
 
-        The model won't necessarily load all files it encounters. If the parent bookmark
-        has a valid asset config set, certain file extension might be excluded.
-        See the :mod:`bookmarks.asset_config.asset_config` for details.
+        The model won't necessarily load all files it encounters. If the parent
+        bookmark item has a valid token config set, certain file extension might be
+        excluded. See the :mod:`bookmarks.tokens.tokens` for details.
 
     """
     queues = (threads.FileInfo, threads.FileThumbnail)
@@ -405,14 +405,15 @@ class FilesModel(basemodel.BaseModel):
             return
         _dirs.append(_source_path)
 
-        # Let' get the asset config instance to check what extensions are
+        # Let's get the token config instance to check what extensions are
         # currently allowed to be displayed in the task folder
-        config = asset_config.get(*p[0:3])
+        config = tokens.get(*p[0:3])
         is_valid_task = config.check_task(k)
         if is_valid_task:
             valid_extensions = config.get_task_extensions(k)
         else:
-            valid_extensions = None
+            valid_extensions = config.get_extensions(tokens.AllFormat)
+
         disable_filter = self.disable_filter()
 
         nth = 987
@@ -449,9 +450,9 @@ class FilesModel(basemodel.BaseModel):
             _dirs.append(_dir)
 
             # We'll check against the current file extension against the allowed
-            # extensions. If the task folder is not defined in the asset config,
+            # extensions. If the task folder is not defined in the token config,
             # we'll allow all extensions
-            if not disable_filter and is_valid_task and ext not in valid_extensions:
+            if not disable_filter and ext not in valid_extensions:
                 continue
 
             # Progress bar
@@ -608,7 +609,7 @@ class FilesModel(basemodel.BaseModel):
         self.set_refresh_needed(False)
 
     def disable_filter(self):
-        """Overrides the asset config and disables file filters."""
+        """Overrides the token config and disables file filters."""
         return False
 
     def source_path(self):

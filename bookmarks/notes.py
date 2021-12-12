@@ -765,14 +765,14 @@ class TodoEditorWidget(QtWidgets.QDialog):
         self.todoeditors_widget = TodoEditors(parent=self)
         self.setMinimumHeight(common.size(common.HeightRow) * 3.0)
 
-        self.scrollarea = QtWidgets.QScrollArea(parent=self)
-        self.scrollarea.setWidgetResizable(True)
-        self.scrollarea.setWidget(self.todoeditors_widget)
+        self.scroll_area = QtWidgets.QScrollArea(parent=self)
+        self.scroll_area.setWidgetResizable(True)
+        self.scroll_area.setWidget(self.todoeditors_widget)
 
-        self.scrollarea.setAttribute(QtCore.Qt.WA_NoSystemBackground)
-        self.scrollarea.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.scroll_area.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        self.scroll_area.setAttribute(QtCore.Qt.WA_TranslucentBackground)
 
-        self.layout().addWidget(self.scrollarea)
+        self.layout().addWidget(self.scroll_area)
 
     def clear(self):
         for idx in reversed(range(len(list(self.todoeditors_widget.items)))):
@@ -886,7 +886,7 @@ class TodoEditorWidget(QtWidgets.QDialog):
             item = self.todoeditors_widget.items[n]
             editor = item.findChild(TodoItemEditor)
             editor.setFocus()
-            self.scrollarea.ensureWidgetVisible(
+            self.scroll_area.ensureWidgetVisible(
                 editor, ymargin=editor.height())
 
     def key_return(self, ):

@@ -15,8 +15,8 @@ from .. import ui
 from .. import database
 
 from .. import images
-from ..property_editor import base
-from ..asset_config import asset_config
+from ..editor import base
+from ..tokens import tokens
 
 from . import shotgun
 from . import actions as sg_actions
@@ -371,12 +371,12 @@ class PublishWidget(base.BasePropertyEditor):
             return False
         v = self.file_editor.path()
 
-        config = asset_config.get(
+        config = tokens.get(
             common.active(common.ServerKey),
             common.active(common.JobKey),
             common.active(common.RootKey)
         )
-        exts = config.get_extensions(asset_config.SceneFormat)
+        exts = config.get_extensions(tokens.SceneFormat)
         return QtCore.QFileInfo(v).suffix().lower() in exts
 
     @property

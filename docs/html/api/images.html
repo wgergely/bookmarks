@@ -177,6 +177,7 @@
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lists.html">lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tokens.html">tokens</a></li>
 </ul>
 </li>
 </ul>
@@ -342,7 +343,7 @@ the file’s format extension.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>An <cite>ImageBuf</cite> instance or <cite>None</cite> if the file is invalid.</p>
+<dd class="field-even"><p>An <cite>ImageBuf</cite> instance or <cite>None</cite> if the image cannot be read.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ImageBuf</p>
@@ -449,7 +450,7 @@ anyway.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.images.ImageCache.contains">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">contains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hash</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#ImageCache.contains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.ImageCache.contains" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">contains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_hash</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#ImageCache.contains"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.ImageCache.contains" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if the given hash exists in the database.</p>
 </dd></dl>
 <dl class="py method">
@@ -531,10 +532,10 @@ setting the new value. This only applies to Image- and PixmapTypes.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.images.ImageCache.oiio_make_thumbnail">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">oiio_make_thumbnail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nthreads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#ImageCache.oiio_make_thumbnail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.ImageCache.oiio_make_thumbnail" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts <code class="docutils literal notranslate"><span class="pre">source</span></code> image to an sRGB image fitting the bounds of <code class="docutils literal notranslate"><span class="pre">size</span></code> and saves it
-to <code class="docutils literal notranslate"><span class="pre">desination</span></code>.</p>
-<p>If size is <code class="docutils literal notranslate"><span class="pre">-1</span></code>, the image won’t be resized.</p>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">oiio_make_thumbnail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nthreads</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#ImageCache.oiio_make_thumbnail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.ImageCache.oiio_make_thumbnail" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the <cite>source</cite> image to an sRGB image fitting the bounds of <cite>size</cite> and saves it
+to <cite>destination</cite>.</p>
+<p>If size is <cite>-1</cite>, the image won’t be resized.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

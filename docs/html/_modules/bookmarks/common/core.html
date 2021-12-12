@@ -172,8 +172,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../bookmarks.html">Introduction</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">bookmarks.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/database.html">database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/tokens.html">tokens</a></li>
 </ul>
 </li>
 </ul>
@@ -209,8 +212,8 @@
 
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">hashlib</span>
-<span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">time</span>
 <span class="kn">import</span> <span class="nn">traceback</span>
@@ -310,21 +313,19 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">common</span><span class="o">.</span><span class="n">typecheck_on</span><span class="p">:</span>
         <span class="k">return</span>
 
-    <span class="n">it</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">it</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">_type</span><span class="p">)</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="k">pass</span>
-
-    <span class="k">if</span> <span class="n">it</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">it</span><span class="p">):</span>
-            <span class="n">_types</span> <span class="o">=</span> <span class="s1">' or '</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">repr</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">f</span><span class="p">))</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">_type</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_type</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">_type</span><span class="p">]):</span>
+            <span class="n">_types</span> <span class="o">=</span> <span class="s1">'" or "'</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">f</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">_type</span><span class="p">])</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">'Invalid type. Expected </span><span class="si">{</span><span class="n">_types</span><span class="si">}</span><span class="s1">, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+                <span class="sa">f</span><span class="s1">'Invalid type. Expected "</span><span class="si">{</span><span class="n">_types</span><span class="si">}</span><span class="s1">", got "</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">"'</span>
+            <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">_type</span><span class="p">)</span> <span class="k">if</span> <span class="n">_type</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">_type</span><span class="p">):</span>
+        <span class="n">_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">_type</span><span class="p">)</span> <span class="k">if</span> <span class="n">_type</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">_type</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">_type</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">'Invalid type. Expected </span><span class="si">{</span><span class="n">_type</span><span class="si">}</span><span class="s1">, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span></div>
+                <span class="sa">f</span><span class="s1">'Invalid type. Expected "</span><span class="si">{</span><span class="n">_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">", got "'</span>
+                <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">"'</span>
+            <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_hash"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.get_hash">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
@@ -389,13 +390,15 @@
 
             <span class="c1"># So we can use the method in threads too</span>
             <span class="n">app</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">app</span> <span class="ow">and</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QThread</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">thread</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">app</span> <span class="ow">and</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QThread</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span> <span class="o">==</span> \
+                    <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">thread</span><span class="p">():</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">():</span>
                         <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ui</span>
                         <span class="n">ui</span><span class="o">.</span><span class="n">ErrorBox</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="fm">__str__</span><span class="p">(),</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
                     <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">showStatusBarMessage</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span>
-                        <span class="s1">'An error occured. See log for more details.'</span><span class="p">)</span>
+                        <span class="s1">'An error occured. See log for more details.'</span>
+                    <span class="p">)</span>
                 <span class="k">except</span><span class="p">:</span>
                     <span class="k">pass</span>
             <span class="k">raise</span>
@@ -405,7 +408,8 @@
 
 <div class="viewcode-block" id="debug"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.debug">[docs]</a><span class="k">def</span> <span class="nf">debug</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
     <span class="sd">"""Function decorator used to log a debug message.</span>
-<span class="sd">    No message will be logged, unless :attr:`bookmarks.common.debug_on` is set to True.</span>
+<span class="sd">    No message will be logged, unless :attr:`bookmarks.common.debug_on` is set to</span>
+<span class="sd">    True.</span>
 
 <span class="sd">    """</span>
     <span class="n">DEBUG_MESSAGE</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{trace}</span><span class="s1">(): Executed in </span><span class="si">{time}</span><span class="s1"> secs.'</span>
@@ -427,7 +431,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">name</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span>
 
-            <span class="n">trace</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="p">,]</span>
+            <span class="n">trace</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="p">,</span> <span class="p">]</span>
             <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">log</span>
             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                 <span class="n">DEBUG_MESSAGE</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -478,9 +482,13 @@
 <span class="sd">        str: The path to the template file.</span>
 
 <span class="sd">    """</span>
-    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">((</span>
-        <span class="vm">__file__</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">pardir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">pardir</span><span class="p">,</span> <span class="s1">'rsc'</span><span class="p">,</span> <span class="s1">'templates'</span><span class="p">,</span> <span class="n">name</span>
-    <span class="p">)))</span></div>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="vm">__file__</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">pardir</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">pardir</span><span class="p">,</span> <span class="s1">'rsc'</span><span class="p">,</span> <span class="s1">'templates'</span><span class="p">,</span> <span class="n">name</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_path_to_executable"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.get_path_to_executable">[docs]</a><span class="k">def</span> <span class="nf">get_path_to_executable</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
@@ -532,7 +540,8 @@
 <span class="sd">    """</span>
     <span class="k">return</span> <span class="p">(</span>
         <span class="n">QtCore</span><span class="o">.</span><span class="n">QStandardPaths</span><span class="o">.</span><span class="n">writableLocation</span><span class="p">(</span>
-            <span class="n">QtCore</span><span class="o">.</span><span class="n">QStandardPaths</span><span class="o">.</span><span class="n">GenericDataLocation</span><span class="p">),</span>
+            <span class="n">QtCore</span><span class="o">.</span><span class="n">QStandardPaths</span><span class="o">.</span><span class="n">GenericDataLocation</span>
+        <span class="p">),</span>
         <span class="n">common</span><span class="o">.</span><span class="n">product</span><span class="p">,</span>
         <span class="s1">'temp'</span><span class="p">,</span>
     <span class="p">)</span></div>
@@ -546,6 +555,15 @@
 
 <span class="sd">    """</span>
     <span class="k">return</span> <span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pseudo_local_bookmark</span><span class="p">())</span></div>
+
+
+<span class="k">def</span> <span class="nf">get_thread_key</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QThread</span><span class="o">.</span><span class="n">currentThread</span><span class="p">())</span>
+    <span class="k">return</span> <span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">+</span> <span class="n">t</span>
+
+
+<span class="k">def</span> <span class="nf">sort_words</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[\w']+"</span><span class="p">,</span> <span class="n">s</span><span class="p">)))</span>
 
 
 <div class="viewcode-block" id="DataDict"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.DataDict">[docs]</a><span class="k">class</span> <span class="nc">DataDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>

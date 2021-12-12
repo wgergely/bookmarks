@@ -3,15 +3,14 @@
 
 """
 import functools
+import importlib
 
 from PySide2 import QtWidgets, QtCore, QtGui
 
-
-from .. import common
-from .. import ui
-from .. import actions
-from . import base
-
+from . import actions
+from . import common
+from . import ui
+from .editor import base
 
 instance = None
 
@@ -68,7 +67,8 @@ class AboutLabel(QtWidgets.QLabel):
         super().__init__(parent=parent)
         self.setAlignment(QtCore.Qt.AlignCenter)
         self.setStyleSheet(
-            'background-color:{bg};border: {bd}px solid {bc};border-radius:{r}px;color:{c};padding: {r}px {r}px {r}px {r}px;'.format(
+            'background-color:{bg};border: {bd}px solid {bc};border-radius:{'
+            'r}px;color:{c};padding: {r}px {r}px {r}px {r}px;'.format(
                 bg=common.rgb(common.color(common.BackgroundDarkColor)),
                 bd=common.size(common.HeightSeparator),
                 bc=common.rgb(common.color(common.SeparatorColor)),
@@ -79,12 +79,12 @@ class AboutLabel(QtWidgets.QLabel):
         self.init_data()
 
     def init_data(self):
-        import importlib
         mod = importlib.import_module(__name__.split('.', maxsplit=1)[0])
-        self.setText(mod.get_info())
+        self.setText(mod.info())
 
     def mouseReleaseEvent(self, event):
-        QtGui.QDesktopServices.openUrl(common.ABOUT_URL)
+        mod = importlib.import_module(__name__.split('.', maxsplit=1)[0])
+        QtGui.QDesktopServices.openUrl(mod.__website__)
 
 
 class AboutWidget(QtWidgets.QDialog):
@@ -128,13 +128,18 @@ SECTIONS = {
                     'validator': None,
                     'widget': ScaleWidget,
                     'placeholder': '',
-                    'description': 'Scales Bookmark\'s interface by the specified amount.\nUseful for high-dpi displays if the text is too small to read.\n\nTakes effect the next time Bookmarks is launched.',
+                    'description': 'Scales Bookmark\'s interface by the specified '
+                                   'amount.\nUseful for high-dpi displays if the '
+                                   'text is too small to read.\n\nTakes effect the '
+                                   'next time Bookmarks is launched.',
                 },
                 1: {
                     'name': 'Context Menu Icon',
                     'key': common.ShowMenuIconsKey,
                     'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Hide Menu Icons'),
+                    'widget': functools.partial(
+                        QtWidgets.QCheckBox, 'Hide Menu Icons'
+                    ),
                     'placeholder': 'Check to hide menu icons',
                     'description': 'Check to hide menu icons',
                 },
@@ -143,16 +148,22 @@ SECTIONS = {
                     'key': common.ShowThumbnailBackgroundKey,
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Show Color'),
-                    'placeholder': 'Check to show a generic thumbnail background color for transparent images',
-                    'description': 'Check to show a generic thumbnail background color for transparent images',
+                    'placeholder': 'Check to show a generic thumbnail background '
+                                   'color for transparent images',
+                    'description': 'Check to show a generic thumbnail background '
+                                   'color for transparent images',
                 },
                 3: {
                     'name': 'Image Thumbnails',
                     'key': common.DontGenerateThumbnailsKey,
                     'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Don\'t Generate Thumbnails'),
-                    'placeholder': 'Check to disable generating thumbnails from image files',
-                    'description': 'Check to disable generating thumbnails from image files',
+                    'widget': functools.partial(
+                        QtWidgets.QCheckBox, 'Don\'t Generate Thumbnails'
+                    ),
+                    'placeholder': 'Check to disable generating thumbnails from '
+                                   'image files',
+                    'description': 'Check to disable generating thumbnails from '
+                                   'image files',
                 },
             },
             1: {
@@ -162,7 +173,8 @@ SECTIONS = {
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'Path to RV, eg. "C:/apps/rv.exe"',
-                    'description': 'Path to the RV executable.\n\nWhen specified, compatible media can be previewed in RV.',
+                    'description': 'Path to the RV executable.\n\nWhen specified, '
+                                   'compatible media can be previewed in RV.',
                     'button': 'Pick',
                     'button2': 'Reveal'
                 },
@@ -172,7 +184,9 @@ SECTIONS = {
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'Path to FFMpeg, eg. "C:/apps/ffmpeg.exe"',
-                    'description': 'Path to the FFMpeg executable.\n\nIf specified, bookmarks can convert images sequences using FFMpeg.',
+                    'description': 'Path to the FFMpeg executable.\n\nIf '
+                                   'specified, bookmarks can convert images '
+                                   'sequences using FFMpeg.',
                     'button': 'Pick',
                     'button2': 'Reveal'
                 },
@@ -191,7 +205,11 @@ SECTIONS = {
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
-                    'description': 'By default, {} always sets the Maya Workspace to the currently active asset item. Check here to disable this behaviour.'.format(common.product),
+                    'description': 'By default, {} always sets the Maya Workspace '
+                                   'to the currently active asset item. Check here '
+                                   'to disable this behaviour.'.format(
+                        common.product
+                    ),
                 },
             },
             1: {
@@ -201,7 +219,10 @@ SECTIONS = {
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
-                    'description': 'Disabled warnings when the\ncurrent Workspace is changed by {}.'.format(common.product),
+                    'description': 'Disabled warnings when the\ncurrent Workspace '
+                                   'is changed by {}.'.format(
+                        common.product
+                    ),
                 },
                 1: {
                     'name': 'Warning on Save',
@@ -209,7 +230,9 @@ SECTIONS = {
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
-                    'description': 'Bookmarks will show a warning when a file is saved outside the current Workspace. Check the box above to disable.',
+                    'description': 'Bookmarks will show a warning when a file is '
+                                   'saved outside the current Workspace. Check the '
+                                   'box above to disable.',
                 },
             },
             2: {
@@ -219,7 +242,9 @@ SECTIONS = {
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
-                    'description': 'When Shotgun RV is available the latest capture will automatically be pushed to RV for viewing. Check the box above to disable.',
+                    'description': 'When Shotgun RV is available the latest '
+                                   'capture will automatically be pushed to RV for '
+                                   'viewing. Check the box above to disable.',
                 },
                 1: {
                     'name': 'Reveal Capture',
@@ -227,7 +252,8 @@ SECTIONS = {
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
-                    'description': 'Check the box above to disable showing captures in the file explorer.',
+                    'description': 'Check the box above to disable showing '
+                                   'captures in the file explorer.',
                 },
                 2: {
                     'name': 'Publish Capture',
@@ -235,7 +261,11 @@ SECTIONS = {
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
-                    'description': 'The latest capture by default will be published into a "Latest" folder with using a generic filename.\nThis can be useful for creating quick edits with RV. Check the box above to disable.',
+                    'description': 'The latest capture by default will be '
+                                   'published into a "Latest" folder with using a '
+                                   'generic filename.\nThis can be useful for '
+                                   'creating quick edits with RV. Check the box '
+                                   'above to disable.',
                 },
             },
         },
@@ -278,13 +308,15 @@ class PreferenceEditor(base.BasePropertyEditor):
             None,
             None,
             db_table=None,
-            fallback_thumb='settings_sm',
+            fallback_thumb='settings',
             hide_thumbnail_editor=True,
             parent=parent
         )
 
         self.debug_editor.stateChanged.connect(self.toggle_debug)
-        getattr(self, f'{common.DontGenerateThumbnailsKey}_editor').stateChanged.connect(actions.generate_thumbnails_changed)
+        getattr(
+            self, f'{common.DontGenerateThumbnailsKey}_editor'
+        ).stateChanged.connect(actions.generate_thumbnails_changed)
 
         self.setWindowTitle('Preferences')
 
@@ -319,12 +351,17 @@ class PreferenceEditor(base.BasePropertyEditor):
                         if v is not None:
                             editor.blockSignals(True)
                             try:
-                                if hasattr(editor, 'setCheckState') and v is not None:
+                                if hasattr(
+                                        editor, 'setCheckState'
+                                ) and v is not None:
                                     editor.setCheckState(
-                                        QtCore.Qt.CheckState(v))
+                                        QtCore.Qt.CheckState(v)
+                                    )
                                 elif hasattr(editor, 'setText') and v is not None:
                                     editor.setText(v)
-                                elif hasattr(editor, 'setCurrentText') and v is not None:
+                                elif hasattr(
+                                        editor, 'setCurrentText'
+                                ) and v is not None:
                                     editor.setCurrentText(v)
                             except:
                                 pass
@@ -344,7 +381,7 @@ class PreferenceEditor(base.BasePropertyEditor):
     @common.debug
     @QtCore.Slot()
     def info_button_clicked(self, *args, **kwargs):
-        from ..versioncontrol import versioncontrol
+        from .versioncontrol import versioncontrol
         versioncontrol.check()
 
     @common.error
@@ -388,7 +425,8 @@ class PreferenceEditor(base.BasePropertyEditor):
         editor = getattr(self, k + '_editor')
         _bin = k.replace('Path', '')
         _filter = '{}.exe'.format(
-            _bin) if common.get_platform() == common.PlatformWindows else '*.*'
+            _bin
+        ) if common.get_platform() == common.PlatformWindows else '*.*'
         res = QtWidgets.QFileDialog.getOpenFileName(
             caption='Select {} Executable...'.format(_bin),
             filter=_filter,
@@ -400,4 +438,6 @@ class PreferenceEditor(base.BasePropertyEditor):
         editor.setText(path)
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth), common.size(common.DefaultHeight) * 1.5)
+        return QtCore.QSize(
+            common.size(common.DefaultWidth), common.size(common.DefaultHeight) * 1.5
+        )

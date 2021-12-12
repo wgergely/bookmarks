@@ -14,7 +14,8 @@ import zipfile
 
 from PySide2 import QtCore, QtWidgets, QtGui
 
-from . import common
+from . import common, asset_properties as editor, bookmark_properties as editor, \
+    preferences as editor
 from . import database
 from . import images
 
@@ -23,8 +24,11 @@ def edit_persistent_bookmarks():
     """Opens `common.static_bookmarks_template`.
 
     """
-    execute(common.get_rsc(
-        f'{common.TemplateResource}/{common.static_bookmarks_template}'))
+    execute(
+        common.get_rsc(
+            f'{common.TemplateResource}/{common.static_bookmarks_template}'
+        )
+    )
 
 
 def add_server(v):
@@ -138,7 +142,8 @@ def remove_bookmark(server, job, root):
     k = common.bookmark_key(server, job, root)
     if k not in common.bookmarks:
         raise RuntimeError(
-            'Key does not seem to match any current bookmarks.')
+            'Key does not seem to match any current bookmarks.'
+        )
 
     del common.bookmarks[k]
     common.settings.set_bookmarks(common.bookmarks)
@@ -195,7 +200,8 @@ def export_favourites(*args, destination=None):
             caption='Select where to save your favourites',
             filter='*.{}'.format(common.favorite_file_ext),
             dir=QtCore.QStandardPaths.writableLocation(
-                QtCore.QStandardPaths.HomeLocation),
+                QtCore.QStandardPaths.HomeLocation
+            ),
         )
         if not destination:
             return
@@ -265,7 +271,8 @@ def import_favourites(*args, source=None):
         corrupt = _zip.testzip()
         if corrupt:
             raise RuntimeError(
-                'This zip archive seem corrupted: {}.'.format(corrupt))
+                'This zip archive seem corrupted: {}.'.format(corrupt)
+            )
 
         if common.favorite_file_ext not in _zip.namelist():
             raise RuntimeError('Invalid file.')
@@ -290,8 +297,10 @@ def import_favourites(*args, source=None):
             if not file_info.exists():
                 # Let's write the thumbnails to disk
                 if file_info.fileName() in _zip.namelist():
-                    root = '/'.join((server, job, root,
-                                     common.bookmark_cache_dir))
+                    root = '/'.join(
+                        (server, job, root,
+                         common.bookmark_cache_dir)
+                    )
                     _zip.extract(
                         file_info.fileName(),
                         root
@@ -348,8 +357,11 @@ def set_active(k, v):
     common.check_type(k, (str, None))
 
     if k not in common.ActiveSectionCacheKeys:
-        raise ValueError('Invalid active key. Key must be the one of "{}"'.format(
-            '", "'.join(common.ActiveSectionCacheKeys)))
+        raise ValueError(
+            'Invalid active key. Key must be the one of "{}"'.format(
+                '", "'.join(common.ActiveSectionCacheKeys)
+            )
+        )
 
     common.active_paths[common.active_mode][k] = v
     if common.active_mode == common.SynchronisedActivePaths:
@@ -459,7 +471,8 @@ def toggle_task_view():
     if common.current_tab() != common.FileTab:
         return
     common.widget(common.TaskTab).setHidden(
-        not common.widget(common.TaskTab).isHidden())
+        not common.widget(common.TaskTab).isHidden()
+    )
 
 
 def toggle_filter_editor():
@@ -575,14 +588,16 @@ def show_add_asset(server=None, job=None, root=None):
     if not all((server, job, root)):
         return None
 
-    from .property_editor import asset_editor as editor
+    from . import asset_properties as editor
     widget = editor.show(server, job, root)
     return widget
 
 
 @common.error
 @common.debug
-def show_add_file(asset=None, extension=None, file=None, create_file=True, increment=False):
+def show_add_file(
+        asset=None, extension=None, file=None, create_file=True, increment=False
+):
     server = common.active(common.ServerKey)
     job = common.active(common.JobKey)
     root = common.active(common.RootKey)
@@ -594,7 +609,7 @@ def show_add_file(asset=None, extension=None, file=None, create_file=True, incre
     if not all(args):
         return None
 
-    from .property_editor import file_editor as editor
+    from .file_saver import file_saver as editor
     widget = editor.show(
         server,
         job,
@@ -626,7 +641,7 @@ def edit_bookmark(server=None, job=None, root=None):
     if not all((server, job, root)):
         return None
 
-    from .property_editor import bookmark_editor as editor
+    from . import bookmark_properties as editor
     widget = editor.show(server, job, root)
 
     widget.open()
@@ -647,7 +662,7 @@ def edit_asset(asset=None):
     if asset is None:
         return
 
-    from .property_editor import asset_editor as editor
+    from . import asset_properties as editor
 
     widget = editor.show(server, job, root, asset=asset)
     return widget
@@ -664,7 +679,7 @@ def edit_file(f):
     if not all((server, job, root, asset)):
         return
 
-    from .property_editor import file_editor as editor
+    from .file_saver import file_saver as editor
     widget = editor.show(
         server,
         job,
@@ -679,7 +694,6 @@ def edit_file(f):
 @common.error
 @common.debug
 def show_preferences():
-    from .property_editor import preference_editor as editor
     widget = editor.show()
     return widget
 
@@ -938,7 +952,8 @@ def show_todos(index):
     from . import notes
     parent = common.widget()
     editors = [f for f in parent.children() if isinstance(
-        f, notes.TodoEditorWidget)]
+        f, notes.TodoEditorWidget
+    )]
     if editors:
         for editor in editors:
             editor.done(QtWidgets.QDialog.Rejected)
@@ -1132,11 +1147,15 @@ def reveal(item):
             'activate',
             '-e',
             'select POSIX file "{}"'.format(
-                QtCore.QDir.toNativeSeparators(path)), '-e', 'end tell']
+                QtCore.QDir.toNativeSeparators(path)
+            ), '-e', 'end tell']
         QtCore.QProcess.startDetached('osascript', args)
     elif common.get_platform() == common.PlatformUnsupported:
-        raise NotImplementedError('{} is unsupported.'.format(
-            QtCore.QSysInfo().productType()))
+        raise NotImplementedError(
+            '{} is unsupported.'.format(
+                QtCore.QSysInfo().productType()
+            )
+        )
 
 
 @common.debug
@@ -1317,9 +1336,11 @@ def pick_thumbnail_from_library(index):
     widget = editor.show()
 
     widget.itemSelected.connect(
-        lambda v: images.load_thumbnail_from_image(server, job, root, source, v))
+        lambda v: images.load_thumbnail_from_image(server, job, root, source, v)
+    )
     widget.itemSelected.connect(
-        lambda _: index.model().sourceModel().updateIndex.emit(index))
+        lambda _: index.model().sourceModel().updateIndex.emit(index)
+    )
 
 
 @common.debug
@@ -1556,7 +1577,8 @@ def add_zip_template(source, mode, prompt=False):
         corrupt = f.testzip()
         if corrupt:
             raise RuntimeError(
-                'The zip archive seems corrupted: {}'.format(corrupt))
+                'The zip archive seems corrupted: {}'.format(corrupt)
+            )
 
     from . import templates
     root = templates.get_template_folder(mode)
@@ -1612,28 +1634,39 @@ def extract_zip_template(source, destination, name):
     file_info = QtCore.QFileInfo(destination)
     if not file_info.exists():
         raise RuntimeError(
-            'Destination {} does not exist.'.format(file_info.filePath()))
+            'Destination {} does not exist.'.format(file_info.filePath())
+        )
     if not file_info.isWritable():
         raise RuntimeError(
-            'Destination {} not writable'.format(file_info.filePath()))
+            'Destination {} not writable'.format(file_info.filePath())
+        )
     if not name:
         raise ValueError('Must enter a name.')
 
     source_file_info = file_info = QtCore.QFileInfo(source)
     if not source_file_info.exists():
-        raise RuntimeError('{} does not exist.'.format(
-            source_file_info.filePath()))
+        raise RuntimeError(
+            '{} does not exist.'.format(
+                source_file_info.filePath()
+            )
+        )
 
     dest_file_info = QtCore.QFileInfo('{}/{}'.format(destination, name))
     if dest_file_info.exists():
-        raise RuntimeError('{} exists already.'.format(
-            dest_file_info.fileName()))
+        raise RuntimeError(
+            '{} exists already.'.format(
+                dest_file_info.fileName()
+            )
+        )
 
-    with zipfile.ZipFile(source_file_info.absoluteFilePath(), 'r', zipfile.ZIP_DEFLATED) as f:
+    with zipfile.ZipFile(
+            source_file_info.absoluteFilePath(), 'r', zipfile.ZIP_DEFLATED
+    ) as f:
         corrupt = f.testzip()
         if corrupt:
             raise RuntimeError(
-                'This zip archive seems to be corrupt: {}'.format(corrupt))
+                'This zip archive seems to be corrupt: {}'.format(corrupt)
+            )
 
         f.extractall(
             dest_file_info.absoluteFilePath(),
@@ -1722,7 +1755,8 @@ def show_sg_error_message(v):
 def show_sg_connecting_message():
     from . import ui
     common.sg_connecting_message = ui.MessageBox(
-        'Shotgun is connecting, please wait...', no_buttons=True)
+        'Shotgun is connecting, please wait...', no_buttons=True
+    )
     common.sg_connecting_message.open()
     QtWidgets.QApplication.instance().processEvents()
 

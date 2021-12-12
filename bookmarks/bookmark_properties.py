@@ -1,34 +1,18 @@
 # -*- coding: utf-8 -*-
-"""Settings window for editing bookmark properties.
-
-Used to edit data in the bookmark database (see 'database.py'). The
-database stores information about the bookmark's default 'width', 'height',
-'frame rate' and connectivity information, such as 'Slack' and 'Shotgun'
-tokens.
-
-Usage:
-
-    widget = BookmarkBasePropertyEditor(
-        '//my_server/jobs', 'my_job', 'my/root/folder'
-    ).open()
-
+"""The widget used to edit bookmark item properties.
 
 """
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui
 
-from .. import common
-from .. import ui
-from .. import database
-from .. import actions
-
-from ..shotgun import actions as sg_actions
-from ..shotgun import shotgun
-
-from . import base
-from . import base_widgets
-from ..asset_config import asset_config_widget
-from ..launcher import launcher
-
+from . import actions
+from . import common
+from . import database
+from . import ui
+from .editor import base
+from .editor import base_widgets
+from .launcher import launcher
+from .shotgun import actions as sg_actions
+from .shotgun import shotgun
 
 SLACK_API_URL = 'https://api.slack.com/apps'
 
@@ -50,7 +34,7 @@ def close():
 def show(server, job, root):
     global instance
     close()
-    instance = BookmarkBasePropertyEditor(
+    instance = BookmarkPropertyEditor(
         server,
         job,
         root,
@@ -72,7 +56,10 @@ SECTIONS = {
                     'validator': base.textvalidator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Custom prefix, eg. \'MYB\'',
-                    'description': 'A short name of the bookmark (or job) used when saving files.\n\nEg. \'MYB_sh0010_anim_v001.ma\' where \'MYB\' is the prefix specified here.',
+                    'description': 'A short name of the bookmark (or job) used '
+                                   'when saving files.\n\nEg. '
+                                   '\'MYB_sh0010_anim_v001.ma\' where \'MYB\' is '
+                                   'the prefix specified here.',
                     'button': 'Suggest'
                 },
             },
@@ -83,7 +70,8 @@ SECTIONS = {
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'A short description, eg. \'Character assets\'',
-                    'description': 'A description of this bookmark, eg. \'Character assets\'.',
+                    'description': 'A description of this bookmark, '
+                                   'eg. \'Character assets\'.',
                 },
             },
             2: {
@@ -93,7 +81,9 @@ SECTIONS = {
                     'validator': base.floatvalidator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Framerate, eg. \'23.976\'',
-                    'description': 'The framerate of the bookmark, eg, \'25.0\'.\n\nUsed by Bookmarks to control the format of scenes inside hosts, eg. Maya.'
+                    'description': 'The framerate of the bookmark, eg, '
+                                   '\'25.0\'.\n\nUsed by Bookmarks to control the '
+                                   'format of scenes inside hosts, eg. Maya.'
                 },
                 1: {
                     'name': 'Width',
@@ -117,7 +107,10 @@ SECTIONS = {
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Start frame, eg. \'1001\'',
-                    'description': 'A default start frame for all subsequent assets.\n\nThis can be useful when the project has a custom start frame, eg. \'1001\' instead of \'1\' or \'0\'.',
+                    'description': 'A default start frame for all subsequent '
+                                   'assets.\n\nThis can be useful when the project '
+                                   'has a custom start frame, eg. \'1001\' instead '
+                                   'of \'1\' or \'0\'.',
                 },
                 4: {
                     'name': 'Default Duration',
@@ -125,7 +118,8 @@ SECTIONS = {
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Duration, eg. \'150\'',
-                    'description': 'The default duration of an asset in frames, eg. \'150\'',
+                    'description': 'The default duration of an asset in frames, '
+                                   'eg. \'150\'',
                 },
             },
             3: {
@@ -135,8 +129,21 @@ SECTIONS = {
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'A file name, eg. \'workspace.mel\'',
-                    'description': 'Only folders containing the file specified above will be read as assets.\n\nUsing the default Maya Workspace the identifier normally is \'workspace.mel\', however any other arbitary file can be used as long it is present in the root of an asset folder.\n\nWhen left empty all folders in the bookmark will be read.',
-                    'help': 'Only folders containing the file specified here will be read as assets.\nUsing the default Maya Workspace the identifier normally is \'workspace.mel\', however any other arbitary file can be used as long it is present in the root of an asset folder.\n\nWhen left empty, all folders in the bookmark will be interpeted as assets.',
+                    'description': 'Only folders containing the file specified '
+                                   'above will be read as assets.\n\nUsing the '
+                                   'default Maya Workspace the identifier normally '
+                                   'is \'workspace.mel\', however any other '
+                                   'arbitary file can be used as long it is '
+                                   'present in the root of an asset '
+                                   'folder.\n\nWhen left empty all folders in the '
+                                   'bookmark will be read.',
+                    'help': 'Only folders containing the file specified here will '
+                            'be read as assets.\nUsing the default Maya Workspace '
+                            'the identifier normally is \'workspace.mel\', '
+                            'however any other arbitary file can be used as long '
+                            'it is present in the root of an asset folder.\n\nWhen '
+                            'left empty, all folders in the bookmark will be '
+                            'interpeted as assets.',
                 }
             }
         }
@@ -155,7 +162,18 @@ SECTIONS = {
                     'widget': ui.LineEdit,
                     'description': 'A valid Slack App OAuth token',
                     'placeholder': 'xoxb-01234567890-0123456',
-                    'help':  'Paste a valid <a href="{slack_api_url}">{start}Slack App OAuth token{end}</a> above (usually starting with {start}xoxb{end}).\n\nMake sure the app has {start}users:read{end} and {start}chat:write{end} scopes enabled. To send messages to channels the bot is not part of, add {start}chat:write.public{end}. Scopes {start}channels:read{end} and {start}groups:read{end} are needed to list available Slack Channels.\n\nSee <a href="{slack_api_url}">{start}Slack API{end}</a> for more information. '.format(slack_api_url=SLACK_API_URL, **base.span),
+                    'help': 'Paste a valid <a href="{slack_api_url}">{start}Slack '
+                            'App OAuth token{end}</a> above (usually starting with '
+                            '{start}xoxb{end}).\n\nMake sure the app has {'
+                            'start}users:read{end} and {start}chat:write{end} '
+                            'scopes enabled. To send messages to channels the bot '
+                            'is not part of, add {start}chat:write.public{end}. '
+                            'Scopes {start}channels:read{end} and {'
+                            'start}groups:read{end} are needed to list available '
+                            'Slack Channels.\n\nSee <a href="{slack_api_url}">{'
+                            'start}Slack API{end}</a> for more information. '.format(
+                        slack_api_url=SLACK_API_URL, **base.span
+                    ),
                     'button': 'Visit',
                     'button2': 'Verify',
                 }
@@ -174,7 +192,9 @@ SECTIONS = {
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'Domain, eg. https://mystudio.shotgunstudio.com',
-                    'description': 'The domain, including http:// or https://, used by shotgun. Eg. \'https://mystudio.shotgunstudio.com\'',
+                    'description': 'The domain, including http:// or https://, '
+                                   'used by shotgun. Eg. '
+                                   '\'https://mystudio.shotgunstudio.com\'',
                     'button': 'Visit',
                     'button2': 'Verify'
                 },
@@ -193,8 +213,14 @@ SECTIONS = {
                     'protect': True,
                     'widget': ui.LineEdit,
                     'placeholder': 'abcdefghijklmno3bqr*1',
-                    'description': 'A Shotgun Script API Key, eg. \'abcdefghijklmno3bqr*1\'.\n\nA valid script has to be set up for your ogranisation for Bookmarks to be able to connect to Shotgun. Consult the Shotgun documentation for details on how to set this up.',
-                    'help': 'Make sure Shotgun has a valid API Script set up. This can be done from the Shotgun Admin - Scripts option.',
+                    'description': 'A Shotgun Script API Key, '
+                                   'eg. \'abcdefghijklmno3bqr*1\'.\n\nA valid '
+                                   'script has to be set up for your ogranisation '
+                                   'for Bookmarks to be able to connect to '
+                                   'Shotgun. Consult the Shotgun documentation for '
+                                   'details on how to set this up.',
+                    'help': 'Make sure Shotgun has a valid API Script set up. This '
+                            'can be done from the Shotgun Admin - Scripts option.',
                 },
             },
         },
@@ -228,7 +254,8 @@ SECTIONS = {
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Shotgun Project ID, eg. \'123\'',
-                    'description': 'The Shotgun ID number this item is associated with. Eg. \'123\'.',
+                    'description': 'The Shotgun ID number this item is associated '
+                                   'with. Eg. \'123\'.',
                 },
                 3: {
                     'name': 'Name',
@@ -253,7 +280,8 @@ SECTIONS = {
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'https://my.custom-url.com',
-                    'description': 'A custom url of the bookmarks, eg. https://sheets.google.com/123',
+                    'description': 'A custom url of the bookmarks, '
+                                   'eg. https://sheets.google.com/123',
                     'button': 'Visit',
                 },
                 1: {
@@ -262,25 +290,27 @@ SECTIONS = {
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'https://my.custom-url.com',
-                    'description': 'A custom url of the bookmarks, eg. https://sheets.google.com/123',
+                    'description': 'A custom url of the bookmarks, '
+                                   'eg. https://sheets.google.com/123',
                     'button': 'Visit',
                 }
             }
         }
     },
     5: {
-        'name': 'Launcher',
+        'name': 'Application Launcher',
         'icon': 'icon',
         'color': common.color(common.BackgroundDarkColor),
         'groups': {
             0: {
                 0: {
-                    'name': 'Applications',
+                    'name': 'Applications:',
                     'key': 'applications',
                     'validator': None,
                     'widget': launcher.LauncherListWidget,
                     'placeholder': None,
-                    'description': 'Edit the list of applications (DCCs) this bookmark item uses.',
+                    'description': 'Edit the list of applications this bookmark '
+                                   'item uses.',
                 },
             }
         }
@@ -345,21 +375,14 @@ SECTIONS = {
 }
 
 
-class BookmarkBasePropertyEditor(base.BasePropertyEditor):
+class BookmarkPropertyEditor(base.BasePropertyEditor):
     """The widget containing all the UI elements used to edit
-    Bookmark properties, such as frame rate, resolution and Shotgun properties.
-
-    Usage:
-        Initialize with the server, job, root name, eg:
-
-        widget = BookmarkBasePropertyEditor(
-            '//my-server/jobs', 'my_job', 'my/root/folder'
-        ).open()
+    bookmark item properties (such as frame-rate, resolution, or SG linking).
 
     """
 
     def __init__(self, server, job, root, parent=None):
-        super(BookmarkBasePropertyEditor, self).__init__(
+        super(BookmarkPropertyEditor, self).__init__(
             SECTIONS,
             server,
             job,
@@ -370,15 +393,15 @@ class BookmarkBasePropertyEditor(base.BasePropertyEditor):
             parent=parent
         )
 
-        self.asset_config_editor = None
-        self._add_asset_config()
+        self.tokens_editor = None
+        self._create_tokens_editor(self.scroll_area.widget())
 
     def _connect_signals(self):
-        super(BookmarkBasePropertyEditor, self)._connect_signals()
+        super(BookmarkPropertyEditor, self)._connect_signals()
         self.thumbnailUpdated.connect(common.signals.thumbnailUpdated)
 
     def db_source(self):
-        return '{}/{}/{}'.format(self.server, self.job, self.root)
+        return self.server + '/' + self.job + '/' + self.root
 
     def init_data(self):
         self.init_db_data()
@@ -387,7 +410,7 @@ class BookmarkBasePropertyEditor(base.BasePropertyEditor):
     @common.debug
     def save_changes(self):
         self.save_changed_data_to_db()
-        self.asset_config_editor.save_changes()
+        self.tokens_editor.save_changes()
         self.thumbnail_editor.save_image()
         self.thumbnailUpdated.emit(self.db_source())
         self.itemUpdated.emit(self.db_source())
@@ -398,7 +421,8 @@ class BookmarkBasePropertyEditor(base.BasePropertyEditor):
 
         """
         sg_properties = shotgun.ShotgunProperties(
-            self.server, self.job, self.root)
+            self.server, self.job, self.root
+        )
 
         sg_properties.domain = self.shotgun_domain_editor.text()
         sg_properties.script = self.shotgun_scriptname_editor.text()
@@ -412,15 +436,17 @@ class BookmarkBasePropertyEditor(base.BasePropertyEditor):
 
         return sg_properties
 
-    def _add_asset_config(self):
-        parent = self.scrollarea.widget()
-        self.asset_config_editor = asset_config_widget.AssetConfigEditor(
+    def _create_tokens_editor(self, parent):
+        from .tokens import tokens_editor
+        self.tokens_editor = tokens_editor.TokenConfigEditor(
             self.server,
             self.job,
             self.root,
             parent=parent
         )
-        parent.layout().addWidget(self.asset_config_editor, 1)
+        parent.layout().addWidget(self.tokens_editor, 1)
+        for name, widget in self.tokens_editor.header_buttons:
+            self.add_section_header_button(name, widget)
 
     def _get_name(self):
         return self.job

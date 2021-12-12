@@ -13,8 +13,8 @@ from .. import images
 from .. import contextmenu
 from . import shotgun
 
-from ..property_editor import base_widgets
-from ..property_editor import base
+from ..editor import base_widgets
+from ..editor import base
 
 
 instance = None

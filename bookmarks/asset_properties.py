@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
-"""Defines `AssetEditor`, the widget used to create and edit asset items.
+""":class:`AssetPropertyEditor` is used to create new assets and edit existing asset
+item's properties.
+
+Attributes:
+    SECTIONS (dict): The property editor sections.
 
 """
-import os
 import functools
+import os
 
-from PySide2 import QtWidgets, QtGui, QtCore
+from PySide2 import QtWidgets, QtCore
 
-from .. import common
-from .. import ui
-from .. import database
-from .. import templates
-
-from ..shotgun import shotgun
-from ..shotgun import actions as sg_actions
-
-from . import base
-from . import base_widgets
-
+from . import common
+from . import database
+from . import templates
+from . import ui
+from .editor import base
+from .editor import base_widgets
+from .shotgun import actions as sg_actions
+from .shotgun import shotgun
 
 instance = None
 
@@ -38,7 +39,7 @@ def show(server, job, root, asset=None):
     global instance
 
     close()
-    instance = AssetEditor(
+    instance = AssetPropertyEditor(
         server,
         job,
         root,
@@ -69,7 +70,8 @@ SECTIONS = {
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'A description, eg. \'My first shot\'',
-                    'description': 'A short description of the asset, eg. \'My first shot.\'.',
+                    'description': 'A short description of the asset, eg. \'My '
+                                   'first shot.\'.',
                 },
             },
             1: {
@@ -77,7 +79,10 @@ SECTIONS = {
                     'name': 'Template',
                     'key': None,
                     'validator': None,
-                    'widget': functools.partial(templates.TemplatesWidget, templates.AssetTemplateMode),
+                    'widget': functools.partial(
+                        templates.TemplatesWidget,
+                        templates.AssetTemplateMode
+                    ),
                     'placeholder': None,
                     'description': 'Select a folder template to create this asset.',
                 },
@@ -113,7 +118,8 @@ SECTIONS = {
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Shotgun Project ID, eg. \'123\'',
-                    'description': 'The Shotgun ID number this item is associated with. Eg. \'123\'.',
+                    'description': 'The Shotgun ID number this item is associated '
+                                   'with. Eg. \'123\'.',
                 },
                 3: {
                     'name': 'Name',
@@ -121,7 +127,10 @@ SECTIONS = {
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'Shotgun entity name, eg. \'MyProject\'',
-                    'description': 'The Shotgun entity name. The entity can be a shot, sequence or asset.\nClick "Link with Shotgun" to get the name and the id from the Shotgun server.',
+                    'description': 'The Shotgun entity name. The entity can be a '
+                                   'shot, sequence or asset.\nClick "Link with '
+                                   'Shotgun" to get the name and the id from the '
+                                   'Shotgun server.',
                 },
             }
         }
@@ -166,21 +175,23 @@ SECTIONS = {
         'groups': {
             0: {
                 0: {
-                    'name': 'Primary',
+                    'name': 'Link #1',
                     'key': 'url1',
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'https://my.custom-url.com',
-                    'description': 'A custom url of the bookmarks, eg. https://sheets.google.com/123',
+                    'description': 'A custom url of the bookmarks, '
+                                   'eg. https://sheets.google.com/123',
                     'button': 'Visit',
                 },
                 1: {
-                    'name': 'Scondary',
+                    'name': 'Link #2',
                     'key': 'url2',
                     'validator': None,
                     'widget': ui.LineEdit,
                     'placeholder': 'https://my.custom-url.com',
-                    'description': 'A custom url of the bookmarks, eg. https://sheets.google.com/123',
+                    'description': 'A custom url of the bookmarks, '
+                                   'eg. https://sheets.google.com/123',
                     'button': 'Visit',
                 }
             }
@@ -189,13 +200,11 @@ SECTIONS = {
 }
 
 
-class AssetEditor(base.BasePropertyEditor):
-    """Widget used to create a new asset in a specified bookmark, or when
-    the optional `asset` argument is set, updates the asset properties.
+class AssetPropertyEditor(base.BasePropertyEditor):
+    """Property editor widget used to edit asset item properties.
 
-    Args:
-        path (str): Destination path for the new assets.
-        update (bool=False): Enables the update mode, if the widget is used to edit an existing asset.
+    The class is a customized :class:`bookmarks.editor.base.BasePropertyEditor`,
+    and implements asset creation on top of existing features.
 
     """
 
@@ -218,8 +227,8 @@ class AssetEditor(base.BasePropertyEditor):
         )
 
         if asset:
-            # When `asset` is set, the template_editor is no longer used so
-            # we're hiding it:
+            # When `asset` is set, the template_editor is no longer used, so
+            # we can hide it:
             self.name_editor.setText(asset)
             self.name_editor.setDisabled(True)
             self.template_editor.parent().parent().setHidden(True)
@@ -247,12 +256,14 @@ class AssetEditor(base.BasePropertyEditor):
         """
         if not self.name():
             return None
-        return '/'.join((
-            self.server,
-            self.job,
-            self.root,
-            self.name()
-        ))
+        return '/'.join(
+            (
+                self.server,
+                self.job,
+                self.root,
+                self.name()
+            )
+        )
 
     def init_data(self):
         """Load the current data from the database.

@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
-"""A list of widgets and methods used by `property_editor.BasePropertyEditor`.
+"""A list of widgets and methods used by `editor.BasePropertyEditor`.
 
 """
 import uuid
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
-from .. import log
 from .. import common
-from .. import ui
-from .. import images
 from .. import contextmenu
-
+from .. import images
+from .. import log
+from .. import ui
 
 THUMBNAIL_EDITOR_SIZE = common.size(common.WidthMargin) * 10
 HEIGHT = common.size(common.HeightRow) * 0.8
@@ -30,12 +29,14 @@ def process_image(source):
         source (str): Path to an image file.
 
     Returns:
-        QImage: The resized QImage, or `None` if the image was not processed successfully.
+        QImage: The resized QImage, or `None` if the image was not processed
+        successfully.
 
     """
     destination = TEMP_THUMBNAIL_PATH.format(
         temp=QtCore.QStandardPaths.writableLocation(
-            QtCore.QStandardPaths.GenericDataLocation),
+            QtCore.QStandardPaths.GenericDataLocation
+        ),
         product=common.product,
         uuid=uuid.uuid1().hex,
         ext=common.thumbnail_format
@@ -87,11 +88,17 @@ class BaseComboBox(QtWidgets.QComboBox):
     def decorate_item(self, error=False):
         idx = self.count() - 1
         sg_pixmap = images.ImageCache.get_rsc_pixmap(
-            'sg', common.color(common.SeparatorColor), common.size(common.WidthMargin) * 2)
+            'sg', common.color(common.SeparatorColor),
+            common.size(common.WidthMargin) * 2
+        )
         check_pixmap = images.ImageCache.get_rsc_pixmap(
-            'check', common.color(common.GreenColor), common.size(common.WidthMargin) * 2)
+            'check', common.color(common.GreenColor),
+            common.size(common.WidthMargin) * 2
+        )
         error_pixmap = images.ImageCache.get_rsc_pixmap(
-            'close', common.color(common.RedColor), common.size(common.WidthMargin) * 2)
+            'close', common.color(common.RedColor),
+            common.size(common.WidthMargin) * 2
+        )
 
         error_icon = QtGui.QIcon(error_pixmap)
 
@@ -132,9 +139,11 @@ class ThumbnailContextMenu(contextmenu.BaseContextMenu):
 
     def setup(self):
         add_pixmap = images.ImageCache.get_rsc_pixmap(
-            'add', common.color(common.GreenColor), common.size(common.WidthMargin))
+            'add', common.color(common.GreenColor), common.size(common.WidthMargin)
+        )
         remove_pixmap = images.ImageCache.get_rsc_pixmap(
-            'close', common.color(common.RedColor), common.size(common.WidthMargin))
+            'close', common.color(common.RedColor), common.size(common.WidthMargin)
+        )
 
         self.menu['Capture...'] = {
             'icon': add_pixmap,
@@ -158,13 +167,17 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
 
     """
 
-    def __init__(self, server, job, root, size=THUMBNAIL_EDITOR_SIZE, source=None, fallback_thumb='placeholder', parent=None):
+    def __init__(
+            self, server, job, root, size=THUMBNAIL_EDITOR_SIZE, source=None,
+            fallback_thumb='placeholder', parent=None
+    ):
         super(ThumbnailEditorWidget, self).__init__(
             'pick_image',
             (common.color(common.BlueColor),
              common.color(common.BackgroundDarkColor)),
             size=size,
-            description='Drag-and-drop an image to add, click to capture, or right-click to pick a custom thumbnail...',
+            description='Drag-and-drop an image to add, click to capture, '
+                        'or right-click to pick a custom thumbnail...',
             parent=parent
         )
 
@@ -230,7 +243,7 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
     @common.error
     @common.debug
     def pick_image(self):
-        from .. lists.widgets import thumb_picker as editor
+        from ..lists.widgets import thumb_picker as editor
         widget = editor.show()
         widget.fileSelected.connect(self.process_image)
 
@@ -247,7 +260,7 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         self.hide_window()
 
         try:
-            from .. lists.widgets import thumb_capture as editor
+            from ..lists.widgets import thumb_capture as editor
             widget = editor.show()
             widget.accepted.connect(self.restore_window)
             widget.rejected.connect(self.restore_window)
@@ -277,7 +290,8 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         painter.setPen(pen)
 
         image = images.ImageCache.resize_image(
-            self._image, int(self.rect().height()))
+            self._image, int(self.rect().height())
+        )
 
         s = float(self.rect().height())
         longest_edge = float(max((self._image.width(), self._image.height())))
@@ -300,16 +314,11 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
 
     def _paint_current_thumbnail(self, painter):
         if not all((self.server, self.job, self.root)):
-            pixmap, color = images.get_thumbnail(
-                '',
-                '',
-                '',
-                '',
-                self.rect().height(),
-                fallback_thumb=self.fallback_thumb
+            pixmap = images.ImageCache.get_rsc_pixmap(
+                self.fallback_thumb, None, self.rect().height()
             )
         else:
-            pixmap, color = images.get_thumbnail(
+            pixmap, _ = images.get_thumbnail(
                 self.server,
                 self.job,
                 self.root,
@@ -323,7 +332,7 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
 
         o = common.size(common.HeightSeparator)
 
-        color = color if color else common.color(common.SeparatorColor)
+        color = common.color(common.SeparatorColor)
         pen = QtGui.QPen(color)
         pen.setWidthF(common.size(common.HeightSeparator))
         painter.setPen(pen)
@@ -334,10 +343,11 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         w = pixmap.width() * ratio
         h = pixmap.height() * ratio
 
-        rect = QtCore.QRect(0, 0,
-                            int(w) - (o * 2),
-                            int(h) - (o * 2)
-                            )
+        rect = QtCore.QRect(
+            0, 0,
+            int(w) - (o * 2),
+            int(h) - (o * 2)
+        )
         rect.moveCenter(self.rect().center())
         painter.drawPixmap(rect, pixmap, pixmap.rect())
 

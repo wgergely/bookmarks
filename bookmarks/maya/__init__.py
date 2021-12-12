@@ -1,7 +1,9 @@
-import re
+"""The Bookmarks Maya integration module..
+
+"""
 import functools
 
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtCore
 from maya import cmds
 
 
@@ -36,8 +38,8 @@ def initialize():
 
 
 def uninitialize():
-    from bookmarks import common
-    from bookmarks.maya import actions
+    from .. import common
+    from . import actions
 
     actions.remove_maya_widget()
     actions.remove_maya_button()

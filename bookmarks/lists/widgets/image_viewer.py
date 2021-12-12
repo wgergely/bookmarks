@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 """Widget used to display a preview of the current item.
 
-For Bookmarks and Asset items, this is the current thumbnail, however, for image
-files, we'll use OpenImageIO to open and display the image in a `QGraphicsView`.
+For Bookmarks and Asset items, this is the current thumbnail, however,
+for image files, we'll use OpenImageIO to open and display the image in a
+`QGraphicsView`.
 
 
 """
-import weakref
 import functools
+import weakref
 
-import OpenImageIO
 from PySide2 import QtCore, QtWidgets, QtGui
 
 from ... import common
@@ -208,14 +208,14 @@ class ImageViewer(QtWidgets.QWidget):
         self._source = source
         self._ref = ref
 
-        if oiio is False and QtCore.QFileInfo(source).suffix().lower() not in images.QT_IMAGE_FORMATS:
+        if oiio is False and QtCore.QFileInfo(
+                source).suffix().lower() not in images.QT_IMAGE_FORMATS:
             raise RuntimeError('Qt cannot display the source image.')
 
         # Wait for the thread to finish loading the thumbnail
         images.wait_for_lock(source)
         with images.lock:
             pixmap = images.ImageCache.get_pixmap(source, -1, oiio=oiio)
-
 
         if pixmap and not pixmap.isNull():
             with images.lock:

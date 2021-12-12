@@ -7,7 +7,7 @@ Hint:
     generally expects them to be associated with a task or data-type eg. ``render``,
     ``comp``, ``textures``, etc.
 
-    Some default task-folders are defined by :mod:`bookmarks.asset_config.asset_config`.
+    Some default task-folders are defined by :mod:`bookmarks.tokens.tokens`.
 
 """
 import functools
@@ -21,7 +21,7 @@ from . import delegate
 from .. import common
 from .. import contextmenu
 from .. import images
-from ..asset_config import asset_config
+from ..tokens import tokens
 from ..threads import threads
 
 
@@ -227,7 +227,7 @@ class TaskFolderModel(basemodel.BaseModel):
             return
         _source_path = '/'.join(source_path)
 
-        config = asset_config.get(*source_path[0:3])
+        config = tokens.get(*source_path[0:3])
 
         # Add the parent path
         _dirs = [_source_path]

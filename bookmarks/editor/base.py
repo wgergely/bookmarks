@@ -1,62 +1,42 @@
 # -*- coding: utf-8 -*-
-"""The module contains the base class used by property editors across
-Bookmarks.
+"""The module contains the base class used by property editors across Bookmarks.
 
-The editor widgets provide a unified approach for editing job, bookmark, asset
-and file item properties. If the base-class is passed the optional `db_table`
-keyword, the class will try to load/save/update data found in the bookmark
-database.
+The property editor's layout is defined by a previously specified SECTIONS dictionary,
+that contains the sections, rows and editor widget definitions - and any linkage
+information needed to associate editors with a bookmark database or user settings.
 
+The :class:`BasePropertyEditor` is relatively flexible and has a number of
+abstract methods that need implementing in subclasses depending on the desired
+functionality. Namely, :meth:`BasePropertyEditor.db_source()`,
+:meth:`BasePropertyEditor.init_data()` and :meth:`BasePropertyEditor.save_changes()`
+are the main function needed to get and save data.
 
-BasePropertyEditor
-----------------
+.. code-block:: python
 
-The `BasePropertyEditor` base class is relatively flexible and has a number of
-abstract methods that need implementing in subclasses depending on the
-desired functionality. Namely, `db_source()`, `init_data()` and `save_changes()`
-are functions responsbile for providing values and methods needed to load and
-save default values from the bookmark database or another source.
-
-The editor provides a thumbnail editor widget that can be used to save a custom
-thumbnail for a job, bookmark, asset or file. The default thumbnail can be set
-by providing the optional `fallback_thumb` keyword to the instance constructor.
-
-Example
--------
-
-    .. code-block:: python
-
-        editor = BasePropertyEditor(
-            SECTIONS,
-            server,
-            job,
-            root,
-            asset=asset,
-            alignment=QtCore.Qt.AlignLeft,
-            fallback_thumb='file_sm',
-            db_table=database.AssetTable,
-        )
-        editor.open()
-
-
-The editor UI is created by passing a `SECTIONS` dictionary to the
-base class.
-
+    editor = BasePropertyEditor(
+        SECTIONS,
+        server,
+        job,
+        root,
+        asset=asset,
+        alignment=QtCore.Qt.AlignLeft,
+        fallback_thumb='file_sm',
+        db_table=database.AssetTable,
+    )
+    editor.open()
 
 """
-import functools
 import datetime
+import functools
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
-from .. import log
-from .. import common
-from .. import ui
-from .. import images
-from .. import database
-
 from . import base_widgets
-
+from .. import common
+from .. import database
+from .. import images
+from .. import log
+from .. import ui
 
 floatvalidator = QtGui.QRegExpValidator()
 floatvalidator.setRegExp(QtCore.QRegExp(r'[0-9]+[\.]?[0-9]*'))
@@ -73,9 +53,10 @@ versionvalidator.setRegExp(QtCore.QRegExp(r'[v]?[0-9]{1,4}'))
 tokenvalidator = QtGui.QRegExpValidator()
 tokenvalidator.setRegExp(QtCore.QRegExp(r'[0-0a-zA-Z\_\-\.\{\}]*'))
 
-
 span = {
-    'start': '<span style="color:{}">'.format(common.rgb(common.color(common.GreenColor))),
+    'start': '<span style="color:{}">'.format(
+        common.rgb(common.color(common.GreenColor))
+    ),
     'end': '</span>',
 }
 
@@ -84,7 +65,7 @@ def add_section(icon, label, parent, color=None):
     """Used to a new section with an icon and a title to a widget.
 
     Args:
-        icon (str):         The name of an rsc image.
+        icon (str):         The name of a rsc image.
         label (str):        The name of the section.
         parent (QWidget):   A widget to add the section to.
         color (QColor):     The color of the icon. Defaults to `None`.
@@ -139,7 +120,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
     Args:
         sections (dict):        The data needed to construct the ui layout.
-        server (unciode):       A server.
+        server (str):           A server.
         job (str):              A job.
         root (str):             A root folder.
         asset (str):            An optional asset. Defaults to `None`.
@@ -157,29 +138,29 @@ class BasePropertyEditor(QtWidgets.QDialog):
     thumbnailUpdated = QtCore.Signal(str)
 
     def __init__(
-        self,
-        sections,
-        server,
-        job,
-        root,
-        asset=None,
-        db_table=None,
-        buttons=('Save', 'Cancel'),
-        alignment=QtCore.Qt.AlignRight,
-        fallback_thumb='placeholder',
-        hide_thumbnail_editor=False,
-        parent=None
+            self,
+            sections,
+            server,
+            job,
+            root,
+            asset=None,
+            db_table=None,
+            buttons=('Save', 'Cancel'),
+            alignment=QtCore.Qt.AlignRight,
+            fallback_thumb='placeholder',
+            hide_thumbnail_editor=False,
+            parent=None
     ):
         common.check_type(sections, dict)
 
         super().__init__(
             parent=parent,
             f=(
-                QtCore.Qt.CustomizeWindowHint |
-                QtCore.Qt.WindowTitleHint |
-                QtCore.Qt.WindowSystemMenuHint |
-                QtCore.Qt.WindowMinMaxButtonsHint |
-                QtCore.Qt.WindowCloseButtonHint
+                    QtCore.Qt.CustomizeWindowHint |
+                    QtCore.Qt.WindowTitleHint |
+                    QtCore.Qt.WindowSystemMenuHint |
+                    QtCore.Qt.WindowMinMaxButtonsHint |
+                    QtCore.Qt.WindowCloseButtonHint
             )
         )
 
@@ -197,6 +178,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         self.thumbnail_editor = None
         self._hide_thumbnail_editor = hide_thumbnail_editor
+        self.section_headers_widget = None
 
         if not self.parent():
             common.set_custom_stylesheet(self)
@@ -204,7 +186,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         self.current_data = {}
         self.changed_data = {}
 
-        self.scrollarea = None
+        self.scroll_area = None
         self.save_button = None
         self.cancel_button = None
 
@@ -215,11 +197,17 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         if all((server, job, root)):
             if not asset:
-                self.setWindowTitle('{}/{}/{}'.format(
-                    server, job, root))
+                self.setWindowTitle(
+                    '{}/{}/{}'.format(
+                        server, job, root
+                    )
+                )
             else:
-                self.setWindowTitle('{}/{}/{}/{}'.format(
-                    server, job, root, asset))
+                self.setWindowTitle(
+                    '{}/{}/{}/{}'.format(
+                        server, job, root, asset
+                    )
+                )
 
         self._create_ui()
         self._connect_signals()
@@ -249,7 +237,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         # Separator pixmap
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'gradient3', None, common.size(common.WidthMargin), opacity=0.5)
+            'gradient3', None, common.size(common.WidthMargin), opacity=0.5
+        )
         separator = QtWidgets.QLabel(parent=self)
         separator.setScaledContents(True)
         separator.setPixmap(pixmap)
@@ -259,7 +248,10 @@ class BasePropertyEditor(QtWidgets.QDialog):
             self.left_row.hide()
 
         self.left_row.setStyleSheet(
-            'background-color: {};'.format(common.rgb(common.color(common.SeparatorColor))))
+            'background-color: {};'.format(
+                common.rgb(common.color(common.SeparatorColor))
+            )
+        )
         QtWidgets.QHBoxLayout(self.left_row)
         self.left_row.layout().setSpacing(0)
         self.left_row.layout().setContentsMargins(0, 0, 0, 0)
@@ -269,26 +261,38 @@ class BasePropertyEditor(QtWidgets.QDialog):
         )
         self.layout().addWidget(self.left_row)
 
-        parent = QtWidgets.QWidget(parent=self.left_row)
+        self.section_headers_widget = QtWidgets.QWidget(parent=self)
+        QtWidgets.QVBoxLayout(self.section_headers_widget)
+        self.section_headers_widget.layout().setContentsMargins(0, 0, 0, 0)
+        self.section_headers_widget.layout().setSpacing(
+            common.size(common.WidthIndicator)
+        )
+
+        parent = QtWidgets.QWidget(parent=self)
         QtWidgets.QVBoxLayout(parent)
         parent.layout().setContentsMargins(o, o, 0, o)
 
         parent.layout().addWidget(self.thumbnail_editor, 0)
+        parent.layout().addWidget(self.section_headers_widget, 0)
         parent.layout().addStretch(1)
+
         self.left_row.layout().addWidget(parent)
         self.left_row.layout().addWidget(separator)
 
         self.right_row = ui.add_row(
-            None, parent=self, padding=None, height=None, vertical=True)
-        self.right_row.layout().setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter)
+            None, parent=self, padding=None, height=None, vertical=True
+        )
+        self.right_row.layout().setAlignment(
+            QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter
+        )
         self.right_row.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.Minimum
         )
 
-        self.scrollarea = QtWidgets.QScrollArea(parent=self)
-        self.scrollarea.setWidgetResizable(True)
-        self.right_row.layout().addWidget(self.scrollarea)
+        self.scroll_area = QtWidgets.QScrollArea(parent=self)
+        self.scroll_area.setWidgetResizable(True)
+        self.right_row.layout().addWidget(self.scroll_area)
 
         parent = QtWidgets.QWidget(parent=self)
 
@@ -296,17 +300,16 @@ class BasePropertyEditor(QtWidgets.QDialog):
         parent.layout().setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignTop)
         parent.layout().setContentsMargins(o, o, o, o)
         parent.layout().setSpacing(o * 2)
-        self.scrollarea.setWidget(parent)
+        self.scroll_area.setWidget(parent)
 
         self._create_sections()
         self._add_buttons()
 
     def _create_sections(self):
-        """Expands the section data into an UI layout.
+        """Translates the section data into a UI layout.
 
         """
-        parent = self.scrollarea.widget()
-
+        parent = self.scroll_area.widget()
         for section in self._sections.values():
             grp = add_section(
                 section['icon'],
@@ -314,123 +317,153 @@ class BasePropertyEditor(QtWidgets.QDialog):
                 parent,
                 color=section['color'],
             )
-            self._section_widgets.append(grp)
+
+            self.add_section_header_button(section['name'], grp)
 
             for item in section['groups'].values():
                 _grp = ui.get_group(parent=grp)
-
                 for v in item.values():
-                    row = ui.add_row(
-                        v['name'], parent=_grp, height=None)
+                    self._add_row(v, grp, _grp)
 
-                    if 'description' in v and v['description']:
-                        row.setStatusTip(v['description'])
-                        row.setToolTip(v['description'])
-                        row.setWhatsThis(v['description'])
+    def _add_row(self, v, grp, _grp):
+        row = ui.add_row(v['name'], parent=_grp, height=None)
 
-                    if 'widget' in v and v['widget']:
-                        if 'no_group' in v and v['no_group']:
-                            editor = v['widget'](parent=grp)
-                            grp.layout().insertWidget(1, editor, 1)
-                        else:
-                            editor = v['widget'](parent=row)
-                            if isinstance(editor, QtWidgets.QCheckBox):
-                                # We don't want checkboxes to fully extend accross a row
-                                editor.setSizePolicy(
-                                    QtWidgets.QSizePolicy.Maximum,
-                                    QtWidgets.QSizePolicy.Maximum,
-                                )
-                                row.layout().addStretch(1)
-                                row.layout().addWidget(editor, 0)
-                            else:
-                                row.layout().addWidget(editor, 1)
+        if 'description' in v and v['description']:
+            row.setStatusTip(v['description'])
+            row.setToolTip(v['description'])
+            row.setWhatsThis(v['description'])
 
-                        # Set the editor as an attribute on the widget for later access
-                        if v['key'] is not None:
-                            setattr(
-                                self,
-                                v['key'] + '_editor',
-                                editor
-                            )
-                        else:
-                            setattr(
-                                self,
-                                v['name'].lower() + '_editor',
-                                editor
-                            )
+        if 'widget' in v and v['widget']:
+            if 'no_group' in v and v['no_group']:
+                editor = v['widget'](parent=grp)
+                grp.layout().insertWidget(1, editor, 1)
+            else:
+                editor = v['widget'](parent=row)
+                if isinstance(editor, QtWidgets.QCheckBox):
+                    # We don't want checkboxes to fully extend across a
+                    # row
+                    editor.setSizePolicy(
+                        QtWidgets.QSizePolicy.Maximum,
+                        QtWidgets.QSizePolicy.Maximum,
+                    )
+                    row.layout().addStretch(1)
+                    row.layout().addWidget(editor, 0)
+                else:
+                    row.layout().addWidget(editor, 1)
 
-                        if hasattr(editor, 'setAlignment'):
-                            editor.setAlignment(self._alignment)
+            # Set the editor as an attribute on the widget for later
+            # access
+            if v['key'] is not None:
+                setattr(
+                    self,
+                    v['key'] + '_editor',
+                    editor
+                )
+            else:
+                setattr(
+                    self,
+                    v['name'].lower() + '_editor',
+                    editor
+                )
 
-                        if v['key'] is not None and self._db_table in database.TABLES and v['key'] in database.TABLES[self._db_table]:
-                            _type = database.TABLES[self._db_table][v['key']]['type']
-                            self._connect_editor_signals(
-                                v['key'], _type, editor)
+            if hasattr(editor, 'setAlignment'):
+                editor.setAlignment(self._alignment)
 
-                        if 'validator' in v and v['validator']:
-                            if hasattr(editor, 'setValidator'):
-                                editor.setValidator(v['validator'])
+            if (
+                    v['key'] is not None and
+                    self._db_table in database.TABLES and
+                    v['key'] in database.TABLES[self._db_table]
+            ):
+                _type = database.TABLES[self._db_table][v['key']]['type']
+                self._connect_editor_signals(
+                    v['key'], _type, editor
+                )
 
-                        if 'placeholder' in v and v['placeholder']:
-                            if hasattr(editor, 'setPlaceholderText'):
-                                editor.setPlaceholderText(v['placeholder'])
+            if 'validator' in v and v['validator']:
+                if hasattr(editor, 'setValidator'):
+                    editor.setValidator(v['validator'])
 
-                        if 'protect' in v and v['protect']:
-                            if hasattr(editor, 'setEchoMode'):
-                                editor.setEchoMode(
-                                    QtWidgets.QLineEdit.Password)
+            if 'placeholder' in v and v['placeholder']:
+                if hasattr(editor, 'setPlaceholderText'):
+                    editor.setPlaceholderText(v['placeholder'])
 
-                        if 'description' in v and v['description']:
-                            editor.setStatusTip(v['description'])
-                            editor.setToolTip(v['description'])
-                            editor.setWhatsThis(v['description'])
+            if 'protect' in v and v['protect']:
+                if hasattr(editor, 'setEchoMode'):
+                    editor.setEchoMode(
+                        QtWidgets.QLineEdit.Password
+                    )
 
-                            row.setStatusTip(v['description'])
-                            row.setToolTip(v['description'])
-                            row.setWhatsThis(v['description'])
+            if 'description' in v and v['description']:
+                editor.setStatusTip(v['description'])
+                editor.setToolTip(v['description'])
+                editor.setWhatsThis(v['description'])
 
-                    if 'help' in v and v['help']:
-                        ui.add_description(
-                            v['help'], label=None, parent=_grp)
+                row.setStatusTip(v['description'])
+                row.setToolTip(v['description'])
+                row.setWhatsThis(v['description'])
 
-                    if 'button' in v and v['button']:
-                        button = ui.PaintedButton(
-                            v['button'], parent=row)
-                        button.setFixedHeight(
-                            common.size(common.HeightRow) * 0.8)
+        if 'help' in v and v['help']:
+            ui.add_description(
+                v['help'], label=None, parent=_grp
+            )
 
-                        if v['key'] is not None:
-                            if hasattr(self, v['key'] + '_button_clicked'):
-                                button.clicked.connect(
-                                    getattr(self, v['key'] + '_button_clicked')
-                                )
-                        else:
-                            if hasattr(self, v['name'].lower() + '_button_clicked'):
-                                button.clicked.connect(
-                                    getattr(
-                                        self, v['name'].lower() + '_button_clicked')
-                                )
-                        row.layout().addWidget(button, 0)
+        if 'button' in v and v['button']:
+            button = ui.PaintedButton(
+                v['button'], parent=row
+            )
+            button.setFixedHeight(
+                common.size(common.HeightRow) * 0.8
+            )
 
-                    if 'button2' in v and v['button2']:
-                        button2 = ui.PaintedButton(
-                            v['button2'], parent=row)
-                        button2.setFixedHeight(
-                            common.size(common.HeightRow) * 0.8)
+            if v['key'] is not None:
+                if hasattr(self, v['key'] + '_button_clicked'):
+                    button.clicked.connect(
+                        getattr(self, v['key'] + '_button_clicked')
+                    )
+            else:
+                if hasattr(self, v['name'].lower() + '_button_clicked'):
+                    button.clicked.connect(
+                        getattr(
+                            self, v['name'].lower() + '_button_clicked'
+                        )
+                    )
+            row.layout().addWidget(button, 0)
 
-                        if v['key'] is not None:
-                            if hasattr(self, v['key'] + '_button2_clicked'):
-                                button2.clicked.connect(
-                                    getattr(self, v['key'] +
-                                            '_button2_clicked')
-                                )
-                        else:
-                            if hasattr(self, v['name'].lower() + '_button2_clicked'):
-                                button2.clicked.connect(
-                                    getattr(
-                                        self, v['name'].lower() + '_button2_clicked')
-                                )
-                        row.layout().addWidget(button2, 0)
+        if 'button2' in v and v['button2']:
+            button2 = ui.PaintedButton(
+                v['button2'], parent=row
+            )
+            button2.setFixedHeight(
+                common.size(common.HeightRow) * 0.8
+            )
+
+            if v['key'] is not None:
+                if hasattr(self, v['key'] + '_button2_clicked'):
+                    button2.clicked.connect(
+                        getattr(self, v['key'] + '_button2_clicked')
+                    )
+            else:
+                if hasattr(self, v['name'].lower() + '_button2_clicked'):
+                    button2.clicked.connect(
+                        getattr(
+                            self, v['name'].lower() + '_button2_clicked'
+                        )
+                    )
+            row.layout().addWidget(button2, 0)
+
+    def add_section_header_button(self, name, widget):
+        """Add a header button to help reveal the given section widget.
+
+        """
+        button = ui.PaintedButton(
+            name,
+            height=common.size(common.WidthMargin),
+            parent=self.section_headers_widget
+        )
+        self.section_headers_widget.layout().addWidget(button)
+        button.clicked.connect(
+            functools.partial(self.scroll_to_section, widget)
+        )
 
     def _add_buttons(self):
         if not self._buttons:
@@ -438,19 +471,29 @@ class BasePropertyEditor(QtWidgets.QDialog):
         h = common.size(common.HeightRow)
 
         self.save_button = ui.PaintedButton(
-            self._buttons[0], parent=self)
+            self._buttons[0], parent=self
+        )
         self.save_button.setFixedHeight(h)
         self.cancel_button = ui.PaintedButton(
-            self._buttons[1], parent=self)
+            self._buttons[1], parent=self
+        )
         self.cancel_button.setFixedHeight(h)
 
         row = ui.add_row(
-            None, padding=None, height=h * 2, parent=self.right_row)
+            None, padding=None, height=h * 2, parent=self.right_row
+        )
         row.layout().setAlignment(QtCore.Qt.AlignCenter)
         row.layout().addSpacing(common.size(common.WidthMargin))
         row.layout().addWidget(self.save_button, 1)
         row.layout().addWidget(self.cancel_button, 0)
         row.layout().addSpacing(common.size(common.WidthMargin))
+
+    @QtCore.Slot(QtWidgets.QWidget)
+    def scroll_to_section(self, widget):
+        point = widget.mapTo(self.scroll_area, QtCore.QPoint(0, 0))
+        self.scroll_area.verticalScrollBar().setValue(
+            point.y() + self.scroll_area.verticalScrollBar().value()
+        )
 
     def _connect_editor_signals(self, key, _type, editor):
         """Utility method for connecting an editor's change signal to `data_changed`.
@@ -499,9 +542,11 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
     def _connect_signals(self):
         self.cancel_button.clicked.connect(
-            lambda: self.done(QtWidgets.QDialog.Rejected))
+            lambda: self.done(QtWidgets.QDialog.Rejected)
+        )
         self.save_button.clicked.connect(
-            lambda: self.done(QtWidgets.QDialog.Accepted))
+            lambda: self.done(QtWidgets.QDialog.Accepted)
+        )
 
     def _connect_settings_save_signals(self, keys):
         """Utility method for connecting editor signals to save their current
@@ -530,8 +575,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
             signal.connect(functools.partial(_save_local_value, k))
 
     def load_saved_user_settings(self, keys):
-        """Utilty method will load values from the user setting  and apply
-        it to the corresponding editors.
+        """Utility method will load user setting values and apply them to the
+        corresponding editors.
 
         Args:
             keys (tuple):   A list of editor keys that save their current value
@@ -599,11 +644,14 @@ class BasePropertyEditor(QtWidgets.QDialog):
         """
         if not all((self._db_table, self.server, self.job, self.root)):
             raise RuntimeError(
-                'To load data from the database, the `db_table`, `server`, `job` andd `root` must all be specified.')
+                'To load data from the database, the `db_table`, `server`, '
+                '`job` andd `root` must all be specified.'
+            )
 
         if self._db_table not in database.TABLES:
             raise RuntimeError(
-                f'"{self._db_table}" is not a valid database table.')
+                f'"{self._db_table}" is not a valid database table.'
+            )
 
         db = database.get_db(self.server, self.job, self.root)
         for k in database.TABLES[self._db_table]:
@@ -621,7 +669,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
             v = db.value(self.db_source(), k, self._db_table)
             if v is not None:
 
-                # Make sure the type loaded from the database maches the required type
+                # Make sure the type loaded from the database maches the required
+                # type
                 for section in self._sections.values():
                     for group in section['groups'].values():
                         for item in group.values():
@@ -629,7 +678,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
                                 continue
 
                             # Get the required type
-                            _type = database.TABLES[self._db_table][item['key']]['type']
+                            _type = database.TABLES[self._db_table][item['key']][
+                                'type']
 
                             if isinstance(v, _type):
                                 continue  # Nothing to do if already the right type
@@ -667,7 +717,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
             if k == 'created':
                 try:
                     v = datetime.datetime.fromtimestamp(
-                        float(v)).strftime('%Y-%m-%d %H:%M:%S')
+                        float(v)
+                    ).strftime('%Y-%m-%d %H:%M:%S')
                 except Exception as e:
                     v = 'error'
 
@@ -688,10 +739,13 @@ class BasePropertyEditor(QtWidgets.QDialog):
         """
         if not all((self._db_table, self.server, self.job, self.root)):
             raise RuntimeError(
-                'To load data fomr the database, the `table`, `server`, `job`, `root` must all be specified.')
+                'To load data fomr the database, the `table`, `server`, `job`, '
+                '`root` must all be specified.'
+            )
         if self._db_table not in database.TABLES:
             raise RuntimeError(
-                f'"{self._db_table}" is not a valid database table.')
+                f'"{self._db_table}" is not a valid database table.'
+            )
 
         # Can't save if db_source is not returning a valid value
         if self.db_source() is None:
@@ -736,7 +790,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
             if not isinstance(editor, QtWidgets.QCheckBox):
                 editor.setStyleSheet(
-                    'color: {};'.format(common.rgb(common.color(common.GreenColor))))
+                    'color: {};'.format(common.rgb(common.color(common.GreenColor)))
+                )
             return
 
         if key in self.changed_data:
@@ -744,7 +799,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         if not isinstance(editor, QtWidgets.QCheckBox):
             editor.setStyleSheet(
-                'color: {};'.format(common.rgb(common.color(common.TextColor))))
+                'color: {};'.format(common.rgb(common.color(common.TextColor)))
+            )
 
     def db_source(self):
         """The path of the file database values are associated with.
@@ -791,7 +847,10 @@ class BasePropertyEditor(QtWidgets.QDialog):
         common.center_window(self)
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth) * 1.33, common.size(common.DefaultHeight) * 1.5)
+        return QtCore.QSize(
+            common.size(common.DefaultWidth) * 1.33,
+            common.size(common.DefaultHeight) * 1.5
+        )
 
     @QtCore.Slot(str)
     @QtCore.Slot(str)

@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="main" href="main.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="tokens" href="tokens.html" /><link rel="prev" title="main" href="main.html" />
 
     <meta name="generator" content="sphinx-4.3.1, furo 2021.11.23"/>
         <title>lists - Bookmarks 0.5.0 documentation</title>
@@ -177,6 +177,8 @@
 <li class="toctree-l2"><a class="reference internal" href="images.html">images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="main.html">main</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tokens.html">tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="property_editor.html">property_editor</a></li>
 </ul>
 </li>
 </ul>
@@ -1568,20 +1570,20 @@ clicked.</p>
 <dt class="sig sig-object py" id="bookmarks.lists.files.FilesModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.lists.files.</span></span><span class="sig-name descname"><span class="pre">FilesModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/files.html#FilesModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.files.FilesModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Model used to list files in an asset.</p>
-<p>The model will load files from one task folder at any given time. The
-current task folder can be retrieved by <a class="reference internal" href="#bookmarks.lists.files.FilesModel.task" title="bookmarks.lists.files.FilesModel.task"><code class="xref py py-meth docutils literal notranslate"><span class="pre">task()</span></code></a>. Switching
-tasks is done via emitting the <code class="xref py py-attr docutils literal notranslate"><span class="pre">taskFolderChanged</span></code> signals.</p>
-<p>The model will load the found files into two separate data sets, one
-listing files individually, the other groups them into sequences.
-See <code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.common.sequences</span></code> for the rules that determine how
-sequence items are identified.</p>
-<p>Switching between <cite>FileItems</cite> and <cite>SequenceItems</cite> is done by emitting
-the <code class="xref py py-attr docutils literal notranslate"><span class="pre">dataTypeChanged</span></code> signal.</p>
+<p>The model will load files from one task folder at any given time. The current
+task folder can be retrieved by <a class="reference internal" href="#bookmarks.lists.files.FilesModel.task" title="bookmarks.lists.files.FilesModel.task"><code class="xref py py-meth docutils literal notranslate"><span class="pre">task()</span></code></a>. Switching tasks is done via
+emitting the <code class="xref py py-attr docutils literal notranslate"><span class="pre">taskFolderChanged</span></code> signals.</p>
+<p>The model will load the found files into two separate data sets, one listing
+files individually, the other groups them into sequences. See
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.common.sequences</span></code> for the rules that determine how sequence
+items are identified.</p>
+<p>Switching between <cite>FileItems</cite> and <cite>SequenceItems</cite> is done by emitting the
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">dataTypeChanged</span></code> signal.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The model won’t necessarily load all files it encounters. If the parent bookmark
-has a valid asset config set, certain file extension might be excluded.
-See the <code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.asset_config.asset_config</span></code> for details.</p>
+<p>The model won’t necessarily load all files it encounters. If the parent
+bookmark item has a valid token config set, certain file extension might be
+excluded. See the <a class="reference internal" href="tokens.html#module-bookmarks.tokens.tokens" title="bookmarks.tokens.tokens"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.tokens.tokens</span></code></a> for details.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.files.FilesModel.init_data">
@@ -1595,7 +1597,7 @@ from the file system.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.files.FilesModel.disable_filter">
 <span class="sig-name descname"><span class="pre">disable_filter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/files.html#FilesModel.disable_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.files.FilesModel.disable_filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overrides the asset config and disables file filters.</p>
+<dd><p>Overrides the token config and disables file filters.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.files.FilesModel.source_path">
@@ -1839,7 +1841,7 @@ changes to the database or the local config file.</p>
 <p>Folders found in an asset’s root are referred to as <cite>task folders</cite>. Bookmarks
 generally expects them to be associated with a task or data-type eg. <code class="docutils literal notranslate"><span class="pre">render</span></code>,
 <code class="docutils literal notranslate"><span class="pre">comp</span></code>, <code class="docutils literal notranslate"><span class="pre">textures</span></code>, etc.</p>
-<p>Some default task-folders are defined by <code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.asset_config.asset_config</span></code>.</p>
+<p>Some default task-folders are defined by <a class="reference internal" href="tokens.html#module-bookmarks.tokens.tokens" title="bookmarks.tokens.tokens"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.tokens.tokens</span></code></a>.</p>
 </div>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.lists.tasks.TaskFolderContextMenu">
@@ -2000,7 +2002,15 @@ the clicked item.</p>
       <footer>
         
         <div class="related-pages">
-          
+          <a class="next-page" href="tokens.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">tokens</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
           <a class="prev-page" href="main.html">
               <svg><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">

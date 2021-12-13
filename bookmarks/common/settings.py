@@ -65,6 +65,8 @@ TextFilterKeyHistory = 'TextFilterHistory'
 UIStateSection = 'UIState'
 WindowGeometryKey = 'WindowGeometry'
 WindowStateKey = 'WindowState'
+BookmarkEditorGeometryKey = 'BookmarkEditorGeometryKey'
+BookmarkEditorStateKey = 'BookmarkEditorStateKey'
 SortByBaseNameKey = 'SortByBaseName'
 WindowAlwaysOnTopKey = 'WindowAlwaysOnTop'
 WindowFramelessKey = 'WindowFrameless'
@@ -312,12 +314,12 @@ class UserSettings(QtCore.QSettings):
 
     def set_servers(self, v):
         common.check_type(v, dict)
-        common.servers = v
+        common.servers = v.copy()
         self.setValue(CurrentUserPicksSection, ServersKey, v)
 
     def set_bookmarks(self, v):
         common.check_type(v, dict)
-        common.bookmarks = v
+        common.bookmarks = v.copy()
         self.setValue(CurrentUserPicksSection, BookmarksKey, v)
 
     def set_favourites(self, v):

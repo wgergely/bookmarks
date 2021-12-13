@@ -56,7 +56,7 @@ class FilterEditor(QtWidgets.QDialog):
         self.editor.setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         row.layout().addWidget(self.editor, 1)
 
-        self.ok_button = ui.PaintedButton('Set Filter', parent=self)
+        self.ok_button = ui.PaintedButton('Save', parent=self)
         row.layout().addWidget(self.ok_button, 0)
 
         self.layout().addStretch(1)

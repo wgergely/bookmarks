@@ -177,7 +177,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/tokens.html">tokens</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/property_editor.html">property_editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/editor.html">editor</a></li>
 </ul>
 </li>
 </ul>
@@ -207,9 +207,8 @@
         </div>
         <article role="main">
           <h1>Source code for bookmarks.common.setup</h1><div class="highlight"><pre>
-<span></span><span class="sd">"""Various methods used to initialize Bookmarks.</span>
-
-<span class="sd">See :func:`.initialize()` and :func:`.uninitialize()`.</span>
+<span></span><span class="sd">"""Various methods used to initialize Bookmarks, mainly, :func:`.initialize()` and</span>
+<span class="sd">:func:`.uninitialize()`.</span>
 
 <span class="sd">"""</span>
 <span class="kn">import</span> <span class="nn">importlib</span>
@@ -237,7 +236,8 @@
     <span class="sd">"""Initialize the components required to run Bookmarks.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">            mode (int):    The initialization mode. One of ``common.StandaloneMode`` or ``common.EmbeddedMode``.</span>
+<span class="sd">        mode (str): The initialization mode. One of ``common.StandaloneMode``</span>
+<span class="sd">                or ``common.EmbeddedMode``.</span>
 
 <span class="sd">    """</span>
     <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">verify_dependencies</span>
@@ -247,7 +247,9 @@
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Already initialized as "</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">init_mode</span><span class="si">}</span><span class="s1">"!'</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">StandaloneMode</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">EmbeddedMode</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">'Invalid initalization mode. Got "</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s1">", expected `common.StandaloneMode` or `common.EmbeddedMode`'</span><span class="p">)</span>
+            <span class="sa">f</span><span class="s1">'Invalid initialization mode. Got "</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s1">", expected '</span>
+            <span class="sa">f</span><span class="s1">'`common.StandaloneMode` or `common.EmbeddedMode`'</span>
+        <span class="p">)</span>
 
     <span class="n">common</span><span class="o">.</span><span class="n">init_mode</span> <span class="o">=</span> <span class="n">mode</span>
 
@@ -334,7 +336,8 @@
 
 
 <span class="k">def</span> <span class="nf">_init_config</span><span class="p">():</span>
-    <span class="sd">"""Load the config values from common.CONFIG and set them in the `common` module as properties.</span>
+    <span class="sd">"""Load the config values from common.CONFIG and set them in the `common`</span>
+<span class="sd">    module as properties.</span>
 
 <span class="sd">    """</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_rsc</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">CONFIG</span><span class="p">)</span>
@@ -390,18 +393,21 @@
 
 <span class="sd">    Raises:</span>
 <span class="sd">            EnvironmentError: When the `common.env_key` is not set.</span>
-<span class="sd">            RuntimeError: When the `common.env_key` is invalid or a directory missing.</span>
+<span class="sd">            RuntimeError: When the `common.env_key` is invalid or a directory</span>
+<span class="sd">            missing.</span>
 
 <span class="sd">    """</span>
     <span class="k">if</span> <span class="n">env_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">env_key</span><span class="si">}</span><span class="s1">" environment variable is not set.'</span><span class="p">)</span>
+            <span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">env_key</span><span class="si">}</span><span class="s1">" environment variable is not set.'</span>
+        <span class="p">)</span>
 
     <span class="n">v</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="n">env_key</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">" is not a falid folder. Is "</span><span class="si">{</span><span class="n">env_key</span><span class="si">}</span><span class="s1">" environment variable set?'</span><span class="p">)</span>
+            <span class="sa">f</span><span class="s1">'"</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">" is not a falid folder. Is "</span><span class="si">{</span><span class="n">env_key</span><span class="si">}</span><span class="s1">" environment variable set?'</span>
+        <span class="p">)</span>
 
     <span class="c1"># Add `common.env_key` to the PATH</span>
     <span class="n">v</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -435,7 +441,8 @@
             <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">mod</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ModuleNotFoundError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ModuleNotFoundError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s1">'Bookmarks cannot be run. A required dependency was not found</span><span class="se">\n</span><span class="s1">&gt;&gt; </span><span class="si">{</span><span class="n">mod</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span></div>
+                <span class="sa">f</span><span class="s1">'Bookmarks cannot be run. A required dependency was not found</span><span class="se">\n</span><span class="s1">&gt;&gt; </span><span class="si">{</span><span class="n">mod</span><span class="si">}</span><span class="s1">'</span>
+            <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span></div>
 </pre></div>
         </article>
       </div>

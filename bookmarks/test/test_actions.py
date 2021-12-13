@@ -4,27 +4,21 @@ from PySide2 import QtCore, QtGui, QtWidgets
 
 from .. import actions
 from .. import common
-from .. import templates
 
 from . import base
 
 
 class Test(base.BaseCase):
-    def test_add_server(self):
-        self.assertFalse(common.servers)
-        v = base.random_str(32)
-        actions.add_server(v)
-        self.assertIn(v, common.servers)
-
-    def test_remove_server(self):
+    def test_add_remove_server(self):
+        self.assertIsInstance(common.servers, dict)
         v = base.random_str(32)
         actions.add_server(v)
         self.assertIn(v, common.servers)
         actions.remove_server(v)
         self.assertNotIn(v, common.servers)
 
-    def test_add_bookmark(self):
-        self.assertFalse(common.bookmarks)
+    def test_add_remove_bookmark(self):
+        self.assertIsInstance(common.bookmarks, dict)
 
         with self.assertRaises(TypeError):
             actions.add_bookmark(None, None, None)
@@ -38,34 +32,15 @@ class Test(base.BaseCase):
 
         self.assertIn(k, common.bookmarks)
 
-    def test_remove_bookmark(self):
-        server = base.random_str(32)
-        job = base.random_str(32)
-        root = base.random_str(32)
-        k = common.bookmark_key(server, job, root)
-        actions.add_bookmark(server, job, root)
-        self.assertIn(k, common.bookmarks)
-
         actions.remove_bookmark(server, job, root)
         self.assertNotIn(k, common.bookmarks)
 
-    def test_add_favourite(self):
-        self.assertFalse(common.favourites)
+    def test_add_remove_favourite(self):
+        self.assertIsInstance(common.favourites, dict)
 
         with self.assertRaises(TypeError):
             actions.add_favourite(None, None)
 
-        server = base.random_str(32)
-        job = base.random_str(32)
-        root = base.random_str(32)
-        source_paths = (server, job, root)
-        source = common.bookmark_key(
-            server, job, root) + '/' + base.random_str(32)
-
-        actions.add_favourite(source_paths, source)
-        self.assertIn(source, common.favourites)
-
-    def test_remove_favourite(self):
         server = base.random_str(32)
         job = base.random_str(32)
         root = base.random_str(32)
@@ -133,13 +108,13 @@ class Test(base.BaseCase):
         for f in os.listdir(common.temp_path()):
             if common.favorite_file_ext not in f:
                 continue
-            actions.import_favourites(common.temp_path() + '/' + f)
+            actions.import_favourites(source=common.temp_path() + '/' + f)
 
     def test_prune_bookmarks(self):
         actions.prune_bookmarks()
 
     def test_set_active(self):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(TypeError):
             actions.set_active(None, None)
 
         for k in common.ActiveSectionCacheKeys:
@@ -175,41 +150,6 @@ class TestWidgetActions(base.BaseCase):
             actions.add_bookmark(server, job, 'data/asset')
             actions.add_bookmark(server, job, 'data/shot')
 
-    # def test_activate(self):
-    #     self.assertIsNotNone(main.instance())
-    #
-    #     w = common.widget(common.BookmarkTab)
-    #     self.assertGreater(w.model().rowCount(), 0)
-    #
-    #     _w = common.widget(common.AssetTab)
-    #     self.assertEqual(_w.model().rowCount(), 0)
-    #
-    #     for idx in range(w.model().rowCount()):
-    #         index = w.model().index(idx, 0)
-    #         w.activate(index)
-    #         break
-    #     for idx in range(w.model().rowCount()):
-    #         index = w.model().index(idx, 0)
-    #         self.assertTrue(index.flags() & common.MarkedAsActive)
-    #         break
-    #
-    #     self.assertGreater(_w.model().rowCount(), 0)
 
     def test_toggle_sequence(self):
         pass
-
-        # self.assertIsNotNone(main.instance())
-
-        # w = common.widget(common.BookmarkTab)
-        # self.assertGreater(w.model().rowCount(), 0)
-        #
-        # for idx in range(w.model().rowCount()):
-        #     index = w.model().index(idx, 0)
-        #     w.activate(index)
-        #     break
-        # for idx in range(w.model().rowCount()):
-        #     index = w.model().index(idx, 0)
-        #     self.assertTrue(index.flags() & common.MarkedAsActive)
-        #     break
-        #
-        # self.assertGreater(_w.model().rowCount(), 0)

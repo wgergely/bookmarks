@@ -690,17 +690,12 @@ class TaskPicker(QtWidgets.QDialog):
             super(TaskPicker, self).done(result)
             return
 
-        if not self.task_editor.selectionModel().hasSelection():
+        index = common.get_selected_index(self.task_editor)
+        if not index.isValid():
             self.sgEntitySelected.emit(None)
             super(TaskPicker, self).done(result)
             return
 
-        if not self.task_editor.selectionModel().currentIndex().isValid():
-            self.sgEntitySelected.emit(None)
-            super(TaskPicker, self).done(result)
-            return
-
-        index = self.task_editor.selectionModel().currentIndex()
         entity = index.data(QtCore.Qt.UserRole)
         if not entity:
             self.sgEntitySelected.emit(None)

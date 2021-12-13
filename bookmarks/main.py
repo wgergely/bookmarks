@@ -3,15 +3,18 @@
 
 :class:`.MainWidget` consist of :class:`bookmarks.topbar.TopBarWidget`,
 :class:`bookmarks.statusbar.StatusBarWidget`,
-and :class:`bookmarks.lists.basewidget.ListsWidget`. The latter is the container for the three
-main list item widgets: :class:`bookmarks.lists.bookmarks.BookmarksWidget`,
-:class:`bookmarks.lists.assets.AssetsWidget` and :class:`bookmarks.lists.files.FilesWidget`.
+and :class:`bookmarks.lists.basewidget.ListsWidget`. The latter is the container
+for the three main list item widgets:
+:class:`bookmarks.lists.bookmarks.BookmarksWidget`,
+:class:`bookmarks.lists.assets.AssetsWidget` and
+:class:`bookmarks.lists.files.FilesWidget`.
 
 Important:
 
-    :class:`.MainWidget` won't be fully set up until :meth:`.MainWidget.initialize` is called.
-    In standalone mode, the widget will automatically be initialized, but in embedded mode,
-    the slot has to be called manually.
+    :class:`.MainWidget` won't be fully set up until
+    :meth:`.MainWidget.initialize` is called. In standalone mode, the widget will
+    automatically be initialized, on first showing, however, in EmbeddedMode,
+    :meth:`.MainWidget.initialize` must be called manually.
 
 
 """
@@ -44,10 +47,14 @@ def init():
 
 
 class MainWidget(QtWidgets.QWidget):
-    """Bookmark's main widget when initialized as `EmbeddedMode`.
+    """Bookmark's main widget when initialized in :attr:`common.EmbeddedMode`.
+    See also :class:`bookmarks.standalone.StandaloneMainWidget`, a subclass used
+    as the main widget when run in :attr:`common.StandaloneMode`.
 
-    The widget is made up of :class:``, a stacked widget, and a status bar. The
-    stacked widget contains the , Asset-, File- and Favourite widgets.
+    Attributes:
+        aboutToInitialize (Signal): Emitted just before the main widget is about to
+                be initialized.
+        initialized (Signal): Emitted when the main widget finished initializing.
 
     """
     aboutToInitialize = QtCore.Signal()
@@ -60,7 +67,6 @@ class MainWidget(QtWidgets.QWidget):
         super().__init__(parent=parent)
 
         self.is_initialized = False
-        self.init_progress = 'Loading...'
         self.shortcuts = []
 
         self._contextMenu = None
@@ -110,7 +116,7 @@ class MainWidget(QtWidgets.QWidget):
         self.layout().addWidget(self.statusbar)
 
     def _init_current_tab(self):
-        # Setting the tab now before we do any more initialisation
+        # Setting the tab now before we do any more initialization
         idx = common.settings.value(
             common.UIStateSection,
             common.CurrentList
@@ -187,11 +193,9 @@ class MainWidget(QtWidgets.QWidget):
         This method must be called to create the UI layout and to load the item
         models.
 
-        :func:`bookmarks.common.core.initialize()` method the widget will automatically
-        be initialized.
         """
         if self.is_initialized:
-            return
+            raise RuntimeError('Cannot initialize more than once.')
 
         self._init_shortcuts()
         self._create_ui()
@@ -352,7 +356,7 @@ class MainWidget(QtWidgets.QWidget):
         rect.setTop(pixmaprect.bottom() + (o * 0.5))
         rect.setHeight(metrics.height())
         common.draw_aliased_text(
-            painter, font, rect, self.init_progress, align, color)
+            painter, font, rect, 'Loading...', align, color)
 
     def paintEvent(self, event):
         painter = QtGui.QPainter()

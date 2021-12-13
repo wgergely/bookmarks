@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
-from PySide2 import QtCore, QtGui, QtWidgets
 
-from .. import common
+from PySide2 import QtCore
 
-from ..bookmark_editor import server_editor
-from ..bookmark_editor import job_editor
-from ..bookmark_editor import bookmark_editor
-from ..bookmark_editor import bookmark_editor_widget
-from .. import actions
-from ..templates import actions as actions
 from . import base
+from .. import common
 
 
 class Test(base.BaseCase):
@@ -18,24 +12,18 @@ class Test(base.BaseCase):
     def setUpClass(cls):
         super(Test, cls).setUpClass()
 
-        common.init_standalone()
-        common.init_pixel_ratio()
-        common.init_ui_scale()
-        common.init_session_lock()
-        common.init_settings()
-        common.init_font_db()
-
         if not os.path.isdir(common.temp_path()):
             os.makedirs(common.temp_path())
 
     def test_server_editor(self):
+        from ..bookmark_editor import server_editor
         v = server_editor.ServerListWidget()
 
         self.assertIsInstance(v, server_editor.ServerListWidget)
         v.init_data()
 
-
     def test_job_editor(self):
+        from ..bookmark_editor import job_editor
         v = job_editor.JobListWidget()
 
         self.assertIsInstance(v, job_editor.JobListWidget)
@@ -43,6 +31,7 @@ class Test(base.BaseCase):
         self.assertEqual(v.count(), 0)
 
     def test_bookmark_editor(self):
+        from ..bookmark_editor import bookmark_editor
         v = bookmark_editor.BookmarkListWidget()
 
         self.assertIsInstance(v, bookmark_editor.BookmarkListWidget)
@@ -50,6 +39,11 @@ class Test(base.BaseCase):
         self.assertEqual(v.count(), 0)
 
     def test_bookmark_editor_widget(self):
+        from ..bookmark_editor import server_editor
+        from ..bookmark_editor import job_editor
+        from ..bookmark_editor import bookmark_editor_widget
+        from .. import actions
+
         v = bookmark_editor_widget.BookmarkEditorWidget()
 
         self.assertIsInstance(v, bookmark_editor_widget.BookmarkEditorWidget)
@@ -60,26 +54,23 @@ class Test(base.BaseCase):
         j = v.job_editor
         self.assertIsInstance(j, job_editor.JobListWidget)
 
-        #==============================================================
+        # ==============================================================
         # Testing servers
-        servers = []
-        for n in range(50):
+        servers = {}
+        for n in range(5):
             server = common.temp_path() + os.sep + base.random_ascii(32)
             os.makedirs(server)
-            servers.append(server)
+            servers[server] = server
         common.settings.set_servers(servers)
 
-        s.init_data()
-        self.assertEqual(s.count(), 50)
+        s.init_data(reset=True)
+        self.assertGreaterEqual(s.count(), len(servers))
 
-        return
-        servers = []
         for n in range(s.count()):
             _v = s.item(n).data(QtCore.Qt.DisplayRole)
             self.assertTrue(os.path.isdir(_v))
-            servers.append(_v)
 
-        for server in servers:
+        for server in servers.keys():
             actions.remove_server(server)
 
         self.assertEqual(len(common.servers), 0)
@@ -102,6 +93,9 @@ class Test(base.BaseCase):
                 break
 
         self.assertEqual(s.currentItem().data(QtCore.Qt.DisplayRole), server)
+        self.assertEqual(j.server, server)
+        self.assertTrue(QtCore.QFileInfo(server).exists())
+
 
         #########################################################
         # Test jobs
@@ -114,11 +108,17 @@ class Test(base.BaseCase):
             QtCore.QDir(path).mkpath('.')
             self.assertTrue(os.path.isdir(path))
 
-        self.assertEqual(j.count(), 0)
+        self.assertEqual(j.model().rowCount(), 0)
         j.init_data()
-        self.assertEqual(j.count(), 10)
+        self.assertEqual(j.model().rowCount(), 10)
 
     def test_create_job_template(self):
+        from ..bookmark_editor import server_editor
+        from ..bookmark_editor import job_editor
+        from ..bookmark_editor import bookmark_editor
+        from ..bookmark_editor import bookmark_editor_widget
+        from ..templates import actions as actions
+
         v = bookmark_editor_widget.BookmarkEditorWidget()
 
         self.assertIsInstance(v, bookmark_editor_widget.BookmarkEditorWidget)
@@ -150,7 +150,8 @@ class Test(base.BaseCase):
         self.assertEqual(s.currentItem().data(QtCore.Qt.DisplayRole), server)
 
         # Template path
-        t = __file__ + os.sep + os.pardir + os.sep + os.pardir + os.sep + 'rsc' + os.sep + 'templates' + os.sep + 'Bookmarks_Default_Job.zip'
+        t = __file__ + os.sep + os.pardir + os.sep + os.pardir + os.sep + 'rsc' + \
+            os.sep + 'templates' + os.sep + 'Bookmarks_Default_Job.zip'
         t = os.path.normpath(t)
         t = str(t)
         self.assertTrue(os.path.isfile(t))

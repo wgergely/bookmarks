@@ -177,7 +177,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/tokens.html">tokens</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/property_editor.html">property_editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/editor.html">editor</a></li>
 </ul>
 </li>
 </ul>
@@ -1021,11 +1021,12 @@
         <span class="k">return</span> <span class="mi">3</span></div>
 
     <span class="k">def</span> <span class="nf">action_on_enter_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">activate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">())</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_selected_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activate</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FilesWidget.startDrag"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.files.FilesWidget.startDrag">[docs]</a>    <span class="k">def</span> <span class="nf">startDrag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">supported_actions</span><span class="p">):</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
-
+        <span class="n">index</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_selected_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">):</span>

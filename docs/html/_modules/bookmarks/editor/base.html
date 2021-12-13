@@ -177,6 +177,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/tokens.html">tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/editor.html">editor</a></li>
 </ul>
 </li>
 </ul>
@@ -205,33 +206,19 @@
           </label>
         </div>
         <article role="main">
-          <h1>Source code for bookmarks.property_editor.base</h1><div class="highlight"><pre>
+          <h1>Source code for bookmarks.editor.base</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">"""The module contains the base class used by property editors across Bookmarks.</span>
+<span class="sd">"""Contains :class:`.BasePropertyEditor` and its required attributes and methods.</span>
 
-<span class="sd">The property editor's layout is defined by a previously specified SECTIONS dictionary,</span>
-<span class="sd">that contains the sections, rows and editor widget definitions - and any linkage</span>
-<span class="sd">information needed to associate editors with a bookmark database or user settings.</span>
+<span class="sd">The property editor's layout is defined by a previously specified SECTIONS</span>
+<span class="sd">dictionary, that contains the sections, rows and editor widget definitions - and</span>
+<span class="sd">linkage information needed to associate the widget with a bookmark database or</span>
+<span class="sd">user settings.</span>
 
 <span class="sd">The :class:`BasePropertyEditor` is relatively flexible and has a number of</span>
 <span class="sd">abstract methods that need implementing in subclasses depending on the desired</span>
-<span class="sd">functionality. Namely, :meth:`BasePropertyEditor.db_source()`,</span>
-<span class="sd">:meth:`BasePropertyEditor.init_data()` and :meth:`BasePropertyEditor.save_changes()`</span>
-<span class="sd">are the main function needed to get and save data.</span>
-
-<span class="sd">.. code-block:: python</span>
-
-<span class="sd">    editor = BasePropertyEditor(</span>
-<span class="sd">        SECTIONS,</span>
-<span class="sd">        server,</span>
-<span class="sd">        job,</span>
-<span class="sd">        root,</span>
-<span class="sd">        asset=asset,</span>
-<span class="sd">        alignment=QtCore.Qt.AlignLeft,</span>
-<span class="sd">        fallback_thumb='file_sm',</span>
-<span class="sd">        db_table=database.AssetTable,</span>
-<span class="sd">    )</span>
-<span class="sd">    editor.open()</span>
+<span class="sd">functionality. See, :meth:`.BasePropertyEditor.db_source`,</span>
+<span class="sd">:meth:`.BasePropertyEditor.init_data` and :meth:`.BasePropertyEditor.save_changes`.</span>
 
 <span class="sd">"""</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
@@ -254,6 +241,8 @@
 <span class="n">textvalidator</span><span class="o">.</span><span class="n">setRegExp</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRegExp</span><span class="p">(</span><span class="sa">r</span><span class="s1">'[a-zA-Z0-9]+'</span><span class="p">))</span>
 <span class="n">namevalidator</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">()</span>
 <span class="n">namevalidator</span><span class="o">.</span><span class="n">setRegExp</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRegExp</span><span class="p">(</span><span class="sa">r</span><span class="s1">'[a-zA-Z0-9\-\_]+'</span><span class="p">))</span>
+<span class="n">jobnamevalidator</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">()</span>
+<span class="n">jobnamevalidator</span><span class="o">.</span><span class="n">setRegExp</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRegExp</span><span class="p">(</span><span class="sa">r</span><span class="s1">'[a-zA-Z0-9\-\_/]+'</span><span class="p">))</span>
 <span class="n">domainvalidator</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">()</span>
 <span class="n">domainvalidator</span><span class="o">.</span><span class="n">setRegExp</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRegExp</span><span class="p">(</span><span class="sa">r</span><span class="s1">'[a-zA-Z0-9/:\.]+'</span><span class="p">))</span>
 <span class="n">versionvalidator</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QRegExpValidator</span><span class="p">()</span>
@@ -269,14 +258,14 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="add_section"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.add_section">[docs]</a><span class="k">def</span> <span class="nf">add_section</span><span class="p">(</span><span class="n">icon</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">"""Used to a new section with an icon and a title to a widget.</span>
+<div class="viewcode-block" id="add_section"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base.add_section">[docs]</a><span class="k">def</span> <span class="nf">add_section</span><span class="p">(</span><span class="n">icon</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">"""Adds a new section with an icon and a title.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        icon (str):         The name of a rsc image.</span>
 <span class="sd">        label (str):        The name of the section.</span>
 <span class="sd">        parent (QWidget):   A widget to add the section to.</span>
-<span class="sd">        color (QColor):     The color of the icon. Defaults to `None`.</span>
+<span class="sd">        color (QColor, optional):     The color of the icon. Defaults to None.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        QWidget:            A widget to add editors to.</span>
@@ -290,9 +279,11 @@
     <span class="n">h</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">HeightRow</span><span class="p">)</span>
     <span class="n">parent</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s1">''</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">vertical</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">any</span><span class="p">((</span><span class="n">icon</span><span class="p">,</span> <span class="n">label</span><span class="p">)):</span>
-        <span class="n">row</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s1">''</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
-        <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignTop</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">((</span><span class="n">icon</span><span class="p">,</span> <span class="n">label</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">parent</span>
+
+    <span class="n">row</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="s1">''</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+    <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignTop</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">icon</span><span class="p">:</span>
         <span class="n">w</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
@@ -309,8 +300,7 @@
         <span class="p">)</span>
         <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">any</span><span class="p">((</span><span class="n">icon</span><span class="p">,</span> <span class="n">label</span><span class="p">)):</span>
-        <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addStretch</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addStretch</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">parent</span></div>
 
@@ -323,7 +313,7 @@
     <span class="p">)</span>
 
 
-<div class="viewcode-block" id="BasePropertyEditor"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor">[docs]</a><span class="k">class</span> <span class="nc">BasePropertyEditor</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">):</span>
+<div class="viewcode-block" id="BasePropertyEditor"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base.BasePropertyEditor">[docs]</a><span class="k">class</span> <span class="nc">BasePropertyEditor</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">):</span>
     <span class="sd">"""Base class for constructing a property editor widget.</span>
 
 <span class="sd">    Args:</span>
@@ -659,7 +649,7 @@
                     <span class="p">)</span>
             <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">button2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
-<div class="viewcode-block" id="BasePropertyEditor.add_section_header_button"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.add_section_header_button">[docs]</a>    <span class="k">def</span> <span class="nf">add_section_header_button</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+<div class="viewcode-block" id="BasePropertyEditor.add_section_header_button"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base.BasePropertyEditor.add_section_header_button">[docs]</a>    <span class="k">def</span> <span class="nf">add_section_header_button</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
         <span class="sd">"""Add a header button to help reveal the given section widget.</span>
 
 <span class="sd">        """</span>
@@ -782,7 +772,7 @@
 
             <span class="n">signal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">_save_local_value</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
 
-<div class="viewcode-block" id="BasePropertyEditor.load_saved_user_settings"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.load_saved_user_settings">[docs]</a>    <span class="k">def</span> <span class="nf">load_saved_user_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+<div class="viewcode-block" id="BasePropertyEditor.load_saved_user_settings"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base.BasePropertyEditor.load_saved_user_settings">[docs]</a>    <span class="k">def</span> <span class="nf">load_saved_user_settings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
         <span class="sd">"""Utility method will load user setting values and apply them to the</span>
 <span class="sd">        corresponding editors.</span>
 
@@ -827,7 +817,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">continue</span></div>
 
-<div class="viewcode-block" id="BasePropertyEditor.set_thumbnail_source"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.set_thumbnail_source">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+<div class="viewcode-block" id="BasePropertyEditor.set_thumbnail_source"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base.BasePropertyEditor.set_thumbnail_source">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">set_thumbnail_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Slot connected to the update timer and used to set the source value</span>
 <span class="sd">        of the thumbnail editor.</span>
@@ -840,7 +830,7 @@
         <span class="k">if</span> <span class="n">source</span> <span class="o">!=</span> <span class="n">_source</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">thumbnail_editor</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="BasePropertyEditor.init_db_data"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.init_db_data">[docs]</a>    <span class="k">def</span> <span class="nf">init_db_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BasePropertyEditor.init_db_data"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base.BasePropertyEditor.init_db_data">[docs]</a>    <span class="k">def</span> <span class="nf">init_db_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Method will load data from the bookmark database.</span>
 
 <span class="sd">        To be able to load data, the `db_table`, `server`, `job` and `root`</span>
@@ -852,8 +842,8 @@
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s1">'To load data from the database, the `db_table`, `server`, '</span>
-                <span class="s1">'`job` andd `root` must all be specified.'</span>
+                <span class="s1">'To load data from the database, `db_table`, `server`, '</span>
+                <span class="s1">'`job` and `root` must all be specified.'</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">database</span><span class="o">.</span><span class="n">TABLES</span><span class="p">:</span>
@@ -877,7 +867,7 @@
             <span class="n">v</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">db_source</span><span class="p">(),</span> <span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 
-                <span class="c1"># Make sure the type loaded from the database maches the required</span>
+                <span class="c1"># Make sure the type loaded from the database matches the required</span>
                 <span class="c1"># type</span>
                 <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sections</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
                     <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">section</span><span class="p">[</span><span class="s1">'groups'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
@@ -935,7 +925,7 @@
                 <span class="n">editor</span><span class="o">.</span><span class="n">setDisabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">editor</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BasePropertyEditor.save_changed_data_to_db"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.save_changed_data_to_db">[docs]</a>    <span class="k">def</span> <span class="nf">save_changed_data_to_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BasePropertyEditor.save_changed_data_to_db"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base.BasePropertyEditor.save_changed_data_to_db">[docs]</a>    <span class="k">def</span> <span class="nf">save_changed_data_to_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""This will save changed data to the bookmark database.</span>
 
 <span class="sd">        To be able to save data, the `_db_table`, `server`, `job` and `root`</span>
@@ -947,7 +937,7 @@
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s1">'To load data fomr the database, the `table`, `server`, `job`, '</span>
+                <span class="s1">'To load data from the database, `table`, `server`, `job`, '</span>
                 <span class="s1">'`root` must all be specified.'</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">database</span><span class="o">.</span><span class="n">TABLES</span><span class="p">:</span>
@@ -969,7 +959,7 @@
                     <span class="n">table</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span>
                 <span class="p">)</span></div>
 
-<div class="viewcode-block" id="BasePropertyEditor.data_changed"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.data_changed">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<div class="viewcode-block" id="BasePropertyEditor.data_changed"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base.BasePropertyEditor.data_changed">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
     <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">type</span><span class="p">)</span>
     <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">)</span>
     <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
@@ -1010,29 +1000,30 @@
                 <span class="s1">'color: </span><span class="si">{}</span><span class="s1">;'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">rgb</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextColor</span><span class="p">)))</span>
             <span class="p">)</span></div>
 
-<div class="viewcode-block" id="BasePropertyEditor.db_source"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.db_source">[docs]</a>    <span class="k">def</span> <span class="nf">db_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""The path of the file database values are associated with.</span>
+<div class="viewcode-block" id="BasePropertyEditor.db_source"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base.BasePropertyEditor.db_source">[docs]</a>    <span class="k">def</span> <span class="nf">db_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""A file path the database values are associated with.</span>
 
-<span class="sd">        Eg. in the case of assets this is `server/job/root/asset`</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            str: Path to a file.</span>
 
 <span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">'Abstract method must be implemented by subclass.'</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BasePropertyEditor.init_data"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.init_data">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+<div class="viewcode-block" id="BasePropertyEditor.init_data"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base.BasePropertyEditor.init_data">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">init_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Initialises the current/default values.</span>
 
 <span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">'Abstract method must be implemented by subclass.'</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BasePropertyEditor.save_changes"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.save_changes">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+<div class="viewcode-block" id="BasePropertyEditor.save_changes"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base.BasePropertyEditor.save_changes">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">save_changes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Abstract method responsible for saving changed data.</span>
 
 <span class="sd">        """</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">'Abstract method must be implemented by subclass.'</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BasePropertyEditor.done"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.done">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+<div class="viewcode-block" id="BasePropertyEditor.done"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base.BasePropertyEditor.done">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">done</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="n">Rejected</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">changed_data</span><span class="p">:</span>
@@ -1050,21 +1041,21 @@
 
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">BasePropertyEditor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">done</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BasePropertyEditor.showEvent"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.showEvent">[docs]</a>    <span class="k">def</span> <span class="nf">showEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="BasePropertyEditor.showEvent"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base.BasePropertyEditor.showEvent">[docs]</a>    <span class="k">def</span> <span class="nf">showEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="n">QtCore</span><span class="o">.</span><span class="n">QTimer</span><span class="o">.</span><span class="n">singleShot</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_data</span><span class="p">)</span>
         <span class="n">common</span><span class="o">.</span><span class="n">center_window</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BasePropertyEditor.sizeHint"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.sizeHint">[docs]</a>    <span class="k">def</span> <span class="nf">sizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BasePropertyEditor.sizeHint"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base.BasePropertyEditor.sizeHint">[docs]</a>    <span class="k">def</span> <span class="nf">sizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSize</span><span class="p">(</span>
             <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">DefaultWidth</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.33</span><span class="p">,</span>
             <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">DefaultHeight</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.5</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="BasePropertyEditor.update_changed_database_value"><a class="viewcode-back" href="../../../api/property_editor.html#bookmarks.property_editor.base.BasePropertyEditor.update_changed_database_value">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<div class="viewcode-block" id="BasePropertyEditor.update_changed_database_value"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base.BasePropertyEditor.update_changed_database_value">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
     <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
     <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">update_changed_database_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">"""Slot responsible updating the gui when  database value is updated.</span>
+        <span class="sd">"""Slot responsible updating the gui when a database value has changed.</span>
 
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">source</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_source</span><span class="p">():</span>

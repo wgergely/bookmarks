@@ -211,10 +211,7 @@ class PublishWidget(base.BasePropertyEditor):
             return
 
         widget = common.widget(common.FileTab)
-        if not widget.selectionModel().hasSelection():
-            return
-
-        index = widget.selectionModel().currentIndex()
+        index = common.get_selected_index(widget)
         if not index.isValid():
             return
 

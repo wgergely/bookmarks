@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Sub-editor widget used by :class:`bookmarks.bookmark_editor.bookmark_editor_widget.BookmarkEditorWidget`
+"""Sub-editor widget used by
+:class:`bookmarks.bookmark_editor.bookmark_editor_widget.BookmarkEditorWidget`
 to add and select jobs a server.
 
 """
@@ -14,7 +15,7 @@ from .. import contextmenu
 from .. import shortcuts
 from .. import templates
 from .. import ui
-from .. editor import base
+from ..editor import base
 
 SECTIONS = {
     0: {
@@ -26,7 +27,7 @@ SECTIONS = {
                 0: {
                     'name': 'Name',
                     'key': None,
-                    'validator': base.namevalidator,
+                    'validator': base.jobnamevalidator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Name, eg. `MY_NEW_JOB`',
                     'description': 'The job\'s name, eg. `MY_NEW_JOB`.',
@@ -38,7 +39,8 @@ SECTIONS = {
                     'key': None,
                     'validator': None,
                     'widget': functools.partial(
-                        templates.TemplatesWidget, templates.JobTemplateMode),
+                        templates.TemplatesWidget, templates.JobTemplateMode
+                    ),
                     'placeholder': None,
                     'description': 'Select a folder template to create this asset.',
                 },
@@ -66,6 +68,7 @@ class AddJobWidget(base.BasePropertyEditor):
     """A custom `BasePropertyEditor` used to add new jobs on a server.
 
     """
+    jobAdded = QtCore.Signal(str)
     buttons = ('Create Job', 'Cancel')
 
     def __init__(self, server, parent=None):
@@ -86,7 +89,7 @@ class AddJobWidget(base.BasePropertyEditor):
     def init_data(self):
         items = []
 
-        for name, path in self.parent().job_editor.find_job_items(self.server):
+        for name, path in self.parent().job_editor.item_generator(self.server):
             items.append(name)
 
         completer = QtWidgets.QCompleter(items, parent=self)
@@ -98,7 +101,9 @@ class AddJobWidget(base.BasePropertyEditor):
     @common.debug
     def done(self, result):
         if result == QtWidgets.QDialog.Rejected:
-            return super(base.BasePropertyEditor, self).done(result)  # pylint: disable=E1003
+            return super(base.BasePropertyEditor, self).done(
+                result
+            )  # pylint: disable=E1003
 
         if not self.name_editor.text():
             raise ValueError('Must enter a name to create a job.')
@@ -112,22 +117,31 @@ class AddJobWidget(base.BasePropertyEditor):
 
         if '/' in name:
             _name = name.split('/')[-1]
-            _root = name[:len(_name) - 1]
+            _root = name[:-len(_name) - 1]
+            name = _name
             root = f'{self.server}/{_root}'
+
+            if not QtCore.QFileInfo(root).exists():
+                if not QtCore.QDir(root).mkpath('.'):
+                    raise RuntimeError('Error creating folders.')
 
         # Create template and signal
         self.template_editor.template_list_widget.create(name, root)
         path = f'{root}/{name}'
 
         if not QtCore.QFileInfo(path).exists():
-            raise RuntimeError('Could not find the new job.')
+            raise RuntimeError('Could not find the added job.')
+
+        self.jobAdded.emit(path)
 
         path += f'/thumbnail.{common.thumbnail_format}'
         self.thumbnail_editor.save_image(destination=path)
 
         ui.MessageBox(f'{name} was successfully created.').open()
 
-        return super(base.BasePropertyEditor, self).done(result)  # pylint: disable=E1003
+        return super(base.BasePropertyEditor, self).done(
+            result
+        )  # pylint: disable=E1003
 
 
 class JobContextMenu(contextmenu.BaseContextMenu):
@@ -150,16 +164,15 @@ class JobContextMenu(contextmenu.BaseContextMenu):
 
     def reveal_menu(self):
         self.menu['Reveal...'] = {
-            'action': lambda: actions.reveal(self.index.data(QtCore.Qt.UserRole) + '/.'),
+            'action': lambda: actions.reveal(
+                self.index.data(QtCore.Qt.UserRole) + '/.'
+            ),
             'icon': ui.get_icon('folder')
         }
 
     def refresh_menu(self):
         self.menu['Refresh'] = {
-            'action': (
-                functools.partial(self.parent().init_data, reset=False),
-                self.parent().restore_current
-            ),
+            'action': self.parent().init_data,
             'icon': ui.get_icon('refresh')
         }
 
@@ -168,11 +181,7 @@ class JobListWidget(ui.ListViewWidget):
     """Simple list widget used to add and remove servers to/from the local
     common.
 
-    Signals:
-        jobChanged(server, job):    Emitted when the current job selection changedes.
-
     """
-    jobChanged = QtCore.Signal(str, str)
 
     def __init__(self, parent=None):
         super().__init__(
@@ -202,41 +211,44 @@ class JobListWidget(ui.ListViewWidget):
     def init_shortcuts(self):
         shortcuts.add_shortcuts(self, shortcuts.BookmarkEditorShortcuts)
         connect = functools.partial(
-            shortcuts.connect, shortcuts.BookmarkEditorShortcuts)
+            shortcuts.connect, shortcuts.BookmarkEditorShortcuts
+        )
         connect(shortcuts.AddItem, self.add)
 
     def _connect_signals(self):
         super()._connect_signals()
 
-        self.selectionModel().selectionChanged.connect(self.save_current)
-        self.selectionModel().selectionChanged.connect(self.emit_job_changed)
-
-        common.signals.bookmarkAdded.connect(self.update_status)
-        common.signals.bookmarkRemoved.connect(self.update_status)
-
-        common.signals.templateExpanded.connect(
-            lambda: self.init_data(reset=False))
-        common.signals.templateExpanded.connect(
-            lambda x: self.restore_current(name=QtCore.QFileInfo(x).fileName())
+        self.selectionModel().selectionChanged.connect(
+            functools.partial(
+                common.save_selection,
+                self,
+                common.BookmarkEditorJobKey
+            )
         )
 
-    def find_job_items(self, source):
+        common.signals.bookmarkAdded.connect(self.update_job_statuses)
+        common.signals.bookmarkRemoved.connect(self.update_job_statuses)
+
+    def item_generator(self, source):
         has_subdir = common.settings.value(
-            common.SettingsSection, common.JobsHaveSubdirs)
-        has_subdir = QtCore.Qt.UnChecked if has_subdir is None else QtCore.Qt.CheckState(
-            has_subdir)
+            common.SettingsSection, common.JobsHaveSubdirs
+        )
+        has_subdir = QtCore.Qt.UnChecked if has_subdir is None else \
+            QtCore.Qt.CheckState(
+                has_subdir
+            )
         has_subdir = has_subdir == QtCore.Qt.Checked
 
         for client_entry in os.scandir(source):
             if self._interrupt_requested:
                 return
 
-            self.window().set_info_message('Scanning: ' + client_entry.path)
-
             if not client_entry.is_dir():
                 continue
 
             file_info = QtCore.QFileInfo(client_entry.path)
+            self.progressUpdate.emit(f'Scanning:  {file_info.filePath()}')
+
             if file_info.isHidden():
                 continue
             if not file_info.isReadable():
@@ -245,6 +257,7 @@ class JobListWidget(ui.ListViewWidget):
                 next(os.scandir(file_info.filePath()))
             except:
                 continue
+
             if not has_subdir:
                 yield client_entry.name, file_info.filePath()
                 continue
@@ -252,12 +265,13 @@ class JobListWidget(ui.ListViewWidget):
             for job_entry in os.scandir(client_entry.path):
                 if self._interrupt_requested:
                     return
-                self.progressUpdate.emit(f'Scanning:  {job_entry.path}')
 
                 if not job_entry.is_dir():
                     continue
 
                 file_info = QtCore.QFileInfo(job_entry.path)
+                self.progressUpdate.emit(f'Scanning:  {file_info.filePath()}')
+
                 if file_info.isHidden():
                     continue
                 if not file_info.isReadable():
@@ -269,27 +283,33 @@ class JobListWidget(ui.ListViewWidget):
                 yield f'{client_entry.name}/{job_entry.name}', file_info.filePath()
 
     @QtCore.Slot()
-    def init_data(self, reset=True):
-        if reset:
-            self.jobChanged.emit(None, None)
+    def init_data(self):
+        selected_index = common.get_selected_index(self)
+        selected_name = selected_index.data(
+            QtCore.Qt.DisplayRole
+        ) if selected_index.isValid() else None
 
-        self.blockSignals(True)
+        self.selectionModel().blockSignals(True)
+
         self.model().sourceModel().clear()
-
         self._interrupt_requested = False
 
-        if not self.server or not QtCore.QFileInfo(self.server).exists():
-            self.blockSignals(False)
+        if (
+                not self.window().server() or
+                not QtCore.QFileInfo(self.window().server()).exists()
+        ):
+            self.selectionModel().blockSignals(False)
             return
 
-        for name, path in self.find_job_items(self.server):
+        for name, path in self.item_generator(self.window().server()):
             item = QtGui.QStandardItem()
 
             _name = (
                 name.
                     replace('_', ' ').
                     replace('  ', ' ').
-                    replace('/', ':  ').
+                    strip().
+                    replace('/', '  |  ').
                     strip().upper()
             )
 
@@ -301,17 +321,33 @@ class JobListWidget(ui.ListViewWidget):
             item.setSizeHint(size)
 
             _icon = get_job_icon(path)
-            item.setData(_icon if _icon else None,
-                         role=QtCore.Qt.DecorationRole)
+            item.setData(
+                _icon if _icon else None,
+                role=QtCore.Qt.DecorationRole
+            )
 
             self.addItem(item)
 
-        self.blockSignals(False)
+        self.update_job_statuses()
+        self.progressUpdate.emit('Loading bookmarks...')
+
+        if selected_name:
+            for idx in range(self.model().rowCount()):
+                index = self.model().index(idx, 0)
+                if index.data(QtCore.Qt.DisplayRole) == selected_name:
+                    self.selectionModel().select(
+                        index, QtCore.QItemSelectionModel.ClearAndSelect
+                    )
+
+        self.selectionModel().blockSignals(False)
+
+        common.restore_selection(self, common.BookmarkEditorJobKey)
         self.progressUpdate.emit('')
 
     @QtCore.Slot()
-    def update_status(self):
-        """Checks each job to see if they have bookmarks added to the current bookmarks.
+    def update_job_statuses(self):
+        """Checks each job to see if they have bookmarks added to the current
+        bookmarks.
         If so, we'll mark the item with a checkmark.
 
         """
@@ -332,46 +368,32 @@ class JobListWidget(ui.ListViewWidget):
             item.setFlags(item.flags() & ~QtCore.Qt.ItemIsUserCheckable)
             item.setData(None, role=QtCore.Qt.CheckStateRole)
 
-    @staticmethod
     @QtCore.Slot()
-    def save_current(current, previous):
-        index = next((f for f in current.indexes()), QtCore.QModelIndex())
-        if not index.isValid():
+    def add(self):
+        """Open the widget used to add a new job to the server.
+
+        """
+        if not self.window().server():
             return
-        common.settings.setValue(
-            common.UIStateSection,
-            common.BookmarkEditorJobKey,
-            index.data(QtCore.Qt.DisplayRole)
+
+        widget = AddJobWidget(self.window().server(), parent=self.window())
+        common.signals.templateExpanded.connect(widget.close)
+        widget.jobAdded.connect(widget.close)
+        widget.jobAdded.connect(lambda _: self.init_data())
+        widget.jobAdded.connect(
+            lambda v: common.select_index(self, v, role=QtCore.Qt.UserRole)
         )
+        widget.open()
 
-    @QtCore.Slot()
-    def restore_current(self, name=None):
-        if name:
-            v = name
-        else:
-            v = common.settings.value(
-                common.UIStateSection,
-                common.BookmarkEditorJobKey
-            )
-        if not v:
-            return
+    def set_filter(self, v):
+        self.selectionModel().blockSignals(True)
+        self.model().setFilterWildcard(v)
+        common.restore_selection(self, common.BookmarkEditorJobKey)
+        self.selectionModel().blockSignals(False)
 
-        for n in range(self.model().rowCount()):
-            index = self.model().index(n, 0)
-
-            if not index.isValid():
-                continue
-            if not v == index.data(QtCore.Qt.DisplayRole):
-                continue
-
-            self.selectionModel().select(
-                index,
-                QtCore.QItemSelectionModel.ClearAndSelect
-            )
-            self.scrollTo(
-                index,
-                QtWidgets.QAbstractItemView.EnsureVisible
-            )
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Escape:
+            self._interrupt_requested = True
 
     def contextMenuEvent(self, event):
         item = self.indexAt(event.pos())
@@ -380,44 +402,3 @@ class JobListWidget(ui.ListViewWidget):
         pos = self.mapToGlobal(pos)
         menu.move(pos)
         menu.exec_()
-
-    @QtCore.Slot(str)
-    def server_changed(self, server):
-        if server is None:
-            self.jobChanged.emit(None, None)
-            return
-
-        if server == self.server:
-            return
-
-        self.server = server
-        self.init_data()
-        self.restore_current()
-
-    @QtCore.Slot(QtCore.QItemSelection)
-    @QtCore.Slot(QtCore.QItemSelection)
-    def emit_job_changed(self, current, previous):
-        index = next((f for f in current.indexes()), QtCore.QModelIndex())
-        if not index.isValid():
-            self.jobChanged.emit(None, None)
-            return
-        self.jobChanged.emit(
-            self.server,
-            index.data(QtCore.Qt.UserRole + 1)
-        )
-
-    @QtCore.Slot()
-    def add(self):
-        """Open the widget used to add a new job to the server.
-
-        """
-        if not self.server:
-            return
-
-        widget = AddJobWidget(self.server, parent=self.window())
-        common.signals.templateExpanded.connect(widget.close)
-        widget.open()
-
-    def keyPressEvent(self, event):
-        if event.key() == QtCore.Qt.Key_Escape:
-            self._interrupt_requested = True

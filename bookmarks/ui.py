@@ -5,7 +5,6 @@ from PySide2 import QtCore, QtGui, QtWidgets
 from . import common
 from . import images
 
-
 OkButton = 'Ok'
 YesButton = 'Yes'
 SaveButton = 'Save'
@@ -174,7 +173,8 @@ class MessageBox(QtWidgets.QDialog):
         stylesheet = MESSAGE_BOX_STYLESHEET.format(
             SIZE=common.size(common.FontSizeLarge),
             FAMILY=common.font_db.primary_font(
-                common.size(common.FontSizeMedium))[0].family(),
+                common.size(common.FontSizeMedium)
+            )[0].family(),
             TEXT=common.rgb(self.secondary_color.darker(255)),
             TRANSPARENT=common.rgb(common.color(common.Transparent)),
         )
@@ -252,7 +252,8 @@ class MessageBox(QtWidgets.QDialog):
     def set_labels(self, args):
         if len(args) >= 1 and isinstance(args[0], str):
             self.primary_label = self._get_label(
-                parent=self, size=common.size(common.FontSizeLarge) - 2)
+                parent=self, size=common.size(common.FontSizeLarge) - 2
+            )
             self.primary_label.setText(args[0])
         else:
             raise ValueError('Primary Label must be {}'.format(str))
@@ -280,7 +281,8 @@ class MessageBox(QtWidgets.QDialog):
             pd=common.rgb(self.primary_color.darker(120)),
             SELECTED_TEXT=common.rgb(common.color(common.TextSelectedColor)),
         )
-        if 'buttons' in kwargs and isinstance(kwargs['buttons'], (tuple, list)) and kwargs['buttons']:
+        if 'buttons' in kwargs and isinstance(kwargs['buttons'], (tuple, list)) and \
+                kwargs['buttons']:
             for k in kwargs['buttons']:
                 if k not in buttons:
                     raise ValueError(f'{k} is an invalid button')
@@ -297,7 +299,10 @@ class MessageBox(QtWidgets.QDialog):
         setattr(self, OkButton.lower() + '_button', button)
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultHeight), common.size(common.DefaultHeight) * 0.5)
+        return QtCore.QSize(
+            common.size(common.DefaultHeight),
+            common.size(common.DefaultHeight) * 0.5
+            )
 
     def eventFilter(self, widget, event):
         if widget != self:
@@ -376,7 +381,9 @@ class OkBox(MessageBox):
 
 
 class Label(QtWidgets.QLabel):
-    def __init__(self, text, color=common.color(common.TextSecondaryColor), parent=None):
+    def __init__(
+            self, text, color=common.color(common.TextSecondaryColor), parent=None
+    ):
         super().__init__(text, parent=parent)
 
         self.color = color
@@ -394,7 +401,9 @@ class Label(QtWidgets.QLabel):
                 'color: {}; font-size: {}px; font-family: "{}"'.format(
                     common.rgb(self._color),
                     common.size(common.FontSizeSmall),
-                    common.font_db.secondary_font(common.size(common.FontSizeMedium))[0].family()
+                    common.font_db.secondary_font(
+                        common.size(common.FontSizeMedium)
+                    )[0].family()
                 )
             )
         else:
@@ -402,7 +411,9 @@ class Label(QtWidgets.QLabel):
                 'color: {}; font-size: {}px; font-family: "{}"'.format(
                     common.rgb(self.color),
                     common.size(common.FontSizeSmall),
-                    common.font_db.secondary_font(common.size(common.FontSizeMedium))[0].family()
+                    common.font_db.secondary_font(
+                        common.size(common.FontSizeMedium)
+                    )[0].family()
                 )
             )
         self.update()
@@ -432,7 +443,9 @@ class LineEdit(QtWidgets.QLineEdit):
 class PaintedButton(QtWidgets.QPushButton):
     """Custom button class."""
 
-    def __init__(self, text, height=common.size(common.HeightRow), width=None, parent=None):
+    def __init__(
+            self, text, height=common.size(common.HeightRow), width=None, parent=None
+    ):
         super(PaintedButton, self).__init__(text, parent=parent)
         if height:
             self.setFixedHeight(height)
@@ -497,8 +510,11 @@ class PaintedButton(QtWidgets.QPushButton):
 class PaintedLabel(QtWidgets.QLabel):
     """QLabel used for static aliased label."""
 
-    def __init__(self, text, color=common.color(common.TextColor), size=common.size(common.FontSizeMedium),
-                 parent=None):
+    def __init__(
+            self, text, color=common.color(common.TextColor),
+            size=common.size(common.FontSizeMedium),
+            parent=None
+    ):
         super(PaintedLabel, self).__init__(text, parent=parent)
         self._size = size
         self._color = color
@@ -508,8 +524,10 @@ class PaintedLabel(QtWidgets.QLabel):
     def update_size(self):
         font, metrics = common.font_db.primary_font(self._size)
         self.setFixedHeight(metrics.height())
-        self.setFixedWidth(metrics.horizontalAdvance(self._text) +
-                           common.size(common.WidthIndicator) * 2)
+        self.setFixedWidth(
+            metrics.horizontalAdvance(self._text) +
+            common.size(common.WidthIndicator) * 2
+            )
 
     def paintEvent(self, event):
         """Custom paint event to use the aliased paint method."""
@@ -552,9 +570,11 @@ class ClickableIconButton(QtWidgets.QLabel):
 
     Args:
         pixmap (str): The name of the resource file without the extension.
-        colors (tuple(QColor, QColor)): A tuple of QColors, for enabled and disabled states.
+        colors (tuple(QColor, QColor)): A tuple of QColors, for enabled and
+        disabled states.
         size (int): The value for width and height.
-        description (str): A user readable description of the action the button performs.
+        description (str): A user readable description of the action the button
+        performs.
         parent (QObject): The widget's parent.
 
     Signals:
@@ -569,7 +589,9 @@ class ClickableIconButton(QtWidgets.QLabel):
     clicked = QtCore.Signal()
     doubleClicked = QtCore.Signal()
 
-    def __init__(self, pixmap, colors, size, description='', state=False, parent=None):
+    def __init__(
+            self, pixmap, colors, size, description='', state=False, parent=None
+    ):
         super(ClickableIconButton, self).__init__(parent=parent)
 
         self._pixmap = pixmap
@@ -617,10 +639,16 @@ class ClickableIconButton(QtWidgets.QLabel):
 
     def pixmap(self):
         if not self.isEnabled():
-            return images.ImageCache.get_rsc_pixmap(self._pixmap, self._off_color, self._size)
+            return images.ImageCache.get_rsc_pixmap(
+                self._pixmap, self._off_color, self._size
+            )
         if self.state():
-            return images.ImageCache.get_rsc_pixmap(self._pixmap, self._on_color, self._size)
-        return images.ImageCache.get_rsc_pixmap(self._pixmap, self._off_color, self._size)
+            return images.ImageCache.get_rsc_pixmap(
+                self._pixmap, self._on_color, self._size
+            )
+        return images.ImageCache.get_rsc_pixmap(
+            self._pixmap, self._off_color, self._size
+        )
 
     def state(self):
         return self._state
@@ -672,16 +700,26 @@ class ListOverlayWidget(QtWidgets.QWidget):
 
         self._message = message
         self.update()
-        QtWidgets.QApplication.instance().processEvents(
-            flags=QtCore.QEventLoop.ExcludeUserInputEvents)
 
     def paintEvent(self, event):
         """Custom paint event used to paint the widget's message.
 
         """
         parent = self.parent().parent()
-        if not self._message and not self.parent().parent().count():
-            message = self.parent().parent().default_message
+
+        if hasattr(parent, 'count'):
+            count = parent.count()
+        elif hasattr(parent, 'model'):
+            model = parent.model()
+            if hasattr(model, 'sourceModel'):
+                count = parent.model().sourceModel().rowCount()
+            else:
+                count = parent.model().rowCount()
+        else:
+            count = 0
+
+        if not self._message and not count:
+            message = parent.default_message
         elif not self._message:
             return
         elif self._message:
@@ -689,7 +727,6 @@ class ListOverlayWidget(QtWidgets.QWidget):
 
         painter = QtGui.QPainter()
         painter.begin(self)
-        painter.setPen(common.color(common.TextSecondaryColor))
 
         o = common.size(common.WidthMargin)
         rect = self.rect().adjusted(o, o, -o, -o)
@@ -698,7 +735,14 @@ class ListOverlayWidget(QtWidgets.QWidget):
             QtCore.Qt.ElideMiddle,
             rect.width(),
         )
+        painter.setPen(QtCore.Qt.NoPen)
+        painter.setBrush(common.color(common.SeparatorColor))
+        painter.setOpacity(0.5)
+        painter.drawRect(self.rect())
 
+        painter.setOpacity(1.0)
+        painter.setBrush(QtCore.Qt.NoBrush)
+        painter.setPen(common.color(common.TextSecondaryColor))
         painter.drawText(
             rect,
             QtCore.Qt.AlignCenter,
@@ -723,24 +767,27 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
         disabled = index.flags() == QtCore.Qt.NoItemFlags
 
         painter.setRenderHint(
-            QtGui.QPainter.Antialiasing, on=True)
+            QtGui.QPainter.Antialiasing, on=True
+        )
         painter.setRenderHint(
-            QtGui.QPainter.SmoothPixmapTransform, on=True)
+            QtGui.QPainter.SmoothPixmapTransform, on=True
+        )
 
-        o = common.size(common.WidthIndicator) * 1.5
+        o = common.size(common.WidthIndicator)
         rect = option.rect.adjusted(o * 0.5, o * 0.5, -o * 0.5, -o * 0.5)
 
         # Background
-        _ = painter.setOpacity(0.8) if hover else painter.setOpacity(0.6)
-        _ = painter.setOpacity(
-            0.0) if disabled else painter.setOpacity(painter.opacity())
-
+        _o = 0.6 if hover else 0.2
+        _o = 0.1 if disabled else _o
+        _o = 1.0 if selected else _o
+        painter.setOpacity(_o)
         painter.setPen(QtCore.Qt.NoPen)
-        if selected:
-            painter.setBrush(common.color(common.BackgroundLightColor))
 
-            painter.setPen(QtCore.Qt.NoPen)
-            painter.drawRoundedRect(rect, o, o)
+        if selected or hover:
+            painter.setBrush(common.color(common.BackgroundLightColor))
+        else:
+            painter.setBrush(common.color(common.SeparatorColor))
+        painter.drawRoundedRect(rect, o, o)
 
         if focus:
             painter.setBrush(QtCore.Qt.NoBrush)
@@ -764,11 +811,13 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
 
         if checkable and checked:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'check', common.color(common.GreenColor), rect.height())
+                'check', common.color(common.GreenColor), rect.height()
+            )
             painter.drawPixmap(rect, pixmap)
         elif checkable and not checked:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'close', common.color(common.BackgroundColor), rect.height())
+                'close', common.color(common.BackgroundColor), rect.height()
+            )
             painter.drawPixmap(rect, pixmap)
         elif not checkable and decoration and isinstance(decoration, QtGui.QPixmap):
             painter.drawPixmap(rect, decoration)
@@ -790,7 +839,8 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
 
         # Label
         font, metrics = common.font_db.primary_font(
-            common.size(common.FontSizeSmall))
+            common.size(common.FontSizeSmall)
+        )
 
         color = common.color(common.TextColor)
         color = common.color(common.TextSelectedColor) if selected else color
@@ -866,14 +916,18 @@ class ListWidget(QtWidgets.QListWidget):
             return
         item.setCheckState(QtCore.Qt.Unchecked)
 
-    def addItem(self, label, icon=None, color=common.color(common.TextSecondaryColor)):
+    def addItem(
+            self, label, icon=None, color=common.color(common.TextSecondaryColor)
+    ):
         if isinstance(label, QtWidgets.QListWidgetItem):
             return super().addItem(label)
 
         _, metrics = common.font_db.primary_font(
-            common.size(common.FontSizeSmall))
+            common.size(common.FontSizeSmall)
+        )
         width = metrics.horizontalAdvance(
-            label) + common.size(common.HeightRow) + common.size(common.WidthMargin)
+            label
+        ) + common.size(common.HeightRow) + common.size(common.WidthMargin)
         item = QtWidgets.QListWidgetItem(label)
 
         size = QtCore.QSize(width, common.size(common.HeightRow))
@@ -881,7 +935,8 @@ class ListWidget(QtWidgets.QListWidget):
 
         if icon:
             item.setFlags(
-                QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
+                QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
+            )
             pixmap = images.ImageCache.get_rsc_pixmap(
                 icon,
                 color,
@@ -900,65 +955,6 @@ class ListWidget(QtWidgets.QListWidget):
 
     def resizeEvent(self, event):
         self.resized.emit(event.size())
-
-
-class ListViewOverlayWidget(QtWidgets.QWidget):
-    """Widget used to display a status message over the list widget.
-
-    """
-
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-        self._message = ''
-
-        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
-        self.setSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding,
-            QtWidgets.QSizePolicy.MinimumExpanding,
-        )
-
-    @QtCore.Slot(str)
-    def set_message(self, message):
-        if message == self._message:
-            return
-
-        self._message = message
-        self.update()
-        QtWidgets.QApplication.instance().processEvents(
-            flags=QtCore.QEventLoop.ExcludeUserInputEvents)
-
-    def paintEvent(self, event):
-        """Custom paint event used to paint the widget's message.
-
-        """
-        parent = self.parent().parent()
-        if not self._message and not parent.model().sourceModel().rowCount():
-            message = parent.default_message
-        elif not self._message:
-            return
-        elif self._message:
-            message = self._message
-
-        painter = QtGui.QPainter()
-        painter.begin(self)
-        painter.setPen(common.color(common.TextSecondaryColor))
-
-        o = common.size(common.WidthMargin)
-        rect = self.rect().adjusted(o, o, -o, -o)
-        text = QtGui.QFontMetrics(self.font()).elidedText(
-            message,
-            QtCore.Qt.ElideMiddle,
-            rect.width(),
-        )
-
-        painter.drawText(
-            rect,
-            QtCore.Qt.AlignCenter,
-            text,
-        )
-        painter.end()
 
 
 class ListViewWidget(QtWidgets.QListView):
@@ -1001,7 +997,7 @@ class ListViewWidget(QtWidgets.QListView):
         self.model().sourceModel().setColumnCount(1)
         self.model().setFilterCaseSensitivity(QtCore.Qt.CaseInsensitive)
 
-        self.overlay = ListViewOverlayWidget(parent=self.viewport())
+        self.overlay = ListOverlayWidget(parent=self.viewport())
         self.overlay.show()
 
     def _connect_signals(self):
@@ -1027,8 +1023,11 @@ class ListViewWidget(QtWidgets.QListView):
             return
 
         _, metrics = common.font_db.primary_font(
-            common.size(common.FontSizeSmall))
-        width = metrics.horizontalAdvance(v) + common.size(common.HeightRow) + common.size(common.WidthMargin)
+            common.size(common.FontSizeSmall)
+        )
+        width = metrics.horizontalAdvance(v) + common.size(
+            common.HeightRow
+        ) + common.size(common.WidthMargin)
 
         item = QtGui.QStandardItem(v)
 
@@ -1037,7 +1036,8 @@ class ListViewWidget(QtWidgets.QListView):
 
         if isinstance(icon, str):
             item.setFlags(
-                QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable)
+                QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
+            )
             pixmap = images.ImageCache.get_rsc_pixmap(
                 icon,
                 color,
@@ -1088,18 +1088,21 @@ def get_icon(
     icon = QtGui.QIcon()
 
     pixmap = images.ImageCache.get_rsc_pixmap(
-        name, color, size, opacity=opacity, resource=resource)
+        name, color, size, opacity=opacity, resource=resource
+    )
     icon.addPixmap(pixmap, mode=QtGui.QIcon.Normal)
 
     _c = common.color(common.TextSelectedColor) if color else None
     pixmap = images.ImageCache.get_rsc_pixmap(
-        name, _c, size, opacity=opacity, resource=resource)
+        name, _c, size, opacity=opacity, resource=resource
+    )
     icon.addPixmap(pixmap, mode=QtGui.QIcon.Active)
     icon.addPixmap(pixmap, mode=QtGui.QIcon.Selected)
 
     _c = common.color(common.SeparatorColor) if color else None
     pixmap = images.ImageCache.get_rsc_pixmap(
-        'close', _c, size, opacity=0.5, resource=common.GuiResource)
+        'close', _c, size, opacity=0.5, resource=common.GuiResource
+    )
 
     icon.addPixmap(pixmap, mode=QtGui.QIcon.Disabled)
 
@@ -1134,9 +1137,12 @@ def get_group(parent=None, vertical=True, margin=common.size(common.WidthMargin)
     return grp
 
 
-def add_row(label, color=common.color(common.TextSecondaryColor), parent=None,
-            padding=common.size(common.WidthMargin), height=common.size(common.HeightRow), cls=None,
-            vertical=False):
+def add_row(
+        label, color=common.color(common.TextSecondaryColor), parent=None,
+        padding=common.size(common.WidthMargin),
+        height=common.size(common.HeightRow), cls=None,
+        vertical=False
+):
     """Utility method for creating a row widget.
 
     Returns:
@@ -1214,8 +1220,10 @@ def add_line_edit(label, parent=None):
     return w
 
 
-def add_description(text, label=' ', color=common.color(common.TextSecondaryColor),
-                    padding=common.size(common.WidthMargin), parent=None):
+def add_description(
+        text, label=' ', color=common.color(common.TextSecondaryColor),
+        padding=common.size(common.WidthMargin), parent=None
+):
     """Utility method for adding a description field.
 
     Returns:
@@ -1231,8 +1239,6 @@ def add_description(text, label=' ', color=common.color(common.TextSecondaryColo
     return row
 
 
-
-
 class GalleryItem(QtWidgets.QLabel):
     """Custom QLabel used by the GalleryWidget to display an image.
 
@@ -1245,7 +1251,10 @@ class GalleryItem(QtWidgets.QLabel):
     """
     clicked = QtCore.Signal(str)
 
-    def __init__(self, label, data, thumbnail, height=common.size(common.HeightRow) * 2, parent=None):
+    def __init__(
+            self, label, data, thumbnail, height=common.size(common.HeightRow) * 2,
+            parent=None
+    ):
         super().__init__(parent=parent)
         common.check_type(label, str)
         common.check_type(data, str)
@@ -1345,7 +1354,6 @@ class GalleryItem(QtWidgets.QLabel):
         painter.end()
 
 
-
 class GalleryWidget(QtWidgets.QDialog):
     """A generic gallery widget used to let the user pick an item.
 
@@ -1355,7 +1363,10 @@ class GalleryWidget(QtWidgets.QDialog):
     """
     itemSelected = QtCore.Signal(str)
 
-    def __init__(self, columns=5, item_height=common.size(common.HeightRow) * 2, parent=None):
+    def __init__(
+            self, columns=5, item_height=common.size(common.HeightRow) * 2,
+            parent=None
+    ):
         super().__init__(parent=parent)
 
         self.scroll_area = None
@@ -1383,7 +1394,8 @@ class GalleryWidget(QtWidgets.QDialog):
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
 
         row = add_row(
-            None, height=common.size(common.HeightRow), padding=None, parent=self)
+            None, height=common.size(common.HeightRow), padding=None, parent=self
+        )
         label = PaintedLabel(
             'Select an item',
             color=common.color(common.TextColor),
@@ -1394,7 +1406,10 @@ class GalleryWidget(QtWidgets.QDialog):
 
         widget = QtWidgets.QWidget(parent=self)
         widget.setStyleSheet(
-            'background-color: {}'.format(common.rgb(common.color(common.SeparatorColor))))
+            'background-color: {}'.format(
+                common.rgb(common.color(common.SeparatorColor))
+            )
+        )
 
         self.setMinimumWidth(
             (common.size(common.WidthIndicator) * 2) +
@@ -1426,7 +1441,8 @@ class GalleryWidget(QtWidgets.QDialog):
             common.size(common.WidthIndicator),
             common.size(common.WidthIndicator),
             common.size(common.WidthIndicator),
-            common.size(common.WidthIndicator))
+            common.size(common.WidthIndicator)
+        )
         widget.layout().setSpacing(common.size(common.WidthIndicator))
 
         self.scroll_area = QtWidgets.QScrollArea(parent=self)
@@ -1440,7 +1456,9 @@ class GalleryWidget(QtWidgets.QDialog):
         idx = 0
 
         for label, path, thumbnail in self.item_generator():
-            item = GalleryItem(label, path, thumbnail, height=self._item_height, parent=self)
+            item = GalleryItem(
+                label, path, thumbnail, height=self._item_height, parent=self
+            )
 
             column = idx % self.columns
             if column == 0:
@@ -1456,7 +1474,8 @@ class GalleryWidget(QtWidgets.QDialog):
         """Abstract method used to generate the values needed to display items.
 
         Yields:
-            tuple (str, str, str): An informative label, user data and thumbnail image path.
+            tuple (str, str, str): An informative label, user data and thumbnail
+            image path.
 
         """
         raise NotImplementedError('Abstract method must be implemented by subclass.')

@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """Collection of common utility methods used by UI elements.
 
-Bookmarks has some DPI awareness, although, I'm pretty confident it wasn't implemented correctly. Still,
-all size values must be queried using :func:`.size()` to get a DPI dependent pixel value.
+Bookmarks has some DPI awareness, although, I'm pretty confident it wasn't
+implemented correctly. Still,
+all size values must be queried using :func:`.size()` to get a DPI dependent pixel
+value.
 
 """
 from PySide2 import QtWidgets, QtGui, QtCore
@@ -142,9 +144,11 @@ def set_custom_stylesheet(widget):
         from .. import images
         qss = qss.format(
             PRIMARY_FONT=common.font_db.primary_font(
-                size(common.FontSizeMedium))[0].family(),
+                size(common.FontSizeMedium)
+            )[0].family(),
             SECONDARY_FONT=common.font_db.secondary_font(
-                size(common.FontSizeSmall))[0].family(),
+                size(common.FontSizeSmall)
+            )[0].family(),
             FontSizeSmall=int(size(common.FontSizeSmall)),
             FontSizeMedium=int(size(common.FontSizeMedium)),
             FontSizeLarge=int(size(common.FontSizeLarge)),
@@ -172,18 +176,23 @@ def set_custom_stylesheet(widget):
             TRANSPARENT=rgb(common.color(common.Transparent)),
             TRANSPARENT_BLACK=rgb(common.color(common.OpaqueColor)),
             BRANCH_CLOSED=images.ImageCache.get_rsc_pixmap(
-                'branch_closed', None, None, get_path=True),
+                'branch_closed', None, None, get_path=True
+            ),
             BRANCH_OPEN=images.ImageCache.get_rsc_pixmap(
-                'branch_open', None, None, get_path=True),
+                'branch_open', None, None, get_path=True
+            ),
             CHECKED=images.ImageCache.get_rsc_pixmap(
-                'check', None, None, get_path=True),
+                'check', None, None, get_path=True
+            ),
             UNCHECKED=images.ImageCache.get_rsc_pixmap(
-                'close', None, None, get_path=True),
+                'close', None, None, get_path=True
+            ),
         )
     except KeyError as err:
         from . import log
         msg = 'Looks like there might be an error in the stylesheet file: {}'.format(
-            err)
+            err
+        )
         log.error(msg)
         raise KeyError(msg)
 
@@ -255,3 +264,67 @@ def draw_aliased_text(painter, font, rect, text, align, color, elide=None):
 
     painter.restore()
     return width
+
+
+@QtCore.Slot(QtWidgets.QWidget)
+@QtCore.Slot(str)
+def save_selection(widget, key, *args, **kwargs):
+    index = common.get_selected_index(widget)
+    common.settings.setValue(
+        common.UIStateSection,
+        key,
+        index.data(QtCore.Qt.DisplayRole) if index.isValid() else None
+    )
+
+
+@QtCore.Slot(QtWidgets.QWidget)
+@QtCore.Slot(str)
+def restore_selection(widget, key, *args, **kwargs):
+    v = common.settings.value(
+        common.UIStateSection,
+        key
+    )
+    if not v:
+        widget.selectionModel().clear()
+        return
+    select_index(widget, v)
+
+
+@QtCore.Slot(QtWidgets.QWidget)
+@QtCore.Slot(str)
+def select_index(widget, v, *args, **kwargs):
+    selected_index = common.get_selected_index(widget)
+
+    if 'role' in kwargs:
+        role = kwargs['role']
+    else:
+        role = QtCore.Qt.DisplayRole
+
+    for n in range(widget.model().rowCount()):
+        index = widget.model().index(n, 0)
+
+        if v != index.data(role):
+            continue
+
+        if selected_index != index:
+            widget.selectionModel().select(
+                index,
+                QtCore.QItemSelectionModel.ClearAndSelect
+            )
+
+        widget.scrollTo(index, QtWidgets.QAbstractItemView.EnsureVisible)
+        return
+
+    widget.selectionModel().clear()
+
+
+def get_selected_index(widget):
+    if not widget.selectionModel().hasSelection():
+        return QtCore.QModelIndex()
+    index = next(
+        (f for f in widget.selectionModel().selectedIndexes()),
+        QtCore.QModelIndex()
+    )
+    if not index.isValid():
+        return QtCore.QModelIndex()
+    return QtCore.QPersistentModelIndex(index)

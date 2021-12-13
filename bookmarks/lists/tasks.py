@@ -347,15 +347,13 @@ class TaskFolderWidget(basewidget.ThreadedBaseWidget):
         )
 
     def action_on_enter_key(self):
-        if not self.selectionModel().hasSelection():
-            return
-        index = self.selectionModel().currentIndex()
-
+        index = common.get_selected_index(self)
         if not index.isValid():
             return
 
         self.hide()
         self.activate(index)
+
         QtCore.QTimer.singleShot(
             1,
             functools.partial(

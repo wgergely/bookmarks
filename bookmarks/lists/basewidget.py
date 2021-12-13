@@ -410,9 +410,7 @@ class BaseListWidget(QtWidgets.QListView):
     @QtCore.Slot()
     def save_selection(self):
         """Saves the current selection."""
-        if not self.selectionModel().hasSelection():
-            return
-        index = self.selectionModel().currentIndex()
+        index = common.get_selected_index(self)
         if not index.isValid():
             return
         if not index.data(QtCore.Qt.StatusTipRole):
@@ -673,7 +671,7 @@ class BaseListWidget(QtWidgets.QListView):
         actions.preview_thumbnail()
 
     def key_down(self):
-        """Custom action on  `down` arrow key-press.
+        """Custom action on `down` arrow key-press.
 
         We're implementing a continuous 'scroll' function: reaching the last
         item in the list will automatically jump to the beginning to the list
@@ -747,9 +745,7 @@ class BaseListWidget(QtWidgets.QListView):
         self.description_editor_widget.show()
 
     def action_on_enter_key(self):
-        if not self.selectionModel().hasSelection():
-            return
-        index = self.selectionModel().currentIndex()
+        index = common.get_selected_index(self)
         if not index.isValid():
             return
         self.activate(index)
@@ -894,16 +890,14 @@ class BaseListWidget(QtWidgets.QListView):
     @common.debug
     @QtCore.Slot()
     def reset_row_layout(self, *args, **kwargs):
-        """Reinitializes the rows to apply size any row height changes.
+        """Re-initializes the rows to apply size and row height changes.
 
         """
         proxy = self.model()
-        index = self.selectionModel().currentIndex()
+        index = common.get_selected_index(self)
 
         # Save the current selection
-        row = -1
-        if self.selectionModel().hasSelection() and index.isValid():
-            row = index.row()
+        row = index.row() if index.isValid() else -1
 
         # Update the layout
         self.scheduleDelayedItemsLayout()
@@ -919,7 +913,6 @@ class BaseListWidget(QtWidgets.QListView):
                 index, QtWidgets.QAbstractItemView.PositionAtCenter)
 
     def set_row_size(self, v):
-        """Saves the current row size to the local common."""
         proxy = self.model()
         model = proxy.sourceModel()
 
@@ -1078,7 +1071,6 @@ class BaseListWidget(QtWidgets.QListView):
         """
         numpad_modifier = event.modifiers() & QtCore.Qt.KeypadModifier
         no_modifier = event.modifiers() == QtCore.Qt.NoModifier
-        index = self.selectionModel().currentIndex()
 
         if no_modifier or numpad_modifier:
             if not self.timer.isActive():
@@ -1314,13 +1306,10 @@ class BaseListWidget(QtWidgets.QListView):
                     return
 
         if rectangles[delegate.DataRect].contains(cursor_position):
-            if not self.selectionModel().hasSelection():
-                return
-            index = self.selectionModel().currentIndex()
+            index = common.get_selected_index(self)
             if not index.isValid():
                 return
             self.activate(index)
-            return
 
 
 class BaseInlineIconWidget(BaseListWidget):

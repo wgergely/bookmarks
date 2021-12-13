@@ -176,6 +176,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../api/images.html">images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/lists.html">lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/tokens.html">tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/editor.html">editor</a></li>
 </ul>
 </li>
 </ul>
@@ -210,15 +212,18 @@
 
 <span class="sd">:class:`.MainWidget` consist of :class:`bookmarks.topbar.TopBarWidget`,</span>
 <span class="sd">:class:`bookmarks.statusbar.StatusBarWidget`,</span>
-<span class="sd">and :class:`bookmarks.lists.basewidget.ListsWidget`. The latter is the container for the three</span>
-<span class="sd">main list item widgets: :class:`bookmarks.lists.bookmarks.BookmarksWidget`,</span>
-<span class="sd">:class:`bookmarks.lists.assets.AssetsWidget` and :class:`bookmarks.lists.files.FilesWidget`.</span>
+<span class="sd">and :class:`bookmarks.lists.basewidget.ListsWidget`. The latter is the container</span>
+<span class="sd">for the three main list item widgets:</span>
+<span class="sd">:class:`bookmarks.lists.bookmarks.BookmarksWidget`,</span>
+<span class="sd">:class:`bookmarks.lists.assets.AssetsWidget` and</span>
+<span class="sd">:class:`bookmarks.lists.files.FilesWidget`.</span>
 
 <span class="sd">Important:</span>
 
-<span class="sd">    :class:`.MainWidget` won't be fully set up until :meth:`.MainWidget.initialize` is called.</span>
-<span class="sd">    In standalone mode, the widget will automatically be initialized, but in embedded mode,</span>
-<span class="sd">    the slot has to be called manually.</span>
+<span class="sd">    :class:`.MainWidget` won't be fully set up until</span>
+<span class="sd">    :meth:`.MainWidget.initialize` is called. In standalone mode, the widget will</span>
+<span class="sd">    automatically be initialized, on first showing, however, in EmbeddedMode,</span>
+<span class="sd">    :meth:`.MainWidget.initialize` must be called manually.</span>
 
 
 <span class="sd">"""</span>
@@ -251,10 +256,14 @@
 
 
 <div class="viewcode-block" id="MainWidget"><a class="viewcode-back" href="../../api/main.html#bookmarks.main.MainWidget">[docs]</a><span class="k">class</span> <span class="nc">MainWidget</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
-    <span class="sd">"""Bookmark's main widget when initialized as `EmbeddedMode`.</span>
+    <span class="sd">"""Bookmark's main widget when initialized in :attr:`common.EmbeddedMode`.</span>
+<span class="sd">    See also :class:`bookmarks.standalone.StandaloneMainWidget`, a subclass used</span>
+<span class="sd">    as the main widget when run in :attr:`common.StandaloneMode`.</span>
 
-<span class="sd">    The widget is made up of :class:``, a stacked widget, and a status bar. The</span>
-<span class="sd">    stacked widget contains the , Asset-, File- and Favourite widgets.</span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        aboutToInitialize (Signal): Emitted just before the main widget is about to</span>
+<span class="sd">                be initialized.</span>
+<span class="sd">        initialized (Signal): Emitted when the main widget finished initializing.</span>
 
 <span class="sd">    """</span>
     <span class="n">aboutToInitialize</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
@@ -267,7 +276,6 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">is_initialized</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">init_progress</span> <span class="o">=</span> <span class="s1">'Loading...'</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shortcuts</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_contextMenu</span> <span class="o">=</span> <span class="kc">None</span>
@@ -317,7 +325,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statusbar</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_init_current_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># Setting the tab now before we do any more initialisation</span>
+        <span class="c1"># Setting the tab now before we do any more initialization</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">value</span><span class="p">(</span>
             <span class="n">common</span><span class="o">.</span><span class="n">UIStateSection</span><span class="p">,</span>
             <span class="n">common</span><span class="o">.</span><span class="n">CurrentList</span>
@@ -394,11 +402,9 @@
 <span class="sd">        This method must be called to create the UI layout and to load the item</span>
 <span class="sd">        models.</span>
 
-<span class="sd">        :func:`bookmarks.common.core.initialize()` method the widget will automatically</span>
-<span class="sd">        be initialized.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">:</span>
-            <span class="k">return</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'Cannot initialize more than once.'</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_shortcuts</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_create_ui</span><span class="p">()</span>
@@ -559,7 +565,7 @@
         <span class="n">rect</span><span class="o">.</span><span class="n">setTop</span><span class="p">(</span><span class="n">pixmaprect</span><span class="o">.</span><span class="n">bottom</span><span class="p">()</span> <span class="o">+</span> <span class="p">(</span><span class="n">o</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">))</span>
         <span class="n">rect</span><span class="o">.</span><span class="n">setHeight</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
         <span class="n">common</span><span class="o">.</span><span class="n">draw_aliased_text</span><span class="p">(</span>
-            <span class="n">painter</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">rect</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_progress</span><span class="p">,</span> <span class="n">align</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
+            <span class="n">painter</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">rect</span><span class="p">,</span> <span class="s1">'Loading...'</span><span class="p">,</span> <span class="n">align</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MainWidget.paintEvent"><a class="viewcode-back" href="../../api/main.html#bookmarks.main.MainWidget.paintEvent">[docs]</a>    <span class="k">def</span> <span class="nf">paintEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="n">painter</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">()</span>

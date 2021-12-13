@@ -1462,11 +1462,13 @@ def paste_asset_properties(index):
 @common.error
 @common.debug
 def toggle_active_mode():
-    if common.main_widget is None or not common.main_widget.is_initialized:
-        return
-    # Toggle the active mode
     common.active_mode = int(not bool(common.active_mode))
     common.write_current_mode_to_lock()
+
+    if common.main_widget is None or not common.main_widget.is_initialized:
+        return
+
+    # Toggle the active mode
     common.signals.activeModeChanged.emit(common.active_mode)
     common.source_model(common.BookmarkTab).reset_data(force=True)
 
@@ -1627,19 +1629,19 @@ def extract_zip_template(source, destination, name):
     """
     for arg in (source, destination, name):
         common.check_type(arg, str)
-
     if not destination:
         raise ValueError('Destination not set')
 
+    if '/' in name:
+        name = name.split('/')[-1]
+        destination += '/' + '/'.join(name.split('/')[:-1])
+
     file_info = QtCore.QFileInfo(destination)
     if not file_info.exists():
-        raise RuntimeError(
-            'Destination {} does not exist.'.format(file_info.filePath())
-        )
+        raise RuntimeError(f'{file_info.filePath()} does not exist.')
     if not file_info.isWritable():
-        raise RuntimeError(
-            'Destination {} not writable'.format(file_info.filePath())
-        )
+        raise RuntimeError(f'{file_info.filePath()} not writable')
+
     if not name:
         raise ValueError('Must enter a name.')
 

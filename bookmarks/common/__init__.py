@@ -1,9 +1,11 @@
-"""Core attributes, classes and methods used to define the look and behaviour of Bookmarks.
+"""Core attributes, classes and methods used to define the look and behaviour of
+Bookmarks.
 
 
-See the :mod:`bookmarks.common.setup` module for the initialization methods. Hard-coded default
-properties are defined in :mod:`bookmarks.common.core`. Configurable properties, such as colours and
-size settings are loaded from ``./rsc/conf.json`` at runtime.
+See the :mod:`bookmarks.common.setup` module for the initialization methods.
+Hard-coded default properties are defined in :mod:`bookmarks.common.core`.
+Configurable properties, such as colors and size settings are loaded from
+``./rsc/conf.json`` at runtime.
 
 Tip:
 
@@ -85,7 +87,7 @@ env_key = 'BOOKMARKS_ROOT'
 bookmark_cache_dir = '.bookmark'
 bookmark_database = 'bookmark.db'
 favorite_file_ext = 'bfav'
-user_settings = 'common.ini'
+user_settings = 'user_settings.ini'
 stylesheet_file = 'stylesheet.qss'
 static_bookmarks_template = 'static_bookmarks.json'
 job_template = 'Job.zip'
@@ -134,6 +136,7 @@ slack_widget = None
 gallery_widget = None
 launcher_widget = None
 message_widget = None
+bookmark_editor_widget = None
 
 sg_connecting_message = None
 sg_error_message = None

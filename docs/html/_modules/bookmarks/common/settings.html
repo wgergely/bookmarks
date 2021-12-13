@@ -172,8 +172,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../bookmarks.html">Introduction</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">bookmarks.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/database.html">database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/tokens.html">tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/editor.html">editor</a></li>
 </ul>
 </li>
 </ul>
@@ -270,6 +274,8 @@
 <span class="n">UIStateSection</span> <span class="o">=</span> <span class="s1">'UIState'</span>
 <span class="n">WindowGeometryKey</span> <span class="o">=</span> <span class="s1">'WindowGeometry'</span>
 <span class="n">WindowStateKey</span> <span class="o">=</span> <span class="s1">'WindowState'</span>
+<span class="n">BookmarkEditorGeometryKey</span> <span class="o">=</span> <span class="s1">'BookmarkEditorGeometryKey'</span>
+<span class="n">BookmarkEditorStateKey</span> <span class="o">=</span> <span class="s1">'BookmarkEditorStateKey'</span>
 <span class="n">SortByBaseNameKey</span> <span class="o">=</span> <span class="s1">'SortByBaseName'</span>
 <span class="n">WindowAlwaysOnTopKey</span> <span class="o">=</span> <span class="s1">'WindowAlwaysOnTop'</span>
 <span class="n">WindowFramelessKey</span> <span class="o">=</span> <span class="s1">'WindowFrameless'</span>
@@ -517,12 +523,12 @@
 
     <span class="k">def</span> <span class="nf">set_servers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
-        <span class="n">common</span><span class="o">.</span><span class="n">servers</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">servers</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">CurrentUserPicksSection</span><span class="p">,</span> <span class="n">ServersKey</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">set_bookmarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
-        <span class="n">common</span><span class="o">.</span><span class="n">bookmarks</span> <span class="o">=</span> <span class="n">v</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">bookmarks</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">CurrentUserPicksSection</span><span class="p">,</span> <span class="n">BookmarksKey</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">set_favourites</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>

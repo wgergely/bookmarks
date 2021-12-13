@@ -178,7 +178,7 @@
 <li class="toctree-l2"><a class="reference internal" href="main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lists.html">lists</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tokens.html">tokens</a></li>
-<li class="toctree-l2"><a class="reference internal" href="property_editor.html">property_editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="editor.html">editor</a></li>
 </ul>
 </li>
 </ul>
@@ -209,10 +209,12 @@
         <article role="main">
           <section id="module-bookmarks.common">
 <span id="common"></span><h1>common<a class="headerlink" href="#module-bookmarks.common" title="Permalink to this headline">¶</a></h1>
-<p>Core attributes, classes and methods used to define the look and behaviour of Bookmarks.</p>
-<p>See the <a class="reference internal" href="#module-bookmarks.common.setup" title="bookmarks.common.setup"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.common.setup</span></code></a> module for the initialization methods. Hard-coded default
-properties are defined in <a class="reference internal" href="#module-bookmarks.common.core" title="bookmarks.common.core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.common.core</span></code></a>. Configurable properties, such as colours and
-size settings are loaded from <code class="docutils literal notranslate"><span class="pre">./rsc/conf.json</span></code> at runtime.</p>
+<p>Core attributes, classes and methods used to define the look and behaviour of
+Bookmarks.</p>
+<p>See the <a class="reference internal" href="#module-bookmarks.common.setup" title="bookmarks.common.setup"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.common.setup</span></code></a> module for the initialization methods.
+Hard-coded default properties are defined in <a class="reference internal" href="#module-bookmarks.common.core" title="bookmarks.common.core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.common.core</span></code></a>.
+Configurable properties, such as colors and size settings are loaded from
+<code class="docutils literal notranslate"><span class="pre">./rsc/conf.json</span></code> at runtime.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>Submodules can be accessed directly from this top module, like so:</p>
@@ -296,15 +298,16 @@ See <a class="reference internal" href="#module-bookmarks.common.signals" title=
 </dd></dl>
 <section id="module-bookmarks.common.setup">
 <span id="common-setup"></span><h2>common.setup<a class="headerlink" href="#module-bookmarks.common.setup" title="Permalink to this headline">¶</a></h2>
-<p>Various methods used to initialize Bookmarks.</p>
-<p>See <a class="reference internal" href="#bookmarks.common.setup.initialize" title="bookmarks.common.setup.initialize"><code class="xref py py-func docutils literal notranslate"><span class="pre">initialize()</span></code></a> and <a class="reference internal" href="#bookmarks.common.setup.uninitialize" title="bookmarks.common.setup.uninitialize"><code class="xref py py-func docutils literal notranslate"><span class="pre">uninitialize()</span></code></a>.</p>
+<p>Various methods used to initialize Bookmarks, mainly, <a class="reference internal" href="#bookmarks.common.setup.initialize" title="bookmarks.common.setup.initialize"><code class="xref py py-func docutils literal notranslate"><span class="pre">initialize()</span></code></a> and
+<a class="reference internal" href="#bookmarks.common.setup.uninitialize" title="bookmarks.common.setup.uninitialize"><code class="xref py py-func docutils literal notranslate"><span class="pre">uninitialize()</span></code></a>.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.common.setup.initialize">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.common.setup.</span></span><span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/setup.html#initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.setup.initialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the components required to run Bookmarks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>mode</strong> (<em>int</em>) – The initialization mode. One of <code class="docutils literal notranslate"><span class="pre">common.StandaloneMode</span></code> or <code class="docutils literal notranslate"><span class="pre">common.EmbeddedMode</span></code>.</p>
+<dd class="field-odd"><p><strong>mode</strong> (<em>str</em>) – The initialization mode. One of <code class="docutils literal notranslate"><span class="pre">common.StandaloneMode</span></code>
+or <code class="docutils literal notranslate"><span class="pre">common.EmbeddedMode</span></code>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -324,7 +327,8 @@ The</p>
 <dt class="field-odd">Raises</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>EnvironmentError</strong> – When the <cite>common.env_key</cite> is not set.</p></li>
-<li><p><strong>RuntimeError</strong> – When the <cite>common.env_key</cite> is invalid or a directory missing.</p></li>
+<li><p><strong>RuntimeError</strong> – When the <cite>common.env_key</cite> is invalid or a directory</p></li>
+<li><p><strong>missing.</strong> – </p></li>
 </ul>
 </dd>
 </dl>
@@ -1104,8 +1108,10 @@ otherwise, returns the specified widget’s active index.</p>
 <section id="module-bookmarks.common.ui">
 <span id="common-ui"></span><h2>common.ui<a class="headerlink" href="#module-bookmarks.common.ui" title="Permalink to this headline">¶</a></h2>
 <p>Collection of common utility methods used by UI elements.</p>
-<p>Bookmarks has some DPI awareness, although, I’m pretty confident it wasn’t implemented correctly. Still,
-all size values must be queried using <a class="reference internal" href="#bookmarks.common.ui.size" title="bookmarks.common.ui.size"><code class="xref py py-func docutils literal notranslate"><span class="pre">size()</span></code></a> to get a DPI dependent pixel value.</p>
+<p>Bookmarks has some DPI awareness, although, I’m pretty confident it wasn’t
+implemented correctly. Still,
+all size values must be queried using <a class="reference internal" href="#bookmarks.common.ui.size" title="bookmarks.common.ui.size"><code class="xref py py-func docutils literal notranslate"><span class="pre">size()</span></code></a> to get a DPI dependent pixel
+value.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.common.ui.size">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.common.ui.</span></span><span class="sig-name descname"><span class="pre">size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/common/ui.html#size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.ui.size" title="Permalink to this definition">¶</a></dt>

@@ -176,7 +176,7 @@
 <li class="toctree-l2"><a class="reference internal" href="api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/lists.html">lists</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/tokens.html">tokens</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/property_editor.html">property_editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/editor.html">editor</a></li>
 </ul>
 </li>
 </ul>
@@ -214,6 +214,8 @@
   <h2>A</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/main.html#bookmarks.main.MainWidget.aboutToInitialize">aboutToInitialize (bookmarks.main.MainWidget attribute)</a>
+</li>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.activate">activate() (bookmarks.lists.basewidget.BaseListWidget method)</a>
 </li>
         <li><a href="api/common.html#bookmarks.common.settings.active">active() (in module bookmarks.common.settings)</a>
@@ -224,11 +226,17 @@
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.BaseModel.activeChanged">activeChanged (bookmarks.lists.basemodel.BaseModel attribute)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/common.html#bookmarks.common.font.FontDatabase.add_custom_fonts">add_custom_fonts() (bookmarks.common.font.FontDatabase method)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.files.add_path_to_mime">add_path_to_mime() (in module bookmarks.lists.files)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/editor.html#bookmarks.editor.base.add_section">add_section() (in module bookmarks.editor.base)</a>
+</li>
+        <li><a href="api/editor.html#bookmarks.editor.base.BasePropertyEditor.add_section_header_button">add_section_header_button() (bookmarks.editor.base.BasePropertyEditor method)</a>
+</li>
+        <li><a href="api/editor.html#bookmarks.editor.base_widgets.BaseComboBox.addItem">addItem() (bookmarks.editor.base_widgets.BaseComboBox method)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.assets.AssetsModel">AssetsModel (class in bookmarks.lists.assets)</a>
 </li>
@@ -238,6 +246,8 @@
 </li>
         <li><a href="api/lists.html#bookmarks.lists.delegate.AssetsWidgetDelegate">AssetsWidgetDelegate (class in bookmarks.lists.delegate)</a>
 </li>
+        <li><a href="api/editor.html#bookmarks.editor.base_widgets.AssetTypesWidget">AssetTypesWidget (class in bookmarks.editor.base_widgets)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -246,6 +256,8 @@
   <h2>B</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/editor.html#bookmarks.editor.base_widgets.BaseComboBox">BaseComboBox (class in bookmarks.editor.base_widgets)</a>
+</li>
         <li><a href="api/lists.html#bookmarks.lists.delegate.BaseDelegate">BaseDelegate (class in bookmarks.lists.delegate)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseInlineIconWidget">BaseInlineIconWidget (class in bookmarks.lists.basewidget)</a>
@@ -253,6 +265,8 @@
         <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget">BaseListWidget (class in bookmarks.lists.basewidget)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.BaseModel">BaseModel (class in bookmarks.lists.basemodel)</a>
+</li>
+        <li><a href="api/editor.html#bookmarks.editor.base.BasePropertyEditor">BasePropertyEditor (class in bookmarks.editor.base)</a>
 </li>
         <li><a href="api/database.html#bookmarks.database.BookmarkDB">BookmarkDB (class in bookmarks.database)</a>
 </li>
@@ -355,14 +369,35 @@
 </li>
         </ul></li>
         <li>
+    bookmarks.editor
+
+        <ul>
+          <li><a href="api/editor.html#module-bookmarks.editor">module</a>
+</li>
+        </ul></li>
+        <li>
+    bookmarks.editor.base
+
+        <ul>
+          <li><a href="api/editor.html#module-bookmarks.editor.base">module</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    bookmarks.editor.base_widgets
+
+        <ul>
+          <li><a href="api/editor.html#module-bookmarks.editor.base_widgets">module</a>
+</li>
+        </ul></li>
+        <li>
     bookmarks.images
 
         <ul>
           <li><a href="api/images.html#module-bookmarks.images">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     bookmarks.lists
 
@@ -485,6 +520,8 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.BaseModel.canDropMimeData">canDropMimeData() (bookmarks.lists.basemodel.BaseModel method)</a>
 </li>
+        <li><a href="api/editor.html#bookmarks.editor.base_widgets.ThumbnailEditorWidget.capture">capture() (bookmarks.editor.base_widgets.ThumbnailEditorWidget method)</a>
+</li>
         <li><a href="api/main.html#bookmarks.standalone.BookmarksAppWindow.changeEvent">changeEvent() (bookmarks.standalone.BookmarksAppWindow method)</a>
 </li>
         <li><a href="api/images.html#bookmarks.images.check_for_thumbnail_image">check_for_thumbnail_image() (in module bookmarks.images)</a>
@@ -519,9 +556,11 @@
         </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.contextMenuEvent">contextMenuEvent() (bookmarks.lists.basewidget.BaseListWidget method)</a>
+        <li><a href="api/editor.html#bookmarks.editor.base_widgets.ThumbnailEditorWidget.contextMenuEvent">contextMenuEvent() (bookmarks.editor.base_widgets.ThumbnailEditorWidget method)</a>
 
         <ul>
+          <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.contextMenuEvent">(bookmarks.lists.basewidget.BaseListWidget method)</a>
+</li>
           <li><a href="api/lists.html#bookmarks.lists.tasks.TaskFolderWidget.contextMenuEvent">(bookmarks.lists.tasks.TaskFolderWidget method)</a>
 </li>
         </ul></li>
@@ -549,6 +588,8 @@
           <li><a href="api/tokens.html#bookmarks.tokens.tokens.TokenConfig.data">(bookmarks.tokens.tokens.TokenConfig method)</a>
 </li>
         </ul></li>
+        <li><a href="api/editor.html#bookmarks.editor.base.BasePropertyEditor.data_changed">data_changed() (bookmarks.editor.base.BasePropertyEditor method)</a>
+</li>
         <li><a href="api/common.html#bookmarks.common.data.data_count">data_count() (in module bookmarks.common.data)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.assets.AssetsModel.data_type">data_type() (bookmarks.lists.assets.AssetsModel method)</a>
@@ -568,6 +609,8 @@
         <li><a href="api/lists.html#bookmarks.lists.basemodel.BaseModel.dataTypeChanged">dataTypeChanged (bookmarks.lists.basemodel.BaseModel attribute)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.BaseModel.dataTypeSorted">dataTypeSorted (bookmarks.lists.basemodel.BaseModel attribute)</a>
+</li>
+        <li><a href="api/editor.html#bookmarks.editor.base.BasePropertyEditor.db_source">db_source() (bookmarks.editor.base.BasePropertyEditor method)</a>
 </li>
         <li><a href="api/common.html#bookmarks.common.core.debug">debug() (in module bookmarks.common.core)</a>
 </li>
@@ -595,21 +638,29 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/lists.html#bookmarks.lists.files.FilesModel.disable_filter">disable_filter() (bookmarks.lists.files.FilesModel method)</a>
 </li>
-        <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.dragEnterEvent">dragEnterEvent() (bookmarks.lists.basewidget.BaseListWidget method)</a>
+        <li><a href="api/editor.html#bookmarks.editor.base.BasePropertyEditor.done">done() (bookmarks.editor.base.BasePropertyEditor method)</a>
+</li>
+        <li><a href="api/editor.html#bookmarks.editor.base_widgets.ThumbnailEditorWidget.dragEnterEvent">dragEnterEvent() (bookmarks.editor.base_widgets.ThumbnailEditorWidget method)</a>
 
         <ul>
+          <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.dragEnterEvent">(bookmarks.lists.basewidget.BaseListWidget method)</a>
+</li>
           <li><a href="api/lists.html#bookmarks.lists.favourites.FavouritesWidget.dragEnterEvent">(bookmarks.lists.favourites.FavouritesWidget method)</a>
 </li>
         </ul></li>
-        <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.dragLeaveEvent">dragLeaveEvent() (bookmarks.lists.basewidget.BaseListWidget method)</a>
+        <li><a href="api/editor.html#bookmarks.editor.base_widgets.ThumbnailEditorWidget.dragLeaveEvent">dragLeaveEvent() (bookmarks.editor.base_widgets.ThumbnailEditorWidget method)</a>
 
         <ul>
+          <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.dragLeaveEvent">(bookmarks.lists.basewidget.BaseListWidget method)</a>
+</li>
           <li><a href="api/lists.html#bookmarks.lists.favourites.FavouritesWidget.dragLeaveEvent">(bookmarks.lists.favourites.FavouritesWidget method)</a>
 </li>
         </ul></li>
-        <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.dragMoveEvent">dragMoveEvent() (bookmarks.lists.basewidget.BaseListWidget method)</a>
+        <li><a href="api/editor.html#bookmarks.editor.base_widgets.ThumbnailEditorWidget.dragMoveEvent">dragMoveEvent() (bookmarks.editor.base_widgets.ThumbnailEditorWidget method)</a>
 
         <ul>
+          <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.dragMoveEvent">(bookmarks.lists.basewidget.BaseListWidget method)</a>
+</li>
           <li><a href="api/lists.html#bookmarks.lists.favourites.FavouritesWidget.dragMoveEvent">(bookmarks.lists.favourites.FavouritesWidget method)</a>
 </li>
         </ul></li>
@@ -625,9 +676,11 @@
 </li>
         <li><a href="api/lists.html#bookmarks.lists.delegate.draw_subdirs">draw_subdirs() (in module bookmarks.lists.delegate)</a>
 </li>
-        <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.dropEvent">dropEvent() (bookmarks.lists.basewidget.BaseListWidget method)</a>
+        <li><a href="api/editor.html#bookmarks.editor.base_widgets.ThumbnailEditorWidget.dropEvent">dropEvent() (bookmarks.editor.base_widgets.ThumbnailEditorWidget method)</a>
 
         <ul>
+          <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.dropEvent">(bookmarks.lists.basewidget.BaseListWidget method)</a>
+</li>
           <li><a href="api/lists.html#bookmarks.lists.favourites.FavouritesWidget.dropEvent">(bookmarks.lists.favourites.FavouritesWidget method)</a>
 </li>
         </ul></li>
@@ -645,18 +698,22 @@
   <h2>E</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseInlineIconWidget.enterEvent">enterEvent() (bookmarks.lists.basewidget.BaseInlineIconWidget method)</a>
+        <li><a href="api/editor.html#bookmarks.editor.base_widgets.ThumbnailEditorWidget.enterEvent">enterEvent() (bookmarks.editor.base_widgets.ThumbnailEditorWidget method)</a>
+
+        <ul>
+          <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseInlineIconWidget.enterEvent">(bookmarks.lists.basewidget.BaseInlineIconWidget method)</a>
 </li>
+        </ul></li>
         <li><a href="api/common.html#bookmarks.common.core.error">error() (in module bookmarks.common.core)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.eventFilter">eventFilter() (bookmarks.lists.basewidget.BaseListWidget method)</a>
 
         <ul>
           <li><a href="api/lists.html#bookmarks.lists.tasks.TaskFolderWidget.eventFilter">(bookmarks.lists.tasks.TaskFolderWidget method)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/main.html#bookmarks.exec_">exec_() (in module bookmarks)</a>
 </li>
         <li><a href="api/tokens.html#bookmarks.tokens.tokens.TokenConfig.expand_tokens">expand_tokens() (bookmarks.tokens.tokens.TokenConfig method)</a>
@@ -837,9 +894,11 @@
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.init_buttons_state">init_buttons_state() (bookmarks.lists.basewidget.BaseListWidget method)</a>
 </li>
-        <li><a href="api/lists.html#bookmarks.lists.assets.AssetsModel.init_data">init_data() (bookmarks.lists.assets.AssetsModel method)</a>
+        <li><a href="api/editor.html#bookmarks.editor.base.BasePropertyEditor.init_data">init_data() (bookmarks.editor.base.BasePropertyEditor method)</a>
 
         <ul>
+          <li><a href="api/lists.html#bookmarks.lists.assets.AssetsModel.init_data">(bookmarks.lists.assets.AssetsModel method)</a>
+</li>
           <li><a href="api/lists.html#bookmarks.lists.basemodel.BaseModel.init_data">(bookmarks.lists.basemodel.BaseModel method)</a>
 </li>
           <li><a href="api/lists.html#bookmarks.lists.bookmarks.BookmarksModel.init_data">(bookmarks.lists.bookmarks.BookmarksModel method)</a>
@@ -851,6 +910,8 @@
           <li><a href="api/lists.html#bookmarks.lists.tasks.TaskFolderModel.init_data">(bookmarks.lists.tasks.TaskFolderModel method)</a>
 </li>
         </ul></li>
+        <li><a href="api/editor.html#bookmarks.editor.base.BasePropertyEditor.init_db_data">init_db_data() (bookmarks.editor.base.BasePropertyEditor method)</a>
+</li>
         <li><a href="api/common.html#bookmarks.common.setup.init_environment">init_environment() (in module bookmarks.common.setup)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.FilterProxyModel.init_filter_values">init_filter_values() (bookmarks.lists.basemodel.FilterProxyModel method)</a>
@@ -875,6 +936,8 @@
         </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/main.html#bookmarks.main.MainWidget.initialized">initialized (bookmarks.main.MainWidget attribute)</a>
+</li>
         <li><a href="api/lists.html#bookmarks.lists.assets.AssetsWidget.inline_icons_count">inline_icons_count() (bookmarks.lists.assets.AssetsWidget method)</a>
 
         <ul>
@@ -949,13 +1012,19 @@
   <h2>L</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseInlineIconWidget.leaveEvent">leaveEvent() (bookmarks.lists.basewidget.BaseInlineIconWidget method)</a>
+        <li><a href="api/editor.html#bookmarks.editor.base_widgets.ThumbnailEditorWidget.leaveEvent">leaveEvent() (bookmarks.editor.base_widgets.ThumbnailEditorWidget method)</a>
+
+        <ul>
+          <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseInlineIconWidget.leaveEvent">(bookmarks.lists.basewidget.BaseInlineIconWidget method)</a>
 </li>
+        </ul></li>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.ListsWidget">ListsWidget (class in bookmarks.lists.basewidget)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/common.html#bookmarks.common.settings.UserSettings.load_active_values">load_active_values() (bookmarks.common.settings.UserSettings method)</a>
+</li>
+        <li><a href="api/editor.html#bookmarks.editor.base.BasePropertyEditor.load_saved_user_settings">load_saved_user_settings() (bookmarks.editor.base.BasePropertyEditor method)</a>
 </li>
         <li><a href="api/images.html#bookmarks.images.load_thumbnail_from_image">load_thumbnail_from_image() (in module bookmarks.images)</a>
 </li>
@@ -1008,6 +1077,12 @@
           <li><a href="api/common.html#module-bookmarks.common.ui">bookmarks.common.ui</a>
 </li>
           <li><a href="api/database.html#module-bookmarks.database">bookmarks.database</a>
+</li>
+          <li><a href="api/editor.html#module-bookmarks.editor">bookmarks.editor</a>
+</li>
+          <li><a href="api/editor.html#module-bookmarks.editor.base">bookmarks.editor.base</a>
+</li>
+          <li><a href="api/editor.html#module-bookmarks.editor.base_widgets">bookmarks.editor.base_widgets</a>
 </li>
           <li><a href="api/images.html#module-bookmarks.images">bookmarks.images</a>
 </li>
@@ -1138,19 +1213,21 @@
 </li>
         <li><a href="api/lists.html#bookmarks.lists.tasks.TaskFolderWidgetDelegate.paint_name">paint_name() (bookmarks.lists.tasks.TaskFolderWidgetDelegate method)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/lists.html#bookmarks.lists.delegate.BaseDelegate.paint_persistent">paint_persistent() (bookmarks.lists.delegate.BaseDelegate method)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.delegate.BaseDelegate.paint_selection_indicator">paint_selection_indicator() (bookmarks.lists.delegate.BaseDelegate method)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.paint_status_message">paint_status_message() (bookmarks.lists.basewidget.BaseListWidget method)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.delegate.BaseDelegate.paint_thumbnail">paint_thumbnail() (bookmarks.lists.delegate.BaseDelegate method)</a>
 </li>
-        <li><a href="api/lists.html#bookmarks.lists.basewidget.FilterOnOverlayWidget.paintEvent">paintEvent() (bookmarks.lists.basewidget.FilterOnOverlayWidget method)</a>
+        <li><a href="api/editor.html#bookmarks.editor.base_widgets.ThumbnailEditorWidget.paintEvent">paintEvent() (bookmarks.editor.base_widgets.ThumbnailEditorWidget method)</a>
 
         <ul>
+          <li><a href="api/lists.html#bookmarks.lists.basewidget.FilterOnOverlayWidget.paintEvent">(bookmarks.lists.basewidget.FilterOnOverlayWidget method)</a>
+</li>
           <li><a href="api/lists.html#bookmarks.lists.basewidget.ProgressWidget.paintEvent">(bookmarks.lists.basewidget.ProgressWidget method)</a>
 </li>
           <li><a href="api/lists.html#bookmarks.lists.files.DragPixmapFactory.paintEvent">(bookmarks.lists.files.DragPixmapFactory method)</a>
@@ -1170,7 +1247,11 @@
 </li>
         <li><a href="api/common.html#bookmarks.common.font.FontDatabase.primary_font">primary_font() (bookmarks.common.font.FontDatabase method)</a>
 </li>
+        <li><a href="api/editor.html#bookmarks.editor.base_widgets.process_image">process_image() (in module bookmarks.editor.base_widgets)</a>
+</li>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.ProgressWidget">ProgressWidget (class in bookmarks.lists.basewidget)</a>
+</li>
+        <li><a href="api/editor.html#bookmarks.editor.base_widgets.ProjectTypesWidget">ProjectTypesWidget (class in bookmarks.editor.base_widgets)</a>
 </li>
         <li><a href="api/common.html#bookmarks.common.sequence.proxy_path">proxy_path() (in module bookmarks.common.sequence)</a>
 </li>
@@ -1248,13 +1329,19 @@
           <li><a href="api/lists.html#bookmarks.lists.files.FilesModel.save_active">(bookmarks.lists.files.FilesModel method)</a>
 </li>
         </ul></li>
-        <li><a href="api/tokens.html#bookmarks.tokens.tokens_editor.TokenConfigEditor.save_changes">save_changes() (bookmarks.tokens.tokens_editor.TokenConfigEditor method)</a>
+        <li><a href="api/editor.html#bookmarks.editor.base.BasePropertyEditor.save_changed_data_to_db">save_changed_data_to_db() (bookmarks.editor.base.BasePropertyEditor method)</a>
+</li>
+        <li><a href="api/editor.html#bookmarks.editor.base.BasePropertyEditor.save_changes">save_changes() (bookmarks.editor.base.BasePropertyEditor method)</a>
+
+        <ul>
+          <li><a href="api/tokens.html#bookmarks.tokens.tokens_editor.TokenConfigEditor.save_changes">(bookmarks.tokens.tokens_editor.TokenConfigEditor method)</a>
+</li>
+        </ul></li>
+        <li><a href="api/editor.html#bookmarks.editor.base_widgets.ThumbnailEditorWidget.save_image">save_image() (bookmarks.editor.base_widgets.ThumbnailEditorWidget method)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.save_selection">save_selection() (bookmarks.lists.basewidget.BaseListWidget method)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.ThreadedBaseWidget.save_visible_rows">save_visible_rows() (bookmarks.lists.basewidget.ThreadedBaseWidget method)</a>
-</li>
-        <li><a href="api/main.html#bookmarks.standalone.BookmarksAppWindow.save_window">save_window() (bookmarks.standalone.BookmarksAppWindow method)</a>
 </li>
         <li><a href="api/common.html#bookmarks.common.font.FontDatabase.secondary_font">secondary_font() (bookmarks.common.font.FontDatabase method)</a>
 </li>
@@ -1296,13 +1383,13 @@
           <li><a href="api/lists.html#bookmarks.lists.basewidget.ThreadedBaseWidget.set_model">(bookmarks.lists.basewidget.ThreadedBaseWidget method)</a>
 </li>
         </ul></li>
-        <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.set_row_size">set_row_size() (bookmarks.lists.basewidget.BaseListWidget method)</a>
-</li>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.BaseModel.set_sort_order">set_sort_order() (bookmarks.lists.basemodel.BaseModel method)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.BaseModel.set_sort_role">set_sort_role() (bookmarks.lists.basemodel.BaseModel method)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basemodel.BaseModel.set_sorting">set_sorting() (bookmarks.lists.basemodel.BaseModel method)</a>
+</li>
+        <li><a href="api/editor.html#bookmarks.editor.base.BasePropertyEditor.set_thumbnail_source">set_thumbnail_source() (bookmarks.editor.base.BasePropertyEditor method)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.ListsWidget.setCurrentIndex">setCurrentIndex() (bookmarks.lists.basewidget.ListsWidget method)</a>
 </li>
@@ -1312,9 +1399,11 @@
 </li>
         <li><a href="api/common.html#bookmarks.common.settings">settings (in module bookmarks.common)</a>
 </li>
-        <li><a href="api/lists.html#bookmarks.lists.assets.AssetsWidgetContextMenu.setup">setup() (bookmarks.lists.assets.AssetsWidgetContextMenu method)</a>
+        <li><a href="api/editor.html#bookmarks.editor.base_widgets.ThumbnailContextMenu.setup">setup() (bookmarks.editor.base_widgets.ThumbnailContextMenu method)</a>
 
         <ul>
+          <li><a href="api/lists.html#bookmarks.lists.assets.AssetsWidgetContextMenu.setup">(bookmarks.lists.assets.AssetsWidgetContextMenu method)</a>
+</li>
           <li><a href="api/lists.html#bookmarks.lists.basewidget.ThumbnailsContextMenu.setup">(bookmarks.lists.basewidget.ThumbnailsContextMenu method)</a>
 </li>
           <li><a href="api/lists.html#bookmarks.lists.bookmarks.BookmarksWidgetContextMenu.setup">(bookmarks.lists.bookmarks.BookmarksWidgetContextMenu method)</a>
@@ -1328,6 +1417,8 @@
           <li><a href="api/main.html#bookmarks.standalone.TrayMenu.setup">(bookmarks.standalone.TrayMenu method)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/common.html#bookmarks.common.settings.UserSettings.setValue">setValue() (bookmarks.common.settings.UserSettings method)</a>
 
         <ul>
@@ -1336,8 +1427,6 @@
           <li><a href="api/images.html#bookmarks.images.ImageCache.setValue">(bookmarks.images.ImageCache class method)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/lists.html#bookmarks.lists.files.DropIndicatorWidget.show">show() (bookmarks.lists.files.DropIndicatorWidget method)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.show_item">show_item() (bookmarks.lists.basewidget.BaseListWidget method)</a>
@@ -1346,9 +1435,11 @@
           <li><a href="api/lists.html#bookmarks.lists.files.FilesWidget.show_item">(bookmarks.lists.files.FilesWidget method)</a>
 </li>
         </ul></li>
-        <li><a href="api/lists.html#bookmarks.lists.assets.AssetsWidget.showEvent">showEvent() (bookmarks.lists.assets.AssetsWidget method)</a>
+        <li><a href="api/editor.html#bookmarks.editor.base.BasePropertyEditor.showEvent">showEvent() (bookmarks.editor.base.BasePropertyEditor method)</a>
 
         <ul>
+          <li><a href="api/lists.html#bookmarks.lists.assets.AssetsWidget.showEvent">(bookmarks.lists.assets.AssetsWidget method)</a>
+</li>
           <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.showEvent">(bookmarks.lists.basewidget.BaseListWidget method)</a>
 </li>
           <li><a href="api/lists.html#bookmarks.lists.basewidget.FilterOnOverlayWidget.showEvent">(bookmarks.lists.basewidget.FilterOnOverlayWidget method)</a>
@@ -1368,9 +1459,11 @@
 </li>
         <li><a href="api/common.html#bookmarks.common.ui.size">size() (in module bookmarks.common.ui)</a>
 </li>
-        <li><a href="api/lists.html#bookmarks.lists.delegate.AssetsWidgetDelegate.sizeHint">sizeHint() (bookmarks.lists.delegate.AssetsWidgetDelegate method)</a>
+        <li><a href="api/editor.html#bookmarks.editor.base.BasePropertyEditor.sizeHint">sizeHint() (bookmarks.editor.base.BasePropertyEditor method)</a>
 
         <ul>
+          <li><a href="api/lists.html#bookmarks.lists.delegate.AssetsWidgetDelegate.sizeHint">(bookmarks.lists.delegate.AssetsWidgetDelegate method)</a>
+</li>
           <li><a href="api/lists.html#bookmarks.lists.delegate.BookmarksWidgetDelegate.sizeHint">(bookmarks.lists.delegate.BookmarksWidgetDelegate method)</a>
 </li>
           <li><a href="api/lists.html#bookmarks.lists.delegate.FilesWidgetDelegate.sizeHint">(bookmarks.lists.delegate.FilesWidgetDelegate method)</a>
@@ -1461,9 +1554,15 @@
         <li><a href="api/lists.html#bookmarks.lists.basewidget.ThreadedBaseWidget">ThreadedBaseWidget (class in bookmarks.lists.basewidget)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.ThumbnailContextMenu">ThumbnailContextMenu (bookmarks.lists.basewidget.BaseListWidget attribute)</a>
+
+        <ul>
+          <li><a href="api/editor.html#bookmarks.editor.base_widgets.ThumbnailContextMenu">(class in bookmarks.editor.base_widgets)</a>
 </li>
+        </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/editor.html#bookmarks.editor.base_widgets.ThumbnailEditorWidget">ThumbnailEditorWidget (class in bookmarks.editor.base_widgets)</a>
+</li>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.ThumbnailsContextMenu">ThumbnailsContextMenu (class in bookmarks.lists.basewidget)</a>
 </li>
         <li><a href="api/common.html#bookmarks.common.core.Timer">Timer (class in bookmarks.common.core)</a>
@@ -1505,6 +1604,8 @@
         <li><a href="api/lists.html#bookmarks.lists.basemodel.BaseModel.unset_active">unset_active() (bookmarks.lists.basemodel.BaseModel method)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.BaseListWidget.update">update() (bookmarks.lists.basewidget.BaseListWidget method)</a>
+</li>
+        <li><a href="api/editor.html#bookmarks.editor.base.BasePropertyEditor.update_changed_database_value">update_changed_database_value() (bookmarks.editor.base.BasePropertyEditor method)</a>
 </li>
         <li><a href="api/lists.html#bookmarks.lists.basewidget.ThreadedBaseWidget.update_row">update_row() (bookmarks.lists.basewidget.ThreadedBaseWidget method)</a>
 </li>

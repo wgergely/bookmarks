@@ -20,5 +20,5 @@ If you're looking for the user guide, see the :ref:`Introduction`.
     api/main
     api/lists
     api/tokens
-    api/property_editor
+    api/editor
 

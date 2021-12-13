@@ -316,8 +316,8 @@ def get_asset_text_segments(text, description):
 
 @functools.lru_cache(maxsize=4194304)
 def get_bookmark_text_segments(text, description):
-    """Returns a tuple of text and colour information to be used to mimic
-    rich-text like colouring of individual text elements.
+    """Returns a tuple of text and color information to be used to mimic
+    rich-text like coloring of individual text elements.
 
     Used by the list delegate to paint the job name and root folder.
 

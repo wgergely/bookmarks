@@ -647,13 +647,9 @@ class SlackWidget(QtWidgets.QDialog):
         """Sends a message using the SlackClient API.
 
         """
-        if not self.users_widget.selectionModel().hasSelection():
-            return
-
-        index = self.users_widget.selectionModel().currentIndex()
+        index = common.get_selected_index(self.task_editor)
         if not index.isValid():
             return
-
         if not self.message_widget.toPlainText():
             return
 

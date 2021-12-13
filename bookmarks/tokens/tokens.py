@@ -375,7 +375,7 @@ class TokenConfig(QtCore.QObject):
     bookmark item's database.
 
     As token config data might be used in performance sensitive sections,
-    the instance is uninitialised until :meth:`data` is called. This will load
+    the instance is uninitialized until :meth:`data` is called. This will load
     values from the database and cache it internally. Data won't be updated
     until :meth:`.data(force=True)` is called.
 
@@ -389,7 +389,7 @@ class TokenConfig(QtCore.QObject):
         self.root = root
         self.asset = asset
 
-        self._initialised = False
+        self._initialized = False
         self._data = DEFAULT_TOKEN_CONFIG.copy()
 
     def data(self, force=False):
@@ -406,7 +406,7 @@ class TokenConfig(QtCore.QObject):
              dict: Token config values.
 
         """
-        if not force and self._initialised:
+        if not force and self._initialized:
             return self._data
 
         try:
@@ -429,7 +429,7 @@ class TokenConfig(QtCore.QObject):
             log.error('Failed to get token config from the database.')
             return self._data
         finally:
-            self._initialised = True
+            self._initialized = True
 
     def set_data(self, data):
         """Saves a data dictionary to the bookmark database as an encoded

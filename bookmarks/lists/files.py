@@ -812,11 +812,12 @@ class FilesWidget(basewidget.ThreadedBaseWidget):
         return 3
 
     def action_on_enter_key(self):
-        self.activate(self.selectionModel().currentIndex())
+        index = common.get_selected_index(self)
+        if not index.isValid():
+            self.activate(index)
 
     def startDrag(self, supported_actions):
-        index = self.selectionModel().currentIndex()
-
+        index = common.get_selected_index(self)
         if not index.isValid():
             return
         if not index.data(QtCore.Qt.StatusTipRole):

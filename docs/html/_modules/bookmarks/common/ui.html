@@ -172,8 +172,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../bookmarks.html">Introduction</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">bookmarks.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/database.html">database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/tokens.html">tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/editor.html">editor</a></li>
 </ul>
 </li>
 </ul>
@@ -206,8 +210,10 @@
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">"""Collection of common utility methods used by UI elements.</span>
 
-<span class="sd">Bookmarks has some DPI awareness, although, I'm pretty confident it wasn't implemented correctly. Still,</span>
-<span class="sd">all size values must be queried using :func:`.size()` to get a DPI dependent pixel value.</span>
+<span class="sd">Bookmarks has some DPI awareness, although, I'm pretty confident it wasn't</span>
+<span class="sd">implemented correctly. Still,</span>
+<span class="sd">all size values must be queried using :func:`.size()` to get a DPI dependent pixel</span>
+<span class="sd">value.</span>
 
 <span class="sd">"""</span>
 <span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
@@ -347,9 +353,11 @@
         <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">images</span>
         <span class="n">qss</span> <span class="o">=</span> <span class="n">qss</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">PRIMARY_FONT</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">primary_font</span><span class="p">(</span>
-                <span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FontSizeMedium</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">family</span><span class="p">(),</span>
+                <span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FontSizeMedium</span><span class="p">)</span>
+            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">family</span><span class="p">(),</span>
             <span class="n">SECONDARY_FONT</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">secondary_font</span><span class="p">(</span>
-                <span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FontSizeSmall</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">family</span><span class="p">(),</span>
+                <span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FontSizeSmall</span><span class="p">)</span>
+            <span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">family</span><span class="p">(),</span>
             <span class="n">FontSizeSmall</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FontSizeSmall</span><span class="p">)),</span>
             <span class="n">FontSizeMedium</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FontSizeMedium</span><span class="p">)),</span>
             <span class="n">FontSizeLarge</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FontSizeLarge</span><span class="p">)),</span>
@@ -377,18 +385,23 @@
             <span class="n">TRANSPARENT</span><span class="o">=</span><span class="n">rgb</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">Transparent</span><span class="p">)),</span>
             <span class="n">TRANSPARENT_BLACK</span><span class="o">=</span><span class="n">rgb</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">OpaqueColor</span><span class="p">)),</span>
             <span class="n">BRANCH_CLOSED</span><span class="o">=</span><span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">get_rsc_pixmap</span><span class="p">(</span>
-                <span class="s1">'branch_closed'</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">get_path</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="s1">'branch_closed'</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">get_path</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">),</span>
             <span class="n">BRANCH_OPEN</span><span class="o">=</span><span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">get_rsc_pixmap</span><span class="p">(</span>
-                <span class="s1">'branch_open'</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">get_path</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="s1">'branch_open'</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">get_path</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">),</span>
             <span class="n">CHECKED</span><span class="o">=</span><span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">get_rsc_pixmap</span><span class="p">(</span>
-                <span class="s1">'check'</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">get_path</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="s1">'check'</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">get_path</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">),</span>
             <span class="n">UNCHECKED</span><span class="o">=</span><span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">get_rsc_pixmap</span><span class="p">(</span>
-                <span class="s1">'close'</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">get_path</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                <span class="s1">'close'</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">get_path</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">),</span>
         <span class="p">)</span>
     <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
         <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">log</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="s1">'Looks like there might be an error in the stylesheet file: </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">err</span><span class="p">)</span>
+            <span class="n">err</span>
+        <span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
@@ -460,6 +473,70 @@
 
     <span class="n">painter</span><span class="o">.</span><span class="n">restore</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">width</span></div>
+
+
+<span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">)</span>
+<span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">save_selection</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_selected_index</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+    <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">UIStateSection</span><span class="p">,</span>
+        <span class="n">key</span><span class="p">,</span>
+        <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span> <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="p">)</span>
+
+
+<span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">)</span>
+<span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">restore_selection</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">value</span><span class="p">(</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">UIStateSection</span><span class="p">,</span>
+        <span class="n">key</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="p">:</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">return</span>
+    <span class="n">select_index</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+
+<span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">)</span>
+<span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">select_index</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">selected_index</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_selected_index</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s1">'role'</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">role</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'role'</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">role</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span>
+
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()):</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">v</span> <span class="o">!=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">role</span><span class="p">):</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="n">selected_index</span> <span class="o">!=</span> <span class="n">index</span><span class="p">:</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+                <span class="n">index</span><span class="p">,</span>
+                <span class="n">QtCore</span><span class="o">.</span><span class="n">QItemSelectionModel</span><span class="o">.</span><span class="n">ClearAndSelect</span>
+            <span class="p">)</span>
+
+        <span class="n">widget</span><span class="o">.</span><span class="n">scrollTo</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">EnsureVisible</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">widget</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">get_selected_index</span><span class="p">(</span><span class="n">widget</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">widget</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">hasSelection</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">()</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">widget</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">selectedIndexes</span><span class="p">()),</span>
+        <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPersistentModelIndex</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 </pre></div>
         </article>
       </div>

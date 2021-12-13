@@ -6,7 +6,6 @@ The widget is also responsible for editing the list of servers and jobs that
 will contain the bookmark items.
 
 """
-import functools
 
 from PySide2 import QtCore, QtWidgets
 
@@ -18,8 +17,6 @@ from .. import common
 from .. import images
 from .. import ui
 
-instance = None
-
 HINT = "To start, add your server below. If the server does not have jobs, you \
 can add new ones using *.zip templates.\nAll job items will contain a series of \
 bookmark items - these are the folders used to store your project's files and \
@@ -29,24 +26,41 @@ label)."
 
 
 def close():
-    global instance
-    if instance is None:
+    if common.bookmark_editor_widget is None:
         return
     try:
-        instance.close()
-        instance.deleteLater()
+        common.bookmark_editor_widget.close()
+        common.bookmark_editor_widget.deleteLater()
     except:
         pass
-    instance = None
+    common.bookmark_editor_widget = None
 
 
 def show():
-    global instance
+    if not common.bookmark_editor_widget:
+        common.bookmark_editor_widget = BookmarkEditorWidget()
 
-    close()
-    instance = BookmarkEditorWidget()
-    instance.open()
-    return instance
+    state = common.settings.value(
+        common.UIStateSection,
+        common.BookmarkEditorStateKey,
+    )
+    state = QtCore.Qt.WindowNoState if state is None else QtCore.Qt.WindowState(
+        state
+    )
+
+    common.bookmark_editor_widget.activateWindow()
+    common.bookmark_editor_widget.restore_window()
+    if state == QtCore.Qt.WindowNoState:
+        common.bookmark_editor_widget.showNormal()
+    elif state & QtCore.Qt.WindowMaximized:
+        common.bookmark_editor_widget.showMaximized()
+    elif state & QtCore.Qt.WindowFullScreen:
+        common.bookmark_editor_widget.showFullScreen()
+    else:
+        common.bookmark_editor_widget.showNormal()
+
+    common.bookmark_editor_widget.open()
+    return common.bookmark_editor_widget
 
 
 HELP = 'Add and remove bookmark items in this window. \
@@ -97,7 +111,8 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
 
         _label = QtWidgets.QLabel(parent=self)
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'bookmark', common.color(common.SeparatorColor), h * 0.8)
+            'bookmark', common.color(common.SeparatorColor), h * 0.8
+        )
         _label.setPixmap(pixmap)
         label = ui.PaintedLabel(
             'Edit Bookmarks',
@@ -119,8 +134,11 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         _row = ui.add_row('', height=None, parent=None)
         self.layout().addWidget(_row, 0)
         _row.layout().setSpacing(0)
-        label = ui.Label(HINT, color=common.color(
-            common.TextSecondaryColor), parent=_row)
+        label = ui.Label(
+            HINT, color=common.color(
+                common.TextSecondaryColor
+            ), parent=_row
+        )
         _row.layout().addWidget(label, 0)
         label.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
@@ -130,7 +148,8 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
 
         label = QtWidgets.QLabel(parent=self)
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'gradient5', common.color(common.SeparatorColor), o)
+            'gradient5', common.color(common.SeparatorColor), o
+        )
         label.setPixmap(pixmap)
         label.setScaledContents(True)
         row.layout().addWidget(label, 1)
@@ -155,15 +174,21 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         row.layout().setSpacing(o * 0.5)
         row.layout().setContentsMargins(0, o, 0, o)
 
-        _grp = ui.get_group(parent=row, margin=common.size(
-            common.WidthIndicator) * 1.5)
+        _grp = ui.get_group(
+            parent=row, margin=common.size(
+                common.WidthIndicator
+            ) * 1.5
+        )
         _row = ui.add_row(None, height=None, parent=_grp)
         _row.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.Maximum
         )
-        grp = ui.get_group(parent=row, margin=common.size(
-            common.WidthIndicator) * 0.66)
+        grp = ui.get_group(
+            parent=row, margin=common.size(
+                common.WidthIndicator
+            ) * 0.66
+        )
         grp.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
@@ -194,16 +219,22 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         row.layout().setSpacing(o * 0.5)
         row.layout().setContentsMargins(0, o, 0, o)
 
-        _grp = ui.get_group(parent=row, margin=common.size(
-            common.WidthIndicator) * 1.5)
+        _grp = ui.get_group(
+            parent=row, margin=common.size(
+                common.WidthIndicator
+            ) * 1.5
+        )
         _row = ui.add_row(None, height=None, parent=_grp)
         _row.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.Maximum
         )
 
-        grp = ui.get_group(parent=row, margin=common.size(
-            common.WidthIndicator) * 0.66)
+        grp = ui.get_group(
+            parent=row, margin=common.size(
+                common.WidthIndicator
+            ) * 0.66
+        )
         grp.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
@@ -229,11 +260,12 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         _row.layout().addStretch(1)
         _row.layout().addWidget(self.job_add_button)
 
-        self.job_filter = ui.LineEdit(parent=self)
-        self.job_filter.setAlignment(
-            QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight)
-        self.job_filter.setPlaceholderText('Search Jobs...')
-        grp.layout().addWidget(self.job_filter)
+        self.job_filter_widget = ui.LineEdit(parent=self)
+        self.job_filter_widget.setAlignment(
+            QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight
+        )
+        self.job_filter_widget.setPlaceholderText('Search Jobs...')
+        grp.layout().addWidget(self.job_filter_widget)
 
         grp.layout().addWidget(self.job_editor, 1)
 
@@ -246,16 +278,22 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         row.layout().setSpacing(o * 0.5)
         row.layout().setContentsMargins(0, o, 0, o)
 
-        _grp = ui.get_group(parent=row, margin=common.size(
-            common.WidthIndicator) * 1.5)
+        _grp = ui.get_group(
+            parent=row, margin=common.size(
+                common.WidthIndicator
+            ) * 1.5
+        )
         _row = ui.add_row(None, height=None, parent=_grp)
         _row.layout().setAlignment(QtCore.Qt.AlignCenter)
         _row.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.Maximum
         )
-        grp = ui.get_group(parent=row, margin=common.size(
-            common.WidthIndicator) * 0.66)
+        grp = ui.get_group(
+            parent=row, margin=common.size(
+                common.WidthIndicator
+            ) * 0.66
+        )
         grp.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
@@ -286,12 +324,15 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
 
         self.info_bar = QtWidgets.QLabel(parent=self)
         self.info_bar.setStyleSheet(
-            'QLabel {{font-family: "{family}";font-size: {size}px;margin: {o} {o} {o} {o};}}'.format(
+            'QLabel {{font-family: "{family}";font-size: {size}px;margin: {o} {o} '
+            '{o} {o};}}'.format(
                 size=common.size(common.FontSizeSmall) * 0.2,
                 family=common.font_db.secondary_font(
-                    common.FontSizeSmall)[0].family(),
+                    common.FontSizeSmall
+                )[0].family(),
                 o=common.size(common.WidthIndicator)
-            ))
+            )
+        )
         self.info_bar.setWordWrap(False)
         self.info_bar.setFixedHeight(common.size(common.WidthMargin) * 2)
 
@@ -303,7 +344,8 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
 
         label = QtWidgets.QLabel(parent=self)
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'gradient2', common.color(common.SeparatorColor), o)
+            'gradient2', common.color(common.SeparatorColor), o
+        )
         label.setPixmap(pixmap)
         label.setScaledContents(True)
         row.layout().addWidget(label, 1)
@@ -321,30 +363,23 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         self.done_button.setFixedHeight(common.size(common.HeightRow))
 
         self.persistent_bookmarks_button = ui.PaintedButton(
-            'Edit Persistent Bookmarks')
+            'Edit Persistent Bookmarks'
+        )
         row.layout().addWidget(self.persistent_bookmarks_button, 0)
         row.layout().addWidget(self.done_button, 1)
 
     def _connect_signals(self):
-        self.server_editor.serverChanged.connect(
-            functools.partial(self.set_hidden, self.job_editor.parent().parent()))
+        self.server_editor.selectionModel().selectionChanged.connect(
+            self.bookmark_editor.clear
+        )
+        self.server_editor.selectionModel().selectionChanged.connect(
+            self.job_editor.init_data
+        )
+        self.job_editor.selectionModel().selectionChanged.connect(
+            self.bookmark_editor.init_data
+        )
 
-        self.server_editor.serverChanged.connect(
-            functools.partial(self.set_hidden, self.job_add_button.parent().parent()))
-        self.server_editor.serverChanged.connect(
-            functools.partial(self.set_hidden, self.bookmark_editor.parent().parent()))
-        self.server_editor.serverChanged.connect(
-            functools.partial(self.set_hidden, self.bookmark_add_button.parent().parent()))
-
-        self.job_editor.jobChanged.connect(
-            functools.partial(self.set_hidden, self.bookmark_editor.parent().parent()))
-        self.job_editor.jobChanged.connect(
-            functools.partial(self.set_hidden, self.bookmark_add_button.parent().parent()))
-
-        self.server_editor.serverChanged.connect(
-            self.job_editor.server_changed)
-        self.job_editor.jobChanged.connect(self.bookmark_editor.job_changed)
-
+        self.server_editor.progressUpdate.connect(self.set_info_message)
         self.job_editor.progressUpdate.connect(self.set_info_message)
         self.bookmark_editor.progressUpdate.connect(self.set_info_message)
 
@@ -354,68 +389,105 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
 
         self.done_button.clicked.connect(self.close)
 
-        self.server_editor.serverChanged.connect(self.job_editor.update_status)
-        self.job_editor.jobChanged.connect(self.job_editor.update_status)
-
         self.persistent_bookmarks_button.clicked.connect(
-            actions.edit_persistent_bookmarks)
+            actions.edit_persistent_bookmarks
+        )
 
         self.job_subdir_toggle.stateChanged.connect(
-            self.job_subdir_toggle_changed)
+            lambda v: common.settings.setValue(
+                common.SettingsSection,
+                common.JobsHaveSubdirs,
+                int(v)
+            )
+        )
         self.job_subdir_toggle.stateChanged.connect(self.job_editor.init_data)
-        self.job_subdir_toggle.stateChanged.connect(
-            self.job_editor.restore_current)
 
-        self.job_filter.textChanged.connect(
-            lambda x: self.job_editor.blockSignals(True))
-        self.job_filter.textChanged.connect(
-            self.job_editor.model().setFilterWildcard)
-        self.job_filter.textChanged.connect(
-            lambda x: self.job_editor.blockSignals(False))
-        self.job_filter.textChanged.connect(self.job_editor.restore_current)
+        self.job_filter_widget.textChanged.connect(self.job_editor.set_filter)
+
+    def server(self):
+        index = common.get_selected_index(self.server_editor)
+        if not index.isValid():
+            return None
+        return index.data(QtCore.Qt.DisplayRole)
+
+    def job(self):
+        index = common.get_selected_index(self.job_editor)
+        if not index.isValid():
+            return None
+        return index.data(QtCore.Qt.UserRole + 1)
+
+    def job_path(self):
+        index = common.get_selected_index(self.job_editor)
+        if not index.isValid():
+            return None
+        return index.data(QtCore.Qt.UserRole)
 
     @QtCore.Slot(str)
     def set_info_message(self, v):
+        font, metrics = common.font_db.primary_font(
+            common.size(common.FontSizeMedium)
+        )
+        v = metrics.elidedText(
+            v,
+            QtCore.Qt.ElideRight,
+            self.window().rect().width() - common.size(common.WidthMargin) * 2
+        )
         self.info_bar.setText(v)
         self.info_bar.repaint()
 
-    def job_subdir_toggle_changed(self, v):
-        common.settings.setValue(
-            common.SettingsSection,
-            common.JobsHaveSubdirs,
-            int(v)
-        )
-
     def init_data(self):
+        self.init_job_subdir_toggle()
         self.server_editor.init_data()
-        self.server_editor.restore_current()
 
-        self.job_editor.init_data()
-        self.job_editor.restore_current()
-
-        self.bookmark_editor.init_data()
-
+    def init_job_subdir_toggle(self):
         v = common.settings.value(
-            common.SettingsSection, common.JobsHaveSubdirs)
+            common.SettingsSection, common.JobsHaveSubdirs
+        )
         v = QtCore.Qt.UnChecked if v is None else QtCore.Qt.CheckState(v)
 
         self.job_subdir_toggle.blockSignals(True)
         self.job_subdir_toggle.setCheckState(v)
         self.job_subdir_toggle.blockSignals(False)
 
-    @QtCore.Slot(QtWidgets.QWidget)
-    @QtCore.Slot(bool)
-    def set_hidden(self, widget, v, *args, **kwargs):
-        return
-        # if not v:
-        #     widget.setHidden(True)
-        # else:
-        #     widget.setHidden(False)
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def save_window(self, *args, **kwargs):
+        common.settings.setValue(
+            common.UIStateSection,
+            common.BookmarkEditorGeometryKey,
+            self.saveGeometry()
+        )
+        common.settings.setValue(
+            common.UIStateSection,
+            common.BookmarkEditorStateKey,
+            int(self.windowState())
+        )
+
+    @common.error
+    @common.debug
+    def restore_window(self, *args, **kwargs):
+        geometry = common.settings.value(
+            common.UIStateSection,
+            common.BookmarkEditorGeometryKey,
+        )
+        if geometry is not None:
+            self.restoreGeometry(geometry)
+
+    def hideEvent(self, event):
+        self.save_window()
+        super().hideEvent(event)
+
+    def closeEvent(self, event):
+        self.save_window()
+        super().closeEvent(event)
 
     def showEvent(self, event):
-        common.center_window(self)
         QtCore.QTimer.singleShot(100, self.init_data)
         super(BookmarkEditorWidget, self).showEvent(event)
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth), common.size(common.DefaultHeight) * 1.33)
+        return QtCore.QSize(
+            common.size(common.DefaultWidth),
+            common.size(common.DefaultHeight) * 1.33
+        )

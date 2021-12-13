@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Sub-editor widget used by :class:`bookmarks.bookmark_editor.bookmark_editor_widget.BookmarkEditorWidget`
+"""Sub-editor widget used by
+:class:`bookmarks.bookmark_editor.bookmark_editor_widget.BookmarkEditorWidget`
 to add/remove bookmarks items to and from the user settings.
 
 """
@@ -16,6 +17,9 @@ from .. import shortcuts
 from .. import ui
 
 
+MAX_RECURSION = 4
+
+
 class BookmarkContextMenu(contextmenu.BaseContextMenu):
     """Custom context menu used to control the list of saved servers.
 
@@ -24,7 +28,9 @@ class BookmarkContextMenu(contextmenu.BaseContextMenu):
     def setup(self):
         self.add_menu()
         self.separator()
-        if isinstance(self.index, QtWidgets.QListWidgetItem) and self.index.flags() & QtCore.Qt.ItemIsEnabled:
+        if isinstance(
+                self.index, QtWidgets.QListWidgetItem
+        ) and self.index.flags() & QtCore.Qt.ItemIsEnabled:
             self.bookmark_properties_menu()
             self.reveal_menu()
         self.separator()
@@ -40,7 +46,9 @@ class BookmarkContextMenu(contextmenu.BaseContextMenu):
     def reveal_menu(self):
         self.menu[contextmenu.key()] = {
             'text': 'Reveal',
-            'action': functools.partial(actions.reveal, self.index.data(QtCore.Qt.UserRole) + '/.'),
+            'action': functools.partial(
+                actions.reveal, self.index.data(QtCore.Qt.UserRole) + '/.'
+                                ),
             'icon': ui.get_icon('folder')
         }
 
@@ -51,8 +59,8 @@ class BookmarkContextMenu(contextmenu.BaseContextMenu):
         }
 
     def bookmark_properties_menu(self):
-        server = self.parent().server
-        job = self.parent().job
+        server = self.parent().window().server()
+        job = self.parent().window().job()
         root = self.index.data(QtCore.Qt.DisplayRole)
 
         self.menu['Properties'] = {
@@ -97,82 +105,83 @@ class BookmarkListWidget(ui.ListWidget):
     def init_shortcuts(self):
         shortcuts.add_shortcuts(self, shortcuts.BookmarkEditorShortcuts)
         connect = functools.partial(
-            shortcuts.connect, shortcuts.BookmarkEditorShortcuts)
+            shortcuts.connect, shortcuts.BookmarkEditorShortcuts
+        )
         connect(shortcuts.AddItem, self.add)
 
     def _connect_signals(self):
         super()._connect_signals()
+
         self.itemActivated.connect(self.toggle_item_state)
-        self.itemChanged.connect(self.item_changed)
-
-    @QtCore.Slot(QtWidgets.QListWidgetItem)
-    def item_changed(self, item):
-        if item.checkState() == QtCore.Qt.Checked:
-            actions.add_bookmark(
-                self.server,
-                self.job,
+        self.itemChanged.connect(
+            lambda item: self.add_remove_bookmark(
+                item.checkState(),
                 item.data(QtCore.Qt.DisplayRole)
             )
-        elif item.checkState() == QtCore.Qt.Unchecked:
-            actions.remove_bookmark(
-                self.server,
-                self.job,
-                item.data(QtCore.Qt.DisplayRole)
-            )
+        )
 
     @QtCore.Slot(QtWidgets.QListWidgetItem)
-    def toggle_item_state(self, item, onlyflag=False):
+    def add_remove_bookmark(self, state, v):
+        if state == QtCore.Qt.Checked:
+            try:
+                actions.add_bookmark(
+                    self.window().server(),
+                    self.window().job(),
+                    v
+                )
+            except:
+                log.error('Could not add bookmark')
+        elif state == QtCore.Qt.Unchecked:
+            try:
+                actions.remove_bookmark(
+                    self.window().server(),
+                    self.window().job(),
+                    v
+                )
+            except:
+                log.error('Could not remove bookmark')
+        else:
+            raise ValueError('Invalid check state.')
+
+    @QtCore.Slot(QtWidgets.QListWidgetItem)
+    def toggle_item_state(self, item):
         if item.checkState() == QtCore.Qt.Checked:
             item.setCheckState(QtCore.Qt.Unchecked)
-
-            if onlyflag is False:
-                try:
-                    actions.remove_bookmark(
-                        self.server,
-                        self.job,
-                        item.data(QtCore.Qt.DisplayRole)
-                    )
-                except:
-                    pass
-
         elif item.checkState() == QtCore.Qt.Unchecked:
             item.setCheckState(QtCore.Qt.Checked)
-
-            if onlyflag is False:
-                try:
-                    actions.add_bookmark(
-                        self.server,
-                        self.job,
-                        item.data(QtCore.Qt.DisplayRole)
-                    )
-                except:
-                    pass
+        self.add_remove_bookmark(
+            QtCore.Qt.Unchecked,
+            item.data(QtCore.Qt.DisplayRole)
+        )
 
     @common.debug
     @common.error
     @QtCore.Slot()
     def add(self, *args, **kwargs):
-        if not self.server or not self.job:
+        if not self.window().server() or not self.window().job():
             return
 
         path = QtWidgets.QFileDialog.getExistingDirectory(
             self,
             'Pick a new bookmark folder',
-            self.server + '/' + self.job,
-            QtWidgets.QFileDialog.ShowDirsOnly | QtWidgets.QFileDialog.DontResolveSymlinks
+            self.window().job_path(),
+            QtWidgets.QFileDialog.ShowDirsOnly |
+            QtWidgets.QFileDialog.DontResolveSymlinks
         )
+
         if not path:
             return
-        if not QtCore.QDir(path).mkdir(common.bookmark_cache_dir):
-            log.error('Failed to create bookmark.')
 
-        name = path.split(self.job)[-1].strip('/').strip('\\')
+        if not QtCore.QDir(path).mkdir(common.bookmark_cache_dir):
+            raise RuntimeError('Could not create bookmark')
+
+        name = path[len(self.window().job_path()) + 1:]
 
         for n in range(self.count()):
             item = self.item(n)
             if item.data(QtCore.Qt.DisplayRole) == name:
                 ui.MessageBox(
-                    '"{}" is already a bookmark.'.format(name),
+                    f'"{name}" is already a bookmark.'
                     'The selected folder is already a bookmark, skipping.'
                 ).open()
                 return
@@ -191,7 +200,7 @@ class BookmarkListWidget(ui.ListWidget):
             common.size(common.WidthMargin) * 2
         )
         item.setSizeHint(size)
-        self.set_item_state(item)
+        self.update_state(item)
         self.insertItem(self.count(), item)
         self.setCurrentItem(item)
 
@@ -203,20 +212,6 @@ class BookmarkListWidget(ui.ListWidget):
         menu.move(pos)
         menu.exec_()
 
-    @QtCore.Slot(str)
-    def job_changed(self, server, job):
-        """This slot responds to any job changes."""
-        if server is None or job is None:
-            self.clear()
-            return
-
-        if server == self.server and job == self.job:
-            return
-
-        self.server = server
-        self.job = job
-        self.init_data()
-
     @QtCore.Slot()
     def init_data(self):
         """Loads a list of bookmarks found in the current job.
@@ -224,35 +219,27 @@ class BookmarkListWidget(ui.ListWidget):
         """
         self.clear()
 
-        if not self.server or not self.job:
-            self.loaded.emit()
+        if not self.window().job():
             return
 
-        path = self.server + '/' + self.job
-        dirs = self.find_bookmark_items(path, -1, 4, [])
-
-        for d in dirs:
+        for name, path in self.item_generator(self.window().job_path()):
             item = QtWidgets.QListWidgetItem()
             item.setFlags(
                 QtCore.Qt.ItemIsEnabled |
                 QtCore.Qt.ItemIsSelectable |
                 QtCore.Qt.ItemIsUserCheckable
             )
-            name = d.split(self.job)[-1].strip('/').strip('\\')
             item.setData(QtCore.Qt.DisplayRole, name)
-            item.setData(QtCore.Qt.UserRole, d)
-            size = QtCore.QSize(
-                0,
-                common.size(common.WidthMargin) * 2
-            )
-            item.setSizeHint(size)
-            self.set_item_state(item)
+            item.setData(QtCore.Qt.UserRole, path)
+            item.setSizeHint(QtCore.QSize(0, common.size(common.WidthMargin) * 2))
+            
+            self.update_state(item)
             self.insertItem(self.count(), item)
 
-        self.loaded.emit()
+        self.progressUpdate.emit('')
 
     @QtCore.Slot(QtWidgets.QListWidgetItem)
-    def set_item_state(self, item):
+    def update_state(self, item):
         """Checks if the item is part of the current bookmark set and set the
         `checkState` and icon accordingly.
 
@@ -271,40 +258,36 @@ class BookmarkListWidget(ui.ListWidget):
         if event.key() == QtCore.Qt.Key_Escape:
             self._interrupt_requested = True
 
-    def find_bookmark_items(self, path, count, limit, arr, emit_progress=True):
+    def item_generator(self, path, recursion=0):
         """Recursive scanning function for finding bookmark folders
         inside the given path.
 
         """
         if self._interrupt_requested:
-            return arr
+            return
 
-        count += 1
-        if count > limit:
-            return arr
+        recursion += 1
+        if recursion > MAX_RECURSION:
+            return
 
         # We'll let unreadable paths fail silently
         try:
             it = os.scandir(path)
         except:
-            return arr
-
-        if emit_progress:
-            self.progressUpdate.emit(f'Scanning {path}. Please wait...')
+            return
 
         for entry in it:
             if not entry.is_dir():
                 continue
+
+            # yield the match
             path = entry.path.replace('\\', '/')
-            if [f for f in arr if f in path]:
-                continue
+            self.progressUpdate.emit(f'Scanning {path}. Please wait...')
 
             if entry.name == common.bookmark_cache_dir:
-                arr.append('/'.join(path.split('/')[:-1]))
+                _path = '/'.join(path.split('/')[:-1])
+                _name = _path[len(self.window().job_path()) + 1:]
+                yield _name, _path
 
-            self.find_bookmark_items(path, count, limit, arr)
-
-        if emit_progress:
-            self.progressUpdate.emit('')
-
-        return sorted(arr)
+            for _name, _path in self.item_generator(path, recursion=recursion):
+                yield _name, _path

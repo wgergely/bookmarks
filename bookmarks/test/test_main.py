@@ -2,35 +2,25 @@
 from PySide2 import QtCore, QtGui, QtWidgets
 
 from .. import common
-from .. import main
 from . import base
 
 
 class Test(base.BaseCase):
-    @classmethod
-    def setUpClass(cls):
-        super(Test, cls).setUpClass()
 
-        common.init_standalone()
-        common.init_pixel_ratio()
-        common.init_ui_scale()
-        common.init_session_lock()
-        common.init_settings()
-        common.init_font_db()
+    def test_initialize(self):
+        from .. import main
 
-    def test_initialize_destroy(self):
         with self.assertRaises(RuntimeError):
-            v = main.instance()
+            w = main.MainWidget()
+        with self.assertRaises(RuntimeError):
+            w = main.init()
 
-        v = main.MainWidget()
-        self.assertFalse(v.is_initialized)
-        self.assertIsInstance(v, main.MainWidget)
-        self.assertIsInstance(main.instance(), main.MainWidget)
-        v.initialize()
-        self.assertTrue(v.is_initialized)
+        self.assertFalse(common.main_widget.is_initialized)
+        self.assertIsInstance(common.main_widget, main.MainWidget)
 
-        common.quit()
-        self.assertFalse(v.is_initialized)
+        common.main_widget.initialize()
+        self.assertTrue(common.main_widget.is_initialized)
 
-        # import sys
-        # self.assertLessEqual(sys.getrefcount(v), 3)
+        with self.assertRaises(RuntimeError):
+            common.main_widget.initialize()
+

@@ -176,6 +176,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../api/images.html">images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/tokens.html">tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/editor.html">editor</a></li>
 </ul>
 </li>
 </ul>
@@ -617,9 +619,7 @@
 <div class="viewcode-block" id="BaseListWidget.save_selection"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basewidget.BaseListWidget.save_selection">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">save_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Saves the current selection."""</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">hasSelection</span><span class="p">():</span>
-            <span class="k">return</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_selected_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">):</span>
@@ -880,7 +880,7 @@
         <span class="n">actions</span><span class="o">.</span><span class="n">preview_thumbnail</span><span class="p">()</span>
 
 <div class="viewcode-block" id="BaseListWidget.key_down"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basewidget.BaseListWidget.key_down">[docs]</a>    <span class="k">def</span> <span class="nf">key_down</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""Custom action on  `down` arrow key-press.</span>
+        <span class="sd">"""Custom action on `down` arrow key-press.</span>
 
 <span class="sd">        We're implementing a continuous 'scroll' function: reaching the last</span>
 <span class="sd">        item in the list will automatically jump to the beginning to the list</span>
@@ -954,9 +954,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">description_editor_widget</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">action_on_enter_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">hasSelection</span><span class="p">():</span>
-            <span class="k">return</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_selected_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
             <span class="k">return</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">activate</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
@@ -1101,16 +1099,14 @@
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">reset_row_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">"""Reinitializes the rows to apply size any row height changes.</span>
+        <span class="sd">"""Re-initializes the rows to apply size and row height changes.</span>
 
 <span class="sd">        """</span>
         <span class="n">proxy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_selected_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="c1"># Save the current selection</span>
-        <span class="n">row</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">hasSelection</span><span class="p">()</span> <span class="ow">and</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
-            <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()</span> <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
 
         <span class="c1"># Update the layout</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scheduleDelayedItemsLayout</span><span class="p">()</span>
@@ -1125,8 +1121,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">scrollTo</span><span class="p">(</span>
                 <span class="n">index</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">PositionAtCenter</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BaseListWidget.set_row_size"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basewidget.BaseListWidget.set_row_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_row_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="sd">"""Saves the current row size to the local common."""</span>
+    <span class="k">def</span> <span class="nf">set_row_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="n">proxy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">proxy</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span>
 
@@ -1135,7 +1130,7 @@
             <span class="n">common</span><span class="o">.</span><span class="n">CurrentRowHeight</span><span class="p">,</span>
             <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">),</span>
             <span class="n">section</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">UIStateSection</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="BaseListWidget.show_item"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basewidget.BaseListWidget.show_item">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
@@ -1285,7 +1280,6 @@
 <span class="sd">        """</span>
         <span class="n">numpad_modifier</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">modifiers</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">KeypadModifier</span>
         <span class="n">no_modifier</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">modifiers</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoModifier</span>
-        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">no_modifier</span> <span class="ow">or</span> <span class="n">numpad_modifier</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">isActive</span><span class="p">():</span>
@@ -1521,13 +1515,10 @@
                     <span class="k">return</span>
 
         <span class="k">if</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">delegate</span><span class="o">.</span><span class="n">DataRect</span><span class="p">]</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">):</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">hasSelection</span><span class="p">():</span>
-                <span class="k">return</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_selected_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
                 <span class="k">return</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">activate</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-            <span class="k">return</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">activate</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="BaseInlineIconWidget"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.basewidget.BaseInlineIconWidget">[docs]</a><span class="k">class</span> <span class="nc">BaseInlineIconWidget</span><span class="p">(</span><span class="n">BaseListWidget</span><span class="p">):</span>

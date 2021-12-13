@@ -1,6 +1,5 @@
-"""Various methods used to initialize Bookmarks.
-
-See :func:`.initialize()` and :func:`.uninitialize()`.
+"""Various methods used to initialize Bookmarks, mainly, :func:`.initialize()` and
+:func:`.uninitialize()`.
 
 """
 import importlib
@@ -28,7 +27,8 @@ def initialize(mode):
     """Initialize the components required to run Bookmarks.
 
     Args:
-            mode (int):    The initialization mode. One of ``common.StandaloneMode`` or ``common.EmbeddedMode``.
+        mode (str): The initialization mode. One of ``common.StandaloneMode``
+                or ``common.EmbeddedMode``.
 
     """
     from . import verify_dependencies
@@ -38,7 +38,9 @@ def initialize(mode):
         raise RuntimeError(f'Already initialized as "{common.init_mode}"!')
     if mode not in (common.StandaloneMode, common.EmbeddedMode):
         raise ValueError(
-            f'Invalid initalization mode. Got "{mode}", expected `common.StandaloneMode` or `common.EmbeddedMode`')
+            f'Invalid initialization mode. Got "{mode}", expected '
+            f'`common.StandaloneMode` or `common.EmbeddedMode`'
+        )
 
     common.init_mode = mode
 
@@ -125,7 +127,8 @@ def uninitialize():
 
 
 def _init_config():
-    """Load the config values from common.CONFIG and set them in the `common` module as properties.
+    """Load the config values from common.CONFIG and set them in the `common`
+    module as properties.
 
     """
     p = common.get_rsc(common.CONFIG)
@@ -181,18 +184,21 @@ def init_environment(env_key, add_private=False):
 
     Raises:
             EnvironmentError: When the `common.env_key` is not set.
-            RuntimeError: When the `common.env_key` is invalid or a directory missing.
+            RuntimeError: When the `common.env_key` is invalid or a directory
+            missing.
 
     """
     if env_key not in os.environ:
         raise EnvironmentError(
-            f'"{env_key}" environment variable is not set.')
+            f'"{env_key}" environment variable is not set.'
+        )
 
     v = os.environ[env_key]
 
     if not os.path.isdir(v):
         raise RuntimeError(
-            f'"{v}" is not a falid folder. Is "{env_key}" environment variable set?')
+            f'"{v}" is not a falid folder. Is "{env_key}" environment variable set?'
+        )
 
     # Add `common.env_key` to the PATH
     v = os.path.normpath(os.path.abspath(v)).strip()
@@ -226,4 +232,5 @@ def verify_dependencies():
             importlib.import_module(mod)
         except ModuleNotFoundError as e:
             raise ModuleNotFoundError(
-                f'Bookmarks cannot be run. A required dependency was not found\n>> {mod}') from e
+                f'Bookmarks cannot be run. A required dependency was not found\n>> {mod}'
+            ) from e

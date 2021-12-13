@@ -89,12 +89,11 @@ class LinkAssetWidget(link.BaseLinkWidget):
         return database.AssetTable
 
     def candidate(self):
-        from .. import main
         widget = common.widget(common.AssetTab)
-        if widget.selectionModel().hasSelection():
-            index = widget.selectionModel().currentIndex()
-            return index.data(common.ParentPathRole)[3]
-        return None
+        index = common.get_selected_index(widget)
+        if not index.isValid():
+            return None
+        return index.data(common.ParentPathRole)[3]
 
     @common.error
     @common.debug

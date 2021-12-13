@@ -30,7 +30,11 @@ class DescriptionEditorWidget(ui.LineEdit):
             self.parent().resized.connect(self.update_editor)
 
     def action(self):
-        index = self.parent().selectionModel().currentIndex()
+        index = common.get_selected_index(self.parent())
+        if not index.isValid():
+            self.hide()
+            return
+
         text = f'{index.data(common.DescriptionRole)}'
         if text.lower() == self.text().lower():
             self.hide()
@@ -63,11 +67,7 @@ class DescriptionEditorWidget(ui.LineEdit):
 
     def update_editor(self):
         """Sets the editor widget's size, position and text contents."""
-        if not self.parent().selectionModel().hasSelection():
-            self.hide()
-            return
-
-        index = self.parent().selectionModel().currentIndex()
+        index = common.get_selected_index(self.parent())
         if not index.isValid():
             self.hide()
             return
@@ -78,8 +78,8 @@ class DescriptionEditorWidget(ui.LineEdit):
         description_rect = self.parent().itemDelegate(
         ).get_description_rect(rectangles, index)
 
-        # Won't be showing the editor if there's no appropiate description area
-        # provided by the delegate (eg. the bookmark items don't have this)
+        # Won't be showing the editor if there's no appropriate description area
+        # provided by the delegate (e.g. the bookmark items don't have this)
         if not description_rect:
             self.hide()
             return
@@ -94,14 +94,10 @@ class DescriptionEditorWidget(ui.LineEdit):
         self.selectAll()
 
     def showEvent(self, event):
-        if not self.parent().selectionModel().hasSelection():
-            self.hide()
-            return
-
-        index = self.parent().selectionModel().currentIndex()
+        index = common.get_selected_index(self.parent())
         if not index.isValid():
             self.hide()
-            return
+            return None
 
         if not index.data(common.FileInfoLoaded):
             self.hide()

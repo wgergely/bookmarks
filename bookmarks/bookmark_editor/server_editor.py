@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""Sub-editor widget used by :class:`bookmarks.bookmark_editor.bookmark_editor_widget.BookmarkEditorWidget`
+"""Sub-editor widget used by
+:class:`bookmarks.bookmark_editor.bookmark_editor_widget.BookmarkEditorWidget`
 to add a new server.
 
 """
@@ -48,7 +49,8 @@ class AddServerEditor(QtWidgets.QDialog):
 
         self.editor = ui.LineEdit(parent=self)
         self.editor.setPlaceholderText(
-            'Enter the path to a server, eg. \'//my_server/jobs\'')
+            'Enter the path to a server, eg. \'//my_server/jobs\''
+        )
         self.setFocusProxy(self.editor)
         self.editor.setFocusPolicy(QtCore.Qt.StrongFocus)
 
@@ -73,10 +75,14 @@ class AddServerEditor(QtWidgets.QDialog):
 
     def _connect_signals(self):
         self.ok_button.clicked.connect(
-            lambda: self.done(QtWidgets.QDialog.Accepted))
+            lambda: self.done(QtWidgets.QDialog.Accepted)
+        )
         self.pick_button.clicked.connect(self.pick)
-        self.editor.textChanged.connect(lambda: self.editor.setStyleSheet(
-            'color: {};'.format(common.rgb(common.color(common.GreenColor)))))
+        self.editor.textChanged.connect(
+            lambda: self.editor.setStyleSheet(
+                'color: {};'.format(common.rgb(common.color(common.GreenColor)))
+            )
+        )
 
     @QtCore.Slot()
     def pick(self):
@@ -101,10 +107,14 @@ class AddServerEditor(QtWidgets.QDialog):
         v = self.text()
         file_info = QtCore.QFileInfo(v)
 
-        if not file_info.exists() or not file_info.isReadable() or v in common.servers:
+        if not file_info.exists() or not file_info.isReadable() or v in \
+                common.servers:
             # Indicate the selected item is invalid and keep the editor open
             self.editor.setStyleSheet(
-                'color: {0}; border-color: {0}'.format(common.rgb(common.color(common.RedColor))))
+                'color: {0}; border-color: {0}'.format(
+                    common.rgb(common.color(common.RedColor))
+                )
+            )
             self.editor.blockSignals(True)
             self.editor.setText(v)
             self.editor.blockSignals(False)
@@ -122,7 +132,9 @@ class AddServerEditor(QtWidgets.QDialog):
         common.center_window(self)
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth), common.size(common.HeightRow) * 2)
+        return QtCore.QSize(
+            common.size(common.DefaultWidth), common.size(common.HeightRow) * 2
+        )
 
 
 class ServerContextMenu(contextmenu.BaseContextMenu):
@@ -133,11 +145,15 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
     def setup(self):
         self.add_menu()
         self.separator()
-        if isinstance(self.index, QtWidgets.QListWidgetItem) and self.index.flags() & QtCore.Qt.ItemIsEnabled:
+        if isinstance(
+                self.index, QtWidgets.QListWidgetItem
+        ) and self.index.flags() & QtCore.Qt.ItemIsEnabled:
             self.reveal_menu()
             self.remove_menu()
-        elif isinstance(self.index,
-                        QtWidgets.QListWidgetItem) and not self.index.flags() & QtCore.Qt.ItemIsEnabled:
+        elif isinstance(
+                self.index,
+                QtWidgets.QListWidgetItem
+        ) and not self.index.flags() & QtCore.Qt.ItemIsEnabled:
             self.remove_menu()
         self.separator()
         self.refresh_menu()
@@ -162,7 +178,7 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
 
     def refresh_menu(self):
         self.menu['Refresh'] = {
-            'action': (self.parent().init_data, self.parent().restore_current),
+            'action': self.parent().init_data,
             'icon': ui.get_icon('refresh')
         }
 
@@ -172,7 +188,6 @@ class ServerListWidget(ui.ListWidget):
     common.
 
     """
-    serverChanged = QtCore.Signal(str)
 
     def __init__(self, parent=None):
         super(ServerListWidget, self).__init__(
@@ -201,26 +216,29 @@ class ServerListWidget(ui.ListWidget):
     def init_shortcuts(self):
         shortcuts.add_shortcuts(self, shortcuts.BookmarkEditorShortcuts)
         connect = functools.partial(
-            shortcuts.connect, shortcuts.BookmarkEditorShortcuts)
+            shortcuts.connect, shortcuts.BookmarkEditorShortcuts
+        )
         connect(shortcuts.AddItem, self.add)
         connect(shortcuts.RemoveItem, self.remove)
 
     def _connect_signals(self):
         super(ServerListWidget, self)._connect_signals()
 
-        self.selectionModel().selectionChanged.connect(self.save_current)
-        self.selectionModel().selectionChanged.connect(self.emit_server_changed)
+        self.selectionModel().selectionChanged.connect(
+            functools.partial(
+                common.save_selection,
+                self,
+                common.BookmarkEditorServerKey
+            )
+        )
 
         common.signals.serversChanged.connect(self.init_data)
-        common.signals.serversChanged.connect(self.restore_current)
 
     @common.debug
     @common.error
     @QtCore.Slot()
     def remove(self, *args, **kwargs):
-        if not self.selectionModel().hasSelection():
-            return
-        index = self.selectionModel().currentIndex()
+        index = common.get_selected_index(self)
         if not index.isValid():
             return
 
@@ -232,78 +250,11 @@ class ServerListWidget(ui.ListWidget):
     @common.error
     @QtCore.Slot()
     def add(self, *args, **kwargs):
-
         w = AddServerEditor(parent=self.window())
         pos = self.mapToGlobal(self.window().rect().topLeft())
         w.move(pos)
         if w.exec_() == QtWidgets.QDialog.Accepted:
-            self.restore_current(current=w.text())
-            self.save_current()
-
-    @common.debug
-    @common.error
-    @QtCore.Slot()
-    def emit_server_changed(self, *args, **kwargs):
-        """Slot connected to the server editor's `serverChanged` signal.
-
-        """
-        if not self.selectionModel().hasSelection():
-            self.serverChanged.emit(None)
-            return
-        index = self.selectionModel().currentIndex()
-        if not index.isValid():
-            self.serverChanged.emit(None)
-            return
-        self.serverChanged.emit(index.data(QtCore.Qt.DisplayRole))
-
-    @common.debug
-    @common.error
-    @QtCore.Slot()
-    def save_current(self, *args, **kwargs):
-        if not self.selectionModel().hasSelection():
-            return
-
-        index = self.selectionModel().currentIndex()
-        if not index.isValid():
-            return
-
-        v = index.data(QtCore.Qt.DisplayRole)
-        common.settings.setValue(
-            common.UIStateSection,
-            common.BookmarkEditorServerKey,
-            v
-        )
-
-    @common.debug
-    @common.error
-    @QtCore.Slot()
-    def restore_current(self, current=None):
-        if current is None:
-            current = common.settings.value(
-                common.UIStateSection,
-                common.BookmarkEditorServerKey
-            )
-        if not current:
-            self.serverChanged.emit(None)
-            return
-
-        for n in range(self.count()):
-            if not current == self.item(n).text():
-                continue
-            index = self.indexFromItem(self.item(n))
-            self.selectionModel().select(
-                index,
-                QtCore.QItemSelectionModel.ClearAndSelect
-            )
-
-            self.scrollToItem(
-                self.item(n), QtWidgets.QAbstractItemView.EnsureVisible)
-            self.selectionModel().emitSelectionChanged(
-                QtCore.QItemSelection(index, index),
-                QtCore.QItemSelection()
-            )
-            self.serverChanged.emit(self.item(n).data(QtCore.Qt.DisplayRole))
-            return
+            self.init_data()
 
     def contextMenuEvent(self, event):
         item = self.itemAt(event.pos())
@@ -317,12 +268,14 @@ class ServerListWidget(ui.ListWidget):
     @common.error
     @QtCore.Slot()
     def init_data(self, *args, **kwargs):
-        self.serverChanged.emit(None)
+        selected_index = common.get_selected_index(self)
+        selected_name = selected_index.data(
+            QtCore.Qt.DisplayRole
+        ) if selected_index.isValid() else None
 
-        self.blockSignals(True)
         self.selectionModel().blockSignals(True)
-
         self.clear()
+
         for server in common.servers:
             item = QtWidgets.QListWidgetItem(server)
             size = QtCore.QSize(
@@ -333,19 +286,38 @@ class ServerListWidget(ui.ListWidget):
             self.validate_item(item)
             self.insertItem(self.count(), item)
 
-        self.blockSignals(False)
+        self.progressUpdate.emit('')
+
+        if selected_name:
+            for idx in range(self.model().rowCount()):
+                index = self.model().index(idx, 0)
+                if index.data(QtCore.Qt.DisplayRole) == selected_name:
+                    self.selectionModel().select(
+                        index, QtCore.QItemSelectionModel.ClearAndSelect
+                    )
+
         self.selectionModel().blockSignals(False)
+        common.restore_selection(self, common.BookmarkEditorServerKey)
+
 
     @QtCore.Slot(QtWidgets.QListWidgetItem)
     def validate_item(self, item):
+        selected_index = common.get_selected_index(self)
+
         self.blockSignals(True)
 
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'server', common.color(common.TextColor), common.size(common.HeightRow) * 0.8)
+            'server', common.color(common.TextColor),
+            common.size(common.HeightRow) * 0.8
+        )
         pixmap_selected = images.ImageCache.get_rsc_pixmap(
-            'server', common.color(common.TextSelectedColor), common.size(common.HeightRow) * 0.8)
+            'server', common.color(common.TextSelectedColor),
+            common.size(common.HeightRow) * 0.8
+        )
         pixmap_disabled = images.ImageCache.get_rsc_pixmap(
-            'close', common.color(common.RedColor), common.size(common.HeightRow) * 0.8)
+            'close', common.color(common.RedColor),
+            common.size(common.HeightRow) * 0.8
+        )
         icon = QtGui.QIcon()
 
         file_info = QtCore.QFileInfo(item.text())
@@ -358,22 +330,17 @@ class ServerListWidget(ui.ListWidget):
                 QtCore.Qt.ItemIsEnabled |
                 QtCore.Qt.ItemIsSelectable
             )
-            r = True
+            valid = True
         else:
             icon.addPixmap(pixmap_disabled, QtGui.QIcon.Normal)
             icon.addPixmap(pixmap_disabled, QtGui.QIcon.Selected)
             icon.addPixmap(pixmap_disabled, QtGui.QIcon.Active)
             icon.addPixmap(pixmap_disabled, QtGui.QIcon.Disabled)
-            r = False
+            valid = False
 
         item.setData(QtCore.Qt.DecorationRole, icon)
         self.blockSignals(False)
 
-        if r:
-            index = self.indexFromItem(item)
-            self.selectionModel().emitSelectionChanged(
-                QtCore.QItemSelection(index, index),
-                QtCore.QItemSelection()
-            )
-
-        return r
+        index = self.indexFromItem(item)
+        if not valid and selected_index == index:
+            self.selectionModel().clearSelection()

@@ -796,7 +796,7 @@ class ImageCache(QtCore.QObject):
 
         Args:
             name (str):         Name of the resource without the extension.
-            color (QColor):     The colour of the icon.
+            color (QColor):     The color of the icon.
             size (int):         The size of pixmap.
             opacity (float):    Sets the opacity of the returned pixmap.
             get_path (bool):    Returns the path to the image instead of a pixmap.

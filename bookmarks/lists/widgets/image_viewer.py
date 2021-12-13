@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 """Widget used to display a preview of the current item.
 
-For Bookmarks and Asset items, this is the current thumbnail, however,
-for image files, we'll use OpenImageIO to open and display the image in a
-`QGraphicsView`.
+For Bookmarks and Asset items, this is the current thumbnail, however, for image
+files, we'll use OpenImageIO to open and display the image in a `QGraphicsView`.
 
 
 """
-import functools
 import weakref
 
 from PySide2 import QtCore, QtWidgets, QtGui
@@ -22,8 +20,9 @@ def show(path, ref, parent, oiio=False):
         common.VIEWER_WIDGET_CACHE[k] = ImageViewer(parent=parent)
 
     common.VIEWER_WIDGET_CACHE[k].show()
-    QtCore.QTimer.singleShot(1, functools.partial(
-        common.VIEWER_WIDGET_CACHE[k].set_image, path, ref, oiio=oiio))
+    common.VIEWER_WIDGET_CACHE[k].set_image(path, ref, oiio=oiio)
+    # QtCore.QTimer.singleShot(1, functools.partial(
+    #     common.VIEWER_WIDGET_CACHE[k].set_image, path, ref, oiio=oiio))
 
 
 def get_item_info(ref):
@@ -87,6 +86,7 @@ class Viewer(QtWidgets.QGraphicsView):
         self.item.setShapeMode(QtWidgets.QGraphicsPixmapItem.MaskShape)
 
         self.setScene(QtWidgets.QGraphicsScene(parent=self))
+
         self.scene().addItem(self.item)
 
         self.setAlignment(QtCore.Qt.AlignCenter)
@@ -97,8 +97,6 @@ class Viewer(QtWidgets.QGraphicsView):
         self.setRenderHint(QtGui.QPainter.Antialiasing, True)
         self.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, True)
 
-        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.setMouseTracking(True)
 
     def paintEvent(self, event):
@@ -113,12 +111,16 @@ class Viewer(QtWidgets.QGraphicsView):
         rect = self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o))
 
         font, metrics = common.font_db.primary_font(
-            common.size(common.FontSizeMedium))
+            common.size(common.FontSizeMedium)
+        )
         rect.setHeight(metrics.height())
 
         for color, text in get_item_info(self.parent()._ref):
-            common.draw_aliased_text(painter, font, QtCore.QRect(
-                rect), text, QtCore.Qt.AlignLeft, color)
+            common.draw_aliased_text(
+                painter, font, QtCore.QRect(
+                    rect
+                ), text, QtCore.Qt.AlignLeft, color
+            )
             rect.moveTop(rect.center().y() + metrics.lineSpacing())
 
         painter.end()
@@ -156,7 +158,8 @@ class Viewer(QtWidgets.QGraphicsView):
 class ImageViewer(QtWidgets.QWidget):
     """Used to view an image.
 
-    The image data is loaded using OpenImageIO and is then wrapped in a QGraphicsScene,
+    The image data is loaded using OpenImageIO and is then wrapped in a
+    QGraphicsScene,
     using a QPixmap. See ``Viewer``.
 
     """
@@ -205,11 +208,14 @@ class ImageViewer(QtWidgets.QWidget):
         QPixmap item.
 
         """
+        self.viewer.item.setPixmap(QtGui.QPixmap())
+
         self._source = source
         self._ref = ref
 
         if oiio is False and QtCore.QFileInfo(
-                source).suffix().lower() not in images.QT_IMAGE_FORMATS:
+                source
+        ).suffix().lower() not in images.QT_IMAGE_FORMATS:
             raise RuntimeError('Qt cannot display the source image.')
 
         # Wait for the thread to finish loading the thumbnail
@@ -220,9 +226,18 @@ class ImageViewer(QtWidgets.QWidget):
         if pixmap and not pixmap.isNull():
             with images.lock:
                 images.ImageCache.flush(source)
-                self.viewer.item.setPixmap(pixmap)
+
+            self.viewer.scale(1.0, 1.0)
+            self.viewer.setSceneRect(self.rect())
+            self.viewer.scene().setSceneRect(self.rect())
+            self.viewer.item.setPixmap(pixmap)
             self.viewer.repaint()
-            return
+
+        br = self.viewer.item.sceneBoundingRect()
+        self.viewer.item.setPos(
+            self.window().rect().center().x() - (br.width() / 2),
+            self.window().rect().center().y() - (br.height() / 2)
+        )
 
         # size = self.viewer.item.pixmap().size()
         # if size.height() > self.height() or size.width() > self.width():

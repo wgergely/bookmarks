@@ -170,7 +170,14 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../bookmarks.html">Introduction</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/common.html">common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/database.html">database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/main.html">main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/lists.html">lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/tokens.html">tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/editor.html">editor</a></li>
 </ul>
 </li>
 </ul>
@@ -227,8 +234,11 @@
 
 
 <span class="k">def</span> <span class="nf">init</span><span class="p">():</span>
-    <span class="k">if</span> <span class="n">common</span><span class="o">.</span><span class="n">main_widget</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'Cannot initialize more than once.'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">common</span><span class="o">.</span><span class="n">init_mode</span> <span class="o">==</span> <span class="n">common</span><span class="o">.</span><span class="n">EmbeddedMode</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Cannot be initialized in `EmbeddedMode`."</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">main_widget</span><span class="p">,</span> <span class="n">BookmarksAppWindow</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"MainWidget already exists."</span><span class="p">)</span>
     <span class="n">common</span><span class="o">.</span><span class="n">main_widget</span> <span class="o">=</span> <span class="n">BookmarksAppWindow</span><span class="p">()</span>
 
 
@@ -592,11 +602,10 @@
         <span class="n">rect</span> <span class="o">=</span> <span class="n">rect</span><span class="o">.</span><span class="n">adjusted</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="o">-</span><span class="n">o</span><span class="p">,</span> <span class="o">-</span><span class="n">o</span><span class="p">)</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">drawRoundedRect</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">o</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="n">o</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
 
-<div class="viewcode-block" id="BookmarksAppWindow.save_window"><a class="viewcode-back" href="../../api/main.html#bookmarks.standalone.BookmarksAppWindow.save_window">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
+    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">save_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">"""Saves window's position to the local common."""</span>
         <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span>
             <span class="n">common</span><span class="o">.</span><span class="n">UIStateSection</span><span class="p">,</span>
             <span class="n">common</span><span class="o">.</span><span class="n">WindowGeometryKey</span><span class="p">,</span>
@@ -606,7 +615,7 @@
             <span class="n">common</span><span class="o">.</span><span class="n">UIStateSection</span><span class="p">,</span>
             <span class="n">common</span><span class="o">.</span><span class="n">WindowStateKey</span><span class="p">,</span>
             <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">windowState</span><span class="p">())</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
 
     <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>

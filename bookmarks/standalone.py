@@ -25,8 +25,11 @@ MODEL_ID = f'{common.product}App'
 
 
 def init():
-    if common.main_widget:
-        raise RuntimeError('Cannot initialize more than once.')
+    if common.init_mode == common.EmbeddedMode:
+        raise RuntimeError("Cannot be initialized in `EmbeddedMode`.")
+
+    if isinstance(common.main_widget, BookmarksAppWindow):
+        raise RuntimeError("MainWidget already exists.")
     common.main_widget = BookmarksAppWindow()
 
 
@@ -394,7 +397,6 @@ class BookmarksAppWindow(main.MainWidget):
     @common.debug
     @QtCore.Slot()
     def save_window(self, *args, **kwargs):
-        """Saves window's position to the local common."""
         common.settings.setValue(
             common.UIStateSection,
             common.WindowGeometryKey,

@@ -83,12 +83,7 @@ def selected_index(idx=None):
 
     """
     common.check_type(idx, (int, None))
-    if not widget(idx=idx).selectionModel().hasSelection():
-        return QtCore.QModelIndex()
-    index = widget(idx=idx).selectionModel().currentIndex()
-    if not index.isValid():
-        return QtCore.QModelIndex()
-    return index
+    return common.get_selected_index(widget(idx=idx))
 
 
 def current_tab():

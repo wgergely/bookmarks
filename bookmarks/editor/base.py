@@ -1,29 +1,15 @@
 # -*- coding: utf-8 -*-
-"""The module contains the base class used by property editors across Bookmarks.
+"""Contains :class:`.BasePropertyEditor` and its required attributes and methods.
 
-The property editor's layout is defined by a previously specified SECTIONS dictionary,
-that contains the sections, rows and editor widget definitions - and any linkage
-information needed to associate editors with a bookmark database or user settings.
+The property editor's layout is defined by a previously specified SECTIONS
+dictionary, that contains the sections, rows and editor widget definitions - and
+linkage information needed to associate the widget with a bookmark database or
+user settings.
 
 The :class:`BasePropertyEditor` is relatively flexible and has a number of
 abstract methods that need implementing in subclasses depending on the desired
-functionality. Namely, :meth:`BasePropertyEditor.db_source()`,
-:meth:`BasePropertyEditor.init_data()` and :meth:`BasePropertyEditor.save_changes()`
-are the main function needed to get and save data.
-
-.. code-block:: python
-
-    editor = BasePropertyEditor(
-        SECTIONS,
-        server,
-        job,
-        root,
-        asset=asset,
-        alignment=QtCore.Qt.AlignLeft,
-        fallback_thumb='file_sm',
-        db_table=database.AssetTable,
-    )
-    editor.open()
+functionality. See, :meth:`.BasePropertyEditor.db_source`,
+:meth:`.BasePropertyEditor.init_data` and :meth:`.BasePropertyEditor.save_changes`.
 
 """
 import datetime
@@ -46,6 +32,8 @@ textvalidator = QtGui.QRegExpValidator()
 textvalidator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9]+'))
 namevalidator = QtGui.QRegExpValidator()
 namevalidator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9\-\_]+'))
+jobnamevalidator = QtGui.QRegExpValidator()
+jobnamevalidator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9\-\_/]+'))
 domainvalidator = QtGui.QRegExpValidator()
 domainvalidator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9/:\.]+'))
 versionvalidator = QtGui.QRegExpValidator()
@@ -62,13 +50,13 @@ span = {
 
 
 def add_section(icon, label, parent, color=None):
-    """Used to a new section with an icon and a title to a widget.
+    """Adds a new section with an icon and a title.
 
     Args:
         icon (str):         The name of a rsc image.
         label (str):        The name of the section.
         parent (QWidget):   A widget to add the section to.
-        color (QColor):     The color of the icon. Defaults to `None`.
+        color (QColor, optional):     The color of the icon. Defaults to None.
 
     Returns:
         QWidget:            A widget to add editors to.
@@ -82,9 +70,11 @@ def add_section(icon, label, parent, color=None):
     h = common.size(common.HeightRow)
     parent = ui.add_row('', height=None, vertical=True, parent=parent)
 
-    if any((icon, label)):
-        row = ui.add_row('', height=h, parent=parent)
-        row.layout().setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft)
+    if not any((icon, label)):
+        return parent
+
+    row = ui.add_row('', height=h, parent=parent)
+    row.layout().setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft)
 
     if icon:
         w = QtWidgets.QLabel(parent=parent)
@@ -101,8 +91,7 @@ def add_section(icon, label, parent, color=None):
         )
         row.layout().addWidget(w, 0)
 
-    if any((icon, label)):
-        row.layout().addStretch(1)
+    row.layout().addStretch(1)
 
     return parent
 
@@ -636,7 +625,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         """Method will load data from the bookmark database.
 
         To be able to load data, the `db_table`, `server`, `job` and `root`
-        values must have all been specified when the class was initialised.
+        values must have all been specified when the class was initialized.
 
         Call this method from `init_data()` when the widget is associated with
         a bookmark database.
@@ -644,8 +633,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
         """
         if not all((self._db_table, self.server, self.job, self.root)):
             raise RuntimeError(
-                'To load data from the database, the `db_table`, `server`, '
-                '`job` andd `root` must all be specified.'
+                'To load data from the database, `db_table`, `server`, '
+                '`job` and `root` must all be specified.'
             )
 
         if self._db_table not in database.TABLES:
@@ -669,7 +658,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
             v = db.value(self.db_source(), k, self._db_table)
             if v is not None:
 
-                # Make sure the type loaded from the database maches the required
+                # Make sure the type loaded from the database matches the required
                 # type
                 for section in self._sections.values():
                     for group in section['groups'].values():
@@ -739,7 +728,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         """
         if not all((self._db_table, self.server, self.job, self.root)):
             raise RuntimeError(
-                'To load data fomr the database, the `table`, `server`, `job`, '
+                'To load data from the database, `table`, `server`, `job`, '
                 '`root` must all be specified.'
             )
         if self._db_table not in database.TABLES:
@@ -803,9 +792,10 @@ class BasePropertyEditor(QtWidgets.QDialog):
             )
 
     def db_source(self):
-        """The path of the file database values are associated with.
+        """A file path the database values are associated with.
 
-        Eg. in the case of assets this is `server/job/root/asset`
+        Returns:
+            str: Path to a file.
 
         """
         raise NotImplementedError('Abstract method must be implemented by subclass.')
@@ -856,7 +846,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
     @QtCore.Slot(str)
     @QtCore.Slot(object)
     def update_changed_database_value(self, table, source, key, value):
-        """Slot responsible updating the gui when  database value is updated.
+        """Slot responsible updating the gui when a database value has changed.
 
         """
         if source != self.db_source():

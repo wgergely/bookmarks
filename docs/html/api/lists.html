@@ -178,7 +178,7 @@
 <li class="toctree-l2"><a class="reference internal" href="main.html">main</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">lists</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tokens.html">tokens</a></li>
-<li class="toctree-l2"><a class="reference internal" href="property_editor.html">property_editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="editor.html">editor</a></li>
 </ul>
 </li>
 </ul>
@@ -813,7 +813,7 @@ changes to the database or the local config file.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.basewidget.BaseListWidget.key_down">
 <span class="sig-name descname"><span class="pre">key_down</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/basewidget.html#BaseListWidget.key_down"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basewidget.BaseListWidget.key_down" title="Permalink to this definition">¶</a></dt>
-<dd><p>Custom action on  <cite>down</cite> arrow key-press.</p>
+<dd><p>Custom action on <cite>down</cite> arrow key-press.</p>
 <p>We’re implementing a continuous ‘scroll’ function: reaching the last
 item in the list will automatically jump to the beginning to the list
 and vice-versa.</p>
@@ -861,12 +861,7 @@ has hidden items.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.basewidget.BaseListWidget.reset_row_layout">
 <span class="sig-name descname"><span class="pre">reset_row_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/basewidget.html#BaseListWidget.reset_row_layout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basewidget.BaseListWidget.reset_row_layout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reinitializes the rows to apply size any row height changes.</p>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.lists.basewidget.BaseListWidget.set_row_size">
-<span class="sig-name descname"><span class="pre">set_row_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/basewidget.html#BaseListWidget.set_row_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.basewidget.BaseListWidget.set_row_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Saves the current row size to the local common.</p>
+<dd><p>Re-initializes the rows to apply size and row height changes.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.lists.basewidget.BaseListWidget.show_item">
@@ -1098,8 +1093,8 @@ associated with custom colors.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.lists.delegate.get_bookmark_text_segments">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.lists.delegate.</span></span><span class="sig-name descname"><span class="pre">get_bookmark_text_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/lists/delegate.html#get_bookmark_text_segments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.lists.delegate.get_bookmark_text_segments" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a tuple of text and colour information to be used to mimic
-rich-text like colouring of individual text elements.</p>
+<dd><p>Returns a tuple of text and color information to be used to mimic
+rich-text like coloring of individual text elements.</p>
 <p>Used by the list delegate to paint the job name and root folder.</p>
 </dd></dl>
 <dl class="py function">

@@ -160,17 +160,26 @@ class TemplateListWidget(ui.ListWidget):
 
     def _connect_signals(self):
         self.model().dataChanged.connect(self.update_name)
-        self.itemSelectionChanged.connect(self.save_selected)
-
-        common.signals.templatesChanged.connect(self.save_selected)
+        self.selectionModel().selectionChanged.connect(
+            functools.partial(
+                common.save_selection,
+                self,
+                f'{self.__class__.__name__}/{self.mode()}'
+            )
+        )
         common.signals.templatesChanged.connect(self.init_data)
-        common.signals.templatesChanged.connect(self.restore_selected)
 
     @QtCore.Slot()
     def init_data(self):
         """Loads the available zip template files from the template directory."""
+        selected_index = common.get_selected_index(self)
+        selected_name = selected_index.data(
+            QtCore.Qt.DisplayRole
+        ) if selected_index.isValid() else None
+
+        self.selectionModel().blockSignals(True)
+
         self.clear()
-        self.blockSignals(True)
 
         dir_ = QtCore.QDir(get_template_folder(self.mode()))
         dir_.setNameFilters(['*.zip', ])
@@ -201,7 +210,7 @@ class TemplateListWidget(ui.ListWidget):
             item.setData(QtCore.Qt.SizeHintRole, size)
             item.setData(QtCore.Qt.DecorationRole, icon)
 
-            path = '{}/{}'.format(dir_.path(), f)
+            path = f'{dir_.path()}/{f}'
             with zipfile.ZipFile(path) as zip:
                 item.setData(TemplatePathRole, path)
                 item.setData(TemplateContentsRole, [f.strip(
@@ -210,51 +219,28 @@ class TemplateListWidget(ui.ListWidget):
 
             self.addItem(item)
 
-        minheight = (size.height() + self.spacing())
-        height = height if height >= minheight else minheight
+        min_height = (size.height() + self.spacing())
+        height = height if height >= min_height else min_height
         self.setFixedHeight(height)
-        self.blockSignals(False)
-        self.restore_selected()
 
-    @QtCore.Slot()
-    def save_selected(self):
-        """Save the current selection to the local common.
+        if selected_name:
+            for idx in range(self.model().rowCount()):
+                index = self.model().index(idx, 0)
+                if index.data(QtCore.Qt.DisplayRole) == selected_name:
+                    self.selectionModel().select(
+                        index, QtCore.QItemSelectionModel.ClearAndSelect
+                    )
 
-        """
-        idx = self.currentRow()
-        if idx < 0:
-            return
-        item = self.item(idx)
-        if not item:
-            return
-        common.settings.setValue(
-            common.UIStateSection,
-            '{}/{}'.format(self.__class__.__name__, self.mode()),
-            item.data(QtCore.Qt.DisplayRole)
-        )
+        self.selectionModel().blockSignals(False)
 
-    @QtCore.Slot()
-    def restore_selected(self):
-        """Restore the previously selected item from the local common.
-
-        """
-        v = common.settings.value(
-            common.UIStateSection,
-            '{}/{}'.format(self.__class__.__name__, self.mode())
-        )
-        if not v:
-            return
-        for n in range(self.count()):
-            item = self.item(n)
-            if v == item.data(QtCore.Qt.DisplayRole):
-                self.setCurrentItem(item)
-                return
+        common.restore_selection(self, f'{self.__class__.__name__}/{self.mode()}')
+        self.progressUpdate.emit('')
 
     def mode(self):
         """The TemplateWidget's current mode.
 
         Returns:
-            str: A template mode, eg. `AssetTable` or `JobTemplateMode`.
+            str: A template mode, e.g. `AssetTable` or `JobTemplateMode`.
 
         """
         return self._mode
@@ -270,14 +256,9 @@ class TemplateListWidget(ui.ListWidget):
             destination (str): The destination folder where the new asset will be expanded to.
 
         """
-        model = self.selectionModel()
-        if not model.hasSelection():
-            raise RuntimeError(
-                'Must select a template to create a new {}'.format(self.mode()))
-        index = next((f for f in model.selectedIndexes()),
-                     QtCore.QModelIndex())
+        index = common.get_selected_index(self)
         if not index.isValid():
-            raise RuntimeError('Invalid template selection.')
+            raise RuntimeError(f'Select a template to add a new {self.mode()}')
 
         actions.extract_zip_template(
             index.data(TemplatePathRole),

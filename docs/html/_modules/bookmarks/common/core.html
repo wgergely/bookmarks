@@ -177,6 +177,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/tokens.html">tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/editor.html">editor</a></li>
 </ul>
 </li>
 </ul>
@@ -216,7 +217,6 @@
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">traceback</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
 
 <span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>
@@ -379,29 +379,26 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
-            <span class="n">info</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">info</span><span class="p">):</span>
-                <span class="n">e</span> <span class="o">=</span> <span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exception</span><span class="p">(</span><span class="o">*</span><span class="n">info</span><span class="p">))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">e</span> <span class="o">=</span> <span class="s1">''</span>
+            <span class="c1"># Remove decorator(s) from the traceback stack</span>
+            <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">exc_traceback</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()</span>
+            <span class="k">while</span> <span class="s1">'wrapper'</span> <span class="ow">in</span> <span class="n">exc_traceback</span><span class="o">.</span><span class="n">tb_frame</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_name</span><span class="p">:</span>
+                <span class="n">exc_traceback</span> <span class="o">=</span> <span class="n">exc_traceback</span><span class="o">.</span><span class="n">tb_next</span>
 
             <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">log</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">'Error.'</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="n">exc_value</span><span class="o">.</span><span class="fm">__str__</span><span class="p">(),</span> <span class="n">exc_info</span><span class="o">=</span><span class="p">(</span>
+                    <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">exc_traceback</span><span class="p">)</span>
+            <span class="p">)</span>
 
-            <span class="c1"># So we can use the method in threads too</span>
+            <span class="c1"># Making sure the ui popup is ignored in non-gui threads</span>
             <span class="n">app</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">app</span> <span class="ow">and</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QThread</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span> <span class="o">==</span> \
-                    <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">thread</span><span class="p">():</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">():</span>
-                        <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ui</span>
-                        <span class="n">ui</span><span class="o">.</span><span class="n">ErrorBox</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="fm">__str__</span><span class="p">(),</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
-                    <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">showStatusBarMessage</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span>
-                        <span class="s1">'An error occured. See log for more details.'</span>
-                    <span class="p">)</span>
-                <span class="k">except</span><span class="p">:</span>
-                    <span class="k">pass</span>
-            <span class="k">raise</span>
+            <span class="k">if</span> <span class="n">app</span> <span class="ow">and</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QThread</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span> <span class="o">==</span> <span class="n">app</span><span class="o">.</span><span class="n">thread</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">():</span>
+                    <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ui</span>
+                    <span class="n">ui</span><span class="o">.</span><span class="n">ErrorBox</span><span class="p">(</span><span class="n">exc_value</span><span class="o">.</span><span class="fm">__str__</span><span class="p">(),</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">showStatusTipMessage</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">'Error: </span><span class="si">{</span><span class="n">exc_value</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span><span class="si">}</span><span class="s1">'</span>
+                <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">func_wrapper</span></div>
 

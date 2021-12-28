@@ -336,12 +336,12 @@ def prune_bookmarks():
     if not common.bookmarks:
         return
 
-    for k, v in common.bookmarks.items():
+    for k in list(common.bookmarks.keys()):
         if not QtCore.QFileInfo(k).exists():
             remove_bookmark(
-                v[common.ServerKey],
-                v[common.JobKey],
-                v[common.RootKey]
+                common.bookmarks[k][common.ServerKey],
+                common.bookmarks[k][common.JobKey],
+                common.bookmarks[k][common.RootKey]
             )
 
 

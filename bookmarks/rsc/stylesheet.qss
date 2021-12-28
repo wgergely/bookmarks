@@ -322,14 +322,20 @@ TableWidget::item {{
 		background: {TRANSPARENT};
 }}
 
+QHeaderView {{
+    font-family: "{PRIMARY_FONT}";
+	border: none;
+	border-style: none;
+}}
 QHeaderView::section {{
-	font-family: "{SECONDARY_FONT}";
+	font-family: "{PRIMARY_FONT}";
 	font-size: {FontSizeSmall}px;
 	background-color: {TRANSPARENT};
 	alignment: center;
 	text-align: center;
 	color: {SECONDARY_TEXT};
 	border: none;
+	border-style: none;
 }}
 
 
@@ -564,4 +570,33 @@ QProgressBar::chunk {{
     background-color: {GREEN};
     width: {WidthIndicator}px;
 		margin: 0;
+}}
+
+QTableView {{
+    gridline-color: {SEPARATOR};
+}}
+
+QTabWidget::pane {{ /* The tab widget frame */
+    border-top: {HeightSeparator}px solid {TRANSPARENT_BLACK};
+}}
+
+QTabWidget::tab-bar {{
+    left: {RADIUS}px;
+    padding: {WidthIndicator}px;
+}}
+
+QTabBar::tab {{
+    background: {TRANSPARENT_BLACK};
+    color: {DISABLED_TEXT};
+    border: none;
+    border-style: none;
+    border-top-left-radius: {RADIUS}px;
+    border-top-right-radius: {RADIUS}px;
+    padding: {RADIUS}px;
+    margin-left:{HeightSeparator}px;
+    margin-right:{HeightSeparator}px;
+}}
+QTabBar::tab:selected, QTabBar::tab:hover {{
+    color: {SELECTED_TEXT};
+    background: {BG};
 }}

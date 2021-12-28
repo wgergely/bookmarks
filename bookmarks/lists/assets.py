@@ -104,6 +104,8 @@ class AssetsModel(basemodel.BaseModel):
 
     @common.status_bar_message('Loading assets...')
     @basemodel.initdata
+    @common.error
+    @common.debug
     def init_data(self):
         """Collects the data needed to populate the asset model.
 

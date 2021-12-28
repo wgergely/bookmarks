@@ -121,7 +121,7 @@ def move_widget_to_available_geo(widget):
 def set_custom_stylesheet(widget):
     """Set Bookmark's custom stylesheet to the given widget.
 
-    The tokenised stylesheet is stored in `common.stylesheet_file`.
+    The tokenized stylesheet is stored in `common.stylesheet_file`.
 
     Args:
             widget (QWidget): A widget t apply the stylesheet to.

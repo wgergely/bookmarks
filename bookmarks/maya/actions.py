@@ -152,11 +152,8 @@ def export_set_to_ass(set_name, set_members, frame=True):
 
     """
     # Ensure the plugin is loaded
-    try:
-        if not cmds.pluginInfo('mtoa.mll', loaded=True, q=True):
-            cmds.loadPlugin('mtoa.mll', quiet=True)
-    except Exception:
-        raise
+    if not cmds.pluginInfo('mtoa.mll', loaded=True, q=True):
+        cmds.loadPlugin('mtoa.mll', quiet=True)
 
     # We want to handle the exact name of the file
     # We'll remove the namespace, strip underscores

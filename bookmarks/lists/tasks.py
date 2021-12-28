@@ -21,8 +21,8 @@ from . import delegate
 from .. import common
 from .. import contextmenu
 from .. import images
-from ..tokens import tokens
 from ..threads import threads
+from ..tokens import tokens
 
 
 class TaskFolderContextMenu(contextmenu.BaseContextMenu):
@@ -36,7 +36,8 @@ class TaskFolderContextMenu(contextmenu.BaseContextMenu):
 
 
 class TaskFolderWidgetDelegate(delegate.BaseDelegate):
-    """The delegate used to paint the available subfolders inside the asset folder."""
+    """The delegate used to paint the available subfolders inside the asset
+    folder."""
 
     def paint(self, painter, option, index):
         """The main paint method."""
@@ -53,7 +54,8 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
     @delegate.paintmethod
     def paint_background(self, *args):
         """Paints the background."""
-        rectangles, painter, option, index, selected, focused, active, archived, favourite, hover, font, metrics, cursor_position = args
+        rectangles, painter, option, index, selected, focused, active, archived, \
+        favourite, hover, font, metrics, cursor_position = args
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
 
         # Set rect with separator
@@ -95,8 +97,10 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
 
     @delegate.paintmethod
     def paint_name(self, *args):
-        """Paints the name and the number of files available for the given data-key."""
-        rectangles, painter, option, index, selected, focused, active, archived, favourite, hover, font, metrics, cursor_position = args
+        """Paints the name and the number of files available for the given
+        data-key."""
+        rectangles, painter, option, index, selected, focused, active, archived, \
+        favourite, hover, font, metrics, cursor_position = args
         if not index.data(QtCore.Qt.DisplayRole):
             return
 
@@ -104,30 +108,36 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
 
         if index.data(common.TodoCountRole):
             color = common.color(
-                common.TextSelectedColor) if hover else common.color(common.TextColor)
+                common.TextSelectedColor
+            ) if hover else common.color(common.TextColor)
         else:
             color = common.color(common.TextColor) if hover else common.color(
-                common.BackgroundLightColor)
+                common.BackgroundLightColor
+            )
         color = common.color(common.TextSelectedColor) if active else color
         color = common.color(common.TextSelectedColor) if selected else color
 
         font = common.font_db.primary_font(
-            common.size(common.FontSizeMedium))[0]
+            common.size(common.FontSizeMedium)
+        )[0]
 
         o = common.size(common.WidthMargin)
         rect = QtCore.QRect(option.rect)
 
         if index.data(common.TodoCountRole) and index.data(common.TodoCountRole) > 0:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'folder', common.color(common.SeparatorColor), o)
+                'folder', common.color(common.SeparatorColor), o
+            )
         else:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'folder', common.color(common.BackgroundDarkColor), o)
+                'folder', common.color(common.BackgroundDarkColor), o
+            )
 
         _rect = QtCore.QRect(0, 0, o, o)
         _rect.moveCenter(option.rect.center())
         _rect.moveLeft(
-            option.rect.left() + ((o + common.size(common.WidthIndicator)) * 0.5))
+            option.rect.left() + ((o + common.size(common.WidthIndicator)) * 0.5)
+        )
         painter.drawPixmap(_rect, pixmap, pixmap.rect())
 
         rect = rect.marginsRemoved(QtCore.QMargins(o * 2, 0, o, 0))
@@ -135,7 +145,9 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
         text = index.data(QtCore.Qt.DisplayRole)
         width = 0
         width = common.draw_aliased_text(
-            painter, font, rect, text, QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft, color)
+            painter, font, rect, text, QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
+            color
+        )
         rect.setLeft(rect.left() + width)
 
         items = []
@@ -145,20 +157,25 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
                 text = '999+ items'
             else:
                 text = f'{index.data(common.TodoCountRole)} items'
-            color = common.color(common.TextSelectedColor) if selected else common.color(
-                common.GreenColor)
+            color = common.color(
+                common.TextSelectedColor
+            ) if selected else common.color(
+                common.GreenColor
+            )
             color = common.color(common.TextSelectedColor) if hover else color
             items.append((text, color))
         else:
             color = common.color(common.TextColor) if active else common.color(
-                common.BackgroundColor)
+                common.BackgroundColor
+            )
             color = common.color(common.TextColor) if hover else color
             color = common.color(common.TextSelectedColor) if selected else color
             items.append(('(empty)', color))
 
         if index.data(QtCore.Qt.ToolTipRole):
             color = common.color(
-                common.TextSelectedColor) if active else common.color(common.TextColor)
+                common.TextSelectedColor
+            ) if active else common.color(common.TextColor)
             color = common.color(common.TextSelectedColor) if hover else color
             color = common.color(common.TextSelectedColor) if selected else color
             items.append((index.data(QtCore.Qt.ToolTipRole), color))
@@ -171,14 +188,18 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
                 align = QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight
 
             width = common.draw_aliased_text(
-                painter, common.font_db.secondary_font(common.size(common.FontSizeSmall))[0], rect,
-                '    |    ', align, common.color(common.SeparatorColor))
+                painter,
+                common.font_db.secondary_font(common.size(common.FontSizeSmall))[0],
+                rect,
+                '    |    ', align, common.color(common.SeparatorColor)
+            )
             rect.setLeft(rect.left() + width)
 
             width = common.draw_aliased_text(
                 painter,
                 common.font_db.primary_font(
-                    common.size(common.FontSizeMedium))[0],
+                    common.size(common.FontSizeMedium)
+                )[0],
                 rect,
                 text,
                 align,
@@ -201,8 +222,6 @@ class TaskFolderModel(basemodel.BaseModel):
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-
-        common.signals.tabChanged.connect(self.reset_data)
         common.signals.taskFolderChanged.connect(self.reset_data)
 
     def source_path(self):
@@ -211,15 +230,18 @@ class TaskFolderModel(basemodel.BaseModel):
     def data_type(self):
         return common.FileItem
 
+    @common.status_bar_message('Loading task folders...')
     @basemodel.initdata
+    @common.error
+    @common.debug
     def init_data(self):
         common.clear_watchdirs(common.TaskItemMonitor)
 
         flags = (
-            QtCore.Qt.ItemIsSelectable |
-            QtCore.Qt.ItemIsEnabled |
-            QtCore.Qt.ItemIsDropEnabled |
-            QtCore.Qt.ItemIsEditable
+                QtCore.Qt.ItemIsSelectable |
+                QtCore.Qt.ItemIsEnabled |
+                QtCore.Qt.ItemIsDropEnabled |
+                QtCore.Qt.ItemIsEditable
         )
         data = self.model_data()
         source_path = self.source_path()
@@ -233,7 +255,8 @@ class TaskFolderModel(basemodel.BaseModel):
         _dirs = [_source_path]
 
         entries = sorted(
-            ([f for f in os.scandir(_source_path)]), key=lambda x: x.name)
+            ([f for f in os.scandir(_source_path)]), key=lambda x: x.name
+        )
 
         for entry in entries:
             if entry.name.startswith('.'):
@@ -245,62 +268,66 @@ class TaskFolderModel(basemodel.BaseModel):
             _dirs.append(path)
 
             idx = len(data)
-            data[idx] = common.DataDict({
-                QtCore.Qt.DisplayRole: entry.name,
-                QtCore.Qt.EditRole: entry.name,
-                QtCore.Qt.StatusTipRole: path,
-                QtCore.Qt.ToolTipRole: '',
-                QtCore.Qt.ToolTipRole: config.get_description(entry.name),
-                QtCore.Qt.SizeHintRole: self.row_size,
-                #
-                common.QueueRole: self.queues,
-                common.DataTypeRole: common.FileItem,
-                #
-                common.EntryRole: [entry, ],
-                common.FlagsRole: flags,
-                common.ParentPathRole: source_path,
-                common.DescriptionRole: '',
-                common.TodoCountRole: 0,
-                common.FileDetailsRole: '',
-                common.SequenceRole: None,
-                common.FramesRole: [],
-                common.StartPathRole: None,
-                common.EndPathRole: None,
-                #
-                common.FileInfoLoaded: False,
-                common.ThumbnailLoaded: True,
-                #
-                common.TypeRole: common.FileItem,
-                #
-                common.SortByNameRole: entry.name.lower(),
-                common.SortByLastModifiedRole: 0,
-                common.SortBySizeRole: 0,
-                common.SortByTypeRole: entry.name,
-                #
-                common.IdRole: idx,
-                #
-                common.ShotgunLinkedRole: False,
-            })
+            data[idx] = common.DataDict(
+                {
+                    QtCore.Qt.DisplayRole: entry.name,
+                    QtCore.Qt.EditRole: entry.name,
+                    QtCore.Qt.StatusTipRole: path,
+                    QtCore.Qt.ToolTipRole: '',
+                    QtCore.Qt.ToolTipRole: config.get_description(entry.name),
+                    QtCore.Qt.SizeHintRole: self.row_size,
+                    #
+                    common.QueueRole: self.queues,
+                    common.DataTypeRole: common.FileItem,
+                    #
+                    common.EntryRole: [entry, ],
+                    common.FlagsRole: flags,
+                    common.ParentPathRole: source_path,
+                    common.DescriptionRole: '',
+                    common.TodoCountRole: 0,
+                    common.FileDetailsRole: '',
+                    common.SequenceRole: None,
+                    common.FramesRole: [],
+                    common.StartPathRole: None,
+                    common.EndPathRole: None,
+                    #
+                    common.FileInfoLoaded: False,
+                    common.ThumbnailLoaded: True,
+                    #
+                    common.TypeRole: common.FileItem,
+                    #
+                    common.SortByNameRole: entry.name.lower(),
+                    common.SortByLastModifiedRole: 0,
+                    common.SortBySizeRole: 0,
+                    common.SortByTypeRole: entry.name,
+                    #
+                    common.IdRole: idx,
+                    #
+                    common.ShotgunLinkedRole: False,
+                }
+            )
             common.set_watchdirs(common.TaskItemMonitor, _dirs)
 
+    @common.error
+    @common.debug
     @QtCore.Slot()
-    def reset_data(self):
+    def reset_data(self, *args, force=False, emit_active=True):
         """Slot used to verify the current task folder.
 
         """
         v = common.active(common.TaskKey)
         if not v:
-            return super().reset_data()
+            return super().reset_data(emit_active=emit_active)
 
         p = common.active(common.TaskKey, args=True)
         if not p or not all(p):
-            super().reset_data(force=True)
+            super().reset_data(force=True, emit_active=emit_active)
             return
 
         if not QtCore.QFileInfo('/'.join(p)).exists():
-            return super().reset_data(force=True)
+            return super().reset_data(force=True, emit_active=emit_active)
 
-        return super().reset_data()
+        return super().reset_data(emit_active=emit_active)
 
     def default_row_size(self):
         return QtCore.QSize(1, common.size(common.HeightRow) * 1.2)
@@ -362,11 +389,12 @@ class TaskFolderWidget(basewidget.ThreadedBaseWidget):
             )
         )
 
-
     @QtCore.Slot(int)
     def tab_changed(self, idx):
         if idx != common.FileTab:
             self.hide()
+            return
+        self.model().sourceModel().reset_data()
 
     def resize_widget(self, rect):
         self.setGeometry(rect)

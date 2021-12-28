@@ -230,8 +230,8 @@
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">common</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">contextmenu</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">images</span>
-<span class="kn">from</span> <span class="nn">..tokens</span> <span class="kn">import</span> <span class="n">tokens</span>
 <span class="kn">from</span> <span class="nn">..threads</span> <span class="kn">import</span> <span class="n">threads</span>
+<span class="kn">from</span> <span class="nn">..tokens</span> <span class="kn">import</span> <span class="n">tokens</span>
 
 
 <div class="viewcode-block" id="TaskFolderContextMenu"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.tasks.TaskFolderContextMenu">[docs]</a><span class="k">class</span> <span class="nc">TaskFolderContextMenu</span><span class="p">(</span><span class="n">contextmenu</span><span class="o">.</span><span class="n">BaseContextMenu</span><span class="p">):</span>
@@ -245,7 +245,8 @@
 
 
 <div class="viewcode-block" id="TaskFolderWidgetDelegate"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.tasks.TaskFolderWidgetDelegate">[docs]</a><span class="k">class</span> <span class="nc">TaskFolderWidgetDelegate</span><span class="p">(</span><span class="n">delegate</span><span class="o">.</span><span class="n">BaseDelegate</span><span class="p">):</span>
-    <span class="sd">"""The delegate used to paint the available subfolders inside the asset folder."""</span>
+    <span class="sd">"""The delegate used to paint the available subfolders inside the asset</span>
+<span class="sd">    folder."""</span>
 
 <div class="viewcode-block" id="TaskFolderWidgetDelegate.paint"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.tasks.TaskFolderWidgetDelegate.paint">[docs]</a>    <span class="k">def</span> <span class="nf">paint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">"""The main paint method."""</span>
@@ -262,7 +263,8 @@
 <div class="viewcode-block" id="TaskFolderWidgetDelegate.paint_background"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.tasks.TaskFolderWidgetDelegate.paint_background">[docs]</a>    <span class="nd">@delegate</span><span class="o">.</span><span class="n">paintmethod</span>
     <span class="k">def</span> <span class="nf">paint_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">"""Paints the background."""</span>
-        <span class="n">rectangles</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">selected</span><span class="p">,</span> <span class="n">focused</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">archived</span><span class="p">,</span> <span class="n">favourite</span><span class="p">,</span> <span class="n">hover</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">cursor_position</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="n">rectangles</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">selected</span><span class="p">,</span> <span class="n">focused</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">archived</span><span class="p">,</span> \
+        <span class="n">favourite</span><span class="p">,</span> <span class="n">hover</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">cursor_position</span> <span class="o">=</span> <span class="n">args</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">setRenderHint</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="o">.</span><span class="n">Antialiasing</span><span class="p">)</span>
 
         <span class="c1"># Set rect with separator</span>
@@ -304,8 +306,10 @@
 
 <div class="viewcode-block" id="TaskFolderWidgetDelegate.paint_name"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.tasks.TaskFolderWidgetDelegate.paint_name">[docs]</a>    <span class="nd">@delegate</span><span class="o">.</span><span class="n">paintmethod</span>
     <span class="k">def</span> <span class="nf">paint_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">"""Paints the name and the number of files available for the given data-key."""</span>
-        <span class="n">rectangles</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">selected</span><span class="p">,</span> <span class="n">focused</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">archived</span><span class="p">,</span> <span class="n">favourite</span><span class="p">,</span> <span class="n">hover</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">cursor_position</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="sd">"""Paints the name and the number of files available for the given</span>
+<span class="sd">        data-key."""</span>
+        <span class="n">rectangles</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">selected</span><span class="p">,</span> <span class="n">focused</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">archived</span><span class="p">,</span> \
+        <span class="n">favourite</span><span class="p">,</span> <span class="n">hover</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">cursor_position</span> <span class="o">=</span> <span class="n">args</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">):</span>
             <span class="k">return</span>
 
@@ -313,30 +317,36 @@
 
         <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TodoCountRole</span><span class="p">):</span>
             <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">TextSelectedColor</span><span class="p">)</span> <span class="k">if</span> <span class="n">hover</span> <span class="k">else</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextColor</span><span class="p">)</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">TextSelectedColor</span>
+            <span class="p">)</span> <span class="k">if</span> <span class="n">hover</span> <span class="k">else</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextColor</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextColor</span><span class="p">)</span> <span class="k">if</span> <span class="n">hover</span> <span class="k">else</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">BackgroundLightColor</span><span class="p">)</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">BackgroundLightColor</span>
+            <span class="p">)</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextSelectedColor</span><span class="p">)</span> <span class="k">if</span> <span class="n">active</span> <span class="k">else</span> <span class="n">color</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextSelectedColor</span><span class="p">)</span> <span class="k">if</span> <span class="n">selected</span> <span class="k">else</span> <span class="n">color</span>
 
         <span class="n">font</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">primary_font</span><span class="p">(</span>
-            <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FontSizeMedium</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FontSizeMedium</span><span class="p">)</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="n">o</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthMargin</span><span class="p">)</span>
         <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">option</span><span class="o">.</span><span class="n">rect</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TodoCountRole</span><span class="p">)</span> <span class="ow">and</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TodoCountRole</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">pixmap</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">get_rsc_pixmap</span><span class="p">(</span>
-                <span class="s1">'folder'</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">SeparatorColor</span><span class="p">),</span> <span class="n">o</span><span class="p">)</span>
+                <span class="s1">'folder'</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">SeparatorColor</span><span class="p">),</span> <span class="n">o</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">pixmap</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">get_rsc_pixmap</span><span class="p">(</span>
-                <span class="s1">'folder'</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">BackgroundDarkColor</span><span class="p">),</span> <span class="n">o</span><span class="p">)</span>
+                <span class="s1">'folder'</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">BackgroundDarkColor</span><span class="p">),</span> <span class="n">o</span>
+            <span class="p">)</span>
 
         <span class="n">_rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
         <span class="n">_rect</span><span class="o">.</span><span class="n">moveCenter</span><span class="p">(</span><span class="n">option</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">center</span><span class="p">())</span>
         <span class="n">_rect</span><span class="o">.</span><span class="n">moveLeft</span><span class="p">(</span>
-            <span class="n">option</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">left</span><span class="p">()</span> <span class="o">+</span> <span class="p">((</span><span class="n">o</span> <span class="o">+</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthIndicator</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">))</span>
+            <span class="n">option</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">left</span><span class="p">()</span> <span class="o">+</span> <span class="p">((</span><span class="n">o</span> <span class="o">+</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthIndicator</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">drawPixmap</span><span class="p">(</span><span class="n">_rect</span><span class="p">,</span> <span class="n">pixmap</span><span class="p">,</span> <span class="n">pixmap</span><span class="o">.</span><span class="n">rect</span><span class="p">())</span>
 
         <span class="n">rect</span> <span class="o">=</span> <span class="n">rect</span><span class="o">.</span><span class="n">marginsRemoved</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QMargins</span><span class="p">(</span><span class="n">o</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
@@ -344,7 +354,9 @@
         <span class="n">text</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span>
         <span class="n">width</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">width</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">draw_aliased_text</span><span class="p">(</span>
-            <span class="n">painter</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">rect</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignVCenter</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
+            <span class="n">painter</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">rect</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignVCenter</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span><span class="p">,</span>
+            <span class="n">color</span>
+        <span class="p">)</span>
         <span class="n">rect</span><span class="o">.</span><span class="n">setLeft</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">left</span><span class="p">()</span> <span class="o">+</span> <span class="n">width</span><span class="p">)</span>
 
         <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
@@ -354,20 +366,25 @@
                 <span class="n">text</span> <span class="o">=</span> <span class="s1">'999+ items'</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TodoCountRole</span><span class="p">)</span><span class="si">}</span><span class="s1"> items'</span>
-            <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextSelectedColor</span><span class="p">)</span> <span class="k">if</span> <span class="n">selected</span> <span class="k">else</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">GreenColor</span><span class="p">)</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">TextSelectedColor</span>
+            <span class="p">)</span> <span class="k">if</span> <span class="n">selected</span> <span class="k">else</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">GreenColor</span>
+            <span class="p">)</span>
             <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextSelectedColor</span><span class="p">)</span> <span class="k">if</span> <span class="n">hover</span> <span class="k">else</span> <span class="n">color</span>
             <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">text</span><span class="p">,</span> <span class="n">color</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextColor</span><span class="p">)</span> <span class="k">if</span> <span class="n">active</span> <span class="k">else</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">BackgroundColor</span><span class="p">)</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">BackgroundColor</span>
+            <span class="p">)</span>
             <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextColor</span><span class="p">)</span> <span class="k">if</span> <span class="n">hover</span> <span class="k">else</span> <span class="n">color</span>
             <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextSelectedColor</span><span class="p">)</span> <span class="k">if</span> <span class="n">selected</span> <span class="k">else</span> <span class="n">color</span>
             <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">'(empty)'</span><span class="p">,</span> <span class="n">color</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ToolTipRole</span><span class="p">):</span>
             <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">TextSelectedColor</span><span class="p">)</span> <span class="k">if</span> <span class="n">active</span> <span class="k">else</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextColor</span><span class="p">)</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">TextSelectedColor</span>
+            <span class="p">)</span> <span class="k">if</span> <span class="n">active</span> <span class="k">else</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextColor</span><span class="p">)</span>
             <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextSelectedColor</span><span class="p">)</span> <span class="k">if</span> <span class="n">hover</span> <span class="k">else</span> <span class="n">color</span>
             <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextSelectedColor</span><span class="p">)</span> <span class="k">if</span> <span class="n">selected</span> <span class="k">else</span> <span class="n">color</span>
             <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ToolTipRole</span><span class="p">),</span> <span class="n">color</span><span class="p">))</span>
@@ -380,14 +397,18 @@
                 <span class="n">align</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignVCenter</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignRight</span>
 
             <span class="n">width</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">draw_aliased_text</span><span class="p">(</span>
-                <span class="n">painter</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">secondary_font</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FontSizeSmall</span><span class="p">))[</span><span class="mi">0</span><span class="p">],</span> <span class="n">rect</span><span class="p">,</span>
-                <span class="s1">'    |    '</span><span class="p">,</span> <span class="n">align</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">SeparatorColor</span><span class="p">))</span>
+                <span class="n">painter</span><span class="p">,</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">secondary_font</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FontSizeSmall</span><span class="p">))[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">rect</span><span class="p">,</span>
+                <span class="s1">'    |    '</span><span class="p">,</span> <span class="n">align</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">SeparatorColor</span><span class="p">)</span>
+            <span class="p">)</span>
             <span class="n">rect</span><span class="o">.</span><span class="n">setLeft</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">left</span><span class="p">()</span> <span class="o">+</span> <span class="n">width</span><span class="p">)</span>
 
             <span class="n">width</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">draw_aliased_text</span><span class="p">(</span>
                 <span class="n">painter</span><span class="p">,</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">primary_font</span><span class="p">(</span>
-                    <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FontSizeMedium</span><span class="p">))[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FontSizeMedium</span><span class="p">)</span>
+                <span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
                 <span class="n">rect</span><span class="p">,</span>
                 <span class="n">text</span><span class="p">,</span>
                 <span class="n">align</span><span class="p">,</span>
@@ -410,8 +431,6 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
-
-        <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">tabChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reset_data</span><span class="p">)</span>
         <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">taskFolderChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reset_data</span><span class="p">)</span>
 
 <div class="viewcode-block" id="TaskFolderModel.source_path"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.tasks.TaskFolderModel.source_path">[docs]</a>    <span class="k">def</span> <span class="nf">source_path</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -420,15 +439,18 @@
 <div class="viewcode-block" id="TaskFolderModel.data_type"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.tasks.TaskFolderModel.data_type">[docs]</a>    <span class="k">def</span> <span class="nf">data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">FileItem</span></div>
 
-<div class="viewcode-block" id="TaskFolderModel.init_data"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.tasks.TaskFolderModel.init_data">[docs]</a>    <span class="nd">@basemodel</span><span class="o">.</span><span class="n">initdata</span>
+    <span class="nd">@common</span><span class="o">.</span><span class="n">status_bar_message</span><span class="p">(</span><span class="s1">'Loading task folders...'</span><span class="p">)</span>
+    <span class="nd">@basemodel</span><span class="o">.</span><span class="n">initdata</span>
+    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
+    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="k">def</span> <span class="nf">init_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">common</span><span class="o">.</span><span class="n">clear_watchdirs</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TaskItemMonitor</span><span class="p">)</span>
 
         <span class="n">flags</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span> <span class="o">|</span>
-            <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span> <span class="o">|</span>
-            <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsDropEnabled</span> <span class="o">|</span>
-            <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEditable</span>
+                <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span> <span class="o">|</span>
+                <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span> <span class="o">|</span>
+                <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsDropEnabled</span> <span class="o">|</span>
+                <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEditable</span>
         <span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_data</span><span class="p">()</span>
         <span class="n">source_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_path</span><span class="p">()</span>
@@ -442,7 +464,8 @@
         <span class="n">_dirs</span> <span class="o">=</span> <span class="p">[</span><span class="n">_source_path</span><span class="p">]</span>
 
         <span class="n">entries</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
-            <span class="p">([</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="n">_source_path</span><span class="p">)]),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="p">([</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="n">_source_path</span><span class="p">)]),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'.'</span><span class="p">):</span>
@@ -454,62 +477,66 @@
             <span class="n">_dirs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
             <span class="n">idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-            <span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">DataDict</span><span class="p">({</span>
-                <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">:</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">:</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span>
-                <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ToolTipRole</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
-                <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ToolTipRole</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get_description</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
-                <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_size</span><span class="p">,</span>
-                <span class="c1">#</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">QueueRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">queues</span><span class="p">,</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">DataTypeRole</span><span class="p">:</span> <span class="n">common</span><span class="o">.</span><span class="n">FileItem</span><span class="p">,</span>
-                <span class="c1">#</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">EntryRole</span><span class="p">:</span> <span class="p">[</span><span class="n">entry</span><span class="p">,</span> <span class="p">],</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">:</span> <span class="n">flags</span><span class="p">,</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">:</span> <span class="n">source_path</span><span class="p">,</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">TodoCountRole</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">FileDetailsRole</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">SequenceRole</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">FramesRole</span><span class="p">:</span> <span class="p">[],</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">StartPathRole</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">EndPathRole</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                <span class="c1">#</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">FileInfoLoaded</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">ThumbnailLoaded</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-                <span class="c1">#</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">TypeRole</span><span class="p">:</span> <span class="n">common</span><span class="o">.</span><span class="n">FileItem</span><span class="p">,</span>
-                <span class="c1">#</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">SortByNameRole</span><span class="p">:</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">SortByLastModifiedRole</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">SortBySizeRole</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">SortByTypeRole</span><span class="p">:</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                <span class="c1">#</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">IdRole</span><span class="p">:</span> <span class="n">idx</span><span class="p">,</span>
-                <span class="c1">#</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">ShotgunLinkedRole</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="p">})</span>
-            <span class="n">common</span><span class="o">.</span><span class="n">set_watchdirs</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TaskItemMonitor</span><span class="p">,</span> <span class="n">_dirs</span><span class="p">)</span></div>
+            <span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">DataDict</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">:</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">:</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span>
+                    <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ToolTipRole</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
+                    <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ToolTipRole</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get_description</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+                    <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_size</span><span class="p">,</span>
+                    <span class="c1">#</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">QueueRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">queues</span><span class="p">,</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">DataTypeRole</span><span class="p">:</span> <span class="n">common</span><span class="o">.</span><span class="n">FileItem</span><span class="p">,</span>
+                    <span class="c1">#</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">EntryRole</span><span class="p">:</span> <span class="p">[</span><span class="n">entry</span><span class="p">,</span> <span class="p">],</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">:</span> <span class="n">flags</span><span class="p">,</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">:</span> <span class="n">source_path</span><span class="p">,</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">TodoCountRole</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">FileDetailsRole</span><span class="p">:</span> <span class="s1">''</span><span class="p">,</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">SequenceRole</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">FramesRole</span><span class="p">:</span> <span class="p">[],</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">StartPathRole</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">EndPathRole</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="c1">#</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">FileInfoLoaded</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">ThumbnailLoaded</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                    <span class="c1">#</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">TypeRole</span><span class="p">:</span> <span class="n">common</span><span class="o">.</span><span class="n">FileItem</span><span class="p">,</span>
+                    <span class="c1">#</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">SortByNameRole</span><span class="p">:</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">SortByLastModifiedRole</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">SortBySizeRole</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">SortByTypeRole</span><span class="p">:</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="c1">#</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">IdRole</span><span class="p">:</span> <span class="n">idx</span><span class="p">,</span>
+                    <span class="c1">#</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">ShotgunLinkedRole</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">set_watchdirs</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TaskItemMonitor</span><span class="p">,</span> <span class="n">_dirs</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TaskFolderModel.reset_data"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.tasks.TaskFolderModel.reset_data">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">reset_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TaskFolderModel.reset_data"><a class="viewcode-back" href="../../../api/lists.html#bookmarks.lists.tasks.TaskFolderModel.reset_data">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
+    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">reset_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">emit_active</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">"""Slot used to verify the current task folder.</span>
 
 <span class="sd">        """</span>
         <span class="n">v</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TaskKey</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset_data</span><span class="p">()</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset_data</span><span class="p">(</span><span class="n">emit_active</span><span class="o">=</span><span class="n">emit_active</span><span class="p">)</span>
 
         <span class="n">p</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TaskKey</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset_data</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset_data</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">emit_active</span><span class="o">=</span><span class="n">emit_active</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileInfo</span><span class="p">(</span><span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">p</span><span class="p">))</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset_data</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset_data</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">emit_active</span><span class="o">=</span><span class="n">emit_active</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset_data</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset_data</span><span class="p">(</span><span class="n">emit_active</span><span class="o">=</span><span class="n">emit_active</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">default_row_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSize</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">HeightRow</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.2</span><span class="p">)</span>
@@ -571,11 +598,12 @@
             <span class="p">)</span>
         <span class="p">)</span>
 
-
     <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">tab_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">idx</span> <span class="o">!=</span> <span class="n">common</span><span class="o">.</span><span class="n">FileTab</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">reset_data</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">resize_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>

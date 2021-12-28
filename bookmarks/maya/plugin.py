@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# pylint: disable=E0401
 """Bookmarks' Maya plugin.
 
 Make sure Bookmark is installed before trying to load the plugin. The `k`

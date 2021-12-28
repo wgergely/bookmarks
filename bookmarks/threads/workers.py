@@ -442,17 +442,15 @@ def get_bookmark_description(bookmark_row_data):
             _v = _v if _v else None
             v[k] = _v
 
-        description = v['description'] + sep if v['description'] else ''
+        description = f'{v["description"]}{sep}' if v['description'] else ''
         width = v['width'] if (v['width'] and v['height']) else ''
-        height = 'x{}px'.format(v['height']) if (
-                v['width'] and v['height']) else ''
-        framerate = '{}{}fps'.format(
-            sep, v['framerate']) if v['framerate'] else ''
-        prefix = '{}{}'.format(sep, v['prefix']) if v['prefix'] else ''
+        height = f'x{v["height"]}px' if (v['width'] and v['height']) else ''
+        framerate = f'{sep}{v["framerate"]}fps' if v['framerate'] else ''
+        prefix = f'{sep}{v["prefix"]}' if v['prefix'] else ''
 
-        s = description + width + height + framerate + prefix
+        s = f'{description}{width}{height}{framerate}{prefix}'
         s = s.replace(sep + sep, sep)
-        s = s.strip(sep).strip()  # pylint: disable=E1310
+        s = s.strip(sep).strip()
         return s
     except:
         log.error('Could not get description.')

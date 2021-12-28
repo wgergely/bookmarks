@@ -8,7 +8,6 @@
         <title>bookmarks - Bookmarks 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=7f0192ddeb2adecfbaa87ffbcf67d16358b30bc1" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/searchbox.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=0af69da206d614734f649b27d4cdc2dd6c31f41d" />
     
     
@@ -178,6 +177,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/lists.html">lists</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/tokens.html">tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/editor.html">editor</a></li>
 </ul>
 </li>
 </ul>
@@ -237,7 +237,8 @@
 
 <span class="sd">* ``Python3``: Tested with 3.7 and 3.9.</span>
 <span class="sd">* ``PySide2``: Tested with Qt 5.15.2. https://pypi.org/project/PySide2</span>
-<span class="sd">* ``OpenImageIO``: Used to generate thumbnails for image items. https://github.com/OpenImageIO/oiio</span>
+<span class="sd">* ``OpenImageIO``: Used to generate thumbnails for image items.</span>
+<span class="sd">https://github.com/OpenImageIO/oiio</span>
 <span class="sd">* ``numpy``: https://pypi.org/project/numpy</span>
 <span class="sd">* ``slack_sdk``: https://pypi.org/project/slack_sdk</span>
 <span class="sd">* ``psutil``: https://pypi.org/project/psutil</span>
@@ -256,7 +257,6 @@
 <span class="n">__email__</span> <span class="o">=</span> <span class="s1">'hello@gergely-wootsch.com'</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="s1">'0.5.0'</span>
 <span class="n">__copyright__</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Copyright (C) 2021 </span><span class="si">{</span><span class="n">__author__</span><span class="si">}</span><span class="s1">'</span>
-
 
 <span class="c1"># Python 2 is not supported</span>
 <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">7</span><span class="p">:</span>
@@ -278,19 +278,21 @@
     <span class="n">sg_ver</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">'shotgun_api3'</span><span class="p">)</span><span class="o">.</span><span class="n">__version__</span>
     <span class="n">slack_ver</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">'slack_sdk.version'</span><span class="p">)</span><span class="o">.</span><span class="n">__version__</span>
 
-    <span class="k">return</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">((</span>
-        <span class="n">__copyright__</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s1">'E-Mail:    </span><span class="si">{</span><span class="n">__email__</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s1">'Website:  </span><span class="si">{</span><span class="n">__website__</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
-        <span class="s1">'</span><span class="se">\n</span><span class="s1">Packages</span><span class="se">\n</span><span class="s1">'</span>
-        <span class="sa">f</span><span class="s1">'Python </span><span class="si">{</span><span class="n">py_ver</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">py_c</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s1">'Bookmarks </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s1">'PySide2 </span><span class="si">{</span><span class="n">qt_ver</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s1">'OpenImageIO </span><span class="si">{</span><span class="n">oiio_ver</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">alembic_ver</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s1">'ShotGrid API </span><span class="si">{</span><span class="n">sg_ver</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
-        <span class="sa">f</span><span class="s1">'SlackClient </span><span class="si">{</span><span class="n">slack_ver</span><span class="si">}</span><span class="s1">'</span>
-    <span class="p">))</span>
+    <span class="k">return</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="n">__copyright__</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'E-Mail:    </span><span class="si">{</span><span class="n">__email__</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'Website:  </span><span class="si">{</span><span class="n">__website__</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
+            <span class="s1">'</span><span class="se">\n</span><span class="s1">Packages</span><span class="se">\n</span><span class="s1">'</span>
+            <span class="sa">f</span><span class="s1">'Python </span><span class="si">{</span><span class="n">py_ver</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">py_c</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'Bookmarks </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'PySide2 </span><span class="si">{</span><span class="n">qt_ver</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'OpenImageIO </span><span class="si">{</span><span class="n">oiio_ver</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">alembic_ver</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'ShotGrid API </span><span class="si">{</span><span class="n">sg_ver</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">'SlackClient </span><span class="si">{</span><span class="n">slack_ver</span><span class="si">}</span><span class="s1">'</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
 
 
 <div class="viewcode-block" id="exec_"><a class="viewcode-back" href="../api/main.html#bookmarks.exec_">[docs]</a><span class="k">def</span> <span class="nf">exec_</span><span class="p">():</span>
@@ -303,11 +305,14 @@
 
 <span class="sd">    """</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="p">())</span>
+
     <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">common</span>
     <span class="n">common</span><span class="o">.</span><span class="n">verify_dependencies</span><span class="p">()</span>
     <span class="n">common</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">StandaloneMode</span><span class="p">)</span>
+
     <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">standalone</span>
     <span class="n">standalone</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
     <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span></div>
 </pre></div>
         </article>
@@ -338,7 +343,5 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/scripts/furo.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lunr.js/0.6.0/lunr.min.js"></script>
-    <script src="../_static/js/searchbox.js"></script>
     </body>
 </html>

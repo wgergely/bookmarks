@@ -8,7 +8,6 @@ import os
 import re
 import sys
 import time
-import traceback
 import uuid
 
 from PySide2 import QtCore, QtWidgets
@@ -171,29 +170,26 @@ def error(func):
         try:
             return func(*args, **kwargs)
         except:
-            info = sys.exc_info()
-            if all(info):
-                e = ''.join(traceback.format_exception(*info))
-            else:
-                e = ''
+            # Remove decorator(s) from the traceback stack
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            while 'wrapper' in exc_traceback.tb_frame.f_code.co_name:
+                exc_traceback = exc_traceback.tb_next
 
             from .. import log
-            log.error('Error.')
+            log.error(
+                exc_value.__str__(), exc_info=(
+                    exc_type, exc_value, exc_traceback)
+            )
 
-            # So we can use the method in threads too
+            # Making sure the ui popup is ignored in non-gui threads
             app = QtWidgets.QApplication.instance()
-            if app and QtCore.QThread.currentThread() == \
-                    QtWidgets.QApplication.instance().thread():
-                try:
-                    if QtWidgets.QApplication.instance():
-                        from .. import ui
-                        ui.ErrorBox(info[1].__str__(), limit=1).open()
-                    common.signals.showStatusBarMessage.emit(
-                        'An error occured. See log for more details.'
-                    )
-                except:
-                    pass
-            raise
+            if app and QtCore.QThread.currentThread() == app.thread():
+                if QtWidgets.QApplication.instance():
+                    from .. import ui
+                    ui.ErrorBox(exc_value.__str__(), limit=1).open()
+                common.signals.showStatusTipMessage.emit(
+                    f'Error: {exc_value.__str__()}'
+                )
 
     return func_wrapper
 

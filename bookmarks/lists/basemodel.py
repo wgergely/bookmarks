@@ -59,10 +59,15 @@ def initdata(func):
         self.beginResetModel()
         self._interrupt_requested = False
         self._load_in_progress = True
-        func(self, *args, **kwargs)
-        self._interrupt_requested = False
-        self._load_in_progress = False
-        self.endResetModel()
+
+        try:
+            func(self, *args, **kwargs)
+        except:
+            raise
+        finally:
+            self._interrupt_requested = False
+            self._load_in_progress = False
+            self.endResetModel()
 
         # Emit  references to the just loaded core data
         p = self.source_path()

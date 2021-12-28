@@ -18,20 +18,13 @@ DEFAULT_ITEM = {
         'button': None,
     },
     1: {
-        'key': 'format',
-        'placeholder': 'Extensions, eg. "ma,mb"',
-        'widget': ui.LineEdit,
-        'description': 'Enter a coma-separated list of extensions to associate the item with',
-        'button': None,
-    },
-    2: {
         'key': 'path',
         'placeholder': 'Path, eg. "C:/maya/maya.exe"',
         'widget': ui.LineEdit,
         'description': 'Path to the executable.',
         'button': 'Pick',
     },
-    4: {
+    2: {
         'key': 'thumbnail',
         'placeholder': 'Path to an image, eg. "C:/images/maya.png"',
         'widget': ui.LineEdit,
@@ -151,10 +144,6 @@ class LauncherItemEditor(QtWidgets.QDialog):
     def action(self):
         if not self.name_editor.text():
             raise RuntimeError('Must enter a name.')
-
-        if not self.format_editor.text():
-            raise RuntimeError(
-                'Must specify the extensions this item is associated with.')
 
         if not self.path_editor.text():
             raise RuntimeError('Must specify a path to an executable.')

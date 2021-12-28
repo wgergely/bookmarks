@@ -371,6 +371,8 @@ class FilesModel(basemodel.BaseModel):
 
     @common.status_bar_message('Loading Files...')
     @basemodel.initdata
+    @common.error
+    @common.debug
     def init_data(self):
         """The method is responsible for getting the bare-bones file items by
         running a file-iterator stemming from ``self.source_path()``.

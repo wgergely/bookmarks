@@ -819,6 +819,11 @@ class BaseContextMenu(QtWidgets.QMenu):
                 shortcuts.MainWidgetShortcuts,
                 shortcuts.AddItem),
         }
+        self.menu[key()] = {
+            'text': 'Prune Bookmarks',
+            'icon': ui.get_icon('close', color=common.color(common.RedColor)),
+            'action': actions.prune_bookmarks,
+        }
 
     def add_asset_to_bookmark_menu(self):
         if not self.index.isValid():

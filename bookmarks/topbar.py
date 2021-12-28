@@ -445,9 +445,6 @@ class BaseTabButton(QtWidgets.QLabel):
 
     @QtCore.Slot()
     def emit_tab_changed(self):
-        if common.current_tab() == common.FileTab and self.tab_idx == common.FileTab:
-            actions.toggle_task_view()
-            return
         if common.current_tab() == self.tab_idx:
             return
         common.signals.tabChanged.emit(self.tab_idx)
@@ -580,7 +577,6 @@ class BaseTabButton(QtWidgets.QLabel):
 
 
 class BookmarksTabButton(BaseTabButton):
-    """The button responsible for revealing the ``BookmarksWidget``"""
     icon = 'bookmark'
 
     def __init__(self, parent=None):
@@ -599,7 +595,6 @@ class BookmarksTabButton(BaseTabButton):
 
 
 class AssetsTabButton(BaseTabButton):
-    """The button responsible for revealing the ``AssetsWidget``"""
     icon = 'asset'
 
     def __init__(self, parent=None):
@@ -621,10 +616,15 @@ class AssetsTabButton(BaseTabButton):
         menu.move(pos)
         menu.exec_()
 
+    @QtCore.Slot()
+    def emit_tab_changed(self):
+        active = common.active(common.RootKey)
+        if not active:
+            return
+        super().emit_tab_changed()
+
 
 class FilesTabButton(BaseTabButton):
-    """The buttons responsible for swtiching the the FilesWidget and showing
-    the switch to change the data-key."""
     icon = 'file'
 
     def __init__(self, parent=None):
@@ -642,6 +642,18 @@ class FilesTabButton(BaseTabButton):
         if not common.active_index(common.AssetTab).isValid():
             return ''
         return super().text()
+
+    @QtCore.Slot()
+    def emit_tab_changed(self):
+        active = common.active(common.AssetKey)
+        if not active:
+            return
+
+        if common.current_tab() == common.FileTab:
+            actions.toggle_task_view()
+            return
+
+        super().emit_tab_changed()
 
     def contextMenuEvent(self, event):
         self.clicked.emit()
@@ -680,7 +692,6 @@ class FilesTabButton(BaseTabButton):
 
 
 class FavouritesTabButton(BaseTabButton):
-    """Drop-down widget to switch between the list"""
     icon = 'favourite'
 
     def __init__(self, parent=None):
@@ -693,7 +704,7 @@ class FavouritesTabButton(BaseTabButton):
 
 
 class SlackDropAreaWidget(QtWidgets.QWidget):
-    """Widget used to receive a slack message drop."""
+    """Widget used to receive a Slack message drop."""
 
     def __init__(self, parent=None):
         super(SlackDropAreaWidget, self).__init__(parent=parent)

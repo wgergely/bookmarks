@@ -176,6 +176,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../api/images.html">images</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/tokens.html">tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/editor.html">editor</a></li>
 </ul>
 </li>
 </ul>
@@ -266,10 +268,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">beginResetModel</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_interrupt_requested</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_load_in_progress</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_interrupt_requested</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_load_in_progress</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">endResetModel</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_interrupt_requested</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_load_in_progress</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">endResetModel</span><span class="p">()</span>
 
         <span class="c1"># Emit  references to the just loaded core data</span>
         <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_path</span><span class="p">()</span>

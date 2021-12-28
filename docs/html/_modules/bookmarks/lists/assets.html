@@ -172,8 +172,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../bookmarks.html">Introduction</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">bookmarks.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/database.html">database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/tokens.html">tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/editor.html">editor</a></li>
 </ul>
 </li>
 </ul>
@@ -309,6 +313,8 @@
 
     <span class="nd">@common</span><span class="o">.</span><span class="n">status_bar_message</span><span class="p">(</span><span class="s1">'Loading assets...'</span><span class="p">)</span>
     <span class="nd">@basemodel</span><span class="o">.</span><span class="n">initdata</span>
+    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
+    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="k">def</span> <span class="nf">init_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">"""Collects the data needed to populate the asset model.</span>
 

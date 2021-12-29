@@ -161,7 +161,7 @@ def set_custom_stylesheet(widget):
             WidthIndicator=int(size(common.WidthIndicator)),
             CONTEXT_MENU_HEIGHT=int(size(common.WidthMargin) * 2),
             CONTEXT_MENU_ICON_PADDING=int(size(common.WidthMargin)),
-            ROW_HEIGHT=int(size(common.HeightRow)),
+            SMALL_ROW_HEIGHT=int(size(common.HeightRow) * 0.8),
             BG=rgb(common.color(common.BackgroundColor)),
             SELECTED_BG=rgb(common.color(common.BackgroundLightColor)),
             DARK_BG=rgb(common.color(common.BackgroundDarkColor)),

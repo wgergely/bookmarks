@@ -2,9 +2,11 @@
 """Maya methods and values.
 
 """
+import re
 import string
 import sys
 import time
+import uuid
 
 import maya.cmds as cmds  # pylint: disable=E0401
 from PySide2 import QtWidgets, QtCore
@@ -12,6 +14,9 @@ from PySide2 import QtWidgets, QtCore
 from .. import common
 from .. import database
 from ..tokens import tokens
+
+GEO_SUFFIX = 'export'
+TEMP_NAMESPACE = f'Temp_{uuid.uuid4().hex}'
 
 MAYA_FPS = {
     'hour': 2.777777777777778e-4,
@@ -117,10 +122,10 @@ CaptureOptions = {
 
 DefaultPadding = 4
 
-CACHE_PATH = '{workspace}/{export_dir}/{set}/{set}_v001.{ext}'
+CACHE_PATH = '{workspace}/{export_dir}/{set}/{set}.{ext}'
 DEFAULT_CACHE_DIR = '{export_dir}/{ext}'
 DEFAULT_CAPTURE_DIR = 'capture'
-CACHE_LAYER_PATH = '{workspace}/{export_dir}/{set}/{set}_{layer}_v001.{ext}'
+CACHE_LAYER_PATH = '{workspace}/{export_dir}/{set}/{set}_{layer}.{ext}'
 CAPTURE_DESTINATION = '{workspace}/{capture_folder}/{scene}/{scene}'
 CAPTURE_FILE = '{workspace}/{capture_folder}/{scene}/{scene}.{frame}.{ext}'
 CAPTURE_PUBLISH_DIR = '{workspace}/{capture_folder}/latest'
@@ -183,7 +188,7 @@ def get_export_dir():
 
 
 def get_export_subdir(v):
-    """Find the name of the subdirectories of the ``export`` folder.
+    """Find the name of a subdirectory in the ``export`` folder.
 
     """
     server = common.active(common.ServerKey)
@@ -466,82 +471,102 @@ def report_export_progress(start, current, end, start_time):
     sys.stdout.write(msg)
 
 
-def outliner_sets():
-    """The main function responsible for returning the user created object sets
-    from the current Maya scene. There's an extra caveat: the set has to contain
-    the word 'geo' to be considered valid.
+def _is_set_created_by_user(name):
+    """From the good folks at cgsociety - filters the in-scene sets to return
+    the user-created items only.
+
+    https://forums.cgsociety.org/t/maya-mel-python-list-object-sets-visible-in
+    -the-dag/1586067/2
 
     Returns:
-        dict: key is the set's name, the value is the contained meshes.
+        bool: True if the user created the set, otherwise False.
 
     """
+    try:
+        # We first test for plug-in object sets.
+        apiNodeType = cmds.nodeType(name, api=True)
+    except RuntimeError:
+        return False
 
-    def _is_set_created_by_user(name):
-        """From the good folks at cgsociety - filters the in-scene sets to return
-        the user-created items only.
-
-        https://forums.cgsociety.org/t/maya-mel-python-list-object-sets-visible-in
-        -the-dag/1586067/2
-
-        Returns:
-            bool: True if the user created the set, otherwise False.
-
-        """
-        try:
-            # We first test for plug-in object sets.
-            apiNodeType = cmds.nodeType(name, api=True)
-        except RuntimeError:
-            return False
-
-        if apiNodeType == "kPluginObjectSet":
-            return True
-
-        # We do not need to test is the object is a set, since that test
-        # has already been done by the outliner
-        try:
-            nodeType = cmds.nodeType(name)
-        except RuntimeError:
-            return False
-
-        # We do not want any rendering sets
-        if nodeType == "shadingEngine":
-            return False
-
-        # if the object is not a set, return false
-        if not (nodeType == "objectSet" or
-                nodeType == "textureBakeSet" or
-                nodeType == "vertexBakeSet" or
-                nodeType == "character"):
-            return False
-
-        # We also do not want any sets with restrictions
-        restrictionAttrs = ["verticesOnlySet", "edgesOnlySet",
-                            "facetsOnlySet", "editPointsOnlySet",
-                            "renderableOnlySet"]
-        if any(
-                cmds.getAttr("{0}.{1}".format(name, attr)) for attr in
-                restrictionAttrs
-        ):
-            return False
-
-        # Do not show layers
-        if cmds.getAttr("{0}.isLayer".format(name)):
-            return False
-
-        # Do not show bookmarks
-        annotation = cmds.getAttr("{0}.annotation".format(name))
-        if annotation == "bookmarkAnimCurves":
-            return False
-
+    if apiNodeType == "kPluginObjectSet":
         return True
 
+    # We do not need to test is the object is a set, since that test
+    # has already been done by the outliner
+    try:
+        nodeType = cmds.nodeType(name)
+    except RuntimeError:
+        return False
+
+    # We do not want any rendering sets
+    if nodeType == "shadingEngine":
+        return False
+
+    # if the object is not a set, return false
+    if not (nodeType == "objectSet" or
+            nodeType == "textureBakeSet" or
+            nodeType == "vertexBakeSet" or
+            nodeType == "character"):
+        return False
+
+    # We also do not want any sets with restrictions
+    restrictionAttrs = ["verticesOnlySet", "edgesOnlySet",
+                        "facetsOnlySet", "editPointsOnlySet",
+                        "renderableOnlySet"]
+    if any(
+            cmds.getAttr(f'{name}.{attr}') for attr in
+            restrictionAttrs
+    ):
+        return False
+
+    # Do not show layers
+    if cmds.getAttr(f'{name}.isLayer'):
+        return False
+
+    # Do not show bookmarks
+    annotation = cmds.getAttr(f'{name}.annotation')
+    if annotation == "bookmarkAnimCurves":
+        return False
+
+    return True
+
+
+def sanitize_namespace(s):
+    """Converts the input string so that it can be safely used as a file name.
+    Any namespace will be enclosed in brackets and the ':' characters will be 
+    replaced with underscores.
+    
+    Args:
+        s (str): A string that contains namespace names.
+
+    Returns:
+        str: The sanitized string.
+
+    """
+    namespaces = {f.group(1) for f in re.finditer(r'([^/:|\\:]+):(?!/|\\)', s)}
+    for ns in namespaces:
+        s = s.replace(ns, f'({ns})')
+    s = re.sub(r':+', ':', s)
+    s = re.sub(rf'_{GEO_SUFFIX}', '', s)
+    return re.sub(r'([)a-zA-Z0-9])(:)([(a-zA-Z0-9])', r'\1_\3', s)
+
+
+def get_geo_sets():
+    """The main function responsible for returning the user created object sets
+    from the current Maya scene. There's an extra caveat: the set has to contain
+    the word 'GEO_SUFFIX' to be considered valid.
+
+    Returns:
+        dict: A dict of set name / mesh list pairs.
+
+    """
     sets_data = {}
     for s in sorted([k for k in cmds.ls(sets=True) if _is_set_created_by_user(k)]):
-        # I added this because of the plethora of sets in complex animation scenes
-        if 'geo' not in s:
+        # Filter sets based on their names
+        if GEO_SUFFIX not in s:
             continue
 
-        dag_set_members = cmds.listConnections('{}.dagSetMembers'.format(s))
+        dag_set_members = cmds.listConnections(f'{s}.dagSetMembers')
         if not dag_set_members:
             continue
 

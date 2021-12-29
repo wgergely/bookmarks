@@ -42,9 +42,7 @@ tokenvalidator = QtGui.QRegExpValidator()
 tokenvalidator.setRegExp(QtCore.QRegExp(r'[0-0a-zA-Z\_\-\.\{\}]*'))
 
 span = {
-    'start': '<span style="color:{}">'.format(
-        common.rgb(common.color(common.GreenColor))
-    ),
+    'start': f'<span style="color:{common.rgb(common.color(common.GreenColor))}">',
     'end': '</span>',
 }
 
@@ -186,17 +184,9 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         if all((server, job, root)):
             if not asset:
-                self.setWindowTitle(
-                    '{}/{}/{}'.format(
-                        server, job, root
-                    )
-                )
+                self.setWindowTitle(f'{server}/{job}/{root}')
             else:
-                self.setWindowTitle(
-                    '{}/{}/{}/{}'.format(
-                        server, job, root, asset
-                    )
-                )
+                self.setWindowTitle(f'{server}/{job}/{root}/{asset}')
 
         self._create_ui()
         self._connect_signals()
@@ -237,9 +227,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
             self.left_row.hide()
 
         self.left_row.setStyleSheet(
-            'background-color: {};'.format(
-                common.rgb(common.color(common.SeparatorColor))
-            )
+            f'background-color: {common.rgb(common.color(common.SeparatorColor))};'
         )
         QtWidgets.QHBoxLayout(self.left_row)
         self.left_row.layout().setSpacing(0)
@@ -687,7 +675,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
                     editor.setValue(v)
 
                 if not isinstance(v, str):
-                    v = '{}'.format(v)
+                    v = str(v)
                 if hasattr(editor, 'setText'):
                     editor.setText(v)
                 if hasattr(editor, 'setCurrentText'):
@@ -700,7 +688,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
             if k == 'id':
                 continue
 
-            source = '{}/{}/{}'.format(self.server, self.job, self.root)
+            source = f'{self.server}/{self.job}/{self.root}'
             v = db.value(source, k, database.InfoTable)
 
             if k == 'created':
@@ -779,7 +767,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
             if not isinstance(editor, QtWidgets.QCheckBox):
                 editor.setStyleSheet(
-                    'color: {};'.format(common.rgb(common.color(common.GreenColor)))
+                    f'color: {common.rgb(common.color(common.GreenColor))};'
                 )
             return
 
@@ -788,7 +776,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         if not isinstance(editor, QtWidgets.QCheckBox):
             editor.setStyleSheet(
-                'color: {};'.format(common.rgb(common.color(common.TextColor)))
+                f'color: {common.rgb(common.color(common.TextColor))};'
             )
 
     def db_source(self):
@@ -862,7 +850,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         if value is None:
             value = ''
         elif not isinstance(value, str):
-            value = '{}'.format(value)
+            value = str(value)
 
         if hasattr(editor, 'setText'):
             editor.setText(value)

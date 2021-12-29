@@ -8,6 +8,8 @@ QWidget {{
 	outline: 0;
 	font-family: "{PRIMARY_FONT}";
 	font-size: {FontSizeMedium}px;
+	selection-color: rgba(255,255,255,255);
+	selection-background-color: rgba(250,250,255,50);
 }}
 
 QWidget:disabled {{
@@ -126,6 +128,7 @@ QPushButton {{
 	padding-left: {FontSizeMedium}px;
 	padding-right: {FontSizeMedium}px;
 	border-style: none;
+	min-height: {SMALL_ROW_HEIGHT}px;
 	background-color: {SELECTED_BG};
 	border-radius: {RADIUS_SM}px;
 }}
@@ -159,6 +162,7 @@ QComboBox {{
 	border-style: solid;
 	border: {HeightSeparator}px solid {TRANSPARENT_BLACK};
 	background-color: {DARK_BG};
+	height: {SMALL_ROW_HEIGHT}px;
 	border-radius: {RADIUS}px;
 }}
 QComboBox:focus {{
@@ -180,6 +184,8 @@ QComboBox QListView::item {{
 	font-family: "{PRIMARY_FONT}";
 	font-size: {FontSizeMedium}px;
 	color: {TEXT};
+	height: {SMALL_ROW_HEIGHT}px;
+	min-height: {SMALL_ROW_HEIGHT}px;
 	background-color: {DARK_BG};
 	padding-left: {RADIUS_SM}px;
 }}
@@ -208,6 +214,7 @@ QLineEdit {{
 	font-size: {FontSizeMedium}px;
 	background-color: {DARK_BG};
 	border: none;
+	min-height: {SMALL_ROW_HEIGHT}px;
 	border-radius: {HeightSeparator}px;
 	padding: {RADIUS}px;
 }}

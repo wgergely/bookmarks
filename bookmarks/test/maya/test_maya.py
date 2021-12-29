@@ -157,13 +157,13 @@ class Test(unittest.TestCase):
             r = maya.widget._instance.import_scene('BOGUS/SCENE/null.ma')
 
 
-    def test_outliner_sets(self):
+    def test_get_geo_sets(self):
         try:
             import bookmarks.maya as maya
         except ImportError as e:
             raise
 
-        sets = maya.widget.outliner_sets()
+        sets = maya.widget.get_geo_sets()
         self.assertIsInstance(sets, dict)
         self.assertIn('testMesh_geo_set', sets)
 
@@ -176,7 +176,7 @@ class Test(unittest.TestCase):
         except ImportError as e:
             raise
 
-        sets = maya.widget.outliner_sets()
+        sets = maya.widget.get_geo_sets()
         k = 'testMesh_geo_set'
         dest = QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.TempLocation)
         dest = dest + os.path.sep + '{}.abc'.format(k)
@@ -219,7 +219,7 @@ class Test(unittest.TestCase):
         except ImportError as e:
             raise
 
-        sets = maya.widget.outliner_sets()
+        sets = maya.widget.get_geo_sets()
         k = 'testMesh_geo_set'
 
         r = maya.widget._instance.export_set_to_abc(k, sets[k], frame=False)

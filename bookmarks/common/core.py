@@ -172,8 +172,12 @@ def error(func):
         except:
             # Remove decorator(s) from the traceback stack
             exc_type, exc_value, exc_traceback = sys.exc_info()
-            while 'wrapper' in exc_traceback.tb_frame.f_code.co_name:
-                exc_traceback = exc_traceback.tb_next
+            if exc_traceback:
+                while 'wrapper' in exc_traceback.tb_frame.f_code.co_name:
+                    tb = exc_traceback.tb_next
+                    if not tb:
+                        break
+                    exc_traceback = exc_traceback.tb_next
 
             from .. import log
             log.error(

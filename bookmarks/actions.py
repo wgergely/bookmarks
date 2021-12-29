@@ -178,7 +178,7 @@ def clear_favourites(prompt=True):
     if prompt:
         from . import ui
         mbox = ui.MessageBox(
-            'Ar you sure you want to remove all starred items?',
+            'Are you sure you want to clear your saved items?',
             buttons=[ui.YesButton, ui.NoButton]
         )
         if mbox.exec_() == QtWidgets.QDialog.Rejected:

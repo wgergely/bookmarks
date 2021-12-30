@@ -231,7 +231,7 @@ class Test(unittest.TestCase):
             import os
             from PySide2 import QtCore
             import bookmarks.maya as maya
-            import bookmarks.maya._mCapture as mCapture
+            import bookmarks.maya.capture
         except ImportError as e:
             raise
 
@@ -246,7 +246,7 @@ class Test(unittest.TestCase):
             from PySide2 import QtCore
             import maya.cmds as cmds
             import bookmarks.maya as maya
-            import bookmarks.maya._mCapture as mCapture
+            import bookmarks.maya.capture
         except ImportError as e:
             raise
 
@@ -259,7 +259,7 @@ class Test(unittest.TestCase):
             from PySide2 import QtCore
             import maya.cmds as cmds
             import bookmarks.maya as maya
-            import bookmarks.maya._mCapture as mCapture
+            import bookmarks.maya.capture
         except ImportError as e:
             raise
 

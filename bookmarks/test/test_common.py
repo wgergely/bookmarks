@@ -53,7 +53,7 @@ class Test(base.BaseCase):
 
     def test_config_resources(self):
         with self.assertRaises(RuntimeError):
-            common.get_rsc(base.random_str(32))
+            common.get_rsc(base.randomw_str(32))
 
         self.assertIsInstance(common.get_rsc('icon.ico'), str)
         self.assertTrue(os.path.isfile(common.get_rsc('icon.ico')))

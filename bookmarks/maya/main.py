@@ -12,7 +12,7 @@ import maya.cmds as cmds
 import shiboken2
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from . import actions as maya_actions
+from . import actions
 from . import contextmenu
 from .. import common
 from .. import images
@@ -324,19 +324,50 @@ class MayaButtonWidget(ui.ClickableIconButton):
             description=f'Click to toggle {common.product.title()}.',
             parent=parent
         )
-
         self.setObjectName('BookmarksMayaButton')
+        self.setAutoFillBackground(False)
         self.setAttribute(QtCore.Qt.WA_NoBackground, False)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground, False)
         self.setFocusPolicy(QtCore.Qt.NoFocus)
-
+    
+        self._connect_signals()
+        self.init_shortcuts()
+    
+    def init_shortcuts(self):
         shortcut = QtWidgets.QShortcut(
             QtGui.QKeySequence('Ctrl+Alt+Shift+B'), self
         )
         shortcut.setAutoRepeat(False)
         shortcut.setContext(QtCore.Qt.ApplicationShortcut)
         shortcut.activated.connect(show)
+        
+        from . import viewport
+        shortcut1 = QtWidgets.QShortcut(
+            QtGui.QKeySequence(f'Ctrl+Alt+Shift+1'), self
+        )
+        shortcut1.setAutoRepeat(False)
+        shortcut1.setContext(QtCore.Qt.ApplicationShortcut)
+        shortcut1.activated.connect(
+            functools.partial(actions.apply_viewport_preset, 'Show All Nodes')
+        )
+        shortcut2 = QtWidgets.QShortcut(
+            QtGui.QKeySequence(f'Ctrl+Alt+Shift+2'), self
+        )
+        shortcut2.setAutoRepeat(False)
+        shortcut2.setContext(QtCore.Qt.ApplicationShortcut)
+        shortcut2.activated.connect(
+            functools.partial(actions.apply_viewport_preset, 'Animation Nodes')
+        )
+        shortcut3 = QtWidgets.QShortcut(
+            QtGui.QKeySequence(f'Ctrl+Alt+Shift+3'), self
+        )
+        shortcut3.setAutoRepeat(False)
+        shortcut3.setContext(QtCore.Qt.ApplicationShortcut)
+        shortcut3.activated.connect(
+            functools.partial(actions.apply_viewport_preset, 'Show Mesh Nodes')
+        )
 
+    def _connect_signals(self):
         self.clicked.connect(show)
 
     def paintEvent(self, event):
@@ -422,7 +453,7 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         self.workspace_timer = common.Timer(parent=self)
         self.workspace_timer.setSingleShot(False)
         self.workspace_timer.setInterval(1000)
-        self.workspace_timer.timeout.connect(maya_actions.set_workspace)
+        self.workspace_timer.timeout.connect(actions.set_workspace)
 
         common.main_widget.initialized.connect(
             lambda: common.main_widget.layout().setContentsMargins(0, 0, 0, 0)
@@ -430,7 +461,7 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
 
         common.main_widget.initialized.connect(self._connect_signals)
         common.main_widget.initialized.connect(self.context_callbacks)
-        common.main_widget.initialized.connect(maya_actions.set_workspace)
+        common.main_widget.initialized.connect(actions.set_workspace)
         common.main_widget.initialized.connect(self.workspace_timer.start)
 
     def _create_UI(self):
@@ -449,27 +480,27 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
             self.customFilesContextMenuEvent
         )
         common.source_model(common.AssetTab).activeChanged.connect(
-            maya_actions.set_workspace
+            actions.set_workspace
         )
 
         common.widget(common.FileTab).customContextMenuRequested.connect(
             self.customFilesContextMenuEvent
         )
         common.source_model(common.FileTab).modelReset.connect(
-            maya_actions.unmark_active
+            actions.unmark_active
         )
         common.source_model(common.FileTab).modelReset.connect(
-            maya_actions.update_active_item
+            actions.update_active_item
         )
         common.widget(common.FileTab).activated.connect(
-            maya_actions.execute
+            actions.execute
         )
 
         common.widget(common.FavouriteTab).customContextMenuRequested.connect(
             self.customFilesContextMenuEvent
         )
         common.widget(common.FavouriteTab).activated.connect(
-            maya_actions.execute
+            actions.execute
         )
 
     @QtCore.Slot()
@@ -510,17 +541,17 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
 
         """
         callback = OpenMaya.MSceneMessage.addCallback(
-            OpenMaya.MSceneMessage.kAfterOpen, maya_actions.update_active_item
+            OpenMaya.MSceneMessage.kAfterOpen, actions.update_active_item
         )
         self._callbacks.append(callback)
 
         callback = OpenMaya.MSceneMessage.addCallback(
-            OpenMaya.MSceneMessage.kBeforeOpen, maya_actions.unmark_active
+            OpenMaya.MSceneMessage.kBeforeOpen, actions.unmark_active
         )
         self._callbacks.append(callback)
 
         callback = OpenMaya.MSceneMessage.addCallback(
-            OpenMaya.MSceneMessage.kBeforeNew, maya_actions.unmark_active
+            OpenMaya.MSceneMessage.kBeforeNew, actions.unmark_active
         )
         self._callbacks.append(callback)
 
@@ -529,7 +560,7 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         # self._callbacks.append(callback)
 
         callback = OpenMaya.MSceneMessage.addCallback(
-            OpenMaya.MSceneMessage.kAfterSave, maya_actions.save_warning
+            OpenMaya.MSceneMessage.kAfterSave, actions.save_warning
         )
         self._callbacks.append(callback)
 

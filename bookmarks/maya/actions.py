@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
-"""This module contains the available Maya actions.
+"""Various common Maya actions.
 
 """
 import os
 import re
 import uuid
 
-import maya.OpenMayaUI as OpenMayaUI  # pylint: disable=E0401
+import maya.OpenMayaUI as OpenMayaUI
 import maya.app.general.mayaMixin as mayaMixin
-import maya.cmds as cmds  # pylint: disable=E0401
+import maya.cmds as cmds
 import shiboken2
 from PySide2 import QtWidgets, QtCore
 
 from . import base
+from . import capture
 from . import main
 from .. import actions
 from .. import common
@@ -412,11 +413,10 @@ def capture_viewport(size=1.0):
 
     camera = cmds.modelPanel(panel, query=True, camera=True)
 
-    # The the panel settings using mCapture.py and update it with our
-    # custom common. See `base.CaptureOptions` for the hard-coded
+    # The panel settings using capture.py and update it with our
+    # custom settings. See `base.CaptureOptions` for the hard-coded
     # defaults we're using here
-    from . import mCapture
-    options = mCapture.parse_view(panel)
+    options = capture.parse_view(panel)
     options['viewport_options'].update(base.CaptureOptions)
 
     # Hide existing panels
@@ -440,7 +440,7 @@ def capture_viewport(size=1.0):
     height = int(cmds.getAttr('defaultResolution.height') * size)
 
     try:
-        mCapture.capture(
+        capture.capture(
             camera=camera,
             width=width,
             height=height,
@@ -454,7 +454,7 @@ def capture_viewport(size=1.0):
             overwrite=True,
             viewer=False
         )
-        log.success('Capture saved to {}'.format(_dir.path()))
+        log.success(f'Capture saved to {_dir.path()}')
     except:
         raise
     finally:
@@ -627,3 +627,23 @@ def remove_workspace_control(workspace_control):
         cmds.deleteUI(workspace_control)
         if cmds.workspaceControlState(workspace_control, ex=True):
             cmds.workspaceControlState(workspace_control, remove=True)
+
+
+@common.error
+@QtCore.Slot()
+def apply_viewport_preset(k):
+    from . import viewport
+    panel = cmds.getPanel(withFocus=True)
+    if not cmds.modelPanel(panel, query=True, exists=True):
+        return
+    editor = cmds.modelPanel(panel, query=True, modelEditor=True)
+    cmds.modelEditor(editor, edit=True, **viewport.presets[k])
+
+
+@QtCore.Slot()
+def import_camera_preset():
+    path = common.get_rsc('maya/camera.ma')
+    if cmds.objExists('camera'):
+        print('An object named "camera" already exists. Nothing imported.')
+        return
+    cmds.file(path, i=True, defaultNamespace=True)

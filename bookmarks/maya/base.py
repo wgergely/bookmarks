@@ -312,7 +312,7 @@ def set_framerate(fps):
         'maxTime': None,
     }
 
-    # Save current values
+    # Store current values
     for k in data:
         data[k] = cmds.playbackOptions(**{k: True, 'query': True})
 
@@ -585,7 +585,7 @@ def get_geo_sets():
 def capture_viewport_destination():
     # Note that CAPTURE_DESTINATION does not actually refer to the full filename
     # the padded frame numbers and the extensions are added to the base name
-    # by `mCapture.py`
+    # by `capture.py`
     workspace = cmds.workspace(q=True, rootDirectory=True).rstrip('/')
     scene = QtCore.QFileInfo(cmds.file(q=True, expandName=True))
     dest = CAPTURE_DESTINATION.format(
@@ -594,6 +594,7 @@ def capture_viewport_destination():
         scene=scene.baseName()
     )
     return DEFAULT_CAPTURE_DIR, workspace, dest
+
 
 
 class MayaProperties(object):

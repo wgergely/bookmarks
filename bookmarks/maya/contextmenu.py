@@ -21,6 +21,9 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         self.separator()
         self.export_menu()
         self.separator()
+        self.import_camera_menu()
+        self.separator()
+        self.viewport_presets_menu()
         self.capture_menu()
 
     def apply_bookmark_settings_menu(self):
@@ -101,10 +104,30 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
     def export_menu(self):
         k = contextmenu.key()
         self.menu[k] = {
-            'text': 'Export',
+            'text': 'Export...',
             'icon': ui.get_icon('set', color=None),
-            'action': export.show()
+            'action': export.show
         }
+
+    def import_camera_menu(self):
+        k = contextmenu.key()
+        self.menu[k] = {
+            'text': 'Import Camera Template',
+            'action': actions.import_camera_preset
+        }
+
+    def viewport_presets_menu(self):
+        from . import viewport
+        k = 'Viewport Presets'
+        self.menu[k] = collections.OrderedDict()
+        self.menu[f'{k}:icon'] = ui.get_icon('image')
+
+        for _k in viewport.presets:
+            self.menu[k][contextmenu.key()] = {
+                'icon': ui.get_icon('image'),
+                'text': _k,
+                'action': functools.partial(actions.apply_viewport_preset, _k)
+            }
 
     def capture_menu(self):
         k = 'Capture Viewport'
@@ -133,7 +156,6 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
             'text': f'Toggle {common.product.title()}',
             'action': self.parent().clicked.emit
         }
-        return
 
 
 class MayaButtonWidgetContextMenu(PluginContextMenu):
@@ -150,19 +172,14 @@ class MayaWidgetContextMenu(PluginContextMenu):
     @common.debug
     def setup(self):
         self.apply_bookmark_settings_menu()
-
         self.separator()
-
         self.save_menu()
-
         self.separator()
-
         self.open_import_scene_menu()
-
         self.separator()
-
         self.export_menu()
-
         self.separator()
-
+        self.import_camera_menu()
+        self.separator()
+        self.viewport_presets_menu()
         self.capture_menu()

@@ -47,11 +47,18 @@ PRESETS = {
         'ogs_pause': True,
     },
     'obj': {
-        'name': 'OBJ Export',
+        'name': 'OBJ',
         'extension': 'obj',
         'plugins': ('objExport.mll',),
         'action': 'export_obj',
         'ogs_pause': True,
+    },
+    'ma': {
+        'name': 'Maya Scene',
+        'extension': 'ma',
+        'plugins': (),
+        'action': 'export_maya',
+        'ogs_pause': False,
     },
 }
 
@@ -205,9 +212,18 @@ class ExportWidget(base.BasePropertyEditor):
             buttons=('Export', 'Close'),
             parent=parent
         )
-        self._interrupt_requested = False
 
+        self.progress_widget = None
+
+        self._interrupt_requested = False
+        self.setWindowTitle('Export Sets')
         self._connect_settings_save_signals(SETTING_KEYS)
+
+    def init_progress_bar(self):
+        self.progress_widget = QtWidgets.QProgressDialog(parent=self)
+        self.progress_widget.setFixedWidth(common.size(common.DefaultWidth))
+        self.progress_widget.setLabelText('Exporting, please wait...')
+        self.progress_widget.setWindowTitle('Export Progress')
 
     @common.error
     @common.debug
@@ -301,6 +317,13 @@ class ExportWidget(base.BasePropertyEditor):
         try:
             sel = cmds.ls(selection=True)
             t = cmds.currentTime(query=True)
+
+            self.init_progress_bar()
+            self.progress_widget.setMinimum(int(start))
+            self.progress_widget.setMaximum(int(end))
+            self.progress_widget.setRange(int(start), int(end))
+            self.progress_widget.open()
+
             action = getattr(self, PRESETS[k]['action'])
             action(file_path, items, int(start), int(end))
             common.signals.fileAdded.emit(file_path)
@@ -313,11 +336,13 @@ class ExportWidget(base.BasePropertyEditor):
         except:
             raise
         finally:
+            self.progress_widget.close()
             cmds.currentTime(t, edit=True)
             cmds.select(clear=True)
             cmds.select(sel, replace=True)
             if PRESETS[k]['ogs_pause'] and not state:
                 cmds.ogs(pause=True)
+            self.check_version()
 
     def db_source(self):
         k = self.mayaexport_type_editor.currentData()
@@ -362,6 +387,39 @@ class ExportWidget(base.BasePropertyEditor):
         return QtCore.QSize(
             common.size(common.DefaultWidth) * 0.66,
             common.size(common.DefaultHeight * 1.2)
+        )
+
+    def export_maya(
+            self, destination, outliner_set, start_frame, end_frame, step=1.0
+    ):
+        """Main Maya scene export function.
+
+        Args:
+            start_frame (int): Start frame.
+            end_frame (int): End frame.
+            destination (str): Path to the output file.
+            outliner_set (tuple): A list of transforms contained in a geometry set.
+
+        """
+        common.check_type(destination, str)
+        common.check_type(outliner_set, (tuple, list))
+        common.check_type(start_frame, (int, float))
+        common.check_type(end_frame, (int, float))
+        common.check_type(step, (float, int))
+
+        ext = destination.split('.')[-1]
+        _destination = str(destination)
+        start_time = time.time()
+
+        cmds.select(outliner_set, replace=True)
+
+        cmds.file(
+            _destination,
+            force=True,
+            preserveReferences=True,
+            type='mayaAscii',
+            exportSelected=True,
+            options="v=0;"
         )
 
     def export_alembic(
@@ -606,6 +664,10 @@ class ExportWidget(base.BasePropertyEditor):
                 return
 
             cmds.currentTime(fr, edit=True)
+            if self.progress_widget.wasCanceled():
+                return
+            else:
+                self.progress_widget.setValue(fr)
 
             if not start_frame == end_frame:
                 # Create a mock version, if does not exist
@@ -660,6 +722,10 @@ class ExportWidget(base.BasePropertyEditor):
                 return
 
             cmds.currentTime(fr, edit=True)
+            if self.progress_widget.wasCanceled():
+                return
+            else:
+                self.progress_widget.setValue(fr)
 
             if not start_frame == end_frame:
                 # Create a mock version, if does not exist

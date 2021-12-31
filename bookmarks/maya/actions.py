@@ -298,12 +298,20 @@ def import_scene(path, reference=False):
         reference (bool): When `true` the import will be a reference.
 
     """
+    def get_namespaces_from_path(_path):
+        _basename = _path.split('/')[-1]
+        _basename = _basename.split('.')[0]
+
+        nms = re.findall(r'\(.+?\)', _basename)
+        nm = ':'.join(re.sub(r'[\(\)]', '', f) for f in nms)
+        name = _basename.replace('_'.join(nms), '').strip('_')
+        return nm, name
+
     p = common.get_sequence_endpath(path)
     file_info = QtCore.QFileInfo(p)
     _s = file_info.suffix().lower()
     if _s not in ('ma', 'mb', 'abc'):
-        s = '{} is not a valid scene.'.format(p)
-        raise RuntimeError(s)
+        raise RuntimeError(f'{p} is not a valid scene.')
 
     # Load the alembic plugin
     if _s == 'abc':
@@ -313,18 +321,14 @@ def import_scene(path, reference=False):
             cmds.loadPlugin("AbcExport.mll", quiet=True)
 
     if not file_info.exists():
-        s = '{} does not exist.'.format(p)
-        raise RuntimeError(s)
+        raise RuntimeError(f'{p} does not exist.')
 
     if cmds.file(
             q=True, sn=True
     ).lower() == file_info.filePath().lower() and reference:
         raise RuntimeError('Can\'t reference itself.')
 
-    match = common.get_sequence(file_info.fileName())
-    basename = match.group(1) if match else file_info.baseName()
-    basename = re.sub(r'_v$', '', basename, flags=re.IGNORECASE)
-
+    _, basename = get_namespaces_from_path(path)
     alphabet = base._get_available_suffixes(basename)
     if not alphabet:  # no more suffixes to assign
         return None
@@ -340,10 +344,10 @@ def import_scene(path, reference=False):
         return None
     suffix = w.textValue()
 
-    id = '{}'.format(uuid.uuid1()).replace('-', '_')
     # This should always be a unique name in the maya scene
-    ns = '{}_{}'.format(basename, suffix)
-    rfn = '{}_RN_{}'.format(ns, id)
+    id = uuid.uuid1().hex.replace('-', '_')
+    ns = f'{basename}_{suffix}'
+    rfn = f'{ns}_RN_{id}'
 
     if reference:
         cmds.file(
@@ -356,7 +360,7 @@ def import_scene(path, reference=False):
 
         # The reference node is locked by default
         cmds.lockNode(rfn, lock=False)
-        rfn = cmds.rename(rfn, '{}_RN'.format(ns))
+        rfn = cmds.rename(rfn, f'{ns}_RN')
         cmds.lockNode(rfn, lock=True)
     else:
         cmds.file(
@@ -366,7 +370,7 @@ def import_scene(path, reference=False):
         )
         base._add_suffix_attribute(ns, suffix, reference=reference)
 
-    s = '{} was imported.'.format(file_info.filePath())
+    s = f'{file_info.filePath()} was imported.'
     log.success(s)
     return file_info.filePath()
 

@@ -394,20 +394,23 @@ def _add_suffix_attribute(rfn, suffix, reference=True):
         nodes = cmds.namespaceInfo(rfn, listNamespace=True)
 
     for node in nodes:
-        # Conflict of duplicate name would prefent import... this is a hackish,
+        # Conflict of duplicate name would prevent import... this is a hackish,
         # yikes, workaround!
-        _node = cmds.ls(node, long=True)[0]
-        if cmds.nodeType(_node) != 'transform':
-            continue
-        if cmds.listRelatives(_node, parent=True) is None:
-            if cmds.attributeQuery('instance_suffix', node=node, exists=True):
-                continue
-            cmds.addAttr(
-                _node, ln='instance_suffix', at='enum',
-                en=':'.join(string.ascii_uppercase)
-            )
-            cmds.setAttr('{}.instance_suffix'.format(_node), _id)
+        try:
+            _node = cmds.ls(node, long=True)[0]
 
+            if cmds.nodeType(_node) != 'transform':
+                continue
+            if cmds.listRelatives(_node, parent=True) is None:
+                if cmds.attributeQuery('instance_suffix', node=node, exists=True):
+                    continue
+                cmds.addAttr(
+                    _node, ln='instance_suffix', at='enum',
+                    en=':'.join(string.ascii_uppercase)
+                )
+                cmds.setAttr('{}.instance_suffix'.format(_node), _id)
+        except:
+            print(f'Could not add attribute to {node}')
 
 def is_scene_modified():
     """If the current scene was modified since the last save, the user will be

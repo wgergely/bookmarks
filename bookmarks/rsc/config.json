@@ -37,49 +37,49 @@
   "DefaultHeight": 480.0,
   "BackgroundColor": [
     85,
-    80,
+    85,
     85,
     255
   ],
   "BackgroundLightColor": [
     145,
-    140,
+    145,
     145,
     255
   ],
   "BackgroundDarkColor": [
     65,
-    60,
+    65,
     65,
     255
   ],
   "TextColor": [
     225,
-    220,
+    225,
     225,
     255
   ],
   "TextSecondaryColor": [
     175,
-    170,
+    175,
     175,
     255
   ],
   "TextSelectedColor": [
     255,
-    250,
+    255,
     255,
     255
   ],
   "TextDisabledColor": [
     145,
-    140,
+    145,
     145,
     255
   ],
   "SeparatorColor": [
     40,
-    35,
+    40,
     40,
     255
   ],
@@ -126,9 +126,9 @@
     255
   ],
   "OpaqueColor": [
-    5,
     0,
-    5,
+    0,
+    0,
     30
   ],
   "Transparent": [

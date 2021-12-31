@@ -451,7 +451,7 @@ class PrefixEditor(QtWidgets.QDialog):
         self.editor.setValidator(base.textvalidator)
         self.setFocusProxy(self.editor)
         self.editor.setFocusPolicy(QtCore.Qt.StrongFocus)
-        self.ok_button = ui.PaintedButton('Save')
+        self.ok_button = ui.PaintedButton('Save', parent=self)
 
         self.ok_button.clicked.connect(
             lambda: self.done(QtWidgets.QDialog.Accepted)

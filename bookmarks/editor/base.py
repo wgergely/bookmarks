@@ -168,7 +168,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         self.section_headers_widget = None
 
         if not self.parent():
-            common.set_custom_stylesheet(self)
+            common.set_stylesheet(self)
 
         self.current_data = {}
         self.changed_data = {}
@@ -190,6 +190,10 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         self._create_ui()
         self._connect_signals()
+
+        self.setFocusProxy(self.scroll_area)
+        self.scroll_area.setFocusPolicy(QtCore.Qt.NoFocus)
+
 
     def _create_ui(self):
         o = common.size(common.WidthMargin)
@@ -388,9 +392,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
             button = ui.PaintedButton(
                 v['button'], parent=row
             )
-            button.setFixedHeight(
-                common.size(common.HeightRow) * 0.8
-            )
 
             if v['key'] is not None:
                 if hasattr(self, v['key'] + '_button_clicked'):
@@ -409,9 +410,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
         if 'button2' in v and v['button2']:
             button2 = ui.PaintedButton(
                 v['button2'], parent=row
-            )
-            button2.setFixedHeight(
-                common.size(common.HeightRow) * 0.8
             )
 
             if v['key'] is not None:
@@ -434,7 +432,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         """
         button = ui.PaintedButton(
             name,
-            height=common.size(common.WidthMargin),
+            height=None,
             parent=self.section_headers_widget
         )
         self.section_headers_widget.layout().addWidget(button)
@@ -450,11 +448,9 @@ class BasePropertyEditor(QtWidgets.QDialog):
         self.save_button = ui.PaintedButton(
             self._buttons[0], parent=self
         )
-        self.save_button.setFixedHeight(h)
         self.cancel_button = ui.PaintedButton(
             self._buttons[1], parent=self
         )
-        self.cancel_button.setFixedHeight(h)
 
         row = ui.add_row(
             None, padding=None, height=h * 2, parent=self.right_row

@@ -361,7 +361,7 @@ class AlembicPreviewWidget(QtWidgets.QWidget):
         common.check_type(path, str)
 
         if not self.parent():
-            common.set_custom_stylesheet(self)
+            common.set_stylesheet(self)
 
         file_info = QtCore.QFileInfo(path)
         if not file_info.exists():

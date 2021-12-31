@@ -564,7 +564,7 @@ class SlackWidget(QtWidgets.QDialog):
     def __init__(self, token, parent=None):
         super(SlackWidget, self).__init__(parent=parent)
         if not self.parent():
-            common.set_custom_stylesheet(self)
+            common.set_stylesheet(self)
 
         self.token = token
 

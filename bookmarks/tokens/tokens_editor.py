@@ -60,7 +60,7 @@ class TokenEditor(QtWidgets.QDialog):
         self._create_ui()
 
     def _create_ui(self):
-        common.set_custom_stylesheet(self)
+        common.set_stylesheet(self)
         QtWidgets.QHBoxLayout(self)
         self.layout().setContentsMargins(0, 0, 0, 0)
 
@@ -261,7 +261,7 @@ class TokenConfigEditor(QtWidgets.QWidget):
         self._connect_signals()
 
     def _create_ui(self):
-        common.set_custom_stylesheet(self)
+        common.set_stylesheet(self)
 
         QtWidgets.QVBoxLayout(self)
         o = common.size(common.WidthMargin)

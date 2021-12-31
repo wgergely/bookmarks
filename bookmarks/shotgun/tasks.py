@@ -440,7 +440,7 @@ class TaskView(QtWidgets.QTreeView):
     def __init__(self, parent=None):
         super(TaskView, self).__init__(parent=parent)
         if not self.parent():
-            common.set_custom_stylesheet(self)
+            common.set_stylesheet(self)
 
         self.setHeaderHidden(False)
         self.setSortingEnabled(False)
@@ -544,7 +544,7 @@ class TaskPicker(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(TaskPicker, self).__init__(parent=parent)
         if not self.parent():
-            common.set_custom_stylesheet(self)
+            common.set_stylesheet(self)
 
         self.sg_properties = None
         self.user_editor = None

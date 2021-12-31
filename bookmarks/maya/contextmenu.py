@@ -22,6 +22,7 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         self.export_menu()
         self.separator()
         self.import_camera_menu()
+        self.shader_tool_menu()
         self.separator()
         self.viewport_presets_menu()
         self.capture_menu()
@@ -109,6 +110,13 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
             'action': export.show
         }
 
+    def shader_tool_menu(self):
+        k = contextmenu.key()
+        self.menu[k] = {
+            'text': 'Show Shader Tool',
+            'action': actions.show_shader_tool
+        }
+
     def import_camera_menu(self):
         k = contextmenu.key()
         self.menu[k] = {
@@ -180,6 +188,7 @@ class MayaWidgetContextMenu(PluginContextMenu):
         self.export_menu()
         self.separator()
         self.import_camera_menu()
+        self.shader_tool_menu()
         self.separator()
         self.viewport_presets_menu()
         self.capture_menu()

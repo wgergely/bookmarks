@@ -38,7 +38,7 @@ class BaseLinkWidget(QtWidgets.QDialog):
         self.create_button = None
 
         if not self.parent():
-            common.set_custom_stylesheet(self)
+            common.set_stylesheet(self)
 
         self.setWindowTitle(
             'Link {} with {} Entity'.format(self.db_source(), self.entity_type.title()))
@@ -203,7 +203,7 @@ class EntityNameEditor(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(EntityNameEditor, self).__init__(parent=parent)
         if not self.parent():
-            common.set_custom_stylesheet(self)
+            common.set_stylesheet(self)
 
         self.editor = None
         self.ok_button = None

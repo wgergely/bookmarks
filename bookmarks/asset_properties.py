@@ -293,7 +293,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         items = [f.name for f in os.scandir(source) if f.is_dir()]
         completer = QtWidgets.QCompleter(items, parent=self)
         completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
-        common.set_custom_stylesheet(completer.popup())
+        common.set_stylesheet(completer.popup())
         self.name_editor.setCompleter(completer)
 
     @common.error

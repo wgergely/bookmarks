@@ -119,7 +119,7 @@ class TableWidget(QtWidgets.QTableWidget):
         item.setFlags(QtCore.Qt.NoItemFlags)
         item.setTextAlignment(QtCore.Qt.AlignCenter)
         self.setItem(row, 3, item)
-        button = ui.PaintedButton('Create', height=None)
+        button = ui.PaintedButton('Create')
         button.clicked.connect(
             functools.partial(self.createEntity.emit, name, editor, button)
         )
@@ -161,7 +161,7 @@ class LinkMultiple(QtWidgets.QDialog):
 
     def _create_ui(self):
         if not self.parent():
-            common.set_custom_stylesheet(self)
+            common.set_stylesheet(self)
 
         QtWidgets.QVBoxLayout(self)
         o = common.size(common.WidthMargin)

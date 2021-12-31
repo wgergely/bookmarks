@@ -438,7 +438,7 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         self._callbacks = []  # Maya api callbacks
 
         self.setWindowTitle(common.product)
-        common.set_custom_stylesheet(self)
+        common.set_stylesheet(self)
 
         # Rename object
         o = self.objectName().replace(

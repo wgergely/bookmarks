@@ -100,7 +100,7 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         self._connect_signals()
 
     def _create_ui(self):
-        common.set_custom_stylesheet(self)
+        common.set_stylesheet(self)
         QtWidgets.QVBoxLayout(self)
 
         o = common.size(common.WidthMargin) * 0.66

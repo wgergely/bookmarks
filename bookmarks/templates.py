@@ -520,7 +520,7 @@ class TemplatesWidget(QtWidgets.QSplitter):
 
     def _create_UI(self):
         if not self.parent():
-            common.set_custom_stylesheet(self)
+            common.set_stylesheet(self)
         self.template_list_widget = TemplateListWidget(self._mode, parent=self)
         self.template_contents_widget = TemplatesPreviewWidget(parent=self)
         self.addWidget(self.template_list_widget)

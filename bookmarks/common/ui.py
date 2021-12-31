@@ -41,7 +41,8 @@ def rgb(v):
             str: The string representation of the color.
 
     """
-    return 'rgba({})'.format(','.join([str(f) for f in v.getRgb()]))
+    v = 'rgba({})'.format(','.join([str(f) for f in v.getRgb()]))
+    return v
 
 
 def status_bar_message(message):
@@ -118,7 +119,7 @@ def move_widget_to_available_geo(widget):
     widget.move(x, y)
 
 
-def set_custom_stylesheet(widget):
+def set_stylesheet(widget):
     """Set Bookmark's custom stylesheet to the given widget.
 
     The tokenized stylesheet is stored in `common.stylesheet_file`.
@@ -142,59 +143,56 @@ def set_custom_stylesheet(widget):
 
     try:
         from .. import images
+        primary = common.font_db.primary_font(
+            size(common.FontSizeMedium))[0].family()
+        secondary = common.font_db.secondary_font(
+            size(common.FontSizeSmall)
+        )[0].family()
+
         qss = qss.format(
-            PRIMARY_FONT=common.font_db.primary_font(
-                size(common.FontSizeMedium)
-            )[0].family(),
-            SECONDARY_FONT=common.font_db.secondary_font(
-                size(common.FontSizeSmall)
-            )[0].family(),
+            PrimaryFont=primary,
+            SecondaryFont=secondary,
             FontSizeSmall=int(size(common.FontSizeSmall)),
             FontSizeMedium=int(size(common.FontSizeMedium)),
             FontSizeLarge=int(size(common.FontSizeLarge)),
-            RADIUS=int(size(common.WidthIndicator) * 1.5),
-            RADIUS_SM=int(size(common.WidthIndicator)),
-            SCROLLBAR_SIZE=int(size(common.WidthIndicator) * 2),
-            SCROLLBAR_MINHEIGHT=int(size(common.WidthMargin) * 5),
             HeightSeparator=int(size(common.HeightSeparator)),
-            WidthMargin=int(size(common.WidthMargin)),
             WidthIndicator=int(size(common.WidthIndicator)),
-            CONTEXT_MENU_HEIGHT=int(size(common.WidthMargin) * 2),
-            CONTEXT_MENU_ICON_PADDING=int(size(common.WidthMargin)),
-            SMALL_ROW_HEIGHT=int(size(common.HeightRow) * 0.8),
-            BG=rgb(common.color(common.BackgroundColor)),
-            SELECTED_BG=rgb(common.color(common.BackgroundLightColor)),
-            DARK_BG=rgb(common.color(common.BackgroundDarkColor)),
-            TEXT=rgb(common.color(common.TextColor)),
-            SECONDARY_TEXT=rgb(common.color(common.TextSecondaryColor)),
-            SELECTED_TEXT=rgb(common.color(common.TextSelectedColor)),
-            DISABLED_TEXT=rgb(common.color(common.TextDisabledColor)),
-            GREEN=rgb(common.color(common.GreenColor)),
-            RED=rgb(common.color(common.RedColor)),
-            SEPARATOR=rgb(common.color(common.SeparatorColor)),
-            BLUE=rgb(common.color(common.BlueColor)),
-            TRANSPARENT=rgb(common.color(common.Transparent)),
-            TRANSPARENT_BLACK=rgb(common.color(common.OpaqueColor)),
-            BRANCH_CLOSED=images.ImageCache.get_rsc_pixmap(
+            WidthIndicator1=int(size(common.WidthIndicator) * 1.33),
+            WidthIndicator2=int(size(common.WidthIndicator) * 1.8),
+            WidthMargin=int(size(common.WidthMargin)),
+            WidthMargin2=int(size(common.WidthMargin) * 2),
+            WidthMargin3=int(size(common.WidthMargin) * 4),
+            SmallHeight=int(size(common.HeightRow) * 0.66),
+            BackgroundColor=rgb(common.color(common.BackgroundColor)),
+            BackgroundLightColor=rgb(common.color(common.BackgroundLightColor)),
+            BackgroundDarkColor=rgb(common.color(common.BackgroundDarkColor)),
+            TextColor=rgb(common.color(common.TextColor)),
+            TextSecondaryColor=rgb(common.color(common.TextSecondaryColor)),
+            TextSelectedColor=rgb(common.color(common.TextSelectedColor)),
+            TextDisabledColor=rgb(common.color(common.TextDisabledColor)),
+            GreenColor=rgb(common.color(common.GreenColor)),
+            RedColor=rgb(common.color(common.RedColor)),
+            SeparatorColor=rgb(common.color(common.SeparatorColor)),
+            BlueColor=rgb(common.color(common.BlueColor)),
+            OpaqueColor=rgb(common.color(common.OpaqueColor)),
+            branch_closed=images.ImageCache.get_rsc_pixmap(
                 'branch_closed', None, None, get_path=True
             ),
-            BRANCH_OPEN=images.ImageCache.get_rsc_pixmap(
+            branch_open=images.ImageCache.get_rsc_pixmap(
                 'branch_open', None, None, get_path=True
             ),
-            CHECKED=images.ImageCache.get_rsc_pixmap(
+            check=images.ImageCache.get_rsc_pixmap(
                 'check', None, None, get_path=True
             ),
-            UNCHECKED=images.ImageCache.get_rsc_pixmap(
+            close=images.ImageCache.get_rsc_pixmap(
                 'close', None, None, get_path=True
-            ),
+            )
         )
     except KeyError as err:
         from . import log
-        msg = 'Looks like there might be an error in the stylesheet file: {}'.format(
-            err
-        )
+        msg = f'Looks like there might be an error in the stylesheet file: {err}'
         log.error(msg)
-        raise KeyError(msg)
+        raise
 
     common.stylesheet = qss
     widget.setStyleSheet(common.stylesheet)

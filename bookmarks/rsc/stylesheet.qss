@@ -1,110 +1,95 @@
 QWidget {{
-	background-color: {BG};
-	color: {TEXT};
+	font-family: "{PrimaryFont}";
+	font-size: {FontSizeMedium}px;
+	background-color: {BackgroundColor};
+	color: {TextColor};
 	border-width: 0;
 	border: none;
 	margin: 0;
 	padding: 0;
 	outline: 0;
-	font-family: "{PRIMARY_FONT}";
-	font-size: {FontSizeMedium}px;
-	selection-color: rgba(255,255,255,255);
+	selection-color: white;
 	selection-background-color: rgba(250,250,255,50);
+	border: {HeightSeparator}px solid transparent;
 }}
 
 QWidget:disabled {{
-	color: {DISABLED_TEXT};
+	color: {TextDisabledColor};
 }}
+QWidget:focus {{
+	border: {HeightSeparator}px solid {BlueColor};
+}}
+
 
 QStackedWidget {{
-	font-family: "{PRIMARY_FONT}";
-	font-size: {FontSizeMedium}px;
-	background-color: {SEPARATOR};
+	background-color: {SeparatorColor};
 }}
-QStackedWidget:focus {{
-	border-color: {BLUE};
-}}
+
 
 QGroupBox {{
-	font-family: "{PRIMARY_FONT}";
-	font-size: {FontSizeMedium}px;
-	border: {HeightSeparator}px solid {TRANSPARENT_BLACK};
-	border-radius: {RADIUS}px;
-	background-color: {TRANSPARENT_BLACK};
-}}
-QGroupBox::title {{
-	font-family: "{PRIMARY_FONT}";
+	font-family: "{SecondaryFont}";
 	font-size: {FontSizeSmall}px;
-	color: {SECONDARY_TEXT};
-  subcontrol-origin: margin;
-  subcontrol-position: top center; /* position at the top center */
-  margin: 0 {RADIUS}px;
-}}
-QGroupBox:focus {{
-	border: {HeightSeparator}px solid {BLUE};
-}}
+	border: {HeightSeparator}px solid {OpaqueColor};
+	border-radius: {WidthIndicator1}px;
+	background-color: {OpaqueColor};
 
-QSplitter:handle {{
-	border: {HeightSeparator}px solid {TRANSPARENT_BLACK};
+}}
+QGroupBox::!title {{
+	color: {TextDisabledColor};
+    subcontrol-origin: padding;
+    subcontrol-position: top middle;
 }}
 
 QStatusBar {{
-	font-family: "{PRIMARY_FONT}";
 	font-size: {FontSizeSmall}px;
-	color: {TEXT};
-	background-color: {SEPARATOR};
-	padding: {RADIUS}px;
-	margin: {RADIUS}px;
+	color: {TextColor};
+	background-color: {SeparatorColor};
+	padding: {WidthIndicator1}px;
+	margin: {WidthIndicator1}px;
 }}
 QStatusBar::item {{
-	font-family: "{PRIMARY_FONT}";
-	font-size: {FontSizeMedium}px;
 	text-align: center;
-	padding: {RADIUS}px;
-	margin: {RADIUS}px;
+	padding: {WidthIndicator1}px;
+	margin: {WidthIndicator1}px;
 	border: none;
 }}
 
 
 QCheckBox {{
-	font-family: "{PRIMARY_FONT}";
-	font-size: {FontSizeMedium}px;
 	height: {FontSizeLarge}px;
-	border-radius: {RADIUS}px;
-	background-color: {DARK_BG};
+	border-radius: {WidthIndicator1}px;
+	background-color: {BackgroundDarkColor};
 	margin: 0;
-	padding: {RADIUS_SM}px;
-	color: {SECONDARY_TEXT};
+	padding: {WidthIndicator}px;
+	color: {TextSecondaryColor};
 }}
 QCheckBox::indicator {{
-	height: {FontSizeMedium}px;
-	width: {FontSizeMedium}px;
-	border-radius: {RADIUS}px;
+	height: {FontSizeSmall}px;
+	width: {FontSizeSmall}px;
+	border-radius: {WidthIndicator1}px;
 }}
 QCheckBox::indicator:unchecked {{
-	/* image: url({UNCHECKED}); */
-	background-color: {SEPARATOR};
+	/* image: url({close}); */
+	background-color: {SeparatorColor};
 }}
 QCheckBox::indicator:checked  {{
-	/* image: url({CHECKED}); */
-	background-color: {GREEN};
+	/* image: url({check}); */
+	background-color: {GreenColor};
 }}
 QCheckBox:checked  {{
-	color: {SELECTED_TEXT};
+	color: {TextSelectedColor};
 }}
 
 
 QRadioButton {{
-	font-family: "{PRIMARY_FONT}";
-	font-size: {FontSizeMedium}px;
-	color: {SECONDARY_TEXT};
-	background-color: {TRANSPARENT};
+	color: {TextSecondaryColor};
+	background-color: transparent;
 	margin: 0;
-	padding: {RADIUS}px;
+	padding: {WidthIndicator1}px;
 }}
 QRadioButton:disabled {{
-	color: {DISABLED_TEXT};
-	background-color: {DARK_BG};
+	color: {TextDisabledColor};
+	background-color: {BackgroundDarkColor};
 }}
 QRadioButton::indicator {{
 	height: {FontSizeMedium}px;
@@ -113,323 +98,310 @@ QRadioButton::indicator {{
 	border-radius: {HeightSeparator}px;
 }}
 QRadioButton::indicator:unchecked {{
-	background-color: {DARK_BG};
+	background-color: {BackgroundDarkColor};
 }}
 QRadioButton::indicator:checked  {{
-	background-color: {SECONDARY_TEXT};
+	background-color: {TextSecondaryColor};
 }}
 
 
 QPushButton {{
-	font-family: "{PRIMARY_FONT}";
-	font-size: {FontSizeMedium}px;
-	color: {TEXT};
+	color: {TextColor};
 	text-align: center;
 	padding-left: {FontSizeMedium}px;
 	padding-right: {FontSizeMedium}px;
-	border-style: none;
-	min-height: {SMALL_ROW_HEIGHT}px;
-	background-color: {SELECTED_BG};
-	border-radius: {RADIUS_SM}px;
+	height: {SmallHeight}px;
+	background-color: {BackgroundDarkColor};
+	border-radius: {WidthIndicator}px;
+	border: {HeightSeparator}px solid {OpaqueColor};
 }}
 QPushButton:disabled {{
-	color: {SECONDARY_TEXT};
-	background-color: {DARK_BG};
-	border: {HeightSeparator}px solid {DARK_BG};
+	color: {TextSecondaryColor};
+	background-color: {BackgroundDarkColor};
+	border: {HeightSeparator}px solid {BackgroundDarkColor};
 }}
 QPushButton:hover {{
-	color: {SELECTED_TEXT};
-	background-color: {SELECTED_BG};
-	border: {HeightSeparator}px solid {SELECTED_BG};
+	color: {TextSelectedColor};
+	background-color: {BackgroundLightColor};
+	border: {HeightSeparator}px solid {BackgroundLightColor};
 }}
 QPushButton:pressed {{
-	color: {SELECTED_TEXT};
-	background-color: {DARK_BG};
-	border: {HeightSeparator}px solid {DARK_BG};
-}}
-QPushButton:focus {{
-	border: {HeightSeparator}px solid {BLUE};
+	color: {TextSelectedColor};
+	background-color: {BackgroundDarkColor};
+	border: {HeightSeparator}px solid {BackgroundDarkColor};
 }}
 
 
 QComboBox {{
-	font-family: "{PRIMARY_FONT}";
-	font-size: {FontSizeMedium}px;
-	color: {TEXT};
+	color: {TextColor};
 	text-align: left;
 	padding-left: {FontSizeMedium}px;
 	padding-right: {FontSizeMedium}px;
 	border-style: solid;
-	border: {HeightSeparator}px solid {TRANSPARENT_BLACK};
-	background-color: {DARK_BG};
-	height: {SMALL_ROW_HEIGHT}px;
-	border-radius: {RADIUS}px;
+	border: {HeightSeparator}px solid {OpaqueColor};
+	background-color: {BackgroundDarkColor};
+	height: {SmallHeight}px;
+	border-radius: {WidthIndicator1}px;
+	border: {HeightSeparator}px solid {OpaqueColor};
 }}
-QComboBox:focus {{
-	border: {HeightSeparator}px solid {BLUE};
+QComboBox:hover {{
+    color: {TextSelectedColor};
 }}
-
+QComboBox:disabled {{
+	color: {TextDisabledColor};
+	background-color: {BackgroundDarkColor};
+}}
+QComboBox:on {{
+	color: {TextDisabledColor};
+	background-color: {SeparatorColor};
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}}
 QComboBox::drop-down {{
-	font-family: "{PRIMARY_FONT}";
-	font-size: {FontSizeMedium}px;
 	width: 0;
 	height: 0;
 	padding: 0;
 	margin: {HeightSeparator}px;
 	border-width: 0;
 	border-style: none;
-	border-radius: {RADIUS_SM}px;
+	border-radius: 0px;
+}}
+QComboBox QListView {{
+	border-radius: 0px;
 }}
 QComboBox QListView::item {{
-	font-family: "{PRIMARY_FONT}";
-	font-size: {FontSizeMedium}px;
-	color: {TEXT};
-	height: {SMALL_ROW_HEIGHT}px;
-	min-height: {SMALL_ROW_HEIGHT}px;
-	background-color: {DARK_BG};
-	padding-left: {RADIUS_SM}px;
+	color: {TextColor};
+	height: {SmallHeight}px;
+	min-height: {SmallHeight}px;
+	background-color: {BackgroundDarkColor};
+	padding-left: {WidthIndicator}px;
 }}
 QComboBox QListView::item:hover {{
-	font-family: "{PRIMARY_FONT}";
-	font-size: {FontSizeMedium}px;
-	color: {SELECTED_TEXT};
-	background-color: {SELECTED_BG};
-}}
-
-QComboBox:hover {{
-		color: {SELECTED_TEXT};
-}}
-QComboBox:disabled {{
-	color: {DISABLED_TEXT};
-	background-color: {DARK_BG};
-}}
-QComboBox:on {{
-	color: {DISABLED_TEXT};
-	background-color: {TRANSPARENT_BLACK};
+	color: {TextSelectedColor};
+	background-color: {BackgroundLightColor};
 }}
 
 
-QLineEdit {{
-	font-family: "{PRIMARY_FONT}";
-	font-size: {FontSizeMedium}px;
-	background-color: {DARK_BG};
-	border: none;
-	min-height: {SMALL_ROW_HEIGHT}px;
-	border-radius: {HeightSeparator}px;
-	padding: {RADIUS}px;
+QLineEdit,
+QTextEdit {{
+	background-color: {BackgroundDarkColor};
+	height: {SmallHeight}px;
+	max-height: {SmallHeight}px;
+	min-height: {SmallHeight}px;
+	border-radius: {WidthIndicator1}px;
+	margin: 0;
+	padding-left: {WidthIndicator}px;
+	padding-right: {WidthIndicator}px;
 }}
+QTextEdit:disabled,
 QLineEdit:disabled {{
-	background-color: {DARK_BG};
-	color: {DISABLED_TEXT};
-}}
-
-.QTextEdit {{
-	font-family: "{PRIMARY_FONT}";
-	font-size: {FontSizeMedium}px;
-	background-color: {DARK_BG};
-	border: none;
-	border-radius: {HeightSeparator}px;
-	padding: {RADIUS}px;
-}}
-.QTextEdit:disabled {{
-	background-color: {DARK_BG};
-	color: {DISABLED_TEXT};
+	background-color: {BackgroundDarkColor};
 }}
 
 QScrollBar {{
-	font-family: "{PRIMARY_FONT}";
-	font-size: {FontSizeMedium}px;
-	background: {SEPARATOR};
-	width: {SCROLLBAR_SIZE}px;
-	height: {SCROLLBAR_SIZE}px;
+	background: {SeparatorColor};
+	width: {WidthIndicator2}px;
+	height: {WidthIndicator2}px;
 }}
 QScrollBar::handle {{
-	background: {DARK_BG};
+	background: {BackgroundDarkColor};
 	border: none;
-	min-height: {SCROLLBAR_MINHEIGHT}px;
+	min-height: {WidthMargin3}px;
 }}
-
 QScrollBar::add-page,
 QScrollBar::add-line,
 QScrollBar::sub-page,
 QScrollBar::up-arrow,
 QScrollBar::down-arrow,
 QScrollBar::sub-line {{
-	background: {SEPARATOR};
+	background: {SeparatorColor};
 }}
 
 
 QTableWidget,
+QTableView,
 QListWidget,
 QListView {{
-	border-radius: {RADIUS}px;
-	font-family: "{PRIMARY_FONT}";
-	font-size: {FontSizeMedium}px;
-	background: {DARK_BG};
+	border-radius: {WidthIndicator1}px;
+	background: {BackgroundDarkColor};
 }}
 QTableWidget::item,
+QTableView::item,
 QListWidget::item,
 QListView::item {{
-	font-family: "{PRIMARY_FONT}";
-	font-size: {FontSizeMedium}px;
-	outline: 0;
-	color: {TEXT};
-  background: {BG};
-	border-bottom: {HeightSeparator}px solid {TRANSPARENT_BLACK};
+    outline: 0;
+    color: {TextColor};
+    background: {BackgroundColor};
+    border-bottom: {HeightSeparator}px solid {OpaqueColor};
 }}
 QTableWidget::item:hover,
+QTableView::item:hover,
 QListWidget::item:hover,
 QListView::item:hover {{
-  background: {SELECTED_BG};
+    background: {BackgroundLightColor};
 }}
 QTableWidget::item:selected,
+QTableView::item:selected,
 QListWidget::item:selected,
 QListView::item:selected {{
-	background: {SELECTED_BG};
+	background: {BackgroundLightColor};
 }}
 QTableWidget::item:selected:hover,
+QTableView::item:selected:hover,
 QListWidget::item:selected:hover,
 QListView::item:selected:hover {{
-	background: {SELECTED_BG};
+	background: {BackgroundLightColor};
 }}
 QTableWidget::item:disabled,
+QTableView::item:disabled,
 QListWidget::item:disabled,
 QListView::item:disabled {{
-  color: {DISABLED_TEXT};
-	background: {TRANSPARENT};
+  color: {TextDisabledColor};
+	background: transparent;
 }}
 QTableWidget::indicator,
 QListWidget::indicator,
 QListView::indicator {{
 	width: {FontSizeMedium}px;
 	height: {FontSizeMedium}px;
-	border-radius: {RADIUS}px;
-	background-color: {DARK_BG};
-	margin-left: {RADIUS}px;
-	margin-right: {RADIUS}px;
+	border-radius: {WidthIndicator1}px;
+	background-color: {BackgroundDarkColor};
+	margin-left: {WidthIndicator1}px;
+	margin-right: {WidthIndicator1}px;
 	subcontrol-position: center;
 }}
 QTableWidget::indicator:checked,
 QListWidget::indicator:checked,
 QListView::indicator:checked {{
-	background: {GREEN};
+	background: {GreenColor};
 }}
 
 TableWidget {{
-	background: {TRANSPARENT};
-	background-color: {TRANSPARENT};
-	selection-background-color: {TRANSPARENT};
+	background: transparent;
+	background-color: transparent;
+	selection-background-color: transparent;
 }}
 TableWidget::item:selected,
 TableWidget::item:hover,
 TableWidget::item:disabled,
 TableWidget::item {{
 		padding: {WidthIndicator}px;
-		background-color: {TRANSPARENT};
-		background: {TRANSPARENT};
+		background-color: transparent;
+		background: transparent;
 }}
 
 QHeaderView {{
-    font-family: "{PRIMARY_FONT}";
+    font-family: "{SecondaryFont}";
 	border: none;
-	border-style: none;
+	background-color: rgba(0,0,10,30);
+    border-top-left-radius: {WidthIndicator}px;
+    border-top-right-radius: {WidthIndicator}px;
+    border-bottom: 1px solid rgba(0,0,0,50);
 }}
 QHeaderView::section {{
-	font-family: "{PRIMARY_FONT}";
+	font-family: "{SecondaryFont}";
 	font-size: {FontSizeSmall}px;
-	background-color: {TRANSPARENT};
+	background-color: transparent;
 	alignment: center;
 	text-align: center;
-	color: {SECONDARY_TEXT};
-	border: none;
-	border-style: none;
+	color: rgba(170,170,175,255);
+    border: none;
+	border-right: 1px solid rgba(0,0,0,50);
 }}
 
 
+QTreeWidget,
 QTreeView {{
-	font-family: "{PRIMARY_FONT}";
 	font-size: {FontSizeMedium}px;
-	background-color: {DARK_BG};
+	background-color: {BackgroundDarkColor};
 	border: none;
 }}
+QTreeWidget::item,
 QTreeView::item {{
 	border: none;
 }}
+QTreeWidget::item:hover,
 QTreeView::item:hover {{
-  background: {BG};
+  background: {BackgroundColor};
 }}
+QTreeWidget::item:focus,
 QTreeView::item:focus {{
-  background: {TRANSPARENT};
+  background: transparent;
 }}
+QTreeWidget::item:selected,
 QTreeView::item:selected {{
-	background: {SELECTED_BG};
+	background: {BackgroundLightColor};
 }}
+QTreeWidget:branch
 QTreeView:branch {{
-	background-color: {DARK_BG};
+	background-color: {BackgroundDarkColor};
 	border: none;
 	border-image: none;
 }}
+QTreeWidget::branch:focus,
 QTreeView::branch:focus {{
-  background: {TRANSPARENT};
+  background: transparent;
 }}
+QTreeWidget:branch:selected,
 QTreeView:branch:selected {{
-	background: {SELECTED_BG};
+	background: {BackgroundLightColor};
 }}
+QTreeWidget:branch:!open:has-children,
 QTreeView:branch:!open:has-children {{
-  image: url("{BRANCH_CLOSED}");
+  image: url("{branch_closed}");
 }}
+QTreeWidget:branch:open:has-children:!has-siblings,
+QTreeWidget:branch:open:has-children:has-siblings,
 QTreeView:branch:open:has-children:!has-siblings,
 QTreeView:branch:open:has-children:has-siblings {{
-  image: url("{BRANCH_OPEN}");
+  image: url("{branch_open}");
 }}
 
 QLabel {{
-	font-family: "{PRIMARY_FONT}";
 	font-size: {FontSizeMedium}px;
-	background-color: {TRANSPARENT};
+	background-color: transparent;
 }}
 QLabel:disabled {{
-	background-color: {TRANSPARENT};
-	color: {DISABLED_TEXT};
+	background-color: transparent;
+	color: {TextDisabledColor};
 }}
 
 QMenu {{
-	font-family: "{PRIMARY_FONT}";
 	font-size: {FontSizeMedium}px;
-  background-color: {DARK_BG};
+  background-color: {BackgroundDarkColor};
 	menu-scrollable: 1;
-	icon-size: {CONTEXT_MENU_HEIGHT}px;
+	icon-size: {WidthMargin2}px;
 }}
 QMenu::separator {{
 	height: {HeightSeparator}px;
 	margin-top: {WidthIndicator}px;
 	margin-bottom: {WidthIndicator}px;
-  background-color: {TRANSPARENT_BLACK};
-  color: {TRANSPARENT};
+  background-color: {OpaqueColor};
+  color: transparent;
 	min-width: 1000px;
 }}
 QMenu::item {{
-	height: {CONTEXT_MENU_HEIGHT}px;
+	height: {WidthMargin2}px;
 	margin: 0px;
 	padding-right: {WidthMargin}px;
 	padding-left: {WidthMargin}px;
 }}
 QMenu::icon {{
-	padding: {CONTEXT_MENU_ICON_PADDING}px;
+	padding: {WidthMargin}px;
 }}
 
 QMenu::item:selected {{
-	color: {SELECTED_TEXT};
-  background-color: {SELECTED_BG};
+	color: {TextSelectedColor};
+  background-color: {BackgroundLightColor};
 }}
 QMenu::item:disabled {{
-	color: {DISABLED_TEXT};
-  background-color: {TRANSPARENT_BLACK};
+	color: {TextDisabledColor};
+  background-color: {OpaqueColor};
 }}
 QMenu::right-arrow {{
   margin: 0;
 	padding-right: {WidthMargin}px;
-  image: url({BRANCH_CLOSED});
+  image: url({branch_closed});
   height: {WidthMargin}px;
   width: {WidthMargin}px;
 }}
@@ -442,62 +414,103 @@ QMenu::shortcut {{
 
 QToolTip {{
 	opacity: 200;
-	font-family: "{SECONDARY_FONT}";
+	font-family: "{SecondaryFont}";
 	font-size: {FontSizeSmall}px;
-  background-color: {DARK_BG};
-	padding: {RADIUS}px;
-	color: {SECONDARY_TEXT};
-	border: {HeightSeparator}px solid {SEPARATOR};
+  background-color: {BackgroundDarkColor};
+	padding: {WidthIndicator1}px;
+	color: {TextSecondaryColor};
+	border: {HeightSeparator}px solid {SeparatorColor};
 }}
+
+QProgressBar {{
+	border: {HeightSeparator}px solid {SeparatorColor};
+	border-radius: {WidthIndicator1}px;
+	background-color: {BackgroundDarkColor};
+	text-align: center;
+}}
+
+QProgressBar::chunk {{
+    background-color: {GreenColor};
+    width: {WidthIndicator}px;
+		margin: 0;
+}}
+
+QTableView {{
+    gridline-color: {SeparatorColor};
+}}
+
+QTabWidget::pane {{ /* The tab widget frame */
+    border-top: {HeightSeparator}px solid {OpaqueColor};
+}}
+
+QTabWidget::tab-bar {{
+    left: {WidthIndicator1}px;
+    padding: {WidthIndicator}px;
+}}
+
+QTabBar::tab {{
+    background: {OpaqueColor};
+    color: {TextDisabledColor};
+    border: none;
+    border-style: none;
+    border-top-left-radius: {WidthIndicator1}px;
+    border-top-right-radius: {WidthIndicator1}px;
+    padding: {WidthIndicator1}px;
+    margin-left:{HeightSeparator}px;
+    margin-right:{HeightSeparator}px;
+}}
+QTabBar::tab:selected, QTabBar::tab:hover {{
+    color: {TextSelectedColor};
+    background: {BackgroundColor};
+}}
+
+
 
 CheckBoxButton,
 DragIndicatorButton {{
-	font-family: "{PRIMARY_FONT}";
 	font-size: {FontSizeMedium}px;
-	background-color: {TEXT};
+	background-color: {TextColor};
 	margin: 0 0 0 0;
 	padding: 0 0 0 0;
 }}
 CheckBoxButton:disabled,
 DragIndicatorButton:disabled {{
-	background-color: {TRANSPARENT};
+	background-color: transparent;
 }}
 
 TodoEditors,
 TodoItemWidget,
 TodoItemEditor {{
-	font-family: "{PRIMARY_FONT}";
-	font-size: {FontSizeMedium}px;
-	color: {DARK_BG};
-	background-color: {TRANSPARENT};
-	border-radius: {RADIUS}px;
-	border: {HeightSeparator}px solid {TRANSPARENT};
+	color: {BackgroundDarkColor};
+	background-color: transparent;
+	border-radius: {WidthIndicator1}px;
+	border: {HeightSeparator}px solid transparent;
 }}
 TodoEditors:disabled,
 TodoItemWidget:disabled,
 TodoItemEditor:disabled {{
-	color: {GREEN};
+	color: {GreenColor};
 }}
 TodoItemEditor:focus {{
-	border: {HeightSeparator}px solid {TRANSPARENT_BLACK};
+	border: {HeightSeparator}px solid transparent;
 }}
 
 TodoEditorWidget QScrollBar {{
-	background: {TRANSPARENT};
+	background: transparent;
 	border: none;
 	border-radius: 0;
-	width:{RADIUS}px;
-	height: {RADIUS}px;
+	width:{WidthIndicator1}px;
+	height: {WidthIndicator1}px;
 }}
 TodoEditorWidget QScrollBar:vertical,
 TodoEditorWidget QScrollBar:horizontal {{
-	background: {TEXT};
+	background: {TextColor};
 	border: none;
 }}
 TodoEditorWidget QScrollBar::handle {{
-	background: {SECONDARY_TEXT};
+	background: {TextSecondaryColor};
 	border: none;
-	border-radius: {RADIUS}px;
+	border-radius: {WidthIndicator1}px;
 	border: none;
 	max-height: 250;
 	min-height: {WidthMargin}px;
@@ -509,37 +522,32 @@ TodoEditorWidget QScrollBar::add-line,
 TodoEditorWidget QScrollBar::up-arrow,
 TodoEditorWidget QScrollBar::down-arrow,
 TodoEditorWidget QScrollBar::sub-line {{
-	background: {TEXT};
+	background: {TextColor};
 	border: none;
 	border-radius: 0;
 }}
 
 LineEdit,
 LineEdit:disabled {{
-    background-color: {TRANSPARENT};
-    font-family: "{PRIMARY_FONT}";
-    font-size: {FontSizeMedium}px;
-    border-bottom: {HeightSeparator}px solid {TRANSPARENT};
+    background-color: transparent;
+    border-bottom: {HeightSeparator}px solid transparent;
     border-radius: 0;
-    color: {TEXT};
+    color: {TextColor};
 }}
 
 LineEdit:disabled {{
-	color: {DISABLED_TEXT};
+	color: {TextDisabledColor};
 }}
 
 
 LineEdit:!read-only:focus{{
-    border-bottom: {HeightSeparator}px solid {GREEN};
+    border-bottom: {HeightSeparator}px solid {GreenColor};
 }}
 
 .ListWidget {{
-	border-radius: {RADIUS}px;
-	border: {HeightSeparator}px solid {DARK_BG};
-	border-radius: {RADIUS}px;
-}}
-.ListWidget:focus {{
-		border: {HeightSeparator}px solid {BLUE};
+	border-radius: {WidthIndicator1}px;
+	border: {HeightSeparator}px solid {BackgroundDarkColor};
+	border-radius: {WidthIndicator1}px;
 }}
 
 BasePropertyEditor,
@@ -547,63 +555,16 @@ BasePropertyEditor > QWidget,
 BasePropertyEditor > QScrollArea,
 BasePropertyEditor > QScrollArea > QWidget,
 BasePropertyEditor > QScrollArea > QWidget > QWidget {{
-	background: {BG};
-	background-color: {BG};
+	background: {BackgroundColor};
+	background-color: {BackgroundColor};
 }}
 
+MayaWidget,
 MainWidget  {{
-	font-family: "{PRIMARY_FONT}";
-	font-size: {FontSizeMedium}px;
-	background-color: {SEPARATOR};
+	background-color: {SeparatorColor};
 }}
-MayaWidget {{
-	font-family: "{PRIMARY_FONT}";
-	font-size: {FontSizeMedium}px;
-	background-color: {SEPARATOR};
-}}
-
 QWidget#mainRow {{
-	background-color: {DARK_BG};
+	background-color: {BackgroundDarkColor};
 }}
 
-QProgressBar {{
-	border: {HeightSeparator}px solid {SEPARATOR};
-	border-radius: {RADIUS}px;
-	background-color: {DARK_BG};
-	text-align: center;
-}}
 
-QProgressBar::chunk {{
-    background-color: {GREEN};
-    width: {WidthIndicator}px;
-		margin: 0;
-}}
-
-QTableView {{
-    gridline-color: {SEPARATOR};
-}}
-
-QTabWidget::pane {{ /* The tab widget frame */
-    border-top: {HeightSeparator}px solid {TRANSPARENT_BLACK};
-}}
-
-QTabWidget::tab-bar {{
-    left: {RADIUS}px;
-    padding: {WidthIndicator}px;
-}}
-
-QTabBar::tab {{
-    background: {TRANSPARENT_BLACK};
-    color: {DISABLED_TEXT};
-    border: none;
-    border-style: none;
-    border-top-left-radius: {RADIUS}px;
-    border-top-right-radius: {RADIUS}px;
-    padding: {RADIUS}px;
-    margin-left:{HeightSeparator}px;
-    margin-right:{HeightSeparator}px;
-}}
-QTabBar::tab:selected, QTabBar::tab:hover {{
-    color: {SELECTED_TEXT};
-    background: {BG};
-}}

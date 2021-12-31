@@ -201,7 +201,7 @@ def _get_info_label(job, asset, task, output_path, startframe, endframe):
 
 def _get_progress_bar(startframe, endframe):
     v = QtWidgets.QProgressDialog()
-    common.set_custom_stylesheet(v)
+    common.set_stylesheet(v)
     v.setFixedWidth(common.size(common.DefaultWidth))
     v.setLabelText('FFMpeg is converting, please wait...')
     v.setMinimum(int(startframe))

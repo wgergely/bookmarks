@@ -35,7 +35,7 @@ class AddServerEditor(QtWidgets.QDialog):
 
     def _create_ui(self):
         if not self.parent():
-            common.set_custom_stylesheet(self)
+            common.set_stylesheet(self)
 
         QtWidgets.QVBoxLayout(self)
 
@@ -70,7 +70,7 @@ class AddServerEditor(QtWidgets.QDialog):
 
         completer = QtWidgets.QCompleter(items, parent=self)
         completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
-        common.set_custom_stylesheet(completer.popup())
+        common.set_stylesheet(completer.popup())
         self.editor.setCompleter(completer)
 
     def _connect_signals(self):

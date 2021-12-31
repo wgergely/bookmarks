@@ -133,6 +133,7 @@ AGNOSTIC_CAPTURE_FILE = '{workspace}/{capture_folder}/latest/{asset}_capture_{' 
                         'frame}.{ext}'
 
 EXPORT_FILE_RULES = {
+    'assexport': 'ass',
     'ass export': 'ass',
     'alembicexport': 'abc',
     'alembic export': 'abc',

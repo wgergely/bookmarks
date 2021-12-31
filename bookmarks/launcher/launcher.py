@@ -61,7 +61,7 @@ class LauncherItemEditor(QtWidgets.QDialog):
 
     def _create_ui(self):
         if not self.parent():
-            common.set_custom_stylesheet(self)
+            common.set_stylesheet(self)
 
         o = common.size(common.WidthMargin) * 0.5
 

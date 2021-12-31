@@ -76,7 +76,7 @@ class MessageBox(QtWidgets.QDialog):
         super().__init__(parent=parent)
 
         if parent is None:
-            common.set_custom_stylesheet(self)
+            common.set_stylesheet(self)
 
         # labels
         self.no_buttons = False
@@ -302,7 +302,7 @@ class MessageBox(QtWidgets.QDialog):
         return QtCore.QSize(
             common.size(common.DefaultHeight),
             common.size(common.DefaultHeight) * 0.5
-            )
+        )
 
     def eventFilter(self, widget, event):
         if widget != self:
@@ -444,7 +444,7 @@ class PaintedButton(QtWidgets.QPushButton):
     """Custom button class."""
 
     def __init__(
-            self, text, height=common.size(common.HeightRow), width=None, parent=None
+            self, text, height=None, width=None, parent=None
     ):
         super(PaintedButton, self).__init__(text, parent=parent)
         if height:
@@ -527,7 +527,7 @@ class PaintedLabel(QtWidgets.QLabel):
         self.setFixedWidth(
             metrics.horizontalAdvance(self._text) +
             common.size(common.WidthIndicator) * 2
-            )
+        )
 
     def paintEvent(self, event):
         """Custom paint event to use the aliased paint method."""
@@ -875,7 +875,7 @@ class ListWidget(QtWidgets.QListWidget):
     def __init__(self, default_message='No items', parent=None):
         super().__init__(parent=parent)
         if not self.parent():
-            common.set_custom_stylesheet(self)
+            common.set_stylesheet(self)
 
         self.default_message = default_message
 
@@ -967,7 +967,7 @@ class ListViewWidget(QtWidgets.QListView):
     def __init__(self, default_message='No items', parent=None):
         super().__init__(parent=parent)
         if not self.parent():
-            common.set_custom_stylesheet(self)
+            common.set_stylesheet(self)
 
         self.default_message = default_message
 
@@ -1236,6 +1236,8 @@ def add_description(
     label = Label(text, color=color, parent=parent)
     row.layout().addWidget(label, 1)
     parent.layout().addWidget(row, 1)
+    row.setFocusPolicy(QtCore.Qt.NoFocus)
+    label.setFocusPolicy(QtCore.Qt.NoFocus)
     return row
 
 
@@ -1384,7 +1386,7 @@ class GalleryWidget(QtWidgets.QDialog):
 
     def _create_ui(self):
         if not self.parent():
-            common.set_custom_stylesheet(self)
+            common.set_stylesheet(self)
 
         QtWidgets.QVBoxLayout(self)
         o = common.size(common.WidthMargin)

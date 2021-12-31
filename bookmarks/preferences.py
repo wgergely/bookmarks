@@ -91,7 +91,7 @@ class AboutWidget(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         if not self.parent():
-            common.set_custom_stylesheet(self)
+            common.set_stylesheet(self)
 
         self.label = None
         self.ok_button = None

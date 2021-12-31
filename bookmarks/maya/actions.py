@@ -644,6 +644,12 @@ def apply_viewport_preset(k):
 def import_camera_preset():
     path = common.get_rsc('maya/camera.ma')
     if cmds.objExists('camera'):
-        print('An object named "camera" already exists. Nothing imported.')
+        print('An object named "camera" already exists. Nothing was imported.')
         return
     cmds.file(path, i=True, defaultNamespace=True)
+
+
+@QtCore.Slot()
+def show_shader_tool():
+    from . import shadertool
+    shadertool.show()

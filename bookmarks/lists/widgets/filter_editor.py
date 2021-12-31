@@ -76,7 +76,7 @@ class FilterEditor(QtWidgets.QDialog):
 
         completer = QtWidgets.QCompleter(v, parent=self.editor)
         completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
-        common.set_custom_stylesheet(completer.popup())
+        common.set_stylesheet(completer.popup())
 
         self.editor.setCompleter(completer)
 

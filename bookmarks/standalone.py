@@ -310,7 +310,7 @@ class BookmarksAppWindow(main.MainWidget):
             8: QtCore.Qt.SizeHorCursor,
         }
 
-        common.set_custom_stylesheet(self)
+        common.set_stylesheet(self)
 
         self.installEventFilter(self)
         self.setMouseTracking(True)

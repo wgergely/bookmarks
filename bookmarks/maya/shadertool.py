@@ -781,6 +781,14 @@ class ShadersWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
                 ignoreShape=False
             )
 
+    def paintEvent(self, event):
+        painter = QtGui.QPainter()
+        painter.begin(self)
+        painter.setPen(QtCore.Qt.NoPen)
+        painter.setBrush(common.color(common.BackgroundColor))
+        painter.drawRect(self.rect())
+        painter.end()
+
     def showEvent(self, event):
         super().showEvent(event)
         self.shader_view.model().init_data()

@@ -42,6 +42,7 @@ DEFAULT_ITEM_FLAGS = (
         QtCore.Qt.ItemIsEnabled |
         QtCore.Qt.ItemIsSelectable
 )
+DEFAULT_SORT_BY_NAME_ROLE = [str()] * 8
 
 
 def initdata(func):

@@ -85,6 +85,7 @@ class DescriptionEditorWidget(ui.LineEdit):
             return
 
         # Let's set the size based on the size provided by the delegate
+        self.setStyleSheet(f'height: {rectangles[delegate.DataRect].height()}px;')
         self.setGeometry(rectangles[delegate.DataRect])
 
         # Set the text and select it

@@ -319,7 +319,7 @@ class UserSettings(QtCore.QSettings):
 
     def set_bookmarks(self, v):
         common.check_type(v, dict)
-        common.bookmarks = v.copy()
+        common.bookmarks = v
         self.setValue(CurrentUserPicksSection, BookmarksKey, v)
 
     def set_favourites(self, v):
@@ -378,7 +378,5 @@ class UserSettings(QtCore.QSettings):
 
         if section == ActiveSection and common.active_mode == PrivateActivePaths:
             return
-        #     raise RuntimeError('The saved active path cannot be changed when the mode is `PrivateActivePaths`')
-
         super().setValue(k, v)
         super().setValue(k + '_type', type(v).__name__)

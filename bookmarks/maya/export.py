@@ -72,7 +72,6 @@ class SetsComboBox(QtWidgets.QComboBox):
     def init_data(self):
         self.blockSignals(True)
         for k, v in mayabase.get_geo_sets().items():
-            print(v)
             self.addItem(k, userData=v)
         self.blockSignals(False)
 

@@ -342,12 +342,15 @@ class BaseWorker(QtCore.QObject):
         k = model.task()
         t = ref().data_type
 
+        if not ref():
+            return
         d = common.sort_data(
             ref,
             sort_role,
             sort_order
         )
-
+        if not ref():
+            return
         common.set_data(p, k, t, d)
 
         if model.data_type() == t:

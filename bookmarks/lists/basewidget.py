@@ -1282,29 +1282,6 @@ class BaseListWidget(QtWidgets.QListView):
             actions.pick_thumbnail_from_file()
             return
 
-        clickable_rectangles = self.itemDelegate().get_clickable_rectangles(index)
-        if not self.buttons_hidden() and clickable_rectangles:
-            root_dir = []
-            for item in clickable_rectangles:
-                rect, text = item
-
-                if not text or not rect:
-                    continue
-
-                root_dir.append(text)
-                if rect.contains(cursor_position):
-                    p = index.data(common.ParentPathRole)
-                    if len(p) >= 5:
-                        p = p[0:5]
-                    elif len(p) == 3:
-                        p = [p[0], ]
-
-                    path = p.rstrip('/')
-                    root_path = '/'.join(root_dir).strip('/')
-                    path = path + '/' + root_path
-                    actions.reveal(path)
-                    return
-
         if rectangles[delegate.DataRect].contains(cursor_position):
             index = common.get_selected_index(self)
             if not index.isValid():
@@ -1375,7 +1352,7 @@ class BaseInlineIconWidget(BaseListWidget):
 
         for idx, item in enumerate(clickable_rectangles):
             if idx == 0:
-                continue  # First rectanble is always the description editor
+                continue  # First rectangle is always the description editor
 
             rect, text = item
             text = text.lower()
@@ -1387,20 +1364,23 @@ class BaseInlineIconWidget(BaseListWidget):
                 if shift_modifier:
                     # Shift modifier will add a "positive" filter and hide all items
                     # that does not contain the given text.
-                    folder_filter = '"/' + text + '/"'
+                    # folder_filter = '"/' + text + '/"'
+                    folder_filter = text
 
                     if folder_filter in filter_text:
                         filter_text = filter_text.replace(folder_filter, '')
                     else:
-                        filter_text = filter_text + ' ' + folder_filter
+                        filter_text = f'{filter_text} {folder_filter}'
 
                     self.model().set_filter_text(filter_text)
                     self.repaint(self.rect())
                 elif alt_modifier or control_modifier:
                     # The alt or control modifiers will add a "negative filter"
                     # and hide the selected subfolder from the view
-                    folder_filter = '--"/' + text + '/"'
-                    _folder_filter = '"/' + text + '/"'
+                    # folder_filter = '--"/' + text + '/"'
+                    # _folder_filter = '"/' + text + '/"'
+                    folder_filter = f'--"{text}"'
+                    _folder_filter = f'"{text}"'
 
                     if filter_text:
                         if _folder_filter in filter_text:

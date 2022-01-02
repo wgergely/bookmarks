@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-"""Contains various utility methods, and :func:`.convert()`, the main method used to convert a source
+"""Contains various utility methods, and :func:`.convert()`, the main method used
+to convert a source
 image sequence to a movie.
 
-FFMpeg also the associated UI element, :class:`bookmarks.external.ffmpeg_widget.FFMpegWidget`.
+FFMpeg also the associated UI element,
+:class:`bookmarks.external.ffmpeg_widget.FFMpegWidget`.
 
 """
 import os
@@ -19,9 +21,6 @@ from .. import images
 from .. import ui
 
 
-PROGRESS_MATCH = re.compile(r'frame=.+?([0-9]+).+?fps.*')
-
-
 class SafeDict(dict):
     def __missing__(self, key):
         return '{' + key + '}'
@@ -31,7 +30,10 @@ def _safe_format(s, **kwargs):
     return string.Formatter().vformat(s, (), SafeDict(**kwargs))
 
 
-_preset_info = ', pad=ceil(iw/2)*2:ceil(ih/2)*2, drawtext=fontfile={FONT}:text=\'{LABEL}%{{frame_num}}\':start_number={STARTFRAME}:x=10:y=h-lh-10:fontcolor=white:fontsize=ceil(w/50):box=1:boxcolor=black:boxborderw=10'
+_preset_info = ', pad=ceil(iw/2)*2:ceil(ih/2)*2, drawtext=fontfile={FONT}:text=\'{' \
+               'LABEL}%{{frame_num}}\':start_number={' \
+               'STARTFRAME}:x=10:y=h-lh-10:fontcolor=white:fontsize=ceil(' \
+               'w/50):box=1:boxcolor=black:boxborderw=10'
 _preset_x264 = '\
 "{BIN}" \
 -y \
@@ -58,15 +60,19 @@ SIZE_PRESETS = {
         'value': (None, None)
     },
     1: {
+        'name': '720p',
+        'value': (1280, 720)
+    },
+    2: {
         'name': '1080p',
         'value': (1920, 1080)
     },
-    2: {
-        'name': '1620p',
+    3: {
+        'name': f'{int(1080 * 1.5)}p',
         'value': (1920 * 1.5, 1080 * 1.5)
     },
-    3: {
-        'name': '2160p',
+    4: {
+        'name': f'{int(1080 * 2)}p',
         'value': (1920 * 2, 1080 * 2)
     },
 }
@@ -74,7 +80,8 @@ SIZE_PRESETS = {
 PRESETS = {
     0: {
         'name': 'H.264 | MP4 | HQ',
-        'description': 'Creates a H.264 video, can be used to preview or publish image sequence previews',
+        'description': 'Creates a H.264 video, can be used to preview or publish '
+                       'image sequence previews',
         'preset': _safe_format(
             _preset_x264,
             PRESET='slower'
@@ -83,7 +90,8 @@ PRESETS = {
     },
     1: {
         'name': 'H.264 | MP4 | LQ',
-        'description': 'Creates a H.264 video, can be used to preview or publish image sequence previews',
+        'description': 'Creates a H.264 video, can be used to preview or publish '
+                       'image sequence previews',
         'preset': _safe_format(
             _preset_x264,
             PRESET='medium'
@@ -114,21 +122,24 @@ def _get_sequence_start_end(path):
         tuple: The sequence, and first and last frames.
 
     """
+    ext = path.split('.')[-1]
     path = path.replace('\\', '/')
     if common.is_collapsed(path):
         path = common.get_sequence_startpath(path)
 
     seq = common.get_sequence(path)
     if not seq:
-        raise RuntimeError('{} is not a sequence.'.format(path))
+        raise RuntimeError(f'{path} is not a sequence.')
 
     _dir = QtCore.QFileInfo(path).dir()
     if not _dir.exists():
-        raise RuntimeError('{} does not exists.'.format(_dir))
+        raise RuntimeError(f'{_dir} does not exists.')
 
     f = []
     for entry in os.scandir(_dir.path()):
         _path = entry.path.replace('\\', '/')
+        if not _path.endswith(ext):
+            continue
         if not seq.group(1) in _path:
             continue
         _seq = common.get_sequence(_path)
@@ -137,7 +148,8 @@ def _get_sequence_start_end(path):
         f.append(int(_seq.group(2)))
     if not f:
         raise RuntimeError(
-            'Could not find the first frame of the sequence.')
+            'Could not find the first frame of the sequence.'
+        )
 
     return seq, min(f), max(f)
 
@@ -213,8 +225,11 @@ def _get_progress_bar(startframe, endframe):
 
 @common.error
 @common.debug
-def convert(path, preset, server=None, job=None, root=None, asset=None, task=None, size=(None, None),
-            ext='mp4', timecode=False):
+def convert(
+        path, preset, server=None, job=None, root=None, asset=None, task=None,
+        size=(None, None),
+        ext='mp4', timecode=False
+):
     """Start a convert process using ffmpeg.
 
     Args:
@@ -305,8 +320,6 @@ def convert(path, preset, server=None, job=None, root=None, asset=None, task=Non
         lines = []
 
         while proc.poll() is None:
-            QtWidgets.QApplication.instance().processEvents()
-
             if pbar.wasCanceled():
                 proc.kill()
                 pbar.close()
@@ -317,11 +330,14 @@ def convert(path, preset, server=None, job=None, root=None, asset=None, task=Non
                 continue
             lines.append(line)
 
-            match = PROGRESS_MATCH.match(line)
+            match = re.search(
+                r'.*frame=.*?([0-9]+)', line.strip(), flags=re.IGNORECASE
+            )
             if not match:
                 continue
 
             pbar.setValue(int(match.group(1)))
+            QtWidgets.QApplication.instance().processEvents()
 
         pbar.close()
         # Verify the output
@@ -330,8 +346,8 @@ def convert(path, preset, server=None, job=None, root=None, asset=None, task=Non
                 f.write('\n'.join(lines))
 
             ui.ErrorBox(
-                'An error occured converting.',
+                'An error occurred converting.',
                 '\n'.join(lines[-5:])
             ).open()
-            return False
-        return True
+            return None
+    return output_path

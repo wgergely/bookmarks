@@ -576,7 +576,7 @@ class EntityComboBox(QtWidgets.QComboBox):
 
     def __init__(self, items, fixed_height=common.size(common.HeightRow), parent=None):
         super(EntityComboBox, self).__init__(parent=parent)
-
+        self.setView(QtWidgets.QListView())
         if not self.parent():
             common.set_stylesheet(self)
         if fixed_height:

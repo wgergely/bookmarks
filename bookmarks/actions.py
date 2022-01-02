@@ -24,7 +24,7 @@ def edit_persistent_bookmarks():
     """Opens `common.static_bookmarks_template`.
 
     """
-    execute(
+    reveal(
         common.get_rsc(
             f'{common.TemplateResource}/{common.static_bookmarks_template}'
         )
@@ -141,9 +141,7 @@ def remove_bookmark(server, job, root):
 
     k = common.bookmark_key(server, job, root)
     if k not in common.bookmarks:
-        raise RuntimeError(
-            'Key does not seem to match any current bookmarks.'
-        )
+        return
 
     del common.bookmarks[k]
     common.settings.set_bookmarks(common.bookmarks)

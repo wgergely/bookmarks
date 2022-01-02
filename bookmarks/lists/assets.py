@@ -38,50 +38,36 @@ class AssetsWidgetContextMenu(contextmenu.BaseContextMenu):
     @common.debug
     @common.error
     def setup(self):
-        self.title()
-
+        self.extra_menu()
+        self.separator()
         self.show_addasset_menu()
         self.add_file_to_asset_menu()
-
         self.separator()
-
         self.launcher_menu()
-
         self.separator()
-
         self.sg_link_assets_menu()
         self.sg_link_asset_menu()
         self.sg_url_menu()
         self.import_json_menu()
-
         self.separator()
-
         self.bookmark_url_menu()
         self.asset_url_menu()
         self.reveal_item_menu()
         self.copy_menu()
-
         self.separator()
-
         self.edit_active_bookmark_menu()
         self.edit_selected_asset_menu()
         self.asset_clipboard_menu()
         self.notes_menu()
         self.toggle_item_flags_menu()
-
         self.separator()
-
         self.row_size_menu()
         self.sort_menu()
         self.list_filter_menu()
         self.refresh_menu()
-
         self.separator()
-
         self.preferences_menu()
-
         self.separator()
-
         self.window_menu()
         self.quit_menu()
 
@@ -149,7 +135,7 @@ class AssetsModel(basemodel.BaseModel):
                     f'Loading assets ({c} found)...')
                 QtWidgets.QApplication.instance().processEvents()
 
-            filename = entry.name
+            filename = filepath[len(source) + 1:]
             flags = basemodel.DEFAULT_ITEM_FLAGS
 
             if filepath in common.favourites:
@@ -163,7 +149,7 @@ class AssetsModel(basemodel.BaseModel):
             # Beautify the name
             name = get_display_name(filename)
 
-            sort_by_name_role = [0, ] * 8
+            sort_by_name_role = basemodel.DEFAULT_SORT_BY_NAME_ROLE.copy()
             for i, n in enumerate(name.split(u'/')):
                 if i >= 8:
                     break
@@ -235,12 +221,18 @@ class AssetsModel(basemodel.BaseModel):
         except OSError as e:
             log.error(e)
             return
+            yield
 
         for entry in it:
             if entry.name.startswith('.'):
                 continue
             if not entry.is_dir():
                 continue
+            yield entry
+
+        # Studio Aka Pipe entries
+        from ..studioaka import base
+        for entry in base.item_generator(path):
             yield entry
 
     def save_active(self):

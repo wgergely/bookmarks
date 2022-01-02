@@ -91,6 +91,7 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         self.bookmark_editor = None
         self.bookmark_add_button = None
         self.persistent_bookmarks_button = None
+        self.prune_bookmarks_button = None
         self.info_bar = None
 
         self.setObjectName('BookmarksEditorWidget')
@@ -366,6 +367,10 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
             'Edit Persistent Bookmarks'
         )
         row.layout().addWidget(self.persistent_bookmarks_button, 0)
+        self.prune_bookmarks_button = ui.PaintedButton(
+            'Prune Bookmarks'
+        )
+        row.layout().addWidget(self.prune_bookmarks_button, 0)
         row.layout().addWidget(self.done_button, 1)
 
     def _connect_signals(self):
@@ -391,6 +396,9 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
 
         self.persistent_bookmarks_button.clicked.connect(
             actions.edit_persistent_bookmarks
+        )
+        self.prune_bookmarks_button.clicked.connect(
+            actions.prune_bookmarks
         )
 
         self.job_subdir_toggle.stateChanged.connect(
@@ -443,7 +451,7 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         v = common.settings.value(
             common.SettingsSection, common.JobsHaveSubdirs
         )
-        v = QtCore.Qt.UnChecked if v is None else QtCore.Qt.CheckState(v)
+        v = QtCore.Qt.Unchecked if v is None else QtCore.Qt.CheckState(v)
 
         self.job_subdir_toggle.blockSignals(True)
         self.job_subdir_toggle.setCheckState(v)

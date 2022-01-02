@@ -233,7 +233,7 @@ class JobListWidget(ui.ListViewWidget):
         has_subdir = common.settings.value(
             common.SettingsSection, common.JobsHaveSubdirs
         )
-        has_subdir = QtCore.Qt.UnChecked if has_subdir is None else \
+        has_subdir = QtCore.Qt.Unchecked if has_subdir is None else \
             QtCore.Qt.CheckState(
                 has_subdir
             )

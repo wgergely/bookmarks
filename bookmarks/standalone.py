@@ -641,7 +641,7 @@ class BookmarksApp(QtWidgets.QApplication):
 
     def __init__(self, args):
         _set_application_properties()
-        super().__init__(args)
+        super().__init__([__file__, '-platform', 'windows:dpiawareness=2'])
         _set_application_properties(app=self)
         self.setApplicationVersion(__version__)
         self.setApplicationName(common.product)

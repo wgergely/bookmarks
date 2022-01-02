@@ -29,7 +29,6 @@ class TaskFolderContextMenu(contextmenu.BaseContextMenu):
     @common.debug
     @common.error
     def setup(self):
-        self.title()
         self.reveal_item_menu()
         self.copy_menu()
         self.refresh_menu()

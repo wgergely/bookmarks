@@ -19,7 +19,6 @@ from ..tokens import tokens
 from ..threads import threads
 
 FILTER_EXTENSIONS = False
-DEFAULT_SORT_BY_NAME_ROLE = [str()] * 8
 
 
 def add_path_to_mime(mime, path):
@@ -54,7 +53,7 @@ def get_path_elements(name, path, _source_path):
     # to the current task folder
     file_root = path[:path.rfind('/')][len(_source_path) + 1:]
 
-    sort_by_name_role = DEFAULT_SORT_BY_NAME_ROLE.copy()
+    sort_by_name_role = basemodel.DEFAULT_SORT_BY_NAME_ROLE.copy()
     _dir = None
     if file_root:
         # Save the file's parent folder for the file system watcher
@@ -262,53 +261,35 @@ class FilesWidgetContextMenu(contextmenu.BaseContextMenu):
     @common.error
     @common.debug
     def setup(self):
-        self.title()
+        self.extra_menu()
         self.task_folder_toggle_menu()
         self.separator()
-
-        self.window_menu()
-
-        self.separator()
-
         self.launcher_menu()
-
         self.separator()
-
         self.sg_publish_menu()
         self.sg_rv_menu()
         self.sg_url_menu()
-
         self.convert_menu()
-
         self.add_file_menu()
-
         self.separator()
-
         self.bookmark_url_menu()
         self.asset_url_menu()
         self.reveal_item_menu()
         self.copy_menu()
-
         self.separator()
-
         self.edit_active_bookmark_menu()
         self.edit_active_asset_menu()
         self.notes_menu()
         self.toggle_item_flags_menu()
-
         self.separator()
-
         self.row_size_menu()
         self.sort_menu()
         self.list_filter_menu()
         self.refresh_menu()
-
         self.separator()
-
         self.preferences_menu()
-
         self.separator()
-
+        self.window_menu()
         self.quit_menu()
 
 

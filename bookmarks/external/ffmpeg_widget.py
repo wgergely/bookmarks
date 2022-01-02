@@ -36,6 +36,7 @@ def show(source):
 class PresetComboBox(QtWidgets.QComboBox):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+        self.setView(QtWidgets.QListView())
         self.init_data()
 
     def init_data(self):
@@ -48,7 +49,7 @@ class PresetComboBox(QtWidgets.QComboBox):
 class SizeComboBox(QtWidgets.QComboBox):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-
+        self.setView(QtWidgets.QListView())
         self.init_data()
 
     def init_data(self):

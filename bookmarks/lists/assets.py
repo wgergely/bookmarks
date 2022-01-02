@@ -230,11 +230,6 @@ class AssetsModel(basemodel.BaseModel):
                 continue
             yield entry
 
-        # Studio Aka Pipe entries
-        from ..studioaka import base
-        for entry in base.item_generator(path):
-            yield entry
-
     def save_active(self):
         index = self.active_index()
 

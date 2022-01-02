@@ -38,6 +38,7 @@ def show():
 class ScaleWidget(QtWidgets.QComboBox):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
+        self.setView(QtWidgets.QListView())
         self.init_data()
 
     def init_data(self):

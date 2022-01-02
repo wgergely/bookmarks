@@ -63,7 +63,6 @@ monitors = {}
 delegate_paths = {}
 delegate_rectangles = {}
 delegate_text_segments = {}
-delegate_description_rects = {}
 delegate_subdir_rects = {}
 delegate_bg_subdir_rects = {}
 delegate_bg_brushes = {}

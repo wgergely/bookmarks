@@ -220,6 +220,9 @@ def update_active_item(*args):
     t1 = model.data_type()
     t2 = common.FileItem if t1 == common.SequenceItem else common.SequenceItem
 
+    if not all((p, k)):
+        return
+
     for t in (t1, t2):
         if t == common.SequenceItem:
             scene = common.proxy_path(scene)
@@ -234,9 +237,7 @@ def update_active_item(*args):
 
             if scene == s and ref():
                 # Set flag to be active
-                ref()[idx][common.FlagsRole] = ref()[
-                                                   idx][
-                                                   common.FlagsRole] | \
+                ref()[idx][common.FlagsRole] = ref()[idx][common.FlagsRole] | \
                                                common.MarkedAsActive
 
                 if t == t1:
@@ -298,6 +299,7 @@ def import_scene(path, reference=False):
         reference (bool): When `true` the import will be a reference.
 
     """
+
     def get_namespaces_from_path(_path):
         _basename = _path.split('/')[-1]
         _basename = _basename.split('.')[0]

@@ -7,20 +7,20 @@ The `BaseContextMenu` contains all context menu options but the abstract `setup`
 method must be overriden to define which menus will appear.
 
 """
+import collections
 import functools
 import uuid
-import collections
+import weakref
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
+from . import actions
 from . import common
 from . import database
 from . import images
-from . import ui
-
 from . import shortcuts
-from . import actions
-from . external import rv
+from . import ui
+from .external import rv
 from .shotgun import actions as sg_actions
 from .shotgun import shotgun
 
@@ -31,7 +31,8 @@ def key():
 
 
 def _showEvent_override(cls, event):
-    """Private utility method for manually calculating the width of `BaseContextMenu`.
+    """Private utility method for manually calculating the width of
+    `BaseContextMenu`.
 
     I might be misunderstaing how styling menus effect appearance and resulting
     size. What is certain, that QT doesn't seem to be able to display the menus
@@ -57,10 +58,15 @@ def _showEvent_override(cls, event):
             w += CONTEXT_MENU_ICON_PADDING
         if action.text():
             w += metrics.horizontalAdvance(action.text())
-        if action.shortcut() and action.shortcut().toString(format=QtGui.QKeySequence.NativeText):
+        if action.shortcut() and action.shortcut().toString(
+                format=QtGui.QKeySequence.NativeText
+        ):
             w += CONTEXT_MENU_ICON_PADDING
-            w += metrics.horizontalAdvance(action.shortcut().toString(
-                format=QtGui.QKeySequence.NativeText))
+            w += metrics.horizontalAdvance(
+                action.shortcut().toString(
+                    format=QtGui.QKeySequence.NativeText
+                )
+            )
         w += CONTEXT_MENU_HEIGHT
         widths.append(int(w))
 
@@ -155,7 +161,8 @@ class BaseContextMenu(QtWidgets.QMenu):
                 submenu = QtWidgets.QMenu(k, parent=parent)
                 submenu.create_menu = self.create_menu
                 submenu.showEvent = functools.partial(
-                    _showEvent_override, submenu)
+                    _showEvent_override, submenu
+                )
 
                 if f'{k}:icon' in menu and show_icons:
                     submenu.setIcon(menu[f'{k}:icon'])
@@ -165,9 +172,10 @@ class BaseContextMenu(QtWidgets.QMenu):
                 if k + ':action' in menu:
                     name = menu[f'{k}:text'] if f'{k}:text' in menu else k
                     icon = menu[f'{k}:icon'] if k + \
-                        ':icon' in menu and show_icons else QtGui.QIcon()
+                                                ':icon' in menu and show_icons \
+                        else QtGui.QIcon()
                     shortcut = menu[f'{k}:shortcut'] if k + \
-                        ':shortcut' in menu else None
+                                                        ':shortcut' in menu else None
 
                     action = submenu.addAction(name)
                     action.setIconVisibleInMenu(True)
@@ -179,7 +187,8 @@ class BaseContextMenu(QtWidgets.QMenu):
                         action.setShortcutVisibleInContextMenu(True)
                         action.setShortcut(shortcut)
                         action.setShortcutContext(
-                            QtCore.Qt.WidgetWithChildrenShortcut)
+                            QtCore.Qt.WidgetWithChildrenShortcut
+                        )
 
                     if isinstance(v, collections.Iterable):
                         for func in menu[k + ':action']:
@@ -227,7 +236,8 @@ class BaseContextMenu(QtWidgets.QMenu):
                     action.setShortcutVisibleInContextMenu(True)
                     action.setShortcut(v['shortcut'])
                     action.setShortcutContext(
-                        QtCore.Qt.WidgetWithChildrenShortcut)
+                        QtCore.Qt.WidgetWithChildrenShortcut
+                    )
                 if 'visible' in v:
                     action.setVisible(v['visible'])
                 else:
@@ -263,10 +273,12 @@ class BaseContextMenu(QtWidgets.QMenu):
                 'action': actions.exec_instance,
                 'shortcut': shortcuts.get(
                     shortcuts.MainWidgetShortcuts,
-                    shortcuts.OpenNewInstance).key(),
+                    shortcuts.OpenNewInstance
+                ).key(),
                 'description': shortcuts.hint(
                     shortcuts.MainWidgetShortcuts,
-                    shortcuts.OpenNewInstance),
+                    shortcuts.OpenNewInstance
+                ),
             }
 
             self.separator(self.menu[k])
@@ -297,10 +309,12 @@ class BaseContextMenu(QtWidgets.QMenu):
                 'action': actions.toggle_maximized,
                 'shortcut': shortcuts.get(
                     shortcuts.MainWidgetShortcuts,
-                    shortcuts.Maximize).key(),
+                    shortcuts.Maximize
+                ).key(),
                 'description': shortcuts.hint(
                     shortcuts.MainWidgetShortcuts,
-                    shortcuts.Maximize),
+                    shortcuts.Maximize
+                ),
             }
             self.menu[k][key()] = {
                 'text': 'Minimise',
@@ -308,19 +322,23 @@ class BaseContextMenu(QtWidgets.QMenu):
                 'action': actions.toggle_minimized,
                 'shortcut': shortcuts.get(
                     shortcuts.MainWidgetShortcuts,
-                    shortcuts.Minimize).key(),
+                    shortcuts.Minimize
+                ).key(),
                 'description': shortcuts.hint(
                     shortcuts.MainWidgetShortcuts,
-                    shortcuts.Minimize),
+                    shortcuts.Minimize
+                ),
             }
             self.menu[k][key()] = {
                 'text': 'Full Screen',
                 'icon': on_icon if full_screen else None,
                 'action': actions.toggle_fullscreen,
                 'shortcut': shortcuts.get(
-                    shortcuts.MainWidgetShortcuts, shortcuts.FullScreen).key(),
+                    shortcuts.MainWidgetShortcuts, shortcuts.FullScreen
+                ).key(),
                 'description': shortcuts.hint(
-                    shortcuts.MainWidgetShortcuts, shortcuts.FullScreen),
+                    shortcuts.MainWidgetShortcuts, shortcuts.FullScreen
+                ),
             }
         except:
             pass
@@ -338,14 +356,18 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         self.menu[k][key()] = {
             'text': 'Ascending' if not sort_order else 'Descending',
-            'icon': ui.get_icon('arrow_down') if not sort_order else ui.get_icon('arrow_up'),
+            'icon': ui.get_icon('arrow_down') if not sort_order else ui.get_icon(
+                'arrow_up'
+            ),
             'action': actions.toggle_sort_order,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.ToggleSortOrder).key(),
+                shortcuts.ToggleSortOrder
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.ToggleSortOrder),
+                shortcuts.ToggleSortOrder
+            ),
         }
 
         self.separator(self.menu[k])
@@ -366,7 +388,8 @@ class BaseContextMenu(QtWidgets.QMenu):
             return
 
         path = common.get_sequence_startpath(
-            self.index.data(QtCore.Qt.StatusTipRole))
+            self.index.data(QtCore.Qt.StatusTipRole)
+        )
 
         self.menu[key()] = {
             'text': 'Show Item in File Manager',
@@ -374,10 +397,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': functools.partial(actions.reveal, path),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.RevealItem).key(),
+                shortcuts.RevealItem
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.RevealItem),
+                shortcuts.RevealItem
+            ),
         }
         return
 
@@ -413,13 +438,17 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[k][key()] = {
                 'text': primary_url,
                 'icon': ui.get_icon('link'),
-                'action': lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl(primary_url)),
+                'action': lambda: QtGui.QDesktopServices.openUrl(
+                    QtCore.QUrl(primary_url)
+                ),
             }
         if secondary_url:
             self.menu[k][key()] = {
                 'text': secondary_url,
                 'icon': ui.get_icon('link'),
-                'action': lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl(secondary_url))
+                'action': lambda: QtGui.QDesktopServices.openUrl(
+                    QtCore.QUrl(secondary_url)
+                )
             }
 
         self.separator(self.menu[k])
@@ -451,13 +480,17 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[k][key()] = {
                 'text': primary_url,
                 'icon': ui.get_icon('link'),
-                'action': lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl(primary_url)),
+                'action': lambda: QtGui.QDesktopServices.openUrl(
+                    QtCore.QUrl(primary_url)
+                ),
             }
         if secondary_url:
             self.menu[k][key()] = {
                 'text': secondary_url,
                 'icon': ui.get_icon('link'),
-                'action': lambda: QtGui.QDesktopServices.openUrl(QtCore.QUrl(secondary_url))
+                'action': lambda: QtGui.QDesktopServices.openUrl(
+                    QtCore.QUrl(secondary_url)
+                )
             }
 
         self.separator(self.menu[k])
@@ -475,7 +508,9 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         path = self.index.data(QtCore.Qt.StatusTipRole)
         metrics = QtGui.QFontMetrics(self.font())
-        for mode in (common.WindowsPath, common.MacOSPath, common.UnixPath, common.SlackPath):
+        for mode in (
+                common.WindowsPath, common.MacOSPath, common.UnixPath,
+                common.SlackPath):
             m = key()
             n = actions.copy_path(path, mode=mode, copy=False)
 
@@ -484,21 +519,27 @@ class BaseContextMenu(QtWidgets.QMenu):
 
             self.menu[k][m] = {
                 'text': n,
-                'icon': ui.get_icon('copy', color=common.color(common.SeparatorColor)),
+                'icon': ui.get_icon(
+                    'copy', color=common.color(common.SeparatorColor)
+                ),
                 'action': functools.partial(actions.copy_path, path, mode=mode),
             }
 
             # Windows/MacOS
             if common.get_platform() == mode:
                 self.menu[k][m]['shortcut'] = shortcuts.get(
-                    shortcuts.MainWidgetShortcuts, shortcuts.CopyItemPath).key()
+                    shortcuts.MainWidgetShortcuts, shortcuts.CopyItemPath
+                ).key()
                 self.menu[k][m]['description'] = shortcuts.hint(
-                    shortcuts.MainWidgetShortcuts, shortcuts.CopyItemPath)
+                    shortcuts.MainWidgetShortcuts, shortcuts.CopyItemPath
+                )
             elif mode == common.UnixPath:
                 self.menu[k][m]['shortcut'] = shortcuts.get(
-                    shortcuts.MainWidgetShortcuts, shortcuts.CopyAltItemPath).key()
+                    shortcuts.MainWidgetShortcuts, shortcuts.CopyAltItemPath
+                ).key()
                 self.menu[k][m]['description'] = shortcuts.hint(
-                    shortcuts.MainWidgetShortcuts, shortcuts.CopyAltItemPath)
+                    shortcuts.MainWidgetShortcuts, shortcuts.CopyAltItemPath
+                )
 
         self.separator(self.menu[k])
 
@@ -545,10 +586,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': actions.toggle_archived,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.ToggleItemArchived).key(),
+                shortcuts.ToggleItemArchived
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.ToggleItemArchived),
+                shortcuts.ToggleItemArchived
+            ),
         }
         self.menu[k][key()] = {
             'text': 'My File',
@@ -557,10 +600,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': actions.toggle_favourite,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.ToggleItemFavourite).key(),
+                shortcuts.ToggleItemFavourite
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.ToggleItemFavourite),
+                shortcuts.ToggleItemFavourite
+            ),
         }
         return
 
@@ -578,10 +623,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': actions.toggle_filter_editor,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.ToggleSearch).key(),
+                shortcuts.ToggleSearch
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.ToggleSearch),
+                shortcuts.ToggleSearch
+            ),
         }
 
         proxy = self.parent().model()
@@ -597,39 +644,51 @@ class BaseContextMenu(QtWidgets.QMenu):
                 'text': 'Show Active Item',
                 'icon': item_on if active else item_off,
                 'disabled': favourite,
-                'action': functools.partial(actions.toggle_flag, common.MarkedAsActive, not active),
+                'action': functools.partial(
+                    actions.toggle_flag, common.MarkedAsActive, not active
+                ),
                 'shortcut': shortcuts.get(
                     shortcuts.MainWidgetShortcuts,
-                    shortcuts.ToggleActive).key(),
+                    shortcuts.ToggleActive
+                ).key(),
                 'description': shortcuts.hint(
                     shortcuts.MainWidgetShortcuts,
-                    shortcuts.ToggleActive),
+                    shortcuts.ToggleActive
+                ),
             }
         if favourite or all_off:
             self.menu[k][key()] = {
                 'text': 'Show Favourites',
                 'icon': item_on if favourite else item_off,
                 'disabled': active,
-                'action': functools.partial(actions.toggle_flag, common.MarkedAsFavourite, not favourite),
+                'action': functools.partial(
+                    actions.toggle_flag, common.MarkedAsFavourite, not favourite
+                ),
                 'shortcut': shortcuts.get(
                     shortcuts.MainWidgetShortcuts,
-                    shortcuts.ToggleFavourite).key(),
+                    shortcuts.ToggleFavourite
+                ).key(),
                 'description': shortcuts.hint(
                     shortcuts.MainWidgetShortcuts,
-                    shortcuts.ToggleFavourite),
+                    shortcuts.ToggleFavourite
+                ),
             }
         if archived or all_off:
             self.menu[k][key()] = {
                 'text': 'Show Archived',
                 'icon': item_on if archived else item_off,
                 'disabled': active if active else favourite,
-                'action': functools.partial(actions.toggle_flag, common.MarkedAsArchived, not archived),
+                'action': functools.partial(
+                    actions.toggle_flag, common.MarkedAsArchived, not archived
+                ),
                 'shortcut': shortcuts.get(
                     shortcuts.MainWidgetShortcuts,
-                    shortcuts.ToggleArchived).key(),
+                    shortcuts.ToggleArchived
+                ).key(),
                 'description': shortcuts.hint(
                     shortcuts.MainWidgetShortcuts,
-                    shortcuts.ToggleArchived),
+                    shortcuts.ToggleArchived
+                ),
             }
 
     def row_size_menu(self):
@@ -643,10 +702,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': actions.increase_row_size,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.RowIncrease).key(),
+                shortcuts.RowIncrease
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.RowIncrease),
+                shortcuts.RowIncrease
+            ),
         }
         self.menu[k][key()] = {
             'text': 'Decrease',
@@ -654,10 +715,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': actions.decrease_row_size,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.RowDecrease).key(),
+                shortcuts.RowDecrease
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.RowDecrease),
+                shortcuts.RowDecrease
+            ),
         }
         self.menu[k][key()] = {
             'text': 'Reset',
@@ -665,10 +728,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': actions.reset_row_size,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.RowReset).key(),
+                shortcuts.RowReset
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.RowReset),
+                shortcuts.RowReset
+            ),
         }
 
     def refresh_menu(self):
@@ -678,10 +743,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'icon': ui.get_icon('refresh'),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.Refresh).key(),
+                shortcuts.Refresh
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.Refresh),
+                shortcuts.Refresh
+            ),
         }
 
     def preferences_menu(self):
@@ -691,10 +758,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'icon': ui.get_icon('settings'),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.OpenPreferences).key(),
+                shortcuts.OpenPreferences
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.OpenPreferences),
+                shortcuts.OpenPreferences
+            ),
         }
 
     def quit_menu(self):
@@ -706,10 +775,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'icon': ui.get_icon('close'),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.Quit).key(),
+                shortcuts.Quit
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.Quit)
+                shortcuts.Quit
+            )
         }
 
     def title(self):
@@ -814,15 +885,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': actions.show_add_bookmark,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.AddItem).key(),
+                shortcuts.AddItem
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.AddItem),
-        }
-        self.menu[key()] = {
-            'text': 'Prune Bookmarks',
-            'icon': ui.get_icon('close', color=common.color(common.RedColor)),
-            'action': actions.prune_bookmarks,
+                shortcuts.AddItem
+            ),
         }
 
     def add_asset_to_bookmark_menu(self):
@@ -832,7 +900,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.menu[key()] = {
             'text': 'Add Asset...',
             'icon': ui.get_icon('add'),
-            'action': functools.partial(actions.show_add_asset, server=server, job=job, root=root),
+            'action': functools.partial(
+                actions.show_add_asset, server=server, job=job, root=root
+            ),
         }
 
     def collapse_sequence_menu(self):
@@ -849,10 +919,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': common.signals.toggleSequenceButton,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.ToggleSequence).key(),
+                shortcuts.ToggleSequence
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.ToggleSequence),
+                shortcuts.ToggleSequence
+            ),
         }
 
     def task_folder_toggle_menu(self):
@@ -865,7 +937,8 @@ class BaseContextMenu(QtWidgets.QMenu):
         k = 'Select Folder'
         self.menu[k] = collections.OrderedDict()
         self.menu[f'{k}:icon'] = ui.get_icon(
-            'folder', color=common.color(common.GreenColor))
+            'folder', color=common.color(common.GreenColor)
+        )
 
         model = common.source_model(common.FileTab)
         path = common.active(common.AssetKey, path=True)
@@ -891,7 +964,9 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[k][key()] = {
                 'text': name,
                 'icon': item_on_pixmap if checked else item_off_pixmap,
-                'action': functools.partial(common.signals.taskFolderChanged.emit, name)
+                'action': functools.partial(
+                    common.signals.taskFolderChanged.emit, name
+                )
             }
 
     def remove_favourite_menu(self):
@@ -932,10 +1007,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': actions.show_add_file,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.AddItem).key(),
+                shortcuts.AddItem
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.AddItem),
+                shortcuts.AddItem
+            ),
         }
 
     def add_file_to_asset_menu(self):
@@ -959,10 +1036,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': actions.show_todos,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.OpenTodo).key(),
+                shortcuts.OpenTodo
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.OpenTodo),
+                shortcuts.OpenTodo
+            ),
         }
 
     def edit_selected_bookmark_menu(self):
@@ -980,13 +1059,17 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.menu[k][key()] = {
             'text': 'Edit Bookmark Properties...',
             'icon': settings_icon,
-            'action': functools.partial(actions.edit_bookmark, server=server, job=job, root=root),
+            'action': functools.partial(
+                actions.edit_bookmark, server=server, job=job, root=root
+            ),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.EditItem).key(),
+                shortcuts.EditItem
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.EditItem),
+                shortcuts.EditItem
+            ),
         }
 
     def bookmark_clipboard_menu(self):
@@ -1006,10 +1089,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'icon': ui.get_icon('copy'),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.CopyProperties).key(),
+                shortcuts.CopyProperties
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.CopyProperties),
+                shortcuts.CopyProperties
+            ),
         }
 
         if not database.CLIPBOARD[database.BookmarkTable]:
@@ -1021,10 +1106,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'icon': ui.get_icon('copy'),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.PasteProperties).key(),
+                shortcuts.PasteProperties
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.PasteProperties),
+                shortcuts.PasteProperties
+            ),
         }
 
     def asset_clipboard_menu(self):
@@ -1044,10 +1131,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'icon': ui.get_icon('copy'),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.CopyProperties).key(),
+                shortcuts.CopyProperties
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.CopyProperties),
+                shortcuts.CopyProperties
+            ),
         }
 
         if not database.CLIPBOARD[database.AssetTable]:
@@ -1059,10 +1148,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'icon': ui.get_icon('copy'),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.PasteProperties).key(),
+                shortcuts.PasteProperties
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.PasteProperties),
+                shortcuts.PasteProperties
+            ),
         }
 
     def edit_active_bookmark_menu(self):
@@ -1097,10 +1188,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': functools.partial(actions.edit_asset, asset=asset),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.EditItem).key(),
+                shortcuts.EditItem
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.EditItem),
+                shortcuts.EditItem
+            ),
         }
 
     def edit_active_asset_menu(self):
@@ -1117,10 +1210,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': actions.edit_asset,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.EditItem).key(),
+                shortcuts.EditItem
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.EditItem),
+                shortcuts.EditItem
+            ),
         }
 
     def edit_selected_file_menu(self):
@@ -1141,10 +1236,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': functools.partial(actions.edit_file, _file),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.EditItem).key(),
+                shortcuts.EditItem
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.EditItem),
+                shortcuts.EditItem
+            ),
         }
 
     def show_addasset_menu(self):
@@ -1155,10 +1252,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': actions.show_add_asset,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.AddItem).key(),
+                shortcuts.AddItem
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.AddItem),
+                shortcuts.AddItem
+            ),
         }
 
     def launcher_menu(self):
@@ -1219,7 +1318,9 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         self.menu[k][key()] = {
             'text': 'Upload Thumbnail to Shotgun...',
-            'action': functools.partial(sg_actions.upload_thumbnail, sg_properties, thumbnail_path),
+            'action': functools.partial(
+                sg_actions.upload_thumbnail, sg_properties, thumbnail_path
+            ),
             'icon': ui.get_icon('sg', color=common.color(common.GreenColor)),
         }
 
@@ -1250,7 +1351,9 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[k][key()] = {
                 'text': url,
                 'icon': ui.get_icon('sg'),
-                'action': functools.partial(QtGui.QDesktopServices.openUrl, QtCore.QUrl(url))
+                'action': functools.partial(
+                    QtGui.QDesktopServices.openUrl, QtCore.QUrl(url)
+                )
             }
 
     def sg_link_bookmark_menu(self):
@@ -1272,7 +1375,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.menu[k][key()] = {
             'text': 'Link Bookmark with Shotgun...',
             'icon': ui.get_icon('sg'),
-            'action': functools.partial(sg_actions.link_bookmark_entity, server, job, root),
+            'action': functools.partial(
+                sg_actions.link_bookmark_entity, server, job, root
+            ),
         }
 
     def sg_link_asset_menu(self):
@@ -1296,7 +1401,10 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[k][key()] = {
                 'text': 'Link item with Shotgun {}'.format(entity_type.title()),
                 'icon': ui.get_icon('sg'),
-                'action': functools.partial(sg_actions.link_asset_entity, server, job, root, asset, entity_type),
+                'action': functools.partial(
+                    sg_actions.link_asset_entity, server, job, root, asset,
+                    entity_type
+                ),
             }
 
     def sg_link_assets_menu(self):
@@ -1332,7 +1440,8 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[f'{k}:icon'] = ui.get_icon('sg')
 
         path = common.get_sequence_startpath(
-            self.index.data(QtCore.Qt.StatusTipRole))
+            self.index.data(QtCore.Qt.StatusTipRole)
+        )
 
         self.menu[k][key()] = {
             'text': 'Push to RV',
@@ -1340,10 +1449,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': functools.partial(rv.push, path),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.PushToRV).key(),
+                shortcuts.PushToRV
+            ).key(),
             'description': shortcuts.hint(
                 shortcuts.MainWidgetShortcuts,
-                shortcuts.PushToRV),
+                shortcuts.PushToRV
+            ),
         }
 
     def sg_publish_menu(self):
@@ -1418,3 +1529,48 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
         self.separator(menu=self.menu[k])
+
+    def extra_menu(self):
+        """The custom client menu"""
+        k = u'Studio Aka'
+        if k not in self.menu:
+            self.menu[k] = collections.OrderedDict()
+            self.menu[f'{k}:icon'] = ui.get_icon('studioaka')
+
+        try:
+            from .studioaka import context
+            self.menu[k][key()] = {
+                'text': 'Show Akapipe',
+                'icon': ui.get_icon(
+                    'studioaka', color=common.color(common.GreenColor)
+                ),
+                'action': context.show_akapipe
+
+            }
+        except:
+            pass
+
+        self.separator()
+
+        if self.index.isValid():
+            from .studioaka import publish
+            from .studioaka import publishwidget
+
+            model = self.index.model().sourceModel()
+            idx = self.index.model().mapToSource(self.index).row()
+            data = model.model_data()
+            ref = weakref.ref(data[idx])
+
+            path = self.index.data(QtCore.Qt.StatusTipRole)
+            ext = path.split('.')[-1]
+            valid = [v for v in publish.PRESETS.values() if ext in v['formats']]
+            valid = valid if common.is_collapsed(path) else False
+
+            if valid:
+                self.menu[k][key()] = {
+                    'text': 'Publish Footage',
+                    'icon': ui.get_icon(
+                        'studioaka', color=common.color(common.GreenColor)
+                    ),
+                    'action': functools.partial(publishwidget.show, ref)
+                }

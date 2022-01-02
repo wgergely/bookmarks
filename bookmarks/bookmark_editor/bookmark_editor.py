@@ -150,7 +150,7 @@ class BookmarkListWidget(ui.ListWidget):
         elif item.checkState() == QtCore.Qt.Unchecked:
             item.setCheckState(QtCore.Qt.Checked)
         self.add_remove_bookmark(
-            QtCore.Qt.Unchecked,
+            item.checkState(),
             item.data(QtCore.Qt.DisplayRole)
         )
 

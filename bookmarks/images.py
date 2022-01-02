@@ -945,17 +945,20 @@ class ImageCache(QtCore.QObject):
         if source_spec.getattribute('ICCProfile'):
             source_spec.erase_attribute('ICCProfile')
 
-        # if source_spec.get_int_attribute('oiio:Movie') == 1:
-        #     codec_name = source_spec.get_string_attribute('ffmpeg:codec_name')
-        #     # [BUG] Not all codec formats are supported by ffmpeg. There does
-        #     # not seem to be (?) error handling and an unsupported codec will
-        #     # crash ffmpeg and the rest of the app.
-        #     if codec_name:
-        #         if not [f for f in accepted_codecs if f.lower() in codec_name.lower()]:
-        #             log.debug(
-        #                 'Unsupported movie format: {codec_name}')
-        #             common.oiio_cache.invalidate(source, force=True)
-        #             return False
+        if source_spec.get_int_attribute('oiio:Movie') == 1:
+            if source_spec.get_int_attribute('oiio:subimages') <= 2:
+                common.oiio_cache.invalidate(source, force=True)
+                return False
+            codec_name = source_spec.get_string_attribute('ffmpeg:codec_name')
+            # [BUG] Not all codec formats are supported by ffmpeg. There does
+            # not seem to be (?) error handling and an unsupported codec will
+            # crash ffmpeg and the rest of the app.
+            if codec_name:
+                if not [f for f in accepted_codecs if f.lower() in codec_name.lower()]:
+                    log.debug(
+                        'Unsupported movie format: {codec_name}')
+                    common.oiio_cache.invalidate(source, force=True)
+                    return False
 
         destination_spec = get_scaled_spec(source_spec)
         if size != -1:

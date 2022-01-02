@@ -129,6 +129,7 @@ class BookmarksModel(BaseModel):
 class BookmarkComboBox(QtWidgets.QComboBox):
     def __init__(self, parent=None):
         super(BookmarkComboBox, self).__init__(parent=parent)
+        self.setView(QtWidgets.QListView())
         self.setModel(BookmarksModel())
 
 
@@ -206,12 +207,14 @@ class AssetsModel(BaseModel):
 class AssetComboBox(QtWidgets.QComboBox):
     def __init__(self, parent=None):
         super(AssetComboBox, self).__init__(parent=parent)
+        self.setView(QtWidgets.QListView())
         self.setModel(AssetsModel())
 
 
 class TaskComboBox(QtWidgets.QComboBox):
     def __init__(self, mode=SceneMode, parent=None):
         super(TaskComboBox, self).__init__(parent=parent)
+        self.setView(QtWidgets.QListView())
         self.setModel(TaskModel(mode=mode))
 
     def set_mode(self, mode):
@@ -353,6 +356,7 @@ class TemplateModel(BaseModel):
 class TemplateComboBox(QtWidgets.QComboBox):
     def __init__(self, parent=None):
         super(TemplateComboBox, self).__init__(parent=parent)
+        self.setView(QtWidgets.QListView())
         self.setModel(TemplateModel())
 
 
@@ -401,6 +405,7 @@ class ExtensionModel(BaseModel):
 class ExtensionComboBox(QtWidgets.QComboBox):
     def __init__(self, parent=None):
         super(ExtensionComboBox, self).__init__(parent=parent)
+        self.setView(QtWidgets.QListView())
         self.setModel(ExtensionModel())
 
 

@@ -30,47 +30,32 @@ class BookmarksWidgetContextMenu(contextmenu.BaseContextMenu):
     @common.debug
     @common.error
     def setup(self):
-        self.title()
-
+        self.extra_menu()
         self.bookmark_editor_menu()
-
         self.separator()
-
         self.launcher_menu()
-
         self.separator()
-
         self.sg_link_bookmark_menu()
         self.sg_url_menu()
-
         self.separator()
-
         self.bookmark_url_menu()
         self.asset_url_menu()
         self.reveal_item_menu()
         self.copy_menu()
-
         self.separator()
-
         self.add_asset_to_bookmark_menu()
         self.edit_selected_bookmark_menu()
         self.bookmark_clipboard_menu()
         self.notes_menu()
         self.toggle_item_flags_menu()
-
         self.separator()
-
         self.row_size_menu()
         self.sort_menu()
         self.list_filter_menu()
         self.refresh_menu()
-
         self.separator()
-
         self.preferences_menu()
-
         self.separator()
-
         self.window_menu()
         self.quit_menu()
 

@@ -534,13 +534,11 @@ LineEdit:disabled {{
     border-radius: 0;
     color: {TextColor};
 }}
-
 LineEdit:disabled {{
 	color: {TextDisabledColor};
 }}
-
-
 LineEdit:!read-only:focus{{
+    border: {HeightSeparator}px solid transparent;
     border-bottom: {HeightSeparator}px solid {GreenColor};
 }}
 

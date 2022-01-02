@@ -73,7 +73,7 @@ def process_image(source):
 class BaseComboBox(QtWidgets.QComboBox):
     def __init__(self, parent=None):
         super(BaseComboBox, self).__init__(parent=parent)
-        self.setFixedHeight(HEIGHT)
+        self.setView(QtWidgets.QListView())
         self.init_items()
 
     @common.error

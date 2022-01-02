@@ -43,6 +43,8 @@ class FavouritesWidgetContextMenu(contextmenu.BaseContextMenu):
     @common.error
     @common.debug
     def setup(self):
+        self.extra_menu()
+        self.separator()
         self.control_favourites_menu()
         if self.index.isValid():
             self.remove_favourite_menu()
@@ -50,10 +52,18 @@ class FavouritesWidgetContextMenu(contextmenu.BaseContextMenu):
         self.reveal_item_menu()
         self.copy_menu()
         self.separator()
-        self.sort_menu()
         self.collapse_sequence_menu()
         self.separator()
+        self.row_size_menu()
+        self.sort_menu()
+        self.list_filter_menu()
+        self.separator()
         self.refresh_menu()
+        self.separator()
+        self.preferences_menu()
+        self.separator()
+        self.window_menu()
+        self.quit_menu()
 
 
 class FavouritesModel(files.FilesModel):

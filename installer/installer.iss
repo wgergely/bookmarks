@@ -4,7 +4,7 @@
 ; shipped with Bookmarks.
 
 #define MyAppName "Bookmarks"
-#define MyAppVersion "0.4.7"
+#define MyAppVersion "0.5.0"
 #define MyAppPublisher "Gergely Wootsch"
 #define MyAppURL "http://github.com/wgergely/bookmarks"
 #define MyAppExeName "bookmarks.exe"
@@ -32,7 +32,7 @@ DisableProgramGroupPage=false
 UsedUserAreasWarning=no
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 PrivilegesRequired=lowest
-OutputDir={#SourcePath}..\..\releases\win_x64
+OutputDir={#SourcePath}..\..\launcher-installer
 
 
 ChangesEnvironment=yes
@@ -82,12 +82,12 @@ Name: maya; Description: {#MyAppName}: Maya Plugin; Types: full; Check: DirExist
 
 [Files]
 ; Main contents
-Source: "{#SourcePath}..\..\win10_x64_vs2017_standalone\*"; DestDir: "{app}"; Components: standalone; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
+Source: "{#SourcePath}..\..\launcher-install\*"; DestDir: "{app}"; Components: standalone; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
 ; Maya plugin -- mBookmarks.py
-Source:  "{#SourcePath}..\..\win10_x64_vs2017_standalone\shared\{#MyAppName}\maya\plugin.py"; DestName: "{#MyAppName}Maya.py"; DestDir: {userdocs}\maya\plug-ins; Components: maya; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
+Source:  "{#SourcePath}..\..\launcher-install\shared\{#MyAppName}\maya\plugin.py"; DestName: "{#MyAppName}Maya.py"; DestDir: {userdocs}\maya\plug-ins; Components: maya; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
 ; Example templates
-Source:  "{#SourcePath}..\..\bookmarks\bookmarks\rsc\templates\Bookmarks_Default_Asset.zip"; DestDir: "{localappdata}\{#MyAppName}\asset_templates"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
-Source:  "{#SourcePath}..\..\bookmarks\bookmarks\rsc\templates\Bookmarks_Default_Job.zip"; DestDir: "{localappdata}\{#MyAppName}\job_templates"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
+Source:  "{#SourcePath}..\bookmarks\rsc\templates\Asset.zip"; DestDir: "{localappdata}\{#MyAppName}\asset_templates"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
+Source:  "{#SourcePath}..\bookmarks\rsc\templates\Job.zip"; DestDir: "{localappdata}\{#MyAppName}\job_templates"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
 
 
 [Registry]

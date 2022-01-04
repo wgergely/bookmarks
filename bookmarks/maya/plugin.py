@@ -6,12 +6,11 @@ environment is set by the installer and is required to find and load all the
 necessary Python modules.
 
 """
-import sys
 import os
+import sys
 
-from maya.api import OpenMaya
 from maya import cmds
-
+from maya.api import OpenMaya
 
 env_key = 'BOOKMARKS_ROOT'
 product = 'bookmarks'
@@ -22,12 +21,30 @@ __version__ = '0.5.0'
 maya_useNewAPI = True
 
 
+def _add_path_to_sys(v, p):
+    _v = f'{v}{os.path.sep}{p}'
+    if not os.path.isdir(_v):
+        raise RuntimeError(f'{_v} does not exist.')
+    if _v in sys.path:
+        return
+    sys.path.append(os.path.normpath(_v))
+
+
+def _add_path_to_PATH(v, p):
+    _v = f'{v}{os.path.sep}{p}'
+    if not os.path.isdir(_v):
+        raise RuntimeError(f'{_v} does not exist.')
+    if _v.lower() in os.environ['PATH'].lower():
+        return
+    os.environ[
+        'PATH'] = f'{os.path.normpath(_v)};{os.environ["PATH"].strip(";")}'
+
+
 def init_environment(env_key, add_private=False):
     """Add the dependencies to the Python environment.
 
     The method requires that `env_key` is set. The key is usually set
-    by the Bookmark installer to point to the install root directory.
-    The
+    by the Bookmark installer to point to the installation root directory.
 
     Raises:
             EnvironmentError: When the `env_key` is not set.
@@ -36,31 +53,20 @@ def init_environment(env_key, add_private=False):
     """
     if env_key not in os.environ:
         raise EnvironmentError(
-            f'"{env_key}" environment variable is not set.')
-
+            f'"{env_key}" environment variable is not set.'
+        )
     v = os.environ[env_key]
-
     if not os.path.isdir(v):
         raise RuntimeError(
-            f'"{v}" is not a falid folder. Is "{env_key}" environment variable set?')
+            f'"{v}" is not a valid folder. Is "{env_key}" environment variable set?'
+        )
 
-    # Add env_key to the PATH
-    v = os.path.normpath(os.path.abspath(v)).strip()
-    if v.lower() not in os.environ['PATH'].lower():
-        os.environ['PATH'] = v + ';' + os.environ['PATH'].strip(';')
+    _add_path_to_PATH(v, '.')
+    _add_path_to_PATH(v, 'bin')
 
-    def _add_path_to_sys(p):
-        _v = f'{v}{os.path.sep}{p}'
-        if not os.path.isdir(_v):
-            raise RuntimeError(f'{_v} does not exist.')
-
-        if _v in sys.path:
-            return
-        sys.path.append(_v)
-
-    _add_path_to_sys('shared')
+    _add_path_to_sys(v, 'shared')
     if add_private:
-        _add_path_to_sys('private')
+        _add_path_to_sys(v, 'private')
     if v not in sys.path:
         sys.path.append(v)
 

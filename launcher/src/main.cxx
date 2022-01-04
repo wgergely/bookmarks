@@ -16,15 +16,12 @@ as a standalone application package.
 #include <shlwapi.h>
 
 
-// Make sure the console is hidden in Release
-#if (defined NDEBUG && defined _WIN32)
+// Make the console hidden
 //#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
-#endif
 
 
-static std::string LIB_DIR = std::string("python37.zip");	// The standard python modules
 static std::string SHARED_DIR = std::string("shared");		// 3rd party dependencies to make available for DCCs
-static std::string PRIVATE_DIR = std::string("private");	// PySide2 and Alembic are private as DCCs (like Maya) might already have these
+static std::string CORE_DIR = std::string("core");	// PySide2 and Alembic are private as DCCs (like Maya) might already have these
 static std::string BIN_DIR = std::string("bin");			// All the *.dlls required the Python modules
 
 
@@ -59,7 +56,6 @@ bool _dir_missing(std::string path)
 		return false;
 	printf("A required directory was not found:\n>>   %s", path.c_str());
 	return true;
-	//throw std::runtime_error(std::string("A directory was not found:\n") + path);
 }
 
 
@@ -69,7 +65,6 @@ std::string _path(const std::string r, const std::string p)
 }
 
 int main(int argc, char** argv) {
-	
 	// Get the program name using GetModuleFileNameW
 	char _root[MAX_PATH + 1];
 
@@ -81,50 +76,36 @@ int main(int argc, char** argv) {
 	std::string root = _root;
 	root = root.substr(0, root.find_last_of("/\\"));
 	
-	// Verify integrity
-	std::string _lib_dir = _path(root, LIB_DIR);
+	// PYTHONHOME
+	_setenv("PYTHONNOUSERSITE", "", 1);
+	_setenv("PYTHONHOME", root.c_str(), 1);
+
+	// PYTHONPATH
 	std::string _shared_dir = _path(root, SHARED_DIR);
-	std::string _priv_dir = _path(root, PRIVATE_DIR);
-	std::string _bin_dir = _path(root, BIN_DIR);
+	std::string _core_dir = _path(root, CORE_DIR);
+	std::string _modules = _shared_dir + ";" + _core_dir;
+	_setenv("PYTHONPATH", _modules.c_str(), 1);
 
-	std::string _modules = root + ";" + _lib_dir + ";" + _shared_dir + ";" + _priv_dir;
-
-	if (_dir_missing(_shared_dir) || _dir_missing(_priv_dir)) {
+	if (_dir_missing(_shared_dir) || _dir_missing(_core_dir)) {
 		exit(1);
 	}
 
-	// Add dirs to PATH
+	// PATH
+	std::string _bin_dir = _path(root, BIN_DIR);
 	std::stringstream string_stream;
 	string_stream << root << ";";
-	string_stream << _modules << ";";
+	string_stream << _bin_dir << ";";
 	string_stream << getenv("PATH");
 	string_stream << '\0';
 	std::string env = string_stream.str();
+	_setenv("PATH", env.c_str(), 1);
 
-	// Set PATH
-	int result = _setenv("PATH", env.c_str(), 1);
-
-
-	// Environment setup
-	_setenv("PYTHONNOUSERSITE", "", 1);
-	_setenv("PYTHONHOME", _lib_dir.c_str(), 1);
-	_setenv("PYTHONPATH", _modules.c_str(), 1);
-	
 	size_t argv_st = strlen(argv[0]);
 	Py_SetProgramName(Py_DecodeLocale(argv[0], &argv_st));
 	
-	size_t home_st = strlen(_lib_dir.c_str());
-	Py_SetPythonHome(Py_DecodeLocale(_lib_dir.c_str(), &home_st));
-
-	size_t mod_st = strlen(_modules.c_str());
-	Py_SetPath(Py_DecodeLocale(_modules.c_str(), &mod_st));
-
 	Py_InitializeEx(0);
 
-	printf("Executable: %s\n", argv[0]);
-	printf("Root Directory: %s\n", root.c_str());
-	printf("PATH: %s\n", env.c_str());
-	
+
 	int r = PyRun_SimpleString(
 		"import bookmarks; bookmarks.exec_()"
 	);

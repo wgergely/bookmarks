@@ -566,3 +566,6 @@ QWidget#mainRow {{
 }}
 
 
+GalleryWidget QWidget:focus {{
+    border: {HeightSeparator}px solid transparent;
+}}

@@ -7,8 +7,10 @@ A list common actions used across `Bookmarks`.
 import functools
 import json
 import os
+import platform
 import re
 import subprocess
+import sys
 import weakref
 import zipfile
 
@@ -1341,12 +1343,19 @@ def pick_thumbnail_from_library(index):
     )
 
 
+def execute_detached(path):
+    proc = QtCore.QProcess()
+    proc.setProgram('cmd.exe')
+    proc.setArguments(['/c', 'start', '/i', "%windir%\explorer.exe", os.path.normpath(path)])
+    proc.startDetached()
+
+
 @common.debug
 @common.error
 def pick_launcher_item():
     from .launcher import launcher_gallery as editor
     widget = editor.show()
-    widget.itemSelected.connect(lambda v: execute(v))
+    widget.itemSelected.connect(execute_detached)
 
 
 @common.debug

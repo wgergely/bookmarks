@@ -310,15 +310,6 @@ def get_path_to_executable(key):
 
     # Otherwise, let's check the environment
     if common.get_platform() == common.PlatformWindows:
-        paths = os.environ['PATH'].split(';')
-        paths = {os.path.normpath(f).rstrip('\\')
-                 for f in paths if os.path.isdir(f)}
-
-        for path in paths:
-            for entry in os.scandir(path):
-                if entry.name.lower().startswith(name):
-                    return QtCore.QFileInfo(entry.path).filePath()
-
         if 'BOOKMARKS_ROOT' in os.environ and QtCore.QFileInfo(
                 os.environ['BOOKMARKS_ROOT']
         ).exists():
@@ -329,6 +320,15 @@ def get_path_to_executable(key):
                 for entry in os.scandir(os.environ['BOOKMARKS_ROOT'] + '/bin'):
                     if entry.name.lower().startswith(name):
                         return QtCore.QFileInfo(entry.path).filePath()
+
+        paths = os.environ['PATH'].split(';')
+        paths = {os.path.normpath(f).rstrip('\\')
+                 for f in paths if os.path.isdir(f)}
+
+        for path in paths:
+            for entry in os.scandir(path):
+                if entry.name.lower().startswith(name):
+                    return QtCore.QFileInfo(entry.path).filePath()
 
     return None
 

@@ -303,12 +303,12 @@ def get_path_to_executable(key):
     else:
         raise ValueError('Unsupported key value.')
 
-    # First let's check if we have set explictily a path to an executable
+    # First let's check if we have set explicitly a path to an executable
     v = common.settings.value(common.SettingsSection, key)
     if isinstance(v, str) and QtCore.QFileInfo(v).exists():
         return QtCore.QFileInfo(v).filePath()
 
-    # Otheriwse, let's check the environment
+    # Otherwise, let's check the environment
     if common.get_platform() == common.PlatformWindows:
         paths = os.environ['PATH'].split(';')
         paths = {os.path.normpath(f).rstrip('\\')
@@ -318,6 +318,17 @@ def get_path_to_executable(key):
             for entry in os.scandir(path):
                 if entry.name.lower().startswith(name):
                     return QtCore.QFileInfo(entry.path).filePath()
+
+        if 'BOOKMARKS_ROOT' in os.environ and QtCore.QFileInfo(
+                os.environ['BOOKMARKS_ROOT']
+        ).exists():
+            for entry in os.scandir(os.environ['BOOKMARKS_ROOT']):
+                if entry.name.lower().startswith(name):
+                    return QtCore.QFileInfo(entry.path).filePath()
+            if QtCore.QFileInfo(os.environ['BOOKMARKS_ROOT'] + '/bin').exists():
+                for entry in os.scandir(os.environ['BOOKMARKS_ROOT'] + '/bin'):
+                    if entry.name.lower().startswith(name):
+                        return QtCore.QFileInfo(entry.path).filePath()
 
     return None
 

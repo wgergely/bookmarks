@@ -184,7 +184,7 @@ class PublishFootageWidget(base.BasePropertyEditor):
         publish.publish_footage(
             preset,
             data[QtCore.Qt.StatusTipRole],
-            data[common.FramesRole],
+            sorted(data[common.FramesRole]),
             server=data[common.ParentPathRole][0],
             job=data[common.ParentPathRole][1],
             root=data[common.ParentPathRole][2],

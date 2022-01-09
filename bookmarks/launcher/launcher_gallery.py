@@ -2,6 +2,7 @@
 """Widget used to select a Launcher item.
 
 """
+from PySide2 import QtCore
 
 from .. import common
 from .. import database
@@ -55,3 +56,7 @@ class LauncherGallery(ui.GalleryWidget):
 
         for k in sorted(v, key=lambda _k: v[_k]['name']):
             yield v[k]['name'], v[k]['path'], v[k]['thumbnail']
+
+    def focusOutEvent(self, event):
+        print('!')
+        self.close()

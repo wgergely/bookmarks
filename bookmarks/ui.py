@@ -1394,6 +1394,10 @@ class GalleryWidget(QtWidgets.QDialog):
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(0)
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
+        self.setWindowFlags(
+            self.windowFlags() | QtCore.Qt.WindowStaysOnTopHint
+        )
+
 
         row = add_row(
             None, height=common.size(common.HeightRow), padding=None, parent=self
@@ -1408,9 +1412,7 @@ class GalleryWidget(QtWidgets.QDialog):
 
         widget = QtWidgets.QWidget(parent=self)
         widget.setStyleSheet(
-            'background-color: {}'.format(
-                common.rgb(common.color(common.SeparatorColor))
-            )
+            f'background-color: {common.rgb(common.color(common.SeparatorColor))}'
         )
 
         self.setMinimumWidth(
@@ -1446,12 +1448,19 @@ class GalleryWidget(QtWidgets.QDialog):
             common.size(common.WidthIndicator)
         )
         widget.layout().setSpacing(common.size(common.WidthIndicator))
+        widget.setFocusPolicy(QtCore.Qt.StrongFocus)
 
         self.scroll_area = QtWidgets.QScrollArea(parent=self)
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setWidget(widget)
-
         self.layout().addWidget(self.scroll_area, 1)
+
+        self.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.scroll_area.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.scroll_area.setStyleSheet('border:none;')
+        self.scroll_area.setFocusProxy(widget)
+        self.setFocusProxy(widget)
+
 
     def init_data(self):
         row = 0

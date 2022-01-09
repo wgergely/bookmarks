@@ -65,14 +65,15 @@ std::string _path(const std::string r, const std::string p)
 }
 
 int main(int argc, char** argv) {
+		if (!_WIN32) {
+		fprintf(stderr, "Reqauires a Windows operating system");
+		exit(1);
+	}
+	
 	// Get the program name using GetModuleFileNameW
 	char _root[MAX_PATH + 1];
-
-	if (_WIN32)
-		GetModuleFileNameA(NULL, _root, MAX_PATH);
-	else
-		throw std::runtime_error("Only Windows is implemented.");
-
+	GetModuleFileNameA(NULL, _root, MAX_PATH);
+		
 	std::string root = _root;
 	root = root.substr(0, root.find_last_of("/\\"));
 	
@@ -87,6 +88,7 @@ int main(int argc, char** argv) {
 	_setenv("PYTHONPATH", _modules.c_str(), 1);
 
 	if (_dir_missing(_shared_dir) || _dir_missing(_core_dir)) {
+		fprintf(stderr, "A subdirectory is missing.");
 		exit(1);
 	}
 
@@ -101,18 +103,25 @@ int main(int argc, char** argv) {
 	_setenv("PATH", env.c_str(), 1);
 
 	size_t argv_st = strlen(argv[0]);
-	Py_SetProgramName(Py_DecodeLocale(argv[0], &argv_st));
+	wchar_t *program = Py_DecodeLocale(argv[0], &argv_st);
+	if (program == NULL) {
+		fprintf(stderr, "Fatal error: cannot decode argv[0]\n");
+		exit(1);
+	}
+
+	Py_SetProgramName(program);
 	
 	Py_InitializeEx(0);
 
-
-	int r = PyRun_SimpleString(
+	int result = PyRun_SimpleString(
 		"import bookmarks; bookmarks.exec_()"
 	);
-	if (r != 0)
-		printf("Python encountered an error.");
-		Py_FinalizeEx();
-		exit(1);
-		
+	if (result != 0) {
+		fprintf(stderr, "Python encountered an error.\n");
+	}
+	if (Py_FinalizeEx() < 0) {
+		exit(120);
+	}
+	PyMem_RawFree(program);	
 	exit(0);
 }

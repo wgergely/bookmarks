@@ -8,9 +8,6 @@ project(
 	HOMEPAGE_URL "https://github.com/wgergely/bookmarks"
 )
 
-# Get the source from github
-
-
 # add the executable
 add_executable(Bookmarks src/main.cxx src/main.rc)
 configure_file("${PROJECT_SOURCE_DIR}/../bookmarks/rsc/icon.ico"

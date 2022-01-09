@@ -114,7 +114,7 @@ int main(int argc, char** argv) {
 	Py_InitializeEx(0);
 
 	int result = PyRun_SimpleString(
-		"import bookmarks; bookmarks.exec_()"
+		"import bookmarks;bookmarks.exec_()"
 	);
 	if (result != 0) {
 		fprintf(stderr, "Python encountered an error.\n");

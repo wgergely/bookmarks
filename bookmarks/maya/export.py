@@ -7,6 +7,7 @@ from maya import cmds
 from . import base as mayabase
 from .. import common, ui, log
 from ..editor import base
+from ..tokens import tokens
 
 instance = None
 
@@ -356,8 +357,8 @@ class ExportWidget(base.BasePropertyEditor):
             return None
 
         export_dir = mayabase.DEFAULT_CACHE_DIR.format(
-            export_dir=mayabase.get_export_dir(),
-            ext=mayabase.get_export_subdir(ext)
+            export_dir=tokens.get_folder(tokens.CacheFolder),
+            ext=tokens.get_subfolder(tokens.CacheFolder, ext)
         )
         file_path = mayabase.CACHE_PATH.format(
             workspace=workspace,

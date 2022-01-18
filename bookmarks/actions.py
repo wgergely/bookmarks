@@ -473,6 +473,8 @@ def toggle_task_view():
     common.widget(common.TaskTab).setHidden(
         not common.widget(common.TaskTab).isHidden()
     )
+    if common.widget(common.TaskTab).isVisible():
+        common.widget(common.TaskTab).model().sourceModel().reset_data()
 
 
 def toggle_filter_editor():

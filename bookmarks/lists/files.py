@@ -498,7 +498,7 @@ class FilesModel(basemodel.BaseModel):
             if seq:
                 # If the sequence has not yet been added to our dictionary
                 # of sequences we add it here
-                if sequence_path not in SEQUENCE_DATA:  # ... and create it if it doesn't exist
+                if sequence_path not in SEQUENCE_DATA:  # create if it doesn't exist
                     sequence_name = sequence_path.split('/')[-1]
                     flags = basemodel.DEFAULT_ITEM_FLAGS
 

@@ -30,10 +30,10 @@ def _safe_format(s, **kwargs):
     return string.Formatter().vformat(s, (), SafeDict(**kwargs))
 
 
-_preset_info = ', pad=ceil(iw/2)*2:ceil(ih/2)*2, drawtext=fontfile={FONT}:text=\'{' \
+_preset_info = ', drawtext=fontfile={FONT}:text=\'{' \
                'LABEL}%{{frame_num}}\':start_number={' \
-               'STARTFRAME}:x=10:y=h-lh-10:fontcolor=white:fontsize=ceil(' \
-               'w/50):box=1:boxcolor=black:boxborderw=10'
+               'STARTFRAME}:x=lh:y=h-(lh*2.5):fontcolor=white:fontsize=ceil(' \
+               'w/80):box=1:boxcolor=black:boxborderw=14'
 _preset_x264 = '\
 "{BIN}" \
 -y \
@@ -50,9 +50,40 @@ _preset_x264 = '\
 -color_trc gamma22 \
 -threads 0 \
 -movflags +faststart \
--vf "format=yuv420p, scale={WIDTH}:{HEIGHT}{TIMECODE}" \
+-vf "format=yuv420p, \
+scale=ceil({WIDTH}/2)*2:ceil(({WIDTH}*(min(iw\,ih)/max(iw\,ih)))/2)*2, \
+setsar=1/1, \
+pad={WIDTH}:{HEIGHT}:0:(max({HEIGHT}\,oh)-min({HEIGHT}\,oh))/2:black\
+{TIMECODE}" \
 "{OUTPUT}"\
 '
+
+_preset_dnxhd = '\
+"{BIN}" \
+-y \
+-hwaccel auto \
+-framerate {FRAMERATE} \
+-start_number {STARTFRAME} \
+-i "{INPUT}" \
+-r {FRAMERATE} \
+-c:v dnxhd \
+-b:v {BITRATE} \
+-color_range 2 \
+-colorspace bt709 \
+-color_primaries bt709 \
+-color_trc gamma22 \
+-threads 0 \
+-movflags +faststart \
+-vf "format=yuv422p, \
+fifo, \
+colormatrix=bt601:bt709, \
+scale=ceil({WIDTH}/2)*2:ceil(({WIDTH}*(min(iw\,ih)/max(iw\,ih)))/2)*2, \
+setsar=1/1, \
+pad={WIDTH}:{HEIGHT}:0:({HEIGHT}-(ceil(({WIDTH}*(min(iw\,ih)/max(iw\,ih)))/2)*2))/2:black\
+{TIMECODE}" \
+"{OUTPUT}"\
+'
+
 
 SIZE_PRESETS = {
     0: {
@@ -97,7 +128,16 @@ PRESETS = {
             PRESET='medium'
         ),
         'output_extension': 'mp4'
-    }
+    },
+    2: {
+        'name': 'DNxHD | MOV | 1080p (90Mbps)',
+        'description': 'DNxHD video for Avid - output size must be set to 1080p',
+        'preset': _safe_format(
+            _preset_dnxhd,
+            BITRATE='90M'
+        ),
+        'output_extension': 'mov'
+    },
 }
 
 
@@ -202,7 +242,7 @@ def _get_info_label(job, asset, task, output_path, startframe, endframe):
         v += ' \\| '
     if task:
         v += task
-        v += ' \\| '
+    v += '\n'
     vseq = common.get_sequence(output_path)
     if vseq:
         v += 'v' + vseq.group(2) + ' \\| '
@@ -227,8 +267,7 @@ def _get_progress_bar(startframe, endframe):
 @common.debug
 def convert(
         path, preset, server=None, job=None, root=None, asset=None, task=None,
-        size=(None, None),
-        ext='mp4', timecode=False
+        size=(None, None), timecode=False
 ):
     """Start a convert process using ffmpeg.
 
@@ -273,6 +312,10 @@ def convert(
         raise RuntimeError('Not all required active items are set.')
 
     seq, startframe, endframe = _get_sequence_start_end(path)
+    ext = next(
+        PRESETS[f]['output_extension'] for f in PRESETS
+        if PRESETS[f]['preset'] == preset
+    )
     output_path = _output_path_from_seq(seq, ext)
 
     # Let's use the input image size if not specified directly
@@ -343,6 +386,8 @@ def convert(
         # Verify the output
         if proc.returncode == 1:
             with open(f'{output_path}.log', 'w', encoding='utf-8') as f:
+                f.write(cmd)
+                f.write('\n\n')
                 f.write('\n'.join(lines))
 
             ui.ErrorBox(

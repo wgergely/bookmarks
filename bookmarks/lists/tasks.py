@@ -123,7 +123,7 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
         o = common.size(common.WidthMargin)
         rect = QtCore.QRect(option.rect)
 
-        if index.data(common.TodoCountRole) and index.data(common.TodoCountRole) > 0:
+        if index.data(common.TodoCountRole):
             pixmap = images.ImageCache.get_rsc_pixmap(
                 'folder', common.color(common.SeparatorColor), o
             )
@@ -150,26 +150,6 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
         rect.setLeft(rect.left() + width)
 
         items = []
-        # Adding an indicator for the number of items in the folder
-        if index.data(common.TodoCountRole):
-            if index.data(common.TodoCountRole) >= 999:
-                text = '999+ items'
-            else:
-                text = f'{index.data(common.TodoCountRole)} items'
-            color = common.color(
-                common.TextSelectedColor
-            ) if selected else common.color(
-                common.GreenColor
-            )
-            color = common.color(common.TextSelectedColor) if hover else color
-            items.append((text, color))
-        else:
-            color = common.color(common.TextColor) if active else common.color(
-                common.BackgroundColor
-            )
-            color = common.color(common.TextColor) if hover else color
-            color = common.color(common.TextSelectedColor) if selected else color
-            items.append(('(empty)', color))
 
         if index.data(QtCore.Qt.ToolTipRole):
             color = common.color(
@@ -234,8 +214,6 @@ class TaskFolderModel(basemodel.BaseModel):
     @common.error
     @common.debug
     def init_data(self):
-        common.clear_watchdirs(common.TaskItemMonitor)
-
         flags = (
                 QtCore.Qt.ItemIsSelectable |
                 QtCore.Qt.ItemIsEnabled |
@@ -250,9 +228,6 @@ class TaskFolderModel(basemodel.BaseModel):
 
         config = tokens.get(*source_path[0:3])
 
-        # Add the parent path
-        _dirs = [_source_path]
-
         entries = sorted(
             ([f for f in os.scandir(_source_path)]), key=lambda x: x.name
         )
@@ -264,7 +239,6 @@ class TaskFolderModel(basemodel.BaseModel):
                 continue
 
             path = entry.path.replace('\\', '/')
-            _dirs.append(path)
 
             idx = len(data)
             data[idx] = common.DataDict(
@@ -283,7 +257,7 @@ class TaskFolderModel(basemodel.BaseModel):
                     common.FlagsRole: flags,
                     common.ParentPathRole: source_path,
                     common.DescriptionRole: '',
-                    common.TodoCountRole: 0,
+                    common.TodoCountRole: self.file_count(path),
                     common.FileDetailsRole: '',
                     common.SequenceRole: None,
                     common.FramesRole: [],
@@ -305,28 +279,12 @@ class TaskFolderModel(basemodel.BaseModel):
                     common.ShotgunLinkedRole: False,
                 }
             )
-            common.set_watchdirs(common.TaskItemMonitor, _dirs)
 
     @common.error
     @common.debug
     @QtCore.Slot()
     def reset_data(self, *args, force=False, emit_active=True):
-        """Slot used to verify the current task folder.
-
-        """
-        v = common.active(common.TaskKey)
-        if not v:
-            return super().reset_data(emit_active=emit_active)
-
-        p = common.active(common.TaskKey, args=True)
-        if not p or not all(p):
-            super().reset_data(force=True, emit_active=emit_active)
-            return
-
-        if not QtCore.QFileInfo('/'.join(p)).exists():
-            return super().reset_data(force=True, emit_active=emit_active)
-
-        return super().reset_data(emit_active=emit_active)
+        return super().reset_data(force=True, emit_active=emit_active)
 
     def default_row_size(self):
         return QtCore.QSize(1, common.size(common.HeightRow) * 1.2)
@@ -334,14 +292,71 @@ class TaskFolderModel(basemodel.BaseModel):
     def user_settings_key(self):
         return common.TaskKey
 
+    def file_count(self, source):
+        count = 0
+        for _ in self.item_generator(source):
+            count += 1
+            if count > 9:
+                break
+        return count
+
+    @classmethod
+    def item_generator(cls, path):
+        """Used to iterate over all files in a given folder.
+
+        Yields:
+            DirEntry:   A DirEntry instance.
+
+        """
+        try:
+            it = os.scandir(path)
+        except:
+            return
+
+        n = 0
+        while True:
+            n += 1
+            if n > 999:
+                return
+
+            try:
+                try:
+                    entry = next(it)
+                except StopIteration:
+                    break
+            except OSError:
+                return
+
+            try:
+                is_dir = entry.is_dir()
+            except OSError:
+                is_dir = False
+
+            if entry.name.startswith('.'):
+                continue
+
+            if not is_dir:
+                yield entry
+
+            try:
+                is_symlink = entry.is_symlink()
+            except OSError:
+                is_symlink = False
+
+            if not is_symlink:
+                for entry in cls.item_generator(entry.path):
+                    yield entry
+
 
 class TaskFolderWidget(basewidget.ThreadedBaseWidget):
-    """The view responsible for displaying the available data-keys."""
+    """The view responsible for displaying the available data-keys.
+
+    """
     SourceModel = TaskFolderModel
     Delegate = TaskFolderWidgetDelegate
     ContextMenu = TaskFolderContextMenu
 
-    queues = (threads.TaskFolderInfo,)
+    queues = ()
 
     def __init__(self, parent=None):
         super().__init__(

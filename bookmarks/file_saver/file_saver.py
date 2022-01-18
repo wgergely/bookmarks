@@ -95,7 +95,7 @@ INACTIVE_KEYS = (
 
 SECTIONS = {
     0: {
-        'name': 'Save File',
+        'name': 'File Saver',
         'icon': '',
         'color': common.color(common.BackgroundDarkColor),
         'groups': {

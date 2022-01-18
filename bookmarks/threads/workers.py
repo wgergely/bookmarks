@@ -27,9 +27,6 @@ def _widget(q):
 
     if common.main_widget is None:
         return None
-
-    if q == threads.TaskFolderInfo:
-        widget = common.widget(common.TaskTab)
     elif threads.THREADS[q]['tab'] >= 0:
         idx = threads.THREADS[q]['tab']
         widget = common.widget(idx)
@@ -632,7 +629,10 @@ class InfoWorker(BaseWorker):
             return
 
         seq = ref()[common.SequenceRole]
-        frs = ref()[common.FramesRole]
+
+        frs = sorted(ref()[common.FramesRole])
+        ref()[common.FramesRole] = frs
+
         er = ref()[common.EntryRole]
         size = ref()[common.SortBySizeRole]
 
@@ -851,68 +851,6 @@ class ThumbnailWorker(BaseWorker):
         if v:
             return None
         return super().queue_items(refs)
-
-
-class TaskFolderWorker(InfoWorker):
-    """Used by the TaskFolderModel to count the number of files in a folder."""
-
-    def count_items(self, ref, source):
-        count = 0
-        for _ in self.item_generator(source):
-            count += 1
-            if count > 999:
-                break
-
-        if not self.is_valid(ref):
-            return
-        ref()[common.TodoCountRole] = count
-
-    @classmethod
-    def item_generator(cls, path):
-        """Used to iterate over all files in a given folder.
-
-        Yields:
-            DirEntry:   A DirEntry instance.
-
-        """
-        try:
-            it = os.scandir(path)
-        except:
-            return
-
-        n = 0
-        while True:
-            n += 1
-            if n > 9999:
-                return
-
-            try:
-                try:
-                    entry = next(it)
-                except StopIteration:
-                    break
-            except OSError:
-                return
-
-            try:
-                is_dir = entry.is_dir()
-            except OSError:
-                is_dir = False
-
-            if entry.name.startswith('.'):
-                continue
-
-            if not is_dir:
-                yield entry
-
-            try:
-                is_symlink = entry.is_symlink()
-            except OSError:
-                is_symlink = False
-
-            if not is_symlink:
-                for entry in cls.item_generator(entry.path):
-                    yield entry
 
 
 class TransactionsWorker(BaseWorker):

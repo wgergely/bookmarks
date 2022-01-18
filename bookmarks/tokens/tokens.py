@@ -34,7 +34,6 @@ Attributes:
 import collections
 import getpass
 import json
-import re
 import socket
 import string
 
@@ -73,11 +72,14 @@ AllFormat = (
 
 invalid_token = '{invalid_token}'
 
-SceneDir = 'scene'
-ExportDir = 'export'
-DataDir = 'data'
-ReferenceDir = 'reference'
-RenderDir = 'render'
+SceneFolder = 'scene'
+CacheFolder = 'cache'
+RenderFolder = 'render'
+DataFolder = 'data'
+ReferenceFolder = 'reference'
+PublishFolder = 'publish'
+TextureFolder = 'textures'
+MiscFolder = 'other'
 
 DEFAULT_TOKEN_CONFIG = {
     FileFormatConfig: {
@@ -93,7 +95,9 @@ DEFAULT_TOKEN_CONFIG = {
         1: {
             'name': 'Image Formats',
             'flag': ImageFormat,
-            'value': common.sort_words(OpenImageIO.get_string_attribute('extension_list')),
+            'value': common.sort_words(
+                OpenImageIO.get_string_attribute('extension_list')
+            ),
             'description': 'Image file formats'
         },
         2: {
@@ -125,7 +129,7 @@ DEFAULT_TOKEN_CONFIG = {
             'name': 'Document Formats',
             'flag': DocFormat,
             'value': common.sort_words(
-                'doc, docx, pdf, ppt, pptx, rtf'
+                'txt, doc, docx, pdf, ppt, pptx, rtf'
             ),
             'description': 'Audio file formats'
         },
@@ -133,9 +137,9 @@ DEFAULT_TOKEN_CONFIG = {
             'name': 'Script Formats',
             'flag': ScriptFormat,
             'value': common.sort_words(
-                'py, jsx, js, vex, mel, env, bat, bash'
+                'py, pyc, pyo, pyd, jsx, js, vex, mel, env, bat, bash, json, xml'
             ),
-            'description': 'Audio file formats'
+            'description': 'Various script file formats'
         },
         7: {
             'name': 'Miscellaneous Formats',
@@ -148,186 +152,209 @@ DEFAULT_TOKEN_CONFIG = {
     },
     FileNameConfig: {
         0: {
-            'name': 'Default File Name',
+            'name': 'Asset Scene File',
             'value': '{prefix}_{asset}_{mode}_{element}_{user}_{version}.{ext}',
-            'description': 'File name with prefix, asset, mode, user name and '
-                           'version number.'
+            'description': 'Uses the project prefix, asset, mode, element, '
+                           'user and version names'
         },
         1: {
-            'name': 'Versioned with element and user name',
-            'value': '{element}_{user}_{version}.{ext}',
-            'description': 'File name with element name, user name and version '
-                           'number.'
+            'name': 'Asset Scene File (without mode and element)',
+            'value': '{prefix}_{asset}_{user}_{version}.{ext}',
+            'description': 'Uses the project prefix, asset, user and version names'
         },
         2: {
-            'name': 'Versioned with element',
-            'value': '{element}_{version}.{ext}',
-            'description': 'File name with element name and version number.'
+            'name': 'Shot Scene File',
+            'value': '{prefix}_SEQ{seq}_SH{shot}_{mode}_{element}_{user}_{'
+                     'version}.{ext}',
+            'description': 'Uses the project prefix, sequence, shot, mode, element, '
+                           'user and version names'
         },
         3: {
-            'name': 'Element name only',
-            'value': '{element}.{ext}',
-            'description': 'File name with the element name.'
+            'name': 'Shot Scene File (without mode and element)',
+            'value': '{prefix}_SEQ{seq}_SH{shot}_{user}_{version}.{ext}',
+            'description': 'Uses the project prefix, sequence, shot, user and '
+                           'version names'
+        },
+        4: {
+            'name': 'Versioned Element',
+            'value': '{element}_{version}.{ext}',
+            'description': 'File name with an element and version name'
         },
         5: {
-            'name': 'Custom name #1',
-            'value': 'MyCustomFile.ma',
-            'description': 'A custom file name'
+            'name': 'Non-Versioned Element',
+            'value': '{element}.{ext}',
+            'description': 'A non-versioned element file'
         },
-        6: {
-            'name': 'Custom name #2',
-            'value': 'MyCustomFile.ma',
-            'description': 'A custom file name'
-        }
     },
     AssetFolderConfig: {
         0: {
-            'name': ExportDir,
-            'value': ExportDir,
+            'name': CacheFolder,
+            'value': CacheFolder,
             'description': 'Alembic, FBX, OBJ and other CG caches',
-            'filter': SceneFormat | ImageFormat | MovieFormat | AudioFormat | CacheFormat,
+            'filter': SceneFormat | ImageFormat | MovieFormat | AudioFormat |
+                      CacheFormat,
             'subfolders': {
                 0: {
                     'name': 'abc',
-                    'value': 'abc',
-                    'description': 'Folder used to store Alembic caches.'
+                    'value': 'alembic',
+                    'description': 'Alembic (*.abc) cache files'
                 },
                 1: {
                     'name': 'obj',
                     'value': 'obj',
-                    'description': 'Folder used to store Waveform OBJ files.'
+                    'description': 'OBJ cache files'
                 },
                 2: {
                     'name': 'fbx',
                     'value': 'fbx',
-                    'description': 'Folder used to store Autodesk FBX exports.'
+                    'description': 'FBX cache files'
                 },
                 3: {
                     'name': 'ass',
-                    'value': 'ass',
-                    'description': 'Folder used to store Arnold ASS exports.'
+                    'value': 'arnold',
+                    'description': 'Arnold (*.ass) cache files'
                 },
                 4: {
                     'name': 'usd',
                     'value': 'usd',
-                    'description': 'Folder used to store USD files.'
+                    'description': 'USD stage and cache files'
                 },
                 5: {
+                    'name': 'usda',
+                    'value': 'usd',
+                    'description': 'USD stage and cache files'
+                },
+                6: {
+                    'name': 'usdc',
+                    'value': 'usd',
+                    'description': 'USD stage and cache files'
+                },
+                7: {
+                    'name': 'usdz',
+                    'value': 'usd',
+                    'description': 'USD stage and cache files'
+                },
+                8: {
+                    'name': 'geo',
+                    'value': 'geo',
+                    'description': 'Houdini cache files'
+                },
+                9: {
                     'name': 'bgeo',
-                    'value': 'bgeo',
-                    'description': 'Folder used to store Houdini geometry caches.'
+                    'value': 'geo',
+                    'description': 'Houdini cache files'
+                },
+                10: {
+                    'name': 'vdb',
+                    'value': 'vdb',
+                    'description': 'Volume caches'
+                },
+                11: {
+                    'name': 'ma',
+                    'value': 'maya',
+                    'description': 'Maya scene exports'
+                },
+                12: {
+                    'name': 'mb',
+                    'value': 'maya',
+                    'description': 'Maya scene exports'
                 }
             }
         },
         1: {
-            'name': DataDir,
-            'value': DataDir,
-            'description': 'Folder used to store temporary cache files, or other '
-                           'generated content.',
-            'filter': AllFormat
+            'name': DataFolder,
+            'value': DataFolder,
+            'description': 'Temporary data files, or content generated by '
+                           'applications',
+            'filter': AllFormat,
+            'subfolders': {},
         },
         2: {
-            'name': ReferenceDir,
-            'value': ReferenceDir,
-            'description': 'Folder used to store visual references, images and '
-                           'videos and sound files.',
-            'filter': ImageFormat | DocFormat | AudioFormat | MovieFormat
+            'name': ReferenceFolder,
+            'value': ReferenceFolder,
+            'description': 'References, e.g., images, videos or sound files',
+            'filter': ImageFormat | DocFormat | AudioFormat | MovieFormat,
+            'subfolders': {},
         },
         3: {
-            'name': RenderDir,
-            'value': RenderDir,
-            'description': 'Folder used to store 2D and 3D renders.',
+            'name': RenderFolder,
+            'value': 'images',
+            'description': 'Render layer outputs',
             'filter': ImageFormat | AudioFormat | MovieFormat,
+            'subfolders': {},
         },
         4: {
-            'name': SceneDir,
-            'value': SceneDir,
-            'description': 'Folder used to store scene files.',
+            'name': SceneFolder,
+            'value': 'scenes',
+            'description': 'Project and scene files',
             'filter': SceneFormat,
             'subfolders': {
                 0: {
-                    'name': 'anim',
-                    'value': 'anim',
-                    'description': 'Folder used to store 2D and 3D animation scene'
-                                   ' files.'
-                },
-                1: {
-                    'name': 'fx',
-                    'value': 'fx',
-                    'description': 'Folder used to store FX scene files.'
-                },
-                2: {
-                    'name': 'audio',
-                    'value': 'audio',
-                    'description': 'Folder used to store sound and music project '
-                                   'files.'
-                },
-                3: {
-                    'name': 'comp',
-                    'value': 'comp',
-                    'description': 'Folder used to store compositing project files.'
-                },
-                4: {
-                    'name': 'block',
-                    'value': 'block',
-                    'description': 'Folder used to store layout, animatic and '
-                                   'blocking scenes.'
-                },
-                5: {
                     'name': 'layout',
                     'value': 'layout',
-                    'description': 'Folder used to store layout, animatic and '
-                                   'blocking scenes.'
+                    'description': 'Layout, blockomatic & animatics scenes'
                 },
-                6: {
-                    'name': 'tracking',
-                    'value': 'tracking',
-                    'description': 'Folder used to store motion tracking project '
-                                   'files.'
-                },
-                7: {
-                    'name': 'look',
-                    'value': 'look',
-                    'description': 'Folder used to store lighting & visual '
-                                   'development scene files.'
-                },
-                8: {
+                1: {
                     'name': 'model',
                     'value': 'model',
-                    'description': 'Folder used to store modeling & sculpting '
-                                   'scene files.'
+                    'description': 'Modeling & sculpting scenes'
                 },
-                9: {
+                2: {
                     'name': 'rig',
                     'value': 'rig',
-                    'description': 'Folder used to store rigging and other '
-                                   'technical scene files.'
+                    'description': 'Character rigging scenes'
                 },
-                10: {
+                3: {
                     'name': 'render',
                     'value': 'render',
-                    'description': 'Folder used to store render scene files.'
-                }
+                    'description': 'Render and lighting projects'
+                },
+                4: {
+                    'name': 'anim',
+                    'value': 'anim',
+                    'description': 'Animation scenes'
+                },
+                5: {
+                    'name': 'fx',
+                    'value': 'fx',
+                    'description': 'FX project files'
+                },
+                6: {
+                    'name': 'comp',
+                    'value': 'comp',
+                    'description': 'Compositing project files'
+                },
+                7: {
+                    'name': 'audio',
+                    'value': 'audio',
+                    'description': 'Audio and SFX project files'
+                },
+                8: {
+                    'name': 'tracking',
+                    'value': 'tracking',
+                    'description': 'Motion tracking projects'
+                },
             },
-            5: {
-                'name': 'final',
-                'value': 'final',
-                'description': 'Folder used to store final and approved render '
-                               'files.',
-                'filter': ImageFormat | MovieFormat | AudioFormat
-            },
-            6: {
-                'name': 'image',
-                'value': 'image',
-                'description': 'Folder used to store 2D and 3D texture files.',
-                'filter': ImageFormat | MovieFormat | AudioFormat
-            },
-            7: {
-                'name': 'other',
-                'value': 'other',
-                'description': 'Folder used to store miscellaneous files.',
-                'filter': AllFormat
-            }
+        },
+        5: {
+            'name': PublishFolder,
+            'value': 'publish',
+            'description': 'Asset publish files',
+            'filter': ImageFormat | MovieFormat | AudioFormat
+        },
+        6: {
+            'name': TextureFolder,
+            'value': 'sourceimages',
+            'description': '2D and 3D texture files',
+            'filter': ImageFormat | MovieFormat | AudioFormat,
+            'subfolders': {},
+        },
+        7: {
+            'name': MiscFolder,
+            'value': 'other',
+            'description': 'Miscellaneous asset files',
+            'filter': AllFormat,
+            'subfolders': {},
         }
     }
 }
@@ -360,14 +387,57 @@ def get(server, job, root, force=False):
         # Fetch the currently stored data from the database
         v = TokenConfig(server, job, root)
         v.data(force=True)
-
         common.token_configs[key] = v
         return common.token_configs[key]
-    except:
+    except Exception:
         common.token_configs[key] = None
         if key in common.token_configs:
             del common.token_configs[key]
         raise
+
+
+def get_folder(token):
+    """Find the name of the `tokens.CacheFolder` folder based on
+    the bookmark item's token configuration.
+
+    Returns:
+        str: The current value of tokens.CacheFolder.
+
+    """
+    server = common.active(common.ServerKey)
+    job = common.active(common.JobKey)
+    root = common.active(common.RootKey)
+
+    if not all((server, job, root)):
+        raise RuntimeError('No active bookmark item found.')
+
+    config = get(server, job, root)
+    v = config.get_asset_folder_name(token)
+    return v if v else token
+
+
+def get_subfolder(token, name):
+    """Find the name of a subdirectory in the `config.CacheFolder` folder based on
+    the bookmark item's token configuration.
+
+    Args:
+        token (str): A folder name, e.g. `tokens.CacheFolder`.
+        name (str): The name of a sub folder.
+
+    Returns:
+        str: The value corresponding to the passed sub folder name.
+
+    """
+    server = common.active(common.ServerKey)
+    job = common.active(common.JobKey)
+    root = common.active(common.RootKey)
+
+    if not all((server, job, root)):
+        raise RuntimeError('No active bookmark item found.')
+
+    config = get(server, job, root)
+    v = config.get_asset_subfolder_name(token, name)
+    return v if v else name
 
 
 class TokenConfig(QtCore.QObject):
@@ -376,8 +446,8 @@ class TokenConfig(QtCore.QObject):
 
     As token config data might be used in performance sensitive sections,
     the instance is uninitialized until :meth:`data` is called. This will load
-    values from the database and cache it internally. Data won't be updated
-    until :meth:`.data(force=True)` is called.
+    values from the database and cache it internally. This cached data won't be
+    updated from the database until :meth:`.data(force=True)` is called.
 
     """
 
@@ -425,7 +495,7 @@ class TokenConfig(QtCore.QObject):
             ):
                 self._data = v
             return self._data
-        except:
+        except (RuntimeError, ValueError, TypeError):
             log.error('Failed to get token config from the database.')
             return self._data
         finally:
@@ -472,7 +542,7 @@ class TokenConfig(QtCore.QObject):
         data = self.data(force=force)
         try:
             json_data = json.dumps(data, sort_keys=True, indent=4)
-        except:
+        except (RuntimeError, ValueError, TypeError):
             log.error('Failed to convert data to JSON.')
             raise
 
@@ -581,11 +651,11 @@ class TokenConfig(QtCore.QObject):
         for k, v in kwargs.items():
             tokens[k] = v
 
-        def _get(k):
-            if k not in kwargs or not kwargs[k]:
-                v = db.value(db.source(), k, database.BookmarkTable)
-                v = v if v else invalid_token
-                tokens[k] = v
+        def _get(_k):
+            if _k not in kwargs or not kwargs[_k]:
+                _v = db.value(db.source(), _k, database.BookmarkTable)
+                _v = _v if _v else invalid_token
+                tokens[_k] = _v
 
         # We can also use some bookmark item properties as tokens.
         # Let's load the values from the database:
@@ -613,6 +683,7 @@ class TokenConfig(QtCore.QObject):
 
         Args:
             flag (int):     A format filter flag.
+            force (bool, optional): Force retrieve tokens from the database.
 
         Returns:
             tuple:           A tuple of file format extensions.
@@ -620,7 +691,7 @@ class TokenConfig(QtCore.QObject):
         """
         data = self.data(force=force)
         if FileFormatConfig not in data:
-            raise KeyError('Invalid data, `FileFormatConfig` not found.')
+            raise KeyError('Malformed data, `FileFormatConfig` not found.')
 
         extensions = []
         for v in data[FileFormatConfig].values():
@@ -636,7 +707,7 @@ class TokenConfig(QtCore.QObject):
 
         data = self.data(force=force)
         if AssetFolderConfig not in data:
-            raise KeyError('{}/{}/{}')
+            raise KeyError('Malformed data, `AssetFolderConfig` not found.')
 
         for v in data[AssetFolderConfig].values():
             if v['value'].lower() == task.lower():
@@ -648,6 +719,7 @@ class TokenConfig(QtCore.QObject):
 
         Args:
             task (str): The name of a task folder.
+            force (bool, optional): Force retrieve tokens from the database.
 
         Returns:
             set: A set of file format extensions.
@@ -657,7 +729,7 @@ class TokenConfig(QtCore.QObject):
 
         data = self.data(force=force)
         if AssetFolderConfig not in data:
-            raise KeyError('Invalid token config data.')
+            raise KeyError('Malformed data, `AssetFolderConfig` not found.')
 
         for v in data[AssetFolderConfig].values():
             if v['value'].lower() != task.lower():
@@ -681,22 +753,29 @@ class TokenConfig(QtCore.QObject):
                 return v['value']
         return None
 
-    def get_export_subdir(self, v, force=False):
+    def get_asset_subfolder_name(self, token, folder, force=False):
+        """Returns the value of a sub folder in the token config.
+
+        Args:
+            token (str): An asset folder name (not value!),
+                e.g.`config.ExportFolder`.
+            folder (str): A sub folder name, e.g. `abc`.
+            force (bool, optional): Force reload data from the database.
+
+        Returns:
+            str: A custom value set in config settings, or None.
+
+        """
         data = self.data(force=force)
         if not data:
-            return v
+            return None
 
-        for _v in data[AssetFolderConfig].values():
-            if _v['name'] == ExportDir:
-                if 'subfolders' not in _v:
-                    return None
-                for v_ in _v['subfolders'].values():
-                    if v_['name'] == v:
-                        return v_['value']
-        return v
-
-    def get_export_dir(self):
-        v = self.get_asset_folder_name(ExportDir)
-        if not v:
-            return '{}/{}/{}'
-        return v
+        for v in data[AssetFolderConfig].values():
+            if v['name'] != token:
+                continue
+            if 'subfolders' not in v:
+                return None
+            for subfolder in v['subfolders'].values():
+                if subfolder['name'] == folder:
+                    return subfolder['value']
+        return None

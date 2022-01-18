@@ -38,7 +38,6 @@ FileInfo3 = 'FileInfo3'
 FavouriteInfo = 'FavouriteInfo'
 AssetInfo = 'AssetInfo'
 BookmarkInfo = 'BookmarkInfo'
-TaskFolderInfo = 'TaskFolderInfo'
 QueuedDatabaseTransaction = 'QueuedDatabaseTransaction'
 QueuedSettingsTransaction = 'QueuedSettingsTransaction'
 QueuedShotgunQuery = 'QueuedShotgunQuery'
@@ -162,17 +161,6 @@ THREADS = {
         'worker': workers.ThumbnailWorker,
         'role': common.ThumbnailLoaded,
         'tab': common.FavouriteTab,
-        'mutex': QtCore.QMutex()
-    },
-    TaskFolderInfo: {
-        'queue': collections.deque([], common.max_list_items),
-        'preload': True,
-        'data_types': {
-            common.FileItem: DataType(TaskFolderInfo, common.FileItem),
-        },
-        'worker': workers.TaskFolderWorker,
-        'role': common.FileInfoLoaded,
-        'tab': -1,
         'mutex': QtCore.QMutex()
     },
     QueuedDatabaseTransaction: {

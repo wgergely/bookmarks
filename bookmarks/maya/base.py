@@ -133,21 +133,28 @@ AGNOSTIC_CAPTURE_FILE = '{workspace}/{capture_folder}/latest/{asset}_capture_{' 
                         'frame}.{ext}'
 
 EXPORT_FILE_RULES = {
+    'Alembic': 'abc',
+    'alembicimport': 'abc',
+    'alembicexport': 'abc',
+    'alembicCache': 'abc',
+    'alembic import': 'abc',
+    'alembic export': 'abc',
     'assexport': 'ass',
     'ass export': 'ass',
-    'alembicexport': 'abc',
-    'alembic export': 'abc',
+    'ass import': 'ass',
+    'OBJ': 'obj',
+    'objimport': 'obj',
+    'obj import': 'obj',
     'objexport': 'obj',
+    'OBJexport': 'obj',
     'obj export': 'obj',
     'fbxexport': 'fbx',
     'fbx export': 'fbx',
-    'ass import': 'ass',
-    'alembicimport': 'abc',
-    'alembic import': 'abc',
-    'objimport': 'obj',
-    'obj import': 'obj',
     'fbximport': 'fbx',
     'fbx import': 'fbx',
+    'Arnold-USD': 'usd',
+    'USD Import': 'usd',
+    'USD Export': 'usd',
 }
 
 RENDER_NAME_TEMPLATE = '<RenderLayer>/<Version>/<RenderPass>/<RenderLayer>_' \
@@ -173,55 +180,35 @@ DB_KEYS = {
 }
 
 
-def get_export_dir():
-    """Find the name of the ``export`` folder.
-
-    """
-    server = common.active(common.ServerKey)
-    job = common.active(common.JobKey)
-    root = common.active(common.RootKey)
-
-    if not all((server, job, root)):
-        raise RuntimeError('No active bookmark item found.')
-
-    config = tokens.get(server, job, root)
-    return config.get_export_dir()
-
-
-def get_export_subdir(v):
-    """Find the name of a subdirectory in the ``export`` folder.
-
-    """
-    server = common.active(common.ServerKey)
-    job = common.active(common.JobKey)
-    root = common.active(common.RootKey)
-
-    if not all((server, job, root)):
-        raise RuntimeError('No active bookmark item found.')
-
-    config = tokens.get(server, job, root)
-    return config.get_export_subdir(v)
-
-
 def patch_workspace_file_rules():
-    """Patches the current maya project to use the ``export`` directory defined
-    in the current token config.
+    """Patches the current maya workspace to use the directories defined in the
+    active bookmark item's token configuration.
 
     """
-    export_dir = get_export_dir()
-
-    if not export_dir:
-        return
-
     for rule, ext in EXPORT_FILE_RULES.items():
-        sub_dir = get_export_subdir(ext)
-        if not sub_dir:
-            continue
         v = DEFAULT_CACHE_DIR.format(
-            export_dir=export_dir,
-            ext=sub_dir
+            export_dir=tokens.get_folder(tokens.CacheFolder),
+            ext=tokens.get_subfolder(tokens.CacheFolder, ext)
         )
         cmds.workspace(fr=(rule, v))
+
+    cmds.workspace(fr=('scene', tokens.get_folder(tokens.SceneFolder)))
+    cmds.workspace(fr=('sourceImages', tokens.get_folder(tokens.TextureFolder)))
+    cmds.workspace(fr=('images', tokens.get_folder(tokens.RenderFolder)))
+
+    cmds.workspace(fr=('timeEditor', tokens.get_folder(tokens.DataFolder)))
+    cmds.workspace(fr=('renderData', tokens.get_folder(tokens.DataFolder)))
+    cmds.workspace(fr=('translatorData', tokens.get_folder(tokens.DataFolder)))
+    cmds.workspace(fr=('sceneAssembly', tokens.get_folder(tokens.DataFolder)))
+    cmds.workspace(fr=('diskCache', tokens.get_folder(tokens.DataFolder)))
+    cmds.workspace(fr=('diskCache', tokens.get_folder(tokens.DataFolder)))
+    cmds.workspace(fr=('fluidCache', tokens.get_folder(tokens.DataFolder)))
+    cmds.workspace(fr=('offlineEdit', tokens.get_folder(tokens.DataFolder)))
+    cmds.workspace(fr=('furShadowMap', tokens.get_folder(tokens.DataFolder)))
+    cmds.workspace(fr=('shaders', tokens.get_folder(tokens.DataFolder)))
+    cmds.workspace(fr=('furFiles', tokens.get_folder(tokens.DataFolder)))
+    cmds.workspace(fr=('furEqualMap', tokens.get_folder(tokens.DataFolder)))
+    cmds.workspace(fr=('movie', tokens.get_folder(tokens.DataFolder)))
 
 
 def set_startframe(frame):

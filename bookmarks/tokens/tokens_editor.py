@@ -15,9 +15,9 @@ from .. import ui
 from ..editor import base
 
 SECTIONS = (
-    (tokens.FileNameConfig, 'File Names Templates'),
-    (tokens.AssetFolderConfig, 'Primary Asset Folders'),
-    (tokens.FileFormatConfig, 'File Formats'),
+    (tokens.FileNameConfig, 'Templates: File Names'),
+    (tokens.AssetFolderConfig, 'Templates: Asset Folders'),
+    (tokens.FileFormatConfig, 'Templates: Formats'),
 )
 
 
@@ -195,9 +195,7 @@ class SubfolderEditor(QtWidgets.QDialog):
         main_grp = base.add_section('', 'Edit Subfolders', self)
         grp = ui.get_group(parent=main_grp)
 
-        for _k, _v in sorted(
-                self.v['subfolders'].items(), key=lambda x: x[1]['name']
-        ):
+        for _k, _v in self.v['subfolders'].items():
             if not isinstance(_v, dict):
                 log.error('Invalid data. Key: {}, Value: {}'.format(_k, _v))
                 continue
@@ -248,14 +246,15 @@ class TokenConfigEditor(QtWidgets.QWidget):
         self.job = job
         self.root = root
 
+        self.tokens = None
         self.current_data = {}
         self.changed_data = {}
 
         self.header_buttons = []
-
         self.scroll_area = None
+        self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
 
-        self.tokens = tokens.get(server, job, root)
+        self.init_data()
 
         self._create_ui()
         self._connect_signals()
@@ -331,30 +330,44 @@ class TokenConfigEditor(QtWidgets.QWidget):
                     )
                     row.layout().addWidget(button, 0)
 
-                if section != tokens.AssetFolderConfig:
-                    continue
-
-                button = ui.PaintedButton('Formats', parent=row)
-                row.layout().addWidget(button, 0)
-                if 'filter' in v:
-                    key = '{}/{}/filter'.format(section, k)
-                    self.current_data[key] = v['filter']
-                    button.clicked.connect(
-                        functools.partial(self.show_filter_editor, key, v, data)
-                    )
-                else:
-                    button.setDisabled(True)
-
-                button = ui.PaintedButton('Subfolders', parent=row)
-                row.layout().addWidget(button, 0)
-                if 'subfolders' in v and isinstance(v['subfolders'], dict):
-                    button.clicked.connect(
-                        functools.partial(
-                            self.show_subfolders_editor, section, k, v, data
+                if section == tokens.AssetFolderConfig:
+                    button = ui.PaintedButton('Formats', parent=row)
+                    row.layout().addWidget(button, 0)
+                    if 'filter' in v:
+                        key = '{}/{}/filter'.format(section, k)
+                        self.current_data[key] = v['filter']
+                        button.clicked.connect(
+                            functools.partial(self.show_filter_editor, key, v, data)
                         )
-                    )
-                else:
-                    button.setDisabled(True)
+                    else:
+                        button.setDisabled(True)
+
+                    button = ui.PaintedButton('Subfolders', parent=row)
+                    row.layout().addWidget(button, 0)
+                    if 'subfolders' in v and isinstance(v['subfolders'], dict):
+                        button.clicked.connect(
+                            functools.partial(
+                                self.show_subfolders_editor, section, k, v, data
+                            )
+                        )
+                    else:
+                        button.setDisabled(True)
+
+    def init_data(self):
+        self.tokens = tokens.get(self.server, self.job, self.root)
+
+    def contextMenuEvent(self, event):
+        action = QtWidgets.QAction(
+            'Reset all template settings to their defaults'
+        )
+        action.triggered.connect(self.restore_to_defaults)
+
+        menu = QtWidgets.QMenu(parent=self)
+        menu.addAction(action)
+        pos = self.mapToGlobal(event.pos())
+        menu.move(pos)
+        menu.exec_()
+        menu.deleteLater()
 
     @QtCore.Slot(str)
     @QtCore.Slot(dict)
@@ -385,6 +398,19 @@ class TokenConfigEditor(QtWidgets.QWidget):
             ) if x == QtWidgets.QDialog.Accepted else None
         )
         editor.exec_()
+
+    @QtCore.Slot()
+    def restore_to_defaults(self):
+        mbox = ui.MessageBox(
+            'Are you sure you want to restore all templates to the default value?',
+            'Your custom settings will be permanently lost.',
+            buttons=[ui.YesButton, ui.CancelButton],
+        )
+        res = mbox.exec_()
+        if res == QtWidgets.QDialog.Rejected:
+            return
+        self.tokens.set_data(tokens.DEFAULT_TOKEN_CONFIG.copy())
+        self.window().close()
 
     @QtCore.Slot(str)
     @QtCore.Slot(dict)

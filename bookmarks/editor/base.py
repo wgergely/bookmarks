@@ -430,10 +430,20 @@ class BasePropertyEditor(QtWidgets.QDialog):
         """Add a header button to help reveal the given section widget.
 
         """
-        button = ui.PaintedButton(
+        button = QtWidgets.QPushButton(
             name,
-            height=None,
             parent=self.section_headers_widget
+        )
+
+        font, _ = common.font_db.secondary_font(common.size(common.FontSizeMedium))
+        button.setStyleSheet(
+            'outline: none;'
+            'border: none;'
+            f'color: {common.rgb(common.color(common.TextSecondaryColor))};'
+            'text-align: left;'
+            'padding: 0px;'
+            'margin: 0px;'
+            f'font-family: "{font.family()}"'
         )
         self.section_headers_widget.layout().addWidget(button)
         button.clicked.connect(

@@ -281,11 +281,11 @@
 
 <span class="n">invalid_token</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{invalid_token}</span><span class="s1">'</span>
 
-<span class="n">SceneDir</span> <span class="o">=</span> <span class="s1">'scene'</span>
-<span class="n">ExportDir</span> <span class="o">=</span> <span class="s1">'export'</span>
-<span class="n">DataDir</span> <span class="o">=</span> <span class="s1">'data'</span>
-<span class="n">ReferenceDir</span> <span class="o">=</span> <span class="s1">'reference'</span>
-<span class="n">RenderDir</span> <span class="o">=</span> <span class="s1">'render'</span>
+<span class="n">SceneFolder</span> <span class="o">=</span> <span class="s1">'scene'</span>
+<span class="n">CacheFolder</span> <span class="o">=</span> <span class="s1">'export'</span>
+<span class="n">DataFolder</span> <span class="o">=</span> <span class="s1">'data'</span>
+<span class="n">ReferenceFolder</span> <span class="o">=</span> <span class="s1">'reference'</span>
+<span class="n">RenderFolder</span> <span class="o">=</span> <span class="s1">'render'</span>
 
 <span class="n">DEFAULT_TOKEN_CONFIG</span> <span class="o">=</span> <span class="p">{</span>
     <span class="n">FileFormatConfig</span><span class="p">:</span> <span class="p">{</span>
@@ -390,8 +390,8 @@
     <span class="p">},</span>
     <span class="n">AssetFolderConfig</span><span class="p">:</span> <span class="p">{</span>
         <span class="mi">0</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'name'</span><span class="p">:</span> <span class="n">ExportDir</span><span class="p">,</span>
-            <span class="s1">'value'</span><span class="p">:</span> <span class="n">ExportDir</span><span class="p">,</span>
+            <span class="s1">'name'</span><span class="p">:</span> <span class="n">CacheFolder</span><span class="p">,</span>
+            <span class="s1">'value'</span><span class="p">:</span> <span class="n">CacheFolder</span><span class="p">,</span>
             <span class="s1">'description'</span><span class="p">:</span> <span class="s1">'Alembic, FBX, OBJ and other CG caches'</span><span class="p">,</span>
             <span class="s1">'filter'</span><span class="p">:</span> <span class="n">SceneFormat</span> <span class="o">|</span> <span class="n">ImageFormat</span> <span class="o">|</span> <span class="n">MovieFormat</span> <span class="o">|</span> <span class="n">AudioFormat</span> <span class="o">|</span> <span class="n">CacheFormat</span><span class="p">,</span>
             <span class="s1">'subfolders'</span><span class="p">:</span> <span class="p">{</span>
@@ -428,28 +428,28 @@
             <span class="p">}</span>
         <span class="p">},</span>
         <span class="mi">1</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'name'</span><span class="p">:</span> <span class="n">DataDir</span><span class="p">,</span>
-            <span class="s1">'value'</span><span class="p">:</span> <span class="n">DataDir</span><span class="p">,</span>
+            <span class="s1">'name'</span><span class="p">:</span> <span class="n">DataFolder</span><span class="p">,</span>
+            <span class="s1">'value'</span><span class="p">:</span> <span class="n">DataFolder</span><span class="p">,</span>
             <span class="s1">'description'</span><span class="p">:</span> <span class="s1">'Folder used to store temporary cache files, or other '</span>
                            <span class="s1">'generated content.'</span><span class="p">,</span>
             <span class="s1">'filter'</span><span class="p">:</span> <span class="n">AllFormat</span>
         <span class="p">},</span>
         <span class="mi">2</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'name'</span><span class="p">:</span> <span class="n">ReferenceDir</span><span class="p">,</span>
-            <span class="s1">'value'</span><span class="p">:</span> <span class="n">ReferenceDir</span><span class="p">,</span>
+            <span class="s1">'name'</span><span class="p">:</span> <span class="n">ReferenceFolder</span><span class="p">,</span>
+            <span class="s1">'value'</span><span class="p">:</span> <span class="n">ReferenceFolder</span><span class="p">,</span>
             <span class="s1">'description'</span><span class="p">:</span> <span class="s1">'Folder used to store visual references, images and '</span>
                            <span class="s1">'videos and sound files.'</span><span class="p">,</span>
             <span class="s1">'filter'</span><span class="p">:</span> <span class="n">ImageFormat</span> <span class="o">|</span> <span class="n">DocFormat</span> <span class="o">|</span> <span class="n">AudioFormat</span> <span class="o">|</span> <span class="n">MovieFormat</span>
         <span class="p">},</span>
         <span class="mi">3</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'name'</span><span class="p">:</span> <span class="n">RenderDir</span><span class="p">,</span>
-            <span class="s1">'value'</span><span class="p">:</span> <span class="n">RenderDir</span><span class="p">,</span>
+            <span class="s1">'name'</span><span class="p">:</span> <span class="n">RenderFolder</span><span class="p">,</span>
+            <span class="s1">'value'</span><span class="p">:</span> <span class="n">RenderFolder</span><span class="p">,</span>
             <span class="s1">'description'</span><span class="p">:</span> <span class="s1">'Folder used to store 2D and 3D renders.'</span><span class="p">,</span>
             <span class="s1">'filter'</span><span class="p">:</span> <span class="n">ImageFormat</span> <span class="o">|</span> <span class="n">AudioFormat</span> <span class="o">|</span> <span class="n">MovieFormat</span><span class="p">,</span>
         <span class="p">},</span>
         <span class="mi">4</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'name'</span><span class="p">:</span> <span class="n">SceneDir</span><span class="p">,</span>
-            <span class="s1">'value'</span><span class="p">:</span> <span class="n">SceneDir</span><span class="p">,</span>
+            <span class="s1">'name'</span><span class="p">:</span> <span class="n">SceneFolder</span><span class="p">,</span>
+            <span class="s1">'value'</span><span class="p">:</span> <span class="n">SceneFolder</span><span class="p">,</span>
             <span class="s1">'description'</span><span class="p">:</span> <span class="s1">'Folder used to store scene files.'</span><span class="p">,</span>
             <span class="s1">'filter'</span><span class="p">:</span> <span class="n">SceneFormat</span><span class="p">,</span>
             <span class="s1">'subfolders'</span><span class="p">:</span> <span class="p">{</span>
@@ -889,13 +889,13 @@
                 <span class="k">return</span> <span class="n">v</span><span class="p">[</span><span class="s1">'value'</span><span class="p">]</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
-    <span class="k">def</span> <span class="nf">get_export_subdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_cache_subfolder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">v</span>
 
         <span class="k">for</span> <span class="n">_v</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">AssetFolderConfig</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">_v</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span> <span class="o">==</span> <span class="n">ExportDir</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_v</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span> <span class="o">==</span> <span class="n">CacheFolder</span><span class="p">:</span>
                 <span class="k">if</span> <span class="s1">'subfolders'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_v</span><span class="p">:</span>
                     <span class="k">return</span> <span class="kc">None</span>
                 <span class="k">for</span> <span class="n">v_</span> <span class="ow">in</span> <span class="n">_v</span><span class="p">[</span><span class="s1">'subfolders'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
@@ -903,8 +903,8 @@
                         <span class="k">return</span> <span class="n">v_</span><span class="p">[</span><span class="s1">'value'</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">v</span>
 
-    <span class="k">def</span> <span class="nf">get_export_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_asset_folder_name</span><span class="p">(</span><span class="n">ExportDir</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">get_cache_folder</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_asset_folder_name</span><span class="p">(</span><span class="n">CacheFolder</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="p">:</span>
             <span class="k">return</span> <span class="s1">'</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">/</span><span class="si">{}</span><span class="s1">'</span>
         <span class="k">return</span> <span class="n">v</span></div>

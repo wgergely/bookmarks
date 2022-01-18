@@ -45,7 +45,7 @@ def show(server, job, root):
 
 SECTIONS = {
     0: {
-        'name': 'Basic Settings',
+        'name': 'Settings',
         'icon': 'bookmark',
         'color': common.color(common.BackgroundDarkColor),
         'groups': {
@@ -53,7 +53,7 @@ SECTIONS = {
                 0: {
                     'name': 'Prefix',
                     'key': 'prefix',
-                    'validator': base.textvalidator,
+                    'validator': base.namevalidator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Custom prefix, eg. \'MYB\'',
                     'description': 'A short name of the bookmark (or job) used '

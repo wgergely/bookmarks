@@ -118,7 +118,7 @@ class AboutWidget(QtWidgets.QDialog):
 
 SECTIONS = {
     0: {
-        'name': 'Basic Settings',
+        'name': 'Settings',
         'icon': 'icon',
         'color': None,
         'groups': {

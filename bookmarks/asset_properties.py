@@ -51,7 +51,7 @@ def show(server, job, root, asset=None):
 
 SECTIONS = {
     0: {
-        'name': 'Basic Settings',
+        'name': 'Settings',
         'icon': '',
         'color': common.color(common.BackgroundDarkColor),
         'groups': {

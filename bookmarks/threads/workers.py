@@ -630,7 +630,7 @@ class InfoWorker(BaseWorker):
 
         seq = ref()[common.SequenceRole]
 
-        frs = sorted(ref()[common.FramesRole])
+        frs = sorted(ref()[common.FramesRole], key=lambda x: int(x))
         ref()[common.FramesRole] = frs
 
         er = ref()[common.EntryRole]

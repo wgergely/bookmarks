@@ -152,10 +152,15 @@ def publish_footage(
     regex = r'|'.join(akatemplates.tokens[f] for f in akatemplates.publish_types)
     publish_type = re.search(regex, destination).group(0)
     publish_type = re.sub(r'[0-9_-]+', '', publish_type)
+
+    # Initialize the aka database and get the client and project prefixes
+    akadatabase.init_table_data(akadb.CL)
     cl_abbrev = akadatabase.get_value(akadb.CL, client, akadb.CL_Abbreviation)
     pr_abbrev = akadatabase.get_value(akadb.PR, project, akadb.PR_Abbreviation)
 
     padding = akatemplates.tokens[akatemplates.AV_PublishSequenceFile].count('#')
+
+    frames = sorted(frames, key=lambda x: int(x))
 
     pbar = get_progress_bar(frames)
     pbar.open()

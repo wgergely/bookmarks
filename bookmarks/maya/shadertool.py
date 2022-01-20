@@ -338,8 +338,8 @@ class ShaderView(QtWidgets.QTableView):
         index = next(f for f in self.selectionModel().selectedIndexes())
         if not index.isValid():
             return
-        shader = self.model().internal_data[index.row()]['shader']
-        cmds.select(shader, replace=True)
+        # shader = self.model().internal_data[index.row()]['shader']
+        # cmds.select(shader, replace=True)
 
     @QtCore.Slot(QtCore.QModelIndex)
     def item_activated(self, index):

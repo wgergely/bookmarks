@@ -145,7 +145,7 @@ class BookmarksModel(basemodel.BaseModel):
             data[idx] = common.DataDict({
                 QtCore.Qt.DisplayRole: text,
                 QtCore.Qt.EditRole: text,
-                QtCore.Qt.StatusTipRole: filepath,
+                common.PathRole: filepath,
                 QtCore.Qt.ToolTipRole: filepath,
                 QtCore.Qt.SizeHintRole: self.row_size,
                 #
@@ -193,7 +193,7 @@ class BookmarksModel(basemodel.BaseModel):
 
         if not index.isValid():
             return
-        if not index.data(QtCore.Qt.StatusTipRole):
+        if not index.data(common.PathRole):
             return
         if not index.data(common.ParentPathRole):
             return

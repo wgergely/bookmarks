@@ -31,6 +31,11 @@ class TaskFolderContextMenu(contextmenu.BaseContextMenu):
     def setup(self):
         self.reveal_item_menu()
         self.copy_menu()
+        self.separator()
+        self.toggle_item_flags_menu()
+        self.sort_menu()
+        self.list_filter_menu()
+        self.separator()
         self.refresh_menu()
 
 
@@ -241,14 +246,18 @@ class TaskFolderModel(basemodel.BaseModel):
             path = entry.path.replace('\\', '/')
 
             idx = len(data)
+            description = config.get_description(entry.name)
             data[idx] = common.DataDict(
                 {
                     QtCore.Qt.DisplayRole: entry.name,
                     QtCore.Qt.EditRole: entry.name,
-                    QtCore.Qt.StatusTipRole: path,
-                    QtCore.Qt.ToolTipRole: '',
-                    QtCore.Qt.ToolTipRole: config.get_description(entry.name),
+                    common.PathRole: path,
                     QtCore.Qt.SizeHintRole: self.row_size,
+                    #
+                    QtCore.Qt.StatusTipRole: description,
+                    QtCore.Qt.AccessibleDescriptionRole: description,
+                    QtCore.Qt.WhatsThisRole: description,
+                    QtCore.Qt.ToolTipRole: description,
                     #
                     common.QueueRole: self.queues,
                     common.DataTypeRole: common.FileItem,
@@ -256,7 +265,7 @@ class TaskFolderModel(basemodel.BaseModel):
                     common.EntryRole: [entry, ],
                     common.FlagsRole: flags,
                     common.ParentPathRole: source_path,
-                    common.DescriptionRole: '',
+                    common.DescriptionRole: description,
                     common.TodoCountRole: self.file_count(path),
                     common.FileDetailsRole: '',
                     common.SequenceRole: None,

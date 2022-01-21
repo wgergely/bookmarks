@@ -152,11 +152,11 @@ def proxy_path(v):
     if isinstance(v, str):
         pass
     elif isinstance(v, weakref.ref):
-        v = v()[QtCore.Qt.StatusTipRole]
+        v = v()[common.PathRole]
     elif isinstance(v, dict):
-        v = v[QtCore.Qt.StatusTipRole]
+        v = v[common.PathRole]
     elif isinstance(v, QtCore.QModelIndex):
-        v = v.data(QtCore.Qt.StatusTipRole)
+        v = v.data(common.PathRole)
     else:
         raise TypeError(
             f'Invalid type, expected one of {weakref.ref}, {QtCore.QModelIndex}, {dict}, got {type(v)}')
@@ -230,7 +230,7 @@ def get_sequence_paths(index):
         list: A list of file paths.
 
     """
-    path = index.data(QtCore.Qt.StatusTipRole)
+    path = index.data(common.PathRole)
     if not is_collapsed(path):
         return [path, ]
 

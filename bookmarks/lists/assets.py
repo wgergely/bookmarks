@@ -164,8 +164,13 @@ class AssetsModel(basemodel.BaseModel):
             data[idx] = common.DataDict({
                 QtCore.Qt.DisplayRole: name,
                 QtCore.Qt.EditRole: filename,
-                QtCore.Qt.StatusTipRole: filepath,
+                common.PathRole: filepath,
                 QtCore.Qt.SizeHintRole: self.row_size,
+                #
+                QtCore.Qt.StatusTipRole: filename,
+                QtCore.Qt.AccessibleDescriptionRole: filename,
+                QtCore.Qt.WhatsThisRole: filename,
+                QtCore.Qt.ToolTipRole: filename,
                 #
                 common.QueueRole: self.queues,
                 common.DataTypeRole: t,
@@ -240,7 +245,7 @@ class AssetsModel(basemodel.BaseModel):
 
         if not index.isValid():
             return
-        if not index.data(QtCore.Qt.StatusTipRole):
+        if not index.data(common.PathRole):
             return
         if not index.data(common.ParentPathRole):
             return
@@ -279,7 +284,7 @@ class AssetsWidget(basewidget.ThreadedBaseWidget):
         common.signals.assetAdded.connect(
             functools.partial(
                 self.show_item,
-                role=QtCore.Qt.StatusTipRole,
+                role=common.PathRole,
             )
         )
         common.signals.assetAdded.connect(self.start_delayed_queue_timer)

@@ -413,13 +413,13 @@ class BaseListWidget(QtWidgets.QListView):
         index = common.get_selected_index(self)
         if not index.isValid():
             return
-        if not index.data(QtCore.Qt.StatusTipRole):
+        if not index.data(common.PathRole):
             return
 
         model = self.model().sourceModel()
         data_type = model.data_type()
 
-        path = index.data(QtCore.Qt.StatusTipRole)
+        path = index.data(common.PathRole)
         if data_type == common.SequenceItem:
             path = common.get_sequence_startpath(path)
 
@@ -470,7 +470,7 @@ class BaseListWidget(QtWidgets.QListView):
 
                 if not index.isValid():
                     continue
-                p = index.data(QtCore.Qt.StatusTipRole)
+                p = index.data(common.PathRole)
                 if not p:
                     continue
 
@@ -567,9 +567,9 @@ class BaseListWidget(QtWidgets.QListView):
             """Sets flags for multiple items."""
             for item in DATA.values():
                 if proxy:
-                    _k = common.proxy_path(item[QtCore.Qt.StatusTipRole])
+                    _k = common.proxy_path(item[common.PathRole])
                 else:
-                    _k = item[QtCore.Qt.StatusTipRole]
+                    _k = item[common.PathRole]
                 if k == _k:
                     _set_flag(_k, mode, item, flag, commit=commit)
 
@@ -631,7 +631,7 @@ class BaseListWidget(QtWidgets.QListView):
         SEQ_DATA = common.get_data(p, k, common.SequenceItem)
 
         applied = data[common.FlagsRole] & flag
-        collapsed = common.is_collapsed(data[QtCore.Qt.StatusTipRole])
+        collapsed = common.is_collapsed(data[common.PathRole])
 
         # Determine the mode of operation
         if state is None and applied:
@@ -642,14 +642,14 @@ class BaseListWidget(QtWidgets.QListView):
             mode = state
 
         if collapsed:
-            k = common.proxy_path(data[QtCore.Qt.StatusTipRole])
+            k = common.proxy_path(data[common.PathRole])
             _set_flag(k, mode, data, flag, commit=True)
             if self.model().sourceModel().model_data() == FILE_DATA:
                 _set_flags(SEQ_DATA, k, mode, flag, commit=False, proxy=True)
             else:
                 _set_flags(FILE_DATA, k, mode, flag, commit=False, proxy=True)
         else:
-            k = data[QtCore.Qt.StatusTipRole]
+            k = data[common.PathRole]
 
             if not can_toggle_flag(k, mode, data, flag):
                 ui.MessageBox(
@@ -955,7 +955,7 @@ class BaseListWidget(QtWidgets.QListView):
         t = model.data_type()
 
         for idx in data:
-            if t == common.SequenceItem and role == QtCore.Qt.StatusTipRole:
+            if t == common.SequenceItem and role == common.PathRole:
                 k = common.proxy_path(data[idx][role])
             else:
                 k = data[idx][role]
@@ -1549,7 +1549,7 @@ class BaseInlineIconWidget(BaseListWidget):
                     self.update(index)
                 elif rectangles[delegate.DataRect].contains(cursor_position):
                     common.signals.showStatusTipMessage.emit(
-                        index.data(QtCore.Qt.StatusTipRole))
+                        index.data(common.PathRole))
                 else:
                     common.signals.clearStatusBarMessage.emit()
                     self.update(index)
@@ -1749,7 +1749,7 @@ class ThreadedBaseWidget(BaseInlineIconWidget):
 
         for row in self.visible_rows['proxy_rows']:
             index = self.model().index(row, 0)
-            if index.data(QtCore.Qt.StatusTipRole) == ref()[QtCore.Qt.StatusTipRole]:
+            if index.data(common.PathRole) == ref()[common.PathRole]:
                 super().update(index)
 
         self.update_queue_timer.start(self.update_queue_timer.interval())

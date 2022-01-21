@@ -64,7 +64,7 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         if not self.index.isValid():
             return
 
-        path = self.index.data(QtCore.Qt.StatusTipRole)
+        path = self.index.data(common.PathRole)
         path = common.get_sequence_endpath(path)
         file_info = QtCore.QFileInfo(path)
 

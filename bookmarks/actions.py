@@ -758,7 +758,7 @@ def edit_item(index):
         v = index.data(common.ParentPathRole)[-1]
         edit_asset(asset=v)
     elif len(pp) >= 4:
-        v = index.data(QtCore.Qt.StatusTipRole)
+        v = index.data(common.PathRole)
         edit_file(v)
 
 
@@ -928,7 +928,7 @@ def copy_selected_path(index):
     else:
         mode = common.UnixPath
     copy_path(
-        index.data(QtCore.Qt.StatusTipRole),
+        index.data(common.PathRole),
         mode=mode,
         first=False
     )
@@ -941,7 +941,7 @@ def copy_selected_alt_path(index):
     if not index.data(common.FileInfoLoaded):
         return
     copy_path(
-        index.data(QtCore.Qt.StatusTipRole),
+        index.data(common.PathRole),
         mode=common.UnixPath,
         first=True
     )
@@ -983,7 +983,7 @@ def preview_thumbnail(index):
     if not index.isValid():
         return
 
-    source = index.data(QtCore.Qt.StatusTipRole)
+    source = index.data(common.PathRole)
     source = common.get_sequence_startpath(source)
 
     if '.abc' in source.lower():
@@ -1027,7 +1027,7 @@ def preview_image(index):
     if not index.isValid():
         return
 
-    source = index.data(QtCore.Qt.StatusTipRole)
+    source = index.data(common.PathRole)
     source = common.get_sequence_startpath(source)
 
     if QtCore.QFileInfo(source).suffix() not in images.get_oiio_extensions():
@@ -1104,14 +1104,14 @@ def show_asset(path):
         return
 
     # Check if the added asset has been added to the currently active bookmark
-    if index.data(QtCore.Qt.StatusTipRole) not in path:
+    if index.data(common.PathRole) not in path:
         return
 
     # Change tabs otherwise
     common.signals.tabChanged.emit(common.AssetTab)
 
     widget = common.widget(common.AssetTab)
-    widget.show_item(path, role=QtCore.Qt.StatusTipRole)
+    widget.show_item(path, role=common.PathRole)
 
 
 @common.debug
@@ -1124,7 +1124,7 @@ def reveal(item):
 
     """
     if isinstance(item, (QtCore.QModelIndex, QtWidgets.QListWidgetItem)):
-        path = item.data(QtCore.Qt.StatusTipRole)
+        path = item.data(common.PathRole)
     elif isinstance(item, str):
         path = item
     else:
@@ -1244,7 +1244,7 @@ def execute(index, first=False):
 
     if not index.isValid():
         return
-    path = index.data(QtCore.Qt.StatusTipRole)
+    path = index.data(common.PathRole)
     if first:
         path = common.get_sequence_startpath(path)
     else:
@@ -1278,7 +1278,7 @@ def suggest_prefix(job):
 @selection
 def capture_thumbnail(index):
     server, job, root = index.data(common.ParentPathRole)[0:3]
-    source = index.data(QtCore.Qt.StatusTipRole)
+    source = index.data(common.PathRole)
 
     if common.init_mode == common.StandaloneMode:
         common.main_widget.hide()
@@ -1309,7 +1309,7 @@ def capture_thumbnail(index):
 @selection
 def pick_thumbnail_from_file(index):
     server, job, root = index.data(common.ParentPathRole)[0:3]
-    source = index.data(QtCore.Qt.StatusTipRole)
+    source = index.data(common.PathRole)
 
     from .lists.widgets import thumb_picker as editor
     widget = editor.show(
@@ -1329,7 +1329,7 @@ def pick_thumbnail_from_file(index):
 @selection
 def pick_thumbnail_from_library(index):
     server, job, root = index.data(common.ParentPathRole)[0:3]
-    source = index.data(QtCore.Qt.StatusTipRole)
+    source = index.data(common.PathRole)
 
     if not all((server, job, root, source)):
         return
@@ -1369,7 +1369,7 @@ def remove_thumbnail(index):
 
     """
     server, job, root = index.data(common.ParentPathRole)[0:3]
-    source = index.data(QtCore.Qt.StatusTipRole)
+    source = index.data(common.PathRole)
 
     thumbnail_path = images.get_cached_thumbnail_path(
         server, job, root, source
@@ -1521,7 +1521,7 @@ def import_asset_properties_from_json():
                 idx = source_index.row()
 
                 # Check for any partial matches and omit items if not found
-                if k.lower() not in data[idx][QtCore.Qt.StatusTipRole].lower():
+                if k.lower() not in data[idx][common.PathRole].lower():
                     continue
                 if not data[idx][common.ParentPathRole]:
                     continue
@@ -1543,7 +1543,7 @@ def import_asset_properties_from_json():
                             continue
 
                         db.setValue(
-                            data[idx][QtCore.Qt.StatusTipRole],
+                            data[idx][common.PathRole],
                             key,
                             import_data[k][key],
                             table=database.AssetTable,
@@ -1559,7 +1559,7 @@ def import_asset_properties_from_json():
 @selection
 def convert_image_sequence(index):
     from .external import ffmpeg_widget
-    ffmpeg_widget.show(index.data(QtCore.Qt.StatusTipRole))
+    ffmpeg_widget.show(index.data(common.PathRole))
 
 
 def add_zip_template(source, mode, prompt=False):
@@ -1816,9 +1816,9 @@ def delete_selected_files(index):
             v[common.FlagsRole] = QtCore.Qt.NoItemFlags | common.MarkedAsArchived
 
     # Mark cache sequence data
-    path = index.data(QtCore.Qt.StatusTipRole)
+    path = index.data(common.PathRole)
     for v in s_data.values():
-        if v[QtCore.Qt.StatusTipRole] == path:
+        if v[common.PathRole] == path:
             v[common.FlagsRole] = QtCore.Qt.NoItemFlags | common.MarkedAsArchived
 
     index.model().invalidateFilter()

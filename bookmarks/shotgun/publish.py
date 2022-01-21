@@ -215,7 +215,7 @@ class PublishWidget(base.BasePropertyEditor):
         if not index.isValid():
             return
 
-        v = index.data(QtCore.Qt.StatusTipRole)
+        v = index.data(common.PathRole)
         if not v:
             return
 

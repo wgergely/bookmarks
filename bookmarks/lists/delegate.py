@@ -58,15 +58,33 @@ def paintmethod(func):
         args[1].restore()
         return res
 
+
     return func_wrapper
 
 
+__elided_text = {}
+
+
+def elided_text(metrics, text, elide_mode, width):
+    k = f'{text}{elide_mode}{width}'
+    if k in __elided_text:
+        return __elided_text[k]
+    v = metrics.elidedText(
+        text,
+        elide_mode,
+        width
+    )
+    __elided_text[k] = v
+    return v
+
+
+
 def subdir_rects_key(index, option):
-    return index.data(QtCore.Qt.StatusTipRole) + str(option.rect.height())
+    return index.data(common.PathRole) + str(option.rect.height())
 
 
 def subdir_bg_rect_key(index, option):
-    return index.data(QtCore.Qt.StatusTipRole) + str(option.rect.size())
+    return index.data(common.PathRole) + str(option.rect.size())
 
 
 def get_painter_path(x, y, font, text):
@@ -393,7 +411,8 @@ def draw_segments(it, font, metrics, offset, *args):
             rect.setLeft(
                 rectangles[DataRect].left()
             )
-            text = metrics.elidedText(
+            text = elided_text(
+                metrics,
                 text,
                 QtCore.Qt.ElideLeft,
                 rect.width()
@@ -488,7 +507,8 @@ def draw_subdirs(bg_rect, clickable_rectangles, filter_text, *args):
         painter.drawRoundedRect(rect, o, o)
 
         if metrics.horizontalAdvance(text) > rect.width():
-            text = metrics.elidedText(
+            text = elided_text(
+                metrics,
                 text,
                 QtCore.Qt.ElideRight,
                 rect.width() - (common.size(common.WidthIndicator) * 2)
@@ -635,7 +655,8 @@ def draw_description(clickable_rectangles, left_limit, right_limit, offset, *arg
         )
 
     text = index.data(common.DescriptionRole)
-    text = metrics.elidedText(
+    text = elided_text(
+        metrics,
         text,
         QtCore.Qt.ElideLeft,
         right_limit - left_limit
@@ -790,7 +811,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         elif len(pp) > 4:
             return get_file_text_segments(
                 index.data(QtCore.Qt.DisplayRole),
-                index.data(QtCore.Qt.StatusTipRole),
+                index.data(common.PathRole),
                 tuple(index.data(common.FramesRole))
             )
 
@@ -987,7 +1008,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
             return
 
         server, job, root = index.data(common.ParentPathRole)[0:3]
-        source = index.data(QtCore.Qt.StatusTipRole)
+        source = index.data(common.PathRole)
 
         size_role = index.data(QtCore.Qt.SizeHintRole)
         if not source or not size_role:
@@ -1590,7 +1611,8 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
                 break
             if r.right() > rect.right():
                 r.setRight(rect.right() - (common.size(common.WidthIndicator)))
-                text = metrics.elidedText(
+                text = elided_text(
+                    metrics,
                     text,
                     QtCore.Qt.ElideRight,
                     r.width() - 6
@@ -1752,7 +1774,8 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
 
             if (_r.right() + o) > rect.right():
                 _r.setRight(rect.right() - o)
-                text = metrics.elidedText(
+                text = elided_text(
+                    metrics,
                     text,
                     QtCore.Qt.ElideRight,
                     _r.width()
@@ -1859,7 +1882,8 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
 
             if (_r.right() + o) > rect.right():
                 _r.setRight(rect.right() - o)
-                text = metrics.elidedText(
+                text = elided_text(
+                    metrics,
                     text,
                     QtCore.Qt.ElideRight,
                     _r.width()

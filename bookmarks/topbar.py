@@ -48,7 +48,7 @@ class QuickSwitchMenu(contextmenu.BaseContextMenu):
                 index.data(common.ParentPathRole)[0],
                 index.data(common.ParentPathRole)[1],
                 index.data(common.ParentPathRole)[2],
-                index.data(QtCore.Qt.StatusTipRole),
+                index.data(common.PathRole),
                 size=common.size(common.WidthMargin) * 4,
                 fallback_thumb='icon_bw'
             )

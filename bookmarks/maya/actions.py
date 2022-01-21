@@ -42,7 +42,7 @@ def set_workspace(*args, **kwargs):
     if not index.isValid():
         return
 
-    file_info = QtCore.QFileInfo(index.data(QtCore.Qt.StatusTipRole))
+    file_info = QtCore.QFileInfo(index.data(common.PathRole))
 
     # Do nothing if the current workspace is already the active item
     current = cmds.workspace(q=True, sn=True)
@@ -139,7 +139,7 @@ def save_scene(increment=False, type='mayaAscii'):
 @common.debug
 def execute(index):
     file_path = common.get_sequence_endpath(
-        index.data(QtCore.Qt.StatusTipRole)
+        index.data(common.PathRole)
     )
     file_info = QtCore.QFileInfo(file_path)
 
@@ -231,9 +231,9 @@ def update_active_item(*args):
             if not ref():
                 continue
             if t == common.FileItem:
-                s = ref()[idx][QtCore.Qt.StatusTipRole]
+                s = ref()[idx][common.PathRole]
             else:
-                s = common.proxy_path(ref()[idx][QtCore.Qt.StatusTipRole])
+                s = common.proxy_path(ref()[idx][common.PathRole])
 
             if scene == s and ref():
                 # Set flag to be active

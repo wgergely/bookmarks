@@ -1261,24 +1261,6 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def launcher_menu(self):
-        # server = common.active(common.ServerKey)
-        # job = common.active(common.JobKey)
-        # root = common.active(common.RootKey)
-        #
-        # if not all((server, job, root)):
-        #     return
-        #
-        # db = database.get_db(server, job, root)
-        # with db.connection():
-        #     v = db.value(
-        #         db.source(),
-        #         'applications',
-        #         database.BookmarkTable
-        #     )
-        #
-        # if not isinstance(v, dict) or not v:
-        #     return
-
         self.menu[key()] = {
             'icon': ui.get_icon('icon'),
             'text': 'Application Launcher',
@@ -1574,3 +1556,13 @@ class BaseContextMenu(QtWidgets.QMenu):
                     ),
                     'action': functools.partial(publishwidget.show, ref)
                 }
+
+    def delete_selected_files_menu(self):
+        if not self.index.isValid():
+            return
+
+        self.menu[key()] = {
+            'icon': ui.get_icon('close', color=common.color(common.RedColor)),
+            'text': 'Delete',
+            'action': actions.delete_selected_files,
+        }

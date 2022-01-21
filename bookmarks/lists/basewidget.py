@@ -1302,7 +1302,7 @@ class BaseInlineIconWidget(BaseListWidget):
         self.multi_toggle_items = {}
 
     def inline_icons_count(self):
-        """The numberof inline icons."""
+        """The number of inline icons."""
         return 0
 
     def reset_multitoggle(self):
@@ -1317,14 +1317,14 @@ class BaseInlineIconWidget(BaseListWidget):
         clickable rectangles define interactive regions on the list widget, and
         are set by the delegate.
 
-        For instance, the files widget has a few addittional clickable inline icons
+        For instance, the file widget has a few additional clickable inline icons
         that control filtering we set the action for here.
 
         ``Shift`` modifier will add a "positive" filter and hide all items that
         does not contain the given text.
 
         The ``alt`` or control modifiers will add a "negative filter" and hide
-        the selected subfolder from the view.
+        the selected sub-folder from the view.
 
         """
 
@@ -1336,14 +1336,14 @@ class BaseInlineIconWidget(BaseListWidget):
 
         if not index.isValid():
             return
+        if not index.flags() & QtCore.Qt.ItemIsEnabled:
+            return
 
         modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
         alt_modifier = modifiers & QtCore.Qt.AltModifier
         shift_modifier = modifiers & QtCore.Qt.ShiftModifier
         control_modifier = modifiers & QtCore.Qt.ControlModifier
 
-        rect = self.visualRect(index)
-        rectangles = delegate.get_rectangles(rect, self.inline_icons_count())
         clickable_rectangles = self.itemDelegate().get_clickable_rectangles(index)
         if not clickable_rectangles:
             return
@@ -1409,7 +1409,7 @@ class BaseInlineIconWidget(BaseListWidget):
 
         cursor_position = self.mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)
-        if not index.isValid():
+        if not index.isValid() or not index.flags() & QtCore.Qt.ItemIsEnabled:
             super(BaseInlineIconWidget, self).mousePressEvent(event)
             self.reset_multitoggle()
             return
@@ -1443,7 +1443,7 @@ class BaseInlineIconWidget(BaseListWidget):
         """Concludes `BaseInlineIconWidget`'s multi-item toggle operation, and
         resets the associated variables.
 
-        The inlince icon buttons are also triggered here. We're using the
+        The inline icon buttons are also triggered here. We're using the
         delegate's ``get_rectangles`` function to determine which icon was
         clicked.
 

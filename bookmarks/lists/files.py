@@ -15,8 +15,8 @@ from .. import common
 from .. import contextmenu
 from .. import images
 from .. import log
-from ..tokens import tokens
 from ..threads import threads
+from ..tokens import tokens
 
 FILTER_EXTENSIONS = False
 
@@ -32,9 +32,11 @@ def add_path_to_mime(mime, path):
     _bytes = QtCore.QByteArray(path.encode('utf-8'))
 
     mime.setData(
-        'application/x-qt-windows-mime;value="FileName"', _bytes)
+        'application/x-qt-windows-mime;value="FileName"', _bytes
+    )
     mime.setData(
-        'application/x-qt-windows-mime;value="FileNameW"', _bytes)
+        'application/x-qt-windows-mime;value="FileNameW"', _bytes
+    )
 
     return mime
 
@@ -132,17 +134,24 @@ class ItemDrag(QtGui.QDrag):
         self.setMimeData(model.mimeData([index, ]))
 
         def get(s, color=common.color(common.GreenColor)):
-            return images.ImageCache.get_rsc_pixmap(s, color,
-                                                    common.size(
-                                                        common.WidthMargin) * common.pixel_ratio)
+            return images.ImageCache.get_rsc_pixmap(
+                s, color,
+                common.size(
+                    common.WidthMargin
+                ) * common.pixel_ratio
+                )
 
         # Set drag icon
         self.setDragCursor(get('add_circle'), QtCore.Qt.CopyAction)
         self.setDragCursor(get('file'), QtCore.Qt.MoveAction)
-        self.setDragCursor(get('close', color=common.color(common.RedColor)),
-                           QtCore.Qt.ActionMask)
-        self.setDragCursor(get('close', color=common.color(common.RedColor)),
-                           QtCore.Qt.IgnoreAction)
+        self.setDragCursor(
+            get('close', color=common.color(common.RedColor)),
+            QtCore.Qt.ActionMask
+        )
+        self.setDragCursor(
+            get('close', color=common.color(common.RedColor)),
+            QtCore.Qt.IgnoreAction
+        )
 
         # Set pixmap
         source = index.data(QtCore.Qt.StatusTipRole)
@@ -163,17 +172,22 @@ class ItemDrag(QtGui.QDrag):
             )
         elif alt_modifier and shift_modifier:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'folder', common.color(common.TextSecondaryColor), common.size(common.HeightRow))
+                'folder', common.color(common.TextSecondaryColor),
+                common.size(common.HeightRow)
+            )
             source = QtCore.QFileInfo(source).dir().path()
         elif alt_modifier:
             pixmap = images.ImageCache.get_rsc_pixmap(
-                'file', common.color(common.TextSecondaryColor), common.size(common.HeightRow))
+                'file', common.color(common.TextSecondaryColor),
+                common.size(common.HeightRow)
+            )
             source = common.get_sequence_startpath(source)
         elif shift_modifier:
             source = common.get_sequence_startpath(source) + ', ++'
             pixmap = images.ImageCache.get_rsc_pixmap(
                 'multiples_files', common.color(common.TextSecondaryColor),
-                common.size(common.HeightRow))
+                common.size(common.HeightRow)
+            )
         else:
             return
 
@@ -191,12 +205,14 @@ class DragPixmapFactory(QtWidgets.QWidget):
         self._text = text
 
         _, metrics = common.font_db.primary_font(
-            common.size(common.FontSizeMedium))
+            common.size(common.FontSizeMedium)
+        )
         self._text_width = metrics.horizontalAdvance(text)
 
         width = self._text_width + common.size(common.WidthMargin)
         width = common.size(common.DefaultWidth) + common.size(
-            common.WidthMargin) if width > common.size(common.DefaultWidth) else width
+            common.WidthMargin
+        ) if width > common.size(common.DefaultWidth) else width
 
         self.setFixedHeight(common.size(common.HeightRow))
 
@@ -235,7 +251,8 @@ class DragPixmapFactory(QtWidgets.QWidget):
         painter.setOpacity(1.0)
 
         pixmap_rect = QtCore.QRect(
-            0, 0, common.size(common.HeightRow), common.size(common.HeightRow))
+            0, 0, common.size(common.HeightRow), common.size(common.HeightRow)
+        )
         painter.drawPixmap(pixmap_rect, self._pixmap, self._pixmap.rect())
 
         width = self._text_width + common.size(common.WidthIndicator)
@@ -261,26 +278,33 @@ class FilesWidgetContextMenu(contextmenu.BaseContextMenu):
     @common.error
     @common.debug
     def setup(self):
-        self.extra_menu()
+        if self.index.flags() & QtCore.Qt.ItemIsEnabled:
+            self.extra_menu()
         self.task_folder_toggle_menu()
         self.separator()
         self.launcher_menu()
         self.separator()
-        self.sg_publish_menu()
-        self.sg_rv_menu()
+        if self.index.flags() & QtCore.Qt.ItemIsEnabled:
+            self.sg_publish_menu()
+            self.sg_rv_menu()
         self.sg_url_menu()
-        self.convert_menu()
+        if self.index.flags() & QtCore.Qt.ItemIsEnabled:
+            self.convert_menu()
         self.add_file_menu()
+        if self.index.flags() & QtCore.Qt.ItemIsEnabled:
+            self.delete_selected_files_menu()
         self.separator()
         self.bookmark_url_menu()
         self.asset_url_menu()
         self.reveal_item_menu()
-        self.copy_menu()
+        if self.index.flags() & QtCore.Qt.ItemIsEnabled:
+            self.copy_menu()
         self.separator()
         self.edit_active_bookmark_menu()
         self.edit_active_asset_menu()
         self.notes_menu()
-        self.toggle_item_flags_menu()
+        if self.index.flags() & QtCore.Qt.ItemIsEnabled:
+            self.toggle_item_flags_menu()
         self.separator()
         self.row_size_menu()
         self.sort_menu()
@@ -423,8 +447,8 @@ class FilesModel(basemodel.BaseModel):
             if 'thumbs.db' in filename:
                 continue
 
-            # These values will always resolve to be the same, and therefore we can use a cache
-            # to retrieve them
+            # These values will always resolve to be the same, and therefore we
+            # can use a cache to retrieve them
             filepath, ext, file_root, _dir, sort_by_name_role = get_path_elements(
                 filename,
                 entry.path,
@@ -442,13 +466,16 @@ class FilesModel(basemodel.BaseModel):
             c += 1
             if not c % nth:
                 common.signals.showStatusBarMessage.emit(
-                    'Loading files (found ' + str(c) + ' items)...')
+                    'Loading files (found ' + str(c) + ' items)...'
+                )
                 QtWidgets.QApplication.instance().processEvents()
 
             flags = basemodel.DEFAULT_ITEM_FLAGS
             seq, sequence_path = get_sequence_elements(filepath)
 
-            if (seq and (sequence_path in common.favourites or filepath in common.favourites)) or (
+            if (seq and (
+                    sequence_path in common.favourites or filepath in
+                    common.favourites)) or (
                     filepath in common.favourites):
                 flags = flags | common.MarkedAsFavourite
 
@@ -458,40 +485,42 @@ class FilesModel(basemodel.BaseModel):
             if idx >= common.max_list_items:
                 break  # Let's limit the maximum number of items we load
 
-            data[idx] = common.DataDict({
-                QtCore.Qt.DisplayRole: filename,
-                QtCore.Qt.EditRole: filename,
-                QtCore.Qt.StatusTipRole: filepath,
-                QtCore.Qt.SizeHintRole: self.row_size,
-                #
-                common.QueueRole: self.queues,
-                common.DataTypeRole: common.FileItem,
-                #
-                common.EntryRole: [entry, ],
-                common.FlagsRole: flags,
-                common.ParentPathRole: parent_path_role,
-                common.DescriptionRole: '',
-                common.TodoCountRole: 0,
-                common.FileDetailsRole: '',
-                common.SequenceRole: seq,
-                common.FramesRole: [],
-                common.FileInfoLoaded: False,
-                common.StartPathRole: None,
-                common.EndPathRole: None,
-                #
-                common.ThumbnailLoaded: False,
-                #
-                common.TypeRole: common.FileItem,
-                #
-                common.SortByNameRole: sort_by_name_role,
-                common.SortByLastModifiedRole: 0,
-                common.SortBySizeRole: 0,
-                common.SortByTypeRole: ext,
-                #
-                common.IdRole: idx,  # non-mutable
-                #
-                common.ShotgunLinkedRole: False,
-            })
+            data[idx] = common.DataDict(
+                {
+                    QtCore.Qt.DisplayRole: filename,
+                    QtCore.Qt.EditRole: filename,
+                    QtCore.Qt.StatusTipRole: filepath,
+                    QtCore.Qt.SizeHintRole: self.row_size,
+                    #
+                    common.QueueRole: self.queues,
+                    common.DataTypeRole: common.FileItem,
+                    #
+                    common.EntryRole: [entry, ],
+                    common.FlagsRole: flags,
+                    common.ParentPathRole: parent_path_role,
+                    common.DescriptionRole: '',
+                    common.TodoCountRole: 0,
+                    common.FileDetailsRole: '',
+                    common.SequenceRole: seq,
+                    common.FramesRole: [],
+                    common.FileInfoLoaded: False,
+                    common.StartPathRole: None,
+                    common.EndPathRole: None,
+                    #
+                    common.ThumbnailLoaded: False,
+                    #
+                    common.TypeRole: common.FileItem,
+                    #
+                    common.SortByNameRole: sort_by_name_role,
+                    common.SortByLastModifiedRole: 0,
+                    common.SortBySizeRole: 0,
+                    common.SortByTypeRole: ext,
+                    #
+                    common.IdRole: idx,  # non-mutable
+                    #
+                    common.ShotgunLinkedRole: False,
+                }
+            )
 
             # If the file in question is a sequence, we will also save a reference
             # to it in the sequence data dict
@@ -508,39 +537,41 @@ class FilesModel(basemodel.BaseModel):
                     sort_by_name_role = list(sort_by_name_role)
                     sort_by_name_role[7] = sequence_name.lower()
 
-                    SEQUENCE_DATA[sequence_path] = common.DataDict({
-                        QtCore.Qt.DisplayRole: sequence_name,
-                        QtCore.Qt.EditRole: sequence_name,
-                        QtCore.Qt.StatusTipRole: sequence_path,
-                        QtCore.Qt.SizeHintRole: self.row_size,
-                        #
-                        common.QueueRole: self.queues,
-                        #
-                        common.EntryRole: [],
-                        common.FlagsRole: flags,
-                        common.ParentPathRole: parent_path_role,
-                        common.DescriptionRole: '',
-                        common.TodoCountRole: 0,
-                        common.FileDetailsRole: '',
-                        common.SequenceRole: seq,
-                        common.FramesRole: [],
-                        common.FileInfoLoaded: False,
-                        common.StartPathRole: None,
-                        common.EndPathRole: None,
-                        #
-                        common.ThumbnailLoaded: False,
-                        #
-                        common.TypeRole: common.SequenceItem,
-                        #
-                        common.SortByNameRole: sort_by_name_role,
-                        common.SortByLastModifiedRole: 0,
-                        common.SortBySizeRole: 0,  # Initializing with null-size
-                        common.SortByTypeRole: ext,
-                        #
-                        common.IdRole: 0,
-                        #
-                        common.ShotgunLinkedRole: False,
-                    })
+                    SEQUENCE_DATA[sequence_path] = common.DataDict(
+                        {
+                            QtCore.Qt.DisplayRole: sequence_name,
+                            QtCore.Qt.EditRole: sequence_name,
+                            QtCore.Qt.StatusTipRole: sequence_path,
+                            QtCore.Qt.SizeHintRole: self.row_size,
+                            #
+                            common.QueueRole: self.queues,
+                            #
+                            common.EntryRole: [],
+                            common.FlagsRole: flags,
+                            common.ParentPathRole: parent_path_role,
+                            common.DescriptionRole: '',
+                            common.TodoCountRole: 0,
+                            common.FileDetailsRole: '',
+                            common.SequenceRole: seq,
+                            common.FramesRole: [],
+                            common.FileInfoLoaded: False,
+                            common.StartPathRole: None,
+                            common.EndPathRole: None,
+                            #
+                            common.ThumbnailLoaded: False,
+                            #
+                            common.TypeRole: common.SequenceItem,
+                            #
+                            common.SortByNameRole: sort_by_name_role,
+                            common.SortByLastModifiedRole: 0,
+                            common.SortBySizeRole: 0,  # Initializing with null-size
+                            common.SortByTypeRole: ext,
+                            #
+                            common.IdRole: 0,
+                            #
+                            common.ShotgunLinkedRole: False,
+                        }
+                    )
 
                 SEQUENCE_DATA[sequence_path][common.FramesRole].append(seq.group(2))
                 SEQUENCE_DATA[sequence_path][common.EntryRole].append(entry)
@@ -866,5 +897,8 @@ class FilesWidget(basewidget.ThreadedBaseWidget):
             model.reset_data(force=True)
 
         # Delay the selection to let the model process events
-        QtCore.QTimer.singleShot(300, functools.partial(
-            self.select_item, v, role=QtCore.Qt.StatusTipRole))
+        QtCore.QTimer.singleShot(
+            300, functools.partial(
+                self.select_item, v, role=QtCore.Qt.StatusTipRole
+            )
+        )

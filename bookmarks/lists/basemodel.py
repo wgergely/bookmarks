@@ -598,7 +598,7 @@ class BaseModel(QtCore.QAbstractListModel):
             return False
 
         index = self.index(row, 0)
-        source = index.data(QtCore.Qt.StatusTipRole)
+        source = index.data(common.PathRole)
 
         proxy = bool(common.is_collapsed(source))
         server, job, root = index.data(common.ParentPathRole)[0:3]
@@ -678,7 +678,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         self.setSortLocaleAware(False)
         self.setDynamicSortFilter(False)
 
-        self.setFilterRole(QtCore.Qt.StatusTipRole)
+        self.setFilterRole(common.PathRole)
         self.setSortCaseSensitivity(QtCore.Qt.CaseSensitive)
         self.setFilterCaseSensitivity(QtCore.Qt.CaseSensitive)
 
@@ -888,7 +888,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
             if not ref():
                 return False
-            searchable = ref()[idx][QtCore.Qt.StatusTipRole].lower() + '\n' + \
+            searchable = ref()[idx][common.PathRole].lower() + '\n' + \
                          d.strip().lower() + '\n' + \
                          f.strip().lower()
 

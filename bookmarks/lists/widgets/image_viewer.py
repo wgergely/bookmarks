@@ -31,7 +31,7 @@ def get_item_info(ref):
     if not ref or not ref():
         return info
 
-    s = ref()[QtCore.Qt.StatusTipRole]
+    s = ref()[common.PathRole]
     s = s if isinstance(s, str) else ''
     info.append((common.color(common.TextColor), s if s else ''))
 
@@ -53,7 +53,7 @@ def get_item_info(ref):
     if not ref or not ref():
         return info
 
-    s = ref()[QtCore.Qt.StatusTipRole]
+    s = ref()[common.PathRole]
     s = common.get_sequence_endpath(s)
 
     buf = images.oiio_get_buf(s)

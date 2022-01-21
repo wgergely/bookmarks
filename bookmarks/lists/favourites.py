@@ -145,7 +145,7 @@ class FavouritesModel(files.FilesModel):
             data[idx] = common.DataDict({
                 QtCore.Qt.DisplayRole: filename,
                 QtCore.Qt.EditRole: filename,
-                QtCore.Qt.StatusTipRole: filepath,
+                common.PathRole: filepath,
                 QtCore.Qt.SizeHintRole: self.row_size,
                 #
                 common.QueueRole: self.queues,
@@ -195,7 +195,7 @@ class FavouritesModel(files.FilesModel):
                     SEQUENCE_DATA[sequence_path] = common.DataDict({
                         QtCore.Qt.DisplayRole: sequence_name,
                         QtCore.Qt.EditRole: sequence_name,
-                        QtCore.Qt.StatusTipRole: sequence_path,
+                        common.PathRole: sequence_path,
                         QtCore.Qt.SizeHintRole: self.row_size,
                         #
                         common.QueueRole: self.queues,
@@ -254,7 +254,7 @@ class FavouritesModel(files.FilesModel):
                 filename = filepath.split('/')[-1]
                 v[QtCore.Qt.DisplayRole] = filename
                 v[QtCore.Qt.EditRole] = filename
-                v[QtCore.Qt.StatusTipRole] = filepath
+                v[common.PathRole] = filepath
                 v[common.TypeRole] = common.FileItem
                 v[common.SortByLastModifiedRole] = 0
 

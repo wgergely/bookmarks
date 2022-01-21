@@ -388,7 +388,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             return
 
         path = common.get_sequence_startpath(
-            self.index.data(QtCore.Qt.StatusTipRole)
+            self.index.data(common.PathRole)
         )
 
         self.menu[key()] = {
@@ -409,7 +409,7 @@ class BaseContextMenu(QtWidgets.QMenu):
     def bookmark_url_menu(self):
         if not self.index.isValid():
             return
-        if not self.index.data(QtCore.Qt.StatusTipRole):
+        if not self.index.data(common.PathRole):
             return
 
         server, job, root = self.index.data(common.ParentPathRole)[0:3]
@@ -456,7 +456,7 @@ class BaseContextMenu(QtWidgets.QMenu):
     def asset_url_menu(self):
         if not self.index.isValid():
             return
-        if not self.index.data(QtCore.Qt.StatusTipRole):
+        if not self.index.data(common.PathRole):
             return
         if len(self.index.data(common.ParentPathRole)) < 4:
             return
@@ -506,7 +506,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[k] = collections.OrderedDict()
             self.menu['{}:icon'.format(k)] = ui.get_icon('copy')
 
-        path = self.index.data(QtCore.Qt.StatusTipRole)
+        path = self.index.data(common.PathRole)
         metrics = QtGui.QFontMetrics(self.font())
         for mode in (
                 common.WindowsPath, common.MacOSPath, common.UnixPath,
@@ -786,7 +786,7 @@ class BaseContextMenu(QtWidgets.QMenu):
     def title(self):
         if not self.index.isValid():
             return
-        title = self.index.data(QtCore.Qt.StatusTipRole).split('/')[-1]
+        title = self.index.data(common.PathRole).split('/')[-1]
         self.menu[key()] = {
             'text': title,
             'disabled': True,
@@ -808,13 +808,13 @@ class BaseContextMenu(QtWidgets.QMenu):
             server,
             job,
             root,
-            self.index.data(QtCore.Qt.StatusTipRole),
+            self.index.data(common.PathRole),
         )
         thumbnail_path = images.get_thumbnail(
             server,
             job,
             root,
-            self.index.data(QtCore.Qt.StatusTipRole),
+            self.index.data(common.PathRole),
             fallback_thumb=self.parent().itemDelegate().fallback_thumb,
             get_path=True
         )
@@ -1223,7 +1223,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             return
 
         settings_icon = ui.get_icon('settings')
-        _file = self.index.data(QtCore.Qt.StatusTipRole)
+        _file = self.index.data(common.PathRole)
 
         k = 'Properties'
         if k not in self.menu:
@@ -1272,7 +1272,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             return
 
         p = self.index.data(common.ParentPathRole)
-        source = self.index.data(QtCore.Qt.StatusTipRole)
+        source = self.index.data(common.PathRole)
         server, job, root = p[0:3]
         asset = p[3] if len(p) > 3 else None
 
@@ -1309,7 +1309,7 @@ class BaseContextMenu(QtWidgets.QMenu):
     def sg_url_menu(self):
         if not self.index.isValid():
             return
-        if not self.index.data(QtCore.Qt.StatusTipRole):
+        if not self.index.data(common.PathRole):
             return
 
         server, job, root = self.index.data(common.ParentPathRole)[0:3]
@@ -1422,7 +1422,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[f'{k}:icon'] = ui.get_icon('sg')
 
         path = common.get_sequence_startpath(
-            self.index.data(QtCore.Qt.StatusTipRole)
+            self.index.data(common.PathRole)
         )
 
         self.menu[k][key()] = {
@@ -1475,7 +1475,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         if not self.index.isValid():
             return
 
-        path = self.index.data(QtCore.Qt.StatusTipRole)
+        path = self.index.data(common.PathRole)
         # Only sequence items can be converted
         if not common.is_collapsed(path) and not common.get_sequence(path):
             return
@@ -1543,7 +1543,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             data = model.model_data()
             ref = weakref.ref(data[idx])
 
-            path = self.index.data(QtCore.Qt.StatusTipRole)
+            path = self.index.data(common.PathRole)
             ext = path.split('.')[-1]
             valid = [v for v in publish.PRESETS.values() if ext in v['formats']]
             valid = valid if common.is_collapsed(path) else False

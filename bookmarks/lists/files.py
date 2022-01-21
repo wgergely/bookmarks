@@ -154,7 +154,7 @@ class ItemDrag(QtGui.QDrag):
         )
 
         # Set pixmap
-        source = index.data(QtCore.Qt.StatusTipRole)
+        source = index.data(common.PathRole)
 
         modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
         no_modifier = modifiers == QtCore.Qt.NoModifier
@@ -489,8 +489,13 @@ class FilesModel(basemodel.BaseModel):
                 {
                     QtCore.Qt.DisplayRole: filename,
                     QtCore.Qt.EditRole: filename,
-                    QtCore.Qt.StatusTipRole: filepath,
+                    common.PathRole: filepath,
                     QtCore.Qt.SizeHintRole: self.row_size,
+                    #
+                    QtCore.Qt.StatusTipRole: filename,
+                    QtCore.Qt.AccessibleDescriptionRole: filename,
+                    QtCore.Qt.WhatsThisRole: filename,
+                    QtCore.Qt.ToolTipRole: filename,
                     #
                     common.QueueRole: self.queues,
                     common.DataTypeRole: common.FileItem,
@@ -541,8 +546,13 @@ class FilesModel(basemodel.BaseModel):
                         {
                             QtCore.Qt.DisplayRole: sequence_name,
                             QtCore.Qt.EditRole: sequence_name,
-                            QtCore.Qt.StatusTipRole: sequence_path,
+                            common.PathRole: sequence_path,
                             QtCore.Qt.SizeHintRole: self.row_size,
+                            #
+                            QtCore.Qt.StatusTipRole: sequence_name,
+                            QtCore.Qt.AccessibleDescriptionRole: sequence_name,
+                            QtCore.Qt.WhatsThisRole: sequence_name,
+                            QtCore.Qt.ToolTipRole: sequence_name,
                             #
                             common.QueueRole: self.queues,
                             #
@@ -601,7 +611,7 @@ class FilesModel(basemodel.BaseModel):
                 filename = filepath.split('/')[-1]
                 v[QtCore.Qt.DisplayRole] = filename
                 v[QtCore.Qt.EditRole] = filename
-                v[QtCore.Qt.StatusTipRole] = filepath
+                v[common.PathRole] = filepath
                 v[common.TypeRole] = common.FileItem
                 v[common.SortByLastModifiedRole] = 0
 
@@ -662,7 +672,7 @@ class FilesModel(basemodel.BaseModel):
 
         if not index.isValid():
             return
-        if not index.data(QtCore.Qt.StatusTipRole):
+        if not index.data(common.PathRole):
             return
         if not index.data(common.ParentPathRole):
             return
@@ -671,7 +681,7 @@ class FilesModel(basemodel.BaseModel):
         if len(parent_role) < 5:
             return
 
-        file_info = QtCore.QFileInfo(index.data(QtCore.Qt.StatusTipRole))
+        file_info = QtCore.QFileInfo(index.data(common.PathRole))
         filepath = parent_role[5] + '/' + \
                    common.get_sequence_endpath(file_info.fileName())
 
@@ -776,7 +786,7 @@ class FilesModel(basemodel.BaseModel):
         for index in indexes:
             if not index.isValid():
                 continue
-            path = index.data(QtCore.Qt.StatusTipRole)
+            path = index.data(common.PathRole)
 
             if no_modifier:
                 path = common.get_sequence_endpath(path)
@@ -834,7 +844,7 @@ class FilesWidget(basewidget.ThreadedBaseWidget):
         index = common.get_selected_index(self)
         if not index.isValid():
             return
-        if not index.data(QtCore.Qt.StatusTipRole):
+        if not index.data(common.PathRole):
             return
         if not index.data(common.ParentPathRole):
             return
@@ -844,6 +854,7 @@ class FilesWidget(basewidget.ThreadedBaseWidget):
 
         drag = ItemDrag(index, self)
         common.main_widget.topbar_widget.slack_drop_area_widget.setHidden(False)
+        QtCore.QTimer.singleShot(1, self.viewport().update)
         drag.exec_(supported_actions)
         common.main_widget.topbar_widget.slack_drop_area_widget.setHidden(True)
 
@@ -899,6 +910,6 @@ class FilesWidget(basewidget.ThreadedBaseWidget):
         # Delay the selection to let the model process events
         QtCore.QTimer.singleShot(
             300, functools.partial(
-                self.select_item, v, role=QtCore.Qt.StatusTipRole
+                self.select_item, v, role=common.PathRole
             )
         )

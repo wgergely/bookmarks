@@ -45,7 +45,7 @@ class DescriptionEditorWidget(ui.LineEdit):
             self.hide()
             return
 
-        p = index.data(QtCore.Qt.StatusTipRole)
+        p = index.data(common.PathRole)
         if common.is_collapsed(p):
             k = common.proxy_path(index)
         else:

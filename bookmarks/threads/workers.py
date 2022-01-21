@@ -261,7 +261,7 @@ class BaseWorker(QtCore.QObject):
                 if n > 99999:
                     return
 
-                s = common.proxy_path(ref()[idx][QtCore.Qt.StatusTipRole])
+                s = common.proxy_path(ref()[idx][common.PathRole])
                 if source == s:
                     ref()[idx][common.FileInfoLoaded] = False
                     threads.THREADS[self.queue]['queue'].append(
@@ -555,7 +555,7 @@ class InfoWorker(BaseWorker):
 
     def _process_data(self, ref):
         pp = ref()[common.ParentPathRole]
-        st = ref()[QtCore.Qt.StatusTipRole]
+        st = ref()[common.PathRole]
         flags = ref()[common.FlagsRole] | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsDragEnabled
         item_type = ref()[common.TypeRole]
 
@@ -681,10 +681,11 @@ class InfoWorker(BaseWorker):
         # Setting the path names
         if not self.is_valid(ref):
             return False
+
         ref()[common.StartPathRole] = startpath
         ref()[common.EndPathRole] = endpath
-        ref()[QtCore.Qt.StatusTipRole] = seqpath
-        ref()[QtCore.Qt.ToolTipRole] = seqpath
+        ref()[common.PathRole] = seqpath
+        #
         ref()[QtCore.Qt.DisplayRole] = seqname
         ref()[QtCore.Qt.EditRole] = seqname
         ref()[common.SortByLastModifiedRole] = _mtime
@@ -769,7 +770,7 @@ class ThumbnailWorker(BaseWorker):
         _p = ref()[common.ParentPathRole]
         if not self.is_valid(ref):
             return False
-        source = ref()[QtCore.Qt.StatusTipRole]
+        source = ref()[common.PathRole]
 
         # Resolve the thumbnail's path...
         destination = images.get_cached_thumbnail_path(

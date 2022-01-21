@@ -383,7 +383,7 @@ class TokenConfigEditor(QtWidgets.QWidget):
 
             item = editor.listwidget.item(editor.listwidget.count() - 1)
             item.setData(QtCore.Qt.UserRole, _v['flag'])
-            item.setData(QtCore.Qt.StatusTipRole, _v['description'])
+            item.setData(common.PathRole, _v['description'])
             item.setData(QtCore.Qt.ToolTipRole, _v['description'])
             item.setData(QtCore.Qt.AccessibleDescriptionRole, _v['description'])
             item.setData(QtCore.Qt.WhatsThisRole, _v['description'])

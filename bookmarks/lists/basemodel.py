@@ -76,10 +76,11 @@ def initdata(func):
         t1 = self.data_type()
         t2 = common.FileItem if t1 == common.SequenceItem else common.SequenceItem
 
-        self.coreDataLoaded.emit(
-            common.get_data_ref(p, k, t1),
-            common.get_data_ref(p, k, t2),
-        )
+        if all((p, k)):
+            self.coreDataLoaded.emit(
+                common.get_data_ref(p, k, t1),
+                common.get_data_ref(p, k, t2),
+            )
 
     return func_wrapper
 

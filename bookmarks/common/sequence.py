@@ -219,22 +219,23 @@ def get_sequence_endpath(path):
     return path
 
 
-@functools.lru_cache(maxsize=4194304)
 def get_sequence_paths(index):
-    """Given the index, returns a tuple of filenames referring to the
-    individual sequence items.
+    """Return a list of file paths of the individual files that make up the
+    sequence.
 
     Args:
-            index (QtCore.QModelIndex): A listview index.
+        index (QtCore.QModelIndex): A list view index.
+
+    Returns:
+        list: A list of file paths.
 
     """
     path = index.data(QtCore.Qt.StatusTipRole)
     if not is_collapsed(path):
-        return path
+        return [path, ]
 
-    sequence_paths = []
+    v = []
+    seq = index.data(common.SequenceRole)
     for frame in index.data(common.FramesRole):
-        seq = index.data(common.SequenceRole)
-        seq = seq.group(1) + frame + seq.group(3) + '.' + seq.group(4)
-        sequence_paths.append(seq)
-    return sequence_paths
+        v.append(f'{seq.group(1)}{frame}{seq.group(3)}.{seq.group(4)}')
+    return v

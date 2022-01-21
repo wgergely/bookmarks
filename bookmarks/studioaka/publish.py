@@ -155,6 +155,7 @@ def publish_footage(
 
     # Initialize the aka database and get the client and project prefixes
     akadatabase.init_table_data(akadb.CL)
+    akadatabase.init_table_data(akadb.PR)
     cl_abbrev = akadatabase.get_value(akadb.CL, client, akadb.CL_Abbreviation)
     pr_abbrev = akadatabase.get_value(akadb.PR, project, akadb.PR_Abbreviation)
 

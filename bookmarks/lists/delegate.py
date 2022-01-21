@@ -1076,6 +1076,8 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         """Paints the background for all list items."""
         rectangles, painter, option, index, selected, focused, active, archived, \
         favourite, hover, font, metrics, cursor_position = args
+        if index.flags() == QtCore.Qt.NoItemFlags | common.MarkedAsArchived:
+            return
 
         rect = QtCore.QRect(rectangles[BackgroundRect])
         if index.row() == (self.parent().model().rowCount() - 1):
@@ -1200,6 +1202,8 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         rectangles, painter, option, index, selected, focused, active, archived, \
         favourite, hover, font, metrics, cursor_position = args
 
+        if index.flags() == QtCore.Qt.NoItemFlags | common.MarkedAsArchived:
+            return
         if rectangles[InlineBackgroundRect].left() < rectangles[
             ThumbnailRect].right():
             return
@@ -1636,6 +1640,20 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
             painter.drawRect(option.rect)
 
     @paintmethod
+    def paint_deleted(self, *args, **kwargs):
+        rectangles, painter, option, index, selected, focused, active, archived, \
+        favourite, hover, font, metrics, cursor_position = args
+
+        if index.flags() != QtCore.Qt.NoItemFlags | common.MarkedAsArchived:
+            return
+
+        rect = QtCore.QRect(option.rect)
+        rect.setHeight(common.size(common.HeightSeparator) * 2)
+        rect.moveCenter(option.rect.center())
+        painter.setBrush(common.color(common.SeparatorColor))
+        painter.drawRect(rect)
+
+    @paintmethod
     def paint_bookmark_name(self, *args):
         """Paints name of the ``BookmarkWidget``'s items."""
         rectangles, painter, option, index, selected, focused, active, archived, \
@@ -2013,6 +2031,7 @@ class FilesWidgetDelegate(BaseDelegate):
         self.paint_thumbnail_drop_indicator(*args)
         self.paint_description_editor_background(*args)
         self.paint_drag_source(*args)
+        self.paint_deleted(*args)
 
     def sizeHint(self, option, index):
         return self.parent().model().sourceModel().row_size

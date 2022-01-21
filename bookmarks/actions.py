@@ -1778,3 +1778,47 @@ def hide_sg_connecting_message():
         QtWidgets.QApplication.instance().processEvents()
     except:
         pass
+
+
+@common.debug
+@common.error
+@selection
+def delete_selected_files(index):
+    from . import ui
+    from . import log
+    mbox = ui.MessageBox(
+        'Are you sure you want to delete this file?',
+        f'{index.data(QtCore.Qt.DisplayRole)} will be permanently lost.',
+        buttons=[ui.YesButton, ui.NoButton]
+    )
+    if mbox.exec_() == QtWidgets.QDialog.Rejected:
+        return
+
+    model = index.model().sourceModel()
+    f_data = common.get_data(model.source_path(), model.task(), common.FileItem)
+    s_data = common.get_data(model.source_path(), model.task(), common.SequenceItem)
+
+    f_v = f_data.values()
+    paths = set(common.get_sequence_paths(index))
+
+    # Remove file on disk
+    for path in paths:
+        _file = QtCore.QFile(path)
+        if not _file.exists():
+            continue
+        if not _file.remove():
+            log.error(f'Could not remove {path}.')
+
+    # Mark cached file data
+    for v in f_data.values():
+        if v[QtCore.Qt.DisplayRole] in paths:
+            paths.remove(v[QtCore.Qt.DisplayRole])
+            v[common.FlagsRole] = QtCore.Qt.NoItemFlags | common.MarkedAsArchived
+
+    # Mark cache sequence data
+    path = index.data(QtCore.Qt.StatusTipRole)
+    for v in s_data.values():
+        if v[QtCore.Qt.StatusTipRole] == path:
+            v[common.FlagsRole] = QtCore.Qt.NoItemFlags | common.MarkedAsArchived
+
+    index.model().invalidateFilter()

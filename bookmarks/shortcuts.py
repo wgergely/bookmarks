@@ -10,57 +10,59 @@ from PySide2 import QtWidgets, QtGui, QtCore
 from . import common
 
 
-OpenNewInstance = 0
+n = (f for f in range(9999))
 
-RowIncrease = OpenNewInstance + 1
-RowDecrease = RowIncrease + 1
-RowReset = RowDecrease + 1
+OpenNewInstance = next(n)
 
-ToggleSortOrder = RowReset + 1
+RowIncrease = next(n)
+RowDecrease = next(n)
+RowReset = next(n)
 
-ShowBookmarksTab = ToggleSortOrder + 1
-ShowAssetsTab = ShowBookmarksTab + 1
-ShowFilesTab = ShowAssetsTab + 1
-ShowFavouritesTab = ShowFilesTab + 1
+ToggleSortOrder = next(n)
 
-NextTab = ShowFavouritesTab + 1
-PreviousTab = NextTab + 1
+ShowBookmarksTab = next(n)
+ShowAssetsTab = next(n)
+ShowFilesTab = next(n)
+ShowFavouritesTab = next(n)
 
-AddItem = PreviousTab + 1
-EditItem = AddItem + 1
-RemoveItem = EditItem + 1
+NextTab = next(n)
+PreviousTab = next(n)
 
-Refresh = RemoveItem + 1
-AltRefresh = Refresh + 1
+AddItem = next(n)
+EditItem = next(n)
+RemoveItem = next(n)
 
-CopyItemPath = AltRefresh + 1
-CopyAltItemPath = CopyItemPath + 1
-RevealItem = CopyAltItemPath + 1
-RevealAltItem = RevealItem + 1
+Refresh = next(n)
+AltRefresh = next(n)
 
-CopyProperties = RevealAltItem + 1
-PasteProperties = CopyProperties + 1
+CopyItemPath = next(n)
+CopyAltItemPath = next(n)
+RevealItem = next(n)
+RevealAltItem = next(n)
 
-Quit = PasteProperties + 1
-Minimize = Quit + 1
-Maximize = Minimize + 1
-FullScreen = Maximize + 1
+CopyProperties = next(n)
+PasteProperties = next(n)
 
-ToggleSearch = FullScreen + 1
-ToggleSequence = ToggleSearch + 1
-ToggleArchived = ToggleSequence + 1
-ToggleFavourite = ToggleArchived + 1
-ToggleActive = ToggleFavourite + 1
+Quit = next(n)
+Minimize = next(n)
+Maximize = next(n)
+FullScreen = next(n)
 
-HideInlineButtons = ToggleActive + 1
-OpenSlack = HideInlineButtons + 1
-OpenPreferences = OpenSlack + 1
-OpenTodo = OpenPreferences + 1
+ToggleSearch = next(n)
+ToggleSequence = next(n)
+ToggleArchived = next(n)
+ToggleFavourite = next(n)
+ToggleActive = next(n)
 
-ToggleItemArchived = OpenTodo + 1
-ToggleItemFavourite = ToggleItemArchived + 1
+HideInlineButtons = next(n)
+OpenSlack = next(n)
+OpenPreferences = next(n)
+OpenTodo = next(n)
 
-PushToRV = ToggleItemFavourite + 1
+ToggleItemArchived = next(n)
+ToggleItemFavourite = next(n)
+
+PushToRV = next(n)
 
 BookmarkEditorShortcuts = {
     AddItem: {

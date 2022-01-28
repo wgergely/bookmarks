@@ -7,10 +7,8 @@ A list common actions used across `Bookmarks`.
 import functools
 import json
 import os
-import platform
 import re
 import subprocess
-import sys
 import weakref
 import zipfile
 
@@ -1123,7 +1121,10 @@ def reveal(item):
         item(str or QModelIndex): The item to show in the file manager.
 
     """
-    if isinstance(item, (QtCore.QModelIndex, QtWidgets.QListWidgetItem)):
+    if isinstance(
+            item, (QtCore.QModelIndex, QtCore.QPersistentModelIndex,
+                   QtWidgets.QListWidgetItem)
+    ):
         path = item.data(common.PathRole)
     elif isinstance(item, str):
         path = item
@@ -1140,7 +1141,7 @@ def reveal(item):
         else:
             args = ['/select,', QtCore.QDir.toNativeSeparators(path)]
         QtCore.QProcess.startDetached('explorer', args)
-
+        return
     elif common.get_platform() == common.PlatformMacOS:
         args = [
             '-e',
@@ -1152,11 +1153,10 @@ def reveal(item):
                 QtCore.QDir.toNativeSeparators(path)
             ), '-e', 'end tell']
         QtCore.QProcess.startDetached('osascript', args)
+        return
     elif common.get_platform() == common.PlatformUnsupported:
         raise NotImplementedError(
-            '{} is unsupported.'.format(
-                QtCore.QSysInfo().productType()
-            )
+            f'{QtCore.QSysInfo().productType()} is unsupported.'
         )
 
 
@@ -1348,7 +1348,9 @@ def pick_thumbnail_from_library(index):
 def execute_detached(path):
     proc = QtCore.QProcess()
     proc.setProgram('cmd.exe')
-    proc.setArguments(['/c', 'start', '/i', "%windir%\explorer.exe", os.path.normpath(path)])
+    proc.setArguments(
+        ['/c', 'start', '/i', "%windir%\explorer.exe", os.path.normpath(path)]
+    )
     proc.startDetached()
 
 

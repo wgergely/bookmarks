@@ -23,45 +23,55 @@ PathHighlight = 0b100000
 HIGHLIGHT_RULES = {
     'url': {
         're': re.compile(
-            r'((?:rvlink|file|http)[s]?:[/\\][/\\](?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
-            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
+            r'((?:rvlink|file|http)[s]?:[/\\][/\\](?:[a-zA-Z]|[0-9]|[$-_@.&+]|['
+            r'!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
+            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE
+        ),
         'flag': PathHighlight
     },
     'drivepath': {
         're': re.compile(
-            r'((?:[a-zA-Z]{1})[s]?:[/\\](?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
-            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
+            r'((?:[a-zA-Z]{1})[s]?:[/\\](?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),'
+            r']|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
+            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE
+        ),
         'flag': PathHighlight
     },
     'uncpath': {
         're': re.compile(
-            r'([/\\]{1,2}(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
-            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
+            r'([/\\]{1,2}(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F]['
+            r'0-9a-fA-F]))+)',
+            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE
+        ),
         'flag': PathHighlight
     },
     'heading': {
         're': re.compile(
             r'^(?<!#)#{1,2}(?!#)',
-            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
+            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE
+        ),
         'flag': HeadingHighlight
     },
     'quotes': {
         're': re.compile(
             # Group(2) captures the contents
             r'([\"\'])((?:(?=(\\?))\3.)*?)\1',
-            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
+            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE
+        ),
         'flag': QuoteHighlight
     },
     'italics': {
         're': re.compile(
             r'([\_])((?:(?=(\\?))\3.)*?)\1',  # Group(2) captures the contents
-            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
+            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE
+        ),
         'flag': ItalicsHighlight
     },
     'bold': {
         're': re.compile(
             r'([\*])((?:(?=(\\?))\3.)*?)\1',  # Group(2) captures the contents
-            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE),
+            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE
+        ),
         'flag': BoldHighlight
     },
 }
@@ -126,8 +136,11 @@ class Highlighter(QtGui.QSyntaxHighlighter):
                     self.setFormat(0, len(text), char_format)
 
                     char_format.setForeground(QtGui.QColor(0, 0, 0, 80))
-                    self.setFormat(match.start(0), len(
-                        match.group(0)), char_format)
+                    self.setFormat(
+                        match.start(0), len(
+                            match.group(0)
+                        ), char_format
+                    )
 
             if case['flag'] == PathHighlight:
                 it = case['re'].finditer(text)
@@ -137,10 +150,15 @@ class Highlighter(QtGui.QSyntaxHighlighter):
                         grp = match.group(0)
                         if grp:
                             char_format.setAnchor(True)
-                            char_format.setForeground(common.color(common.GreenColor))
+                            char_format.setForeground(
+                                common.color(common.GreenColor)
+                            )
                             char_format.setAnchorHref(grp)
-                            self.setFormat(match.start(
-                                0), len(grp), char_format)
+                            self.setFormat(
+                                match.start(
+                                    0
+                                ), len(grp), char_format
+                            )
 
             if case['flag'] == QuoteHighlight:
                 it = case['re'].finditer(text)
@@ -151,17 +169,29 @@ class Highlighter(QtGui.QSyntaxHighlighter):
                             grp = match.group(2)
                             if grp:
                                 char_format.setAnchor(True)
-                                char_format.setForeground(common.color(common.GreenColor))
+                                char_format.setForeground(
+                                    common.color(common.GreenColor)
+                                )
                                 char_format.setAnchorHref(grp)
-                                self.setFormat(match.start(
-                                    2), len(grp), char_format)
+                                self.setFormat(
+                                    match.start(
+                                        2
+                                    ), len(grp), char_format
+                                )
 
                                 char_format.setForeground(
-                                    QtGui.QColor(0, 0, 0, 40))
-                                self.setFormat(match.start(
-                                    2) - 1, 1, char_format)
-                                self.setFormat(match.start(
-                                    2) + len(grp), 1, char_format)
+                                    QtGui.QColor(0, 0, 0, 40)
+                                )
+                                self.setFormat(
+                                    match.start(
+                                        2
+                                    ) - 1, 1, char_format
+                                    )
+                                self.setFormat(
+                                    match.start(
+                                        2
+                                    ) + len(grp), 1, char_format
+                                    )
 
             if case['flag'] == ItalicsHighlight:
                 it = case['re'].finditer(text)
@@ -173,15 +203,25 @@ class Highlighter(QtGui.QSyntaxHighlighter):
                             if grp:
                                 flag == flag | ItalicsHighlight
                                 char_format.setFontItalic(True)
-                                self.setFormat(match.start(
-                                    2), len(grp), char_format)
+                                self.setFormat(
+                                    match.start(
+                                        2
+                                    ), len(grp), char_format
+                                )
 
                                 char_format.setForeground(
-                                    QtGui.QColor(0, 0, 0, 20))
-                                self.setFormat(match.start(
-                                    2) - 1, 1, char_format)
-                                self.setFormat(match.start(
-                                    2) + len(grp), 1, char_format)
+                                    QtGui.QColor(0, 0, 0, 20)
+                                )
+                                self.setFormat(
+                                    match.start(
+                                        2
+                                    ) - 1, 1, char_format
+                                    )
+                                self.setFormat(
+                                    match.start(
+                                        2
+                                    ) + len(grp), 1, char_format
+                                    )
 
             if case['flag'] == BoldHighlight:
                 it = case['re'].finditer(text)
@@ -192,15 +232,25 @@ class Highlighter(QtGui.QSyntaxHighlighter):
                             grp = match.group(2)
                             if grp:
                                 char_format.setFontWeight(QtGui.QFont.Bold)
-                                self.setFormat(match.start(
-                                    2), len(grp), char_format)
+                                self.setFormat(
+                                    match.start(
+                                        2
+                                    ), len(grp), char_format
+                                )
 
                                 char_format.setForeground(
-                                    QtGui.QColor(0, 0, 0, 20))
-                                self.setFormat(match.start(
-                                    2) - 1, 1, char_format)
-                                self.setFormat(match.start(
-                                    2) + len(grp), 1, char_format)
+                                    QtGui.QColor(0, 0, 0, 20)
+                                )
+                                self.setFormat(
+                                    match.start(
+                                        2
+                                    ) - 1, 1, char_format
+                                    )
+                                self.setFormat(
+                                    match.start(
+                                        2
+                                    ) + len(grp), 1, char_format
+                                    )
 
             char_format.setFont(_font)
             char_format.setForeground(_foreground)
@@ -210,7 +260,8 @@ class Highlighter(QtGui.QSyntaxHighlighter):
 class TodoItemEditor(QtWidgets.QTextBrowser):
     """Custom QTextBrowser widget for writing `Todo`'s.
 
-    The editor automatically sets its size to accommodate the contents of the document.
+    The editor automatically sets its size to accommodate the contents of the
+    document.
     Some of the code has been lifted and implemented from Cameel's implementation.
 
     https://github.com/cameel/auto-resizing-text-edit/
@@ -231,10 +282,12 @@ class TodoItemEditor(QtWidgets.QTextBrowser):
 
         if read_only:
             self.setTextInteractionFlags(
-                QtCore.Qt.TextSelectableByMouse | QtCore.Qt.LinksAccessibleByMouse)
+                QtCore.Qt.TextSelectableByMouse | QtCore.Qt.LinksAccessibleByMouse
+            )
         else:
             self.setTextInteractionFlags(
-                QtCore.Qt.TextEditorInteraction | QtCore.Qt.LinksAccessibleByMouse)
+                QtCore.Qt.TextEditorInteraction | QtCore.Qt.LinksAccessibleByMouse
+            )
 
         self.setTabStopWidth(common.size(common.WidthMargin))
         self.setUndoRedoEnabled(True)
@@ -264,13 +317,17 @@ class TodoItemEditor(QtWidgets.QTextBrowser):
 
     def get_minHeight(self):
         """Returns the desired minimum height of the editor."""
-        font, metrics = common.font_db.primary_font(common.size(common.FontSizeMedium))
+        font, metrics = common.font_db.primary_font(
+            common.size(common.FontSizeMedium)
+        )
         line_height = (metrics.lineSpacing()) * 1  # Lines tall
         return line_height
 
     def get_maxHeight(self):
         """Returns the desired minimum height of the editor."""
-        font, metrics = common.font_db.primary_font(common.size(common.FontSizeMedium))
+        font, metrics = common.font_db.primary_font(
+            common.size(common.FontSizeMedium)
+        )
         line_height = (metrics.lineSpacing()) * 35  # Lines tall
         return line_height
 
@@ -347,7 +404,9 @@ class TodoItemEditor(QtWidgets.QTextBrowser):
         file_info = QtCore.QFileInfo(url.url())
         if file_info.exists():
             actions.reveal(file_info.filePath())
-            QtGui.QClipboard().setText(file_info.filePath())
+            QtWidgets.QApplication.clipboard().setText(
+                file_info.filePath()
+            )
         else:
             QtGui.QDesktopServices.openUrl(url)
 
@@ -384,7 +443,8 @@ class DragIndicatorButton(QtWidgets.QLabel):
 
     The button is responsible for initiating a QDrag operation and setting the
     mime data. The data is populated with the `TodoEditor`'s text and the
-    custom mime type ('bookmarks/todo-drag'). The latter is needed to accept the drag operation
+    custom mime type ('bookmarks/todo-drag'). The latter is needed to accept the
+    drag operation
     in the target drop widet.
     """
 
@@ -397,7 +457,8 @@ class DragIndicatorButton(QtWidgets.QLabel):
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         pixmap = images.ImageCache.get_rsc_pixmap(
             'drag_indicator', common.color(common.TextSecondaryColor),
-            common.size(common.WidthMargin))
+            common.size(common.WidthMargin)
+        )
         self.setPixmap(pixmap)
 
     def mousePressEvent(self, event):
@@ -465,7 +526,9 @@ class DragIndicatorButton(QtWidgets.QLabel):
 class Separator(QtWidgets.QLabel):
     def __init__(self, parent=None):
         super(Separator, self).__init__(parent=parent)
-        pixmap = QtGui.QPixmap(QtCore.QSize(4096, common.size(common.HeightSeparator)))
+        pixmap = QtGui.QPixmap(
+            QtCore.QSize(4096, common.size(common.HeightSeparator))
+        )
         pixmap.fill(common.color(common.BlueColor))
         self.setPixmap(pixmap)
 
@@ -652,7 +715,9 @@ class TodoItemWidget(QtWidgets.QWidget):
         painter.setPen(QtCore.Qt.NoPen)
         painter.setBrush(QtGui.QColor(255, 255, 255, 255))
         painter.drawRoundedRect(
-            self.rect(), common.size(common.WidthIndicator), common.size(common.WidthIndicator))
+            self.rect(), common.size(common.WidthIndicator),
+            common.size(common.WidthIndicator)
+        )
         painter.end()
 
 
@@ -726,7 +791,8 @@ class TodoEditorWidget(QtWidgets.QDialog):
         text = 'Notes'
         label = ui.PaintedLabel(
             text, color=common.color(common.TextSecondaryColor),
-            size=common.size(common.FontSizeLarge), parent=self)
+            size=common.size(common.FontSizeLarge), parent=self
+        )
         label.setFixedHeight(height)
 
         self.refresh_button = ui.ClickableIconButton(
@@ -755,8 +821,10 @@ class TodoEditorWidget(QtWidgets.QDialog):
         row = ui.add_row(None, height=height, parent=self)
 
         text = 'Add Note'
-        self.add_label = ui.PaintedLabel(text, color=common.color(common.TextSecondaryColor),
-                                         parent=row)
+        self.add_label = ui.PaintedLabel(
+            text, color=common.color(common.TextSecondaryColor),
+            parent=row
+        )
 
         row.layout().addWidget(self.add_button, 0)
         row.layout().addWidget(self.add_label, 0)
@@ -825,7 +893,8 @@ class TodoEditorWidget(QtWidgets.QDialog):
             painter = QtGui.QPainter()
             painter.begin(self)
             font = common.font_db.secondary_font(
-                common.size(common.FontSizeMedium))[0]
+                common.size(common.FontSizeMedium)
+            )[0]
             painter.setFont(font)
             painter.setRenderHints(QtGui.QPainter.Antialiasing)
 
@@ -844,7 +913,8 @@ class TodoEditorWidget(QtWidgets.QDialog):
             text = text if not len(self.todoeditors_widget.items) else ''
             common.draw_aliased_text(
                 painter, font, rect, text, QtCore.Qt.AlignCenter,
-                common.color(common.BackgroundDarkColor))
+                common.color(common.BackgroundDarkColor)
+            )
             painter.end()
         return False
 
@@ -887,7 +957,8 @@ class TodoEditorWidget(QtWidgets.QDialog):
             editor = item.findChild(TodoItemEditor)
             editor.setFocus()
             self.scroll_area.ensureWidgetVisible(
-                editor, ymargin=editor.height())
+                editor, ymargin=editor.height()
+            )
 
     def key_return(self, ):
         for item in self.todoeditors_widget.items:
@@ -943,7 +1014,8 @@ class TodoEditorWidget(QtWidgets.QDialog):
         item = TodoItemWidget(parent=self)
 
         editor = TodoItemEditor(
-            text, read_only=self.read_only, parent=item)
+            text, read_only=self.read_only, parent=item
+        )
         editor.setFocusPolicy(QtCore.Qt.StrongFocus)
         item.layout().addWidget(editor, 1)
 
@@ -1081,4 +1153,6 @@ class TodoEditorWidget(QtWidgets.QDialog):
 
     def sizeHint(self):
         """Custom size."""
-        return QtCore.QSize(common.size(common.DefaultWidth), common.size(common.DefaultHeight))
+        return QtCore.QSize(
+            common.size(common.DefaultWidth), common.size(common.DefaultHeight)
+        )

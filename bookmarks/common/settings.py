@@ -221,7 +221,7 @@ def get_static_bookmarks():
     data = {}
     try:
         with open(source, 'r', encoding='utf8') as f:
-            data = json.load(f)
+            data = json.loads(f.read())
     except (ValueError, TypeError):
         log.error(f'Could not decode `{source}`')
     except RuntimeError:

@@ -1186,7 +1186,7 @@ def copy_path(path, mode=common.WindowsPath, first=True, copy=True):
         path = common.get_sequence_endpath(path)
 
     if mode is None and copy:
-        QtGui.QClipboard().setText(path)
+        QtWidgets.QApplication.clipboard().setText(path)
         return path
     elif mode is None and not copy:
         return path
@@ -1221,7 +1221,7 @@ def copy_path(path, mode=common.WindowsPath, first=True, copy=True):
         )
 
     if copy:
-        QtGui.QClipboard().setText(path)
+        QtWidgets.QApplication.clipboard().setText(path)
     return path
 
 

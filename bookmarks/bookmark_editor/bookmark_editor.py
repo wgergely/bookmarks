@@ -5,6 +5,7 @@ to add/remove bookmarks items to and from the user settings.
 
 """
 import functools
+import json
 import os
 
 from PySide2 import QtCore, QtWidgets
@@ -16,15 +17,10 @@ from .. import log
 from .. import shortcuts
 from .. import ui
 
-
 MAX_RECURSION = 4
 
 
 class BookmarkContextMenu(contextmenu.BaseContextMenu):
-    """Custom context menu used to control the list of saved servers.
-
-    """
-
     def setup(self):
         self.add_menu()
         self.separator()
@@ -33,6 +29,7 @@ class BookmarkContextMenu(contextmenu.BaseContextMenu):
         ) and self.index.flags() & QtCore.Qt.ItemIsEnabled:
             self.bookmark_properties_menu()
             self.reveal_menu()
+            self.copy_json_menu()
         self.separator()
         self.refresh_menu()
 
@@ -48,12 +45,13 @@ class BookmarkContextMenu(contextmenu.BaseContextMenu):
             'text': 'Reveal',
             'action': functools.partial(
                 actions.reveal, self.index.data(QtCore.Qt.UserRole) + '/.'
-                                ),
+            ),
             'icon': ui.get_icon('folder')
         }
 
     def refresh_menu(self):
-        self.menu['Refresh'] = {
+        self.menu[contextmenu.key()] = {
+            'text': 'Refresh',
             'action': self.parent().init_data,
             'icon': ui.get_icon('refresh')
         }
@@ -63,11 +61,33 @@ class BookmarkContextMenu(contextmenu.BaseContextMenu):
         job = self.parent().window().job()
         root = self.index.data(QtCore.Qt.DisplayRole)
 
-        self.menu['Properties'] = {
+        self.menu[contextmenu.key()] = {
             'text': 'Edit Properties...',
             'action': functools.partial(actions.edit_bookmark, server, job, root),
             'icon': ui.get_icon('settings')
         }
+
+    def copy_json_menu(self):
+        server = self.parent().window().server()
+        job = self.parent().window().job()
+        root = self.index.data(QtCore.Qt.DisplayRole)
+
+        d = {
+            f'{server}/{job}/{root}': {
+                common.ServerKey: server,
+                common.JobKey: job,
+                common.RootKey: root
+            }
+        }
+        s = json.dumps(d)
+
+        self.menu[contextmenu.key()] = {
+            'text': 'Copy as JSON',
+            'action': functools.partial(
+                QtWidgets.QApplication.clipboard().setText, s),
+            'icon': ui.get_icon('copy')
+        }
+
 
 
 class BookmarkListWidget(ui.ListWidget):
@@ -232,7 +252,7 @@ class BookmarkListWidget(ui.ListWidget):
             item.setData(QtCore.Qt.DisplayRole, name)
             item.setData(QtCore.Qt.UserRole, path)
             item.setSizeHint(QtCore.QSize(0, common.size(common.WidthMargin) * 2))
-            
+
             self.update_state(item)
             self.insertItem(self.count(), item)
 

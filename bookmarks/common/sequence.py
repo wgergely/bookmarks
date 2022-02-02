@@ -155,7 +155,7 @@ def proxy_path(v):
         v = v()[common.PathRole]
     elif isinstance(v, dict):
         v = v[common.PathRole]
-    elif isinstance(v, QtCore.QModelIndex):
+    elif isinstance(v, (QtCore.QModelIndex, QtCore.QPersistentModelIndex)):
         v = v.data(common.PathRole)
     else:
         raise TypeError(

@@ -29,7 +29,8 @@ def get_display_name(file_name):
         str: Display name.
 
     """
-    return re.sub(r'[_]+', ' ', file_name).strip('_').strip('')
+    return file_name
+    # return re.sub(r'[_]+', ' ', file_name).strip('_').strip('')
 
 
 class AssetsWidgetContextMenu(contextmenu.BaseContextMenu):

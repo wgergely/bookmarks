@@ -47,6 +47,12 @@ DataRect = 10
 PropertiesRect = 11
 InlineBackgroundRect = 12
 
+DCC_ICONS = {
+    'HOUDINI': 'hip',
+    'MAYA': 'ma',
+    'AFX': 'aep'
+}
+
 
 def paintmethod(func):
     """Decorator used to manage painter states."""
@@ -76,7 +82,6 @@ def elided_text(metrics, text, elide_mode, width):
     )
     __elided_text[k] = v
     return v
-
 
 
 def subdir_rects_key(index, option):
@@ -321,15 +326,18 @@ def get_asset_text_segments(text, description):
 
         _v = s.split('/')
         for _i, _s in enumerate(_v):
+            # In the AKA ecosystem folder names are prefixed with numbers, but we
+            # don't want to show these
+            _s = re.sub(r'^[0-9]+_', '', _s)
             _s = _s.strip()
             d[len(d)] = (_s, c)
             if _i < (len(_v) - 1):
                 d[len(d)] = (' / ', s_color)
         if i < (len(v) - 1):
-            d[len(d)] = ('   |    ', s_color)
+            d[len(d)] = (' |  ', s_color)
 
     if description:
-        d[len(d)] = ('   |   ', s_color)
+        d[len(d)] = (' | ', s_color)
         d[len(d)] = (description, s_color)
 
     common.delegate_text_segments[k] = d
@@ -370,6 +378,10 @@ def get_bookmark_text_segments(text, description):
         _v = s.split('/')
         for _i, _s in enumerate(_v):
             _s = _s.strip()
+            # In the AKA ecosystem folder names are prefixed with numbers, but we
+            # don't want to show these
+            _s = re.sub(r'^[0-9]+_', '', _s)
+
             d[len(d)] = (_s, c)
             if _i < (len(_v) - 1):
                 d[len(d)] = (' / ', s_color)
@@ -1963,6 +1975,46 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         )
         painter.restore()
 
+    @paintmethod
+    def paint_dcc_status(self, *args):
+        rectangles, painter, option, index, selected, focused, active, archived, \
+        favourite, hover, font, metrics, cursor_position = args
+        if not index.isValid():
+            return
+        if not index.data(QtCore.Qt.DisplayRole):
+            return
+        if not index.data(common.ParentPathRole):
+            return
+
+        d = index.data(QtCore.Qt.DisplayRole)
+        icon = next((DCC_ICONS[f] for f in DCC_ICONS if f in d), None)
+        if not icon:
+            return
+
+        rect = QtCore.QRect(
+            0, 0, common.size(
+                common.WidthMargin
+            ), common.size(common.WidthMargin)
+        )
+
+        offset = QtCore.QPoint(
+            common.size(common.WidthIndicator),
+            common.size(common.WidthIndicator)
+        )
+        rect.moveTopLeft(
+            rectangles[ThumbnailRect].topLeft() + offset
+        )
+
+        painter.setOpacity(0.9) if hover else painter.setOpacity(0.8)
+
+        pixmap = images.ImageCache.get_rsc_pixmap(
+            icon,
+            None,
+            common.size(common.WidthMargin),
+            resource=common.FormatResource
+        )
+        painter.drawPixmap(rect, pixmap, pixmap.rect())
+
 
 class BookmarksWidgetDelegate(BaseDelegate):
     """The delegate used to paint the bookmark items."""
@@ -2013,6 +2065,7 @@ class AssetsWidgetDelegate(BaseDelegate):
         self.paint_selection_indicator(*args)
         self.paint_thumbnail_drop_indicator(*args)
         self.paint_shotgun_status(*args)
+        self.paint_dcc_status(*args)
 
     def sizeHint(self, option, index):
         return self.parent().model().sourceModel().row_size

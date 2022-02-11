@@ -354,7 +354,6 @@ def get_placeholder_path(file_path, fallback):
     return os.path.normpath(path)
 
 
-
 def oiio_get_buf(source, hash=None, force=False):
     """Check and load a source image with OpenImageIO's format reader.
 
@@ -538,7 +537,7 @@ class ImageCache(QtCore.QObject):
                 return data
 
         # If not yet stored, load and save the data
-        wait_for_lock(source)
+        # wait_for_lock(source)
         if size != -1:
             buf = oiio_get_buf(source, hash=hash, force=force)
         if not buf:
@@ -877,6 +876,11 @@ class ImageCache(QtCore.QObject):
             bool: True if successfully converted the image, False otherwise.
 
         """
+        if os.path.isfile(destination + '.lock'):
+            return
+
+        open(destination + '.lock', 'a', encoding='utf8')
+
         log.debug('Converting {}...'.format(source), cls)
 
         def get_scaled_spec(source_spec):
@@ -991,8 +995,7 @@ class ImageCache(QtCore.QObject):
         # _buf.set_write_format(OpenImageIO.UINT8)
 
         # Create a lock file before writing
-        with open(destination + '.lock', 'a', encoding='utf8') as _f:
-            success = buf.write(destination, dtype=OpenImageIO.UINT8)
+        success = buf.write(destination, dtype=OpenImageIO.UINT8)
         os.remove(destination + '.lock')
 
         if not success:

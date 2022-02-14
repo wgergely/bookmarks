@@ -15,6 +15,8 @@ from .shotgun import actions as sg_actions
 from .shotgun import shotgun
 
 SLACK_API_URL = 'https://api.slack.com/apps'
+TEAMS_WEBHOOK_URL = 'https://docs.microsoft.com/en-us/microsoftteams/platform' \
+                    '/webhooks-and-connectors/how-to/add-incoming-webhook'
 
 instance = None
 
@@ -181,6 +183,29 @@ SECTIONS = {
         }
     },
     2: {
+        'name': 'Teams Incoming Webhook',
+        'icon': 'msteams',
+        'color': None,
+        'groups': {
+            0: {
+                0: {
+                    'name': 'Teams Incoming Webhook',
+                    'key': 'teamstoken',
+                    'validator': None,
+                    'protect': True,
+                    'widget': ui.LineEdit,
+                    'description': 'Incoming Webhook URL',
+                    'placeholder': 'https://***.webhook.office.com/webhookb2/*',
+                    'help': 'Paste a valid <a href="{help_url}">{start}Microsoft'
+                            ' Incoming Webhook url{end}</a> above'.format(
+                        help_url=TEAMS_WEBHOOK_URL, **base.span
+                    ),
+                    'button': 'Visit',
+                }
+            }
+        }
+    },
+    3: {
         'name': 'Shotgun Connection',
         'icon': 'sg',
         'color': None,
@@ -225,7 +250,7 @@ SECTIONS = {
             },
         },
     },
-    3: {
+    4: {
         'name': 'Shotgun Entity',
         'icon': 'sg',
         'color': None,
@@ -268,7 +293,7 @@ SECTIONS = {
             }
         }
     },
-    4: {
+    5: {
         'name': 'Links',
         'icon': 'link',
         'color': common.color(common.BackgroundDarkColor),
@@ -297,7 +322,7 @@ SECTIONS = {
             }
         }
     },
-    5: {
+    6: {
         'name': 'Application Launcher',
         'icon': 'icon',
         'color': common.color(common.BackgroundDarkColor),
@@ -315,7 +340,7 @@ SECTIONS = {
             }
         }
     },
-    6: {
+    7: {
         'name': 'Database',
         'icon': 'bookmark',
         'color': common.color(common.BackgroundDarkColor),
@@ -471,6 +496,10 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
         """
         token = self.slacktoken_editor.text()
         actions.test_slack_token(token)
+
+    @QtCore.Slot()
+    def teamstoken_button_clicked(self):
+        QtGui.QDesktopServices.openUrl(TEAMS_WEBHOOK_URL)
 
     @QtCore.Slot()
     def link_button_clicked(self):

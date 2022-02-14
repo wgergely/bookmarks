@@ -183,6 +183,10 @@ TABLES = {
             'sql': 'TEXT',
             'type': str
         },
+        'teamstoken': {
+            'sql': 'TEXT',
+            'type': str,
+        },
         'shotgun_domain': {
             'sql': 'TEXT',
             'type': str

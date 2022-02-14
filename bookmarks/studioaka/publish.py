@@ -185,6 +185,18 @@ def publish_footage(
         _framename = re.sub(r'[#]+', str(int(idx)).zfill(padding), _framename)
         destination_frame = f'{destination}/{_framename}'
 
+        # Make thumbnail
+        try:
+            if idx == 1:
+                # Now let's create a thumbnail for this publish
+                images.ImageCache.oiio_make_thumbnail(
+                    source_frame,
+                    f'{destination}/thumbnail.png',
+                    common.thumbnail_size
+                )
+        except:
+            log.error('Could not make thumbnail.')
+
         # Create a movie
         if make_movie and idx == 1:
             try:
@@ -218,8 +230,8 @@ def publish_footage(
                 if destination_movie_file.exists():
                     if not destination_movie_file.remove():
                         raise RuntimeError('Could not remove movie file')
-                if not QtCore.QFile.copy(movie_path, destination_movie):
-                    raise RuntimeError(f'Could copy {movie_path}')
+                if movie_path and not QtCore.QFile.copy(movie_path, destination_movie):
+                    log.error(f'Could copy {movie_path}')
 
                 if copy_path:
                     actions.copy_path(
@@ -254,6 +266,29 @@ def publish_footage(
             source,
             publish_type
         )
+    except Exception as e:
+        log.error(e)
+
+
+    try:
+        from ..teams import message
+
+        db = database.get_db(server, job, root)
+        webhook = db.value(db.source(), 'teamstoken', database.BookmarkTable)
+
+        if webhook:
+            payload = message.get_payload(
+                message.PUBLISH_MESSAGE,
+                thumbnail=f'{destination}/thumbnail.png',
+                seq=seq,
+                shot=shot,
+                path=destination,
+                date=time.strftime('%d/%m/%Y %H:%M:%S'),
+                user=common.get_username(),
+                publish_type=publish_type,
+            )
+            message.send(webhook, payload)
+
     except Exception as e:
         log.error(e)
 

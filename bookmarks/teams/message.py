@@ -110,11 +110,6 @@ PUBLISH_MESSAGE = {
                                         "horizontalAlignment": "Left"
                                     }
                                 ],
-                                "horizontalAlignment": "Left",
-                                "backgroundImage": {
-                                    "verticalAlignment": "Center",
-                                    "horizontalAlignment": "Right"
-                                }
                             }
                         ],
                         "horizontalAlignment": "Center"

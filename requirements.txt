@@ -1,7 +1,6 @@
 OpenImageIO
 PySide2
 shiboken2
-Alembic
 psutil
 requests
 shotgun_api3

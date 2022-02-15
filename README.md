@@ -28,7 +28,7 @@ Bookmarks started out as a Maya utility and we're still providing a Maya plugin.
 Dependencies
 ------------
 
-Bookmarks is a Python2 project tested against PySide2 / Qt5. We're using the python bindings of [OpenImageIO](https://github.com/OpenImageIO/oiio), [Alembic](https://github.com/alembic/alembic) and the [shotgun_api3](https://github.com/shotgunsoftware/python-api), [psutil](https://github.com/giampaolo/psutil), slack and [scandir](https://github.com/benhoyt/scandir) modules. Currently only we're only packaging Bookmarks with precompiled dependecies for Windows, but Bookmarks should be able to run on other platforms. Some functionaly is not platform agnostic and has not yet been implemented.
+Bookmarks is a Python2 project tested against PySide2 / Qt5. We're using the python bindings of [OpenImageIO](https://github.com/OpenImageIO/oiio) and the [shotgun_api3](https://github.com/shotgunsoftware/python-api), [psutil](https://github.com/giampaolo/psutil), slack and [scandir](https://github.com/benhoyt/scandir) modules. Currently only we're only packaging Bookmarks with precompiled dependecies for Windows, but Bookmarks should be able to run on other platforms. Some functionaly is not platform agnostic and has not yet been implemented.
 
 
 Usage

@@ -15,7 +15,6 @@ from .. import common
 dependencies = (
     'PySide2',
     'OpenImageIO',
-    'alembic',
     'numpy',
     'psutil',
     'shotgun_api3',

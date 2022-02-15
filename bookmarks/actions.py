@@ -972,10 +972,8 @@ def show_todos(index):
 def preview_thumbnail(index):
     """Displays a preview of the currently selected item.
 
-    For alembic archives, this is the hierarchy of the archive file. For
-    image files we'll try to load and display the image itself, and
-    for any other case we will fall back to cached or default thumbnail
-    images.
+    For image files we'll try to load and display the image itself, and for any
+    other case we will fall back to cached or default thumbnail images.
 
     """
     if not index.isValid():
@@ -983,14 +981,6 @@ def preview_thumbnail(index):
 
     source = index.data(common.PathRole)
     source = common.get_sequence_startpath(source)
-
-    if '.abc' in source.lower():
-        from .lists.widgets import alembic_widget
-        editor = alembic_widget.AlembicPreviewWidget(source)
-        common.widget().selectionModel().currentChanged.connect(editor.close)
-        common.widget().selectionModel().currentChanged.connect(editor.deleteLater)
-        editor.show()
-        return
 
     # Let's try to open the image outright
     # If this fails, we will try and look for a saved thumbnail image,

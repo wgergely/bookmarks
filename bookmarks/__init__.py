@@ -77,7 +77,6 @@ def info():
             f'Bookmarks {__version__}',
             f'PySide2 {qt_ver}',
             f'OpenImageIO {oiio_ver}',
-            f'{alembic_ver}',
             f'ShotGrid API {sg_ver}',
             f'SlackClient {slack_ver}'
         )

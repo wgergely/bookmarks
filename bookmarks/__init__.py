@@ -34,7 +34,6 @@ https://github.com/OpenImageIO/oiio
 * ``slack_sdk``: https://pypi.org/project/slack_sdk
 * ``psutil``: https://pypi.org/project/psutil
 * ``shotgun_api3``: https://github.com/shotgunsoftware/python-api
-* ``alembic``: Alembic's Python library. https://github.com/alembic/alembic
 
 """
 import importlib
@@ -64,7 +63,6 @@ def info():
     py_ver = platform.python_version()
     py_c = platform.python_compiler()
     oiio_ver = importlib.import_module('OpenImageIO').__version__
-    alembic_ver = importlib.import_module('alembic').Abc.GetLibraryVersion()
     qt_ver = importlib.import_module('PySide2.QtCore').__version__
     sg_ver = importlib.import_module('shotgun_api3').__version__
     slack_ver = importlib.import_module('slack_sdk.version').__version__

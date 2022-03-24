@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """Contains various utility methods, and :func:`.convert()`, the main method used
-to convert a source
-image sequence to a movie.
+to convert a source image sequence to a movie file using an external FFMPEG binary.
 
-FFMpeg also the associated UI element,
+The FFMpeg ui elements are defined at
 :class:`bookmarks.external.ffmpeg_widget.FFMpegWidget`.
 
 """
@@ -23,7 +22,7 @@ from .. import ui
 
 class SafeDict(dict):
     def __missing__(self, key):
-        return '{' + key + '}'
+        return f'{key}'
 
 
 def _safe_format(s, **kwargs):
@@ -79,11 +78,11 @@ fifo, \
 colormatrix=bt601:bt709, \
 scale=ceil({WIDTH}/2)*2:ceil(({WIDTH}*(min(iw\,ih)/max(iw\,ih)))/2)*2, \
 setsar=1/1, \
-pad={WIDTH}:{HEIGHT}:0:({HEIGHT}-(ceil(({WIDTH}*(min(iw\,ih)/max(iw\,ih)))/2)*2))/2:black\
+pad={WIDTH}:{HEIGHT}:0:({HEIGHT}-(ceil(({WIDTH}*(min(iw\,ih)/max(iw\,' \
+                'ih)))/2)*2))/2:black\
 {TIMECODE}" \
 "{OUTPUT}"\
 '
-
 
 SIZE_PRESETS = {
     0: {
@@ -146,6 +145,9 @@ def _get_font_path():
     The method also takes care of returning the path in a format that ffmpeg
     can consume.
 
+    Returns:
+        str: path to the font file used to label the generated files.
+
     """
     v = common.get_rsc(f'fonts/{common.medium_font}.ttf')
     v = v.replace(':', '\\:').replace('\\', '\\\\').replace('\\\\:', '\\:')
@@ -196,26 +198,33 @@ def _get_sequence_start_end(path):
 
 def _input_path_from_seq(seq):
     """Returns an input path from a sequence that ffmpeg can recognize.
+
+    TODO: Currently does not work with non-sequential images.
+
+    Returns:
+        str: Path to an image file.
+
     """
     return os.path.normpath(
-        seq.group(1) +
-        '%0{}d'.format(len(seq.group(2))) +
-        seq.group(3) +
-        '.' +
-        seq.group(4)
+        f'{seq.group(1)}%0{len(seq.group(2))}d{seq.group(3)}.{seq.group(4)}'
     )
 
 
 def _output_path_from_seq(seq, ext):
     """Return preformatted output path for ffmpeg.
+
     """
     return os.path.normpath(
         seq.group(1).rstrip('.').rstrip('_').rstrip() + '.' + ext
     )
 
 
-def _get_framerate(server, job, root):
+def _get_framerate(server, job, root, fallback_framerate=24.0):
     """Get the currently set frame-rate from the bookmark item database.
+
+    Returns:
+        float: The current framerate.
+
     """
     db = database.get_db(server, job, root)
     v = db.value(
@@ -224,13 +233,18 @@ def _get_framerate(server, job, root):
         database.BookmarkTable
     )
 
-    if not v:  # default framerate when not set
-        return 24
+    if not v:  # use the fallback value when not set
+        return fallback_framerate
     return v
 
 
 def _get_info_label(job, asset, task, output_path, startframe, endframe):
     """Construct an informative label when converting using the information label.
+
+    This is the text the gets stamped onto the generated movie file.
+
+    Returns:
+        str: An informative label describing the movie file.
 
     """
     v = ''
@@ -247,11 +261,17 @@ def _get_info_label(job, asset, task, output_path, startframe, endframe):
     if vseq:
         v += 'v' + vseq.group(2) + ' \\| '
         v += datetime.now().strftime('%a %d/%m/%Y %H\\:%M \\| ')
-    v += '{}-{} '.format(startframe, endframe)
+    v += f'{startframe}-{endframe} '
     return v
 
 
 def _get_progress_bar(startframe, endframe):
+    """A progress bar used during the conversion process.
+
+    Returns:
+        QProgressBar: A widget instance.
+
+    """
     v = QtWidgets.QProgressDialog()
     common.set_stylesheet(v)
     v.setFixedWidth(common.size(common.DefaultWidth))
@@ -281,8 +301,11 @@ def convert(
         task (str): A path segment.
         size (tuple(int, int)): The output video width in pixels.
 
+    Returns:
+        str: The path to the generated movie file or `None` when the process fails.
+
     Raises:
-        RuntimeError: If the path is not a sequence or not found.
+        RuntimeError: If the input path is not a sequence or not found.
 
     """
     common.check_type(path, str)

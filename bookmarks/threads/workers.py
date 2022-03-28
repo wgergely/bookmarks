@@ -812,8 +812,10 @@ class ThumbnailWorker(BaseWorker):
             if not buf:
                 return True
 
+            # Skip large files
             if QtCore.QFileInfo(source).size() >= pow(1024, 3) * 2:
                 return True
+
 
             res = images.ImageCache.oiio_make_thumbnail(
                 source,

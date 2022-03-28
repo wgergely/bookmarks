@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Widget used to display a preview of the current item.
-
-For Bookmarks and Asset items, this is the current thumbnail, however, for image
-files, we'll use OpenImageIO to open and display the image in a `QGraphicsView`.
-
+"""A pop-up widget used to display an image preview of a selected item.
 
 """
 import weakref
@@ -21,8 +17,6 @@ def show(path, ref, parent, oiio=False):
 
     common.VIEWER_WIDGET_CACHE[k].show()
     common.VIEWER_WIDGET_CACHE[k].set_image(path, ref, oiio=oiio)
-    # QtCore.QTimer.singleShot(1, functools.partial(
-    #     common.VIEWER_WIDGET_CACHE[k].set_image, path, ref, oiio=oiio))
 
 
 def get_item_info(ref):
@@ -72,7 +66,7 @@ def get_item_info(ref):
 
 
 class Viewer(QtWidgets.QGraphicsView):
-    """The graphics view used to display a QPixmap read using OpenImageIO.
+    """The graphics view used to display a QPixmap.
 
     """
 
@@ -156,11 +150,7 @@ class Viewer(QtWidgets.QGraphicsView):
 
 
 class ImageViewer(QtWidgets.QWidget):
-    """Used to view an image.
-
-    The image data is loaded using OpenImageIO and is then wrapped in a
-    QGraphicsScene,
-    using a QPixmap. See ``Viewer``.
+    """The top-level widget containing the QGraphicsScene items.
 
     """
 
@@ -183,20 +173,10 @@ class ImageViewer(QtWidgets.QWidget):
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
-        height = common.size(common.HeightRow) * 0.6
+
         o = 0
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
-
-        def get_row(parent=None):
-            row = QtWidgets.QWidget(parent=parent)
-            row.setFixedHeight(height)
-            QtWidgets.QHBoxLayout(row)
-            row.layout().setContentsMargins(0, 0, 0, 0)
-            row.layout().setSpacing(0)
-            parent.layout().addWidget(row)
-            row.setStyleSheet('background-color: rgba(0, 0, 0, 255);')
-            return row
 
         self.viewer = Viewer(parent=self)
         self.layout().addWidget(self.viewer, 1)
@@ -204,8 +184,7 @@ class ImageViewer(QtWidgets.QWidget):
     @QtCore.Slot(str)
     @QtCore.Slot(weakref.ref)
     def set_image(self, source, ref, oiio=False):
-        """Loads an image using OpenImageIO and displays the contents as a
-        QPixmap item.
+        """Loads an image and displays the contents as a QPixmap item.
 
         """
         self.viewer.item.setPixmap(QtGui.QPixmap())
@@ -239,10 +218,6 @@ class ImageViewer(QtWidgets.QWidget):
             self.window().rect().center().y() - (br.height() / 2)
         )
 
-        # size = self.viewer.item.pixmap().size()
-        # if size.height() > self.height() or size.width() > self.width():
-        #     self.fitInView(self.viewer.item, QtCore.Qt.KeepAspectRatio)
-
     def paintEvent(self, event):
         painter = QtGui.QPainter()
         painter.begin(self)
@@ -257,12 +232,8 @@ class ImageViewer(QtWidgets.QWidget):
 
         painter.end()
 
-    def mousePressEvent(self, event):
-        event.accept()
-        self.hide()
-
     def keyPressEvent(self, event):
-        """We're mapping the key press events to the parent list."""
+        """Catching and forward key press events."""
         event.accept()
 
         if event.key() == QtCore.Qt.Key_Down:
@@ -277,7 +248,11 @@ class ImageViewer(QtWidgets.QWidget):
         elif event.key() == QtCore.Qt.Key_Backtab:
             self.parent().key_down()
             self.parent().key_space()
-        else:
+        elif event.key() == QtCore.Qt.Key_Escape:
+            self.hide()
+        elif event.key() == QtCore.Qt.Key_Space:
+            self.hide()
+        elif event.key() == QtCore.Qt.Key_Enter:
             self.hide()
 
     def showEvent(self, event):

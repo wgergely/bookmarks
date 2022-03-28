@@ -233,3 +233,4 @@ def verify_dependencies():
             raise ModuleNotFoundError(
                 f'Bookmarks cannot be run. A required dependency was not found\n>> {mod}'
             ) from e
+

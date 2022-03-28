@@ -1616,7 +1616,7 @@ def extract_zip_template(source, destination, name):
     """Expands the selected source zip archive to `destination` as `name`.
 
     The contents will be expanded to a `{destination}/{name}` where name is an
-    arbitary name of a job or an asset item to be created.
+    arbitrary name of a job or an asset item to be created.
 
     Args:
         source (str):           Path to a *.zip archive.
@@ -1646,20 +1646,16 @@ def extract_zip_template(source, destination, name):
     if not name:
         raise ValueError('Must enter a name.')
 
-    source_file_info = file_info = QtCore.QFileInfo(source)
+    source_file_info = QtCore.QFileInfo(source)
     if not source_file_info.exists():
         raise RuntimeError(
-            '{} does not exist.'.format(
-                source_file_info.filePath()
-            )
+            f'{source_file_info.filePath()} does not exist.'
         )
 
-    dest_file_info = QtCore.QFileInfo('{}/{}'.format(destination, name))
+    dest_file_info = QtCore.QFileInfo(f'{destination}/{name}')
     if dest_file_info.exists():
         raise RuntimeError(
-            '{} exists already.'.format(
-                dest_file_info.fileName()
-            )
+            f'{dest_file_info.fileName()} exists already.'
         )
 
     with zipfile.ZipFile(
@@ -1668,7 +1664,7 @@ def extract_zip_template(source, destination, name):
         corrupt = f.testzip()
         if corrupt:
             raise RuntimeError(
-                'This zip archive seems to be corrupt: {}'.format(corrupt)
+                f'This zip archive seems to be corrupt: {corrupt}'
             )
 
         f.extractall(
@@ -1750,7 +1746,7 @@ def pick_template(mode):
 def show_sg_error_message(v):
     from . import ui
     common.sg_error_message = ui.ErrorBox(
-        'An error occured.',
+        'An error occurred.',
         v
     ).open()
 
@@ -1790,7 +1786,6 @@ def delete_selected_files(index):
     f_data = common.get_data(model.source_path(), model.task(), common.FileItem)
     s_data = common.get_data(model.source_path(), model.task(), common.SequenceItem)
 
-    f_v = f_data.values()
     paths = set(common.get_sequence_paths(index))
 
     # Remove file on disk

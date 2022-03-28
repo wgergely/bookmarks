@@ -167,34 +167,26 @@ SECTIONS = {
                                    'image files',
                 },
             },
-            1: {
+        },
+    },
+    1: {
+        'name': 'Binaries',
+        'icon': 'icon',
+        'color': None,
+        'groups': {
+            0: {
                 0: {
-                    'name': 'Shotgun RV',
-                    'key': common.RVKey,
+                    'name': None,
+                    'key': 'environment',
                     'validator': None,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'Path to RV, eg. "C:/apps/rv.exe"',
-                    'description': 'Path to the RV executable.\n\nWhen specified, '
-                                   'compatible media can be previewed in RV.',
-                    'button': 'Pick',
-                    'button2': 'Reveal'
-                },
-                1: {
-                    'name': 'FFMpeg',
-                    'key': common.FFMpegKey,
-                    'validator': None,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'Path to FFMpeg, eg. "C:/apps/ffmpeg.exe"',
-                    'description': 'Path to the FFMpeg executable.\n\nIf '
-                                   'specified, bookmarks can convert images '
-                                   'sequences using FFMpeg.',
-                    'button': 'Pick',
-                    'button2': 'Reveal'
+                    'widget': common.EnvPathEditor,
+                    'placeholder': '',
+                    'description': 'Edit external binary paths',
                 },
             },
         },
     },
-    1: {
+    2: {
         'name': 'Maya',
         'icon': 'maya',
         'color': None,
@@ -206,11 +198,8 @@ SECTIONS = {
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
-                    'description': 'By default, {} always sets the Maya Workspace '
-                                   'to the currently active asset item. Check here '
-                                   'to disable this behaviour.'.format(
-                        common.product
-                    ),
+                    'description': f'By default, {common.product} always sets the '
+                                   f'Maya Workspace to the currently active asset item. Check here to disable this behaviour.',
                 },
             },
             1: {
@@ -271,7 +260,7 @@ SECTIONS = {
             },
         },
     },
-    2: {
+    3: {
         'name': 'About',
         'icon': None,
         'color': common.color(common.TextSecondaryColor),
@@ -391,52 +380,6 @@ class PreferenceEditor(base.BasePropertyEditor):
     def info_button2_clicked(self, *args, **kwargs):
         w = AboutWidget(parent=self)
         w.open()
-
-    @common.error
-    @common.debug
-    @QtCore.Slot()
-    def RVPath_button_clicked(self, *args, **kwargs):
-        self._pick_file(common.RVKey)
-
-    @common.error
-    @common.debug
-    @QtCore.Slot()
-    def RVPath_button2_clicked(self, *args, **kwargs):
-        editor = getattr(self, common.RVKey + '_editor')
-        if not editor.text():
-            return
-        actions.reveal(editor.text())
-
-    @common.error
-    @common.debug
-    @QtCore.Slot()
-    def FFMpegPath_button_clicked(self, *args, **kwargs):
-        self._pick_file(common.FFMpegKey)
-
-    @common.error
-    @common.debug
-    @QtCore.Slot()
-    def FFMpegPath_button2_clicked(self, *args, **kwargs):
-        editor = getattr(self, common.FFMpegKey + '_editor')
-        if not editor.text():
-            return
-        actions.reveal(editor.text())
-
-    def _pick_file(self, k):
-        editor = getattr(self, k + '_editor')
-        _bin = k.replace('Path', '')
-        _filter = '{}.exe'.format(
-            _bin
-        ) if common.get_platform() == common.PlatformWindows else '*.*'
-        res = QtWidgets.QFileDialog.getOpenFileName(
-            caption='Select {} Executable...'.format(_bin),
-            filter=_filter,
-            dir='/'
-        )
-        path, _ = res
-        if not path:
-            return
-        editor.setText(path)
 
     def sizeHint(self):
         return QtCore.QSize(

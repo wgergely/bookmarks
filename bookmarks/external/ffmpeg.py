@@ -318,7 +318,7 @@ def convert(
     common.check_type(size, (tuple, None))
 
     # First, let's check if FFMPEG is available.
-    FFMPEG_BIN = common.get_path_to_executable(common.FFMpegKey)
+    FFMPEG_BIN = common.get_binary('ffmpeg')
     if not FFMPEG_BIN:
         raise RuntimeError('Could not find FFMpeg binary.')
     if not QtCore.QFileInfo(FFMPEG_BIN).exists():

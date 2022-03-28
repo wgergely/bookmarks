@@ -11,9 +11,7 @@ __pycache__
 docs/build/
 docs/build
 develop-eggs/
-dist
 dist/
-dist/*
 dest
 eggs/
 .eggs/

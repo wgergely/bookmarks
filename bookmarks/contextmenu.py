@@ -1413,7 +1413,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         if not self.index.isValid():
             return
 
-        if not bool(common.get_path_to_executable(common.RVKey)):
+        if not common.get_binary('rv'):
             return
 
         k = 'RV'
@@ -1489,7 +1489,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             return
 
         # Can only convert when FFMpeg is present
-        if not common.get_path_to_executable(common.FFMpegKey):
+        if not common.get_binary('ffmpeg'):
             return
 
         self.menu[key()] = {

@@ -42,8 +42,6 @@ FavouritesKey = 'Favourites'
 
 SettingsSection = 'Settings'
 JobsHaveSubdirs = 'JobsHaveSubdirs'
-FFMpegKey = 'FFMpegPath'
-RVKey = 'RVPath'
 UIScaleKey = 'UIScale'
 ShowMenuIconsKey = 'ShowMenuIcons'
 ShowThumbnailBackgroundKey = 'ShowThumbnailBackgroundKey'
@@ -132,9 +130,9 @@ def init_settings():
 def _init_bookmarks():
     """Loads all previously saved bookmarks to memory.
 
-    The list of bookmarks is made up of a list of persistent bookmarks, defined
-    in `common.static_bookmarks_template`, and bookmarks added by the user, stored in the
-    user setting.
+    The list of bookmarks is made up of a list of persistent bookmarks, defined in
+    `common.static_bookmarks_template`, and bookmarks added by the user, stored in
+    the user setting.
 
     """
     _static = get_static_bookmarks()

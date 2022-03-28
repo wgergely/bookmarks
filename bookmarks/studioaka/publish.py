@@ -115,8 +115,8 @@ def publish_footage(
         raise RuntimeError('Sequence seems to be empty.')
 
     ext = source.split('.')[-1]
-    if make_movie and ext.lower() not in images.get_oiio_extensions():
-        raise RuntimeError('Item is not an image.')
+    if make_movie and ext.lower() not in images.oiio_image_extensions:
+        raise RuntimeError(f'{ext} is not a accepted image format.')
 
     # Let's check if the template file exists
     if not all((seq, shot)):

@@ -286,55 +286,6 @@ def get_template_file_path(name):
     )
 
 
-def get_path_to_executable(key):
-    """Returns the path to an executable.
-
-    Args:
-        key (str):
-            The setting key to look up (one of ``setings.FFMpegKey``, or
-            ``common.RVKey``) or `None` if not found.
-
-    Returns:
-        str: The path to the executable.
-
-    """
-    # Only FFMpeg and RV are implemented at the moment
-    if key == common.FFMpegKey:
-        name = 'ffmpeg'
-    elif key == common.RVKey:
-        name = 'rv'
-    else:
-        raise ValueError('Unsupported key value.')
-
-    # First let's check if we have set explicitly a path to an executable
-    v = common.settings.value(common.SettingsSection, key)
-    if isinstance(v, str) and QtCore.QFileInfo(v).exists():
-        return QtCore.QFileInfo(v).filePath()
-
-    # Otherwise, let's check the environment
-    if common.get_platform() == common.PlatformWindows:
-        if 'BOOKMARKS_ROOT' in os.environ and QtCore.QFileInfo(
-                os.environ['BOOKMARKS_ROOT']
-        ).exists():
-            for entry in os.scandir(os.environ['BOOKMARKS_ROOT']):
-                if entry.name.lower().startswith(name):
-                    return QtCore.QFileInfo(entry.path).filePath()
-            if QtCore.QFileInfo(os.environ['BOOKMARKS_ROOT'] + '/bin').exists():
-                for entry in os.scandir(os.environ['BOOKMARKS_ROOT'] + '/bin'):
-                    if entry.name.lower().startswith(name):
-                        return QtCore.QFileInfo(entry.path).filePath()
-
-        paths = os.environ['PATH'].split(';')
-        paths = {os.path.normpath(f).rstrip('\\')
-                 for f in paths if os.path.isdir(f)}
-
-        for path in paths:
-            for entry in os.scandir(path):
-                if entry.name.lower().startswith(name):
-                    return QtCore.QFileInfo(entry.path).filePath()
-
-    return None
-
 
 def pseudo_local_bookmark():
     """Return a location on the local system to store temporary files.
@@ -436,3 +387,8 @@ class Timer(QtCore.QTimer):
             common.timers[k].stop()
             common.timers[k].deleteLater()
             del common.timers[k]
+
+
+@functools.lru_cache(maxsize=1048576)
+def is_dir(path):
+    return QtCore.QFileInfo(path).isDir()

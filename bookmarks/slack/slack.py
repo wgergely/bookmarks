@@ -270,7 +270,7 @@ class SlackClient(slack_sdk.WebClient):
             response = self.api_call(
                 'users.list',
                 http_verb="GET",
-                kwargs={
+                params={
                     'limit': limit,
                     'cursor': response['response_metadata']['next_cursor']
                 },

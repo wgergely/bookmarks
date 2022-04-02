@@ -88,7 +88,7 @@ DEFAULT_TOKEN_CONFIG = {
             'flag': SceneFormat,
             'value': common.sort_words(
                 'aep, ai, eps, fla, ppj, prproj, psb, psd, psq, xfl, c4d, hud, '
-                'hip, hiplc, hipnc, ma, mb, nk, nk~,spm, mocha, rv, tvpp'
+                'hip, hiplc, hipnc, ma, mb, nk, nk~,spm, mocha, rv, tvpp, zprj'
             ),
             'description': 'Scene file formats'
         },

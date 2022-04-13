@@ -596,7 +596,7 @@ class ExportWidget(base.BasePropertyEditor):
                                f'{time.time()})"'
 
             # Build the export command
-            cmd = '{f} {fr} {s} {uv} {ws} {wv} {wuvs} {sn} {rt} {df} {pfc} {ro}'
+            cmd = '{f} {fr} {s} {uv} {ws} {wv} {wuvs} {wcs} {wfs} {sn} {rt} {df} {pfc} {ro}'
             cmd = cmd.format(
                 f=f'-file "{destination}"',
                 fr=f'-framerange {start_frame} {end_frame}',
@@ -606,6 +606,8 @@ class ExportWidget(base.BasePropertyEditor):
                 wv='-writeVisibility',
                 # eu='-eulerFilter',
                 wuvs='-writeuvsets',
+                wcs='-writeColorSets',
+                wfs='-writeFaceSets',
                 sn='-stripNamespaces',
                 rt=f'-root {" -root ".join(world_transforms)}',
                 df='-dataFormat ogawa',

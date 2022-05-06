@@ -78,7 +78,7 @@ def initialize(mode):
         from .. import main
         main.init()
 
-    common.init_monitor()
+    # common.init_monitor()
 
     # Start non-model linked worker threads
     _threads = []

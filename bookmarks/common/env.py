@@ -70,14 +70,15 @@ def _get_user_setting(binary_name):
     from . import common
     key = f'bin_{binary_name}'.lower()
     v = common.settings.value(common.SettingsSection, key)
-    if isinstance(v, str) and v and QtCore.QFileInfo(v).exists():
-        return QtCore.QFileInfo(v).filePath()
+    file_info = QtCore.QFileInfo(v)
+    if isinstance(v, str) and v and file_info.exists():
+        return file_info.filePath()
     return None
 
 
 def _parse_path_env(binary_name):
     items = {
-        os.path.normpath(k.lower()).strip(): os.path.normpath(k) for k
+        os.path.normpath(k.lower()).strip(): QtCore.QFileInfo(k).filePath() for k
         in os.environ['PATH'].split(';')
     }
 
@@ -87,18 +88,19 @@ def _parse_path_env(binary_name):
 
         for entry in os.scandir(v):
             try:
-                if not entry.isfile():
+                if not entry.is_file():
                     continue
             except:
-                pass
+                continue
 
-            _name = entry.path.split('\\')[-1]
+            _filepath = QtCore.QFileInfo(entry.path).filePath()
+            _name = _filepath.split('/')[-1]
+
             match = re.match(rf'{binary_name}.*', _name, flags=re.IGNORECASE)
-
             if not match:
                 continue
 
-            return QtCore.QFileInfo(entry.path).filePath()
+            return _filepath
 
     return None
 

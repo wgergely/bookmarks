@@ -628,8 +628,8 @@ class FilesModel(basemodel.BaseModel):
             data[idx][common.IdRole] = idx
             data[idx][common.DataTypeRole] = common.SequenceItem
 
-        common.clear_watchdirs(common.FileItemMonitor)
-        common.set_watchdirs(common.FileItemMonitor, list(set(_dirs)))
+        # common.clear_watchdirs(common.FileItemMonitor)
+        # common.set_watchdirs(common.FileItemMonitor, list(set(_dirs)))
         self.set_refresh_needed(False)
 
     def disable_filter(self):

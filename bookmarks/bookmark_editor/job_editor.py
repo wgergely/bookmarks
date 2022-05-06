@@ -281,6 +281,7 @@ class JobListWidget(ui.ListViewWidget):
                 except:
                     continue
                 yield f'{client_entry.name}/{job_entry.name}', file_info.filePath()
+                continue
 
     @QtCore.Slot()
     def init_data(self):

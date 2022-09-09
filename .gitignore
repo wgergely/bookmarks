@@ -15,6 +15,7 @@ dist/
 dest
 eggs/
 .eggs/
+.vs/
 lib/
 MANIFEST
 debug.log

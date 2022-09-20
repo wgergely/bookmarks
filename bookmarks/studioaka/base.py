@@ -82,13 +82,12 @@ def get_client_project():
 
 def item_generator(path):
     """The item generator responsible for returning the asset and shot
-    items from an Aka project.
+    items from a Studio Aka project.
 
     """
     try:
         from akapipe.core import templates
     except:
-        log.error('Could not import akapipe')
         return
         yield
 

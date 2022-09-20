@@ -435,14 +435,15 @@ class BasePropertyEditor(QtWidgets.QDialog):
             parent=self.section_headers_widget
         )
 
-        font, _ = common.font_db.secondary_font(common.size(common.FontSizeMedium))
+        font, _ = common.font_db.primary_font(common.size(common.FontSizeSmall))
         button.setStyleSheet(
             'outline: none;'
             'border: none;'
-            f'color: {common.rgb(common.color(common.TextSecondaryColor))};'
+            f'color: {common.rgb(common.color(common.BackgroundLightColor))};'
             'text-align: left;'
             'padding: 0px;'
             'margin: 0px;'
+            f'font-size: {common.size(common.FontSizeSmall)}px;'
             f'font-family: "{font.family()}"'
         )
         self.section_headers_widget.layout().addWidget(button)

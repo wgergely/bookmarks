@@ -52,16 +52,15 @@ def prune_lock():
         product=common.product,
     )
 
-    r = r'{prefix}_([0-9]+)\.{ext}'.format(
-        prefix=PREFIX,
-        ext=FORMAT
-    )
+    r = fr'{PREFIX}_([0-9]+)\.{FORMAT}'
     pids = psutil.pids()
+
     for entry in os.scandir(path):
         if entry.is_dir():
             continue
 
-        match = re.match(r, entry.name.lower())
+        match = re.match(r, entry.name)
+
         if not match:
             continue
 
@@ -116,6 +115,13 @@ def init_lock():
     # Otherwise, set the default value
     common.active_mode = common.SynchronisedActivePaths
     return write_current_mode_to_lock()
+
+
+def remove_lock():
+    f = QtCore.QFile(get_lock_path())
+    if f.exists():
+        if not f.remove():
+            print('Failed to remove lock file')
 
 
 @QtCore.Slot()

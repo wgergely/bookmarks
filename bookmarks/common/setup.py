@@ -124,6 +124,8 @@ def uninitialize():
     for k, v in common.__initial_values__.items():
         setattr(common, k, v)
 
+    common.remove_lock()
+
 
 def _init_config():
     """Load the config values from common.CONFIG and set them in the `common`

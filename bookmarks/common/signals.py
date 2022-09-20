@@ -48,6 +48,8 @@ class CoreSignals(QtCore.QObject):
     toggleInlineIcons = QtCore.Signal()
     toggleFavouritesButton = QtCore.Signal()
 
+    adjustTabButtonSize = QtCore.Signal()
+
     activeModeChanged = QtCore.Signal(int)
 
     tabChanged = QtCore.Signal(int)
@@ -85,13 +87,20 @@ class CoreSignals(QtCore.QObject):
         self.toggleSequenceButton.connect(actions.toggle_sequence)
         self.toggleArchivedButton.connect(actions.toggle_archived_items)
         self.toggleInlineIcons.connect(actions.toggle_inline_icons)
+
         self.toggleFavouritesButton.connect(actions.toggle_favourite_items)
+
         self.databaseValueUpdated.connect(actions.asset_identifier_changed)
         self.assetAdded.connect(actions.show_asset)
 
         self.taskFolderChanged.connect(actions.set_task_folder)
 
         self.generateThumbnailsChanged.connect(actions.generate_thumbnails_changed)
+
+        self.adjustTabButtonSize.connect(actions.adjust_tab_button_size)
+        self.taskFolderChanged.connect(actions.adjust_tab_button_size)
+        self.bookmarkActivated.connect(actions.adjust_tab_button_size)
+        self.assetActivated.connect(actions.adjust_tab_button_size)
 
         self.sgConnectionAttemptStarted.connect(actions.show_sg_connecting_message)
         self.sgConnectionSuccessful.connect(actions.hide_sg_connecting_message)

@@ -27,7 +27,7 @@ from . import common
 from . import images
 from . import shortcuts
 from . import statusbar
-from . import topbar
+from .topbar import topbar
 from .lists import assets
 from .lists import basewidget
 from .lists import bookmarks
@@ -116,14 +116,40 @@ class MainWidget(QtWidgets.QWidget):
         self.layout().addWidget(self.statusbar)
 
     def _init_current_tab(self):
-        # Setting the tab now before we do any more initialization
+        """Sets our current tab based on the current user settings.
+
+        We can't use model indexes when this method is called as the list models
+        themselves are still uninitialized resulting in
+        `self.stacked_widget.setCurrentIndex()` returning an incorrect tab.
+
+        """
         idx = common.settings.value(
             common.UIStateSection,
             common.CurrentList
         )
         idx = common.BookmarkTab if idx is None or idx is False else idx
-        idx = common.BookmarkTab if idx < common.BookmarkTab else idx
-        idx = common.FavouriteTab if idx > common.FavouriteTab else idx
+        idx = idx if idx >= common.BookmarkTab else common.BookmarkTab
+
+        root = common.active_paths[common.SynchronisedActivePaths][common.RootKey]
+        asset = common.active_paths[common.SynchronisedActivePaths][common.AssetKey]
+
+        if (
+            not root
+            and idx in (common.BookmarkTab, common.AssetTab, common.FileTab)
+        ):
+            idx = common.BookmarkTab
+
+        if (
+            root
+            and not asset
+            and idx in (common.AssetTab, common.FileTab)
+        ):
+            idx = common.AssetTab
+
+        if idx > common.FavouriteTab:
+            idx = common.FavouriteTab
+
+        # We'll invoke directly the original setCurrentIndex method
         super(basewidget.ListsWidget, self.stacked_widget).setCurrentIndex(idx)
 
     @common.debug
@@ -158,10 +184,6 @@ class MainWidget(QtWidgets.QWidget):
         a.activated.connect(
             lambda: common.signals.tabChanged.emit(common.FileTab))
 
-
-        ########################################################################
-        b.model().sourceModel().activeChanged.connect(lc.slack_button.check_token)
-        #####################################################
         l.connect_signals()
 
         common.signals.tabChanged.connect(common.signals.updateButtons)

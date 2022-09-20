@@ -1,3 +1,9 @@
+"""This module contains linkage with the experimental StudioAka module.
+
+AkaPipe is not part of Bookmarks, nor is it under development but the module
+shall serve as a placeholder for a future Studio Aka pipline integration.
+
+"""
 from PySide2 import QtCore
 
 from akapipe.core import context

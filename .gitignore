@@ -11,3 +11,14 @@ __pycache__
 
 /docs/build/
 /dist/
+docs/build/
+docs/build
+develop-eggs/
+dist/
+dest
+eggs/
+.eggs/
+.vs/
+lib/
+MANIFEST
+debug.log

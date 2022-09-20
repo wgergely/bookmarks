@@ -291,8 +291,6 @@ class UserSettings(QtCore.QSettings):
         self.verify_active(SynchronisedActivePaths)
         self.verify_active(PrivateActivePaths)
 
-        # for m in (SynchronisedActivePaths, PrivateActivePaths):
-
     def verify_active(self, m):
         """Verify the active path values and unset any item, that refers to an invalid path.
 

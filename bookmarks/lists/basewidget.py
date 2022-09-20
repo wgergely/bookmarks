@@ -49,25 +49,31 @@ class ListsWidget(QtWidgets.QStackedWidget):
             idx (int): The index of the widget to set.
 
         """
-        # Converting idx to int
-        idx = 0 if idx is None or idx is False else idx
-        idx = idx if idx >= 0 else 0
+        idx = common.BookmarkTab if idx is None or idx is False else idx
+        idx = idx if idx >= common.BookmarkTab else common.BookmarkTab
 
-        # No active bookmark
-        if not common.active_index(0).isValid() and idx in (1, 2):
-            idx = 0
+        if (
+            not common.active_index(common.BookmarkTab).isValid()
+            and idx in (common.BookmarkTab, common.AssetTab, common.FileTab)
+        ):
+            idx = common.BookmarkTab
 
-        # No active asset
-        if common.active_index(0).isValid() and not common.active_index(1).isValid() and idx == 2:
-            idx = 1
+        if (
+            common.active_index(common.BookmarkTab).isValid()
+            and not common.active_index(common.AssetTab).isValid()
+            and idx in (common.AssetTab, common.FileTab)
+        ):
+            idx = common.AssetTab
 
-        if idx <= 3:
-            common.settings.setValue(
-                common.UIStateSection,
-                common.CurrentList,
-                idx
-            )
+        if idx > common.FavouriteTab:
+            idx = common.FavouriteTab
 
+        # Save tab to user settings
+        common.settings.setValue(
+            common.UIStateSection,
+            common.CurrentList,
+            idx
+        )
         super().setCurrentIndex(idx)
         self.currentWidget().setFocus()
 

@@ -1514,23 +1514,25 @@ class BaseContextMenu(QtWidgets.QMenu):
 
     def extra_menu(self):
         """The custom client menu"""
+        try:
+            from .studioaka import context
+        except ModuleNotFoundError:
+            return
+        except:
+            raise
+
         k = u'Studio Aka'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
             self.menu[f'{k}:icon'] = ui.get_icon('studioaka')
 
-        try:
-            from .studioaka import context
-            self.menu[k][key()] = {
-                'text': 'Show Akapipe',
-                'icon': ui.get_icon(
-                    'studioaka', color=common.color(common.GreenColor)
-                ),
-                'action': context.show_akapipe
-
-            }
-        except:
-            pass
+        self.menu[k][key()] = {
+            'text': 'Show Akapipe',
+            'icon': ui.get_icon(
+                'studioaka', color=common.color(common.GreenColor)
+            ),
+            'action': context.show_akapipe
+        }
 
         self.separator()
 

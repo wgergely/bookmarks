@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Bookmarks' Maya plugin.
 
-Make sure Bookmark is installed before trying to load the plugin. The `k`
-environment is set by the installer and is required to find and load all the
-necessary Python modules.
+Make sure the BOOKMARKS_ROOT environment variable is set to point the root of the
+Bookmarks distribution package as it is required to find and load all the
+necessary dependencies.
 
 """
 import os
@@ -30,17 +30,20 @@ def _add_path_to_sys(v, p):
     sys.path.append(os.path.normpath(_v))
 
 
-def _add_path_to_PATH(v, p):
-    _v = f'{v}{os.path.sep}{p}'
+def _add_path_to_path(v, p):
+    _v = os.path.normpath(f'{v}{os.path.sep}{p}')
     if not os.path.isdir(_v):
         raise RuntimeError(f'{_v} does not exist.')
-    if _v.lower() in os.environ['PATH'].lower():
-        return
-    os.environ[
-        'PATH'] = f'{os.path.normpath(_v)};{os.environ["PATH"].strip(";")}'
+
+    # Windows DLL loading has changed in Python 3.8+ and PATH is no longer used
+    if sys.version_info.major >= 3 and sys.version_info.minor >= 8:
+        os.add_dll_directory(_v)
+
+    if _v.lower() not in os.environ['PATH'].lower():
+        os.environ['PATH'] = f'{os.path.normpath(_v)};{os.environ["PATH"].strip(";")}'
 
 
-def init_environment(env_key, add_private=False):
+def init_environment(key, add_private=False):
     """Add the dependencies to the Python environment.
 
     The method requires that `env_key` is set. The key is usually set
@@ -51,32 +54,39 @@ def init_environment(env_key, add_private=False):
             RuntimeError: When the `env_key` is invalid or a directory missing.
 
     """
-    if env_key not in os.environ:
+    if key not in os.environ:
         raise EnvironmentError(
-            f'"{env_key}" environment variable is not set.'
+            f'"{key}" environment variable is not set.'
         )
-    v = os.environ[env_key]
+    v = os.environ[key]
     if not os.path.isdir(v):
         raise RuntimeError(
-            f'"{v}" is not a valid folder. Is "{env_key}" environment variable set?'
+            f'"{v}" is not a valid folder. Is "{key}" environment variable set?'
         )
 
-    _add_path_to_PATH(v, '.')
-    _add_path_to_PATH(v, 'bin')
+    _add_path_to_path(v, '.')
+    _add_path_to_path(v, 'bin')
 
     _add_path_to_sys(v, 'shared')
     if add_private:
-        _add_path_to_sys(v, 'private')
+        _add_path_to_sys(v, 'core')
     if v not in sys.path:
         sys.path.append(v)
 
 
+def is_batch():
+    return OpenMaya.MGlobal.mayaState() == OpenMaya.MGlobal.kBatch
+
+
 def initializePlugin(name):
-    plugin = OpenMaya.MFnPlugin(
+    OpenMaya.MFnPlugin(
         name,
         vendor=__author__,
         version=__version__
     )
+
+    if is_batch():
+        return
 
     OpenMaya.MGlobal.displayInfo(f'Loading {product.title()}...')
     init_environment(env_key)
@@ -86,11 +96,15 @@ def initializePlugin(name):
 
 
 def uninitializePlugin(name):
-    plugin = OpenMaya.MFnPlugin(
+    OpenMaya.MFnPlugin(
         name,
         vendor=__author__,
         version=__version__
     )
+
+    if is_batch():
+        return
+
     OpenMaya.MGlobal.displayInfo(f'Unloading {product.title()}...')
     from bookmarks import maya
     cmds.evalDeferred(maya.uninitialize)

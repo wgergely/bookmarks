@@ -20,6 +20,18 @@ from . import database
 from . import images
 
 
+def must_be_initialized(func):
+    """A decorator to make sure the main widget is created and initialized
+
+    """
+    @functools.wraps(func)
+    def func_wrapper(*args, **kwargs):
+        if common.main_widget is None or not common.main_widget.is_initialized:
+            return
+        return func(*args, **kwargs)
+    return func_wrapper
+
+
 def edit_persistent_bookmarks():
     """Opens `common.static_bookmarks_template`.
 
@@ -376,9 +388,8 @@ def set_task_folder(v):
 
 @common.error
 @common.debug
+@must_be_initialized
 def toggle_sequence():
-    if common.main_widget is None or not common.main_widget.is_initialized:
-        return
     if common.current_tab() not in (common.FileTab, common.FavouriteTab):
         return
 
@@ -392,9 +403,8 @@ def toggle_sequence():
 
 @common.error
 @common.debug
+@must_be_initialized
 def toggle_archived_items():
-    if common.main_widget is None or not common.main_widget.is_initialized:
-        return
     w = common.widget()
     proxy = w.model()
     val = proxy.filter_flag(common.MarkedAsArchived)
@@ -404,9 +414,8 @@ def toggle_archived_items():
 
 @common.error
 @common.debug
+@must_be_initialized
 def toggle_active_item():
-    if common.main_widget is None or not common.main_widget.is_initialized:
-        return
     w = common.widget()
     proxy = w.model()
     val = proxy.filter_flag(common.MarkedAsActive)
@@ -416,21 +425,29 @@ def toggle_active_item():
 
 @common.error
 @common.debug
+@must_be_initialized
 def toggle_favourite_items():
-    if common.main_widget is None or not common.main_widget.is_initialized:
-        return
     w = common.widget()
     proxy = w.model()
     val = proxy.filter_flag(common.MarkedAsFavourite)
     proxy.set_filter_flag(common.MarkedAsFavourite, not val)
     proxy.filterFlagChanged.emit(common.MarkedAsFavourite, not val)
 
+@common.error
+@common.debug
+@must_be_initialized
+def adjust_tab_button_size(*args, **kwargs):
+    w = common.main_widget.topbar_widget
+    w.button(common.BookmarkTab).adjust_size()
+    w.button(common.AssetTab).adjust_size()
+    w.button(common.FileTab).adjust_size()
+    w.button(common.FavouriteTab).adjust_size()
+
 
 @common.error
 @common.debug
+@must_be_initialized
 def toggle_inline_icons():
-    if common.main_widget is None or not common.main_widget.is_initialized:
-        return
 
     widget = common.widget()
     state = not widget.buttons_hidden()
@@ -444,9 +461,8 @@ def toggle_inline_icons():
 @common.error
 @common.debug
 @QtCore.Slot()
+@must_be_initialized
 def generate_thumbnails_changed(state):
-    if common.main_widget is None or not common.main_widget.is_initialized:
-        return
     if state == QtCore.Qt.Checked:
         return
 
@@ -463,9 +479,8 @@ def generate_thumbnails_changed(state):
 
 
 @QtCore.Slot()
+@must_be_initialized
 def toggle_task_view():
-    if common.main_widget is None or not common.main_widget.is_initialized:
-        return
     if common.current_tab() != common.FileTab:
         return
     common.widget(common.TaskTab).setHidden(
@@ -475,9 +490,8 @@ def toggle_task_view():
         common.widget(common.TaskTab).model().sourceModel().reset_data()
 
 
+@must_be_initialized
 def toggle_filter_editor():
-    if common.main_widget is None or not common.main_widget.is_initialized:
-        return
     w = common.widget()
     if w.filter_editor.isHidden():
         w.filter_editor.open()
@@ -489,12 +503,11 @@ def toggle_filter_editor():
 @QtCore.Slot(str)
 @QtCore.Slot(str)
 @QtCore.Slot(object)
+@must_be_initialized
 def asset_identifier_changed(table, source, key, value):
     """Refresh the assets model if the identifier changes.
 
     """
-    if common.main_widget is None or not common.main_widget.is_initialized:
-        return
     # All shotgun fields should be prefixed by 'shotgun_'
     if not (table == database.BookmarkTable and key == 'identifier'):
         return
@@ -509,9 +522,8 @@ def selection(func):
     """
 
     @functools.wraps(func)
+    @must_be_initialized
     def func_wrapper():
-        if common.main_widget is None or not common.main_widget.is_initialized:
-            return None
         index = common.selected_index()
         if not index.isValid():
             return None
@@ -522,9 +534,8 @@ def selection(func):
 
 @common.error
 @common.debug
+@must_be_initialized
 def increase_row_size():
-    if common.main_widget is None or not common.main_widget.is_initialized:
-        return
     widget = common.widget()
     proxy = widget.model()
     model = proxy.sourceModel()
@@ -539,9 +550,8 @@ def increase_row_size():
 
 @common.error
 @common.debug
+@must_be_initialized
 def decrease_row_size():
-    if common.main_widget is None or not common.main_widget.is_initialized:
-        return
     widget = common.widget()
     proxy = widget.model()
     model = proxy.sourceModel()
@@ -556,9 +566,8 @@ def decrease_row_size():
 
 @common.error
 @common.debug
+@must_be_initialized
 def reset_row_size():
-    if common.main_widget is None or not common.main_widget.is_initialized:
-        return
     widget = common.widget()
     proxy = widget.model()
     model = proxy.sourceModel()
@@ -866,9 +875,8 @@ def exec_instance():
 
 @common.error
 @common.debug
+@must_be_initialized
 def change_tab(idx):
-    if common.main_widget is None or not common.main_widget.is_initialized:
-        return
     if common.current_tab() == idx:
         return
     common.signals.tabChanged.emit(idx)

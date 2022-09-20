@@ -115,7 +115,7 @@ def publish_footage(
         raise RuntimeError('Sequence seems to be empty.')
 
     ext = source.split('.')[-1]
-    if make_movie and ext.lower() not in images.oiio_image_extensions:
+    if make_movie and ext.lower() not in images.get_oiio_extensions():
         raise RuntimeError(f'{ext} is not a accepted image format.')
 
     # Let's check if the template file exists
@@ -150,8 +150,11 @@ def publish_footage(
 
     # Get the publish type from the path
     regex = r'|'.join(akatemplates.tokens[f] for f in akatemplates.publish_types)
-    publish_type = re.search(regex, destination).group(0)
-    publish_type = re.sub(r'[0-9_-]+', '', publish_type)
+    publish_type = re.search(regex, destination)
+    if not publish_type:
+        raise RuntimeError('Could not find the publish type. Something is not '
+                           'configured correctly.')
+    publish_type = re.sub(r'[0-9_-]+', '', publish_type.group(0))
 
     # Initialize the aka database and get the client and project prefixes
     akadatabase.init_table_data(akadb.CL)
@@ -191,8 +194,8 @@ def publish_footage(
                 # Now let's create a thumbnail for this publish
                 images.ImageCache.oiio_make_thumbnail(
                     source_frame,
-                    f'{destination}/thumbnail.png',
-                    common.thumbnail_size
+                    f'{destination}/thumbnail.jpg',
+                    128
                 )
         except:
             log.error('Could not make thumbnail.')
@@ -279,7 +282,7 @@ def publish_footage(
         if webhook:
             payload = message.get_payload(
                 message.PUBLISH_MESSAGE,
-                thumbnail=f'{destination}/thumbnail.png',
+                thumbnail=f'{destination}/thumbnail.jpg',
                 seq=seq,
                 shot=shot,
                 path=destination,

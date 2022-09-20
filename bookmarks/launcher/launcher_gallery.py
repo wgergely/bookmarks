@@ -58,5 +58,4 @@ class LauncherGallery(ui.GalleryWidget):
             yield v[k]['name'], v[k]['path'], v[k]['thumbnail']
 
     def focusOutEvent(self, event):
-        print('!')
         self.close()

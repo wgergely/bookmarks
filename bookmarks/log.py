@@ -12,14 +12,14 @@ from . import common
 
 mutex = QtCore.QMutex()
 
-ESC = ''
-OKBLUE = f'{ESC}[94m'
-OKGREEN = f'{ESC}[92m'
-WARNING = f'{ESC}[93m'
-FAIL = f'{ESC}[91m'
-RESET = f'{ESC}[0m'
-BOLD = f'{ESC}[1m'
-UNDERLINE = f'{ESC}[4m'
+ESC = r''
+OKBLUE = rf'{ESC}[94m'
+OKGREEN = rf'{ESC}[92m'
+WARNING = rf'{ESC}[93m'
+FAIL = rf'{ESC}[91m'
+RESET = rf'{ESC}[0m'
+BOLD = rf'{ESC}[1m'
+UNDERLINE = rf'{ESC}[4m'
 
 
 def _log(message):

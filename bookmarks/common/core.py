@@ -103,6 +103,9 @@ def check_type(value, _type):
         value (object): An object of invalid type.
         _type (type or tuple or types): The valid type.
 
+    Raises:
+        TypeError: When ``value`` is not of ``_type``.
+
     """
     if not common.typecheck_on:
         return

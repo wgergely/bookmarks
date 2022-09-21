@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""The threads and associated worker classes.
-
-Thumbnail and file-load work on carried out on secondary threads.
-Each thread is assigned a single Worker - usually responsible for taking
-a *weakref.ref* from the thread's queue.
+"""Thread definitions and associated worker classes.
 
 """
 import uuid
@@ -45,7 +41,7 @@ QueuedShotgunQuery = 'QueuedShotgunQuery'
 
 controllers = {}
 
-
+# Main thread definitions
 THREADS = {
     BookmarkInfo: {
         'queue': collections.deque([], common.max_list_items),
@@ -185,6 +181,9 @@ THREADS = {
 
 
 def queue_database_transaction(*args):
+    """A utility method used to execute a delayed database transaction.
+
+    """
     if args not in queue(QueuedDatabaseTransaction):
         queue(QueuedDatabaseTransaction).append(args)
     get_thread(QueuedDatabaseTransaction).startTimer.emit()
@@ -197,11 +196,17 @@ def queue_shotgun_query(*args):
 
 
 def reset_all_queues():
+    """Clear all thread queues.
+
+    """
     for k in THREADS:
         THREADS[k]['queue'].clear()
 
 
 def quit_threads():
+    """Terminate all running threads.
+
+    """
     for k in THREADS:
         thread = get_thread(k)
         if thread.isRunning():
@@ -221,6 +226,10 @@ def quit_threads():
 
 def get_thread(k):
     """Get a cached thread controller instance.
+
+    Args:
+        k (str): Name of the thread controller to return, e.g.
+            ``threads.QueuedShotgunQuery``.
 
     If the controller does not yet exist we will create and cache it.
     All threads are associated with worker, defined by `THREADS`.
@@ -259,10 +268,12 @@ def add_to_queue(k, ref):
 
 
 class BaseThread(QtCore.QThread):
-    """Thread controller.
+    """Base QThread controller.
 
-    The threads are associated with workers and are used to consume items
-    from their associated queues.
+    Attributes:
+        initWorker (QtCore.Signal): Signal emitted when the thread has spun up.
+        startTimer (QtCore.Signal): Starts the thread's queue timer.
+        stopTimer (QtCore.Signal): Stops the thread's queue timer.
 
     """
     initWorker = QtCore.Signal()
@@ -270,9 +281,9 @@ class BaseThread(QtCore.QThread):
     stopTimer = QtCore.Signal()
 
     def __init__(self, worker, parent=None):
-        super(BaseThread, self).__init__(parent=parent)
-        self.setObjectName('{}Thread_{}'.format(
-            worker.queue, uuid.uuid1().hex))
+        super().__init__(parent=parent)
+
+        self.setObjectName(f'{worker.queue}Thread_{uuid.uuid1().hex}')
         self.setTerminationEnabled(True)
 
         self.worker = worker
@@ -291,11 +302,9 @@ class BaseThread(QtCore.QThread):
         """Slot called when the thread is started.
 
         We'll move the worker to the thread and connect all signals needed to
-        communicate with the worker. Thread affinity seems to be tricky
-        thing to manage but as far as I can see starting
+        communicate with the worker.
 
         """
-        # Start the timer in this thread
         self.worker.moveToThread(self)
 
         cnx = QtCore.Qt.QueuedConnection

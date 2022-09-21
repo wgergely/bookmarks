@@ -10,13 +10,14 @@ Introduction
 .. automodule:: bookmarks
 
 
+Table of Contents
+=================
+
 .. toctree::
     :maxdepth: 3
 
     bookmarks
     api
-
-
 
 
 Indices and tables

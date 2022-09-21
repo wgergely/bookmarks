@@ -42,16 +42,6 @@ class Test(base.BaseCase):
         self.assertIn('png', v)
         self.assertIn('jpg', v)
 
-    def test_check_for_thumbnail_image(self):
-        from .. import images
-        v = images.check_for_thumbnail_image(common.temp_path())
-        self.assertIsNotNone(v)
-        self.assertIsInstance(v, str)
-        self.assertIsInstance(v, str)
-
-        v = images.check_for_thumbnail_image(common.temp_path() + '1')
-        self.assertIsNone(v)
-
     def test_get_placeholder_path(self):
         from .. import images
         for ext in ('ma', 'aep'):

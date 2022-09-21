@@ -880,7 +880,7 @@ class BaseContextMenu(QtWidgets.QMenu):
     def bookmark_editor_menu(self):
         icon = ui.get_icon('add', color=common.color(common.GreenColor))
         self.menu[key()] = {
-            'text': 'Edit Bookmarks...',
+            'text': 'Edit Active Bookmarks...',
             'icon': icon,
             'action': actions.show_add_bookmark,
             'shortcut': shortcuts.get(
@@ -1057,7 +1057,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[f'{k}:icon'] = settings_icon
 
         self.menu[k][key()] = {
-            'text': 'Edit Bookmark Properties...',
+            'text': 'Edit bookmark properties...',
             'icon': settings_icon,
             'action': functools.partial(
                 actions.edit_bookmark, server=server, job=job, root=root
@@ -1165,7 +1165,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[f'{k}:icon'] = settings_icon
 
         self.menu[k][key()] = {
-            'text': 'Edit Bookmark Properties...',
+            'text': 'Edit bookmark properties...',
             'icon': settings_icon,
             'action': actions.edit_bookmark,
         }
@@ -1293,13 +1293,13 @@ class BaseContextMenu(QtWidgets.QMenu):
         if not QtCore.QFileInfo(thumbnail_path).exists():
             return
 
-        k = 'Shotgun'
+        k = 'ShotGrid'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
             self.menu['{}:icon'.format(k)] = ui.get_icon('sg')
 
         self.menu[k][key()] = {
-            'text': 'Upload Thumbnail to Shotgun...',
+            'text': 'Upload Thumbnail to ShotGrid...',
             'action': functools.partial(
                 sg_actions.upload_thumbnail, sg_properties, thumbnail_path
             ),
@@ -1323,7 +1323,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         if not sg_properties.verify():
             return
 
-        k = 'Shotgun'
+        k = 'ShotGrid'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
             self.menu[f'{k}:icon'] = ui.get_icon('sg')
@@ -1349,13 +1349,13 @@ class BaseContextMenu(QtWidgets.QMenu):
         if not sg_properties.verify(connection=True):
             return
 
-        k = 'Shotgun'
+        k = 'ShotGrid'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
             self.menu[f'{k}:icon'] = ui.get_icon('sg')
 
         self.menu[k][key()] = {
-            'text': 'Link Bookmark with Shotgun...',
+            'text': 'Link Bookmark with ShotGrid...',
             'icon': ui.get_icon('sg'),
             'action': functools.partial(
                 sg_actions.link_bookmark_entity, server, job, root
@@ -1373,7 +1373,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         if not sg_properties.verify(bookmark=True):
             return
 
-        k = 'Shotgun'
+        k = 'ShotGrid'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
             self.menu[f'{k}:icon'] = ui.get_icon('sg')
@@ -1381,7 +1381,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         server, job, root, asset = self.index.data(common.ParentPathRole)[0:4]
         for entity_type in ('Asset', 'Shot', 'Sequence'):
             self.menu[k][key()] = {
-                'text': 'Link item with Shotgun {}'.format(entity_type.title()),
+                'text': 'Link item with ShotGrid {}'.format(entity_type.title()),
                 'icon': ui.get_icon('sg'),
                 'action': functools.partial(
                     sg_actions.link_asset_entity, server, job, root, asset,
@@ -1395,14 +1395,14 @@ class BaseContextMenu(QtWidgets.QMenu):
         if not sg_properties.verify(bookmark=True):
             return
 
-        k = 'Shotgun'
+        k = 'ShotGrid'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
             self.menu[f'{k}:icon'] = ui.get_icon('sg')
 
         self.separator(self.menu[k])
         self.menu[k][key()] = {
-            'text': 'Link Assets with Shotgun',
+            'text': 'Link Assets with ShotGrid',
             'icon': ui.get_icon('sg', color=common.color(common.GreenColor)),
             'action': sg_actions.link_assets,
         }
@@ -1449,7 +1449,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         if not sg_properties.verify():
             return
 
-        k = 'Shotgun'
+        k = 'ShotGrid'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
             self.menu[f'{k}:icon'] = ui.get_icon('sg')

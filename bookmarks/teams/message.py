@@ -1,6 +1,4 @@
-"""Microsoft Teams API integration module.
-
-When a bookmark item is set up with a Microsoft Teams Incoming Webhook URL,
+"""When a bookmark item is set up with a Microsoft Teams Incoming Webhook URL,
 we can use it to send cards (messages) to the associated channel. The current
 functionality is limited and is currently only used to signal new publishes.
 

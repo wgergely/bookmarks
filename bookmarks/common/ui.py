@@ -256,7 +256,7 @@ def draw_aliased_text(painter, font, rect, text, align, color, elide=None):
     painter.setBrush(color)
     painter.setPen(QtCore.Qt.NoPen)
 
-    from ..lists import delegate
+    from ..items import delegate
     path = delegate.get_painter_path(x, y, font, text)
     painter.drawPath(path)
 

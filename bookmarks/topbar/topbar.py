@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
-"""Defines :class:`.TopBarWidget`, and all the buttons found on the bar located above the
-:class:`bookmarks.main.StackedWidget`.
-
+"""Defines :class:`.TopBarWidget`, the main widget containing all control buttons.
 
 """
-
 from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import buttons
@@ -14,7 +11,6 @@ from .. import common
 from .. import images
 
 n = (f for f in range(common.FavouriteTab + 1, 999))
-
 
 BUTTONS = {
     common.BookmarkTab: {

@@ -1,6 +1,6 @@
 """Interface to interact with the item data cache.
 
-All data loaded by the item models are stored in :attr:`bookmarks.common.item_data`.
+All data loaded by the item models are stored in :attr:`~bookmarks.common.item_data`.
 The module provides methods for the models to access, load and reset the cached data.
 
 """
@@ -15,7 +15,7 @@ def sort_data(ref, sort_role, sort_order):
     """Sort the given data using `sort_role` and `sort_order`.
 
     Args:
-        ref (weakref.ref): Pointer to a :class:`bookmarks.common.core.DataDict` instance.
+        ref (weakref.ref): Pointer to a :class:`~bookmarks.common.core.DataDict` instance.
         sort_role (int): The role to use to sort the data.
         sort_order (bool):  The sort order.
 
@@ -53,12 +53,12 @@ def sort_data(ref, sort_role, sort_order):
 
 
 def get_data(key, task, data_type):
-    """Get a cached data dict from :attr:`bookmarks.common.item_data`.
+    """Get a cached data dict from :attr:`~bookmarks.common.item_data`.
 
     Args:
         key (tuple): A tuple of path segments.
         task (str): A task folder.
-        data_type (int): One of :attr:`bookmarks.common.FileItem` or :attr:`bookmarks.common.SequenceItem`.
+        data_type (int): One of :attr:`~bookmarks.common.FileItem` or :attr:`~bookmarks.common.SequenceItem`.
 
     Returns:
         common.DataDict: The cached data.
@@ -78,7 +78,7 @@ def get_data(key, task, data_type):
 
 
 def get_task_data(key, task):
-    """Get cached data from :attr:`bookmarks.common.item_data`.
+    """Get cached data from :attr:`~bookmarks.common.item_data`.
 
     Args:
         key (tuple): A tuple of path segments.
@@ -104,7 +104,7 @@ def data_count(key, task, data_type):
     Args:
         key (tuple): A tuple of path segments.
         task (str): A task folder.
-        data_type (int): One of :attr:`bookmarks.common.FileItem` or :attr:`bookmarks.common.SequenceItem`.
+        data_type (int): One of :attr:`~bookmarks.common.FileItem` or :attr:`~bookmarks.common.SequenceItem`.
 
     Returns:
         int: The number of items in the data dictionary.
@@ -124,7 +124,7 @@ def is_data_loaded(key, task, data_type):
     Args:
         key (tuple): A tuple of path segments.
         task (str): A task folder.
-        data_type (int): One of :attr:`bookmarks.common.FileItem` or :attr:`bookmarks.common.SequenceItem`.
+        data_type (int): One of :attr:`~bookmarks.common.FileItem` or :attr:`~bookmarks.common.SequenceItem`.
 
     Returns:
         bool:   True if loaded, false otherwise.

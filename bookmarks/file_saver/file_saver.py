@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-"""The module contains the definition of :class:`FileSaverWidget`, the main widget
-used by Bookmarks to create versioned template files.
+"""The module contains the definition of :class:`FileSaverWidget`, the main widget used
+by Bookmarks to create versioned template files.
 
 The suggested save destination will be partially dependent on the extension
 specified, the current token config values as well as the active bookmark and asset
@@ -10,7 +10,8 @@ The final file name is generated from a filename template. The editor widgets
 defined in `file_saver_widgets.py` are used to edit the values needed to expand
 the tokens of in the selected file name template.
 
-See the `tokens.py` and `bookmark_properties.py` modules for more information.
+See the :mod:`bookmarks.tokens` and :mod:`bookmarks.editor.bookmark_properties` modules
+for more information.
 
 .. code-block:: python
 
@@ -20,7 +21,7 @@ See the `tokens.py` and `bookmark_properties.py` modules for more information.
         root,
         asset=asset,
         extension='fbx'
-    ).open()
+    )
 
 """
 import os

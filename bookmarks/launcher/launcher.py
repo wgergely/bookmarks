@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
-import os
+"""Application launcher item definitions and sub-widgets.
+
+"""
 import functools
+
 from PySide2 import QtCore, QtWidgets, QtGui
 
 from .. import common
-from .. import ui
-from .. import images
 from .. import contextmenu
-
+from .. import images
+from .. import ui
 
 DEFAULT_ITEM = {
     0: {
@@ -199,7 +201,8 @@ class LauncherItemEditor(QtWidgets.QDialog):
         return v
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth), common.size(common.HeightRow))
+        return QtCore.QSize(common.size(common.DefaultWidth),
+                            common.size(common.HeightRow))
 
 
 class LauncherListContextMenu(contextmenu.BaseContextMenu):

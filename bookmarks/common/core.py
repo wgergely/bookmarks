@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Common attributes, methods and flag values.
 
 """
@@ -40,7 +41,7 @@ SlackPath = 3
 MarkedAsArchived = 0b1000000000
 MarkedAsFavourite = 0b10000000000
 MarkedAsActive = 0b100000000000
-MarkedAsPersistent = 0b1000000000000
+MarkedAsDefault = 0b1000000000000
 
 FileItem = 1100
 SequenceItem = 1200
@@ -206,7 +207,7 @@ def error(func):
 
 def debug(func):
     """Function decorator used to log a debug message.
-    No message will be logged, unless :attr:`bookmarks.common.debug_on` is set to
+    No message will be logged, unless :attr:`~bookmarks.common.debug_on` is set to
     True.
 
     """

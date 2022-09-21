@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""The widget used to link multiple local assets with Shotgun Entities.
+"""The widget used to link multiple local assets with ShotGrid entities.
 
 """
 import os
@@ -48,7 +48,7 @@ def show():
 
 class TableWidget(QtWidgets.QTableWidget):
     """The table that contains our list of non-archived assets, and the combobox
-    and button used to associate/create Shotgun entities.
+    and button used to associate/create ShotGrid entities.
 
     """
     createEntity = QtCore.Signal(
@@ -61,7 +61,7 @@ class TableWidget(QtWidgets.QTableWidget):
 
         self.setColumnCount(4)
         self.setHorizontalHeaderLabels(
-            ('Local Assets', '', 'Shotgun Entity', 'Create Entity'))
+            ('Local Assets', '', 'ShotGrid Entity', 'Create Entity'))
         self.verticalHeader().setVisible(False)
 
         header = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, parent=self)
@@ -137,7 +137,7 @@ class TableWidget(QtWidgets.QTableWidget):
 
 
 class LinkMultiple(QtWidgets.QDialog):
-    """The main widget used to link multiple local assets with their Shotgun
+    """The main widget used to link multiple local assets with their ShotGrid
     counterparts.
 
     """
@@ -153,7 +153,7 @@ class LinkMultiple(QtWidgets.QDialog):
 
         self.model = None
 
-        self.setWindowTitle('Link Local Assets with Shotgun')
+        self.setWindowTitle('Link Local Assets with ShotGrid')
 
         self._create_ui()
         self._connect_signals()
@@ -253,7 +253,7 @@ class LinkMultiple(QtWidgets.QDialog):
 
         if not sg_properties.verify(connection=True):
             raise RuntimeError(
-                'Bookmark is not configured to use Shotgun.')
+                'Bookmark is not configured to use ShotGrid.')
 
         self.emit_request(sg_properties)
 

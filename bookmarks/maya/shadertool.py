@@ -6,11 +6,15 @@ import re
 
 import shiboken2
 from PySide2 import QtWidgets, QtCore, QtGui
-from maya import OpenMayaUI
-from maya import cmds
-from maya import mel
-from maya.api import OpenMaya
-from maya.app.general import mayaMixin
+
+try:
+    from maya import OpenMayaUI
+    from maya import cmds
+    from maya import mel
+    from maya.api import OpenMaya
+    from maya.app.general import mayaMixin
+except ImportError:
+    raise ImportError('Could not find the Maya modules.')
 
 from .. import common
 

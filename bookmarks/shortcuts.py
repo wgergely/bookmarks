@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-"""The threads and associated worker classes.
+"""Application-wide shortcut definitions.
 
-Thumbnail and file-load work on carried out on secondary threads.
-Each thread is assigned a single Worker - usually responsible for taking
-a *weakref.ref* from the thread's queue.
+TODO: Create editor widget to make these customizable.
 
 """
 from PySide2 import QtWidgets, QtGui, QtCore
@@ -358,6 +356,9 @@ def _verify_shortuts(shortcuts):
 @common.debug
 @common.error
 def add_shortcuts(widget, shortcuts, context=QtCore.Qt.WidgetWithChildrenShortcut):
+    """Helper function to initialize shortcuts.
+
+    """
     _verify_shortuts(shortcuts)
     for v in shortcuts.values():
         key_sequence = QtGui.QKeySequence(v['value'])
@@ -370,17 +371,29 @@ def add_shortcuts(widget, shortcuts, context=QtCore.Qt.WidgetWithChildrenShortcu
 @common.debug
 @common.error
 def connect(shortcuts, key, func):
+    """Helper function to connect a function with a shortcut.
+
+    """
     shortcuts[key]['shortcut'].activated.connect(func)
 
 
 def get(shortcuts, k):
+    """Helper function used to retrieve a shortcut.
+
+    """
     return shortcuts[k]['shortcut']
 
 def string(shortcuts, k):
+    """Returns the string representation of a shortcut.
+
+    """
     v = shortcuts[k]['shortcut'].key()
     if hasattr(v, 'toString'):
         return v.toString(format=QtGui.QKeySequence.NativeText)
     return v
 
 def hint(shortcuts, k):
+    """Get the hint text associated with a shortcut.
+
+    """
     return shortcuts[k]['description']

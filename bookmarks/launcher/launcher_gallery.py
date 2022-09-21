@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Widget used to select a Launcher item.
+"""Main widget used to select a Launcher item.
 
 """
 from PySide2 import QtCore

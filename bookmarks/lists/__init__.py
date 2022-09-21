@@ -1,4 +1,0 @@
-"""The core tab widgets
-
-
-"""

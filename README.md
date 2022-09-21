@@ -83,5 +83,5 @@ See `bookmarks.maya` and [`bookmarks.common`](api/common.md#module-bookmarks.com
 
 ## Python Modules Documentation
 
-`https://bookmarks.gergely-wootsch.com/html/api.html`: [https://bookmarks.gergely-wootsch.com/html/api.html]
+https://bookmarks.gergely-wootsch.com/html/api.html
 

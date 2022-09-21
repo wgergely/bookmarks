@@ -1,13 +1,23 @@
-"""The Bookmarks Maya integration module..
+"""Autodesk Maya integrations.
 
 """
 import functools
 
 from PySide2 import QtCore
-from maya import cmds
+
+try:
+    from maya import cmds
+except ImportError:
+    raise ImportError('Could not find Maya modules.')
 
 
 def initialize():
+    """Initializes the Bookmarks Maya module.
+
+    This will start Bookmarks in ``common.EmbeddedMode`` and will create the settings
+    and widgets needed to embed it into the Maya UI.
+
+    """
     from .. import common
     common.initialize(common.EmbeddedMode)
 
@@ -38,6 +48,9 @@ def initialize():
 
 
 def uninitialize():
+    """Removes the embedded Bookmarks elements from Maya.
+
+    """
     from .. import common
     from . import actions
 
@@ -46,4 +59,3 @@ def uninitialize():
     actions.remove_workspace_controls()
 
     common.uninitialize()
-    # maya_widget._instance.hide()

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Shotgun Entity linker widgets.
 
-The widets are used to link a Shotgun entity with a local item.
+The widgets are used to link a ShotGrid entity with a local item.
 
 """
 from PySide2 import QtWidgets, QtCore, QtGui
@@ -13,7 +13,7 @@ from . import shotgun
 
 
 class BaseLinkWidget(QtWidgets.QDialog):
-    """Widget used to link a Shotgun entity with a local item.
+    """Widget used to link a ShotGrid entity with a local item.
 
     Args:
         entity_type (str): A shotgun entity type.
@@ -92,7 +92,7 @@ class BaseLinkWidget(QtWidgets.QDialog):
     @common.error
     @common.debug
     def request_data(self):
-        """Request Loads a list of Shotgun entities.
+        """Request Loads a list of ShotGrid entities.
 
         """
         pass
@@ -155,7 +155,7 @@ class BaseLinkWidget(QtWidgets.QDialog):
     @common.debug
     @QtCore.Slot(str)
     def create_entity(self, name):
-        """Creates a new Shotgun entity.
+        """Creates a new ShotGrid entity.
 
         """
         pass

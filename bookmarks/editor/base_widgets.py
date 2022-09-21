@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""A list of widgets and methods used by `editor.BasePropertyEditor`.
+"""A list of widgets and methods used by :class:`bookmarks.editor.base.BasePropertyEditor`.
 
 """
 import uuid
@@ -243,7 +243,7 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
     @common.error
     @common.debug
     def pick_image(self):
-        from ..lists.widgets import thumb_picker as editor
+        from ..items.widgets import thumb_picker as editor
         widget = editor.show()
         widget.fileSelected.connect(self.process_image)
 
@@ -260,7 +260,7 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         self.hide_window()
 
         try:
-            from ..lists.widgets import thumb_capture as editor
+            from ..items.widgets import thumb_capture as editor
             widget = editor.show()
             widget.accepted.connect(self.restore_window)
             widget.rejected.connect(self.restore_window)

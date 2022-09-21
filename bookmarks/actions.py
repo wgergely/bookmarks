@@ -14,8 +14,7 @@ import zipfile
 
 from PySide2 import QtCore, QtWidgets, QtGui
 
-from . import common, asset_properties as editor, bookmark_properties as editor, \
-    preferences as editor
+from . import common
 from . import database
 from . import images
 
@@ -32,13 +31,13 @@ def must_be_initialized(func):
     return func_wrapper
 
 
-def edit_persistent_bookmarks():
-    """Opens `common.static_bookmarks_template`.
+def edit_default_bookmarks():
+    """Opens `common.default_bookmarks_template`.
 
     """
     reveal(
         common.get_rsc(
-            f'{common.TemplateResource}/{common.static_bookmarks_template}'
+            f'{common.TemplateResource}/{common.default_bookmarks_template}'
         )
     )
 
@@ -50,8 +49,8 @@ def add_server(v):
         v (str): A path to server, e.g. `Q:/jobs`.
 
     """
-    # Disallow adding persistent servers
-    for bookmark in common.static_bookmarks.values():
+    # Disallow adding default servers
+    for bookmark in common.default_bookmarks.values():
         if bookmark[common.ServerKey] == v:
             return
 
@@ -67,8 +66,8 @@ def remove_server(v):
         v (str): A path to server, e.g. `Q:/jobs`.
 
     """
-    # Disallow removing persistent servers
-    for bookmark in common.static_bookmarks.values():
+    # Disallow removing default servers
+    for bookmark in common.default_bookmarks.values():
         if bookmark[common.ServerKey] == v:
             return
 
@@ -84,7 +83,8 @@ def add_bookmark(server, job, root):
 
     Each bookmark is stored as dictionary entry:
 
-    ..code-block:: python
+
+    .. code-block:: python
 
         bookmarks = {
             '//server/jobs/MyFirstJob/data/shots': {
@@ -597,7 +597,7 @@ def show_add_asset(server=None, job=None, root=None):
     if not all((server, job, root)):
         return None
 
-    from . import asset_properties as editor
+    from .editor import asset_properties as editor
     widget = editor.show(server, job, root)
     return widget
 
@@ -671,8 +671,7 @@ def edit_asset(asset=None):
     if asset is None:
         return
 
-    from . import asset_properties as editor
-
+    from .editor import asset_properties as editor
     widget = editor.show(server, job, root, asset=asset)
     return widget
 
@@ -703,6 +702,7 @@ def edit_file(f):
 @common.error
 @common.debug
 def show_preferences():
+    from .editor import preferences as editor
     widget = editor.show()
     return widget
 
@@ -1012,7 +1012,7 @@ def preview_thumbnail(index):
     idx = model.mapToSource(index).row()
     ref = weakref.ref(data[idx])
 
-    from .lists.widgets import image_viewer
+    from .items.widgets import image_viewer
     image_viewer.show(source, ref, common.widget(), oiio=False)
 
 
@@ -1035,7 +1035,7 @@ def preview_image(index):
     idx = model.mapToSource(index).row()
     ref = weakref.ref(data[idx])
 
-    from .lists.widgets import image_viewer
+    from .items.widgets import image_viewer
     image_viewer.show(source, ref, common.widget(), oiio=True)
 
 
@@ -1079,10 +1079,10 @@ def toggle_favourite(index):
 @common.error
 @selection
 def toggle_archived(index):
-    # Ignore persistent items
-    if index.data(common.FlagsRole) & common.MarkedAsPersistent:
+    # Ignore default items
+    if index.data(common.FlagsRole) & common.MarkedAsDefault:
         from . import ui
-        ui.MessageBox('Persistent items cannot be archived.').open()
+        ui.MessageBox('Default bookmark items cannot be archived.').open()
         return
 
     common.widget().save_selection()
@@ -1282,7 +1282,7 @@ def capture_thumbnail(index):
         common.main_widget.hide()
         common.main_widget.save_window()
 
-    from .lists.widgets import thumb_capture as editor
+    from .items.widgets import thumb_capture as editor
     widget = editor.show(
         server=server,
         job=job,
@@ -1309,7 +1309,7 @@ def pick_thumbnail_from_file(index):
     server, job, root = index.data(common.ParentPathRole)[0:3]
     source = index.data(common.PathRole)
 
-    from .lists.widgets import thumb_picker as editor
+    from .items.widgets import thumb_picker as editor
     widget = editor.show(
         server=server,
         job=job,
@@ -1332,7 +1332,7 @@ def pick_thumbnail_from_library(index):
     if not all((server, job, root, source)):
         return
 
-    from .lists.widgets import thumb_library as editor
+    from .items.widgets import thumb_library as editor
     widget = editor.show()
 
     widget.itemSelected.connect(
@@ -1762,7 +1762,7 @@ def show_sg_error_message(v):
 def show_sg_connecting_message():
     from . import ui
     common.sg_connecting_message = ui.MessageBox(
-        'Shotgun is connecting, please wait...', no_buttons=True
+        'ShotGrid is connecting, please wait...', no_buttons=True
     )
     common.sg_connecting_message.open()
     QtWidgets.QApplication.instance().processEvents()

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """The publish widget used by Bookmarks to create new PublishedFiles and Version
-entities.
+entities on ShotGrid.
 
 Our publish logic creates `Version` and `PublishFile` entites linked against
 the current active project and asset and uploads any custom thumbnails set.
@@ -69,21 +69,21 @@ SECTIONS = {
         'groups': {
             0: {
                 0: {
-                    'name': 'Shotgun Project',
+                    'name': 'ShotGrid Project',
                     'key': 'project_entity',
                     'validator': None,
                     'widget': publish_widgets.ProjectEntityEditor,
                     'placeholder': '',
-                    'description': 'The current bookmark\'s linked Shotgun Project.',
+                    'description': 'The current bookmark\'s linked ShotGrid Project.',
                     'button': 'Visit',
                 },
                 1: {
-                    'name': 'Shotgun Asset',
+                    'name': 'ShotGrid Asset',
                     'key': 'asset_entity',
                     'validator': None,
                     'widget': publish_widgets.AssetEntityEditor,
                     'placeholder': '',
-                    'description': 'The current bookmark\'s linked Shotgun Project.',
+                    'description': 'The current bookmark\'s linked ShotGrid Project.',
                     'button': 'Visit',
                 },
             },
@@ -94,7 +94,7 @@ SECTIONS = {
                     'validator': None,
                     'widget': publish_widgets.TaskEditor,
                     'placeholder': '',
-                    'description': 'Select a Shotgun Task.',
+                    'description': 'Select a ShotGrid Task.',
                     'button': 'Visit',
                 },
                 1: {
@@ -103,25 +103,25 @@ SECTIONS = {
                     'validator': None,
                     'widget': publish_widgets.StatusEditor,
                     'placeholder': '',
-                    'description': 'Select a Shotgun Status.',
+                    'description': 'Select a ShotGrid Status.',
                 },
             },
             2: {
                 0: {
-                    'name': 'Shotgun Storage',
+                    'name': 'ShotGrid Storage',
                     'key': 'storage',
                     'validator': None,
                     'widget': publish_widgets.LocalStorageEditor,
                     'placeholder': '',
-                    'description': 'Select a Shotgun Storage.',
+                    'description': 'Select a ShotGrid Storage.',
                 },
                 1: {
-                    'name': 'Shotgun File Type',
+                    'name': 'ShotGrid File Type',
                     'key': 'file_type',
                     'validator': None,
                     'widget': publish_widgets.PublishedFileTypeEditor,
                     'placeholder': '',
-                    'description': 'Select a Shotgun Published File Type.',
+                    'description': 'Select a ShotGrid Published File Type.',
                 },
             },
             3: {
@@ -142,7 +142,7 @@ SECTIONS = {
                     'widget': publish_widgets.DropWidget,
                     'no_group': True,
                     'placeholder': 'Drop a file here, or click to select...',
-                    'description': 'Drag-and-drop, or click, to add a file to publish to Shotgun.',
+                    'description': 'Drag-and-drop, or click, to add a file to publish to ShotGrid.',
                 },
                 1: {
                     'name': 'Image Sequence',
@@ -344,7 +344,7 @@ class PublishWidget(base.BasePropertyEditor):
 
                 # A match, let's set the sequence path
                 if file_info.baseName() in entry.name:
-                    # Reading the Shotgun source code, looks like they're expecting
+                    # Reading the ShotGrid source code, looks like they're expecting
                     # an fprint style sequence notation
                     _file_info = QtCore.QFileInfo(entry.path)
                     seq = common.get_sequence(_file_info.filePath())

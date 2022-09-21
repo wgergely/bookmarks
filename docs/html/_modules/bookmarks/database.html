@@ -1,14 +1,14 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <meta name="generator" content="sphinx-4.3.1, furo 2021.11.23"/>
+    <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
         <title>bookmarks.database - Bookmarks 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=7f0192ddeb2adecfbaa87ffbcf67d16358b30bc1" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=0af69da206d614734f649b27d4cdc2dd6c31f41d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
 
@@ -24,16 +24,8 @@
   --api-font-size: var(--font-size--normal);
   
   }
-  body[data-theme="dark"] {
-    --color-code-background: #232629;
-  --color-code-foreground: #cccccc;
-  --color-brand-primary: rgba(90, 200, 155, 1);
-  --color-brand-content: rgba(90, 200, 155, 1);
-  --color-api-name: rgba(255, 255, 255, 0.9);
-  
-  }
-  @media (prefers-color-scheme: dark) {
-    body:not([data-theme="light"]) {
+  @media not print {
+    body[data-theme="dark"] {
       --color-code-background: #232629;
   --color-code-foreground: #cccccc;
   --color-brand-primary: rgba(90, 200, 155, 1);
@@ -41,27 +33,35 @@
   --color-api-name: rgba(255, 255, 255, 0.9);
   
     }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+      }
+    }
   }
 </style></head>
   <body>
+    
     <script>
       document.body.dataset.theme = localStorage.getItem("theme") || "auto";
     </script>
     
+
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
     <title>Contents</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" />
-      <line x1="4" y1="6" x2="20" y2="6" />
-      <line x1="10" y1="12" x2="20" y2="12" />
-      <line x1="6" y1="18" x2="20" y2="18" />
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
     </svg>
   </symbol>
   <symbol id="svg-menu" viewBox="0 0 24 24">
     <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
       <line x1="3" y1="12" x2="21" y2="12"></line>
       <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -70,14 +70,14 @@
   </symbol>
   <symbol id="svg-arrow-right" viewBox="0 0 24 24">
     <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
       <polyline points="9 18 15 12 9 6"></polyline>
     </svg>
   </symbol>
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -92,7 +92,7 @@
   </symbol>
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
@@ -100,7 +100,7 @@
   </symbol>
   <symbol id="svg-sun-half" viewBox="0 0 24 24">
     <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <circle cx="12" cy="12" r="9" />
@@ -177,12 +177,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/lists.html">lists</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/tokens.html">tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/editor.html">editor</a></li>
 </ul>
 </li>
 </ul>
 
 </div>
 </div>
+
       </div>
       
     </div>
@@ -190,6 +192,12 @@
   <div class="main">
     <div class="content">
       <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
         <div class="content-icon-container">
           <div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
@@ -207,7 +215,7 @@
         <article role="main">
           <h1>Source code for bookmarks.database</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">"""Defines :class:`BookmarkDB`, the sqlite3 database interface used to store item properties,</span>
+<span class="sd">&quot;&quot;&quot;Defines :class:`BookmarkDB`, the sqlite3 database interface used to store item properties,</span>
 <span class="sd">such as custom descriptions, flags, ``width``, ``height``, :mod:`bookmarks.tokens.tokens`</span>
 <span class="sd">values, etc.</span>
 
@@ -216,14 +224,14 @@
 
 <span class="sd">.. code-block:: python</span>
 
-<span class="sd">    path = f'//server/job/root/{common.bookmark_cache_dir}/{common.bookmark_database}'</span>
+<span class="sd">    path = f&#39;//server/job/root/{common.bookmark_cache_dir}/{common.bookmark_database}&#39;</span>
 
 
 <span class="sd">The database table layout is defined in :attr:`.TABLES`, which defines the sqlite and python types</span>
 <span class="sd">for each column.</span>
 
 
-<span class="sd">Don't create DatabaseDB instances directly, instead use :func:`.get_db` to get cached,</span>
+<span class="sd">Don&#39;t create DatabaseDB instances directly, instead use :func:`.get_db` to get cached,</span>
 <span class="sd">thread-specific database controllers. E.g.:</span>
 
 <span class="sd">.. code-block:: python</span>
@@ -237,7 +245,7 @@
 <span class="sd">Attributes:</span>
 <span class="sd">    TABLES (dict):  Bookmark database tables and column definitions.</span>
 
-<span class="sd">"""</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">base64</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">json</span>
@@ -250,186 +258,190 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">common</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">log</span>
 
-<span class="n">AssetTable</span> <span class="o">=</span> <span class="s1">'AssetData'</span>
-<span class="n">BookmarkTable</span> <span class="o">=</span> <span class="s1">'BookmarkData'</span>
-<span class="n">InfoTable</span> <span class="o">=</span> <span class="s1">'InfoData'</span>
+<span class="n">AssetTable</span> <span class="o">=</span> <span class="s1">&#39;AssetData&#39;</span>
+<span class="n">BookmarkTable</span> <span class="o">=</span> <span class="s1">&#39;BookmarkData&#39;</span>
+<span class="n">InfoTable</span> <span class="o">=</span> <span class="s1">&#39;InfoData&#39;</span>
 
-<span class="n">IdColumn</span> <span class="o">=</span> <span class="s1">'id'</span>
-<span class="n">DescriptionColumn</span> <span class="o">=</span> <span class="s1">'description'</span>
-<span class="n">NotesColumn</span> <span class="o">=</span> <span class="s1">'notes'</span>
+<span class="n">IdColumn</span> <span class="o">=</span> <span class="s1">&#39;id&#39;</span>
+<span class="n">DescriptionColumn</span> <span class="o">=</span> <span class="s1">&#39;description&#39;</span>
+<span class="n">NotesColumn</span> <span class="o">=</span> <span class="s1">&#39;notes&#39;</span>
 
 <span class="n">database_connect_retries</span> <span class="o">=</span> <span class="mi">100</span>
 
 <span class="n">TABLES</span> <span class="o">=</span> <span class="p">{</span>
     <span class="n">AssetTable</span><span class="p">:</span> <span class="p">{</span>
         <span class="n">IdColumn</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT PRIMARY KEY COLLATE NOCASE'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT PRIMARY KEY COLLATE NOCASE&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'description'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'notes'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">dict</span>
+        <span class="s1">&#39;notes&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">dict</span>
         <span class="p">},</span>
-        <span class="s1">'flags'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'INT DEFAULT 0'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="s1">&#39;flags&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;INT DEFAULT 0&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">int</span>
         <span class="p">},</span>
-        <span class="s1">'thumbnail_stamp'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'REAL'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">float</span>
+        <span class="s1">&#39;thumbnail_stamp&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;REAL&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">float</span>
         <span class="p">},</span>
-        <span class="s1">'user'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'shotgun_id'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'INT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="s1">&#39;shotgun_id&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;INT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">int</span>
         <span class="p">},</span>
-        <span class="s1">'shotgun_name'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="s1">&#39;shotgun_name&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'shotgun_type'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="s1">&#39;shotgun_type&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'cut_duration'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'INT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="s1">&#39;cut_duration&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;INT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">int</span>
         <span class="p">},</span>
-        <span class="s1">'cut_in'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'INT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s1">&#39;cut_in&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;INT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="p">},</span>
-        <span class="s1">'cut_out'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'INT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="s1">&#39;cut_out&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;INT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">int</span>
         <span class="p">},</span>
-        <span class="s1">'url1'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="s1">&#39;url1&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'url2'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="s1">&#39;url2&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
 
         <span class="p">},</span>
     <span class="p">},</span>
     <span class="n">InfoTable</span><span class="p">:</span> <span class="p">{</span>
         <span class="n">IdColumn</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT PRIMARY KEY COLLATE NOCASE'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT PRIMARY KEY COLLATE NOCASE&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'server'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT NOT NULL'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="s1">&#39;server&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT NOT NULL&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'job'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT NOT NULL'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s1">&#39;job&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT NOT NULL&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="p">},</span>
-        <span class="s1">'root'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT NOT NULL'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="s1">&#39;root&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT NOT NULL&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'user'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT NOT NULL'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT NOT NULL&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="p">},</span>
-        <span class="s1">'host'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT NOT NULL'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT NOT NULL&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'created'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'REAL NOT NULL'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">float</span>
+        <span class="s1">&#39;created&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;REAL NOT NULL&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">float</span>
         <span class="p">}</span>
     <span class="p">},</span>
     <span class="n">BookmarkTable</span><span class="p">:</span> <span class="p">{</span>
         <span class="n">IdColumn</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT PRIMARY KEY COLLATE NOCASE'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT PRIMARY KEY COLLATE NOCASE&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'description'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'width'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'INT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="s1">&#39;width&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;INT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">int</span>
         <span class="p">},</span>
-        <span class="s1">'height'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'INT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="s1">&#39;height&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;INT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">int</span>
         <span class="p">},</span>
-        <span class="s1">'framerate'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'REAL'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">float</span>
+        <span class="s1">&#39;framerate&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;REAL&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">float</span>
         <span class="p">},</span>
-        <span class="s1">'prefix'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'startframe'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'INT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="s1">&#39;startframe&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;INT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">int</span>
         <span class="p">},</span>
-        <span class="s1">'duration'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'INT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="s1">&#39;duration&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;INT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">int</span>
         <span class="p">},</span>
-        <span class="s1">'identifier'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="s1">&#39;identifier&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'slacktoken'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="s1">&#39;slacktoken&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'shotgun_domain'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="s1">&#39;teamstoken&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="p">},</span>
-        <span class="s1">'shotgun_scriptname'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="s1">&#39;shotgun_domain&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'shotgun_api_key'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="s1">&#39;shotgun_scriptname&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'shotgun_id'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'INT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">int</span>
+        <span class="s1">&#39;shotgun_api_key&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'shotgun_name'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="s1">&#39;shotgun_id&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;INT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">int</span>
         <span class="p">},</span>
-        <span class="s1">'shotgun_type'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="s1">&#39;shotgun_name&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'url1'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="s1">&#39;shotgun_type&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'url2'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">str</span>
+        <span class="s1">&#39;url1&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="p">},</span>
-        <span class="s1">'tokens'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">dict</span>
+        <span class="s1">&#39;url2&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">str</span>
         <span class="p">},</span>
-        <span class="s1">'applications'</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">'sql'</span><span class="p">:</span> <span class="s1">'TEXT'</span><span class="p">,</span>
-            <span class="s1">'type'</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+        <span class="s1">&#39;tokens&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">dict</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;applications&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;sql&#39;</span><span class="p">:</span> <span class="s1">&#39;TEXT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span>
@@ -440,7 +452,7 @@
 
 
 <div class="viewcode-block" id="get_db"><a class="viewcode-back" href="../../api/database.html#bookmarks.database.get_db">[docs]</a><span class="k">def</span> <span class="nf">get_db</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">"""Creates a database controller associated with a bookmark item.</span>
+    <span class="sd">&quot;&quot;&quot;Creates a database controller associated with a bookmark item.</span>
 
 <span class="sd">    SQLite cannot share the same connection instance between threads, hence we</span>
 <span class="sd">    create and cache controllers per thread. The cached entries are stored</span>
@@ -459,7 +471,7 @@
 <span class="sd">        RuntimeError:   When the database is locked.</span>
 <span class="sd">        OSError:        When the database is missing.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
         <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
@@ -476,15 +488,15 @@
 
 
 <div class="viewcode-block" id="remove_db"><a class="viewcode-back" href="../../api/database.html#bookmarks.database.remove_db">[docs]</a><span class="k">def</span> <span class="nf">remove_db</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
-    <span class="sd">"""Removes and closes a cached a bookmark database connection.</span>
+    <span class="sd">&quot;&quot;&quot;Removes and closes a cached a bookmark database connection.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        server (str):   A server.</span>
 <span class="sd">        job (str):      A job.</span>
 <span class="sd">        root (str):     A root.</span>
 
-<span class="sd">    """</span>
-    <span class="n">key</span> <span class="o">=</span> <span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">))</span>
 
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">db_connections</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
@@ -495,11 +507,11 @@
             <span class="n">common</span><span class="o">.</span><span class="n">db_connections</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">()</span>
             <span class="k">del</span> <span class="n">common</span><span class="o">.</span><span class="n">db_connections</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
         <span class="k">except</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">'Error removing the database.'</span><span class="p">)</span></div>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Error removing the database.&#39;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="remove_all_connections"><a class="viewcode-back" href="../../api/database.html#bookmarks.database.remove_all_connections">[docs]</a><span class="k">def</span> <span class="nf">remove_all_connections</span><span class="p">():</span>
-    <span class="sd">"""Closes and deletes all database controller instances."""</span>
+    <span class="sd">&quot;&quot;&quot;Closes and deletes all database controller instances.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">db_connections</span><span class="p">):</span>
         <span class="n">common</span><span class="o">.</span><span class="n">db_connections</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">common</span><span class="o">.</span><span class="n">db_connections</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">()</span>
@@ -509,7 +521,7 @@
 <div class="viewcode-block" id="copy_properties"><a class="viewcode-back" href="../../api/database.html#bookmarks.database.copy_properties">[docs]</a><span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
 <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
 <span class="k">def</span> <span class="nf">copy_properties</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">asset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="n">BookmarkTable</span><span class="p">):</span>
-    <span class="sd">"""Copies the database properties from the specified item to ``CLIPBOARD``.</span>
+    <span class="sd">&quot;&quot;&quot;Copies the database properties from the specified item to ``CLIPBOARD``.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        server (str): Source server name.</span>
@@ -518,17 +530,17 @@
 <span class="sd">        asset (str, optional): Source asset name.</span>
 <span class="sd">        table (str, optional): Source table name.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">if</span> <span class="n">asset</span><span class="p">:</span>
-        <span class="n">source</span> <span class="o">=</span> <span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">asset</span><span class="p">))</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">asset</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">source</span> <span class="o">=</span> <span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">))</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">))</span>
 
     <span class="n">db</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">'id'</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span>
             <span class="k">continue</span>
         <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
 
@@ -542,7 +554,7 @@
 <div class="viewcode-block" id="paste_properties"><a class="viewcode-back" href="../../api/database.html#bookmarks.database.paste_properties">[docs]</a><span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
 <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
 <span class="k">def</span> <span class="nf">paste_properties</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">asset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="n">BookmarkTable</span><span class="p">):</span>
-    <span class="sd">"""Loads the copied item properties from CLIPBOARD and saves it in the target item's database.</span>
+    <span class="sd">&quot;&quot;&quot;Loads the copied item properties from CLIPBOARD and saves it in the target item&#39;s database.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        server (str): The target server name.</span>
@@ -551,14 +563,14 @@
 <span class="sd">        asset (str, optional): The target asset name.</span>
 <span class="sd">        table (str, optional): Target database table.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">CLIPBOARD</span><span class="p">[</span><span class="n">table</span><span class="p">]:</span>
         <span class="k">return</span>
 
     <span class="k">if</span> <span class="n">asset</span><span class="p">:</span>
-        <span class="n">source</span> <span class="o">=</span> <span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">asset</span><span class="p">))</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">asset</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">source</span> <span class="o">=</span> <span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">))</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">))</span>
 
     <span class="n">db</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
     <span class="k">with</span> <span class="n">db</span><span class="o">.</span><span class="n">connection</span><span class="p">():</span>
@@ -569,13 +581,13 @@
 <span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">b64encode</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
     <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">'utf-8'</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">'utf-8'</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
 
 
 <span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">b64decode</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
     <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">'utf-8'</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">sleep</span><span class="p">():</span>
@@ -587,44 +599,44 @@
 
 
 <div class="viewcode-block" id="set_flag"><a class="viewcode-back" href="../../api/database.html#bookmarks.database.set_flag">[docs]</a><span class="k">def</span> <span class="nf">set_flag</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">flag</span><span class="p">):</span>
-    <span class="sd">"""A utility method used by the base view to set an item flag to the database.</span>
+    <span class="sd">&quot;&quot;&quot;A utility method used by the base view to set an item flag to the database.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">db</span> <span class="o">=</span> <span class="n">get_db</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
-    <span class="n">f</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s1">'flags'</span><span class="p">,</span> <span class="n">AssetTable</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s1">&#39;flags&#39;</span><span class="p">,</span> <span class="n">AssetTable</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">f</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">f</span> <span class="o">|</span> <span class="n">flag</span> <span class="k">if</span> <span class="n">mode</span> <span class="k">else</span> <span class="n">f</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">flag</span>
     <span class="k">with</span> <span class="n">db</span><span class="o">.</span><span class="n">connection</span><span class="p">():</span>
-        <span class="n">db</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s1">'flags'</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">AssetTable</span><span class="p">)</span></div>
+        <span class="n">db</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s1">&#39;flags&#39;</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">AssetTable</span><span class="p">)</span></div>
 
 
 <span class="k">def</span> <span class="nf">_verify_args</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">]:</span>
-        <span class="n">t</span> <span class="o">=</span> <span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">])</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Key "</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">" is invalid. Expected one of </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s1">.'</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">])</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Key &quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&quot; is invalid. Expected one of </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
-        <span class="n">t</span> <span class="o">=</span> <span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">])</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">]:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Key "</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">" is invalid. Expected one of </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s1">.'</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Key &quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&quot; is invalid. Expected one of </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
 
     <span class="c1"># Check type</span>
     <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s1">'type'</span><span class="p">])</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
-            <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">][</span><span class="n">k</span><span class="p">][</span><span class="s1">'type'</span><span class="p">])</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">][</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">])</span>
 
 
 <span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">load_json</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
-        <span class="n">b64decode</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">'utf-8'</span><span class="p">)),</span>
+        <span class="n">b64decode</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)),</span>
         <span class="n">parse_int</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
         <span class="n">parse_float</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
     <span class="p">)</span>
@@ -635,7 +647,7 @@
         <span class="k">return</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">]:</span>
         <span class="k">return</span> <span class="kc">None</span>
-    <span class="n">_type</span> <span class="o">=</span> <span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s1">'type'</span><span class="p">]</span>
+    <span class="n">_type</span> <span class="o">=</span> <span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">_type</span> <span class="ow">is</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="n">load_json</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
@@ -643,7 +655,7 @@
             <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">elif</span> <span class="n">_type</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">b64decode</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">'utf-8'</span><span class="p">))</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">b64decode</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">elif</span> <span class="n">_type</span> <span class="ow">is</span> <span class="nb">float</span><span class="p">:</span>
@@ -660,9 +672,9 @@
 
 
 <div class="viewcode-block" id="BookmarkDB"><a class="viewcode-back" href="../../api/database.html#bookmarks.database.BookmarkDB">[docs]</a><span class="k">class</span> <span class="nc">BookmarkDB</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="p">):</span>
-    <span class="sd">"""Database connector used to interface with the bookmark item's SQLite database.</span>
+    <span class="sd">&quot;&quot;&quot;Database connector used to interface with the bookmark item&#39;s SQLite database.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">BookmarkDB</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
@@ -676,9 +688,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_job</span> <span class="o">=</span> <span class="n">job</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_root</span> <span class="o">=</span> <span class="n">root</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_bookmark</span> <span class="o">=</span> <span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_bookmark_root</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_bookmark</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">bookmark_cache_dir</span><span class="si">}</span><span class="s1">'</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_database_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_bookmark_root</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">bookmark_database</span><span class="si">}</span><span class="s1">'</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bookmark</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bookmark_root</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_bookmark</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">bookmark_cache_dir</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_database_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_bookmark_root</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">bookmark_database</span><span class="si">}</span><span class="s1">&#39;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_bookmark_dir</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">connect_with_retries</span><span class="p">()</span>
@@ -690,15 +702,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">destroyed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_connect_to_memory_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""Creates an in-memory database when we're unable to connect to the</span>
+        <span class="sd">&quot;&quot;&quot;Creates an in-memory database when we&#39;re unable to connect to the</span>
 <span class="sd">        physical database.</span>
 
 <span class="sd">        This is so that Bookmarks keeps running uninterrupted even when the database is unreachable.</span>
-<span class="sd">        Data saved the in-memory database won't be saved to disk.</span>
+<span class="sd">        Data saved the in-memory database won&#39;t be saved to disk.</span>
 
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-            <span class="s1">':memory:'</span><span class="p">,</span>
+            <span class="s1">&#39;:memory:&#39;</span><span class="p">,</span>
             <span class="n">isolation_level</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">check_same_thread</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span>
@@ -706,17 +718,17 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span>
 
 <div class="viewcode-block" id="BookmarkDB.connect_with_retries"><a class="viewcode-back" href="../../api/database.html#bookmarks.database.BookmarkDB.connect_with_retries">[docs]</a>    <span class="k">def</span> <span class="nf">connect_with_retries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""Connects to the database file.</span>
+        <span class="sd">&quot;&quot;&quot;Connects to the database file.</span>
 
 <span class="sd">        The database can be locked for a brief period of time whilst it is being</span>
 <span class="sd">        used by another other controller instance in another thread. This might</span>
 <span class="sd">        raise an exception, but it is safe to wait on a little and re-try before deeming</span>
 <span class="sd">        the operation unsuccessful.</span>
 
-<span class="sd">        When a database is unreachable, we'll create an in-memory database instead, and</span>
+<span class="sd">        When a database is unreachable, we&#39;ll create an in-memory database instead, and</span>
 <span class="sd">        mark the instance ``invalid`` (:meth:`BookmarkDB.is_valid` will return `False`).</span>
 
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -732,20 +744,20 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">_connect_to_memory_db</span><span class="p">()</span>
                     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span>
                 <span class="n">sleep</span><span class="p">()</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">'Error.'</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Error.&#39;</span><span class="p">)</span>
                 <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">except</span> <span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">):</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">'Error.'</span><span class="p">)</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Error.&#39;</span><span class="p">)</span>
                 <span class="k">raise</span></div>
 
     <span class="k">def</span> <span class="nf">_create_bookmark_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""Creates the `bookmark_cache_dir` if it does not yet exist.</span>
+        <span class="sd">&quot;&quot;&quot;Creates the `bookmark_cache_dir` if it does not yet exist.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            bool: `True` if the folder already exists, or successfully created, or `False` when</span>
-<span class="sd">                can't create the folder.</span>
+<span class="sd">                can&#39;t create the folder.</span>
 
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">file_info</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileInfo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">())</span>
         <span class="k">if</span> <span class="n">file_info</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">True</span>
@@ -755,26 +767,26 @@
         <span class="k">return</span> <span class="kc">False</span>
 
     <span class="k">def</span> <span class="nf">_create_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
-        <span class="sd">"""Creates a table based on the passed table definition.</span>
+        <span class="sd">&quot;&quot;&quot;Creates a table based on the passed table definition.</span>
 
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">args</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">'</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s1">'sql'</span><span class="p">]))</span>
+            <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;sql&#39;</span><span class="p">]))</span>
 
-        <span class="n">sql</span> <span class="o">=</span> <span class="s1">'CREATE TABLE IF NOT EXISTS </span><span class="si">{table}</span><span class="s1"> (</span><span class="si">{args}</span><span class="s1">)'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">sql</span> <span class="o">=</span> <span class="s1">&#39;CREATE TABLE IF NOT EXISTS </span><span class="si">{table}</span><span class="s1"> (</span><span class="si">{args}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span>
-            <span class="n">args</span><span class="o">=</span><span class="s1">','</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">args</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_patch_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
-        <span class="sd">"""For backwards compatibility, we will ALTER the database if any of the</span>
+        <span class="sd">&quot;&quot;&quot;For backwards compatibility, we will ALTER the database if any of the</span>
 <span class="sd">        required columns are missing.</span>
 
-<span class="sd">        """</span>
-        <span class="n">sql</span> <span class="o">=</span> <span class="s1">'PRAGMA table_info(</span><span class="se">\'</span><span class="si">{}</span><span class="se">\'</span><span class="s1">);'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sql</span> <span class="o">=</span> <span class="s1">&#39;PRAGMA table_info(</span><span class="se">\&#39;</span><span class="si">{}</span><span class="se">\&#39;</span><span class="s1">);&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
 
         <span class="n">table_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
 
@@ -782,24 +794,24 @@
         <span class="n">missing</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">])</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">columns</span><span class="p">))</span>
 
         <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">missing</span><span class="p">:</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">'ALTER TABLE </span><span class="si">{}</span><span class="s1"> ADD COLUMN </span><span class="si">{}</span><span class="s1">;'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="s1">&#39;ALTER TABLE </span><span class="si">{}</span><span class="s1"> ADD COLUMN </span><span class="si">{}</span><span class="s1">;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">column</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="s1">'Added missing column </span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">missing</span><span class="p">))</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="s1">&#39;Added missing column </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">missing</span><span class="p">))</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s1">'Failed to add missing column </span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+                    <span class="s1">&#39;Failed to add missing column </span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">column</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
                 <span class="k">raise</span>
 
     <span class="k">def</span> <span class="nf">_add_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""Adds information about who and when created the database.</span>
+        <span class="sd">&quot;&quot;&quot;Adds information about who and when created the database.</span>
 
-<span class="sd">        """</span>
-        <span class="n">sql</span> <span class="o">=</span> <span class="s1">'INSERT OR IGNORE INTO </span><span class="si">{table}</span><span class="s1"> (</span><span class="si">{args}</span><span class="s1">) VALUES (</span><span class="si">{kwargs}</span><span class="s1">);'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sql</span> <span class="o">=</span> <span class="s1">&#39;INSERT OR IGNORE INTO </span><span class="si">{table}</span><span class="s1"> (</span><span class="si">{args}</span><span class="s1">) VALUES (</span><span class="si">{kwargs}</span><span class="s1">);&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">table</span><span class="o">=</span><span class="n">InfoTable</span><span class="p">,</span>
-            <span class="n">args</span><span class="o">=</span><span class="s1">','</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">TABLES</span><span class="p">[</span><span class="n">InfoTable</span><span class="p">])),</span>
-            <span class="n">kwargs</span><span class="o">=</span><span class="s1">'</span><span class="se">\'</span><span class="s1">{{</span><span class="si">{}</span><span class="s1">}}</span><span class="se">\'</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="s1">'}</span><span class="se">\'</span><span class="s1">, </span><span class="se">\'</span><span class="s1">{'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">args</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">TABLES</span><span class="p">[</span><span class="n">InfoTable</span><span class="p">])),</span>
+            <span class="n">kwargs</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">{{</span><span class="si">{}</span><span class="s1">}}</span><span class="se">\&#39;</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="s1">&#39;}</span><span class="se">\&#39;</span><span class="s1">, </span><span class="se">\&#39;</span><span class="s1">{&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
                     <span class="nb">sorted</span><span class="p">(</span><span class="n">TABLES</span><span class="p">[</span><span class="n">InfoTable</span><span class="p">])</span>
                 <span class="p">)</span>
             <span class="p">)</span>
@@ -815,13 +827,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_init_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""Initialises the database with the default tables.</span>
+        <span class="sd">&quot;&quot;&quot;Initialises the database with the default tables.</span>
 
 <span class="sd">        If the database is new or empty, we will create the tables.</span>
-<span class="sd">        If the database has tables already, we'll check the columns against</span>
+<span class="sd">        If the database has tables already, we&#39;ll check the columns against</span>
 <span class="sd">        the table definitions and add any missing ones.</span>
 
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -843,12 +855,12 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bookmark_root</span>
 
 <div class="viewcode-block" id="BookmarkDB.is_valid"><a class="viewcode-back" href="../../api/database.html#bookmarks.database.BookmarkDB.is_valid">[docs]</a>    <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""Returns the database's status.</span>
+        <span class="sd">&quot;&quot;&quot;Returns the database&#39;s status.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            bool: True if the database is valid, False otherwise.</span>
 
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span></div>
@@ -861,12 +873,12 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">'Database error.'</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Database error.&#39;</span><span class="p">)</span>
         <span class="k">finally</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="kc">None</span>
 
 <div class="viewcode-block" id="BookmarkDB.source"><a class="viewcode-back" href="../../api/database.html#bookmarks.database.BookmarkDB.source">[docs]</a>    <span class="k">def</span> <span class="nf">source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">"""The source path of the database.</span>
+        <span class="sd">&quot;&quot;&quot;The source path of the database.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            args (tuple): A tuple of path segments to be added to the base path.</span>
@@ -874,9 +886,9 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            str: The source path of the bookmark database.</span>
 
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bookmark</span> <span class="o">+</span> <span class="s1">'/'</span> <span class="o">+</span> <span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bookmark</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bookmark</span></div>
 
     <span class="k">def</span> <span class="nf">get_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
@@ -884,35 +896,35 @@
         <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
         <span class="n">_hash</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_hash</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-        <span class="n">sql</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'SELECT * FROM </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s1"> WHERE id=</span><span class="se">\'</span><span class="si">{</span><span class="n">_hash</span><span class="si">}</span><span class="se">\'</span><span class="s1">'</span>
+        <span class="n">sql</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;SELECT * FROM </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s1"> WHERE id=</span><span class="se">\&#39;</span><span class="si">{</span><span class="n">_hash</span><span class="si">}</span><span class="se">\&#39;</span><span class="s1">&#39;</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
             <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">cursor</span><span class="o">.</span><span class="n">description</span><span class="p">]</span>
             <span class="n">row</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">'Failed to get value from database.</span><span class="se">\n</span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Failed to get value from database.</span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
             <span class="k">raise</span>
 
         <span class="n">values</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">row</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
-                <span class="c1"># skip 'id'</span>
-                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">'id'</span><span class="p">:</span>
+                <span class="c1"># skip &#39;id&#39;</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span>
                     <span class="k">continue</span>
                 <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">return</span> <span class="n">values</span>
 
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">columns</span><span class="p">):</span>
-            <span class="c1"># skip 'id'</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">'id'</span><span class="p">:</span>
+            <span class="c1"># skip &#39;id&#39;</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">convert_return_values</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">row</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">values</span>
 
 <div class="viewcode-block" id="BookmarkDB.value"><a class="viewcode-back" href="../../api/database.html#bookmarks.database.BookmarkDB.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
-        <span class="sd">"""Returns a value from the `database`.</span>
+        <span class="sd">&quot;&quot;&quot;Returns a value from the `database`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            source (str):       Path to a file or folder.</span>
@@ -922,7 +934,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            data:                   The requested value or `None`.</span>
 
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">None</span>
 
@@ -931,14 +943,14 @@
         <span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
         <span class="k">def</span> <span class="nf">_get_sql</span><span class="p">(</span><span class="n">_source</span><span class="p">,</span> <span class="n">_key</span><span class="p">,</span> <span class="n">_table</span><span class="p">):</span>
             <span class="n">_hash</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_hash</span><span class="p">(</span><span class="n">_source</span><span class="p">)</span>
-            <span class="k">return</span> <span class="sa">f</span><span class="s1">'SELECT </span><span class="si">{</span><span class="n">_key</span><span class="si">}</span><span class="s1"> FROM </span><span class="si">{</span><span class="n">_table</span><span class="si">}</span><span class="s1"> WHERE id=</span><span class="se">\'</span><span class="si">{</span><span class="n">_hash</span><span class="si">}</span><span class="se">\'</span><span class="s1">'</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;SELECT </span><span class="si">{</span><span class="n">_key</span><span class="si">}</span><span class="s1"> FROM </span><span class="si">{</span><span class="n">_table</span><span class="si">}</span><span class="s1"> WHERE id=</span><span class="se">\&#39;</span><span class="si">{</span><span class="n">_hash</span><span class="si">}</span><span class="se">\&#39;</span><span class="s1">&#39;</span>
 
         <span class="n">sql</span> <span class="o">=</span> <span class="n">_get_sql</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Failed to get value from database.</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Failed to get value from database.</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="k">raise</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">row</span><span class="p">:</span>
@@ -948,7 +960,7 @@
         <span class="k">return</span> <span class="n">convert_return_values</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BookmarkDB.setValue"><a class="viewcode-back" href="../../api/database.html#bookmarks.database.BookmarkDB.setValue">[docs]</a>    <span class="k">def</span> <span class="nf">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="n">AssetTable</span><span class="p">):</span>
-        <span class="sd">"""Set a value in the database.</span>
+        <span class="sd">&quot;&quot;&quot;Set a value in the database.</span>
 
 <span class="sd">        Example:</span>
 
@@ -956,8 +968,8 @@
 
 <span class="sd">            db = database.get_db(server, job, root)</span>
 <span class="sd">            with db.connection():</span>
-<span class="sd">                source = f'//{server}/{job}/{root}/sh0010/scenes/my_scene.ma'</span>
-<span class="sd">                db.setValue(source, 'description', 'hello world')</span>
+<span class="sd">                source = f&#39;//{server}/{job}/{root}/sh0010/scenes/my_scene.ma&#39;</span>
+<span class="sd">                db.setValue(source, &#39;description&#39;, &#39;hello world&#39;)</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            source (str): Source file path.</span>
@@ -965,7 +977,7 @@
 <span class="sd">            value (object): The value to set in the database.</span>
 <span class="sd">            table (str): A database table.</span>
 
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid</span><span class="p">():</span>
             <span class="k">return</span>
 
@@ -998,31 +1010,31 @@
         <span class="c1"># https://stackoverflow.com/questions/418898/sqlite-upsert-not-insert-or-replace</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">]:</span>
             <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
-                <span class="n">v</span> <span class="o">=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1"> null'</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">'</span><span class="se">\n</span><span class="s1"> </span><span class="se">\'</span><span class="s1">'</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s1">'</span><span class="se">\'</span><span class="s1">'</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> null&#39;</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> </span><span class="se">\&#39;</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">value</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;</span>
                 <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
                 <span class="k">continue</span>
 
-            <span class="n">v</span> <span class="o">=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">(SELECT '</span> <span class="o">+</span> <span class="n">k</span> <span class="o">+</span> <span class="s1">' FROM '</span> <span class="o">+</span> <span class="n">table</span> <span class="o">+</span> \
-                <span class="s1">' WHERE id =</span><span class="se">\'</span><span class="s1">'</span> <span class="o">+</span> <span class="n">_hash</span> <span class="o">+</span> <span class="s1">'</span><span class="se">\'</span><span class="s1">)'</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">(SELECT &#39;</span> <span class="o">+</span> <span class="n">k</span> <span class="o">+</span> <span class="s1">&#39; FROM &#39;</span> <span class="o">+</span> <span class="n">table</span> <span class="o">+</span> \
+                <span class="s1">&#39; WHERE id =</span><span class="se">\&#39;</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="n">_hash</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\&#39;</span><span class="s1">)&#39;</span>
             <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
 
-        <span class="n">sql</span> <span class="o">=</span> <span class="s1">'INSERT OR REPLACE INTO </span><span class="si">{table}</span><span class="s1"> (id, </span><span class="si">{allkeys}</span><span class="s1">) VALUES (</span><span class="se">\'</span><span class="si">{hash}</span><span class="se">\'</span><span class="s1">, </span><span class="si">{values}</span><span class="s1">);'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">sql</span> <span class="o">=</span> <span class="s1">&#39;INSERT OR REPLACE INTO </span><span class="si">{table}</span><span class="s1"> (id, </span><span class="si">{allkeys}</span><span class="s1">) VALUES (</span><span class="se">\&#39;</span><span class="si">{hash}</span><span class="se">\&#39;</span><span class="s1">, </span><span class="si">{values}</span><span class="s1">);&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="nb">hash</span><span class="o">=</span><span class="n">_hash</span><span class="p">,</span>
-            <span class="n">allkeys</span><span class="o">=</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">]),</span>
-            <span class="n">values</span><span class="o">=</span><span class="s1">','</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">values</span><span class="p">),</span>
+            <span class="n">allkeys</span><span class="o">=</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">]),</span>
+            <span class="n">values</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">values</span><span class="p">),</span>
             <span class="n">table</span><span class="o">=</span><span class="n">table</span>
         <span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
 
-            <span class="c1"># Finally, we'll notify others of the changed value</span>
+            <span class="c1"># Finally, we&#39;ll notify others of the changed value</span>
             <span class="n">_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">)</span>
             <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">databaseValueUpdated</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span>
                 <span class="n">table</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">_value</span><span class="p">)</span>
 
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">'Failed to set value.</span><span class="se">\n</span><span class="si">{}</span><span class="s1">'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div></div>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Failed to set value.</span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div></div>
 </pre></div>
         </article>
       </div>
@@ -1032,11 +1044,21 @@
           
           
         </div>
-
-        <div class="related-information">
-              Copyright &#169; 2021, Gergely Wootsch |
-          Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-          <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021, Gergely Wootsch
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
         </div>
         
       </footer>
@@ -1050,6 +1072,7 @@
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     </body>

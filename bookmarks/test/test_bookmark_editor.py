@@ -151,7 +151,7 @@ class Test(base.BaseCase):
 
         # Template path
         t = __file__ + os.sep + os.pardir + os.sep + os.pardir + os.sep + 'rsc' + \
-            os.sep + 'templates' + os.sep + 'Bookmarks_Default_Job.zip'
+            os.sep + 'templates' + os.sep + 'Job.zip'
         t = os.path.normpath(t)
         t = str(t)
         self.assertTrue(os.path.isfile(t))

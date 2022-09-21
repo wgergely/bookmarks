@@ -17,12 +17,8 @@ from .. import common
 from .. import images
 from .. import ui
 
-HINT = "To start, add your server below. If the server does not have jobs, you \
-can add new ones using *.zip templates.\nAll job items will contain a series of \
-bookmark items - these are the folders used to store your project's files and \
-are usually called 'Shots', 'Assets', etc.\nYou can create new bookmark items \
-below or toggle existing ones by double-clicking their name (or clicking their \
-label)."
+HINT = 'Activate or disable existing bookmark items, or create new ones using the options ' \
+       'below.'
 
 
 def close():
@@ -87,15 +83,14 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         self.server_add_button = None
         self.job_editor = None
         self.job_add_button = None
-        self.job_subdir_toggle = None
         self.bookmark_editor = None
         self.bookmark_add_button = None
-        self.persistent_bookmarks_button = None
+        self.default_bookmarks_button = None
         self.prune_bookmarks_button = None
         self.info_bar = None
 
         self.setObjectName('BookmarksEditorWidget')
-        self.setWindowTitle('Edit Bookmarks')
+        self.setWindowTitle('Edit Active Bookmarks')
 
         self._create_ui()
         self._connect_signals()
@@ -116,7 +111,7 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         )
         _label.setPixmap(pixmap)
         label = ui.PaintedLabel(
-            'Edit Bookmarks',
+            'Edit Active Bookmarks',
             size=common.size(common.FontSizeLarge),
             color=common.color(common.TextColor),
             parent=self
@@ -136,10 +131,12 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         self.layout().addWidget(_row, 0)
         _row.layout().setSpacing(0)
         label = ui.Label(
-            HINT, color=common.color(
-                common.TextSecondaryColor
-            ), parent=_row
+            HINT,
+            color=common.color(common.TextSecondaryColor),
+            parent=_row
         )
+        label.setFocusPolicy(QtCore.Qt.NoFocus)
+
         _row.layout().addWidget(label, 0)
         label.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
@@ -205,7 +202,7 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
             (common.color(common.GreenColor),
              common.color(common.TextSelectedColor)),
             common.size(common.HeightRow) * 0.5,
-            description='Add Server',
+            description='Click to add a new server',
             state=True,
             parent=self
         )
@@ -242,7 +239,7 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         )
 
         label = ui.PaintedLabel(
-            'Jobs',
+            'Job Folders',
             color=common.color(common.TextSecondaryColor)
         )
 
@@ -265,13 +262,10 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         self.job_filter_widget.setAlignment(
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight
         )
-        self.job_filter_widget.setPlaceholderText('Search Jobs...')
+        self.job_filter_widget.setPlaceholderText('Search...')
         grp.layout().addWidget(self.job_filter_widget)
 
         grp.layout().addWidget(self.job_editor, 1)
-
-        self.job_subdir_toggle = QtWidgets.QCheckBox('Use clients')
-        grp.layout().addWidget(self.job_subdir_toggle, 1)
 
         # =====================================================
 
@@ -301,7 +295,7 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         )
 
         label = ui.PaintedLabel(
-            'Bookmarks',
+            'Bookmark Items',
             color=common.color(common.TextSecondaryColor)
         )
 
@@ -363,12 +357,12 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         )
         self.done_button.setFixedHeight(common.size(common.HeightRow))
 
-        self.persistent_bookmarks_button = ui.PaintedButton(
-            'Edit Persistent Bookmarks'
+        self.default_bookmarks_button = ui.PaintedButton(
+            'Edit Default Bookmark Items'
         )
-        row.layout().addWidget(self.persistent_bookmarks_button, 0)
+        row.layout().addWidget(self.default_bookmarks_button, 0)
         self.prune_bookmarks_button = ui.PaintedButton(
-            'Prune Bookmarks'
+            'Prune Bookmark Items'
         )
         row.layout().addWidget(self.prune_bookmarks_button, 0)
         row.layout().addWidget(self.done_button, 1)
@@ -394,21 +388,12 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
 
         self.done_button.clicked.connect(self.close)
 
-        self.persistent_bookmarks_button.clicked.connect(
-            actions.edit_persistent_bookmarks
+        self.default_bookmarks_button.clicked.connect(
+            actions.edit_default_bookmarks
         )
         self.prune_bookmarks_button.clicked.connect(
             actions.prune_bookmarks
         )
-
-        self.job_subdir_toggle.stateChanged.connect(
-            lambda v: common.settings.setValue(
-                common.SettingsSection,
-                common.JobsHaveSubdirs,
-                int(v)
-            )
-        )
-        self.job_subdir_toggle.stateChanged.connect(self.job_editor.init_data)
 
         self.job_filter_widget.textChanged.connect(self.job_editor.set_filter)
 
@@ -444,18 +429,7 @@ class BookmarkEditorWidget(QtWidgets.QDialog):
         self.info_bar.repaint()
 
     def init_data(self):
-        self.init_job_subdir_toggle()
         self.server_editor.init_data()
-
-    def init_job_subdir_toggle(self):
-        v = common.settings.value(
-            common.SettingsSection, common.JobsHaveSubdirs
-        )
-        v = QtCore.Qt.Unchecked if v is None else QtCore.Qt.CheckState(v)
-
-        self.job_subdir_toggle.blockSignals(True)
-        self.job_subdir_toggle.setCheckState(v)
-        self.job_subdir_toggle.blockSignals(False)
 
     @common.error
     @common.debug

@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
-"""The threads and associated worker classes across Bookmarks.
-
-
-
-Thumbnail and file-load work on carried out on secondary threads.
-Each thread is assigned a single Worker - usually responsible for taking
-a *weakref.ref* from the thread's queue.
+"""Defines :class:`bookmarks.threads.workers.BaseWorker`, the main thread worker base
+class, and various other helper functions.
 
 """
 import functools
@@ -133,9 +128,8 @@ def process(func):
 class BaseWorker(QtCore.QObject):
     """Base worker class used to load and process item data.
 
-    Each worker is associated with global queues using `queue` and their signals
-    are connected to the respective thread signals. This is so that we can
-    rely on Qt's event queue for communicating between threads.
+    Each worker is associated with a thread controller and a data queue.
+    See :mod:`bookmarks.threads.threads` for the definitions.
 
     """
     initWorker = QtCore.Signal()
@@ -270,13 +264,18 @@ class BaseWorker(QtCore.QObject):
 
     @common.error
     def queue_items(self, refs):
+        """Queues the given list of weakrefs to the workers' associated queue.
+
+        Args:
+            refs (list or tuple): A list of ``weakref.ref`` instances.
+
+        """
         from . import threads
 
         q = self.queue
         for ref in reversed(refs):
             if ref in threads.THREADS[q]['queue']:
                 continue
-
             threads.THREADS[q]['queue'].append(ref)
         self.queue_timer.start()
         common.signals.threadItemsQueued.emit()
@@ -285,7 +284,11 @@ class BaseWorker(QtCore.QObject):
     @QtCore.Slot(weakref.ref)
     @QtCore.Slot(weakref.ref)
     def queue_model(self, data_type_ref1, data_type_ref2):
+        """Queues the data items of the given list model.
 
+        This method is used by the file item model and queues individual files and
+        collapsed sequence items of the given model.
+        """
         from . import threads
 
         # Skip if the model is not meant to be preloaded by the worker
@@ -399,11 +402,15 @@ def byte_to_pretty_string(num, suffix='B'):
 
 
 def count_todos(asset_row_data):
+    """Get the number of TODO items."""
     v = asset_row_data['notes']
     return len(v) if isinstance(v, dict) else 0
 
 
 def count_assets(path, ASSET_IDENTIFIER):
+    """Get the number of asset items.
+
+    """
     n = 0
     for entry in os.scandir(path):
         if entry.name.startswith('.'):
@@ -486,11 +493,17 @@ def get_ranges(arr, padding):
 
 
 def update_slack_configured(source_paths, bookmark_row_data, ref):
+    """Slot called when a slack integration value was updated.
+
+    """
     v = bookmark_row_data['slacktoken']
     ref()[common.SlackLinkedRole] = True if v else False
 
 
 def update_shotgun_configured(pp, b, a, ref):
+    """Slot called when a shotgun integration value was updated.
+
+    """
     if not all((pp, b, a, ref())):
         return
     b_conf = (b['shotgun_domain'], b['shotgun_scriptname'], b['shotgun_api_key'])
@@ -580,7 +593,7 @@ class InfoWorker(BaseWorker):
         if len(pp) > 3:
             if asset_row_data:
                 ref()[common.DescriptionRole] = asset_row_data['description']
-        # Shotgun status
+        # ShotGrid status
         if len(pp) <= 4:
             update_shotgun_configured(pp, bookmark_row_data, asset_row_data, ref)
         # Note count
@@ -857,6 +870,9 @@ class ThumbnailWorker(BaseWorker):
 
 
 class TransactionsWorker(BaseWorker):
+    """This worker processes database transactions.
+
+    """
     @common.error
     def process_data(self):
         verify_thread_affinity()
@@ -874,6 +890,7 @@ class TransactionsWorker(BaseWorker):
 
 
 class ShotgunWorker(BaseWorker):
+    """This worker is used to retrieve data from ShotGrid."""
     @common.error
     def process_data(self):
         verify_thread_affinity()

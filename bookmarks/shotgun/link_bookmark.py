@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Shotgun Entity linker widgets.
 
-The widets are used to link a Shotgun entity with a local item.
+The widgets are used to link a ShotGrid entity with a local bookmark item.
 
 """
 from PySide2 import QtWidgets, QtCore, QtGui
@@ -75,7 +75,7 @@ class LinkBookmarkWidget(link.BaseLinkWidget):
     @common.error
     @common.debug
     def request_data(self):
-        """Request Loads a list of Shotgun entities.
+        """Request Loads a list of ShotGrid entities.
 
         """
         self.combobox.model().sourceModel().entityDataRequested.emit(

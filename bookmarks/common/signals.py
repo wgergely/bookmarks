@@ -34,6 +34,8 @@ class CoreSignals(QtCore.QObject):
 
     serversChanged = QtCore.Signal()
 
+    jobAdded = QtCore.Signal(str)
+
     bookmarkAdded = QtCore.Signal(str, str, str)
     bookmarkRemoved = QtCore.Signal(str, str, str)
 
@@ -59,7 +61,7 @@ class CoreSignals(QtCore.QObject):
     templatesChanged = QtCore.Signal()
     templateExpanded = QtCore.Signal(str)
 
-    # Shotgun
+    # ShotGrid
     sgEntitySelected = QtCore.Signal(dict)
     sgAssetsLinked = QtCore.Signal()
     sgEntityDataReady = QtCore.Signal(str, list)

@@ -433,7 +433,7 @@ class TaskModel(QtCore.QAbstractItemModel):
 
 
 class TaskView(QtWidgets.QTreeView):
-    """Tree view used to display the current Shotgun Steps and Tasks.
+    """Tree view used to display the current ShotGrid Steps and Tasks.
 
     """
 
@@ -536,7 +536,7 @@ class TaskPicker(QtWidgets.QDialog):
     """The main dialog used to select a task entity.
 
      The task is to associate a file publish, or a version when publishing to
-     Shotgun.
+     ShotGrid.
 
     """
     sgEntitySelected = QtCore.Signal(dict)

@@ -3,11 +3,11 @@
 
 :class:`.MainWidget` consist of :class:`bookmarks.topbar.TopBarWidget`,
 :class:`bookmarks.statusbar.StatusBarWidget`,
-and :class:`bookmarks.lists.basewidget.ListsWidget`. The latter is the container
+and :class:`bookmarks.items.views.ListsWidget`. The latter is the container
 for the three main list item widgets:
-:class:`bookmarks.lists.bookmarks.BookmarksWidget`,
-:class:`bookmarks.lists.assets.AssetsWidget` and
-:class:`bookmarks.lists.files.FilesWidget`.
+:class:`bookmarks.items.bookmark_items.BookmarksWidget`,
+:class:`bookmarks.items.asset_items.AssetsWidget` and
+:class:`bookmarks.items.files.FilesWidget`.
 
 Important:
 
@@ -28,12 +28,12 @@ from . import images
 from . import shortcuts
 from . import statusbar
 from .topbar import topbar
-from .lists import assets
-from .lists import basewidget
-from .lists import bookmarks
-from .lists import favourites
-from .lists import files
-from .lists import tasks
+from .items import views
+from .items import bookmark_items
+from .items import asset_items
+from .items import file_items
+from .items import favourite_items
+from .items import task_items
 
 
 def init():
@@ -95,13 +95,13 @@ class MainWidget(QtWidgets.QWidget):
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(0)
 
-        self.stacked_widget = basewidget.ListsWidget(parent=self)
-        self.bookmarks_widget = bookmarks.BookmarksWidget(parent=self)
-        self.assets_widget = assets.AssetsWidget(parent=self)
-        self.files_widget = files.FilesWidget(parent=self)
-        self.tasks_widget = tasks.TaskFolderWidget(parent=self.files_widget)
+        self.stacked_widget = views.ListsWidget(parent=self)
+        self.bookmarks_widget = bookmark_items.BookmarksWidget(parent=self)
+        self.assets_widget = asset_items.AssetsWidget(parent=self)
+        self.files_widget = file_items.FilesWidget(parent=self)
+        self.tasks_widget = task_items.TaskFolderWidget(parent=self.files_widget)
         self.tasks_widget.setHidden(True)
-        self.favourites_widget = favourites.FavouritesWidget(parent=self)
+        self.favourites_widget = favourite_items.FavouritesWidget(parent=self)
 
         self.stacked_widget.addWidget(self.bookmarks_widget)
         self.stacked_widget.addWidget(self.assets_widget)
@@ -150,7 +150,7 @@ class MainWidget(QtWidgets.QWidget):
             idx = common.FavouriteTab
 
         # We'll invoke directly the original setCurrentIndex method
-        super(basewidget.ListsWidget, self.stacked_widget).setCurrentIndex(idx)
+        super(views.ListsWidget, self.stacked_widget).setCurrentIndex(idx)
 
     @common.debug
     @common.error

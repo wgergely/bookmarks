@@ -17,8 +17,6 @@ from .. import log
 from .. import shortcuts
 from .. import ui
 
-MAX_RECURSION = 4
-
 
 class BookmarkContextMenu(contextmenu.BaseContextMenu):
     def setup(self):
@@ -35,7 +33,7 @@ class BookmarkContextMenu(contextmenu.BaseContextMenu):
 
     def add_menu(self):
         self.menu[contextmenu.key()] = {
-            'text': 'Pick a new folder to use as a Bookmark...',
+            'text': 'Pick a new bookmark item...',
             'action': self.parent().add,
             'icon': ui.get_icon('add', color=common.color(common.GreenColor))
         }
@@ -89,7 +87,6 @@ class BookmarkContextMenu(contextmenu.BaseContextMenu):
         }
 
 
-
 class BookmarkListWidget(ui.ListWidget):
     """Simple list widget used to add and remove servers to/from the local
     common.
@@ -99,13 +96,13 @@ class BookmarkListWidget(ui.ListWidget):
 
     def __init__(self, parent=None):
         super(BookmarkListWidget, self).__init__(
-            default_message='No bookmarks found.',
+            default_message='No items found.',
             parent=parent
         )
 
         self._interrupt_requested = False
 
-        self.setWindowTitle('Bookmark Editor')
+        self.setWindowTitle('Bookmark Item Editor')
         self.setObjectName('BookmarkEditor')
 
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
@@ -192,6 +189,9 @@ class BookmarkListWidget(ui.ListWidget):
         if not path:
             return
 
+        if self.window().job_path() not in path:
+            raise RuntimeError('Bookmark item must be inside the current job folder.')
+
         if not QtCore.QDir(path).mkdir(common.bookmark_cache_dir):
             raise RuntimeError('Could not create bookmark')
 
@@ -242,7 +242,21 @@ class BookmarkListWidget(ui.ListWidget):
         if not self.window().job():
             return
 
-        for name, path in self.item_generator(self.window().job_path()):
+        max_recursion = common.settings.value(
+            common.SettingsSection,
+            common.RecurseDepth
+        )
+        try:
+            max_recursion = int(max_recursion)
+        except:
+            max_recursion = 3
+        finally:
+            max_recursion = 1 if max_recursion < 1 else max_recursion
+
+        for name, path in self.item_generator(
+                self.window().job_path(),
+                max_recursion=max_recursion
+        ):
             item = QtWidgets.QListWidgetItem()
             item.setFlags(
                 QtCore.Qt.ItemIsEnabled |
@@ -278,7 +292,7 @@ class BookmarkListWidget(ui.ListWidget):
         if event.key() == QtCore.Qt.Key_Escape:
             self._interrupt_requested = True
 
-    def item_generator(self, path, recursion=0):
+    def item_generator(self, path, recursion=0, max_recursion=3):
         """Recursive scanning function for finding bookmark folders
         inside the given path.
 
@@ -287,7 +301,7 @@ class BookmarkListWidget(ui.ListWidget):
             return
 
         recursion += 1
-        if recursion > MAX_RECURSION:
+        if recursion > max_recursion:
             return
 
         # We'll let unreadable paths fail silently
@@ -309,5 +323,9 @@ class BookmarkListWidget(ui.ListWidget):
                 _name = _path[len(self.window().job_path()) + 1:]
                 yield _name, _path
 
-            for _name, _path in self.item_generator(path, recursion=recursion):
+            for _name, _path in self.item_generator(
+                    path,
+                    recursion=recursion,
+                    max_recursion=max_recursion
+            ):
                 yield _name, _path

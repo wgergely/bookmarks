@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 """Core attributes, classes and methods used to define the look and behaviour of
 Bookmarks.
 
 
-See the :mod:`bookmarks.common.setup` module for the initialization methods.
-Hard-coded default properties are defined in :mod:`bookmarks.common.core`.
+See the :mod:`~bookmarks.common.setup` module for the initialization methods.
+Hard-coded default properties are defined in :mod:`~bookmarks.common.core`.
 Configurable properties, such as colors and size settings are loaded from
 ``./rsc/conf.json`` at runtime.
 
@@ -20,15 +21,15 @@ Tip:
 
 Attributes:
 
-    debug_on (bool): Debug logging is on when True. See :func:`bookmarks.common.core.debug()`.
-    typecheck_on (bool): Type checking on when True. See :func:`bookmarks.common.core.check_type()`.
-    init_mode (int): Initialization mode. See :func:`bookmarks.common.setup.initialize()`
+    debug_on (bool): Debug logging is on when True. See :func:`~bookmarks.common.core.debug()`.
+    typecheck_on (bool): Type checking on when True. See :func:`~bookmarks.common.core.check_type()`.
+    init_mode (int): Initialization mode. See :func:`~bookmarks.common.setup.initialize()`
     active_mode (int): Determines how the active paths are saved and loaded.
-        See :mod:`bookmarks.common.sessionlock` and :mod:`bookmarks.common.settings`.
+        See :mod:`~bookmarks.common.sessionlock` and :mod:`~bookmarks.common.settings`.
     signals (QtCore.QObject): A QObject that holds common application signals.
-        See :mod:`bookmarks.common.signals`.
-    settings (QtCore.QSettings): The user settings instance. See :mod:`bookmarks.common.settings`.
-    item_data (common.DataDict): Cache used to store item data. See :mod:`bookmarks.common.data`.
+        See :mod:`~bookmarks.common.signals`.
+    settings (QtCore.QSettings): The user settings instance. See :mod:`~bookmarks.common.settings`.
+    item_data (common.DataDict): Cache used to store item data. See :mod:`~bookmarks.common.data`.
 
 """
 debug_on = False
@@ -47,7 +48,7 @@ cursor = None
 font_db = None
 
 servers = {}
-static_bookmarks = {}
+default_bookmarks = {}
 bookmarks = {}
 favourites = {}
 hashes = {}
@@ -88,7 +89,7 @@ bookmark_database = 'bookmark.db'
 favorite_file_ext = 'bfav'
 user_settings = 'user_settings.ini'
 stylesheet_file = 'stylesheet.qss'
-static_bookmarks_template = 'static_bookmarks.json'
+default_bookmarks_template = 'default_bookmark_items.json'
 job_template = 'Job.zip'
 asset_template = 'Asset.zip'
 max_list_items = 999999
@@ -141,8 +142,12 @@ sg_connecting_message = None
 sg_error_message = None
 
 # Save the initial module values for later use
-__initial_values__ = {k: (v.copy() if isinstance(v, dict) else v) for (k, v) in locals().copy().items() if not k.startswith('__')}
+__initial_values__ = {
+    k: (v.copy() if isinstance(v, dict) else v) for (k, v) in
+    locals().copy().items() if not k.startswith('__')
+}
 
+# Make submodules available from this top module
 from .core import *
 from .data import *
 from .filemonitor import *

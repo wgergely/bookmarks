@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """The module contains the classes and methods needed to provide linkage
-with Shotgun.
+with ShotGrid.
 
 Connection
 ----------
 
-In the simplest of cases (eg. when a bookmark is active and have already been
-linked with Shotgun) we can initiate a connection using a ShotgunProperties
+In the simplest of cases (e.g. when a bookmark item is active and have already been
+linked with ShotGrid) we can initiate a connection using a ShotgunProperties
 instance:
 
 .. code-block:: python
@@ -18,7 +18,7 @@ instance:
 
     # Verify properties before connecting
     if not sg_properties.verify(connection=True):
-        raise ValueError('Bookmark not configured to use Shotgun.')
+        raise ValueError('Bookmark not configured to use ShotGrid.')
 
     with shotgun.connection(sg_properties) as sg:
         schema = sg.schema_field_read('Shot')
@@ -73,7 +73,7 @@ sg_connecting_message = None
 
 
 def sanitize_path(path, separator):
-    """Utility method mirrors the Shotgun sanitize path method.
+    """Utility method mirrors the ShotGrid sanitize path method.
 
     """
     if path is None:
@@ -101,7 +101,7 @@ def sanitize_path(path, separator):
 
 @contextlib.contextmanager
 def connection(sg_properties):
-    """Context manager for connecting to Shotgun using an API Script.
+    """Context manager for connecting to ShotGrid using an API Script.
 
     The context manager will connect to shotgun on entering and close the
     connection when exiting.
@@ -114,7 +114,7 @@ def connection(sg_properties):
 
     """
     if not sg_properties.verify(connection=True):
-        s = 'Bookmark not yet configured to use Shotgun. You must enter a valid domain name, script name and api key before connecting.'
+        s = 'Bookmark not yet configured to use ShotGrid. You must enter a valid domain name, script name and api key before connecting.'
         if QtWidgets.QApplication.instance():
             common.signals.sgConnectionFailed.emit(s)
 
@@ -149,8 +149,8 @@ def get_sg(domain, script, key):
 
     Args:
         domain (str): The base url or domain where the shotgun server is located.
-        script (str): A valid Shotgun API Script's name.
-        key (str):  A valid Shotgun Script's API Key.
+        script (str): A valid ShotGrid API Script's name.
+        key (str):  A valid ShotGrid Script's API Key.
 
     """
     for arg in (domain, script, key):
@@ -187,7 +187,7 @@ def get_sg(domain, script, key):
         SG_CONNECTIONS[k] = None
         if key in SG_CONNECTIONS:
             del SG_CONNECTIONS[k]
-        log.error('Shotgun connection error.')
+        log.error('ShotGrid connection error.')
         raise
 
 
@@ -197,10 +197,10 @@ def _get_thread_key(*args):
 
 
 class ShotgunProperties(object):
-    """Returns all Shotgun properties saved in the BookmarkDB.
+    """Returns all ShotGrid properties saved in the BookmarkDB.
 
-    These proerties define the linkage between Shotgun entities and local assets
-    and are required to make Shotgun connections.
+    These proerties define the linkage between ShotGrid entities and local assets
+    and are required to make ShotGrid connections.
 
     The instance is uninitialized by default, use self.init() to load the values
     from the bookmark database.
@@ -351,19 +351,19 @@ class ShotgunProperties(object):
 
 
 class EntityModel(QtCore.QAbstractItemModel):
-    """Our custom model used to store Shotgun entities.
+    """Our custom model used to store ShotGrid entities.
 
     The model itself does not load any data but instead uses a secondary worker
     thread to do the heavey lifting. The `entityDataRequested` and
     `entityDataReceived` signals are responsible for requesting and retrieveing
-    Shotgun data.
+    ShotGrid data.
 
     Each instance has a unique uuid used to match data requests with retreved
     data.
 
 
     Signals:
-        entityDataRequested (args):             Emit to request data from Shotgun with a model
+        entityDataRequested (args):             Emit to request data from ShotGrid with a model
                                                 `uuid`, `server`, `job`, `root`, `asset`, `entity_type`,
                                                 shotgun `filters` and shotgun `fields` arguments.
         entityDataReceived (str, list):     Emitted by the worker thread when data is
@@ -569,7 +569,7 @@ class EntityFilterModel(QtCore.QSortFilterProxyModel):
 
 
 class EntityComboBox(QtWidgets.QComboBox):
-    """A Shotgun specific combobox, intended to be used with the `EntityFilterModel`.
+    """A ShotGrid specific combobox, intended to be used with the `EntityFilterModel`.
     Use `self.set_model` to set a new `EntityModel`.
 
     """

@@ -1,14 +1,14 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
-    <meta name="generator" content="sphinx-4.3.1, furo 2021.11.23"/>
+    <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
         <title>bookmarks.common.sequence - Bookmarks 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=7f0192ddeb2adecfbaa87ffbcf67d16358b30bc1" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=0af69da206d614734f649b27d4cdc2dd6c31f41d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
 
@@ -24,16 +24,8 @@
   --api-font-size: var(--font-size--normal);
   
   }
-  body[data-theme="dark"] {
-    --color-code-background: #232629;
-  --color-code-foreground: #cccccc;
-  --color-brand-primary: rgba(90, 200, 155, 1);
-  --color-brand-content: rgba(90, 200, 155, 1);
-  --color-api-name: rgba(255, 255, 255, 0.9);
-  
-  }
-  @media (prefers-color-scheme: dark) {
-    body:not([data-theme="light"]) {
+  @media not print {
+    body[data-theme="dark"] {
       --color-code-background: #232629;
   --color-code-foreground: #cccccc;
   --color-brand-primary: rgba(90, 200, 155, 1);
@@ -41,27 +33,35 @@
   --color-api-name: rgba(255, 255, 255, 0.9);
   
     }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+      }
+    }
   }
 </style></head>
   <body>
+    
     <script>
       document.body.dataset.theme = localStorage.getItem("theme") || "auto";
     </script>
     
+
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
     <title>Contents</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" />
-      <line x1="4" y1="6" x2="20" y2="6" />
-      <line x1="10" y1="12" x2="20" y2="12" />
-      <line x1="6" y1="18" x2="20" y2="18" />
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
     </svg>
   </symbol>
   <symbol id="svg-menu" viewBox="0 0 24 24">
     <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
       <line x1="3" y1="12" x2="21" y2="12"></line>
       <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -70,14 +70,14 @@
   </symbol>
   <symbol id="svg-arrow-right" viewBox="0 0 24 24">
     <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
       <polyline points="9 18 15 12 9 6"></polyline>
     </svg>
   </symbol>
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -92,7 +92,7 @@
   </symbol>
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
@@ -100,7 +100,7 @@
   </symbol>
   <symbol id="svg-sun-half" viewBox="0 0 24 24">
     <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <circle cx="12" cy="12" r="9" />
@@ -172,14 +172,19 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../bookmarks.html">Introduction</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">bookmarks.main</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/database.html">database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/tokens.html">tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/editor.html">editor</a></li>
 </ul>
 </li>
 </ul>
 
 </div>
 </div>
+
       </div>
       
     </div>
@@ -187,6 +192,12 @@
   <div class="main">
     <div class="content">
       <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
         <div class="content-icon-container">
           <div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
@@ -203,14 +214,14 @@
         </div>
         <article role="main">
           <h1>Source code for bookmarks.common.sequence</h1><div class="highlight"><pre>
-<span></span><span class="sd">"""Common methods used to work with sequentially numbered file items.</span>
+<span></span><span class="sd">&quot;&quot;&quot;Common methods used to work with sequentially numbered file items.</span>
 
 <span class="sd">A sequence item is a file that has a number component that can be incremented. See</span>
 <span class="sd">:func:`get_sequence`. E.g.:</span>
 
 <span class="sd">.. code-block:: python</span>
 
-<span class="sd">    s = 'C:/test/my_image_sequence_0001.png'</span>
+<span class="sd">    s = &#39;C:/test/my_image_sequence_0001.png&#39;</span>
 <span class="sd">    seq = common.get_sequence(s)</span>
 
 
@@ -220,7 +231,7 @@
 
 <span class="sd">.. code-block:: python</span>
 
-<span class="sd">    s = 'C:/test/my_image_sequence_{1-200}.png'</span>
+<span class="sd">    s = &#39;C:/test/my_image_sequence_{1-200}.png&#39;</span>
 <span class="sd">    common.is_collapsed(s) # = True</span>
 
 
@@ -230,7 +241,7 @@
 <span class="sd">    SEQPROXY (str): Placeholder sequence marker used to associate settings and database values</span>
 <span class="sd">        with sequence items.</span>
 
-<span class="sd">"""</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">weakref</span>
 <span class="kn">import</span> <span class="nn">functools</span>
@@ -239,30 +250,30 @@
 
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">common</span>
 
-<span class="n">SEQSTART</span> <span class="o">=</span> <span class="s1">'{'</span>
-<span class="n">SEQEND</span> <span class="o">=</span> <span class="s1">'}'</span>
-<span class="n">SEQPROXY</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">SEQSTART</span><span class="si">}</span><span class="s1">0</span><span class="si">{</span><span class="n">SEQEND</span><span class="si">}</span><span class="s1">'</span>
+<span class="n">SEQSTART</span> <span class="o">=</span> <span class="s1">&#39;{&#39;</span>
+<span class="n">SEQEND</span> <span class="o">=</span> <span class="s1">&#39;}&#39;</span>
+<span class="n">SEQPROXY</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">SEQSTART</span><span class="si">}</span><span class="s1">0</span><span class="si">{</span><span class="n">SEQEND</span><span class="si">}</span><span class="s1">&#39;</span>
 
 <span class="n">IsSequenceRegex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
-    <span class="sa">rf</span><span class="s1">'^(.+?)(</span><span class="si">{</span><span class="n">SEQSTART</span><span class="si">}</span><span class="s1">.*</span><span class="si">{</span><span class="n">SEQEND</span><span class="si">}</span><span class="s1">)(.*)$'</span><span class="p">,</span>
+    <span class="sa">rf</span><span class="s1">&#39;^(.+?)(</span><span class="si">{</span><span class="n">SEQSTART</span><span class="si">}</span><span class="s1">.*</span><span class="si">{</span><span class="n">SEQEND</span><span class="si">}</span><span class="s1">)(.*)$&#39;</span><span class="p">,</span>
     <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">UNICODE</span>
 <span class="p">)</span>
 <span class="n">SequenceStartRegex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
-    <span class="sa">rf</span><span class="s1">'^(.*)</span><span class="si">{</span><span class="n">SEQSTART</span><span class="si">}</span><span class="s1">([0-9]+).*</span><span class="si">{</span><span class="n">SEQEND</span><span class="si">}</span><span class="s1">(.*)$'</span><span class="p">,</span>
+    <span class="sa">rf</span><span class="s1">&#39;^(.*)</span><span class="si">{</span><span class="n">SEQSTART</span><span class="si">}</span><span class="s1">([0-9]+).*</span><span class="si">{</span><span class="n">SEQEND</span><span class="si">}</span><span class="s1">(.*)$&#39;</span><span class="p">,</span>
     <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">UNICODE</span>
 <span class="p">)</span>
 <span class="n">SequenceEndRegex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
-    <span class="sa">rf</span><span class="s1">'^(.*)</span><span class="si">{</span><span class="n">SEQSTART</span><span class="si">}</span><span class="s1">.*?([0-9]+)</span><span class="si">{</span><span class="n">SEQEND</span><span class="si">}</span><span class="s1">(.*)$'</span><span class="p">,</span>
+    <span class="sa">rf</span><span class="s1">&#39;^(.*)</span><span class="si">{</span><span class="n">SEQSTART</span><span class="si">}</span><span class="s1">.*?([0-9]+)</span><span class="si">{</span><span class="n">SEQEND</span><span class="si">}</span><span class="s1">(.*)$&#39;</span><span class="p">,</span>
     <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">UNICODE</span>
 <span class="p">)</span>
 <span class="n">GetSequenceRegex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
-    <span class="sa">r</span><span class="s1">'^(.*?)([0-9]+)([0-9</span><span class="se">\\</span><span class="s1">/]*|[^0-9</span><span class="se">\\</span><span class="s1">/]*(?=.+?))\.([^\.]+)$'</span><span class="p">,</span>
+    <span class="sa">r</span><span class="s1">&#39;^(.*?)([0-9]+)([0-9</span><span class="se">\\</span><span class="s1">/]*|[^0-9</span><span class="se">\\</span><span class="s1">/]*(?=.+?))\.([^\.]+)$&#39;</span><span class="p">,</span>
     <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">UNICODE</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="is_collapsed"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.is_collapsed">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">is_collapsed</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-    <span class="sd">"""Checks the presence :attr:`.SEQSTART` and :attr:`.SEQEND` markers.</span>
+    <span class="sd">&quot;&quot;&quot;Checks the presence :attr:`.SEQSTART` and :attr:`.SEQEND` markers.</span>
 
 <span class="sd">    When Bookmarks is displaying a sequence of files as a single item,</span>
 <span class="sd">    the item is *collapsed*. Every collapsed item contains the :attr:`.SEQEND`, sequence range and</span>
@@ -272,11 +283,11 @@
 
 <span class="sd">        .. code-block:: python</span>
 
-<span class="sd">            filename = 'job_sh010_animation_[001-299]_gw.png'</span>
+<span class="sd">            filename = &#39;job_sh010_animation_[001-299]_gw.png&#39;</span>
 <span class="sd">            m = is_collapsed(filename)</span>
-<span class="sd">            prefix = match.group(1) # = 'job_sh010_animation_'</span>
-<span class="sd">            sequence_string = match.group(2) # = '[001-299]'</span>
-<span class="sd">            suffix = match.group(3) # = '_gw.png'</span>
+<span class="sd">            prefix = match.group(1) # = &#39;job_sh010_animation_&#39;</span>
+<span class="sd">            sequence_string = match.group(2) # = &#39;[001-299]&#39;</span>
+<span class="sd">            suffix = match.group(3) # = &#39;_gw.png&#39;</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        s (str): A file path.</span>
@@ -287,14 +298,14 @@
 <span class="sd">            * group(2) - The sequence marker, e.g. ``{01-50}``.</span>
 <span class="sd">            * group(3) - All characters **after** the sequence marker.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">IsSequenceRegex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">s</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_sequence"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.get_sequence">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">get_sequence</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-    <span class="sd">"""Check if the given text contains a sequence element.</span>
+    <span class="sd">&quot;&quot;&quot;Check if the given text contains a sequence element.</span>
 
 <span class="sd">    Strictly speaking, a sequence is any file that has a valid number element.</span>
 <span class="sd">    There can only be **one** incremental element - it will always be the</span>
@@ -315,11 +326,11 @@
 <span class="sd">            group 1 (SRE_Match):    All the characters **before** the sequence number.</span>
 <span class="sd">            group 2 (SRE_Match):    The sequence number, as a string.</span>
 <span class="sd">            group 3 (SRE_Match):    All the characters **after** the sequence number up until the file extensions.</span>
-<span class="sd">            group 4 (SRE_Match):    The file extension **without** the '.' dot.</span>
+<span class="sd">            group 4 (SRE_Match):    The file extension **without** the &#39;.&#39; dot.</span>
 
 <span class="sd">    .. code-block:: python</span>
 
-<span class="sd">       s = 'job_sh010_animation_v002_wgergely.c4d'</span>
+<span class="sd">       s = &#39;job_sh010_animation_v002_wgergely.c4d&#39;</span>
 <span class="sd">       m = get_sequence(s)</span>
 <span class="sd">       if m:</span>
 <span class="sd">               prefix = match.group(1)</span>
@@ -328,18 +339,18 @@
 <span class="sd">               extension = match.group(4)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">            ``SRE_Match``: ``None`` if the text doesn't contain a number or an ``SRE_Match`` object.</span>
+<span class="sd">            ``SRE_Match``: ``None`` if the text doesn&#39;t contain a number or an ``SRE_Match`` object.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">is_collapsed</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-            <span class="s1">'Cannot extract sequence numbers from collapsed items.'</span><span class="p">)</span>
+            <span class="s1">&#39;Cannot extract sequence numbers from collapsed items.&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">GetSequenceRegex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">s</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="proxy_path"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.proxy_path">[docs]</a><span class="k">def</span> <span class="nf">proxy_path</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-    <span class="sd">"""Encompasses the logic used to associate preferences with items.</span>
+    <span class="sd">&quot;&quot;&quot;Encompasses the logic used to associate preferences with items.</span>
 
 <span class="sd">    Sequence items need a generic key to save values as the sequence notation</span>
 <span class="sd">    might change as files are added/removed to image sequences. Any `FileItem`</span>
@@ -350,21 +361,21 @@
 <span class="sd">            v (QModelIndex, weakref.ref, dict or str): Data dict, index or filepath string.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">            str: The key used to store the item's information in the local</span>
+<span class="sd">            str: The key used to store the item&#39;s information in the local</span>
 <span class="sd">            preferences and the bookmark item database.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">pass</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">):</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="p">()[</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">]</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="p">()[</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">]</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">]</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">):</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPersistentModelIndex</span><span class="p">)):</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">'Invalid type, expected one of </span><span class="si">{</span><span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="nb">dict</span><span class="si">}</span><span class="s1">, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+            <span class="sa">f</span><span class="s1">&#39;Invalid type, expected one of </span><span class="si">{</span><span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="nb">dict</span><span class="si">}</span><span class="s1">, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_proxy_path</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
 
 
@@ -375,13 +386,13 @@
         <span class="k">return</span> <span class="n">collapsed</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">SEQPROXY</span> <span class="o">+</span> <span class="n">collapsed</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
     <span class="n">seq</span> <span class="o">=</span> <span class="n">get_sequence</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">seq</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">SEQPROXY</span> <span class="o">+</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'.'</span> <span class="o">+</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">SEQPROXY</span> <span class="o">+</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">v</span>
 
 
 <div class="viewcode-block" id="get_sequence_startpath"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.get_sequence_startpath">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">get_sequence_startpath</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="sd">"""Checks if given string is collapsed, and if so, returns the path of</span>
+    <span class="sd">&quot;&quot;&quot;Checks if given string is collapsed, and if so, returns the path of</span>
 <span class="sd">    the first item of the sequence.</span>
 
 <span class="sd">    Args:</span>
@@ -390,7 +401,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        str: The path to the first file of the sequence.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">is_collapsed</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
@@ -398,13 +409,13 @@
 
     <span class="n">match</span> <span class="o">=</span> <span class="n">SequenceStartRegex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">SequenceStartRegex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">'\1\2\3'</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">SequenceStartRegex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\1\2\3&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">path</span></div>
 
 
 <div class="viewcode-block" id="get_sequence_endpath"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.get_sequence_endpath">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">get_sequence_endpath</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="sd">"""Checks if given string is collapsed, and if so, returns the path of</span>
+    <span class="sd">&quot;&quot;&quot;Checks if given string is collapsed, and if so, returns the path of</span>
 <span class="sd">    the last item of the sequence.</span>
 
 <span class="sd">    Args:</span>
@@ -413,36 +424,37 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        str: The path to the last file of the sequence.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">is_collapsed</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">path</span>
 
     <span class="n">match</span> <span class="o">=</span> <span class="n">SequenceEndRegex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">SequenceEndRegex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">'\1\2\3'</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">SequenceEndRegex</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\1\2\3&#39;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">path</span></div>
 
 
-<div class="viewcode-block" id="get_sequence_paths"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.get_sequence_paths">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">get_sequence_paths</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
-    <span class="sd">"""Given the index, returns a tuple of filenames referring to the</span>
-<span class="sd">    individual sequence items.</span>
+<div class="viewcode-block" id="get_sequence_paths"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.sequence.get_sequence_paths">[docs]</a><span class="k">def</span> <span class="nf">get_sequence_paths</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a list of file paths of the individual files that make up the</span>
+<span class="sd">    sequence.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">            index (QtCore.QModelIndex): A listview index.</span>
+<span class="sd">        index (QtCore.QModelIndex): A list view index.</span>
 
-<span class="sd">    """</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        list: A list of file paths.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">is_collapsed</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">path</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">path</span><span class="p">,</span> <span class="p">]</span>
 
-    <span class="n">sequence_paths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">seq</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">SequenceRole</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FramesRole</span><span class="p">):</span>
-        <span class="n">seq</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">SequenceRole</span><span class="p">)</span>
-        <span class="n">seq</span> <span class="o">=</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">frame</span> <span class="o">+</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'.'</span> <span class="o">+</span> <span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-        <span class="n">sequence_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">sequence_paths</span></div>
+        <span class="n">v</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}{</span><span class="n">frame</span><span class="si">}{</span><span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">v</span></div>
 </pre></div>
         </article>
       </div>
@@ -452,11 +464,21 @@
           
           
         </div>
-
-        <div class="related-information">
-              Copyright &#169; 2021, Gergely Wootsch |
-          Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-          <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021, Gergely Wootsch
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
         </div>
         
       </footer>
@@ -470,6 +492,7 @@
 </div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
     </body>

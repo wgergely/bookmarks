@@ -1,8 +1,15 @@
+"""Maya-specific context menus.
+
+"""
 import collections
 import functools
 
 from PySide2 import QtCore
-from maya import cmds
+
+try:
+    from maya import cmds
+except ImportError:
+    raise ImportError('Could not find the Maya modules.')
 
 from .. import common
 from .. import ui

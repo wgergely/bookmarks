@@ -307,6 +307,7 @@ class JobListWidget(ui.ListViewWidget):
                 except:
                     continue
                 yield f'{client_entry.name}/{job_entry.name}', file_info.filePath()
+                continue
 
         if emit_progress:
             self.progressUpdate.emit('')

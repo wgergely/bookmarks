@@ -122,12 +122,14 @@ class TemplateListDelegate(ui.ListWidgetDelegate):
 
     def createEditor(self, parent, option, index):
         """Custom editor for editing the template's name."""
-        editor = QtWidgets.QLineEdit(parent=parent)
+        editor = ui.LineEdit(parent=parent)
         editor.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        editor.setStyleSheet('padding: 0px; margin: 0px; border-radius: 0px;')
+        editor.setStyleSheet(f'background-color: {common.rgb(common.color(common.BackgroundDarkColor))};')
         validator = QtGui.QRegExpValidator(parent=editor)
         validator.setRegExp(QtCore.QRegExp(r'[\_\-a-zA-z0-9]+'))
         editor.setValidator(validator)
+        editor.setGeometry(option.rect)
+        editor.move(0, 0)
         return editor
 
 
@@ -218,10 +220,6 @@ class TemplateListWidget(ui.ListWidget):
                 item.setFlags(item.flags() | QtCore.Qt.ItemIsEditable)
 
             self.addItem(item)
-
-        min_height = (size.height() + self.spacing())
-        height = height if height >= min_height else min_height
-        self.setFixedHeight(height)
 
         if selected_name:
             for idx in range(self.model().rowCount()):
@@ -525,7 +523,6 @@ class TemplatesWidget(QtWidgets.QSplitter):
         self.template_contents_widget = TemplatesPreviewWidget(parent=self)
         self.addWidget(self.template_list_widget)
         self.addWidget(self.template_contents_widget)
-        self.setSizes((common.size(common.DefaultWidth), 0))
 
     def _connect_signals(self):
         model = self.template_list_widget.selectionModel()

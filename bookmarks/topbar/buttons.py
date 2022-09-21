@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines :class:`.TopBarWidget`, and all the buttons found on the bar located above the
-:class:`bookmarks.main.StackedWidget`.
+"""Defines the small control buttons found on the right-hand side of the top bar.
 
 
 """

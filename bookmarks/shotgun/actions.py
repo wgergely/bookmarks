@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""A list of Shotgun actions.
+"""A list of ShotGrid specific actions.
 
 """
 import os
@@ -80,7 +80,7 @@ def upload_thumbnail(sg_properties, thumbnail_path):
         )
 
     from .. import ui
-    ui.OkBox('Shotgun thumbnail updated.').open()
+    ui.OkBox('ShotGrid thumbnail updated.').open()
 
 
 @common.debug
@@ -88,11 +88,11 @@ def upload_thumbnail(sg_properties, thumbnail_path):
 def test_shotgun_connection(sg_properties):
     if not sg_properties.verify(connection=True):
         if not sg_properties.domain:
-            raise ValueError('Shotgun Domain not set.')
+            raise ValueError('ShotGrid Domain not set.')
         if not sg_properties.script:
-            raise ValueError('Shotgun API Script Name not set.')
+            raise ValueError('ShotGrid API Script Name not set.')
         if not sg_properties.key:
-            raise ValueError('Shotgun API Script Key not set.')
+            raise ValueError('ShotGrid API Script Key not set.')
 
     with shotgun.connection(sg_properties) as sg:
         if not sg.find('Project', []):
@@ -106,7 +106,7 @@ def test_shotgun_connection(sg_properties):
 
     from .. import ui
     ui.MessageBox(
-        'Successfully connected to Shotgun.',
+        'Successfully connected to ShotGrid.',
         info
     ).open()
     return True
@@ -115,7 +115,7 @@ def test_shotgun_connection(sg_properties):
 @common.error
 @common.debug
 def create_entity(entity_type, entity_name, request_data=None, create_data=None, verify_bookmark=True, verify_all=False):
-    """Creates a new Shotgun entity linked to the currently active  project.
+    """Creates a new ShotGrid entity linked to the currently active  project.
 
     """
     sg_properties = shotgun.ShotgunProperties(active=True)
@@ -178,7 +178,7 @@ def create_entity(entity_type, entity_name, request_data=None, create_data=None,
 @common.error
 @common.debug
 def create_project(server, job, root, entity_name):
-    """Creates a new Shotgun entity linked to the currently active  project.
+    """Creates a new ShotGrid entity linked to the currently active  project.
 
     """
     sg_properties = shotgun.ShotgunProperties(server, job, root)
@@ -345,9 +345,9 @@ def create_published_file(
     published_file_type_entity,
     local_storage_entity
 ):
-    """Creates a new PublishedFile entity on Shotgun.
+    """Creates a new PublishedFile entity on ShotGrid.
 
-    The data structure was taken from the Shotgun API documentation
+    The data structure was taken from the ShotGrid API documentation
     https://developer.shotgunsoftware.com/tk-core/_modules/tank/util/shotgun/publish_creation.html#register_publish
 
     """
@@ -451,7 +451,7 @@ def create_version(
     user_entity,
     status_entity,
 ):
-    """Add a new Version entity to Shotgun."""
+    """Add a new Version entity to ShotGrid."""
     if not version_cache:
         version_cache = file_path
 

@@ -1,14 +1,14 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
 
-    <meta name="generator" content="sphinx-4.3.1, furo 2021.11.23"/>
+    <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
         <title>bookmarks - Bookmarks 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=7f0192ddeb2adecfbaa87ffbcf67d16358b30bc1" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=0af69da206d614734f649b27d4cdc2dd6c31f41d" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
 
@@ -24,16 +24,8 @@
   --api-font-size: var(--font-size--normal);
   
   }
-  body[data-theme="dark"] {
-    --color-code-background: #232629;
-  --color-code-foreground: #cccccc;
-  --color-brand-primary: rgba(90, 200, 155, 1);
-  --color-brand-content: rgba(90, 200, 155, 1);
-  --color-api-name: rgba(255, 255, 255, 0.9);
-  
-  }
-  @media (prefers-color-scheme: dark) {
-    body:not([data-theme="light"]) {
+  @media not print {
+    body[data-theme="dark"] {
       --color-code-background: #232629;
   --color-code-foreground: #cccccc;
   --color-brand-primary: rgba(90, 200, 155, 1);
@@ -41,27 +33,35 @@
   --color-api-name: rgba(255, 255, 255, 0.9);
   
     }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+      }
+    }
   }
 </style></head>
   <body>
+    
     <script>
       document.body.dataset.theme = localStorage.getItem("theme") || "auto";
     </script>
     
+
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
     <title>Contents</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" />
-      <line x1="4" y1="6" x2="20" y2="6" />
-      <line x1="10" y1="12" x2="20" y2="12" />
-      <line x1="6" y1="18" x2="20" y2="18" />
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
     </svg>
   </symbol>
   <symbol id="svg-menu" viewBox="0 0 24 24">
     <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
       <line x1="3" y1="12" x2="21" y2="12"></line>
       <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -70,14 +70,14 @@
   </symbol>
   <symbol id="svg-arrow-right" viewBox="0 0 24 24">
     <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
       <polyline points="9 18 15 12 9 6"></polyline>
     </svg>
   </symbol>
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -92,7 +92,7 @@
   </symbol>
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
@@ -100,7 +100,7 @@
   </symbol>
   <symbol id="svg-sun-half" viewBox="0 0 24 24">
     <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <circle cx="12" cy="12" r="9" />
@@ -170,20 +170,28 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../bookmarks.html">Introduction</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../api/common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/database.html">database</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/images.html">images</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/main.html">main</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/lists.html">lists</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/tokens.html">tokens</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/editor.html">editor</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../api.html">Python Modules</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/common.html">common: Core attributes, classes and methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/database.html">database: Bookmark item database interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/images.html">images: Image cache and thumbnails</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/threads.html">threads: Multi-threading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/tokens.html">tokens: Bookmark item file token definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/main.html">main: Main widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/items.html">items: Item views &amp; models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/ui.html">ui: Utility classes and methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/topbar.html">topbar: Top bar widget</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/editor.html">editor: Property editor widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/bookmark_editor.html">bookmark_editor: Active bookmark editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/actions.html">actions: A list of user actions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/shortcuts.html">shortcuts: Keyboard shortcuts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/contextmenu.html">contextmenu: Context menus</a></li>
 </ul>
 </li>
 </ul>
 
 </div>
 </div>
+
       </div>
       
     </div>
@@ -191,6 +199,12 @@
   <div class="main">
     <div class="content">
       <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
         <div class="content-icon-container">
           <div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
@@ -208,103 +222,143 @@
         <article role="main">
           <h1>Source code for bookmarks</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">"""Bookmarks is a lightweight asset manager designed to browse project content of</span>
-<span class="sd">animation, VFX and film projects.</span>
+<span class="sd">&quot;&quot;&quot;Bookmarks is a lightweight asset manager written in Python designed to</span>
+<span class="sd">browse and manage project content of animation, VFX and film projects.</span>
 
 
 <span class="sd">Features</span>
 <span class="sd">--------</span>
 
-<span class="sd">To provide an overview, Bookmarks displays content as separate ``bookmark``,</span>
-<span class="sd">``asset`` and ``file`` items. These items can be configured to link with</span>
-<span class="sd">``ShotGrid`` entities or set up with properties, like frame-rate, resolution,</span>
-<span class="sd">and custom urls. These can be used, for instance, to quickly configure scenes in</span>
-<span class="sd">host applications, such as Maya.</span>
+<span class="sd">The app displays content as separate ``bookmark``, ``asset`` and ``file`` items. Each</span>
+<span class="sd">``bookmark`` item contains a series of ``asset`` items that in turn contain ``file``</span>
+<span class="sd">items. ``Bookmark`` and ``asset`` items can be configured independently to link with,</span>
+<span class="sd">for instance, ``ShotGrid`` entities or set up with properties, like frame-rate,</span>
+<span class="sd">resolution, and custom urls. These properties can be used to quickly configure scenes</span>
+<span class="sd">in host applications, like Maya, and to access related external resources.</span>
 
-<span class="sd">Bookmarks provides a simple tools to create job and asset items using on zipped</span>
-<span class="sd">templates, and options to annotate and filter items. It can also preview</span>
-<span class="sd">images files thanks to OpenImageIO</span>
+<span class="sd">The app provides simple tools to create new jobs from ZIP file templates (although this</span>
+<span class="sd">is usually something very site specific) and options to annotate and filter existing</span>
+<span class="sd">items. It can also preview images files using ``OpenImageIO``.</span>
 
 
-<span class="sd">Installation</span>
+<span class="sd">Background</span>
+<span class="sd">----------</span>
+
+<span class="sd">This project was developed to manage my project personal projects and is adapted to my</span>
+<span class="sd">own custom way of setting them up. This is to say, Bookmarks expects certain patterns to</span>
+<span class="sd">be respected to read files and folders correctly, but I tried my best to make things</span>
+<span class="sd">easily customizable to adapt to site specific environments.</span>
+
+
+<span class="sd">Quick Start</span>
+<span class="sd">-----------</span>
+
+<span class="sd">The simplest way to start Bookmarks as a standalone application is to run:</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    import bookmarks</span>
+<span class="sd">    bookmarks.exec_()</span>
+
+
+<span class="sd">Dependencies</span>
 <span class="sd">------------</span>
 
-<span class="sd">Download the latest release from https://github.com/wgergely/bookmarks/releases.</span>
+<span class="sd">The following python packages are required to run Bookmarks:</span>
 
-<span class="sd">Whilst the code base should be compatible  with most systems, Windows is the only</span>
-<span class="sd">supported platform at the moment. If you'd like to try Bookmarks on another</span>
-<span class="sd">system, you'll have to make sure all the requirements are built and available:</span>
-
-<span class="sd">* ``Python3``: Tested with 3.7 and 3.9.</span>
-<span class="sd">* ``PySide2``: Tested with Qt 5.15.2. https://pypi.org/project/PySide2</span>
-<span class="sd">* ``OpenImageIO``: Used to generate thumbnails for image items.</span>
-<span class="sd">https://github.com/OpenImageIO/oiio</span>
+<span class="sd">* ``Python3``: Tested against 3.9.</span>
+<span class="sd">* ``PySide2``: Tested against Qt 5.15.2. https://pypi.org/project/PySide2</span>
+<span class="sd">* ``OpenImageIO``: Used to generate thumbnails for image items https://github.com/OpenImageIO/oiio</span>
 <span class="sd">* ``numpy``: https://pypi.org/project/numpy</span>
 <span class="sd">* ``slack_sdk``: https://pypi.org/project/slack_sdk</span>
 <span class="sd">* ``psutil``: https://pypi.org/project/psutil</span>
 <span class="sd">* ``shotgun_api3``: https://github.com/shotgunsoftware/python-api</span>
-<span class="sd">* ``alembic``: Alembic's Python library. https://github.com/alembic/alembic</span>
 
-<span class="sd">"""</span>
+<span class="sd">Currently, Windows is the only supported platform (although much of the codebase should</span>
+<span class="sd">be platform-agnostic).</span>
+
+<span class="sd">Note:</span>
+
+<span class="sd">    OpenImageIO does not currently maintain installable python packages. Building it</span>
+<span class="sd">    manually is therefore required.</span>
+
+
+
+<span class="sd">Standalone and Embedded Modes</span>
+<span class="sd">-----------------------------</span>
+
+<span class="sd">Bookmarks can be run in two modes. As a standalone application, or embedded in a</span>
+<span class="sd">PySide2 environment. The base-layers can be initialized with:</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">    from bookmarks import common</span>
+<span class="sd">    common.initialize(common.EmbeddedMode) # or common.StandaloneMode</span>
+
+<span class="sd">:func:`bookmarks.exec_()` is a utility method for starting Bookmarks in</span>
+<span class="sd">:attr:`common.StandaloneMode`, whilst :attr:`common.EmbeddedMode` is useful when</span>
+<span class="sd">running from inside a host DCC. Currently only the Maya plugin makes use of this mode.</span>
+<span class="sd">See :mod:`bookmarks.maya` and :mod:`bookmarks.common` for the related methods.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">importlib</span>
 <span class="kn">import</span> <span class="nn">platform</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtWidgets</span>
 
-<span class="n">__author__</span> <span class="o">=</span> <span class="s1">'Gergely Wootsch'</span>
-<span class="n">__website__</span> <span class="o">=</span> <span class="s1">'https://github.com/wgergely/bookmarks'</span>
-<span class="n">__email__</span> <span class="o">=</span> <span class="s1">'hello@gergely-wootsch.com'</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s1">'0.5.0'</span>
-<span class="n">__copyright__</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'Copyright (C) 2021 </span><span class="si">{</span><span class="n">__author__</span><span class="si">}</span><span class="s1">'</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Gergely Wootsch&#39;</span>
+<span class="n">__website__</span> <span class="o">=</span> <span class="s1">&#39;https://github.com/wgergely/bookmarks&#39;</span>
+<span class="n">__email__</span> <span class="o">=</span> <span class="s1">&#39;hello@gergely-wootsch.com&#39;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.5.0&#39;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Copyright (C) 2022 </span><span class="si">{</span><span class="n">__author__</span><span class="si">}</span><span class="s1">&#39;</span>
 
 <span class="c1"># Python 2 is not supported</span>
 <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">3</span> <span class="ow">and</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">7</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'Bookmarks requires Python 3.7.0 or later.'</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Bookmarks requires Python 3.7.0 or later.&#39;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">info</span><span class="p">():</span>
-    <span class="sd">"""Returns an informative string about the project environment and author.</span>
+    <span class="sd">&quot;&quot;&quot;Returns an informative string about the project environment and author.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        str: An informative string.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">py_ver</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">python_version</span><span class="p">()</span>
     <span class="n">py_c</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">python_compiler</span><span class="p">()</span>
-    <span class="n">oiio_ver</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">'OpenImageIO'</span><span class="p">)</span><span class="o">.</span><span class="n">__version__</span>
-    <span class="n">alembic_ver</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">'alembic'</span><span class="p">)</span><span class="o">.</span><span class="n">Abc</span><span class="o">.</span><span class="n">GetLibraryVersion</span><span class="p">()</span>
-    <span class="n">qt_ver</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">'PySide2.QtCore'</span><span class="p">)</span><span class="o">.</span><span class="n">__version__</span>
-    <span class="n">sg_ver</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">'shotgun_api3'</span><span class="p">)</span><span class="o">.</span><span class="n">__version__</span>
-    <span class="n">slack_ver</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">'slack_sdk.version'</span><span class="p">)</span><span class="o">.</span><span class="n">__version__</span>
+    <span class="n">oiio_ver</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;OpenImageIO&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">__version__</span>
+    <span class="n">qt_ver</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;PySide2.QtCore&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">__version__</span>
+    <span class="n">sg_ver</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;shotgun_api3&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">__version__</span>
+    <span class="n">slack_ver</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s1">&#39;slack_sdk.version&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">__version__</span>
 
-    <span class="k">return</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+    <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
         <span class="p">(</span>
             <span class="n">__copyright__</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s1">'E-Mail:    </span><span class="si">{</span><span class="n">__email__</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s1">'Website:  </span><span class="si">{</span><span class="n">__website__</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
-            <span class="s1">'</span><span class="se">\n</span><span class="s1">Packages</span><span class="se">\n</span><span class="s1">'</span>
-            <span class="sa">f</span><span class="s1">'Python </span><span class="si">{</span><span class="n">py_ver</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">py_c</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s1">'Bookmarks </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s1">'PySide2 </span><span class="si">{</span><span class="n">qt_ver</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s1">'OpenImageIO </span><span class="si">{</span><span class="n">oiio_ver</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">alembic_ver</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s1">'ShotGrid API </span><span class="si">{</span><span class="n">sg_ver</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
-            <span class="sa">f</span><span class="s1">'SlackClient </span><span class="si">{</span><span class="n">slack_ver</span><span class="si">}</span><span class="s1">'</span>
+            <span class="sa">f</span><span class="s1">&#39;E-Mail:    </span><span class="si">{</span><span class="n">__email__</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;Website:  </span><span class="si">{</span><span class="n">__website__</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Packages</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="sa">f</span><span class="s1">&#39;Python </span><span class="si">{</span><span class="n">py_ver</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">py_c</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;Bookmarks </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;PySide2 </span><span class="si">{</span><span class="n">qt_ver</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;OpenImageIO </span><span class="si">{</span><span class="n">oiio_ver</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;ShotGrid API </span><span class="si">{</span><span class="n">sg_ver</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s1">&#39;Slack SDK </span><span class="si">{</span><span class="n">slack_ver</span><span class="si">}</span><span class="s1">&#39;</span>
         <span class="p">)</span>
     <span class="p">)</span>
 
 
-<div class="viewcode-block" id="exec_"><a class="viewcode-back" href="../api/main.html#bookmarks.exec_">[docs]</a><span class="k">def</span> <span class="nf">exec_</span><span class="p">():</span>
-    <span class="sd">"""Opens the Bookmark application.</span>
+<div class="viewcode-block" id="exec_"><a class="viewcode-back" href="../api/main.html#bookmarks.exec_">[docs]</a><span class="k">def</span> <span class="nf">exec_</span><span class="p">(</span><span class="n">print_info</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Opens the Bookmark app.</span>
 
 <span class="sd">    The method creates :class:`bookmarks.standalone.BookmarksApp`,</span>
 <span class="sd">    and initializes all required submodules and data.</span>
 
 <span class="sd">    Make sure to check the :doc:`list of dependencies &lt;index&gt;` before running.</span>
 
-<span class="sd">    """</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="p">())</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">print_info</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">info</span><span class="p">())</span>
 
     <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">common</span>
     <span class="n">common</span><span class="o">.</span><span class="n">verify_dependencies</span><span class="p">()</span>
@@ -323,11 +377,21 @@
           
           
         </div>
-
-        <div class="related-information">
-              Copyright &#169; 2021, Gergely Wootsch |
-          Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-          <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021, Gergely Wootsch
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
         </div>
         
       </footer>
@@ -341,6 +405,7 @@
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     </body>

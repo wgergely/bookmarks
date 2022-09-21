@@ -1,14 +1,14 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
-    <meta name="generator" content="sphinx-4.3.1, furo 2021.11.23"/>
+    <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
         <title>bookmarks.main - Bookmarks 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=7f0192ddeb2adecfbaa87ffbcf67d16358b30bc1" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=0af69da206d614734f649b27d4cdc2dd6c31f41d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
 
@@ -24,16 +24,8 @@
   --api-font-size: var(--font-size--normal);
   
   }
-  body[data-theme="dark"] {
-    --color-code-background: #232629;
-  --color-code-foreground: #cccccc;
-  --color-brand-primary: rgba(90, 200, 155, 1);
-  --color-brand-content: rgba(90, 200, 155, 1);
-  --color-api-name: rgba(255, 255, 255, 0.9);
-  
-  }
-  @media (prefers-color-scheme: dark) {
-    body:not([data-theme="light"]) {
+  @media not print {
+    body[data-theme="dark"] {
       --color-code-background: #232629;
   --color-code-foreground: #cccccc;
   --color-brand-primary: rgba(90, 200, 155, 1);
@@ -41,27 +33,35 @@
   --color-api-name: rgba(255, 255, 255, 0.9);
   
     }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+      }
+    }
   }
 </style></head>
   <body>
+    
     <script>
       document.body.dataset.theme = localStorage.getItem("theme") || "auto";
     </script>
     
+
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
     <title>Contents</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" />
-      <line x1="4" y1="6" x2="20" y2="6" />
-      <line x1="10" y1="12" x2="20" y2="12" />
-      <line x1="6" y1="18" x2="20" y2="18" />
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
     </svg>
   </symbol>
   <symbol id="svg-menu" viewBox="0 0 24 24">
     <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
       <line x1="3" y1="12" x2="21" y2="12"></line>
       <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -70,14 +70,14 @@
   </symbol>
   <symbol id="svg-arrow-right" viewBox="0 0 24 24">
     <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
       <polyline points="9 18 15 12 9 6"></polyline>
     </svg>
   </symbol>
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -92,7 +92,7 @@
   </symbol>
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
@@ -100,7 +100,7 @@
   </symbol>
   <symbol id="svg-sun-half" viewBox="0 0 24 24">
     <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <circle cx="12" cy="12" r="9" />
@@ -171,19 +171,25 @@
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../bookmarks.html">Introduction</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../api/common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/database.html">database</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/images.html">images</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/main.html">main</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/lists.html">lists</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/tokens.html">tokens</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/editor.html">editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/common.html">common: Core attributes, classes and methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/database.html">database: Bookmark item database interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/images.html">images: Image cache and thumbnails</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/threads.html">threads: Multi-threading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/tokens.html">tokens: Bookmark item file token definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/ui.html">ui: Utility classes and methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/main.html">main: Main widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/lists.html">lists: Item list widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/topbar.html">topbar: Top bar widget</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/editor.html">editor: Property editor widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/shortcuts.html">shortcuts: Keyboard shortcuts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/actions.html">actions: A list of user actions</a></li>
 </ul>
 </li>
 </ul>
 
 </div>
 </div>
+
       </div>
       
     </div>
@@ -191,6 +197,12 @@
   <div class="main">
     <div class="content">
       <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
         <div class="content-icon-container">
           <div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
@@ -208,25 +220,25 @@
         <article role="main">
           <h1>Source code for bookmarks.main</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">"""Bookmarks' main widget.</span>
+<span class="sd">&quot;&quot;&quot;Bookmarks&#39; main widget.</span>
 
 <span class="sd">:class:`.MainWidget` consist of :class:`bookmarks.topbar.TopBarWidget`,</span>
 <span class="sd">:class:`bookmarks.statusbar.StatusBarWidget`,</span>
-<span class="sd">and :class:`bookmarks.lists.basewidget.ListsWidget`. The latter is the container</span>
+<span class="sd">and :class:`bookmarks.items.views.ListsWidget`. The latter is the container</span>
 <span class="sd">for the three main list item widgets:</span>
-<span class="sd">:class:`bookmarks.lists.bookmarks.BookmarksWidget`,</span>
-<span class="sd">:class:`bookmarks.lists.assets.AssetsWidget` and</span>
-<span class="sd">:class:`bookmarks.lists.files.FilesWidget`.</span>
+<span class="sd">:class:`bookmarks.items.bookmark_items.BookmarksWidget`,</span>
+<span class="sd">:class:`bookmarks.items.asset_items.AssetsWidget` and</span>
+<span class="sd">:class:`bookmarks.items.files.FilesWidget`.</span>
 
 <span class="sd">Important:</span>
 
-<span class="sd">    :class:`.MainWidget` won't be fully set up until</span>
+<span class="sd">    :class:`.MainWidget` won&#39;t be fully set up until</span>
 <span class="sd">    :meth:`.MainWidget.initialize` is called. In standalone mode, the widget will</span>
 <span class="sd">    automatically be initialized, on first showing, however, in EmbeddedMode,</span>
 <span class="sd">    :meth:`.MainWidget.initialize` must be called manually.</span>
 
 
-<span class="sd">"""</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 
 <span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
@@ -236,27 +248,27 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">images</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">shortcuts</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">statusbar</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">topbar</span>
-<span class="kn">from</span> <span class="nn">.lists</span> <span class="kn">import</span> <span class="n">assets</span>
-<span class="kn">from</span> <span class="nn">.lists</span> <span class="kn">import</span> <span class="n">basewidget</span>
-<span class="kn">from</span> <span class="nn">.lists</span> <span class="kn">import</span> <span class="n">bookmarks</span>
-<span class="kn">from</span> <span class="nn">.lists</span> <span class="kn">import</span> <span class="n">favourites</span>
-<span class="kn">from</span> <span class="nn">.lists</span> <span class="kn">import</span> <span class="n">files</span>
-<span class="kn">from</span> <span class="nn">.lists</span> <span class="kn">import</span> <span class="n">tasks</span>
+<span class="kn">from</span> <span class="nn">.topbar</span> <span class="kn">import</span> <span class="n">topbar</span>
+<span class="kn">from</span> <span class="nn">.items</span> <span class="kn">import</span> <span class="n">views</span>
+<span class="kn">from</span> <span class="nn">.items</span> <span class="kn">import</span> <span class="n">bookmark_items</span>
+<span class="kn">from</span> <span class="nn">.items</span> <span class="kn">import</span> <span class="n">asset_items</span>
+<span class="kn">from</span> <span class="nn">.items</span> <span class="kn">import</span> <span class="n">file_items</span>
+<span class="kn">from</span> <span class="nn">.items</span> <span class="kn">import</span> <span class="n">favourite_items</span>
+<span class="kn">from</span> <span class="nn">.items</span> <span class="kn">import</span> <span class="n">task_items</span>
 
 
 <span class="k">def</span> <span class="nf">init</span><span class="p">():</span>
     <span class="k">if</span> <span class="n">common</span><span class="o">.</span><span class="n">init_mode</span> <span class="o">==</span> <span class="n">common</span><span class="o">.</span><span class="n">StandaloneMode</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Cannot be initialized in `StandaloneMode`."</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Cannot be initialized in `StandaloneMode`.&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">main_widget</span><span class="p">,</span> <span class="n">MainWidget</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"MainWidget already exists."</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;MainWidget already exists.&quot;</span><span class="p">)</span>
 
     <span class="n">common</span><span class="o">.</span><span class="n">main_widget</span> <span class="o">=</span> <span class="n">MainWidget</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="MainWidget"><a class="viewcode-back" href="../../api/main.html#bookmarks.main.MainWidget">[docs]</a><span class="k">class</span> <span class="nc">MainWidget</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
-    <span class="sd">"""Bookmark's main widget when initialized in :attr:`common.EmbeddedMode`.</span>
+    <span class="sd">&quot;&quot;&quot;Bookmark&#39;s main widget when initialized in :attr:`common.EmbeddedMode`.</span>
 <span class="sd">    See also :class:`bookmarks.standalone.StandaloneMainWidget`, a subclass used</span>
 <span class="sd">    as the main widget when run in :attr:`common.StandaloneMode`.</span>
 
@@ -265,13 +277,13 @@
 <span class="sd">                be initialized.</span>
 <span class="sd">        initialized (Signal): Emitted when the main widget finished initializing.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">aboutToInitialize</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
     <span class="n">initialized</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">main_widget</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1"> already exists.'</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1"> already exists.&#39;</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
 
@@ -304,13 +316,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setSpacing</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">stacked_widget</span> <span class="o">=</span> <span class="n">basewidget</span><span class="o">.</span><span class="n">ListsWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bookmarks_widget</span> <span class="o">=</span> <span class="n">bookmarks</span><span class="o">.</span><span class="n">BookmarksWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">assets_widget</span> <span class="o">=</span> <span class="n">assets</span><span class="o">.</span><span class="n">AssetsWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">files_widget</span> <span class="o">=</span> <span class="n">files</span><span class="o">.</span><span class="n">FilesWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">tasks_widget</span> <span class="o">=</span> <span class="n">tasks</span><span class="o">.</span><span class="n">TaskFolderWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">files_widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stacked_widget</span> <span class="o">=</span> <span class="n">views</span><span class="o">.</span><span class="n">ListsWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bookmarks_widget</span> <span class="o">=</span> <span class="n">bookmark_items</span><span class="o">.</span><span class="n">BookmarksWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assets_widget</span> <span class="o">=</span> <span class="n">asset_items</span><span class="o">.</span><span class="n">AssetsWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">files_widget</span> <span class="o">=</span> <span class="n">file_items</span><span class="o">.</span><span class="n">FilesWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tasks_widget</span> <span class="o">=</span> <span class="n">task_items</span><span class="o">.</span><span class="n">TaskFolderWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">files_widget</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tasks_widget</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">favourites_widget</span> <span class="o">=</span> <span class="n">favourites</span><span class="o">.</span><span class="n">FavouritesWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">favourites_widget</span> <span class="o">=</span> <span class="n">favourite_items</span><span class="o">.</span><span class="n">FavouritesWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">stacked_widget</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bookmarks_widget</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stacked_widget</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">assets_widget</span><span class="p">)</span>
@@ -325,23 +337,49 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statusbar</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_init_current_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># Setting the tab now before we do any more initialization</span>
+        <span class="sd">&quot;&quot;&quot;Sets our current tab based on the current user settings.</span>
+
+<span class="sd">        We can&#39;t use model indexes when this method is called as the list models</span>
+<span class="sd">        themselves are still uninitialized resulting in</span>
+<span class="sd">        `self.stacked_widget.setCurrentIndex()` returning an incorrect tab.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">value</span><span class="p">(</span>
             <span class="n">common</span><span class="o">.</span><span class="n">UIStateSection</span><span class="p">,</span>
             <span class="n">common</span><span class="o">.</span><span class="n">CurrentList</span>
         <span class="p">)</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">BookmarkTab</span> <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">False</span> <span class="k">else</span> <span class="n">idx</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">BookmarkTab</span> <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="n">common</span><span class="o">.</span><span class="n">BookmarkTab</span> <span class="k">else</span> <span class="n">idx</span>
-        <span class="n">idx</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">FavouriteTab</span> <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;</span> <span class="n">common</span><span class="o">.</span><span class="n">FavouriteTab</span> <span class="k">else</span> <span class="n">idx</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">basewidget</span><span class="o">.</span><span class="n">ListsWidget</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stacked_widget</span><span class="p">)</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span> <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="n">common</span><span class="o">.</span><span class="n">BookmarkTab</span> <span class="k">else</span> <span class="n">common</span><span class="o">.</span><span class="n">BookmarkTab</span>
+
+        <span class="n">root</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">active_paths</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">SynchronisedActivePaths</span><span class="p">][</span><span class="n">common</span><span class="o">.</span><span class="n">RootKey</span><span class="p">]</span>
+        <span class="n">asset</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">active_paths</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">SynchronisedActivePaths</span><span class="p">][</span><span class="n">common</span><span class="o">.</span><span class="n">AssetKey</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="n">root</span>
+            <span class="ow">and</span> <span class="n">idx</span> <span class="ow">in</span> <span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">BookmarkTab</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">AssetTab</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">FileTab</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">BookmarkTab</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">root</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="n">asset</span>
+            <span class="ow">and</span> <span class="n">idx</span> <span class="ow">in</span> <span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">AssetTab</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">FileTab</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">AssetTab</span>
+
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;</span> <span class="n">common</span><span class="o">.</span><span class="n">FavouriteTab</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">FavouriteTab</span>
+
+        <span class="c1"># We&#39;ll invoke directly the original setCurrentIndex method</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">views</span><span class="o">.</span><span class="n">ListsWidget</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stacked_widget</span><span class="p">)</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
 
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="k">def</span> <span class="nf">_connect_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""This is where the bulk of the model, view and control widget</span>
+        <span class="sd">&quot;&quot;&quot;This is where the bulk of the model, view and control widget</span>
 <span class="sd">        signals and slots are connected.</span>
 
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bookmarks_widget</span>
         <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assets_widget</span>
         <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">files_widget</span>
@@ -367,10 +405,6 @@
         <span class="n">a</span><span class="o">.</span><span class="n">activated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
             <span class="k">lambda</span><span class="p">:</span> <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">tabChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FileTab</span><span class="p">))</span>
 
-
-        <span class="c1">########################################################################</span>
-        <span class="n">b</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">activeChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">lc</span><span class="o">.</span><span class="n">slack_button</span><span class="o">.</span><span class="n">check_token</span><span class="p">)</span>
-        <span class="c1">#####################################################</span>
         <span class="n">l</span><span class="o">.</span><span class="n">connect_signals</span><span class="p">()</span>
 
         <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">tabChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">updateButtons</span><span class="p">)</span>
@@ -398,13 +432,13 @@
     <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""The widget will be in ``uninitialized`` state after creation.</span>
+        <span class="sd">&quot;&quot;&quot;The widget will be in ``uninitialized`` state after creation.</span>
 <span class="sd">        This method must be called to create the UI layout and to load the item</span>
 <span class="sd">        models.</span>
 
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'Cannot initialize more than once.'</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Cannot initialize more than once.&#39;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_shortcuts</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_create_ui</span><span class="p">()</span>
@@ -436,10 +470,10 @@
             <span class="n">f</span><span class="o">.</span><span class="n">filterFlagChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="n">filter_flag</span><span class="p">(</span><span class="n">flag</span><span class="p">))</span>
             <span class="n">ff</span><span class="o">.</span><span class="n">filterFlagChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">ff</span><span class="o">.</span><span class="n">filter_flag</span><span class="p">(</span><span class="n">flag</span><span class="p">))</span>
 
-        <span class="c1"># Let's load our favourite items</span>
+        <span class="c1"># Let&#39;s load our favourite items</span>
         <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">favouritesChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
 
-        <span class="c1"># We're done, let other components know, we have finished initializing</span>
+        <span class="c1"># We&#39;re done, let other components know, we have finished initializing</span>
         <span class="c1"># the base widget</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_initialized</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span></div>
@@ -455,7 +489,7 @@
             <span class="n">common</span><span class="o">.</span><span class="n">FileKey</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span> <span class="k">if</span> <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="n">k</span><span class="p">)]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
 
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
@@ -557,7 +591,7 @@
             <span class="n">o</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
 
         <span class="n">pixmap</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">get_rsc_pixmap</span><span class="p">(</span>
-            <span class="s1">'icon_bw'</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+            <span class="s1">&#39;icon_bw&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">setOpacity</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">drawPixmap</span><span class="p">(</span><span class="n">pixmaprect</span><span class="p">,</span> <span class="n">pixmap</span><span class="p">,</span> <span class="n">pixmap</span><span class="o">.</span><span class="n">rect</span><span class="p">())</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">setOpacity</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
@@ -565,7 +599,7 @@
         <span class="n">rect</span><span class="o">.</span><span class="n">setTop</span><span class="p">(</span><span class="n">pixmaprect</span><span class="o">.</span><span class="n">bottom</span><span class="p">()</span> <span class="o">+</span> <span class="p">(</span><span class="n">o</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">))</span>
         <span class="n">rect</span><span class="o">.</span><span class="n">setHeight</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
         <span class="n">common</span><span class="o">.</span><span class="n">draw_aliased_text</span><span class="p">(</span>
-            <span class="n">painter</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">rect</span><span class="p">,</span> <span class="s1">'Loading...'</span><span class="p">,</span> <span class="n">align</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
+            <span class="n">painter</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">rect</span><span class="p">,</span> <span class="s1">&#39;Loading...&#39;</span><span class="p">,</span> <span class="n">align</span><span class="p">,</span> <span class="n">color</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MainWidget.paintEvent"><a class="viewcode-back" href="../../api/main.html#bookmarks.main.MainWidget.paintEvent">[docs]</a>    <span class="k">def</span> <span class="nf">paintEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="n">painter</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">()</span>
@@ -592,11 +626,21 @@
           
           
         </div>
-
-        <div class="related-information">
-              Copyright &#169; 2021, Gergely Wootsch |
-          Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-          <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021, Gergely Wootsch
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
         </div>
         
       </footer>
@@ -610,6 +654,7 @@
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     </body>

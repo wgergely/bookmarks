@@ -8,7 +8,11 @@ import sys
 import time
 import uuid
 
-import maya.cmds as cmds  # pylint: disable=E0401
+try:
+    import maya.cmds as cmds
+except ImportError:
+    raise ImportError('Could not find the Maya modules.')
+
 from PySide2 import QtWidgets, QtCore
 
 from .. import common
@@ -399,6 +403,7 @@ def _add_suffix_attribute(rfn, suffix, reference=True):
         except:
             print(f'Could not add attribute to {node}')
 
+
 def is_scene_modified():
     """If the current scene was modified since the last save, the user will be
     prompted to save the scene.
@@ -585,7 +590,6 @@ def capture_viewport_destination():
         scene=scene.baseName()
     )
     return DEFAULT_CAPTURE_DIR, workspace, dest
-
 
 
 class MayaProperties(object):

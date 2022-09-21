@@ -1,14 +1,14 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
-    <meta name="generator" content="sphinx-4.3.1, furo 2021.11.23"/>
+    <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
         <title>bookmarks.common.signals - Bookmarks 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=7f0192ddeb2adecfbaa87ffbcf67d16358b30bc1" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=0af69da206d614734f649b27d4cdc2dd6c31f41d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
 
@@ -24,16 +24,8 @@
   --api-font-size: var(--font-size--normal);
   
   }
-  body[data-theme="dark"] {
-    --color-code-background: #232629;
-  --color-code-foreground: #cccccc;
-  --color-brand-primary: rgba(90, 200, 155, 1);
-  --color-brand-content: rgba(90, 200, 155, 1);
-  --color-api-name: rgba(255, 255, 255, 0.9);
-  
-  }
-  @media (prefers-color-scheme: dark) {
-    body:not([data-theme="light"]) {
+  @media not print {
+    body[data-theme="dark"] {
       --color-code-background: #232629;
   --color-code-foreground: #cccccc;
   --color-brand-primary: rgba(90, 200, 155, 1);
@@ -41,27 +33,35 @@
   --color-api-name: rgba(255, 255, 255, 0.9);
   
     }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+      }
+    }
   }
 </style></head>
   <body>
+    
     <script>
       document.body.dataset.theme = localStorage.getItem("theme") || "auto";
     </script>
     
+
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
     <title>Contents</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" />
-      <line x1="4" y1="6" x2="20" y2="6" />
-      <line x1="10" y1="12" x2="20" y2="12" />
-      <line x1="6" y1="18" x2="20" y2="18" />
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
     </svg>
   </symbol>
   <symbol id="svg-menu" viewBox="0 0 24 24">
     <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
       <line x1="3" y1="12" x2="21" y2="12"></line>
       <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -70,14 +70,14 @@
   </symbol>
   <symbol id="svg-arrow-right" viewBox="0 0 24 24">
     <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
       <polyline points="9 18 15 12 9 6"></polyline>
     </svg>
   </symbol>
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -92,7 +92,7 @@
   </symbol>
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
@@ -100,7 +100,7 @@
   </symbol>
   <symbol id="svg-sun-half" viewBox="0 0 24 24">
     <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <circle cx="12" cy="12" r="9" />
@@ -170,18 +170,31 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../bookmarks.html">Introduction</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/database.html">database</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/images.html">images</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common: Core attributes, classes and methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/database.html">database: Bookmark item database interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/images.html">images: Image cache and thumbnails</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/threads.html">threads: Multi-threading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/tokens.html">tokens: Bookmark item file token definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main: Main widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/items.html">items: Item views &amp; models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/ui.html">ui: Utility classes and methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/topbar.html">topbar: Top bar widget</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/editor.html">editor: Property editor widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/bookmark_editor.html">bookmark_editor: Active bookmark editor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/file_saver.html">file_saver: Generic file saver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/actions.html">actions: A list of user actions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/shortcuts.html">shortcuts: Keyboard shortcuts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/contextmenu.html">contextmenu: Context menus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/launcher.html">launcher: Application launcher</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/shotgrid.html">ShotGrid</a></li>
 </ul>
 </li>
 </ul>
 
 </div>
 </div>
+
       </div>
       
     </div>
@@ -189,6 +202,12 @@
   <div class="main">
     <div class="content">
       <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
         <div class="content-icon-container">
           <div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
@@ -205,9 +224,9 @@
         </div>
         <article role="main">
           <h1>Source code for bookmarks.common.signals</h1><div class="highlight"><pre>
-<span></span><span class="sd">"""Common signals used across Bookmarks.</span>
+<span></span><span class="sd">&quot;&quot;&quot;Common signals used across Bookmarks.</span>
 
-<span class="sd">"""</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtCore</span>
 
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">common</span>
@@ -218,9 +237,9 @@
 
 
 <div class="viewcode-block" id="CoreSignals"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.CoreSignals">[docs]</a><span class="k">class</span> <span class="nc">CoreSignals</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="p">):</span>
-    <span class="sd">"""A utility class used to keep application-wide signals.</span>
+    <span class="sd">&quot;&quot;&quot;A utility class used to keep application-wide signals.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">logChanged</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
 
     <span class="c1"># Top Bar</span>
@@ -241,6 +260,8 @@
 
     <span class="n">serversChanged</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
 
+    <span class="n">jobAdded</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
     <span class="n">bookmarkAdded</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
     <span class="n">bookmarkRemoved</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
@@ -255,6 +276,8 @@
     <span class="n">toggleInlineIcons</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
     <span class="n">toggleFavouritesButton</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
 
+    <span class="n">adjustTabButtonSize</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
+
     <span class="n">activeModeChanged</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="n">tabChanged</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
@@ -264,7 +287,7 @@
     <span class="n">templatesChanged</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
     <span class="n">templateExpanded</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
 
-    <span class="c1"># Shotgun</span>
+    <span class="c1"># ShotGrid</span>
     <span class="n">sgEntitySelected</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
     <span class="n">sgAssetsLinked</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
     <span class="n">sgEntityDataReady</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
@@ -292,13 +315,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">toggleSequenceButton</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">toggle_sequence</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">toggleArchivedButton</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">toggle_archived_items</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">toggleInlineIcons</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">toggle_inline_icons</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">toggleFavouritesButton</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">toggle_favourite_items</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">databaseValueUpdated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">asset_identifier_changed</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assetAdded</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">show_asset</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">taskFolderChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">set_task_folder</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">generateThumbnailsChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">generate_thumbnails_changed</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">adjustTabButtonSize</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">adjust_tab_button_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">taskFolderChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">adjust_tab_button_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bookmarkActivated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">adjust_tab_button_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assetActivated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">adjust_tab_button_size</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">sgConnectionAttemptStarted</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">show_sg_connecting_message</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sgConnectionSuccessful</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">hide_sg_connecting_message</span><span class="p">)</span>
@@ -316,11 +346,21 @@
           
           
         </div>
-
-        <div class="related-information">
-              Copyright &#169; 2021, Gergely Wootsch |
-          Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-          <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021, Gergely Wootsch
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
         </div>
         
       </footer>
@@ -334,6 +374,7 @@
 </div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
     </body>

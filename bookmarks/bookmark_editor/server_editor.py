@@ -159,7 +159,7 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
         self.refresh_menu()
 
     def add_menu(self):
-        self.menu['Add server...'] = {
+        self.menu['Add New Server...'] = {
             'action': self.parent().add,
             'icon': ui.get_icon('add', color=common.color(common.GreenColor))
         }

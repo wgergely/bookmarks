@@ -19,7 +19,7 @@ class Test(base.BaseCase):
         self.assertIsNotNone(common.env_key)
         self.assertIsNotNone(common.bookmark_cache_dir)
         self.assertIsNotNone(common.favorite_file_ext)
-        self.assertIsNotNone(common.static_bookmarks_template)
+        self.assertIsNotNone(common.default_bookmarks_template)
         self.assertIsNotNone(common.job_template)
         self.assertIsNotNone(common.asset_template)
         self.assertIsNotNone(common.max_list_items)
@@ -53,7 +53,7 @@ class Test(base.BaseCase):
 
     def test_config_resources(self):
         with self.assertRaises(RuntimeError):
-            common.get_rsc(base.randomw_str(32))
+            common.get_rsc(base.random_str(32))
 
         self.assertIsInstance(common.get_rsc('icon.ico'), str)
         self.assertTrue(os.path.isfile(common.get_rsc('icon.ico')))

@@ -6,9 +6,13 @@ import os
 import re
 import uuid
 
-import maya.OpenMayaUI as OpenMayaUI
-import maya.app.general.mayaMixin as mayaMixin
-import maya.cmds as cmds
+try:
+    import maya.OpenMayaUI as OpenMayaUI
+    import maya.app.general.mayaMixin as mayaMixin
+    import maya.cmds as cmds
+except ImportError:
+    raise ImportError('Could not find the Maya modules.')
+
 import shiboken2
 from PySide2 import QtWidgets, QtCore
 

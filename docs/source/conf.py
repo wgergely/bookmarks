@@ -15,13 +15,16 @@ import sys
 
 sys.path.insert(0, os.path.abspath(f'{__file__}/../../../bookmarks'))
 
+
 from bookmarks import common
+import bookmarks
+print(bookmarks)
 common.initialize(common.StandaloneMode)
 
 # -- Project information -----------------------------------------------------
 
 project = 'Bookmarks'
-copyright = '2021, Gergely Wootsch'
+copyright = '2022, Gergely Wootsch'
 author = 'Gergely Wootsch'
 
 # The full version, including alpha/beta/rc tags
@@ -39,7 +42,8 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.viewcode',
     'sphinx.ext.autosectionlabel',
-    'sphinx.ext.githubpages'
+    'sphinx.ext.githubpages',
+    'sphinx_markdown_builder'
 ]
 
 napoleon_google_docstring = True

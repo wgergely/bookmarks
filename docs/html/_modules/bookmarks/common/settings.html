@@ -1,14 +1,14 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
-    <meta name="generator" content="sphinx-4.3.1, furo 2021.11.23"/>
+    <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
         <title>bookmarks.common.settings - Bookmarks 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=7f0192ddeb2adecfbaa87ffbcf67d16358b30bc1" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=0af69da206d614734f649b27d4cdc2dd6c31f41d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
 
@@ -24,16 +24,8 @@
   --api-font-size: var(--font-size--normal);
   
   }
-  body[data-theme="dark"] {
-    --color-code-background: #232629;
-  --color-code-foreground: #cccccc;
-  --color-brand-primary: rgba(90, 200, 155, 1);
-  --color-brand-content: rgba(90, 200, 155, 1);
-  --color-api-name: rgba(255, 255, 255, 0.9);
-  
-  }
-  @media (prefers-color-scheme: dark) {
-    body:not([data-theme="light"]) {
+  @media not print {
+    body[data-theme="dark"] {
       --color-code-background: #232629;
   --color-code-foreground: #cccccc;
   --color-brand-primary: rgba(90, 200, 155, 1);
@@ -41,27 +33,35 @@
   --color-api-name: rgba(255, 255, 255, 0.9);
   
     }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+      }
+    }
   }
 </style></head>
   <body>
+    
     <script>
       document.body.dataset.theme = localStorage.getItem("theme") || "auto";
     </script>
     
+
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
     <title>Contents</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" />
-      <line x1="4" y1="6" x2="20" y2="6" />
-      <line x1="10" y1="12" x2="20" y2="12" />
-      <line x1="6" y1="18" x2="20" y2="18" />
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
     </svg>
   </symbol>
   <symbol id="svg-menu" viewBox="0 0 24 24">
     <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
       <line x1="3" y1="12" x2="21" y2="12"></line>
       <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -70,14 +70,14 @@
   </symbol>
   <symbol id="svg-arrow-right" viewBox="0 0 24 24">
     <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
       <polyline points="9 18 15 12 9 6"></polyline>
     </svg>
   </symbol>
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -92,7 +92,7 @@
   </symbol>
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
@@ -100,7 +100,7 @@
   </symbol>
   <symbol id="svg-sun-half" viewBox="0 0 24 24">
     <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <circle cx="12" cy="12" r="9" />
@@ -184,6 +184,7 @@
 
 </div>
 </div>
+
       </div>
       
     </div>
@@ -191,6 +192,12 @@
   <div class="main">
     <div class="content">
       <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
         <div class="content-icon-container">
           <div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
@@ -208,12 +215,12 @@
         <article role="main">
           <h1>Source code for bookmarks.common.settings</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">"""Defines a customized QSettings object used to store user settings.</span>
+<span class="sd">&quot;&quot;&quot;Defines a customized QSettings object used to store user settings.</span>
 
 <span class="sd">The user settings are stored in an ini file stored at :func:`.get_user_settings_path`.</span>
 <span class="sd">The current ui state, current active paths and application settings are all stored in here.</span>
 
-<span class="sd">"""</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
@@ -227,13 +234,13 @@
 <span class="n">SynchronisedActivePaths</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">PrivateActivePaths</span> <span class="o">=</span> <span class="mi">1</span>
 
-<span class="n">ActiveSection</span> <span class="o">=</span> <span class="s1">'Active'</span>
-<span class="n">ServerKey</span> <span class="o">=</span> <span class="s1">'Server'</span>
-<span class="n">JobKey</span> <span class="o">=</span> <span class="s1">'Job'</span>
-<span class="n">RootKey</span> <span class="o">=</span> <span class="s1">'Root'</span>
-<span class="n">AssetKey</span> <span class="o">=</span> <span class="s1">'Asset'</span>
-<span class="n">TaskKey</span> <span class="o">=</span> <span class="s1">'Task'</span>
-<span class="n">FileKey</span> <span class="o">=</span> <span class="s1">'File'</span>
+<span class="n">ActiveSection</span> <span class="o">=</span> <span class="s1">&#39;Active&#39;</span>
+<span class="n">ServerKey</span> <span class="o">=</span> <span class="s1">&#39;Server&#39;</span>
+<span class="n">JobKey</span> <span class="o">=</span> <span class="s1">&#39;Job&#39;</span>
+<span class="n">RootKey</span> <span class="o">=</span> <span class="s1">&#39;Root&#39;</span>
+<span class="n">AssetKey</span> <span class="o">=</span> <span class="s1">&#39;Asset&#39;</span>
+<span class="n">TaskKey</span> <span class="o">=</span> <span class="s1">&#39;Task&#39;</span>
+<span class="n">FileKey</span> <span class="o">=</span> <span class="s1">&#39;File&#39;</span>
 
 <span class="n">ActiveSectionCacheKeys</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n">ServerKey</span><span class="p">,</span>
@@ -244,68 +251,70 @@
     <span class="n">FileKey</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">CurrentUserPicksSection</span> <span class="o">=</span> <span class="s1">'UserPicks'</span>
-<span class="n">ServersKey</span> <span class="o">=</span> <span class="s1">'Servers'</span>
-<span class="n">BookmarksKey</span> <span class="o">=</span> <span class="s1">'Bookmarks'</span>
-<span class="n">FavouritesKey</span> <span class="o">=</span> <span class="s1">'Favourites'</span>
+<span class="n">CurrentUserPicksSection</span> <span class="o">=</span> <span class="s1">&#39;UserPicks&#39;</span>
+<span class="n">ServersKey</span> <span class="o">=</span> <span class="s1">&#39;Servers&#39;</span>
+<span class="n">BookmarksKey</span> <span class="o">=</span> <span class="s1">&#39;Bookmarks&#39;</span>
+<span class="n">FavouritesKey</span> <span class="o">=</span> <span class="s1">&#39;Favourites&#39;</span>
 
-<span class="n">SettingsSection</span> <span class="o">=</span> <span class="s1">'Settings'</span>
-<span class="n">JobsHaveSubdirs</span> <span class="o">=</span> <span class="s1">'JobsHaveSubdirs'</span>
-<span class="n">FFMpegKey</span> <span class="o">=</span> <span class="s1">'FFMpegPath'</span>
-<span class="n">RVKey</span> <span class="o">=</span> <span class="s1">'RVPath'</span>
-<span class="n">UIScaleKey</span> <span class="o">=</span> <span class="s1">'UIScale'</span>
-<span class="n">ShowMenuIconsKey</span> <span class="o">=</span> <span class="s1">'ShowMenuIcons'</span>
-<span class="n">ShowThumbnailBackgroundKey</span> <span class="o">=</span> <span class="s1">'ShowThumbnailBackgroundKey'</span>
-<span class="n">DontGenerateThumbnailsKey</span> <span class="o">=</span> <span class="s1">'DontGenerateThumbnailsKey'</span>
-<span class="n">WorkspaceSyncKey</span> <span class="o">=</span> <span class="s1">'WorkspaceSync'</span>
-<span class="n">WorkspaceWarningsKey</span> <span class="o">=</span> <span class="s1">'WorkspaceWarnings'</span>
-<span class="n">SaveWarningsKey</span> <span class="o">=</span> <span class="s1">'SaveWarnings'</span>
-<span class="n">PushCaptureToRVKey</span> <span class="o">=</span> <span class="s1">'PushCaptureToRV'</span>
-<span class="n">RevealCaptureKey</span> <span class="o">=</span> <span class="s1">'RevealCapture'</span>
-<span class="n">PublishCaptureKey</span> <span class="o">=</span> <span class="s1">'PublishCapture'</span>
+<span class="n">SettingsSection</span> <span class="o">=</span> <span class="s1">&#39;Settings&#39;</span>
 
-<span class="n">ListFilterSection</span> <span class="o">=</span> <span class="s1">'ListFilters'</span>
-<span class="n">ActiveFlagFilterKey</span> <span class="o">=</span> <span class="s1">'ActiveFilter'</span>
-<span class="n">ArchivedFlagFilterKey</span> <span class="o">=</span> <span class="s1">'ArchivedFilter'</span>
-<span class="n">FavouriteFlagFilterKey</span> <span class="o">=</span> <span class="s1">'FavouriteFilter'</span>
-<span class="n">TextFilterKey</span> <span class="o">=</span> <span class="s1">'TextFilter'</span>
-<span class="n">TextFilterKeyHistory</span> <span class="o">=</span> <span class="s1">'TextFilterHistory'</span>
+<span class="c1"># Bookmarks editor</span>
+<span class="n">JobsHaveSubdirs</span> <span class="o">=</span> <span class="s1">&#39;JobsHaveSubdirs&#39;</span>
+<span class="n">RecurseDepth</span> <span class="o">=</span> <span class="s1">&#39;RecurseDepth&#39;</span>
 
-<span class="n">UIStateSection</span> <span class="o">=</span> <span class="s1">'UIState'</span>
-<span class="n">WindowGeometryKey</span> <span class="o">=</span> <span class="s1">'WindowGeometry'</span>
-<span class="n">WindowStateKey</span> <span class="o">=</span> <span class="s1">'WindowState'</span>
-<span class="n">BookmarkEditorGeometryKey</span> <span class="o">=</span> <span class="s1">'BookmarkEditorGeometryKey'</span>
-<span class="n">BookmarkEditorStateKey</span> <span class="o">=</span> <span class="s1">'BookmarkEditorStateKey'</span>
-<span class="n">SortByBaseNameKey</span> <span class="o">=</span> <span class="s1">'SortByBaseName'</span>
-<span class="n">WindowAlwaysOnTopKey</span> <span class="o">=</span> <span class="s1">'WindowAlwaysOnTop'</span>
-<span class="n">WindowFramelessKey</span> <span class="o">=</span> <span class="s1">'WindowFrameless'</span>
-<span class="n">InlineButtonsHidden</span> <span class="o">=</span> <span class="s1">'InlineButtonsHidden'</span>
-<span class="n">CurrentRowHeight</span> <span class="o">=</span> <span class="s1">'CurrentRowHeight'</span>
-<span class="n">CurrentList</span> <span class="o">=</span> <span class="s1">'CurrentListIdx'</span>
-<span class="n">CurrentSortRole</span> <span class="o">=</span> <span class="s1">'CurrentSortRole'</span>
-<span class="n">CurrentSortOrder</span> <span class="o">=</span> <span class="s1">'CurrentSortOrder'</span>
-<span class="n">CurrentDataType</span> <span class="o">=</span> <span class="s1">'CurrentDataType'</span>
-<span class="n">FileSelectionKey</span> <span class="o">=</span> <span class="s1">'FileSelection'</span>
-<span class="n">SequenceSelectionKey</span> <span class="o">=</span> <span class="s1">'FileSequenceSelection'</span>
-<span class="n">BookmarkEditorServerKey</span> <span class="o">=</span> <span class="s1">'BookmarkEditorServer'</span>
-<span class="n">BookmarkEditorJobKey</span> <span class="o">=</span> <span class="s1">'BookmarkEditorJob'</span>
-<span class="n">SlackUserKey</span> <span class="o">=</span> <span class="s1">'SlackUser'</span>
-<span class="n">LinkMultipleCurrentFilter</span> <span class="o">=</span> <span class="s1">'LinkMultipleCurrentFilter'</span>
-<span class="n">PublishTask</span> <span class="o">=</span> <span class="s1">'PublishTask'</span>
-<span class="n">PublishFileType</span> <span class="o">=</span> <span class="s1">'PublishFileType'</span>
+<span class="n">UIScaleKey</span> <span class="o">=</span> <span class="s1">&#39;UIScale&#39;</span>
+<span class="n">ShowMenuIconsKey</span> <span class="o">=</span> <span class="s1">&#39;ShowMenuIcons&#39;</span>
+<span class="n">ShowThumbnailBackgroundKey</span> <span class="o">=</span> <span class="s1">&#39;ShowThumbnailBackgroundKey&#39;</span>
+<span class="n">DontGenerateThumbnailsKey</span> <span class="o">=</span> <span class="s1">&#39;DontGenerateThumbnailsKey&#39;</span>
+<span class="n">WorkspaceSyncKey</span> <span class="o">=</span> <span class="s1">&#39;WorkspaceSync&#39;</span>
+<span class="n">WorkspaceWarningsKey</span> <span class="o">=</span> <span class="s1">&#39;WorkspaceWarnings&#39;</span>
+<span class="n">SaveWarningsKey</span> <span class="o">=</span> <span class="s1">&#39;SaveWarnings&#39;</span>
+<span class="n">PushCaptureToRVKey</span> <span class="o">=</span> <span class="s1">&#39;PushCaptureToRV&#39;</span>
+<span class="n">RevealCaptureKey</span> <span class="o">=</span> <span class="s1">&#39;RevealCapture&#39;</span>
+<span class="n">PublishCaptureKey</span> <span class="o">=</span> <span class="s1">&#39;PublishCapture&#39;</span>
 
-<span class="n">FileSaverSection</span> <span class="o">=</span> <span class="s1">'FileSaver'</span>
-<span class="n">CurrentFolderKey</span> <span class="o">=</span> <span class="s1">'CurrentFolder'</span>
-<span class="n">CurrentTemplateKey</span> <span class="o">=</span> <span class="s1">'CurrentTemplate'</span>
+<span class="n">ListFilterSection</span> <span class="o">=</span> <span class="s1">&#39;ListFilters&#39;</span>
+<span class="n">ActiveFlagFilterKey</span> <span class="o">=</span> <span class="s1">&#39;ActiveFilter&#39;</span>
+<span class="n">ArchivedFlagFilterKey</span> <span class="o">=</span> <span class="s1">&#39;ArchivedFilter&#39;</span>
+<span class="n">FavouriteFlagFilterKey</span> <span class="o">=</span> <span class="s1">&#39;FavouriteFilter&#39;</span>
+<span class="n">TextFilterKey</span> <span class="o">=</span> <span class="s1">&#39;TextFilter&#39;</span>
+<span class="n">TextFilterKeyHistory</span> <span class="o">=</span> <span class="s1">&#39;TextFilterHistory&#39;</span>
 
-<span class="n">PublishVersionSection</span> <span class="o">=</span> <span class="s1">'PublishVersion'</span>
-<span class="n">CurrentUserKey</span> <span class="o">=</span> <span class="s1">'CurrentUser'</span>
-<span class="n">CurrentAssetKey</span> <span class="o">=</span> <span class="s1">'CurrentAsset'</span>
-<span class="n">CurrentSelectionKey</span> <span class="o">=</span> <span class="s1">'CurrentSelection'</span>
+<span class="n">UIStateSection</span> <span class="o">=</span> <span class="s1">&#39;UIState&#39;</span>
+<span class="n">WindowGeometryKey</span> <span class="o">=</span> <span class="s1">&#39;WindowGeometry&#39;</span>
+<span class="n">WindowStateKey</span> <span class="o">=</span> <span class="s1">&#39;WindowState&#39;</span>
+<span class="n">BookmarkEditorGeometryKey</span> <span class="o">=</span> <span class="s1">&#39;BookmarkEditorGeometryKey&#39;</span>
+<span class="n">BookmarkEditorStateKey</span> <span class="o">=</span> <span class="s1">&#39;BookmarkEditorStateKey&#39;</span>
+<span class="n">SortByBaseNameKey</span> <span class="o">=</span> <span class="s1">&#39;SortByBaseName&#39;</span>
+<span class="n">WindowAlwaysOnTopKey</span> <span class="o">=</span> <span class="s1">&#39;WindowAlwaysOnTop&#39;</span>
+<span class="n">WindowFramelessKey</span> <span class="o">=</span> <span class="s1">&#39;WindowFrameless&#39;</span>
+<span class="n">InlineButtonsHidden</span> <span class="o">=</span> <span class="s1">&#39;InlineButtonsHidden&#39;</span>
+<span class="n">CurrentRowHeight</span> <span class="o">=</span> <span class="s1">&#39;CurrentRowHeight&#39;</span>
+<span class="n">CurrentList</span> <span class="o">=</span> <span class="s1">&#39;CurrentListIdx&#39;</span>
+<span class="n">CurrentSortRole</span> <span class="o">=</span> <span class="s1">&#39;CurrentSortRole&#39;</span>
+<span class="n">CurrentSortOrder</span> <span class="o">=</span> <span class="s1">&#39;CurrentSortOrder&#39;</span>
+<span class="n">CurrentDataType</span> <span class="o">=</span> <span class="s1">&#39;CurrentDataType&#39;</span>
+<span class="n">FileSelectionKey</span> <span class="o">=</span> <span class="s1">&#39;FileSelection&#39;</span>
+<span class="n">SequenceSelectionKey</span> <span class="o">=</span> <span class="s1">&#39;FileSequenceSelection&#39;</span>
+<span class="n">BookmarkEditorServerKey</span> <span class="o">=</span> <span class="s1">&#39;BookmarkEditorServer&#39;</span>
+<span class="n">BookmarkEditorJobKey</span> <span class="o">=</span> <span class="s1">&#39;BookmarkEditorJob&#39;</span>
+<span class="n">SlackUserKey</span> <span class="o">=</span> <span class="s1">&#39;SlackUser&#39;</span>
+<span class="n">LinkMultipleCurrentFilter</span> <span class="o">=</span> <span class="s1">&#39;LinkMultipleCurrentFilter&#39;</span>
+<span class="n">PublishTask</span> <span class="o">=</span> <span class="s1">&#39;PublishTask&#39;</span>
+<span class="n">PublishFileType</span> <span class="o">=</span> <span class="s1">&#39;PublishFileType&#39;</span>
 
-<span class="n">SGUserKey</span> <span class="o">=</span> <span class="s1">'SGUser'</span>
-<span class="n">SGStorageKey</span> <span class="o">=</span> <span class="s1">'SGStorage'</span>
-<span class="n">SGTypeKey</span> <span class="o">=</span> <span class="s1">'SGType'</span>
+<span class="n">FileSaverSection</span> <span class="o">=</span> <span class="s1">&#39;FileSaver&#39;</span>
+<span class="n">CurrentFolderKey</span> <span class="o">=</span> <span class="s1">&#39;CurrentFolder&#39;</span>
+<span class="n">CurrentTemplateKey</span> <span class="o">=</span> <span class="s1">&#39;CurrentTemplate&#39;</span>
+
+<span class="n">PublishVersionSection</span> <span class="o">=</span> <span class="s1">&#39;PublishVersion&#39;</span>
+<span class="n">CurrentUserKey</span> <span class="o">=</span> <span class="s1">&#39;CurrentUser&#39;</span>
+<span class="n">CurrentAssetKey</span> <span class="o">=</span> <span class="s1">&#39;CurrentAsset&#39;</span>
+<span class="n">CurrentSelectionKey</span> <span class="o">=</span> <span class="s1">&#39;CurrentSelection&#39;</span>
+
+<span class="n">SGUserKey</span> <span class="o">=</span> <span class="s1">&#39;SGUser&#39;</span>
+<span class="n">SGStorageKey</span> <span class="o">=</span> <span class="s1">&#39;SGStorage&#39;</span>
+<span class="n">SGTypeKey</span> <span class="o">=</span> <span class="s1">&#39;SGType&#39;</span>
 
 
 <span class="k">def</span> <span class="nf">init_settings</span><span class="p">():</span>
@@ -339,18 +348,18 @@
 
 
 <span class="k">def</span> <span class="nf">_init_bookmarks</span><span class="p">():</span>
-    <span class="sd">"""Loads all previously saved bookmarks to memory.</span>
+    <span class="sd">&quot;&quot;&quot;Loads all previously saved bookmarks to memory.</span>
 
-<span class="sd">    The list of bookmarks is made up of a list of persistent bookmarks, defined</span>
-<span class="sd">    in `common.static_bookmarks_template`, and bookmarks added by the user, stored in the</span>
-<span class="sd">    user setting.</span>
+<span class="sd">    The list of bookmark items is made up of a list of default items, defined in</span>
+<span class="sd">    `common.default_bookmarks_template`, and bookmarks added by the user, stored in</span>
+<span class="sd">    the user setting.</span>
 
-<span class="sd">    """</span>
-    <span class="n">_static</span> <span class="o">=</span> <span class="n">get_static_bookmarks</span><span class="p">()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_static</span> <span class="o">=</span> <span class="n">get_default_bookmarks</span><span class="p">()</span>
     <span class="n">_static</span> <span class="o">=</span> <span class="n">_static</span> <span class="k">if</span> <span class="n">_static</span> <span class="k">else</span> <span class="p">{}</span>
 
-    <span class="c1"># Save persistent items to cache</span>
-    <span class="n">common</span><span class="o">.</span><span class="n">static_bookmarks</span> <span class="o">=</span> <span class="n">_static</span>
+    <span class="c1"># Save default items to cache</span>
+    <span class="n">common</span><span class="o">.</span><span class="n">default_bookmarks</span> <span class="o">=</span> <span class="n">_static</span>
 
     <span class="n">_custom</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">CurrentUserPicksSection</span><span class="p">,</span> <span class="n">BookmarksKey</span><span class="p">)</span>
     <span class="n">_custom</span> <span class="o">=</span> <span class="n">_custom</span> <span class="k">if</span> <span class="n">_custom</span> <span class="k">else</span> <span class="p">{}</span>
@@ -375,7 +384,7 @@
 
 
 <div class="viewcode-block" id="active"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.active">[docs]</a><span class="k">def</span> <span class="nf">active</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">"""Get the current active item.</span>
+    <span class="sd">&quot;&quot;&quot;Get the current active item.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        k (str): The name of the path segment, eg. `common.ServerKey`.</span>
@@ -387,7 +396,7 @@
 <span class="sd">        * str (when path=True): Path to the active item.</span>
 <span class="sd">        * tuple (when args=True): Active path elements.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">path</span> <span class="ow">or</span> <span class="n">args</span><span class="p">:</span>
         <span class="n">_path</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">_args</span> <span class="o">=</span> <span class="kc">None</span>
@@ -396,7 +405,7 @@
                   <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">ActiveSectionCacheKeys</span><span class="p">[:</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="n">path</span><span class="p">:</span>
-            <span class="n">_path</span> <span class="o">=</span> <span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">_path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
                 <span class="k">return</span> <span class="p">(</span><span class="n">_path</span><span class="p">,</span> <span class="n">_args</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">_path</span>
@@ -411,43 +420,43 @@
 
 
 <div class="viewcode-block" id="get_user_settings_path"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.get_user_settings_path">[docs]</a><span class="k">def</span> <span class="nf">get_user_settings_path</span><span class="p">():</span>
-    <span class="sd">"""Returns the path to the user settings file."""</span>
+    <span class="sd">&quot;&quot;&quot;Returns the path to the user settings file.&quot;&quot;&quot;</span>
     <span class="n">v</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QStandardPaths</span><span class="o">.</span><span class="n">writableLocation</span><span class="p">(</span>
         <span class="n">QtCore</span><span class="o">.</span><span class="n">QStandardPaths</span><span class="o">.</span><span class="n">GenericDataLocation</span><span class="p">)</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">product</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">user_settings</span><span class="si">}</span><span class="s1">'</span></div>
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">product</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">user_settings</span><span class="si">}</span><span class="s1">&#39;</span></div>
 
 
-<div class="viewcode-block" id="get_static_bookmarks"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.get_static_bookmarks">[docs]</a><span class="k">def</span> <span class="nf">get_static_bookmarks</span><span class="p">():</span>
-    <span class="sd">"""Loads any preconfigured bookmark items from the json config file.</span>
+<div class="viewcode-block" id="get_default_bookmarks"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.get_default_bookmarks">[docs]</a><span class="k">def</span> <span class="nf">get_default_bookmarks</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Loads any preconfigured bookmark items from the json config file.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: The parsed data.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">source</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_rsc</span><span class="p">(</span>
-        <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">TemplateResource</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">static_bookmarks_template</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">TemplateResource</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">default_bookmarks_template</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s1">'r'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf8'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Could not decode `</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s1">`'</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Could not decode `</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s1">`&#39;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Error opening `</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s1">`'</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Error opening `</span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s1">`&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span></div>
 
 
 <span class="k">def</span> <span class="nf">strip</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span>
-        <span class="sa">r</span><span class="s1">'</span><span class="se">\\</span><span class="s1">'</span><span class="p">,</span> <span class="s1">'/'</span><span class="p">,</span>
+        <span class="sa">r</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span>
         <span class="n">s</span><span class="p">,</span>
         <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">UNICODE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span>
-    <span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">bookmark_key</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-    <span class="n">k</span> <span class="o">=</span> <span class="s1">'/'</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">strip</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">args</span><span class="p">])</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">strip</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">args</span><span class="p">])</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">k</span>
 
 
@@ -457,7 +466,7 @@
 
 
 <div class="viewcode-block" id="UserSettings"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.UserSettings">[docs]</a><span class="k">class</span> <span class="nc">UserSettings</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QSettings</span><span class="p">):</span>
-    <span class="sd">"""An `ini` config file to store all local user common.</span>
+    <span class="sd">&quot;&quot;&quot;An `ini` config file to store all local user common.</span>
 
 <span class="sd">    This is where the current bookmarks, saved favourites, active bookmark,</span>
 <span class="sd">    assets and files and other widget states are kept.</span>
@@ -465,14 +474,14 @@
 <span class="sd">    Active Path:</span>
 <span class="sd">        The active path is saved in the following segments:</span>
 
-<span class="sd">        * ActiveSection/ServerKey (str):    Server, eg. '//server/data'.</span>
+<span class="sd">        * ActiveSection/ServerKey (str):    Server, eg. &#39;//server/data&#39;.</span>
 <span class="sd">        * ActiveSection/JobKey (str):       Job folder name inside the server.</span>
-<span class="sd">        * ActiveSection/RootKey (str):      Job-relative bookmark path, eg. 'seq_010/shots'.</span>
-<span class="sd">        * ActiveSection/AssetKey (str):     Job folder name inside the root, eg. 'shot_010'.</span>
-<span class="sd">        * ActiveSection/TaskKey (str):      A folder, eg. 'scenes', 'renders', etc.</span>
+<span class="sd">        * ActiveSection/RootKey (str):      Job-relative bookmark path, eg. &#39;seq_010/shots&#39;.</span>
+<span class="sd">        * ActiveSection/AssetKey (str):     Job folder name inside the root, eg. &#39;shot_010&#39;.</span>
+<span class="sd">        * ActiveSection/TaskKey (str):      A folder, eg. &#39;scenes&#39;, &#39;renders&#39;, etc.</span>
 <span class="sd">        * ActiveSection/FileKey (str):      A relative file path.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -489,12 +498,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">verify_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">load_active_values</span><span class="p">)</span>
 
 <div class="viewcode-block" id="UserSettings.load_active_values"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.UserSettings.load_active_values">[docs]</a>    <span class="k">def</span> <span class="nf">load_active_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""Load previously saved active path elements from the settings file.</span>
+        <span class="sd">&quot;&quot;&quot;Load previously saved active path elements from the settings file.</span>
 
-<span class="sd">        If the resulting path is invalid, we'll progressively unset the invalid</span>
+<span class="sd">        If the resulting path is invalid, we&#39;ll progressively unset the invalid</span>
 <span class="sd">        path segments until we find a valid path.</span>
 
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sync</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ActiveSectionCacheKeys</span><span class="p">:</span>
             <span class="n">common</span><span class="o">.</span><span class="n">active_paths</span><span class="p">[</span><span class="n">SynchronisedActivePaths</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">(</span>
@@ -502,15 +511,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">verify_active</span><span class="p">(</span><span class="n">SynchronisedActivePaths</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verify_active</span><span class="p">(</span><span class="n">PrivateActivePaths</span><span class="p">)</span></div>
 
-        <span class="c1"># for m in (SynchronisedActivePaths, PrivateActivePaths):</span>
-
 <div class="viewcode-block" id="UserSettings.verify_active"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.UserSettings.verify_active">[docs]</a>    <span class="k">def</span> <span class="nf">verify_active</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
-        <span class="sd">"""Verify the active path values and unset any item, that refers to an invalid path.</span>
+        <span class="sd">&quot;&quot;&quot;Verify the active path values and unset any item, that refers to an invalid path.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            m (int): The active mode.</span>
 
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">p</span> <span class="o">=</span> <span class="nb">str</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ActiveSectionCacheKeys</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">common</span><span class="o">.</span><span class="n">active_paths</span><span class="p">[</span><span class="n">m</span><span class="p">][</span><span class="n">k</span><span class="p">]:</span>
@@ -519,7 +526,7 @@
                 <span class="n">common</span><span class="o">.</span><span class="n">active_paths</span><span class="p">[</span><span class="n">m</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="n">SynchronisedActivePaths</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">ActiveSection</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="n">p</span> <span class="o">+=</span> <span class="s1">'/'</span></div>
+            <span class="n">p</span> <span class="o">+=</span> <span class="s1">&#39;/&#39;</span></div>
 
     <span class="k">def</span> <span class="nf">set_servers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
@@ -528,7 +535,7 @@
 
     <span class="k">def</span> <span class="nf">set_bookmarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
-        <span class="n">common</span><span class="o">.</span><span class="n">bookmarks</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">bookmarks</span> <span class="o">=</span> <span class="n">v</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">CurrentUserPicksSection</span><span class="p">,</span> <span class="n">BookmarksKey</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">set_favourites</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
@@ -536,7 +543,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">CurrentUserPicksSection</span><span class="p">,</span> <span class="n">FavouritesKey</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
 
 <div class="viewcode-block" id="UserSettings.value"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.UserSettings.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="sd">"""Get a values from the user settings file.</span>
+        <span class="sd">&quot;&quot;&quot;Get a values from the user settings file.</span>
 
 <span class="sd">        Overrides the default `value()` method to provide type checking.</span>
 <span class="sd">        Types are saved in `{key}_type`.</span>
@@ -548,49 +555,47 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            The value stored in `user_settings` or `None` if not found.</span>
 
-<span class="sd">        """</span>
-        <span class="n">k</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">'</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span>
 
-        <span class="n">t</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="s1">'_type'</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39;_type&#39;</span><span class="p">)</span>
         <span class="n">v</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="s1">'NoneType'</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="s1">&#39;NoneType&#39;</span><span class="p">:</span>
                 <span class="n">v</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s1">'bool'</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s1">&#39;bool&#39;</span><span class="p">:</span>
                 <span class="c1"># Convert any loose representation back to `bool()`</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-                    <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'true'</span><span class="p">,</span> <span class="s1">'1'</span><span class="p">]:</span>
+                    <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;true&#39;</span><span class="p">,</span> <span class="s1">&#39;1&#39;</span><span class="p">]:</span>
                         <span class="n">v</span> <span class="o">=</span> <span class="kc">True</span>
-                    <span class="k">elif</span> <span class="n">v</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'false'</span><span class="p">,</span> <span class="s1">'0'</span><span class="p">,</span> <span class="s1">'none'</span><span class="p">]:</span>
+                    <span class="k">elif</span> <span class="n">v</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;false&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;none&#39;</span><span class="p">]:</span>
                         <span class="n">v</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s1">'str'</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">'utf-8'</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s1">'str'</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s1">&#39;str&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s1">&#39;str&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">v</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
                 <span class="k">except</span><span class="p">:</span>
                     <span class="k">pass</span>
-            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s1">'int'</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s1">&#39;int&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
                 <span class="n">v</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s1">'float'</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="o">==</span> <span class="s1">&#39;float&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
                 <span class="n">v</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">'Type conversion failed'</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Type conversion failed&#39;</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">v</span></div>
 
 <div class="viewcode-block" id="UserSettings.setValue"><a class="viewcode-back" href="../../../api/common.html#bookmarks.common.UserSettings.setValue">[docs]</a>    <span class="k">def</span> <span class="nf">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="n">k</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">'</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">section</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&#39;</span>
 
         <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="n">ActiveSection</span> <span class="ow">and</span> <span class="n">common</span><span class="o">.</span><span class="n">active_mode</span> <span class="o">==</span> <span class="n">PrivateActivePaths</span><span class="p">:</span>
             <span class="k">return</span>
-        <span class="c1">#     raise RuntimeError('The saved active path cannot be changed when the mode is `PrivateActivePaths`')</span>
-
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="s1">'_type'</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></div></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="s1">&#39;_type&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span></div></div>
 </pre></div>
         </article>
       </div>
@@ -600,11 +605,21 @@
           
           
         </div>
-
-        <div class="related-information">
-              Copyright &#169; 2021, Gergely Wootsch |
-          Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-          <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021, Gergely Wootsch
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
         </div>
         
       </footer>
@@ -618,6 +633,7 @@
 </div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
     </body>

@@ -1,3 +1,11 @@
+"""Various generic utility classes and functions used to define the UI.
+
+Attributes:
+
+    MESSAGE_BOX_STYLESHEET (str): Stylesheet used to style our custom ``QMessageBox``.
+    PUSH_BUTTON_STYLESHEET (str): Stylesheet used to style our custom ``QPushButton``.
+
+"""
 import functools
 
 from PySide2 import QtCore, QtGui, QtWidgets
@@ -842,7 +850,8 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
             common.size(common.FontSizeSmall)
         )
 
-        color = common.color(common.TextColor)
+        _fg = index.data(QtCore.Qt.ForegroundRole)
+        color = _fg if _fg else common.color(common.TextColor)
         color = common.color(common.TextSelectedColor) if selected else color
         color = common.color(common.TextColor) if checked else color
 
@@ -1398,7 +1407,6 @@ class GalleryWidget(QtWidgets.QDialog):
             self.windowFlags() | QtCore.Qt.WindowStaysOnTopHint
         )
 
-
         row = add_row(
             None, height=common.size(common.HeightRow), padding=None, parent=self
         )
@@ -1460,7 +1468,6 @@ class GalleryWidget(QtWidgets.QDialog):
         self.scroll_area.setStyleSheet('border:none;')
         self.scroll_area.setFocusProxy(widget)
         self.setFocusProxy(widget)
-
 
     def init_data(self):
         row = 0

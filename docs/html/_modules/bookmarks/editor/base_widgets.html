@@ -1,14 +1,14 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
-    <meta name="generator" content="sphinx-4.3.1, furo 2021.11.23"/>
+    <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
         <title>bookmarks.editor.base_widgets - Bookmarks 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=7f0192ddeb2adecfbaa87ffbcf67d16358b30bc1" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=0af69da206d614734f649b27d4cdc2dd6c31f41d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
 
@@ -24,16 +24,8 @@
   --api-font-size: var(--font-size--normal);
   
   }
-  body[data-theme="dark"] {
-    --color-code-background: #232629;
-  --color-code-foreground: #cccccc;
-  --color-brand-primary: rgba(90, 200, 155, 1);
-  --color-brand-content: rgba(90, 200, 155, 1);
-  --color-api-name: rgba(255, 255, 255, 0.9);
-  
-  }
-  @media (prefers-color-scheme: dark) {
-    body:not([data-theme="light"]) {
+  @media not print {
+    body[data-theme="dark"] {
       --color-code-background: #232629;
   --color-code-foreground: #cccccc;
   --color-brand-primary: rgba(90, 200, 155, 1);
@@ -41,27 +33,35 @@
   --color-api-name: rgba(255, 255, 255, 0.9);
   
     }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+      }
+    }
   }
 </style></head>
   <body>
+    
     <script>
       document.body.dataset.theme = localStorage.getItem("theme") || "auto";
     </script>
     
+
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
     <title>Contents</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" />
-      <line x1="4" y1="6" x2="20" y2="6" />
-      <line x1="10" y1="12" x2="20" y2="12" />
-      <line x1="6" y1="18" x2="20" y2="18" />
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
     </svg>
   </symbol>
   <symbol id="svg-menu" viewBox="0 0 24 24">
     <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
       <line x1="3" y1="12" x2="21" y2="12"></line>
       <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -70,14 +70,14 @@
   </symbol>
   <symbol id="svg-arrow-right" viewBox="0 0 24 24">
     <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
       <polyline points="9 18 15 12 9 6"></polyline>
     </svg>
   </symbol>
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -92,7 +92,7 @@
   </symbol>
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
@@ -100,7 +100,7 @@
   </symbol>
   <symbol id="svg-sun-half" viewBox="0 0 24 24">
     <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <circle cx="12" cy="12" r="9" />
@@ -171,18 +171,25 @@
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../bookmarks.html">Introduction</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/database.html">database</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/images.html">images</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/tokens.html">tokens</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common: Core attributes, classes and methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/database.html">database: Bookmark item database interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/images.html">images: Image cache and thumbnails</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/threads.html">threads: Multi-threading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/tokens.html">tokens: Bookmark item file token definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/ui.html">ui: Utility classes and methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main: Main widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists: Item list widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/topbar.html">topbar: Top bar widget</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/editor.html">editor: Property editor widgets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/shortcuts.html">shortcuts: Keyboard shortcuts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/actions.html">actions: A list of user actions</a></li>
 </ul>
 </li>
 </ul>
 
 </div>
 </div>
+
       </div>
       
     </div>
@@ -190,6 +197,12 @@
   <div class="main">
     <div class="content">
       <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
         <div class="content-icon-container">
           <div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
@@ -207,9 +220,9 @@
         <article role="main">
           <h1>Source code for bookmarks.editor.base_widgets</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="sd">"""A list of widgets and methods used by `editor.BasePropertyEditor`.</span>
+<span class="sd">&quot;&quot;&quot;A list of widgets and methods used by :class:`bookmarks.editor.base.BasePropertyEditor`.</span>
 
-<span class="sd">"""</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">uuid</span>
 
 <span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtWidgets</span>
@@ -222,16 +235,16 @@
 
 <span class="n">THUMBNAIL_EDITOR_SIZE</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthMargin</span><span class="p">)</span> <span class="o">*</span> <span class="mi">10</span>
 <span class="n">HEIGHT</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">HeightRow</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.8</span>
-<span class="n">TEMP_THUMBNAIL_PATH</span> <span class="o">=</span> <span class="s1">'</span><span class="si">{temp}</span><span class="s1">/</span><span class="si">{product}</span><span class="s1">/temp/</span><span class="si">{uuid}</span><span class="s1">.</span><span class="si">{ext}</span><span class="s1">'</span>
+<span class="n">TEMP_THUMBNAIL_PATH</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{temp}</span><span class="s1">/</span><span class="si">{product}</span><span class="s1">/temp/</span><span class="si">{uuid}</span><span class="s1">.</span><span class="si">{ext}</span><span class="s1">&#39;</span>
 
-<span class="n">ProjectTypes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'Project'</span><span class="p">,)</span>
-<span class="n">AssetTypes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'Asset'</span><span class="p">,</span> <span class="s1">'Sequence'</span><span class="p">,</span> <span class="s1">'Shot'</span><span class="p">)</span>
+<span class="n">ProjectTypes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Project&#39;</span><span class="p">,)</span>
+<span class="n">AssetTypes</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Asset&#39;</span><span class="p">,</span> <span class="s1">&#39;Sequence&#39;</span><span class="p">,</span> <span class="s1">&#39;Shot&#39;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="process_image"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base_widgets.process_image">[docs]</a><span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
 <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
 <span class="k">def</span> <span class="nf">process_image</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
-    <span class="sd">"""Converts, resizes and loads an image file as a QImage.</span>
+    <span class="sd">&quot;&quot;&quot;Converts, resizes and loads an image file as a QImage.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        source (str): Path to an image file.</span>
@@ -240,7 +253,7 @@
 <span class="sd">        QImage: The resized QImage, or `None` if the image was not processed</span>
 <span class="sd">        successfully.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">destination</span> <span class="o">=</span> <span class="n">TEMP_THUMBNAIL_PATH</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
         <span class="n">temp</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QStandardPaths</span><span class="o">.</span><span class="n">writableLocation</span><span class="p">(</span>
             <span class="n">QtCore</span><span class="o">.</span><span class="n">QStandardPaths</span><span class="o">.</span><span class="n">GenericDataLocation</span>
@@ -251,8 +264,8 @@
     <span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileInfo</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span><span class="o">.</span><span class="n">dir</span><span class="p">()</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span><span class="o">.</span><span class="n">dir</span><span class="p">()</span><span class="o">.</span><span class="n">mkpath</span><span class="p">(</span><span class="s1">'.'</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'Could not create temp folder'</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">f</span><span class="o">.</span><span class="n">dir</span><span class="p">()</span><span class="o">.</span><span class="n">mkpath</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Could not create temp folder&#39;</span><span class="p">)</span>
 
     <span class="n">res</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">oiio_make_thumbnail</span><span class="p">(</span>
         <span class="n">source</span><span class="p">,</span>
@@ -261,7 +274,7 @@
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'Failed to convert the thumbnail'</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Failed to convert the thumbnail&#39;</span><span class="p">)</span>
 
     <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">flush</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
     <span class="n">image</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span>
@@ -270,10 +283,10 @@
         <span class="n">force</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">image</span> <span class="ow">or</span> <span class="n">image</span><span class="o">.</span><span class="n">isNull</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'Failed to load converted image'</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Failed to load converted image&#39;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFile</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span><span class="o">.</span><span class="n">remove</span><span class="p">():</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">'Could not remove temp image.'</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Could not remove temp image.&#39;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">image</span></div>
 
@@ -281,7 +294,7 @@
 <div class="viewcode-block" id="BaseComboBox"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base_widgets.BaseComboBox">[docs]</a><span class="k">class</span> <span class="nc">BaseComboBox</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QComboBox</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">BaseComboBox</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setFixedHeight</span><span class="p">(</span><span class="n">HEIGHT</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setView</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QListView</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_items</span><span class="p">()</span>
 
     <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
@@ -296,15 +309,15 @@
     <span class="k">def</span> <span class="nf">decorate_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="n">sg_pixmap</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">get_rsc_pixmap</span><span class="p">(</span>
-            <span class="s1">'sg'</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">SeparatorColor</span><span class="p">),</span>
+            <span class="s1">&#39;sg&#39;</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">SeparatorColor</span><span class="p">),</span>
             <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthMargin</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
         <span class="p">)</span>
         <span class="n">check_pixmap</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">get_rsc_pixmap</span><span class="p">(</span>
-            <span class="s1">'check'</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">GreenColor</span><span class="p">),</span>
+            <span class="s1">&#39;check&#39;</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">GreenColor</span><span class="p">),</span>
             <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthMargin</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
         <span class="p">)</span>
         <span class="n">error_pixmap</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">get_rsc_pixmap</span><span class="p">(</span>
-            <span class="s1">'close'</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">RedColor</span><span class="p">),</span>
+            <span class="s1">&#39;close&#39;</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">RedColor</span><span class="p">),</span>
             <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthMargin</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
         <span class="p">)</span>
 
@@ -341,51 +354,51 @@
 
 
 <div class="viewcode-block" id="ThumbnailContextMenu"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base_widgets.ThumbnailContextMenu">[docs]</a><span class="k">class</span> <span class="nc">ThumbnailContextMenu</span><span class="p">(</span><span class="n">contextmenu</span><span class="o">.</span><span class="n">BaseContextMenu</span><span class="p">):</span>
-    <span class="sd">"""Context menu associated with the ThumbnailEditorWidget.</span>
+    <span class="sd">&quot;&quot;&quot;Context menu associated with the ThumbnailEditorWidget.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ThumbnailContextMenu.setup"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base_widgets.ThumbnailContextMenu.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">add_pixmap</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">get_rsc_pixmap</span><span class="p">(</span>
-            <span class="s1">'add'</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">GreenColor</span><span class="p">),</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthMargin</span><span class="p">)</span>
+            <span class="s1">&#39;add&#39;</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">GreenColor</span><span class="p">),</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthMargin</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="n">remove_pixmap</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">get_rsc_pixmap</span><span class="p">(</span>
-            <span class="s1">'close'</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">RedColor</span><span class="p">),</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthMargin</span><span class="p">)</span>
+            <span class="s1">&#39;close&#39;</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">RedColor</span><span class="p">),</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthMargin</span><span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">menu</span><span class="p">[</span><span class="s1">'Capture...'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">'icon'</span><span class="p">:</span> <span class="n">add_pixmap</span><span class="p">,</span>
-            <span class="s1">'action'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">capture</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">menu</span><span class="p">[</span><span class="s1">&#39;Capture...&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;icon&#39;</span><span class="p">:</span> <span class="n">add_pixmap</span><span class="p">,</span>
+            <span class="s1">&#39;action&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">capture</span>
         <span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">menu</span><span class="p">[</span><span class="s1">'Pick...'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">'icon'</span><span class="p">:</span> <span class="n">add_pixmap</span><span class="p">,</span>
-            <span class="s1">'action'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">pick_image</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">menu</span><span class="p">[</span><span class="s1">&#39;Pick...&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;icon&#39;</span><span class="p">:</span> <span class="n">add_pixmap</span><span class="p">,</span>
+            <span class="s1">&#39;action&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">pick_image</span>
         <span class="p">}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">separator</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">menu</span><span class="p">[</span><span class="s1">'Reset'</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">'icon'</span><span class="p">:</span> <span class="n">remove_pixmap</span><span class="p">,</span>
-            <span class="s1">'action'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">reset_image</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">menu</span><span class="p">[</span><span class="s1">&#39;Reset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;icon&#39;</span><span class="p">:</span> <span class="n">remove_pixmap</span><span class="p">,</span>
+            <span class="s1">&#39;action&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">reset_image</span>
         <span class="p">}</span></div></div>
 
 
 <div class="viewcode-block" id="ThumbnailEditorWidget"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base_widgets.ThumbnailEditorWidget">[docs]</a><span class="k">class</span> <span class="nc">ThumbnailEditorWidget</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">ClickableIconButton</span><span class="p">):</span>
-    <span class="sd">"""Widget used to edit item thumbnails.</span>
+    <span class="sd">&quot;&quot;&quot;Widget used to edit item thumbnails.</span>
 
-<span class="sd">    """</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">THUMBNAIL_EDITOR_SIZE</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">fallback_thumb</span><span class="o">=</span><span class="s1">'placeholder'</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span>
+            <span class="n">fallback_thumb</span><span class="o">=</span><span class="s1">&#39;placeholder&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ThumbnailEditorWidget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="s1">'pick_image'</span><span class="p">,</span>
+            <span class="s1">&#39;pick_image&#39;</span><span class="p">,</span>
             <span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">BlueColor</span><span class="p">),</span>
              <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">BackgroundDarkColor</span><span class="p">)),</span>
             <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span>
-            <span class="n">description</span><span class="o">=</span><span class="s1">'Drag-and-drop an image to add, click to capture, '</span>
-                        <span class="s1">'or right-click to pick a custom thumbnail...'</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Drag-and-drop an image to add, click to capture, &#39;</span>
+                        <span class="s1">&#39;or right-click to pick a custom thumbnail...&#39;</span><span class="p">,</span>
             <span class="n">parent</span><span class="o">=</span><span class="n">parent</span>
         <span class="p">)</span>
 
@@ -422,7 +435,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 
 <div class="viewcode-block" id="ThumbnailEditorWidget.save_image"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base_widgets.ThumbnailEditorWidget.save_image">[docs]</a>    <span class="k">def</span> <span class="nf">save_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">destination</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">"""Save the selected thumbnail image to the disc."""</span>
+        <span class="sd">&quot;&quot;&quot;Save the selected thumbnail image to the disc.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_image</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QImage</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image</span><span class="o">.</span><span class="n">isNull</span><span class="p">():</span>
             <span class="k">return</span>
 
@@ -440,7 +453,7 @@
             <span class="n">destination</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">get_cached_thumbnail_path</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">destination</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">'Failed to save thumbnail.'</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Failed to save thumbnail.&#39;</span><span class="p">)</span>
 
         <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">flush</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span></div>
 
@@ -451,24 +464,24 @@
     <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="k">def</span> <span class="nf">pick_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">..lists.widgets</span> <span class="kn">import</span> <span class="n">thumb_picker</span> <span class="k">as</span> <span class="n">editor</span>
+        <span class="kn">from</span> <span class="nn">..items.widgets</span> <span class="kn">import</span> <span class="n">thumb_picker</span> <span class="k">as</span> <span class="n">editor</span>
         <span class="n">widget</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
         <span class="n">widget</span><span class="o">.</span><span class="n">fileSelected</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">process_image</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ThumbnailEditorWidget.capture"><a class="viewcode-back" href="../../../api/editor.html#bookmarks.editor.base_widgets.ThumbnailEditorWidget.capture">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="k">def</span> <span class="nf">capture</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""Captures a thumbnail and save it as a QImage.</span>
+        <span class="sd">&quot;&quot;&quot;Captures a thumbnail and save it as a QImage.</span>
 
 <span class="sd">        The captured image is stored internally in `self._image` and saved to</span>
 <span class="sd">        disk when `self.save_image()` is called.</span>
 
-<span class="sd">        """</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">save_window</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hide_window</span><span class="p">()</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">..lists.widgets</span> <span class="kn">import</span> <span class="n">thumb_capture</span> <span class="k">as</span> <span class="n">editor</span>
+            <span class="kn">from</span> <span class="nn">..items.widgets</span> <span class="kn">import</span> <span class="n">thumb_capture</span> <span class="k">as</span> <span class="n">editor</span>
             <span class="n">widget</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
             <span class="n">widget</span><span class="o">.</span><span class="n">accepted</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">restore_window</span><span class="p">)</span>
             <span class="n">widget</span><span class="o">.</span><span class="n">rejected</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">restore_window</span><span class="p">)</span>
@@ -585,7 +598,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_paint_proposed_thumbnail</span><span class="p">(</span><span class="n">painter</span><span class="p">)</span>
         <span class="k">except</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">'Error painting.'</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Error painting.&#39;</span><span class="p">)</span>
         <span class="k">finally</span><span class="p">:</span>
             <span class="n">painter</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
 
@@ -651,11 +664,21 @@
           
           
         </div>
-
-        <div class="related-information">
-              Copyright &#169; 2021, Gergely Wootsch |
-          Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-          <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2021, Gergely Wootsch
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
         </div>
         
       </footer>
@@ -669,6 +692,7 @@
 </div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
     </body>

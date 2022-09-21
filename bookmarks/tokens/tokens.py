@@ -12,6 +12,8 @@ Use :func:`.get` to retrieve token config controller instances.
 
 .. code-block:: python
 
+    from bookmarks.tokens import tokens
+
     tokens_config = tokens.get(server, job, root)
     data = tokens_config.data()
 

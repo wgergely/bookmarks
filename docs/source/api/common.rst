@@ -5,7 +5,7 @@ common
 
 
 
-common.setup
+setup
 ------------
 
 .. automodule:: bookmarks.common.setup
@@ -13,7 +13,7 @@ common.setup
 
 
 
-common.core
+core
 -----------
 
 .. automodule:: bookmarks.common.core
@@ -21,7 +21,7 @@ common.core
 
 
 
-common.data
+data
 -----------
 
 .. automodule:: bookmarks.common.data
@@ -29,7 +29,7 @@ common.data
 
 
 
-common.filemonitor
+filemonitor
 ------------------
 
 .. automodule:: bookmarks.common.filemonitor
@@ -37,7 +37,7 @@ common.filemonitor
 
 
 
-common.font
+font
 -----------
 
 .. automodule:: bookmarks.common.font
@@ -45,7 +45,7 @@ common.font
 
 
 
-common.sequence
+sequence
 ---------------
 
 .. automodule:: bookmarks.common.sequence
@@ -53,7 +53,7 @@ common.sequence
 
 
 
-common.settings
+settings
 ---------------
 
 .. automodule:: bookmarks.common.settings
@@ -61,7 +61,7 @@ common.settings
 
 
 
-common.sessionlock
+sessionlock
 ------------------
 
 .. automodule:: bookmarks.common.sessionlock
@@ -69,7 +69,7 @@ common.sessionlock
 
 
 
-common.signals
+signals
 --------------
 
 .. automodule:: bookmarks.common.signals
@@ -77,7 +77,7 @@ common.signals
 
 
 
-common.lists
+lists
 ------------
 
 .. automodule:: bookmarks.common.lists
@@ -85,7 +85,7 @@ common.lists
 
 
 
-common.ui
+ui
 ---------
 
 .. automodule:: bookmarks.common.ui

@@ -1,43 +1,82 @@
-### Python-based asset manager to locate, annotate and browse project content.
+# Welcome to Bookmarks!
 
-<br>
+## Introduction
 
-![alt text](https://img.shields.io/badge/Python-2.7-lightgrey.svg "Python 2.7") ![alt text](https://img.shields.io/badge/Qt-5.6%2B-lightgrey.svg "Qt 5.6+") ![alt text](https://img.shields.io/badge/platform-windows-lightgray.svg "Windows")
-<br>
+Bookmarks is a lightweight asset manager written in Python designed to
+browse and manage project content of animation, VFX and film projects.
 
-***
+### Features
 
-<br>
+The app displays content as separate `bookmark`, `asset` and `file` items. Each
+`bookmark` item contains a series of `asset` items that in turn contain `file`
+items. `Bookmark` and `asset` items can be configured independently to link with,
+for instance, `ShotGrid` entities or set up with properties, like frame-rate,
+resolution, and custom urls. These properties can be used to quickly configure scenes
+in host applications, like Maya, and to access related external resources.
 
-Bookmarks is a lightweight asset manager designed to browse film, animation or VFX project content. It utilises the brilliant OpenImageIO library to generate thumbnails. It also provides a simple interface to create jobs based on zip template files and various tools to annotate and filter items.
+The app provides simple tools to create new jobs from ZIP file templates (although this
+is usually something very site specific) and options to annotate and filter existing
+items. It can also preview images files using `OpenImageIO`.
 
-Use Bookmarks to separate larger project folder structures into smaller logical parts. We refer to these parts as bookmark items. For example, `{job}/SHOTS` or `{jobs}/ASSETS` folders could be considered bookmark items and contain framerate, resolution, Slack and Shotgun connection information. Use these properties to link assets with their Shotgun counterparts, send Slack messages or apply cut and resolution settings to Maya scenes.
+### Background
 
-<a href="./bookmarks/rsc/docs/bookmark_graph.jpg" target="_blank">Content is organised into 3 tabs: bookmark items, assets and files:</a>
-Bookmarks are arbitrary folders inside a job and contain asset items.
-_Assets_ are Maya workspace-like folder structures and contain a
-series of subfolders (think _scene_, _render_, _cache_ folders).
-_Files_ are project and image files stored in asset subfolders. The tool lists all files in the selected asset subfolder - the idea here is that this provides a good overview to then use the provided search and filter tools to locate project and image files.
+This project was developed to manage my project personal projects and is adapted to my
+own custom way of setting them up. This is to say, Bookmarks expects certain patterns to
+be respected to read files and folders correctly, but I tried my best to make things
+easily customizable to adapt to site specific environments.
 
-Maya
-----
+### Quick Start
 
-Bookmarks started out as a Maya utility and we're still providing a Maya plugin. It replaces the internal Maya Project Manager and uses the current asset for setting the Workspace. Bookmarks also boundles a few utility scripts for importing/exporting scenes and file caches, capturing viewport, and more!
-
-
-Dependencies
-------------
-
-Bookmarks is a Python2 project tested against PySide2 / Qt5. We're using the python bindings of [OpenImageIO](https://github.com/OpenImageIO/oiio) and the [shotgun_api3](https://github.com/shotgunsoftware/python-api), [psutil](https://github.com/giampaolo/psutil), slack and [scandir](https://github.com/benhoyt/scandir) modules. Currently only we're only packaging Bookmarks with precompiled dependecies for Windows, but Bookmarks should be able to run on other platforms. Some functionaly is not platform agnostic and has not yet been implemented.
-
-
-Usage
------
-
-If all the dependecies are satisfied, you can start Bookmarks calling its exec method:
+The simplest way to start Bookmarks as a standalone application is to run:
 
 ```python
 import bookmarks
 bookmarks.exec_()
 ```
-To start bookmarks in Maya best is to use the boundled Maya plugin. The installer will automatically install the plugin if a Maya installation is available on your system. Otherwise, the source plugin code can be found at `./bookmarks/maya/plugin.py`.
+
+### Dependencies
+
+The following python packages are required to run Bookmarks:
+
+
+* `Python3`: Tested against 3.9.
+
+
+* `PySide2`: Tested against Qt 5.15.2. [https://pypi.org/project/PySide2](https://pypi.org/project/PySide2)
+
+
+* `OpenImageIO`: Used to generate thumbnails for image items [https://github.com/OpenImageIO/oiio](https://github.com/OpenImageIO/oiio)
+
+
+* `numpy`: [https://pypi.org/project/numpy](https://pypi.org/project/numpy)
+
+
+* `slack_sdk`: [https://pypi.org/project/slack_sdk](https://pypi.org/project/slack_sdk)
+
+
+* `psutil`: [https://pypi.org/project/psutil](https://pypi.org/project/psutil)
+
+
+* `shotgun_api3`: [https://github.com/shotgunsoftware/python-api](https://github.com/shotgunsoftware/python-api)
+
+Currently, Windows is the only supported platform (although much of the codebase should
+be platform-agnostic).
+
+**NOTE**: OpenImageIO does not currently maintain installable python packages. Building it
+manually is therefore required.
+
+### Standalone and Embedded Modes
+
+Bookmarks can be run in two modes. As a standalone application, or embedded in a
+PySide2 environment. The base-layers can be initialized with:
+
+```python
+from bookmarks import common
+common.initialize(common.EmbeddedMode) # or common.StandaloneMode
+```
+
+[`bookmarks.exec_()`](api/main.md#bookmarks.exec_) is a utility method for starting Bookmarks in
+`common.StandaloneMode`, whilst `common.EmbeddedMode` is useful when
+running from inside a host DCC. Currently only the Maya plugin makes use of this mode.
+See `bookmarks.maya` and [`bookmarks.common`](api/common.md#module-bookmarks.common) for the related methods.
+

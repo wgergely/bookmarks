@@ -15,23 +15,22 @@ The Slack App requires the `users:read` and
 `chat:write` scopes to function. To send messages to Slack Channels
 the bot is not part of add `chat:write.public`.
 Scopes `channels:read` and `groups:read` are needed to list the available
-slack channels.
+Slack channels.
 
 See http://api.slack.com/apps for more information.
 
 
 """
-import urllib.request
 import urllib.error
+import urllib.request
+
 import slack_sdk
-
-
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from .. import log
 from .. import common
-from .. import ui
 from .. import images
+from .. import log
+from .. import ui
 
 IdRole = QtCore.Qt.UserRole + 1
 ThumbnailHashRole = IdRole + 1
@@ -368,7 +367,8 @@ class UsersModel(QtCore.QAbstractItemModel):
                     QtCore.Qt.DisplayRole: 'Channel:  ' + channel['name'],
                     QtCore.Qt.DecorationRole: icon,
                     QtCore.Qt.SizeHintRole: self.row_size,
-                    QtCore.Qt.FontRole: common.font_db.primary_font(common.size(common.FontSizeSmall))[0],
+                    QtCore.Qt.FontRole:
+                        common.font_db.primary_font(common.size(common.FontSizeSmall))[0],
                     IdRole: channel['id'],
                     ThumbnailHashRole: None,
                     ThumbnailUrlRole: None,
@@ -384,7 +384,8 @@ class UsersModel(QtCore.QAbstractItemModel):
                     QtCore.Qt.DisplayRole: self.get_pretty_name(profile),
                     QtCore.Qt.DecorationRole: icon,
                     QtCore.Qt.SizeHintRole: self.row_size,
-                    QtCore.Qt.FontRole: common.font_db.primary_font(common.size(common.FontSizeSmall))[0],
+                    QtCore.Qt.FontRole:
+                        common.font_db.primary_font(common.size(common.FontSizeSmall))[0],
                     IdRole: profile['id'],
                     ThumbnailHashRole: profile['profile']['avatar_hash'],
                     ThumbnailUrlRole: profile['profile']['image_32'],

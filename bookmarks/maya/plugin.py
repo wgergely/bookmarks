@@ -9,8 +9,11 @@ necessary dependencies.
 import os
 import sys
 
-from maya import cmds
-from maya.api import OpenMaya
+try:
+    from maya import cmds
+    from maya.api import OpenMaya
+except ImportError:
+    raise ImportError('Could not find the Maya modules.')
 
 env_key = 'BOOKMARKS_ROOT'
 product = 'bookmarks'
@@ -50,8 +53,9 @@ def init_environment(key, add_private=False):
     by the Bookmark installer to point to the installation root directory.
 
     Raises:
-            EnvironmentError: When the `env_key` is not set.
-            RuntimeError: When the `env_key` is invalid or a directory missing.
+            EnvironmentError: When the `key` environment is not set.
+            RuntimeError: When the `key` environment is invalid or points to a missing
+            directory.
 
     """
     if key not in os.environ:

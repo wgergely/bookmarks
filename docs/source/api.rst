@@ -1,6 +1,6 @@
-----------------------------
-Python Modules Documentation
-----------------------------
+==============
+Python Modules
+==============
 
 This is the developer documentation of Bookmarks' Python modules.
 
@@ -14,11 +14,15 @@ If you're looking for the user guide, see the :ref:`Introduction`.
 .. toctree::
     :maxdepth: 3
 
-    api/common
-    api/database
-    api/images
-    api/main
-    api/lists
-    api/tokens
-    api/editor
+    api_core
+    ui_core
+    ui_modules
+    3rdparty
+
+
+
+
+
+
+
 

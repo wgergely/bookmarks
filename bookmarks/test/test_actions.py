@@ -140,7 +140,7 @@ class TestWidgetActions(base.BaseCase):
 
         # Template path
         t = __file__ + os.sep + os.pardir + os.sep + os.pardir + os.sep + \
-            'rsc' + os.sep + 'templates' + os.sep + 'Bookmarks_Default_Job.zip'
+            'rsc' + os.sep + 'templates' + os.sep + 'Job.zip'
         t = os.path.normpath(t)
 
         for _ in range(2):

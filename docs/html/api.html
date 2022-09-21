@@ -1,15 +1,15 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="common" href="api/common.html" /><link rel="prev" title="Introduction" href="bookmarks.html" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Core Modules" href="api_core.html" /><link rel="prev" title="Introduction" href="bookmarks.html" />
 
-    <meta name="generator" content="sphinx-4.3.1, furo 2021.11.23"/>
-        <title>Python Modules Documentation - Bookmarks 0.5.0 documentation</title>
+    <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
+        <title>Python Modules - Bookmarks 0.5.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=7f0192ddeb2adecfbaa87ffbcf67d16358b30bc1" />
-    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=0af69da206d614734f649b27d4cdc2dd6c31f41d" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
 
@@ -25,16 +25,8 @@
   --api-font-size: var(--font-size--normal);
   
   }
-  body[data-theme="dark"] {
-    --color-code-background: #232629;
-  --color-code-foreground: #cccccc;
-  --color-brand-primary: rgba(90, 200, 155, 1);
-  --color-brand-content: rgba(90, 200, 155, 1);
-  --color-api-name: rgba(255, 255, 255, 0.9);
-  
-  }
-  @media (prefers-color-scheme: dark) {
-    body:not([data-theme="light"]) {
+  @media not print {
+    body[data-theme="dark"] {
       --color-code-background: #232629;
   --color-code-foreground: #cccccc;
   --color-brand-primary: rgba(90, 200, 155, 1);
@@ -42,27 +34,35 @@
   --color-api-name: rgba(255, 255, 255, 0.9);
   
     }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+      }
+    }
   }
 </style></head>
   <body>
+    
     <script>
       document.body.dataset.theme = localStorage.getItem("theme") || "auto";
     </script>
     
+
 <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
   <symbol id="svg-toc" viewBox="0 0 24 24">
     <title>Contents</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-      <path stroke="none" d="M0 0h24v24H0z" />
-      <line x1="4" y1="6" x2="20" y2="6" />
-      <line x1="10" y1="12" x2="20" y2="12" />
-      <line x1="6" y1="18" x2="20" y2="18" />
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
     </svg>
   </symbol>
   <symbol id="svg-menu" viewBox="0 0 24 24">
     <title>Menu</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
       <line x1="3" y1="12" x2="21" y2="12"></line>
       <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -71,14 +71,14 @@
   </symbol>
   <symbol id="svg-arrow-right" viewBox="0 0 24 24">
     <title>Expand</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
       <polyline points="9 18 15 12 9 6"></polyline>
     </svg>
   </symbol>
   <symbol id="svg-sun" viewBox="0 0 24 24">
     <title>Light mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
       <circle cx="12" cy="12" r="5"></circle>
       <line x1="12" y1="1" x2="12" y2="3"></line>
@@ -93,7 +93,7 @@
   </symbol>
   <symbol id="svg-moon" viewBox="0 0 24 24">
     <title>Dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
@@ -101,7 +101,7 @@
   </symbol>
   <symbol id="svg-sun-half" viewBox="0 0 24 24">
     <title>Auto light/dark mode</title>
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
       stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <circle cx="12" cy="12" r="9" />
@@ -171,20 +171,47 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="bookmarks.html">Introduction</a></li>
-<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Python Modules Documentation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/common.html">common</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/database.html">database</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/images.html">images</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/main.html">main</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/lists.html">lists</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/tokens.html">tokens</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/editor.html">editor</a></li>
+<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Python Modules</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="api_core.html">Core Modules</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html">Common</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/database.html">Database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/images.html">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/threads.html">Threads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/tokens.html">Tokens</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ui_core.html">Core UI Modules</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/main.html">Main Widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/items.html">Item Views &amp; Models</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="ui_modules.html">UI Modules</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/ui.html">UI Utility classes and methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/topbar.html">Topbar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/editor.html">Editors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/bookmark_editor.html">Bookmark Editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/file_saver.html">File Saver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/actions.html">Actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/shortcuts.html">Shortcuts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contextmenu.html">Context Menu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/launcher.html">Application launcher</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="3rdparty.html">3rd Party</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/shotgrid.html">ShotGrid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/rv.html">ShotGrid RV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/ffmpeg.html">FFMpeg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/slack.html">Slack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/teams.html">Teams</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 
 </div>
 </div>
+
       </div>
       
     </div>
@@ -192,6 +219,12 @@
   <div class="main">
     <div class="content">
       <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
         <div class="content-icon-container">
           <div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
@@ -207,8 +240,8 @@
           </label>
         </div>
         <article role="main">
-          <section id="python-modules-documentation">
-<h1>Python Modules Documentation<a class="headerlink" href="#python-modules-documentation" title="Permalink to this headline">¶</a></h1>
+          <section id="python-modules">
+<h1>Python Modules<a class="headerlink" href="#python-modules" title="Permalink to this heading">#</a></h1>
 <p>This is the developer documentation of Bookmarks’ Python modules.</p>
 <p>It is generated from the source code automatically and hence might not be complete or
 perfectly structured. Still, hopefully, can serve as a guide and reference for future
@@ -216,46 +249,120 @@ development work.</p>
 <p>If you’re looking for the user guide, see the <a class="reference internal" href="index.html#module-bookmarks"><span class="std std-ref">Introduction</span></a>.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="api/common.html">common</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/common.html#module-bookmarks.common.setup">common.setup</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/common.html#module-bookmarks.common.core">common.core</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/common.html#module-bookmarks.common.data">common.data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/common.html#module-bookmarks.common.filemonitor">common.filemonitor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/common.html#module-bookmarks.common.font">common.font</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/common.html#module-bookmarks.common.sequence">common.sequence</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/common.html#module-bookmarks.common.settings">common.settings</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/common.html#module-bookmarks.common.sessionlock">common.sessionlock</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/common.html#module-bookmarks.common.signals">common.signals</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/common.html#module-bookmarks.common.lists">common.lists</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/common.html#module-bookmarks.common.ui">common.ui</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_core.html">Core Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/common.html">Common</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.setup">setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.core">core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.data">data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.filemonitor">filemonitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.font">font</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.sequence">sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.settings">settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.sessionlock">sessionlock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.signals">signals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.lists">lists</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/common.html#module-bookmarks.common.ui">ui</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="api/database.html">database</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/images.html">images</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/main.html">main</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/main.html#id1">main</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/main.html#module-bookmarks.standalone">standalone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/database.html">Database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/images.html">Images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/threads.html">Threads</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/threads.html#threads-submodule">threads (submodule)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/threads.html#module-bookmarks.threads.workers">workers</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="api/lists.html">lists</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/lists.html#module-bookmarks.lists.basemodel">lists.basemodel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/lists.html#module-bookmarks.lists.basewidget">lists.basewidget</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/lists.html#module-bookmarks.lists.delegate">lists.delegate</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/lists.html#module-bookmarks.lists.bookmarks">lists.bookmarks</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/lists.html#module-bookmarks.lists.assets">lists.assets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/lists.html#module-bookmarks.lists.files">lists.files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/lists.html#module-bookmarks.lists.favourites">lists.favourites</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/lists.html#module-bookmarks.lists.tasks">lists.tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/tokens.html">Tokens</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/tokens.html#module-bookmarks.tokens.tokens">tokens (submodule)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/tokens.html#module-bookmarks.tokens.tokens_editor">tokens_editor</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="api/tokens.html">tokens</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/tokens.html#tokens-tokens">tokens.tokens</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/tokens.html#module-bookmarks.tokens.tokens_editor">tokens.tokens_editor</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="api/editor.html">editor</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/editor.html#module-bookmarks.editor.base">editor.base</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/editor.html#module-bookmarks.editor.base_widgets">editor.base_widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ui_core.html">Core UI Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/main.html">Main Widgets</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/main.html#id1">main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/main.html#module-bookmarks.standalone">standalone</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/items.html">Item Views &amp; Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/items.html#module-bookmarks.items.models">models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/items.html#module-bookmarks.items.views">views</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/items.html#module-bookmarks.items.delegate">delegate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/items.html#module-bookmarks.items.bookmark_items">bookmark_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/items.html#module-bookmarks.items.asset_items">asset_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/items.html#module-bookmarks.items.file_items">file_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/items.html#module-bookmarks.items.favourite_items">favourite_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/items.html#module-bookmarks.items.task_items">task_items</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ui_modules.html">UI Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/ui.html">UI Utility classes and methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/topbar.html">Topbar</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/topbar.html#module-bookmarks.topbar.topbar">topbar (submodule)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/topbar.html#module-bookmarks.topbar.buttons">buttons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/topbar.html#module-bookmarks.topbar.quickswitch">quickswitch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/topbar.html#module-bookmarks.topbar.tabs">tabs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/editor.html">Editors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/editor.html#module-bookmarks.editor.base">base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/editor.html#module-bookmarks.editor.base_widgets">base_widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/editor.html#module-bookmarks.editor.asset_properties">asset_properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/editor.html#module-bookmarks.editor.bookmark_properties">bookmark_properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/editor.html#module-bookmarks.editor.preferences">preferences</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/bookmark_editor.html">Bookmark Editor</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/bookmark_editor.html#module-bookmarks.bookmark_editor.bookmark_editor">bookmark_editor (submodule)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/bookmark_editor.html#module-bookmarks.bookmark_editor.bookmark_editor_widget">bookmark_editor_widget</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/bookmark_editor.html#module-bookmarks.bookmark_editor.job_editor">job_editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/bookmark_editor.html#module-bookmarks.bookmark_editor.server_editor">server_editor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/file_saver.html">File Saver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/file_saver.html#module-bookmarks.file_saver.file_saver">file_saver (submodule)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/file_saver.html#file-saver-widgets">file_saver_widgets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/actions.html">Actions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/shortcuts.html">Shortcuts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/contextmenu.html">Context Menu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/launcher.html">Application launcher</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/launcher.html#module-bookmarks.launcher.launcher">launcher (submodule)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/launcher.html#module-bookmarks.launcher.launcher_gallery">launcher_gallery</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="3rdparty.html">3rd Party</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/shotgrid.html">ShotGrid</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/shotgrid.html#module-bookmarks.shotgun.shotgun">shotgun (submodule)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/shotgrid.html#module-bookmarks.shotgun.actions">actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/shotgrid.html#module-bookmarks.shotgun.link">link</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/shotgrid.html#module-bookmarks.shotgun.link_asset">link_asset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/shotgrid.html#module-bookmarks.shotgun.link_assets">link_assets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/shotgrid.html#module-bookmarks.shotgun.link_bookmark">link_bookmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/shotgrid.html#module-bookmarks.shotgun.publish">publish</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/shotgrid.html#module-bookmarks.shotgun.publish_widgets">publish_widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/shotgrid.html#module-bookmarks.shotgun.tasks">tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/rv.html">ShotGrid RV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/ffmpeg.html">FFMpeg</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/ffmpeg.html#module-bookmarks.external.ffmpeg_widget">ffmpeg_widget</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/slack.html">Slack</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/slack.html#module-bookmarks.slack.slack">slack (submodule)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/slack.html#id1">slack (submodule)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/teams.html">Teams</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/teams.html#module-bookmarks.teams.message">message</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -267,12 +374,12 @@ development work.</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="api/common.html">
+          <a class="next-page" href="api_core.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">common</div>
+                <div class="title">Core Modules</div>
               </div>
               <svg><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -288,15 +395,21 @@ development work.</p>
               </div>
             </a>
         </div>
-
-        <div class="related-information">
-              Copyright &#169; 2021, Gergely Wootsch |
-          Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
-          <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
-            | <a class="muted-link" href="_sources/api.rst.txt"
-               rel="nofollow">
-              Show Source
-            </a>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Gergely Wootsch
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
         </div>
         
       </footer>
@@ -310,6 +423,7 @@ development work.</p>
 </div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/scripts/furo.js"></script>
     </body>

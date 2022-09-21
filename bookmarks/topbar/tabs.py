@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Defines :class:`.TopBarWidget`, and all the buttons found on the bar located above the
-:class:`bookmarks.main.StackedWidget`.
-
+"""Defines the main item tab buttons found on the left hand side of the top bar.
 
 """
 from PySide2 import QtWidgets, QtGui, QtCore
@@ -10,11 +8,13 @@ from . import quickswitch
 from .. import actions
 from .. import common
 from .. import images
-from ..lists import delegate
+from ..items import delegate
 
 
 class BaseTabButton(QtWidgets.QLabel):
-    """Baseclass for text-based control buttons."""
+    """The base class of our item tab buttons.
+
+    """
     icon = 'asset'
 
     clicked = QtCore.Signal()

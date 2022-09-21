@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """Shotgun RV commands module.
 
+TODO: This module is a stub and needs more testing and development.
+
 """
 import subprocess
 

@@ -1,8 +1,16 @@
+"""Maya cache export classes and functions.
+
+"""
+
 import functools
 import time
 
 from PySide2 import QtCore, QtWidgets
-from maya import cmds
+
+try:
+    from maya import cmds
+except ImportError:
+    raise ImportError('Could not find the Maya modules.')
 
 from . import base as mayabase
 from .. import common, ui, log

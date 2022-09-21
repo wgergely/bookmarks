@@ -6,33 +6,31 @@ browse and manage project content of animation, VFX and film projects.
 Features
 --------
 
-Bookmarks display content as separate ``bookmark``, ``asset`` and ``file``
-items. Each bookmark item contains a series of asset items that in turn
-contain file items. Bookmark and asset items can be configured independently
-to link with, for instance, ``ShotGrid`` entities or set up with properties,
-like frame-rate, resolution, and custom urls. These properties can be used to
-quickly configure scenes in host applications, like Maya, and to access
-related external resources.
+The app displays content as separate ``bookmark``, ``asset`` and ``file`` items. Each
+``bookmark`` item contains a series of ``asset`` items that in turn contain ``file``
+items. ``Bookmark`` and ``asset`` items can be configured independently to link with,
+for instance, ``ShotGrid`` entities or set up with properties, like frame-rate,
+resolution, and custom urls. These properties can be used to quickly configure scenes
+in host applications, like Maya, and to access related external resources.
 
-The application provides a simple tools to create job and asset items using
-zipped file templates, and options to annotate and filter items. It can also
-preview images files using ``OpenImageIO``.
+The app provides simple tools to create new jobs from ZIP file templates (although this
+is usually something very site specific) and options to annotate and filter existing
+items. It can also preview images files using ``OpenImageIO``.
 
 
-History
--------
+Background
+----------
 
-This project was born out of my desire to manage my project content and is
-adapted to my own custom way of setting projects up and interacting with
-content. That is to say, Bookmarks expects certain patters to be respected to
-read files and folders correctly. Still, I tried my best to make things
-easily customizable to adapt to existing production environments.
+This project was developed to manage my project personal projects and is adapted to my
+own custom way of setting them up. This is to say, Bookmarks expects certain patterns to
+be respected to read files and folders correctly, but I tried my best to make things
+easily customizable to adapt to site specific environments.
 
 
 Quick Start
 -----------
 
-The simples way to start Bookmarks as a standalone application is by running:
+The simplest way to start Bookmarks as a standalone application is to run:
 
 .. code-block:: python
 
@@ -40,8 +38,10 @@ The simples way to start Bookmarks as a standalone application is by running:
     bookmarks.exec_()
 
 
-Whilst the code base should be compatible with most systems, Windows is the only
-supported platform. The following python packages are required to run Bookmarks:
+Dependencies
+------------
+
+The following python packages are required to run Bookmarks:
 
 * ``Python3``: Tested against 3.9.
 * ``PySide2``: Tested against Qt 5.15.2. https://pypi.org/project/PySide2
@@ -51,21 +51,31 @@ supported platform. The following python packages are required to run Bookmarks:
 * ``psutil``: https://pypi.org/project/psutil
 * ``shotgun_api3``: https://github.com/shotgunsoftware/python-api
 
+Currently, Windows is the only supported platform (although much of the codebase should
+be platform-agnostic).
 
-Standalone and Embedded modes
+Note:
+
+    OpenImageIO does not currently maintain installable python packages. Building it
+    manually is therefore required.
+
+
+
+Standalone and Embedded Modes
 -----------------------------
 
-Bookmarks can be run in two modes. As a standalone application, or embedded in
-a PySide2 environment. The base-layers can be initialized with:
+Bookmarks can be run in two modes. As a standalone application, or embedded in a
+PySide2 environment. The base-layers can be initialized with:
 
 .. code-block:: python
 
     from bookmarks import common
     common.initialize(common.EmbeddedMode) # or common.StandaloneMode
 
-:func:`bookmarks.exec_()` is a utility method for starting Bookmarks in :attr:`common.StandaloneMode`,
-whilst :attr:`common.StandaloneMode` mode will omit creating a Qt5 application.
-See :mod:`bookmarks.common` for the related methods.
+:func:`bookmarks.exec_()` is a utility method for starting Bookmarks in
+:attr:`common.StandaloneMode`, whilst :attr:`common.EmbeddedMode` is useful when
+running from inside a host DCC. Currently only the Maya plugin makes use of this mode.
+See :mod:`bookmarks.maya` and :mod:`bookmarks.common` for the related methods.
 
 """
 import importlib
@@ -110,13 +120,13 @@ def info():
             f'PySide2 {qt_ver}',
             f'OpenImageIO {oiio_ver}',
             f'ShotGrid API {sg_ver}',
-            f'SlackClient {slack_ver}'
+            f'Slack SDK {slack_ver}'
         )
     )
 
 
-def exec_():
-    """Opens the Bookmark application.
+def exec_(print_info=True):
+    """Opens the Bookmark app.
 
     The method creates :class:`bookmarks.standalone.BookmarksApp`,
     and initializes all required submodules and data.
@@ -124,7 +134,8 @@ def exec_():
     Make sure to check the :doc:`list of dependencies <index>` before running.
 
     """
-    print(info())
+    if print_info:
+        print(info())
 
     from . import common
     common.verify_dependencies()

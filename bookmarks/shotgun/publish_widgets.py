@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Tree view and model used to display Shotgun Steps and Tasks.
+"""Tree view and model used to display ShotGrid Steps and Tasks.
 
 """
 from PySide2 import QtWidgets, QtCore, QtGui
@@ -334,7 +334,7 @@ class StatusEditor(shotgun.EntityComboBox):
 
 
 class TaskEditor(shotgun.EntityComboBox):
-    """Lets the user selet a Shotgun task."""
+    """Lets the user select a ShotGrid task."""
 
     def __init__(self, parent=None):
         super(TaskEditor, self).__init__(
@@ -443,7 +443,7 @@ class TaskEditor(shotgun.EntityComboBox):
 
 
 class LocalStorageEditor(shotgun.EntityComboBox):
-    """Lets the user selet a Shotgun task."""
+    """Lets the user select a ShotGrid task."""
 
     def __init__(self, parent=None):
         super(LocalStorageEditor, self).__init__(
@@ -511,7 +511,7 @@ class LocalStorageEditor(shotgun.EntityComboBox):
 
 
 class PublishedFileTypeEditor(shotgun.EntityComboBox):
-    """Lets the user selet a Shotgun task."""
+    """Lets the user select a ShotGrid task."""
 
     def __init__(self, parent=None):
         super(PublishedFileTypeEditor, self).__init__(

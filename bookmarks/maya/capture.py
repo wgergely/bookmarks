@@ -32,8 +32,12 @@ import re
 import sys
 from contextlib import ExitStack, contextmanager
 
-import maya.cmds as cmds
-import maya.mel as mel
+try:
+    import maya.cmds as cmds
+    import maya.mel as mel
+except ImportError:
+    raise ImportError('Could not find the Maya modules.')
+
 from PySide2 import QtGui, QtWidgets
 
 version_info = (2, 3, 0)

@@ -8,8 +8,6 @@ __pycache__
 .idea
 .pytest*
 .DS_Store
-docs/build/
-docs/build
 develop-eggs/
 dist/
 dest
@@ -19,3 +17,6 @@ eggs/
 lib/
 MANIFEST
 debug.log
+
+# Docs
+docs/build/

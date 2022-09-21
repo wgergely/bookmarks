@@ -41,7 +41,11 @@ BookmarksKey = 'Bookmarks'
 FavouritesKey = 'Favourites'
 
 SettingsSection = 'Settings'
+
+# Bookmarks editor
 JobsHaveSubdirs = 'JobsHaveSubdirs'
+RecurseDepth = 'RecurseDepth'
+
 UIScaleKey = 'UIScale'
 ShowMenuIconsKey = 'ShowMenuIcons'
 ShowThumbnailBackgroundKey = 'ShowThumbnailBackgroundKey'
@@ -130,16 +134,16 @@ def init_settings():
 def _init_bookmarks():
     """Loads all previously saved bookmarks to memory.
 
-    The list of bookmarks is made up of a list of persistent bookmarks, defined in
-    `common.static_bookmarks_template`, and bookmarks added by the user, stored in
+    The list of bookmark items is made up of a list of default items, defined in
+    `common.default_bookmarks_template`, and bookmarks added by the user, stored in
     the user setting.
 
     """
-    _static = get_static_bookmarks()
+    _static = get_default_bookmarks()
     _static = _static if _static else {}
 
-    # Save persistent items to cache
-    common.static_bookmarks = _static
+    # Save default items to cache
+    common.default_bookmarks = _static
 
     _custom = common.settings.value(CurrentUserPicksSection, BookmarksKey)
     _custom = _custom if _custom else {}
@@ -206,7 +210,7 @@ def get_user_settings_path():
     return f'{v}/{common.product}/{common.user_settings}'
 
 
-def get_static_bookmarks():
+def get_default_bookmarks():
     """Loads any preconfigured bookmark items from the json config file.
 
     Returns:
@@ -214,7 +218,7 @@ def get_static_bookmarks():
 
     """
     source = common.get_rsc(
-        f'{common.TemplateResource}/{common.static_bookmarks_template}')
+        f'{common.TemplateResource}/{common.default_bookmarks_template}')
 
     data = {}
     try:

@@ -20,7 +20,3 @@ class Test(base.BaseCase):
 
         common.main_widget.initialize()
         self.assertTrue(common.main_widget.is_initialized)
-
-        with self.assertRaises(RuntimeError):
-            common.main_widget.initialize()
-

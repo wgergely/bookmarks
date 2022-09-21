@@ -1,0 +1,587 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="shortcuts" href="shortcuts.html" /><link rel="prev" title="file_saver" href="file_saver.html" />
+
+    <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
+        <title>actions - Bookmarks 0.5.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #ffffff;
+  --color-code-foreground: black;
+  --color-brand-primary: rgba(75, 180, 135, 1);
+  --color-brand-content: rgba(75, 180, 135, 1);
+  --color-api-name: rgba(0, 0, 0, 0.9);
+  --color-api-pre-name: rgba(75, 180, 135, 0.75);
+  --api-font-size: var(--font-size--normal);
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Bookmarks 0.5.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../_static/icon.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../_static/icon_bw.png" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Bookmarks 0.5.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../bookmarks.html">Introduction</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">Python Modules</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../api_core.html">Core Modules</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="common.html">Common</a></li>
+<li class="toctree-l3"><a class="reference internal" href="database.html">Database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="images.html">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="threads.html">Threads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tokens.html">Tokens</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../ui_core.html">Core UI Modules</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="main.html">Main Widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="items.html">Item Views &amp; Models</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../ui_modules.html">UI Modules</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="ui.html">UI Utility classes and methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="topbar.html">Topbar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="editor.html">Editors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bookmark_editor.html">Bookmark Editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="file_saver.html">File Saver</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="shortcuts.html">Shortcuts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contextmenu.html">Context Menu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="launcher.html">Application launcher</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../3rdparty.html">3rd Party</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="shotgrid.html">ShotGrid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rv.html">ShotGrid RV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ffmpeg.html">FFMpeg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="slack.html">Slack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teams.html">Teams</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="module-bookmarks.actions">
+<span id="actions"></span><h1>actions<a class="headerlink" href="#module-bookmarks.actions" title="Permalink to this heading">#</a></h1>
+<p>Actions modules.</p>
+<p>A list common actions used across <cite>Bookmarks</cite>.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.must_be_initialized">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">must_be_initialized</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#must_be_initialized"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.must_be_initialized" title="Permalink to this definition">#</a></dt>
+<dd><p>A decorator to make sure the main widget is created and initialized</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.edit_default_bookmarks">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">edit_default_bookmarks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#edit_default_bookmarks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.edit_default_bookmarks" title="Permalink to this definition">#</a></dt>
+<dd><p>Opens <cite>common.default_bookmarks_template</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.add_server">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">add_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#add_server"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.add_server" title="Permalink to this definition">#</a></dt>
+<dd><p>Add an item to the list of user specified servers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>v</strong> (<em>str</em>) – A path to server, e.g. <cite>Q:/jobs</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.remove_server">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">remove_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#remove_server"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.remove_server" title="Permalink to this definition">#</a></dt>
+<dd><p>Remove an item from the list of user specified servers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>v</strong> (<em>str</em>) – A path to server, e.g. <cite>Q:/jobs</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.add_bookmark">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">add_bookmark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#add_bookmark"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.add_bookmark" title="Permalink to this definition">#</a></dt>
+<dd><p>Save the given bookmark in <cite>user_settings</cite>.</p>
+<p>Each bookmark is stored as dictionary entry:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">bookmarks</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;//server/jobs/MyFirstJob/data/shots&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="p">{</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">ServerKey</span><span class="p">:</span> <span class="s1">&#39;//server/jobs&#39;</span><span class="p">,</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">JobKey</span><span class="p">:</span>  <span class="s1">&#39;MyFirstJob&#39;</span><span class="p">,</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">RootKey</span><span class="p">:</span>  <span class="s1">&#39;data/shots&#39;</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;//server/jobs/MySecondJob/data/shots&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="p">{</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">ServerKey</span><span class="p">:</span> <span class="s1">&#39;//server/jobs&#39;</span><span class="p">,</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">JobKey</span><span class="p">:</span>  <span class="s1">&#39;MySecondJob&#39;</span><span class="p">,</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">RootKey</span><span class="p">:</span>  <span class="s1">&#39;data/shots&#39;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Saved bookmarks can be retrieved using <cite>common.settings.get_bookmarks</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>server</strong> (<em>str</em>) – A path segment.</p></li>
+<li><p><strong>job</strong> (<em>str</em>) – A path segment.</p></li>
+<li><p><strong>root</strong> (<em>str</em>) – A path segment.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.remove_bookmark">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">remove_bookmark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#remove_bookmark"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.remove_bookmark" title="Permalink to this definition">#</a></dt>
+<dd><p>Remove the given bookmark from the settings file.</p>
+<p>Removing the bookmark will also close and delete the bookmarks’ database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>server</strong> (<em>str</em>) – A path segment.</p></li>
+<li><p><strong>job</strong> (<em>str</em>) – A path segment.</p></li>
+<li><p><strong>root</strong> (<em>str</em>) – A path segment.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.clear_favourites">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">clear_favourites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#clear_favourites"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.clear_favourites" title="Permalink to this definition">#</a></dt>
+<dd><p>Clear the list of saved items.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.export_favourites">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">export_favourites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#export_favourites"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.export_favourites" title="Permalink to this definition">#</a></dt>
+<dd><p>Saves all My File items as a zip archive.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.import_favourites">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">import_favourites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#import_favourites"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.import_favourites" title="Permalink to this definition">#</a></dt>
+<dd><p>Import a previously exported favourites file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>source</strong> (<em>str</em>) – Path to a file. Defaults to <cite>None</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.prune_bookmarks">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">prune_bookmarks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#prune_bookmarks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.prune_bookmarks" title="Permalink to this definition">#</a></dt>
+<dd><p>Removes invalid bookmark items from the current set.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.set_active">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">set_active</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#set_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.set_active" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets the given path as the active path segment for the given key.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>k</strong> (<em>str</em>) – An active key, e.g. <cite>common.ServerKey</cite>.</p></li>
+<li><p><strong>v</strong> (<em>str or None</em>) – A path segment, e.g. ‘//myserver/jobs’.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.asset_identifier_changed">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">asset_identifier_changed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#asset_identifier_changed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.asset_identifier_changed" title="Permalink to this definition">#</a></dt>
+<dd><p>Refresh the assets model if the identifier changes.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.selection">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">selection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#selection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.selection" title="Permalink to this definition">#</a></dt>
+<dd><p>Decorator function to ensure <cite>QModelIndexes</cite> passed to worker threads
+are in a valid state.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.show_slack">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">show_slack</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#show_slack"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.show_slack" title="Permalink to this definition">#</a></dt>
+<dd><p>Opens the Slack widget used to send messages using SlackAPI.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.preview_thumbnail">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">preview_thumbnail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#preview_thumbnail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.preview_thumbnail" title="Permalink to this definition">#</a></dt>
+<dd><p>Displays a preview of the currently selected item.</p>
+<p>For image files we’ll try to load and display the image itself, and for any
+other case we will fall back to cached or default thumbnail images.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.reveal">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">reveal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#reveal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.reveal" title="Permalink to this definition">#</a></dt>
+<dd><p>Reveals an item in the file explorer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>item</strong> (<em>str or QModelIndex</em>) – The item to show in the file manager.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.copy_path">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">copy_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#copy_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.copy_path" title="Permalink to this definition">#</a></dt>
+<dd><p>Copy a file path to the clipboard.</p>
+<p>The path will be conformed to the given <cite>mode</cite> (e.g. forward slashes
+converted to back-slashes for <cite>WindowsPath</cite>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – Description of parameter <cite>path</cite>.</p></li>
+<li><p><strong>mode</strong> (<em>int</em>) – Any of <cite>WindowsPath</cite>, <cite>UnixPath</cite>, <cite>SlackPath</cite> or
+<cite>MacOSPath</cite>. Defaults to <cite>WindowsPath</cite>.</p></li>
+<li><p><strong>first</strong> (<em>bool</em>) – If <cite>True</cite> copy the first item of a sequence.</p></li>
+<li><p><strong>copy</strong> (<em>bool</em>) – If copy is false the converted path won’t be copied to
+the clipboard. Defaults to <cite>True</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The converted path.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.execute">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#execute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.execute" title="Permalink to this definition">#</a></dt>
+<dd><p>Given the model index, executes the index’s path using
+<cite>QDesktopServices</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> (<em>QModelIndex or str</em>) – A list item index or a path to a file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.remove_thumbnail">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">remove_thumbnail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#remove_thumbnail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.remove_thumbnail" title="Permalink to this definition">#</a></dt>
+<dd><p>Deletes a thumbnail file and the cached entries associated
+with it.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.add_zip_template">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">add_zip_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#add_zip_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.add_zip_template" title="Permalink to this definition">#</a></dt>
+<dd><p>Adds the selected source zip archive as a <cite>mode</cite> template file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<em>str</em>) – Path to a source file.</p></li>
+<li><p><strong>mode</strong> (<em>str</em>) – A template mode, e.g. ‘job’ or ‘asset’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the saved template file, or <cite>None</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.extract_zip_template">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">extract_zip_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#extract_zip_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.extract_zip_template" title="Permalink to this definition">#</a></dt>
+<dd><p>Expands the selected source zip archive to <cite>destination</cite> as <cite>name</cite>.</p>
+<p>The contents will be expanded to a <cite>{destination}/{name}</cite> where name is an
+arbitrary name of a job or an asset item to be created.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<em>str</em>) – Path to a <a href="#id1"><span class="problematic" id="id2">*</span></a>.zip archive.</p></li>
+<li><p><strong>destination</strong> (<em>str</em>) – Path to a folder</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Name of the root folder where the archive
+contents will be expanded to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the expanded archive contents.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.remove_zip_template">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">remove_zip_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#remove_zip_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.remove_zip_template" title="Permalink to this definition">#</a></dt>
+<dd><p>Deletes a zip template file from the disk.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>source</strong> (<em>str</em>) – Path to a zip template file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.pick_template">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">pick_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#pick_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.pick_template" title="Permalink to this definition">#</a></dt>
+<dd><p>Prompts the user to pick a new <cite>*.zip</cite> file containing a template
+directory structure.</p>
+<p>The template is copied to <code class="docutils literal notranslate"><span class="pre">%localappdata%/[product]/[mode]_templates/*.zip</span></code>
+folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mode</strong> (<em>str</em>) – A template mode, e.g. <cite>JobTemplateMode</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="shortcuts.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">shortcuts</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="file_saver.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">file_saver</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Gergely Wootsch
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    </body>
+</html>

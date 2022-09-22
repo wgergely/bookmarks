@@ -1,4 +1,14 @@
-"""Autodesk Maya integrations.
+"""Autodesk Maya plugin.
+
+See the :mod:`bookmarks.maya.plugin` for the installable Maya plugin.
+
+This module provides an implementation to embed Bookmarks into the Maya UI. See
+:class:`bookmarks.maya.main.MayaWidget`. It also defines extra asset referencing,
+loading and exporting features. ``plugin.py`` is responsible for setting up the
+environment to run Bookmarks. This can be tricky as Maya needs to be told where to find
+the dynamic libraries and python modules used by OpenImageIO. The libraries the plugin
+is pointing at mirror the current distribution package structure but can be customized
+to suit site-specific needs.
 
 """
 import functools

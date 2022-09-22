@@ -1,3 +1,9 @@
+"""Viewport presets.
+
+Attributes:
+    presets (dict): Viewport visibility presets.
+
+"""
 presets = {
     'Show All Nodes': {
         'rendererName': 'vp2Renderer',

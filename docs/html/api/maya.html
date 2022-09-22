@@ -1,0 +1,1363 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="3rd Party" href="../3rdparty.html" /><link rel="prev" title="Plugins" href="../plugins.html" />
+
+    <meta name="generator" content="sphinx-5.1.1, furo 2022.06.21"/>
+        <title>Maya - Bookmarks 0.6.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=40978830699223671f4072448e654b5958f38b89" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #ffffff;
+  --color-code-foreground: black;
+  --color-brand-primary: rgba(75, 180, 135, 1);
+  --color-brand-content: rgba(75, 180, 135, 1);
+  --color-api-name: rgba(0, 0, 0, 0.9);
+  --color-api-pre-name: rgba(75, 180, 135, 0.75);
+  --api-font-size: var(--font-size--normal);
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Bookmarks 0.6.0 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../_static/icon.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../_static/icon_bw.png" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Bookmarks 0.6.0 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../api.html">Python Modules</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="../common.html">Core Modules</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="common.html">Common</a></li>
+<li class="toctree-l3"><a class="reference internal" href="database.html">Database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="images.html">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="threads.html">Threads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tokens.html">Tokens</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../ui.html">UI Modules</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="main.html">Main Widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="items.html">Item Views &amp; Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ui.html">UI Utility classes and methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="topbar.html">Topbar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="editor.html">Editors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bookmark_editor.html">Bookmark Editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="file_saver.html">File Saver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="actions.html">Actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="shortcuts.html">Shortcuts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contextmenu.html">Context Menu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="launcher.html">Application launcher</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../plugins.html">Plugins</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Maya</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../3rdparty.html">3rd Party</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="shotgrid.html">ShotGrid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rv.html">ShotGrid RV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ffmpeg.html">FFMpeg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="slack.html">Slack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="teams.html">Teams</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="module-bookmarks.maya">
+<span id="maya"></span><h1>Maya<a class="headerlink" href="#module-bookmarks.maya" title="Permalink to this heading">#</a></h1>
+<p>Autodesk Maya plugin.</p>
+<p>See the <a class="reference internal" href="#module-bookmarks.maya.plugin" title="bookmarks.maya.plugin"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.maya.plugin</span></code></a> for the installable Maya plugin.</p>
+<p>This module provides an implementation to embed Bookmarks into the Maya UI. See
+<a class="reference internal" href="#bookmarks.maya.main.MayaWidget" title="bookmarks.maya.main.MayaWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.maya.main.MayaWidget</span></code></a>. It also defines extra asset referencing,
+loading and exporting features. <code class="docutils literal notranslate"><span class="pre">plugin.py</span></code> is responsible for setting up the
+environment to run Bookmarks. This can be tricky as Maya needs to be told where to find
+the dynamic libraries and python modules used by OpenImageIO. The libraries the plugin
+is pointing at mirror the current distribution package structure but can be customized
+to suit site-specific needs.</p>
+<p><strong>Functions:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.initialize" title="bookmarks.maya.initialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code></a>()</p></td>
+<td><p>Initializes the Bookmarks Maya module.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.uninitialize" title="bookmarks.maya.uninitialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uninitialize</span></code></a>()</p></td>
+<td><p>Removes the embedded Bookmarks elements from Maya.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.initialize">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.</span></span><span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya.html#initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.initialize" title="Permalink to this definition">#</a></dt>
+<dd><p>Initializes the Bookmarks Maya module.</p>
+<p>This will start Bookmarks in <code class="docutils literal notranslate"><span class="pre">common.EmbeddedMode</span></code> and will create the settings
+and widgets needed to embed it into the Maya UI.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.uninitialize">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.</span></span><span class="sig-name descname"><span class="pre">uninitialize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya.html#uninitialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.uninitialize" title="Permalink to this definition">#</a></dt>
+<dd><p>Removes the embedded Bookmarks elements from Maya.</p>
+</dd></dl>
+
+<section id="module-bookmarks.maya.plugin">
+<span id="plugin"></span><h2>plugin<a class="headerlink" href="#module-bookmarks.maya.plugin" title="Permalink to this heading">#</a></h2>
+<p>Bookmarks’ Maya plugin.</p>
+<p>Make sure the BOOKMARKS_ROOT environment variable is set to point the root of the
+Bookmarks distribution package as it is required to find and load all the
+necessary dependencies.</p>
+<p><strong>Functions:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.plugin.init_environment" title="bookmarks.maya.plugin.init_environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_environment</span></code></a>(key[, add_private])</p></td>
+<td><p>Add the dependencies to the Python environment.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.plugin.init_environment">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.plugin.</span></span><span class="sig-name descname"><span class="pre">init_environment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_private</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/plugin.html#init_environment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.plugin.init_environment" title="Permalink to this definition">#</a></dt>
+<dd><p>Add the dependencies to the Python environment.</p>
+<p>The method requires that <cite>env_key</cite> is set. The key is usually set
+by the Bookmark installer to point to the installation root directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>EnvironmentError</strong> – When the <cite>key</cite> environment is not set.</p></li>
+<li><p><strong>RuntimeError</strong> – When the <cite>key</cite> environment is invalid or points to a missing</p></li>
+<li><p><strong>directory.</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-bookmarks.maya.base">
+<span id="base"></span><h2>base<a class="headerlink" href="#module-bookmarks.maya.base" title="Permalink to this heading">#</a></h2>
+<p>Maya-specific methods and values.</p>
+<p><strong>Functions:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.base.patch_workspace_file_rules" title="bookmarks.maya.base.patch_workspace_file_rules"><code class="xref py py-obj docutils literal notranslate"><span class="pre">patch_workspace_file_rules</span></code></a>()</p></td>
+<td><p>Patches the current maya workspace to use the directories defined in the active bookmark item's token configuration.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.base.find_project_folder" title="bookmarks.maya.base.find_project_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_project_folder</span></code></a>(key)</p></td>
+<td><p>Return the relative path of a project folder.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.base.is_scene_modified" title="bookmarks.maya.base.is_scene_modified"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_scene_modified</span></code></a>()</p></td>
+<td><p>If the current scene was modified since the last save, the user will be prompted to save the scene.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.base.report_export_progress" title="bookmarks.maya.base.report_export_progress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">report_export_progress</span></code></a>(start, current, end, ...)</p></td>
+<td><p>A litle progress report get some export feedback.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.base.sanitize_namespace" title="bookmarks.maya.base.sanitize_namespace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sanitize_namespace</span></code></a>(s)</p></td>
+<td><p>Converts the input string so that it can be safely used as a file name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.base.get_geo_sets" title="bookmarks.maya.base.get_geo_sets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_geo_sets</span></code></a>()</p></td>
+<td><p>The main function responsible for returning the user created object sets from the current Maya scene.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.base.patch_workspace_file_rules">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.base.</span></span><span class="sig-name descname"><span class="pre">patch_workspace_file_rules</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/base.html#patch_workspace_file_rules"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.base.patch_workspace_file_rules" title="Permalink to this definition">#</a></dt>
+<dd><p>Patches the current maya workspace to use the directories defined in the
+active bookmark item’s token configuration.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.base.find_project_folder">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.base.</span></span><span class="sig-name descname"><span class="pre">find_project_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/base.html#find_project_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.base.find_project_folder" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the relative path of a project folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>str</em>) – The name of a Maya project folder name, eg. ‘sourceImages’.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The name of the folder that corresponds with <cite>key</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.base.is_scene_modified">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.base.</span></span><span class="sig-name descname"><span class="pre">is_scene_modified</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/base.html#is_scene_modified"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.base.is_scene_modified" title="Permalink to this definition">#</a></dt>
+<dd><p>If the current scene was modified since the last save, the user will be
+prompted to save the scene.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.base.report_export_progress">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.base.</span></span><span class="sig-name descname"><span class="pre">report_export_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">current</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/base.html#report_export_progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.base.report_export_progress" title="Permalink to this definition">#</a></dt>
+<dd><p>A litle progress report get some export feedback.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.base.sanitize_namespace">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.base.</span></span><span class="sig-name descname"><span class="pre">sanitize_namespace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/base.html#sanitize_namespace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.base.sanitize_namespace" title="Permalink to this definition">#</a></dt>
+<dd><p>Converts the input string so that it can be safely used as a file name.
+Any namespace will be enclosed in brackets and the ‘:’ characters will be
+replaced with underscores.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>s</strong> (<em>str</em>) – A string that contains namespace names.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The sanitized string.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.base.get_geo_sets">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.base.</span></span><span class="sig-name descname"><span class="pre">get_geo_sets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/base.html#get_geo_sets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.base.get_geo_sets" title="Permalink to this definition">#</a></dt>
+<dd><p>The main function responsible for returning the user created object sets
+from the current Maya scene. There’s an extra caveat: the set has to contain
+the word ‘GEO_SUFFIX’ to be considered valid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dict of set name / mesh list pairs.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-bookmarks.maya.main">
+<span id="main-maya"></span><h2>main (maya)<a class="headerlink" href="#module-bookmarks.maya.main" title="Permalink to this heading">#</a></h2>
+<p>This module defines <a class="reference internal" href="#bookmarks.maya.main.MayaWidget" title="bookmarks.maya.main.MayaWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">MayaWidget</span></code></a>, Bookmarks’ container widget.</p>
+<p><strong>Functions:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.init_tool_button" title="bookmarks.maya.main.init_tool_button"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_tool_button</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Finds the built-in Toolbox menu and embeds our custom control-button.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.main.show" title="bookmarks.maya.main.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>()</p></td>
+<td><p>Main function to show <a class="reference internal" href="#bookmarks.maya.main.MayaWidget" title="bookmarks.maya.main.MayaWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">MayaWidget</span></code></a> inside Maya as a dockable widget.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.init_maya_widget" title="bookmarks.maya.main.init_maya_widget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_maya_widget</span></code></a>()</p></td>
+<td><p>Initializes the maya widget.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Classes:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.PanelPicker" title="bookmarks.maya.main.PanelPicker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PanelPicker</span></code></a>([parent])</p></td>
+<td><p>Modal dialog used to select a visible modelPanel in Maya.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.main.MayaButtonWidget" title="bookmarks.maya.main.MayaButtonWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MayaButtonWidget</span></code></a>(size[, parent])</p></td>
+<td><p>A small control buttons used by the Maya plugin usually docked under the Maya Toolbox.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.MayaWidget" title="bookmarks.maya.main.MayaWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MayaWidget</span></code></a>([parent])</p></td>
+<td><p>The main plugin widget.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.main.init_tool_button">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.main.</span></span><span class="sig-name descname"><span class="pre">init_tool_button</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#init_tool_button"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.init_tool_button" title="Permalink to this definition">#</a></dt>
+<dd><p>Finds the built-in Toolbox menu and embeds our custom control-button.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.main.show">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.main.</span></span><span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.show" title="Permalink to this definition">#</a></dt>
+<dd><p>Main function to show <a class="reference internal" href="#bookmarks.maya.main.MayaWidget" title="bookmarks.maya.main.MayaWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">MayaWidget</span></code></a> inside Maya as a dockable
+widget.</p>
+<p>The function will create <a class="reference internal" href="#bookmarks.maya.main.MayaWidget" title="bookmarks.maya.main.MayaWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">MayaWidget</span></code></a> if it doesn’t yet exist and dock
+it to the bar where AttributeEditor is found. If it exists it will get the
+existing instance and show it if not currently visible, hide it if visible.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.main.init_maya_widget">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.main.</span></span><span class="sig-name descname"><span class="pre">init_maya_widget</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#init_maya_widget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.init_maya_widget" title="Permalink to this definition">#</a></dt>
+<dd><p>Initializes the maya widget.
+Usually the Maya plugin will call this method.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.maya.main.PanelPicker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.maya.main.</span></span><span class="sig-name descname"><span class="pre">PanelPicker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#PanelPicker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.PanelPicker" title="Permalink to this definition">#</a></dt>
+<dd><p>Modal dialog used to select a visible modelPanel in Maya.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.PanelPicker.paintEvent" title="bookmarks.maya.main.PanelPicker.paintEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paintEvent</span></code></a>(event)</p></td>
+<td><p>Paint the capture window.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.main.PanelPicker.keyPressEvent" title="bookmarks.maya.main.PanelPicker.keyPressEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keyPressEvent</span></code></a>(event)</p></td>
+<td><p>Cancel the capture on keypress.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.PanelPicker.mouseReleaseEvent" title="bookmarks.maya.main.PanelPicker.mouseReleaseEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mouseReleaseEvent</span></code></a>(event)</p></td>
+<td><p>Finalise the capture.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.main.PanelPicker.mouseMoveEvent" title="bookmarks.maya.main.PanelPicker.mouseMoveEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mouseMoveEvent</span></code></a>(event)</p></td>
+<td><p>Constrain and resize the capture window.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.PanelPicker.showEvent" title="bookmarks.maya.main.PanelPicker.showEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showEvent</span></code></a>(self, arg__1)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.main.PanelPicker.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#PanelPicker.paintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.PanelPicker.paintEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Paint the capture window.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.main.PanelPicker.keyPressEvent">
+<span class="sig-name descname"><span class="pre">keyPressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#PanelPicker.keyPressEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.PanelPicker.keyPressEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Cancel the capture on keypress.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.main.PanelPicker.mouseReleaseEvent">
+<span class="sig-name descname"><span class="pre">mouseReleaseEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#PanelPicker.mouseReleaseEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.PanelPicker.mouseReleaseEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Finalise the capture.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.main.PanelPicker.mouseMoveEvent">
+<span class="sig-name descname"><span class="pre">mouseMoveEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#PanelPicker.mouseMoveEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.PanelPicker.mouseMoveEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Constrain and resize the capture window.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.main.PanelPicker.showEvent">
+<span class="sig-name descname"><span class="pre">showEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg__1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtGui.QShowEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#PanelPicker.showEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.PanelPicker.showEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.maya.main.MayaButtonWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.maya.main.</span></span><span class="sig-name descname"><span class="pre">MayaButtonWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#MayaButtonWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.MayaButtonWidget" title="Permalink to this definition">#</a></dt>
+<dd><p>A small control buttons used by the Maya plugin usually docked
+under the Maya Toolbox.</p>
+<p><strong>Classes:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.MayaButtonWidget.ContextMenu" title="bookmarks.maya.main.MayaButtonWidget.ContextMenu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ContextMenu</span></code></a></p></td>
+<td><p>alias of <a class="reference internal" href="#bookmarks.maya.contextmenu.MayaButtonWidgetContextMenu" title="bookmarks.maya.contextmenu.MayaButtonWidgetContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">MayaButtonWidgetContextMenu</span></code></a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.MayaButtonWidget.paintEvent" title="bookmarks.maya.main.MayaButtonWidget.paintEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paintEvent</span></code></a>(self, arg__1)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.main.MayaButtonWidget.enterEvent" title="bookmarks.maya.main.MayaButtonWidget.enterEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">enterEvent</span></code></a>(self, event)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.MayaButtonWidget.leaveEvent" title="bookmarks.maya.main.MayaButtonWidget.leaveEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">leaveEvent</span></code></a>(self, event)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.main.MayaButtonWidget.contextMenuEvent" title="bookmarks.maya.main.MayaButtonWidget.contextMenuEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contextMenuEvent</span></code></a>(event)</p></td>
+<td><p>Context menu event.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.maya.main.MayaButtonWidget.ContextMenu">
+<span class="sig-name descname"><span class="pre">ContextMenu</span></span><a class="headerlink" href="#bookmarks.maya.main.MayaButtonWidget.ContextMenu" title="Permalink to this definition">#</a></dt>
+<dd><p>alias of <a class="reference internal" href="#bookmarks.maya.contextmenu.MayaButtonWidgetContextMenu" title="bookmarks.maya.contextmenu.MayaButtonWidgetContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">MayaButtonWidgetContextMenu</span></code></a></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.main.MayaButtonWidget.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg__1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtGui.QPaintEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#MayaButtonWidget.paintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.MayaButtonWidget.paintEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.main.MayaButtonWidget.enterEvent">
+<span class="sig-name descname"><span class="pre">enterEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#MayaButtonWidget.enterEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.MayaButtonWidget.enterEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.main.MayaButtonWidget.leaveEvent">
+<span class="sig-name descname"><span class="pre">leaveEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#MayaButtonWidget.leaveEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.MayaButtonWidget.leaveEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.main.MayaButtonWidget.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#MayaButtonWidget.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.MayaButtonWidget.contextMenuEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Context menu event.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.maya.main.MayaWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.maya.main.</span></span><span class="sig-name descname"><span class="pre">MayaWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#MayaWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.MayaWidget" title="Permalink to this definition">#</a></dt>
+<dd><p>The main plugin widget.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.MayaWidget.active_changed" title="bookmarks.maya.main.MayaWidget.active_changed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">active_changed</span></code></a>()</p></td>
+<td><p>Slot called when an active asset changes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.main.MayaWidget.context_callbacks" title="bookmarks.maya.main.MayaWidget.context_callbacks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">context_callbacks</span></code></a>()</p></td>
+<td><p>This method is called by the Maya plug-in when initializing and the callback needed by the maya plugin.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.MayaWidget.remove_context_callbacks" title="bookmarks.maya.main.MayaWidget.remove_context_callbacks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_context_callbacks</span></code></a>()</p></td>
+<td><p>This method is called by the Maya plug-in when unloading.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.main.MayaWidget.customFilesContextMenuEvent" title="bookmarks.maya.main.MayaWidget.customFilesContextMenuEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">customFilesContextMenuEvent</span></code></a>(index, parent)</p></td>
+<td><p>Shows the custom context menu.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.MayaWidget.show" title="bookmarks.maya.main.MayaWidget.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Show the QWidget window.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.main.MayaWidget.paintEvent" title="bookmarks.maya.main.MayaWidget.paintEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paintEvent</span></code></a>(self, event)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.MayaWidget.sizeHint" title="bookmarks.maya.main.MayaWidget.sizeHint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sizeHint</span></code></a>(self)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.main.MayaWidget.active_changed">
+<span class="sig-name descname"><span class="pre">active_changed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#MayaWidget.active_changed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.MayaWidget.active_changed" title="Permalink to this definition">#</a></dt>
+<dd><p>Slot called when an active asset changes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.main.MayaWidget.context_callbacks">
+<span class="sig-name descname"><span class="pre">context_callbacks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#MayaWidget.context_callbacks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.MayaWidget.context_callbacks" title="Permalink to this definition">#</a></dt>
+<dd><p>This method is called by the Maya plug-in when initializing
+and the callback needed by the maya plugin.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.main.MayaWidget.remove_context_callbacks">
+<span class="sig-name descname"><span class="pre">remove_context_callbacks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#MayaWidget.remove_context_callbacks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.MayaWidget.remove_context_callbacks" title="Permalink to this definition">#</a></dt>
+<dd><p>This method is called by the Maya plug-in when unloading.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.main.MayaWidget.customFilesContextMenuEvent">
+<span class="sig-name descname"><span class="pre">customFilesContextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#MayaWidget.customFilesContextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.MayaWidget.customFilesContextMenuEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Shows the custom context menu.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.main.MayaWidget.show">
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#MayaWidget.show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.MayaWidget.show" title="Permalink to this definition">#</a></dt>
+<dd><p>Show the QWidget window.  Overrides standard QWidget.show()</p>
+<dl class="field-list simple">
+<dt class="field-odd">See<span class="colon">:</span></dt>
+<dd class="field-odd"><p>setDockableParameters() for a list of parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.main.MayaWidget.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtGui.QPaintEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#MayaWidget.paintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.MayaWidget.paintEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.main.MayaWidget.sizeHint">
+<span class="sig-name descname"><span class="pre">sizeHint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PySide2.QtCore.QSize</span></span></span><a class="reference internal" href="../_modules/bookmarks/maya/main.html#MayaWidget.sizeHint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.MayaWidget.sizeHint" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-bookmarks.maya.actions">
+<span id="actions-maya"></span><h2>actions (maya)<a class="headerlink" href="#module-bookmarks.maya.actions" title="Permalink to this heading">#</a></h2>
+<p>Various common Maya actions.</p>
+<p><strong>Functions:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.actions.apply_settings" title="bookmarks.maya.actions.apply_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_settings</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Applies asset and bookmark item properties to the current scene.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.actions.save_scene" title="bookmarks.maya.actions.save_scene"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_scene</span></code></a>([increment, type])</p></td>
+<td><p>Save the current scene using our file saver.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.actions.save_warning" title="bookmarks.maya.actions.save_warning"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_warning</span></code></a>(*args)</p></td>
+<td><p>Shows the user a warning when a file is saved outside the current workspace.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.actions.unmark_active" title="bookmarks.maya.actions.unmark_active"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unmark_active</span></code></a>(*args)</p></td>
+<td><p>Callback responsible for keeping the active-file in the list updated.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.actions.update_active_item" title="bookmarks.maya.actions.update_active_item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_active_item</span></code></a>(*args)</p></td>
+<td><p>Callback responsible for keeping the active-file in the list updated.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.actions.open_scene" title="bookmarks.maya.actions.open_scene"><code class="xref py py-obj docutils literal notranslate"><span class="pre">open_scene</span></code></a>(path)</p></td>
+<td><p>Opens the given path using <code class="docutils literal notranslate"><span class="pre">cmds.file</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.actions.import_scene" title="bookmarks.maya.actions.import_scene"><code class="xref py py-obj docutils literal notranslate"><span class="pre">import_scene</span></code></a>(path[, reference])</p></td>
+<td><p>Imports a Maya or alembic file to the current Maya scene.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.actions.capture_viewport" title="bookmarks.maya.actions.capture_viewport"><code class="xref py py-obj docutils literal notranslate"><span class="pre">capture_viewport</span></code></a>([size])</p></td>
+<td><p>Saves a versioned capture to the <code class="docutils literal notranslate"><span class="pre">capture_folder</span></code> defined in the preferences.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.actions.publish_capture" title="bookmarks.maya.actions.publish_capture"><code class="xref py py-obj docutils literal notranslate"><span class="pre">publish_capture</span></code></a>(workspace, capture_folder, ...)</p></td>
+<td><p>Publish the latest capture sequence as a version agnostic copy.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.actions.apply_settings">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.actions.</span></span><span class="sig-name descname"><span class="pre">apply_settings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/actions.html#apply_settings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.actions.apply_settings" title="Permalink to this definition">#</a></dt>
+<dd><p>Applies asset and bookmark item properties to the current scene.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.actions.save_scene">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.actions.</span></span><span class="sig-name descname"><span class="pre">save_scene</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">increment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mayaAscii'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/actions.html#save_scene"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.actions.save_scene" title="Permalink to this definition">#</a></dt>
+<dd><p>Save the current scene using our file saver.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Path to the saved scene file.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.actions.save_warning">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.actions.</span></span><span class="sig-name descname"><span class="pre">save_warning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/actions.html#save_warning"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.actions.save_warning" title="Permalink to this definition">#</a></dt>
+<dd><p>Shows the user a warning when a file is saved outside the current
+workspace.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.actions.unmark_active">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.actions.</span></span><span class="sig-name descname"><span class="pre">unmark_active</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/actions.html#unmark_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.actions.unmark_active" title="Permalink to this definition">#</a></dt>
+<dd><p>Callback responsible for keeping the active-file in the list updated.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.actions.update_active_item">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.actions.</span></span><span class="sig-name descname"><span class="pre">update_active_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/actions.html#update_active_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.actions.update_active_item" title="Permalink to this definition">#</a></dt>
+<dd><p>Callback responsible for keeping the active-file in the list updated.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.actions.open_scene">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.actions.</span></span><span class="sig-name descname"><span class="pre">open_scene</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/actions.html#open_scene"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.actions.open_scene" title="Permalink to this definition">#</a></dt>
+<dd><p>Opens the given path using <code class="docutils literal notranslate"><span class="pre">cmds.file</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The name of the input scene if the load was successfull.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – When and invalid scene file is passed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.actions.import_scene">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.actions.</span></span><span class="sig-name descname"><span class="pre">import_scene</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reference</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/actions.html#import_scene"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.actions.import_scene" title="Permalink to this definition">#</a></dt>
+<dd><p>Imports a Maya or alembic file to the current Maya scene.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – Path to a Maya scene file.</p></li>
+<li><p><strong>reference</strong> (<em>bool</em>) – When <cite>true</cite> the import will be a reference.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.actions.capture_viewport">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.actions.</span></span><span class="sig-name descname"><span class="pre">capture_viewport</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/actions.html#capture_viewport"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.actions.capture_viewport" title="Permalink to this definition">#</a></dt>
+<dd><p>Saves a versioned capture to the <code class="docutils literal notranslate"><span class="pre">capture_folder</span></code> defined in the
+preferences.</p>
+<p>The script will output to an image sequence and if FFFmpeg can be found
+converts it to a h264 movie file.
+It will also try to create a <code class="docutils literal notranslate"><span class="pre">latest</span></code> folder with a copy of the last
+exported image sequence.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.actions.publish_capture">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.actions.</span></span><span class="sig-name descname"><span class="pre">publish_capture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">workspace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capture_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scene_info</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/actions.html#publish_capture"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.actions.publish_capture" title="Permalink to this definition">#</a></dt>
+<dd><p>Publish the latest capture sequence as a version agnostic copy.</p>
+</dd></dl>
+
+</section>
+<section id="module-bookmarks.maya.capture">
+<span id="capture"></span><h2>capture<a class="headerlink" href="#module-bookmarks.maya.capture" title="Permalink to this heading">#</a></h2>
+<p>Maya Capture.</p>
+<p>A modified version of <a class="reference external" href="https://github.com/abstractfactory/maya-capture">https://github.com/abstractfactory/maya-capture</a> by Marcus Ottosson.</p>
+<p><strong>Functions:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.capture.nested" title="bookmarks.maya.capture.nested"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nested</span></code></a>(*contexts)</p></td>
+<td><p>Reimplementation of nested in python 3.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.capture.capture" title="bookmarks.maya.capture.capture"><code class="xref py py-obj docutils literal notranslate"><span class="pre">capture</span></code></a>([camera, width, height, filename, ...])</p></td>
+<td><p>Playblast in an independent panel.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.capture.snap" title="bookmarks.maya.capture.snap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">snap</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Single frame playblast in an independent panel.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.capture.apply_view" title="bookmarks.maya.capture.apply_view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_view</span></code></a>(panel, **options)</p></td>
+<td><p>Apply options to panel</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.capture.parse_active_panel" title="bookmarks.maya.capture.parse_active_panel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_active_panel</span></code></a>()</p></td>
+<td><p>Parse the active modelPanel.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.capture.parse_active_view" title="bookmarks.maya.capture.parse_active_view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_active_view</span></code></a>()</p></td>
+<td><p>Parse the current settings from the active view</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.capture.parse_view" title="bookmarks.maya.capture.parse_view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_view</span></code></a>(panel)</p></td>
+<td><p>Parse the scene, panel and camera for their current settings</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.capture.parse_active_scene" title="bookmarks.maya.capture.parse_active_scene"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_active_scene</span></code></a>()</p></td>
+<td><p>Parse active scene for arguments for capture()</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.capture.apply_scene" title="bookmarks.maya.capture.apply_scene"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_scene</span></code></a>(**options)</p></td>
+<td><p>Apply options from scene</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.capture.nested">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.capture.</span></span><span class="sig-name descname"><span class="pre">nested</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">contexts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/capture.html#nested"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.capture.nested" title="Permalink to this definition">#</a></dt>
+<dd><p>Reimplementation of nested in python 3.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.capture.capture">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.capture.</span></span><span class="sig-name descname"><span class="pre">capture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">camera</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_frame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_frame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'qt'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compression</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'H.264'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">off_screen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_ornaments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isolate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maintain_aspect_ratio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_frame_numbers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">camera_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">display_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewport_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">viewport2_options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">complete_filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/capture.html#capture"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.capture.capture" title="Permalink to this definition">#</a></dt>
+<dd><p>Playblast in an independent panel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>camera</strong> (<em>str, optional</em>) – Name of camera, defaults to ‘persp’</p></li>
+<li><p><strong>width</strong> (<em>int, optional</em>) – Width of output in pixels</p></li>
+<li><p><strong>height</strong> (<em>int, optional</em>) – Height of output in pixels</p></li>
+<li><p><strong>filename</strong> (<em>str, optional</em>) – Name of output file. If
+none is specified, no files are saved.</p></li>
+<li><p><strong>start_frame</strong> (<em>float, optional</em>) – Defaults to current start frame.</p></li>
+<li><p><strong>end_frame</strong> (<em>float, optional</em>) – Defaults to current end frame.</p></li>
+<li><p><strong>frame</strong> (<em>float or tuple, optional</em>) – A single frame or list of frames.
+Use this to capture a single frame or an arbitrary sequence of
+frames.</p></li>
+<li><p><strong>format</strong> (<em>str, optional</em>) – Name of format, defaults to ‘qt’.</p></li>
+<li><p><strong>compression</strong> (<em>str, optional</em>) – Name of compression, defaults to ‘H.264’</p></li>
+<li><p><strong>quality</strong> (<em>int, optional</em>) – The quality of the output, defaults to 100</p></li>
+<li><p><strong>off_screen</strong> (<em>bool, optional</em>) – Whether or not to playblast off screen</p></li>
+<li><p><strong>viewer</strong> (<em>bool, optional</em>) – Display results in native player</p></li>
+<li><p><strong>show_ornaments</strong> (<em>bool, optional</em>) – Whether or not model view ornaments
+(e.g. axis icon, grid and HUD) should be displayed.</p></li>
+<li><p><strong>sound</strong> (<em>str, optional</em>) – Specify the sound node to be used during
+playblast. When None (default) no sound will be used.</p></li>
+<li><p><strong>isolate</strong> (<em>list</em>) – List of nodes to isolate upon capturing</p></li>
+<li><p><strong>maintain_aspect_ratio</strong> (<em>bool, optional</em>) – Modify height in order to
+maintain aspect ratio.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool, optional</em>) – Whether or not to overwrite if file
+already exists. If disabled and file exists and error will be
+raised.</p></li>
+<li><p><strong>frame_padding</strong> (<em>bool, optional</em>) – Number of zeros used to pad file name
+for image sequences.</p></li>
+<li><p><strong>raw_frame_numbers</strong> (<em>bool, optional</em>) – Whether or not to use the exact
+frame numbers from the scene or capture to a sequence starting at
+zero. Defaults to False. When set to True <cite>viewer</cite> can’t be used
+and will be forced to False.</p></li>
+<li><p><strong>camera_options</strong> (<em>dict, optional</em>) – Supplied camera options,
+using <cite>CameraOptions</cite></p></li>
+<li><p><strong>display_options</strong> (<em>dict, optional</em>) – Supplied display
+options, using <cite>DisplayOptions</cite></p></li>
+<li><p><strong>viewport_options</strong> (<em>dict, optional</em>) – Supplied viewport
+options, using <cite>ViewportOptions</cite></p></li>
+<li><p><strong>viewport2_options</strong> (<em>dict, optional</em>) – Supplied display
+options, using <cite>Viewport2Options</cite></p></li>
+<li><p><strong>complete_filename</strong> (<em>str, optional</em>) – Exact name of output file. Use this
+to override the output of <cite>filename</cite> so it excludes frame padding.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Launch default capture</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">capture</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Launch capture with custom viewport settings</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">capture</span><span class="p">(</span><span class="s1">&#39;persp&#39;</span><span class="p">,</span> <span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">viewport_options</span><span class="o">=</span><span class="p">{</span>
+<span class="gp">... </span>            <span class="s1">&#39;displayAppearance&#39;</span><span class="p">:</span> <span class="s1">&#39;wireframe&#39;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s1">&#39;grid&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="s1">&#39;polymeshes&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="p">},</span>
+<span class="gp">... </span>        <span class="n">camera_options</span><span class="o">=</span><span class="p">{</span>
+<span class="gp">... </span>            <span class="s1">&#39;displayResolution&#39;</span><span class="p">:</span> <span class="kc">True</span>
+<span class="gp">... </span>        <span class="p">}</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.capture.snap">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.capture.</span></span><span class="sig-name descname"><span class="pre">snap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/capture.html#snap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.capture.snap" title="Permalink to this definition">#</a></dt>
+<dd><p>Single frame playblast in an independent panel.</p>
+<p>The arguments of <cite>capture</cite> are all valid here as well, except for
+<cite>start_frame</cite> and <cite>end_frame</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frame</strong> (<em>float, optional</em>) – The frame to snap. If not provided current
+frame is used.</p></li>
+<li><p><strong>clipboard</strong> (<em>bool, optional</em>) – Whether to add the output image to the
+global clipboard. This allows to easily paste the snapped image
+into another application, eg. into Photoshop.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Keywords:</dt><dd><p>See <cite>capture</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.capture.apply_view">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.capture.</span></span><span class="sig-name descname"><span class="pre">apply_view</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">panel</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/capture.html#apply_view"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.capture.apply_view" title="Permalink to this definition">#</a></dt>
+<dd><p>Apply options to panel</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.capture.parse_active_panel">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.capture.</span></span><span class="sig-name descname"><span class="pre">parse_active_panel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/capture.html#parse_active_panel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.capture.parse_active_panel" title="Permalink to this definition">#</a></dt>
+<dd><p>Parse the active modelPanel.</p>
+<dl class="simple">
+<dt>Raises</dt><dd><p>RuntimeError: When no active modelPanel an error is raised.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Name of modelPanel</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.capture.parse_active_view">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.capture.</span></span><span class="sig-name descname"><span class="pre">parse_active_view</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/capture.html#parse_active_view"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.capture.parse_active_view" title="Permalink to this definition">#</a></dt>
+<dd><p>Parse the current settings from the active view</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.capture.parse_view">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.capture.</span></span><span class="sig-name descname"><span class="pre">parse_view</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">panel</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/capture.html#parse_view"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.capture.parse_view" title="Permalink to this definition">#</a></dt>
+<dd><p>Parse the scene, panel and camera for their current settings</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">parse_view</span><span class="p">(</span><span class="s1">&#39;modelPanel1&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>panel</strong> (<em>str</em>) – Name of modelPanel</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.capture.parse_active_scene">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.capture.</span></span><span class="sig-name descname"><span class="pre">parse_active_scene</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/capture.html#parse_active_scene"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.capture.parse_active_scene" title="Permalink to this definition">#</a></dt>
+<dd><p>Parse active scene for arguments for capture()</p>
+<p>Resolution taken from render common.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.maya.capture.apply_scene">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.capture.</span></span><span class="sig-name descname"><span class="pre">apply_scene</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/capture.html#apply_scene"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.capture.apply_scene" title="Permalink to this definition">#</a></dt>
+<dd><p>Apply options from scene</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">apply_scene</span><span class="p">({</span><span class="s1">&#39;start_frame&#39;</span><span class="p">:</span> <span class="mi">1009</span><span class="p">})</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>options</strong> (<em>dict</em>) – Scene options</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-bookmarks.maya.contextmenu">
+<span id="contextmenu-maya"></span><h2>contextmenu (maya)<a class="headerlink" href="#module-bookmarks.maya.contextmenu" title="Permalink to this heading">#</a></h2>
+<p>Maya-specific context menus.</p>
+<p><strong>Classes:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.contextmenu.PluginContextMenu" title="bookmarks.maya.contextmenu.PluginContextMenu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PluginContextMenu</span></code></a>(index[, parent])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.contextmenu.MayaButtonWidgetContextMenu" title="bookmarks.maya.contextmenu.MayaButtonWidgetContextMenu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MayaButtonWidgetContextMenu</span></code></a>([parent])</p></td>
+<td><p>The context-menu associated with the BrowserButton.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.contextmenu.MayaWidgetContextMenu" title="bookmarks.maya.contextmenu.MayaWidgetContextMenu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MayaWidgetContextMenu</span></code></a>(index[, parent])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.maya.contextmenu.PluginContextMenu">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.maya.contextmenu.</span></span><span class="sig-name descname"><span class="pre">PluginContextMenu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/contextmenu.html#PluginContextMenu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.contextmenu.PluginContextMenu" title="Permalink to this definition">#</a></dt>
+<dd><p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.contextmenu.PluginContextMenu.setup" title="bookmarks.maya.contextmenu.PluginContextMenu.setup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code></a>()</p></td>
+<td><p>An abstract method that must be overridden by subclasses.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.contextmenu.PluginContextMenu.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/contextmenu.html#PluginContextMenu.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.contextmenu.PluginContextMenu.setup" title="Permalink to this definition">#</a></dt>
+<dd><p>An abstract method that must be overridden by subclasses.</p>
+<p>Call the methods to define which menu items should be showing.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.maya.contextmenu.MayaButtonWidgetContextMenu">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.maya.contextmenu.</span></span><span class="sig-name descname"><span class="pre">MayaButtonWidgetContextMenu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/contextmenu.html#MayaButtonWidgetContextMenu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.contextmenu.MayaButtonWidgetContextMenu" title="Permalink to this definition">#</a></dt>
+<dd><p>The context-menu associated with the BrowserButton.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.maya.contextmenu.MayaWidgetContextMenu">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.maya.contextmenu.</span></span><span class="sig-name descname"><span class="pre">MayaWidgetContextMenu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/contextmenu.html#MayaWidgetContextMenu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.contextmenu.MayaWidgetContextMenu" title="Permalink to this definition">#</a></dt>
+<dd><p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.contextmenu.MayaWidgetContextMenu.setup" title="bookmarks.maya.contextmenu.MayaWidgetContextMenu.setup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code></a>()</p></td>
+<td><p>An abstract method that must be overridden by subclasses.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.contextmenu.MayaWidgetContextMenu.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/contextmenu.html#MayaWidgetContextMenu.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.contextmenu.MayaWidgetContextMenu.setup" title="Permalink to this definition">#</a></dt>
+<dd><p>An abstract method that must be overridden by subclasses.</p>
+<p>Call the methods to define which menu items should be showing.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-bookmarks.maya.export">
+<span id="export"></span><h2>export<a class="headerlink" href="#module-bookmarks.maya.export" title="Permalink to this heading">#</a></h2>
+<p>Maya cache export classes and functions.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.maya.export.PRESETS">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.export.</span></span><span class="sig-name descname"><span class="pre">PRESETS</span></span><a class="headerlink" href="#bookmarks.maya.export.PRESETS" title="Permalink to this definition">#</a></dt>
+<dd><p>List of implemented export formats.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.maya.export.SECTIONS">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.export.</span></span><span class="sig-name descname"><span class="pre">SECTIONS</span></span><a class="headerlink" href="#bookmarks.maya.export.SECTIONS" title="Permalink to this definition">#</a></dt>
+<dd><p>UI layout definition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p><strong>Classes:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.export.SetsComboBox" title="bookmarks.maya.export.SetsComboBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SetsComboBox</span></code></a>([parent])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.export.TypeComboBox" title="bookmarks.maya.export.TypeComboBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TypeComboBox</span></code></a>([parent])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.export.VersionsComboBox" title="bookmarks.maya.export.VersionsComboBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VersionsComboBox</span></code></a>([parent])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.export.ExportWidget" title="bookmarks.maya.export.ExportWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExportWidget</span></code></a>([parent])</p></td>
+<td><p>The widget used to start an export process.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.maya.export.SetsComboBox">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.maya.export.</span></span><span class="sig-name descname"><span class="pre">SetsComboBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/export.html#SetsComboBox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.export.SetsComboBox" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.maya.export.TypeComboBox">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.maya.export.</span></span><span class="sig-name descname"><span class="pre">TypeComboBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/export.html#TypeComboBox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.export.TypeComboBox" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.maya.export.VersionsComboBox">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.maya.export.</span></span><span class="sig-name descname"><span class="pre">VersionsComboBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/export.html#VersionsComboBox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.export.VersionsComboBox" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.maya.export.ExportWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.maya.export.</span></span><span class="sig-name descname"><span class="pre">ExportWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/export.html#ExportWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.export.ExportWidget" title="Permalink to this definition">#</a></dt>
+<dd><p>The widget used to start an export process.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.export.ExportWidget.init_data" title="bookmarks.maya.export.ExportWidget.init_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_data</span></code></a>()</p></td>
+<td><p>Initialises the current/default values.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.export.ExportWidget.save_changes" title="bookmarks.maya.export.ExportWidget.save_changes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_changes</span></code></a>()</p></td>
+<td><p>Start the export process.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.export.ExportWidget.db_source" title="bookmarks.maya.export.ExportWidget.db_source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">db_source</span></code></a>()</p></td>
+<td><p>A file path the database values are associated with.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.export.ExportWidget.keyPressEvent" title="bookmarks.maya.export.ExportWidget.keyPressEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keyPressEvent</span></code></a>(self, arg__1)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.export.ExportWidget.sizeHint" title="bookmarks.maya.export.ExportWidget.sizeHint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sizeHint</span></code></a>(self)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.export.ExportWidget.export_maya" title="bookmarks.maya.export.ExportWidget.export_maya"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_maya</span></code></a>(destination, outliner_set, ...)</p></td>
+<td><p>Main Maya scene export function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.export.ExportWidget.export_alembic" title="bookmarks.maya.export.ExportWidget.export_alembic"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_alembic</span></code></a>(destination, outliner_set, ...)</p></td>
+<td><p>Main alembic export function.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.export.ExportWidget.export_ass" title="bookmarks.maya.export.ExportWidget.export_ass"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_ass</span></code></a>(destination, outliner_set, ...[, ...])</p></td>
+<td><p>Main Arnold ASS export function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.export.ExportWidget.export_obj" title="bookmarks.maya.export.ExportWidget.export_obj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_obj</span></code></a>(destination, outliner_set, ...[, ...])</p></td>
+<td><p>Main obj export function.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.export.ExportWidget.init_data">
+<span class="sig-name descname"><span class="pre">init_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/export.html#ExportWidget.init_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.export.ExportWidget.init_data" title="Permalink to this definition">#</a></dt>
+<dd><p>Initialises the current/default values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.export.ExportWidget.save_changes">
+<span class="sig-name descname"><span class="pre">save_changes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/export.html#ExportWidget.save_changes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.export.ExportWidget.save_changes" title="Permalink to this definition">#</a></dt>
+<dd><p>Start the export process.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.export.ExportWidget.db_source">
+<span class="sig-name descname"><span class="pre">db_source</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/export.html#ExportWidget.db_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.export.ExportWidget.db_source" title="Permalink to this definition">#</a></dt>
+<dd><p>A file path the database values are associated with.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Path to a file.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.export.ExportWidget.keyPressEvent">
+<span class="sig-name descname"><span class="pre">keyPressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg__1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtGui.QKeyEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/bookmarks/maya/export.html#ExportWidget.keyPressEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.export.ExportWidget.keyPressEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.export.ExportWidget.sizeHint">
+<span class="sig-name descname"><span class="pre">sizeHint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PySide2.QtCore.QSize</span></span></span><a class="reference internal" href="../_modules/bookmarks/maya/export.html#ExportWidget.sizeHint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.export.ExportWidget.sizeHint" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.export.ExportWidget.export_maya">
+<span class="sig-name descname"><span class="pre">export_maya</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outliner_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/export.html#ExportWidget.export_maya"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.export.ExportWidget.export_maya" title="Permalink to this definition">#</a></dt>
+<dd><p>Main Maya scene export function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_frame</strong> (<em>int</em>) – Start frame.</p></li>
+<li><p><strong>end_frame</strong> (<em>int</em>) – End frame.</p></li>
+<li><p><strong>destination</strong> (<em>str</em>) – Path to the output file.</p></li>
+<li><p><strong>outliner_set</strong> (<em>tuple</em>) – A list of transforms contained in a geometry set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.export.ExportWidget.export_alembic">
+<span class="sig-name descname"><span class="pre">export_alembic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outliner_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/export.html#ExportWidget.export_alembic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.export.ExportWidget.export_alembic" title="Permalink to this definition">#</a></dt>
+<dd><p>Main alembic export function.</p>
+<p>Only shapes, normals and uvs are exported by this implementation. The list
+of shapes contained in the <cite>outliner_set</cite> will be rebuilt in the root of
+the scene to avoid parenting issues.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_frame</strong> (<em>int</em>) – Start frame.</p></li>
+<li><p><strong>end_frame</strong> (<em>int</em>) – End frame.</p></li>
+<li><p><strong>destination</strong> (<em>str</em>) – Path to the output file.</p></li>
+<li><p><strong>outliner_set</strong> (<em>tuple</em>) – A list of transforms contained in a geometry set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.export.ExportWidget.export_ass">
+<span class="sig-name descname"><span class="pre">export_ass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outliner_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/export.html#ExportWidget.export_ass"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.export.ExportWidget.export_ass" title="Permalink to this definition">#</a></dt>
+<dd><p>Main Arnold ASS export function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_frame</strong> (<em>int</em>) – Start frame.</p></li>
+<li><p><strong>end_frame</strong> (<em>int</em>) – End frame.</p></li>
+<li><p><strong>destination</strong> (<em>str</em>) – Path to the output file.</p></li>
+<li><p><strong>outliner_set</strong> (<em>tuple</em>) – A list of transforms contained in a geometry set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.maya.export.ExportWidget.export_obj">
+<span class="sig-name descname"><span class="pre">export_obj</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outliner_set</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/maya/export.html#ExportWidget.export_obj"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.export.ExportWidget.export_obj" title="Permalink to this definition">#</a></dt>
+<dd><p>Main obj export function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_frame</strong> (<em>int</em>) – Start frame.</p></li>
+<li><p><strong>end_frame</strong> (<em>int</em>) – End frame.</p></li>
+<li><p><strong>destination</strong> (<em>str</em>) – Path to the output file.</p></li>
+<li><p><strong>outliner_set</strong> (<em>tuple</em>) – A list of transforms contained in a geometry set.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../3rdparty.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">3rd Party</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../plugins.html">
+              <svg><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Plugins</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Gergely Wootsch
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Maya</a><ul>
+<li><a class="reference internal" href="#module-bookmarks.maya.plugin">plugin</a></li>
+<li><a class="reference internal" href="#module-bookmarks.maya.base">base</a></li>
+<li><a class="reference internal" href="#module-bookmarks.maya.main">main (maya)</a></li>
+<li><a class="reference internal" href="#module-bookmarks.maya.actions">actions (maya)</a></li>
+<li><a class="reference internal" href="#module-bookmarks.maya.capture">capture</a></li>
+<li><a class="reference internal" href="#module-bookmarks.maya.contextmenu">contextmenu (maya)</a></li>
+<li><a class="reference internal" href="#module-bookmarks.maya.export">export</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    </body>
+</html>

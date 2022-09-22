@@ -82,6 +82,8 @@ image_cache = {}
 token_configs = {}
 
 # These values will be overridden by the values in config.json:
+documentation_url = 'https://bookmarks.gergely-wootsch.com/html/index.html'
+github_url = 'https://github.com/wgergely/bookmarks'
 product = 'Bookmarks'
 env_key = 'BOOKMARKS_ROOT'
 bookmark_cache_dir = '.bookmark'

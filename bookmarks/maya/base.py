@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Maya methods and values.
+"""Maya-specific methods and values.
 
 """
 import re

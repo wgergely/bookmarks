@@ -51,7 +51,6 @@ ShowMenuIconsKey = 'ShowMenuIcons'
 ShowThumbnailBackgroundKey = 'ShowThumbnailBackgroundKey'
 DontGenerateThumbnailsKey = 'DontGenerateThumbnailsKey'
 WorkspaceSyncKey = 'WorkspaceSync'
-WorkspaceWarningsKey = 'WorkspaceWarnings'
 SaveWarningsKey = 'SaveWarnings'
 PushCaptureToRVKey = 'PushCaptureToRV'
 RevealCaptureKey = 'RevealCapture'
@@ -125,6 +124,7 @@ def init_settings():
     v = common.settings.value(CurrentUserPicksSection, FavouritesKey)
     if not v or not isinstance(v, dict):
         v = {}
+
     common.favourites = v
     common.signals.favouritesChanged.emit()
 

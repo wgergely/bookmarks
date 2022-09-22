@@ -23,6 +23,13 @@ for more information.
         extension='fbx'
     )
 
+
+Attributes:
+    SECTIONS (dict): The ui layout definition of the file saver widget.
+    SETTING_KEYS (tuple): A tuple of keys used to save values to the user settings.
+    INACTIVE_KEYS (tuple): A tuple of keys used to mark hidden and disabled editors.
+
+
 """
 import os
 import re
@@ -41,6 +48,9 @@ instance = None
 
 
 def close():
+    """Close the :class:`FileSaverWidget` widget.
+
+    """
     global instance
     if instance is None:
         return
@@ -56,6 +66,21 @@ def show(
         server, job, root, asset, extension=None, file=None, create_file=True,
         increment=False
 ):
+    """Show the :class:`FileSaverWidget` widget.
+
+    Args:
+        server (str): The name of the `server`.
+        job (str): The name of the `job`.
+        root (str): The name of the `root`.
+        asset (str): The name of the `asset`.
+        extension (str): Optional file extension. Default is ``None``.
+        file (str): Optional, path to an existing file.
+        create_file (bool): Optional, when ``True`` the widget will create empty
+            placeholder files. Default is ``True``.
+        increment (bool): Optional bool. Will increment the version of ``file`` when
+            ``True``. Default is ``False``
+
+    """
     global instance
 
     close()

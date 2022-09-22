@@ -56,13 +56,12 @@ be platform-agnostic).
 
 Note:
 
-    OpenImageIO does not currently maintain installable python packages. Building it
-    manually is therefore required.
+    OpenImageIO does not currently maintain installable python packages.
 
 
 
-Standalone and Embedded Modes
------------------------------
+Modes
+-----
 
 Bookmarks can be run in two modes. As a standalone application, or embedded in a
 PySide2 environment. The base-layers can be initialized with:
@@ -72,13 +71,23 @@ PySide2 environment. The base-layers can be initialized with:
     from bookmarks import common
     common.initialize(common.EmbeddedMode) # or common.StandaloneMode
 
-:func:`bookmarks.exec_()` is a utility method for starting Bookmarks in
+:func:`exec_()` is a utility method for starting Bookmarks in
 :attr:`common.StandaloneMode`, whilst :attr:`common.EmbeddedMode` is useful when
 running from inside a host DCC. Currently only the Maya plugin makes use of this mode.
 See :mod:`bookmarks.maya` and :mod:`bookmarks.common` for the related methods.
 
+
+Links
+-----
+
+`Github Repository <https://github.com/wgergely/bookmarks>`_
+
+`Documentation <https://bookmarks.gergely-wootsch.com/html/index.html>`_
+
+
 """
 import importlib
+import os
 import platform
 import sys
 
@@ -87,7 +96,8 @@ from PySide2 import QtWidgets
 __author__ = 'Gergely Wootsch'
 __website__ = 'https://github.com/wgergely/bookmarks'
 __email__ = 'hello@gergely-wootsch.com'
-__version__ = '0.5.0'
+__version__ = '0.6.0'
+__version_info__ = (0, 6, 0)
 __copyright__ = f'Copyright (C) 2022 {__author__}'
 
 # Python 2 is not supported
@@ -109,6 +119,12 @@ def info():
     sg_ver = importlib.import_module('shotgun_api3').__version__
     slack_ver = importlib.import_module('slack_sdk.version').__version__
 
+    from . import common
+    if common.env_key not in os.environ:
+        env = f'{common.env_key} is not set!'
+    else:
+        env = f'{common.env_key}={os.environ[common.env_key]}'
+
     return '\n'.join(
         (
             __copyright__,
@@ -120,7 +136,8 @@ def info():
             f'PySide2 {qt_ver}',
             f'OpenImageIO {oiio_ver}',
             f'ShotGrid API {sg_ver}',
-            f'Slack SDK {slack_ver}'
+            f'Slack SDK {slack_ver}',
+            f'{env}'
         )
     )
 
@@ -130,8 +147,6 @@ def exec_(print_info=True):
 
     The method creates :class:`bookmarks.standalone.BookmarksApp`,
     and initializes all required submodules and data.
-
-    Make sure to check the :doc:`list of dependencies <index>` before running.
 
     """
     if print_info:

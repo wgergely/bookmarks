@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 """:class:`PreferenceEditor` and helper classes used to set application-wide preferences.
 
+Attributes:
+
+    SECTIONS (dict): UI structure and content definitions.
+
 """
 import functools
 import importlib
@@ -16,6 +20,9 @@ instance = None
 
 
 def close():
+    """Closes the :class:`PreferenceEditor` widget.
+
+    """
     global instance
     if instance is None:
         return
@@ -28,6 +35,9 @@ def close():
 
 
 def show():
+    """Shows the :class:`PreferenceEditor` widget.
+
+    """
     global instance
     close()
     instance = PreferenceEditor()
@@ -229,41 +239,30 @@ SECTIONS = {
         'groups': {
             0: {
                 0: {
-                    'name': 'Set Workspace',
+                    'name': 'Set Maya Workspace',
                     'key': common.WorkspaceSyncKey,
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
-                    'description': f'By default, {common.product} always sets the '
-                                   f'Maya Workspace to the currently active asset item. Check here to disable this behaviour.',
+                    'description': f'Click to disable setting the Maya workspace. By '
+                                   f'default the Maya workspace is always set to be the'
+                                   f'current active asset.',
                 },
             },
             1: {
                 0: {
-                    'name': 'Warn Workspace',
-                    'key': common.WorkspaceWarningsKey,
-                    'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
-                    'placeholder': None,
-                    'description': 'Disabled warnings when the\ncurrent Workspace '
-                                   'is changed by {}.'.format(
-                        common.product
-                    ),
-                },
-                1: {
-                    'name': 'Warning on Save',
+                    'name': 'Workspace Save Warning',
                     'key': common.SaveWarningsKey,
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
-                    'description': 'Bookmarks will show a warning when a file is '
-                                   'saved outside the current Workspace. Check the '
-                                   'box above to disable.',
+                    'description': 'Click to disable warnings when saving files outside '
+                                   'the current Workspace.'
                 },
             },
             2: {
                 0: {
-                    'name': 'Push Capture',
+                    'name': 'Push Capture to RV',
                     'key': common.PushCaptureToRVKey,
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
@@ -282,15 +281,15 @@ SECTIONS = {
                                    'captures in the file explorer.',
                 },
                 2: {
-                    'name': 'Publish Capture',
+                    'name': 'Disable "Latest" Capture',
                     'key': common.PublishCaptureKey,
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
-                    'description': 'The latest capture by default will be '
+                    'description': 'The last capture by default will be '
                                    'published into a "Latest" folder with using a '
                                    'generic filename.\nThis can be useful for '
-                                   'creating quick edits with RV. Check the box '
+                                   'creating quick edits in RV. Check the box '
                                    'above to disable.',
                 },
             },
@@ -303,6 +302,16 @@ SECTIONS = {
         'groups': {
             0: {
                 0: {
+                    'name': 'Documentation',
+                    'key': None,
+                    'validator': None,
+                    'widget': None,
+                    'placeholder': '',
+                    'description': 'Check for new versions.',
+                    'button': 'GitHub',
+                    'button2': 'Documentation',
+                },
+                1: {
                     'name': 'Info',
                     'key': None,
                     'validator': None,
@@ -312,7 +321,7 @@ SECTIONS = {
                     'button': 'Check for Updates',
                     'button2': 'Build Info',
                 },
-                1: {
+                2: {
                     'name': 'Debug',
                     'key': None,
                     'validator': None,
@@ -419,3 +428,15 @@ class PreferenceEditor(base.BasePropertyEditor):
     def info_button2_clicked(self, *args, **kwargs):
         w = AboutWidget(parent=self)
         w.open()
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def documentation_button_clicked(self, *args, **kwargs):
+        QtGui.QDesktopServices.openUrl(common.github_url)
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def documentation_button2_clicked(self, *args, **kwargs):
+        QtGui.QDesktopServices.openUrl(common.documentation_url)

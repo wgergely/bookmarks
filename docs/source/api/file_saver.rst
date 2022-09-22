@@ -15,7 +15,7 @@ file_saver (submodule)
 
 
 file_saver_widgets
------------------
+------------------
 
 .. automodule:: bookmarks.file_saver.file_saver_widgets
     :members:

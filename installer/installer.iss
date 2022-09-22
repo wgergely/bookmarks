@@ -1,20 +1,12 @@
-; The installer script takes care of deploying Bookmarks and sets
-; BOOKMARKS_ROOT environment variable to point to the
-; install root. This is used by the Maya Pluging to load the python dependencies
-; shipped with Bookmarks.
-
 #define MyAppName "Bookmarks"
-#define MyAppVersion "0.5.0"
+#define MyAppVersion "0.6.0"
 #define MyAppPublisher "Gergely Wootsch"
-#define MyAppURL "http://github.com/wgergely/bookmarks"
+#define MyAppURL "http:\\github.com\wgergely\bookmarks"
 #define MyAppExeName "bookmarks.exe"
 #define MyAppExeDName "bookmarks_d.exe"
 
-
 [Setup]
-; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
-; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{43C00B91-E185-48A1-9FF0-0A90F0AB831C}
+AppId={{C6A64D39-06F7-4229-92B1-5AFEADF201CB}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppVerName={#MyAppName} {#MyAppVersion}
@@ -28,23 +20,18 @@ ArchitecturesInstallIn64BitMode=x64
 ArchitecturesAllowed=x64
 DisableDirPage=false
 DisableProgramGroupPage=false
-; The [Icons] "quicklaunchicon" entry uses {userappdata} but its [Tasks] entry has a proper IsAdminInstallMode Check.
 UsedUserAreasWarning=no
-; Uncomment the following line to run in non administrative install mode (install for current user only.)
 PrivilegesRequired=lowest
-OutputDir={#SourcePath}..\..\launcher-installer
-
+OutputDir={#SourcePath}packages
 
 ChangesEnvironment=yes
 ChangesAssociations=yes
 
-OutputBaseFilename={#MyAppName}_setup_{#MyAppVersion}
-SetupIconFile={#SourcePath}..\..\bookmarks\bookmarks\rsc\icon.ico
+OutputBaseFilename={#MyAppName}_{#MyAppVersion}
+SetupIconFile={#SourcePath}..\bookmarks\rsc\icon.ico
 
-;Compression
-;https://stackoverflow.com/questions/40447498/best-compression-settings-in-inno-setup-compiler
-SolidCompression=no
 Compression=lzma2/ultra64
+SolidCompression=no
 LZMAUseSeparateProcess=yes
 LZMADictionarySize=65536
 LZMANumFastBytes=64
@@ -63,7 +50,7 @@ WizardImageFile={#SourcePath}WIZMODERNIMAGE.BMP
 WizardImageBackColor=clGray
 WizardSmallImageFile={#SourcePath}WIZMODERNSMALLIMAGE.BMP
 UsePreviousGroup=false
-UninstallDisplayIcon={#SourcePath}..\..\bookmarks\bookmarks\rsc\icon.ico
+UninstallDisplayIcon={#SourcePath}..\bookmarks\rsc\icon.ico
 UninstallDisplayName={#MyAppName}
 
 [Languages]
@@ -81,10 +68,13 @@ Name: standalone; Description: {#MyAppName} Standalone; Types: full compact cust
 Name: maya; Description: {#MyAppName}: Maya Plugin; Types: full; Check: DirExists(ExpandConstant('{userdocs}\maya'))
 
 [Files]
-; Main contents
-Source: "{#SourcePath}..\..\launcher-install\*"; DestDir: "{app}"; Components: standalone; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
-; Maya plugin -- mBookmarks.py
-Source:  "{#SourcePath}..\..\launcher-install\shared\{#MyAppName}\maya\plugin.py"; DestName: "{#MyAppName}Maya.py"; DestDir: {userdocs}\maya\plug-ins; Components: maya; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
+; Pre-built binaries
+Source: "{#SourcePath}dist\*"; DestDir: "{app}"; Components: standalone; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
+; Bookmarks python module
+Source:  "{#SourcePath}..\bookmarks\*"; DestDir: "{app}\shared\bookmarks"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
+
+; Maya plugin
+Source:  "{#SourcePath}..\bookmarks\maya\plugin.py"; DestName: "Bookmarks.py"; DestDir: {userdocs}\maya\plug-ins; Components: maya; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
 ; Example templates
 Source:  "{#SourcePath}..\bookmarks\rsc\templates\Asset.zip"; DestDir: "{localappdata}\{#MyAppName}\asset_templates"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
 Source:  "{#SourcePath}..\bookmarks\rsc\templates\Job.zip"; DestDir: "{localappdata}\{#MyAppName}\job_templates"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify

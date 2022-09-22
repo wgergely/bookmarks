@@ -64,3 +64,35 @@ task_items
 
 .. automodule:: bookmarks.items.task_items
     :members:
+
+
+
+widgets
+-------
+
+
+.. automodule:: bookmarks.items.widgets.description_editor
+    :members:
+
+
+
+.. automodule:: bookmarks.items.widgets.filter_editor
+    :members:
+
+
+.. automodule:: bookmarks.items.widgets.image_viewer
+    :members:
+
+
+.. automodule:: bookmarks.items.widgets.thumb_capture
+    :members:
+
+
+.. automodule:: bookmarks.items.widgets.thumb_library
+    :members:
+
+
+
+.. automodule:: bookmarks.items.widgets.thumb_picker
+    :members:
+

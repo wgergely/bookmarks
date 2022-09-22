@@ -170,14 +170,40 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../bookmarks.html">Introduction</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules Documentation</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/common.html">common: Core attributes, classes and methods</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/database.html">database: Bookmark item database interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/images.html">images: Image cache and thumbnails</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/main.html">main: Principal app widget</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/lists.html">lists: Item list widgets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/tokens.html">tokens:</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/editor.html">editor</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api.html">Python Modules</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../api_core.html">Core Modules</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/common.html">Common</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/database.html">Database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/images.html">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/threads.html">Threads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/tokens.html">Tokens</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../ui_core.html">Core UI Modules</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/main.html">Main Widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/items.html">Item Views &amp; Models</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../ui_modules.html">UI Modules</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/ui.html">UI Utility classes and methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/topbar.html">Topbar</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/editor.html">Editors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/bookmark_editor.html">Bookmark Editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/file_saver.html">File Saver</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/actions.html">Actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/shortcuts.html">Shortcuts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/contextmenu.html">Context Menu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/launcher.html">Application launcher</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../3rdparty.html">3rd Party</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/shotgrid.html">ShotGrid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/rv.html">ShotGrid RV</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/ffmpeg.html">FFMpeg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/slack.html">Slack</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/teams.html">Teams</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -306,7 +332,7 @@
             <span class="s1">&#39;flag&#39;</span><span class="p">:</span> <span class="n">SceneFormat</span><span class="p">,</span>
             <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">common</span><span class="o">.</span><span class="n">sort_words</span><span class="p">(</span>
                 <span class="s1">&#39;aep, ai, eps, fla, ppj, prproj, psb, psd, psq, xfl, c4d, hud, &#39;</span>
-                <span class="s1">&#39;hip, hiplc, hipnc, ma, mb, nk, nk~,spm, mocha, rv, tvpp&#39;</span>
+                <span class="s1">&#39;hip, hiplc, hipnc, ma, mb, nk, nk~,spm, mocha, rv, tvpp, zprj&#39;</span>
             <span class="p">),</span>
             <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Scene file formats&#39;</span>
         <span class="p">},</span>
@@ -1009,7 +1035,7 @@
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2021, Gergely Wootsch
+                Copyright &#169; 2022, Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             

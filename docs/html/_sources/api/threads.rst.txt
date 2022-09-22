@@ -1,12 +1,12 @@
 threads
-======
+=======
 
 .. automodule:: bookmarks.threads
 
 
 
 threads (submodule)
-------------------
+-------------------
 
 .. automodule:: bookmarks.threads.threads
   :members:

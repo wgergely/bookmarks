@@ -7,7 +7,7 @@ import re
 
 from PySide2 import QtCore
 
-from .. import common, log
+from .. import common
 
 Sequence = 'SEQ'
 Shot = 'SH'

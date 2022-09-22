@@ -299,7 +299,6 @@ class ServerListWidget(ui.ListWidget):
         self.selectionModel().blockSignals(False)
         common.restore_selection(self, common.BookmarkEditorServerKey)
 
-
     @QtCore.Slot(QtWidgets.QListWidgetItem)
     def validate_item(self, item):
         selected_index = common.get_selected_index(self)

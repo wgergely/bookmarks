@@ -4,15 +4,14 @@ functionality is limited and is currently only used to signal new publishes.
 
 """
 
-import os
-import json
 import base64
+import json
+import os
 
 import requests
 
-from .. import images
 from .. import common
-
+from .. import images
 
 PUBLISH_MESSAGE = {
     "type": "message",
@@ -175,13 +174,12 @@ def get_payload(
 
     base64_thumbnail = base64.b64encode(open(thumbnail, 'rb').read()).decode()
     data = json.dumps(card)
-    data = data.\
-        replace('<IMAGE>', base64_thumbnail).\
-        replace('<TYPE>', publish_type).\
-        replace('<SEQ>', seq).\
-        replace('<SHOT>', shot).\
-        replace('<PATH>', path).\
-        replace('<USER>', user).\
+    data = data. \
+        replace('<IMAGE>', base64_thumbnail). \
+        replace('<TYPE>', publish_type). \
+        replace('<SEQ>', seq). \
+        replace('<SHOT>', shot). \
+        replace('<PATH>', path). \
+        replace('<USER>', user). \
         replace('<DATE>', date)
     return json.loads(data)
-

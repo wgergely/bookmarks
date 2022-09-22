@@ -2,15 +2,15 @@
 """Thread definitions and associated worker classes.
 
 """
-import uuid
-import time
-import weakref
 import collections
+import time
+import uuid
+import weakref
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
-from .. import common
 from . import workers
+from .. import common
 
 
 class DataType(object):
@@ -37,7 +37,6 @@ BookmarkInfo = 'BookmarkInfo'
 QueuedDatabaseTransaction = 'QueuedDatabaseTransaction'
 QueuedSettingsTransaction = 'QueuedSettingsTransaction'
 QueuedShotgunQuery = 'QueuedShotgunQuery'
-
 
 controllers = {}
 

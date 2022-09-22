@@ -290,7 +290,6 @@ def get_template_file_path(name):
     )
 
 
-
 def pseudo_local_bookmark():
     """Return a location on the local system to store temporary files.
     This is used to store thumbnails for starred items and other temporary items.

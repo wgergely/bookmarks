@@ -5,10 +5,9 @@
 from PySide2 import QtCore
 
 from ... import common
-from ... import ui
 from ... import database
-
-from ... items import delegate
+from ... import ui
+from ...items import delegate
 
 
 class DescriptionEditorWidget(ui.LineEdit):

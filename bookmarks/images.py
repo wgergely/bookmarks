@@ -68,7 +68,8 @@ def init_imagecache():
 
 def init_resources():
     for _source, k in ((common.get_rsc(f), f) for f in
-                       (common.GuiResource, common.ThumbnailResource, common.FormatResource)):
+                       (common.GuiResource, common.ThumbnailResource,
+                        common.FormatResource)):
         for _entry in os.scandir(_source):
             common.image_resource_list[k].append(_entry.name.split('.', maxsplit=1)[0])
 
@@ -967,7 +968,8 @@ class ImageCache(QtCore.QObject):
 
             # I'm having issues working with very short movie files - that contain only a couple of frames,
             # so, let's ignore those (gifs are fine)
-            if not is_gif and source_spec.get_int_attribute('oiio:subimages', defaultval=-1) <= 2:
+            if not is_gif and source_spec.get_int_attribute('oiio:subimages',
+                                                            defaultval=-1) <= 2:
                 common.oiio_cache.invalidate(source, force=True)
                 os.remove(destination + '.lock')
                 return False

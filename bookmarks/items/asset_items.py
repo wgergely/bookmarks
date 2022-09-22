@@ -4,13 +4,12 @@
 """
 import functools
 import os
-import re
 
 from PySide2 import QtCore, QtWidgets, QtGui
 
+from . import delegate
 from . import models
 from . import views
-from . import delegate
 from .. import actions
 from .. import common
 from .. import contextmenu

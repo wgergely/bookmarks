@@ -3,8 +3,6 @@
 import os
 import random
 
-from PySide2 import QtCore, QtWidgets
-
 from . import base
 
 
@@ -118,7 +116,6 @@ class Test(base.BaseCase):
                 _v = db.value(db.source(), k, t)
                 self.assertIsNone(_v)
 
-
     def test_copy_paste(self):
         from .. import common
         from .. import database
@@ -153,7 +150,6 @@ class Test(base.BaseCase):
                 _v = db.value(db.source(), k, t)
                 self.assertEqual(_v, v)
 
-
         v = database.copy_properties(server, job, root)
         self.assertIsNotNone(v)
         self.assertIsInstance(v, dict)
@@ -163,7 +159,8 @@ class Test(base.BaseCase):
             self.assertIn(k, v)
             self.assertIsNotNone(v[k])
 
-        v = database.copy_properties(server, job, root, asset='asset', table=database.AssetTable)
+        v = database.copy_properties(server, job, root, asset='asset',
+                                     table=database.AssetTable)
         self.assertIsNotNone(v)
         self.assertIsInstance(v, dict)
         for k in database.TABLES[database.AssetTable]:
@@ -173,4 +170,5 @@ class Test(base.BaseCase):
             self.assertIsNotNone(v[k])
 
         for _ in range(10):
-            database.paste_properties(server, job, root, asset=base.random_str(32), table=database.AssetTable)
+            database.paste_properties(server, job, root, asset=base.random_str(32),
+                                      table=database.AssetTable)

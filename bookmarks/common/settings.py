@@ -246,7 +246,8 @@ def bookmark_key(*args):
 
 def update_private_values():
     for k in ActiveSectionCacheKeys:
-        common.active_paths[PrivateActivePaths][k] = common.active_paths[SynchronisedActivePaths][k]
+        common.active_paths[PrivateActivePaths][k] = \
+        common.active_paths[SynchronisedActivePaths][k]
 
 
 class UserSettings(QtCore.QSettings):

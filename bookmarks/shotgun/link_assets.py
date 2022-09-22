@@ -2,20 +2,17 @@
 """The widget used to link multiple local assets with ShotGrid entities.
 
 """
-import os
 import functools
+import os
 
 from PySide2 import QtWidgets, QtCore, QtGui
 
+from . import shotgun
 from .. import common
-from .. import ui
 from .. import database
 from .. import images
+from .. import ui
 from ..shotgun import actions as sg_actions
-
-
-from . import shotgun
-
 
 instance = None
 
@@ -93,7 +90,8 @@ class TableWidget(QtWidgets.QTableWidget):
         _item.setFlags(QtCore.Qt.ItemIsEnabled)
         _item.setTextAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'asset', common.color(common.BackgroundDarkColor), common.size(common.WidthMargin))
+            'asset', common.color(common.BackgroundDarkColor),
+            common.size(common.WidthMargin))
         icon = QtGui.QIcon()
         icon.addPixmap(pixmap, QtGui.QIcon.Normal)
         _item.setIcon(icon)
@@ -104,7 +102,8 @@ class TableWidget(QtWidgets.QTableWidget):
         item.setTextAlignment(QtCore.Qt.AlignCenter)
         self.setItem(row, 1, item)
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'branch_closed', common.color(common.BackgroundDarkColor), common.size(common.WidthMargin))
+            'branch_closed', common.color(common.BackgroundDarkColor),
+            common.size(common.WidthMargin))
         label = QtWidgets.QLabel()
         label.setPixmap(pixmap)
         self.setCellWidget(row, 1, label)
@@ -358,9 +357,9 @@ class LinkMultiple(QtWidgets.QDialog):
             # Let's check if the local asset has already a valid configuration
             # and select a default choice based on the result
             if all((
-                data['current_data']['id'],
-                data['current_data']['type'],
-                data['current_data']['code'],
+                    data['current_data']['id'],
+                    data['current_data']['type'],
+                    data['current_data']['code'],
             )):
                 # ALready has a valid configuration
                 editor.setCurrentIndex(1)
@@ -433,4 +432,5 @@ class LinkMultiple(QtWidgets.QDialog):
         QtCore.QTimer.singleShot(100, self.init_data)
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth), common.size(common.DefaultHeight))
+        return QtCore.QSize(common.size(common.DefaultWidth),
+                            common.size(common.DefaultHeight))

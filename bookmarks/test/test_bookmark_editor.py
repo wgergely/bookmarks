@@ -96,7 +96,6 @@ class Test(base.BaseCase):
         self.assertEqual(j.server, server)
         self.assertTrue(QtCore.QFileInfo(server).exists())
 
-
         #########################################################
         # Test jobs
 

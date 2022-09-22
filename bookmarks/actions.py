@@ -23,11 +23,13 @@ def must_be_initialized(func):
     """A decorator to make sure the main widget is created and initialized
 
     """
+
     @functools.wraps(func)
     def func_wrapper(*args, **kwargs):
         if common.main_widget is None or not common.main_widget.is_initialized:
             return
         return func(*args, **kwargs)
+
     return func_wrapper
 
 
@@ -433,6 +435,7 @@ def toggle_favourite_items():
     proxy.set_filter_flag(common.MarkedAsFavourite, not val)
     proxy.filterFlagChanged.emit(common.MarkedAsFavourite, not val)
 
+
 @common.error
 @common.debug
 @must_be_initialized
@@ -448,7 +451,6 @@ def adjust_tab_button_size(*args, **kwargs):
 @common.debug
 @must_be_initialized
 def toggle_inline_icons():
-
     widget = common.widget()
     state = not widget.buttons_hidden()
 

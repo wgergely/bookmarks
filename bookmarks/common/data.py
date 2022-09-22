@@ -30,7 +30,8 @@ def sort_data(ref, sort_role, sort_order):
     def sort_key(_idx):
         # If sort_by_basename is `True` we'll use the base file name for sorting
         v = ref().__getitem__(_idx)
-        if common.sort_by_basename and sort_role == common.SortByNameRole and isinstance(v[sort_role], list):
+        if common.sort_by_basename and sort_role == common.SortByNameRole and isinstance(
+                v[sort_role], list):
             return v[sort_role][-1]
         return v[sort_role]
 

@@ -126,7 +126,8 @@ class MessageWidget(QtWidgets.QStatusBar):
             painter,
             font,
             self.rect().marginsRemoved(QtCore.QMargins(
-                common.size(common.WidthIndicator), 0, common.size(common.WidthIndicator), 0)),
+                common.size(common.WidthIndicator), 0, common.size(common.WidthIndicator),
+                0)),
             '  {}  '.format(self.currentMessage()),
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
             common.color(common.TextColor)
@@ -154,10 +155,12 @@ class ToggleSessionModeButton(ui.ClickableIconButton):
 
     def pixmap(self):
         if common.active_mode == common.SynchronisedActivePaths:
-            return images.ImageCache.get_rsc_pixmap('check', common.color(common.GreenColor),
+            return images.ImageCache.get_rsc_pixmap('check',
+                                                    common.color(common.GreenColor),
                                                     self._size)
         if common.active_mode == common.PrivateActivePaths:
-            return images.ImageCache.get_rsc_pixmap('crossed', common.color(common.RedColor),
+            return images.ImageCache.get_rsc_pixmap('crossed',
+                                                    common.color(common.RedColor),
                                                     self._size)
         return images.ImageCache.get_rsc_pixmap('crossed', common.color(common.RedColor),
                                                 self._size)

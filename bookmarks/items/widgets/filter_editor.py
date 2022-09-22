@@ -8,7 +8,6 @@ from ... import common
 from ... import ui
 
 
-
 class FilterEditor(QtWidgets.QDialog):
     """Editor widget used to set a list model's persistent text filter.
 
@@ -46,7 +45,8 @@ class FilterEditor(QtWidgets.QDialog):
 
         self.history_button = ui.ClickableIconButton(
             'filter',
-            (common.color(common.TextSecondaryColor), common.color(common.TextSecondaryColor)),
+            (common.color(common.TextSecondaryColor),
+             common.color(common.TextSecondaryColor)),
             common.size(common.WidthMargin)
         )
         self.history_button.setFocusPolicy(QtCore.Qt.NoFocus)

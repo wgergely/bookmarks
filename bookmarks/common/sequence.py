@@ -26,9 +26,9 @@ Attributes:
         with sequence items.
 
 """
+import functools
 import re
 import weakref
-import functools
 
 from PySide2 import QtCore
 

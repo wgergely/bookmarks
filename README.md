@@ -1,29 +1,45 @@
-# Welcome to Bookmarks!
+<p align="center">
+  <img width="300" height="300" src="https://github.com/wgergely/bookmarks/blob/main/bookmarks/rsc/gui/icon.png?raw=true">
+</p>
 
-## Introduction
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.8%2B-lightgrey">
+  <img src="https://img.shields.io/badge/Python-PySide2-lightgrey">
+  <img src="https://img.shields.io/badge/Platform-Windows-lightgrey">
+  <img src="https://img.shields.io/badge/Version-v0.6.0-green">
+</p> 
 
-Bookmarks is a lightweight asset manager written in Python designed to
-browse and manage project content of animation, VFX and film projects.
+<p align="center">
+  Bookmarks is a lightweight Python asset manager designed to browse and manage content of animation, VFX and film projects.<br>
+  https://github.com/wgergely/bookmarks/releases/download/0.6.0/Bookmarks_0.6.0.exe
+</p>
+
+---
 
 ### Features
 
-The app displays content as separate `bookmark`, `asset` and `file` items. Each
-`bookmark` item contains a series of `asset` items that in turn contain `file`
-items. `Bookmark` and `asset` items can be configured independently to link with,
-for instance, `ShotGrid` entities or set up with properties, like frame-rate,
-resolution, and custom urls. These properties can be used to quickly configure scenes
-in host applications, like Maya, and to access related external resources.
+Bookmarks separate content as `bookmark`, `asset` and `file` items. Each
+bookmark item contains a series of asset items that in turn contain the file
+items. Bookmark and asset items can be configured independently to link with,
+for instance, `ShotGrid` entities or be set up with properties, like frame-rate,
+resolution, and custom URLs. These properties can be used to quickly configure scenes
+in host applications, e.g. Maya, and to access related external resources.
 
-The app provides simple tools to create new jobs from ZIP file templates (although this
-is usually something very site specific) and options to annotate and filter existing
-items. It can also preview images files using `OpenImageIO`.
+
+
+The app provides simple tools to create jobs and assets using ZIP templates, templated file-names
+and options to annotate and filter existing items, and preview images using `OpenImageIO`.
 
 ### Background
 
-This project was developed to manage my project personal projects and is adapted to my
-own custom way of setting them up. This is to say, Bookmarks expects certain patterns to
-be respected to read files and folders correctly, but I tried my best to make things
-easily customizable to adapt to site specific environments.
+This project was developed to manage personal projects and is adapted to
+custom way of setting them up. his is to say, Bookmarks expects certain patterns to
+be respected to read files and folders correctly. I tried my best to keep things
+customizable to adapt to site specific environments.
+
+<p align="center">
+  <img src="https://github.com/wgergely/bookmarks/blob/main/docs/media/bookmarks.gif?raw=True">
+</p>
 
 ### Quick Start
 

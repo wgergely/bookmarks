@@ -5,8 +5,8 @@ TODO: Create editor widget to make these customizable.
 
 """
 from PySide2 import QtWidgets, QtGui, QtCore
-from . import common
 
+from . import common
 
 n = (f for f in range(9999))
 
@@ -342,9 +342,6 @@ MainWidgetShortcuts = {
 }
 
 
-
-
-
 def _verify_shortuts(shortcuts):
     values = []
     for v in shortcuts.values():
@@ -368,6 +365,7 @@ def add_shortcuts(widget, shortcuts, context=QtCore.Qt.WidgetWithChildrenShortcu
         shortcut.setContext(context)
         v['shortcut'] = shortcut
 
+
 @common.debug
 @common.error
 def connect(shortcuts, key, func):
@@ -383,6 +381,7 @@ def get(shortcuts, k):
     """
     return shortcuts[k]['shortcut']
 
+
 def string(shortcuts, k):
     """Returns the string representation of a shortcut.
 
@@ -391,6 +390,7 @@ def string(shortcuts, k):
     if hasattr(v, 'toString'):
         return v.toString(format=QtGui.QKeySequence.NativeText)
     return v
+
 
 def hint(shortcuts, k):
     """Get the hint text associated with a shortcut.

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Bookmarks test environment setup and teardown."""
-import shutil
 import os
+import shutil
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore
 
 from . import base
 
@@ -19,7 +19,7 @@ class Test(base.BaseCase):
 
         # Get built-in templates
         root = __file__ + os.sep + os.pardir + os.sep + \
-            os.pardir + os.sep + 'rsc' + os.sep + 'templates'
+               os.pardir + os.sep + 'rsc' + os.sep + 'templates'
         root = os.path.normpath(root)
         for f in os.listdir(root):
             if '.zip' not in f:
@@ -31,7 +31,6 @@ class Test(base.BaseCase):
 
     def test_get_template_folder(self):
         from .. import templates
-        from .. import actions
 
         with self.assertRaises(TypeError):
             templates.get_template_folder(1)
@@ -104,7 +103,6 @@ class Test(base.BaseCase):
 
     def test_extract_zip_template(self):
         from .. import common
-        from .. import templates
         from .. import actions
 
         with self.assertRaises(RuntimeError):
@@ -135,7 +133,6 @@ class Test(base.BaseCase):
 
     def test_remove_zip_template(self):
         from .. import common
-        from .. import templates
         from .. import actions
 
         with self.assertRaises(TypeError):

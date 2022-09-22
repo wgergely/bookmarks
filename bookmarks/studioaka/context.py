@@ -5,7 +5,6 @@ shall serve as a placeholder for a future Studio Aka pipline integration.
 
 """
 from PySide2 import QtCore
-
 from akapipe.core import context
 from akapipe.core import database
 from akapipe.core import db
@@ -140,6 +139,3 @@ def asset_activated(server, job, root, asset):
                 if path in templates.expand_token(_token):
                     signals.signals.workspaceChangedExternally.emit(label)
                     return
-
-
-

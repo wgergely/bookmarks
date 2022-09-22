@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
 """Bookmarks test environment setup and teardown."""
 import os
-import random
 
-from PySide2 import QtCore, QtGui, QtWidgets
-
-from .. import common
 from . import base
+from .. import common
 
 
 class Test(base.BaseCase):
@@ -33,6 +30,7 @@ class Test(base.BaseCase):
 
         v = common.active(common.AssetKey, args=True)
         self.assertIsInstance(v, (type(None), tuple))
+
     # def test_values(self):
     #     v = common.settings.value(common.UIStateSection, common.CurrentList)
     #     self.assertIsNone(v)

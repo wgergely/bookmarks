@@ -150,13 +150,13 @@ __initial_values__ = {
 # Make submodules available from this top module
 from .core import *
 from .data import *
+from .env import *
 from .filemonitor import *
 from .font import *
+from .lists import *
 from .sequence import *
 from .sessionlock import *
 from .settings import *
 from .setup import *
 from .signals import *
-from .lists import *
 from .ui import *
-from .env import *

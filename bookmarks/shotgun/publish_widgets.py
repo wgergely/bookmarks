@@ -4,12 +4,10 @@
 """
 from PySide2 import QtWidgets, QtCore, QtGui
 
-from .. import common
-
-from .. import images
-from . import shotgun
 from . import actions as sg_actions
-
+from . import shotgun
+from .. import common
+from .. import images
 
 NOT_SELECTED = 'Not selected...'
 NOT_CONFIGURED = 'Not configured'
@@ -100,7 +98,8 @@ class DropWidget(QtWidgets.QWidget):
 
         rect = self.rect().adjusted(o, o, -o, -o)
 
-        color = common.color(common.GreenColor) if hover else common.color(common.SeparatorColor)
+        color = common.color(common.GreenColor) if hover else common.color(
+            common.SeparatorColor)
         pen = QtGui.QPen(color)
         pen.setWidthF(common.size(common.HeightSeparator) * 2)
         pen.setStyle(QtCore.Qt.DashLine)
@@ -123,7 +122,8 @@ class DropWidget(QtWidgets.QWidget):
 
         o = common.size(common.WidthMargin) * 1.5
 
-        color = common.color(common.GreenColor) if hover else common.color(common.TextSecondaryColor)
+        color = common.color(common.GreenColor) if hover else common.color(
+            common.TextSecondaryColor)
         color = common.color(common.TextSelectedColor) if self._path else color
         color = common.color(common.GreenColor) if self._drag_in_progress else color
 

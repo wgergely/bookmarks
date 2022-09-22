@@ -27,13 +27,13 @@ from . import common
 from . import images
 from . import shortcuts
 from . import statusbar
-from .topbar import topbar
-from .items import views
-from .items import bookmark_items
 from .items import asset_items
-from .items import file_items
+from .items import bookmark_items
 from .items import favourite_items
+from .items import file_items
 from .items import task_items
+from .items import views
+from .topbar import topbar
 
 
 def init():
@@ -134,15 +134,15 @@ class MainWidget(QtWidgets.QWidget):
         asset = common.active_paths[common.SynchronisedActivePaths][common.AssetKey]
 
         if (
-            not root
-            and idx in (common.BookmarkTab, common.AssetTab, common.FileTab)
+                not root
+                and idx in (common.BookmarkTab, common.AssetTab, common.FileTab)
         ):
             idx = common.BookmarkTab
 
         if (
-            root
-            and not asset
-            and idx in (common.AssetTab, common.FileTab)
+                root
+                and not asset
+                and idx in (common.AssetTab, common.FileTab)
         ):
             idx = common.AssetTab
 
@@ -243,7 +243,8 @@ class MainWidget(QtWidgets.QWidget):
         ff = self.favourites_widget.model()
         ff.filterTextChanged.emit(ff.filter_text())
 
-        for flag in (common.MarkedAsActive, common.MarkedAsArchived, common.MarkedAsFavourite):
+        for flag in (
+        common.MarkedAsActive, common.MarkedAsArchived, common.MarkedAsFavourite):
             b.filterFlagChanged.emit(flag, b.filter_flag(flag))
             a.filterFlagChanged.emit(flag, a.filter_flag(flag))
             f.filterFlagChanged.emit(flag, f.filter_flag(flag))

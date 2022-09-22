@@ -7,9 +7,9 @@ import os
 
 from PySide2 import QtWidgets, QtCore, QtGui
 
+from . import delegate
 from . import models
 from . import views
-from . import delegate
 from .. import actions
 from .. import common
 from .. import contextmenu

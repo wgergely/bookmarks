@@ -4,10 +4,7 @@
 """
 import os
 
-from PySide2 import QtCore, QtWidgets, QtGui
-
 from ... import common
-from ... import images
 from ... import ui
 
 

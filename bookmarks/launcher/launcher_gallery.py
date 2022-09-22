@@ -2,7 +2,6 @@
 """Main widget used to select a Launcher item.
 
 """
-from PySide2 import QtCore
 
 from .. import common
 from .. import database

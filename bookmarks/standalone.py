@@ -8,18 +8,17 @@ Note, in ``EmbeddedMode``, Bookmarks uses :class:`.main.MainWidget` as the main
 widget.
 
 """
-import os
 import ctypes
+import os
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
+from . import __version__
+from . import actions
 from . import common
-from . import ui
 from . import contextmenu
 from . import main
-
-from . import actions
-from . import __version__
+from . import ui
 
 MODEL_ID = f'{common.product}App'
 
@@ -39,13 +38,13 @@ def init_tray():
         common.tray_widget.show()
 
 
-
 @QtCore.Slot()
 def show():
     """Shows the main window.
 
     """
-    if common.init_mode != common.StandaloneMode or not isinstance(common.main_widget, BookmarksAppWindow):
+    if common.init_mode != common.StandaloneMode or not isinstance(common.main_widget,
+                                                                   BookmarksAppWindow):
         raise RuntimeError('Window can only be show in StandaloneMode.')
 
     state = common.settings.value(
@@ -118,7 +117,8 @@ class Tray(QtWidgets.QSystemTrayIcon):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        p = common.get_rsc(f'{common.GuiResource}{os.path.sep}icon.{common.thumbnail_format}')
+        p = common.get_rsc(
+            f'{common.GuiResource}{os.path.sep}icon.{common.thumbnail_format}')
         pixmap = QtGui.QPixmap(p)
         icon = QtGui.QIcon(pixmap)
         self.setIcon(icon)
@@ -653,7 +653,8 @@ class BookmarksApp(QtWidgets.QApplication):
 
     def _set_window_icon(self):
         """Set the application icon."""
-        path = common.get_rsc(f'{common.GuiResource}{os.path.sep}icon.{common.thumbnail_format}')
+        path = common.get_rsc(
+            f'{common.GuiResource}{os.path.sep}icon.{common.thumbnail_format}')
         pixmap = QtGui.QPixmap(path)
         icon = QtGui.QIcon(pixmap)
         self.setWindowIcon(icon)

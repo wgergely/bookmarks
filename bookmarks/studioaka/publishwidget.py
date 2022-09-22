@@ -5,10 +5,10 @@ import functools
 
 from PySide2 import QtCore, QtWidgets
 
-from ..external import ffmpeg_widget
-from .. import common, ui
 from . import publish
+from .. import common, ui
 from ..editor import base
+from ..external import ffmpeg_widget
 
 instance = None
 
@@ -202,4 +202,4 @@ class PublishFootageWidget(base.BasePropertyEditor):
         return QtCore.QSize(
             common.size(common.DefaultWidth) * 0.66,
             common.size(common.DefaultHeight) * 1.33
-            )
+        )

@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 """Bookmarks test environment setup and teardown."""
 import os
-import random
 
-
-from .. import common
 from . import base
+from .. import common
 
 
 class Test(base.BaseCase):

@@ -16,10 +16,10 @@ import weakref
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from . import models
 from . import delegate
-from . widgets import description_editor
-from . widgets import filter_editor
+from . import models
+from .widgets import description_editor
+from .widgets import filter_editor
 from .. import actions
 from .. import common
 from .. import contextmenu
@@ -28,9 +28,7 @@ from .. import images
 from .. import ui
 from ..threads import threads
 
-
 BG_COLOR = QtGui.QColor(0, 0, 0, 50)
-
 
 
 class ListsWidget(QtWidgets.QStackedWidget):
@@ -53,15 +51,15 @@ class ListsWidget(QtWidgets.QStackedWidget):
         idx = idx if idx >= common.BookmarkTab else common.BookmarkTab
 
         if (
-            not common.active_index(common.BookmarkTab).isValid()
-            and idx in (common.BookmarkTab, common.AssetTab, common.FileTab)
+                not common.active_index(common.BookmarkTab).isValid()
+                and idx in (common.BookmarkTab, common.AssetTab, common.FileTab)
         ):
             idx = common.BookmarkTab
 
         if (
-            common.active_index(common.BookmarkTab).isValid()
-            and not common.active_index(common.AssetTab).isValid()
-            and idx in (common.AssetTab, common.FileTab)
+                common.active_index(common.BookmarkTab).isValid()
+                and not common.active_index(common.AssetTab).isValid()
+                and idx in (common.AssetTab, common.FileTab)
         ):
             idx = common.AssetTab
 
@@ -289,7 +287,6 @@ class BaseListWidget(QtWidgets.QListView):
             self.restore_selection)
 
         self.init_buttons_state()
-
 
     @common.error
     @common.debug
@@ -548,7 +545,8 @@ class BaseListWidget(QtWidgets.QListView):
         server, job, root = index.data(common.ParentPathRole)[0:3]
 
         # Ignore default items
-        if flag == common.MarkedAsArchived and index.data(common.FlagsRole) & common.MarkedAsDefault:
+        if flag == common.MarkedAsArchived and index.data(
+                common.FlagsRole) & common.MarkedAsDefault:
             return
 
         if flag == common.MarkedAsArchived:
@@ -1012,7 +1010,8 @@ class BaseListWidget(QtWidgets.QListView):
         model = proxy.sourceModel()
         index = proxy.mapToSource(index)
 
-        if not model.canDropMimeData(event.mimeData(), event.proposedAction(), index.row(), 0):
+        if not model.canDropMimeData(event.mimeData(), event.proposedAction(),
+                                     index.row(), 0):
             self._thumbnail_drop = (-1, False)
             self.repaint(self.rect())
             event.ignore()
@@ -1036,7 +1035,8 @@ class BaseListWidget(QtWidgets.QListView):
         model = proxy.sourceModel()
         index = proxy.mapToSource(index)
 
-        if not model.canDropMimeData(event.mimeData(), event.proposedAction(), index.row(), 0):
+        if not model.canDropMimeData(event.mimeData(), event.proposedAction(),
+                                     index.row(), 0):
             event.ignore()
             return
         model.dropMimeData(
@@ -1102,7 +1102,8 @@ class BaseListWidget(QtWidgets.QListView):
                 self.key_up()
                 self.delay_save_selection()
                 return
-            elif (event.key() == QtCore.Qt.Key_Return) or (event.key() == QtCore.Qt.Key_Enter):
+            elif (event.key() == QtCore.Qt.Key_Return) or (
+                    event.key() == QtCore.Qt.Key_Enter):
                 self.action_on_enter_key()
                 self.delay_save_selection()
                 return
@@ -1154,7 +1155,8 @@ class BaseListWidget(QtWidgets.QListView):
                     if n <= sel.currentIndex().row():
                         continue
 
-                    if index.data(QtCore.Qt.DisplayRole)[0].lower() == self.timed_search_string.lower():
+                    if index.data(QtCore.Qt.DisplayRole)[
+                        0].lower() == self.timed_search_string.lower():
                         sel.setCurrentIndex(
                             index,
                             QtCore.QItemSelectionModel.ClearAndSelect
@@ -1202,7 +1204,8 @@ class BaseListWidget(QtWidgets.QListView):
             shift_modifier = event.modifiers() & QtCore.Qt.ShiftModifier
 
             # Adjust the scroll amount based on thw row size
-            if self.model().sourceModel().row_size.height() > (common.size(common.HeightRow) * 2):
+            if self.model().sourceModel().row_size.height() > (
+                    common.size(common.HeightRow) * 2):
                 o = 9 if shift_modifier else 1
             else:
                 o = 9 if shift_modifier else 3
@@ -1278,7 +1281,8 @@ class BaseListWidget(QtWidgets.QListView):
 
         rect = self.visualRect(index)
         rectangles = delegate.get_rectangles(rect, self.inline_icons_count())
-        description_rectangle = self.itemDelegate().get_description_rect(rectangles, index)
+        description_rectangle = self.itemDelegate().get_description_rect(rectangles,
+                                                                         index)
 
         if description_rectangle.contains(cursor_position):
             self.description_editor_widget.show()

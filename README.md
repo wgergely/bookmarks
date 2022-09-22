@@ -80,3 +80,8 @@ common.initialize(common.EmbeddedMode) # or common.StandaloneMode
 running from inside a host DCC. Currently only the Maya plugin makes use of this mode.
 See `bookmarks.maya` and [`bookmarks.common`](api/common.md#module-bookmarks.common) for the related methods.
 
+
+## Python Modules Documentation
+
+https://bookmarks.gergely-wootsch.com/html/api.html
+

@@ -1,7 +1,10 @@
 """Maya cache export classes and functions.
 
-"""
+Attributes:
+    PRESETS (dict): List of implemented export formats.
+    SECTIONS (dict): UI layout definition.
 
+"""
 import functools
 import time
 
@@ -13,7 +16,9 @@ except ImportError:
     raise ImportError('Could not find the Maya modules.')
 
 from . import base as mayabase
-from .. import common, ui, log
+from .. import common
+from .. import log
+from .. import ui
 from ..editor import base
 from ..tokens import tokens
 

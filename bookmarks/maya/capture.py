@@ -1,30 +1,6 @@
 """Maya Capture.
 
-Playblasting with independent viewport, camera and display options.
-
-Capture from : https://github.com/abstractfactory/maya-capture
-
-The MIT License (MIT)
-
-Copyright (c) 2014 Marcus Ottosson
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+A modified version of https://github.com/abstractfactory/maya-capture by Marcus Ottosson.
 
 """
 import contextlib
@@ -39,11 +15,6 @@ except ImportError:
     raise ImportError('Could not find the Maya modules.')
 
 from PySide2 import QtGui, QtWidgets
-
-version_info = (2, 3, 0)
-
-__version__ = '%s.%s.%s' % version_info
-__license__ = 'MIT'
 
 
 @contextmanager
@@ -517,7 +488,7 @@ def parse_view(panel):
 def parse_active_scene():
     """Parse active scene for arguments for capture()
 
-    *Resolution taken from render common.
+    Resolution taken from render common.
 
     """
 

@@ -3,20 +3,14 @@ Welcome to Bookmarks!
 =====================
 
 
-------------
-Introduction
-------------
-
 .. automodule:: bookmarks
 
 
-Table of Contents
-=================
-
 .. toctree::
-    :maxdepth: 3
+    :hidden:
+    :maxdepth: 2
 
-    bookmarks
+    introduction
     api
 
 

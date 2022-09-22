@@ -11,7 +11,3 @@ slack (submodule)
 
 .. automodule:: bookmarks.slack.slack
     :members:
-
-
-slack (submodule)
-------------------

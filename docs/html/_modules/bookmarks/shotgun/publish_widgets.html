@@ -246,12 +246,10 @@
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
 
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">common</span>
-
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">images</span>
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">shotgun</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">actions</span> <span class="k">as</span> <span class="n">sg_actions</span>
-
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">shotgun</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">common</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">images</span>
 
 <span class="n">NOT_SELECTED</span> <span class="o">=</span> <span class="s1">&#39;Not selected...&#39;</span>
 <span class="n">NOT_CONFIGURED</span> <span class="o">=</span> <span class="s1">&#39;Not configured&#39;</span>
@@ -342,7 +340,8 @@
 
         <span class="n">rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">adjusted</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="o">-</span><span class="n">o</span><span class="p">,</span> <span class="o">-</span><span class="n">o</span><span class="p">)</span>
 
-        <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">GreenColor</span><span class="p">)</span> <span class="k">if</span> <span class="n">hover</span> <span class="k">else</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">SeparatorColor</span><span class="p">)</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">GreenColor</span><span class="p">)</span> <span class="k">if</span> <span class="n">hover</span> <span class="k">else</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">SeparatorColor</span><span class="p">)</span>
         <span class="n">pen</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPen</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
         <span class="n">pen</span><span class="o">.</span><span class="n">setWidthF</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">HeightSeparator</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">pen</span><span class="o">.</span><span class="n">setStyle</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DashLine</span><span class="p">)</span>
@@ -365,7 +364,8 @@
 
         <span class="n">o</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">WidthMargin</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.5</span>
 
-        <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">GreenColor</span><span class="p">)</span> <span class="k">if</span> <span class="n">hover</span> <span class="k">else</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextSecondaryColor</span><span class="p">)</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">GreenColor</span><span class="p">)</span> <span class="k">if</span> <span class="n">hover</span> <span class="k">else</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">TextSecondaryColor</span><span class="p">)</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">TextSelectedColor</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="k">else</span> <span class="n">color</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">GreenColor</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drag_in_progress</span> <span class="k">else</span> <span class="n">color</span>
 
@@ -904,7 +904,7 @@
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2021, Gergely Wootsch
+                Copyright &#169; 2022, Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             

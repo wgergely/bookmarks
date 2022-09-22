@@ -13,13 +13,14 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath(f'{__file__}/../../../bookmarks'))
-
-
 from bookmarks import common
-import bookmarks
-print(bookmarks)
 common.initialize(common.StandaloneMode)
+
+from maya import standalone
+try:
+    standalone.initialize(name='python')
+except:
+    pass
 
 # -- Project information -----------------------------------------------------
 
@@ -28,8 +29,7 @@ copyright = '2022, Gergely Wootsch'
 author = 'Gergely Wootsch'
 
 # The full version, including alpha/beta/rc tags
-release = '0.5.0'
-
+release = '0.6.0'
 
 # -- General configuration ---------------------------------------------------
 
@@ -43,7 +43,8 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.autosectionlabel',
     'sphinx.ext.githubpages',
-    'sphinx_markdown_builder'
+    'sphinx_markdown_builder',
+    'autodocsumm',
 ]
 
 napoleon_google_docstring = True
@@ -60,7 +61,6 @@ templates_path = ['_templates']
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
-
 
 # -- Options for HTML output -------------------------------------------------
 
@@ -93,5 +93,8 @@ highlight_language = "python"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-
 autodoc_member_order = 'bysource'
+
+autodoc_default_options = {
+    'autosummary': True,
+}

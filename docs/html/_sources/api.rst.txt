@@ -2,25 +2,31 @@
 Python Modules
 ==============
 
-This is the developer documentation of Bookmarks' Python modules.
+Developer documentation of Bookmarks' Python modules.
 
-It is generated from the source code automatically and hence might not be complete or
-perfectly structured. Still, hopefully, can serve as a guide and reference for future
-development work.
+As it is generated from the source code might not be complete or well structured.
+Still, hopefully, can serve as a reference for future development work.
 
-If you're looking for the user guide, see the :ref:`Introduction`.
+If you're looking for the user guide, see :ref:`Welcome to Bookmarks!`.
 
+
+Sections
+========
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
 
-    api_core
-    ui_core
-    ui_modules
+    common
+    ui
+    plugins
     3rdparty
 
 
-
+Indices and tables
+==================
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
 
 
 

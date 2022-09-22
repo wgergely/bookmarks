@@ -510,7 +510,7 @@ class PrefixEditor(QtWidgets.QDialog):
     def sizeHint(self):
         return QtCore.QSize(
             common.size(common.DefaultWidth) * 0.5, common.size(common.HeightRow)
-            )
+        )
 
 
 if __name__ == '__main__':

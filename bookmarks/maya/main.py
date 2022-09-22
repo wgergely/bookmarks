@@ -333,10 +333,10 @@ class MayaButtonWidget(ui.ClickableIconButton):
         self.setAttribute(QtCore.Qt.WA_NoBackground, False)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground, False)
         self.setFocusPolicy(QtCore.Qt.NoFocus)
-    
+
         self._connect_signals()
         self.init_shortcuts()
-    
+
     def init_shortcuts(self):
         shortcut = QtWidgets.QShortcut(
             QtGui.QKeySequence('Ctrl+Alt+Shift+B'), self
@@ -344,8 +344,7 @@ class MayaButtonWidget(ui.ClickableIconButton):
         shortcut.setAutoRepeat(False)
         shortcut.setContext(QtCore.Qt.ApplicationShortcut)
         shortcut.activated.connect(show)
-        
-        from . import viewport
+
         shortcut1 = QtWidgets.QShortcut(
             QtGui.QKeySequence(f'Ctrl+Alt+Shift+1'), self
         )

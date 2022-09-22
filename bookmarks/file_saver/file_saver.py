@@ -332,11 +332,11 @@ class FileSaverWidget(base.BasePropertyEditor):
         def _strip(s):
             return (
                 s.
-                    strip('-').
-                    strip('_').
-                    strip().
-                    replace('__', '_').
-                    replace('_.', '.')
+                strip('-').
+                strip('_').
+                strip().
+                replace('__', '_').
+                replace('_.', '.')
             )
 
         def _get(k):

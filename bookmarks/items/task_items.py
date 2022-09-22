@@ -13,9 +13,9 @@ import os
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
+from . import delegate
 from . import models
 from . import views
-from . import delegate
 from .. import common
 from .. import contextmenu
 from .. import images

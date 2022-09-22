@@ -64,7 +64,6 @@ def paintmethod(func):
         args[1].restore()
         return res
 
-
     return func_wrapper
 
 
@@ -404,7 +403,7 @@ def draw_segments(it, font, metrics, offset, *args):
     rect.setRight(
         rectangles[DataRect].right() -
         common.size(common.WidthMargin) * 1.5
-        )
+    )
 
     o = 0.9 if selected else 0.8
     o = 1.0 if hover else o
@@ -755,7 +754,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
                 QtCore.QPoint(
                     name_rect.center().x(),
                     name_rect.center().y() - (metrics.lineSpacing() / 2.0)
-                    )
+                )
             )
 
         text_segments = self.get_text_segments(index)
@@ -789,7 +788,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
             QtCore.QPoint(
                 description_rect.center().x(),
                 name_rect.center().y() + metrics.lineSpacing()
-                )
+            )
         )
         return description_rect
 
@@ -1134,12 +1133,12 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
             _rect.setBottom(
                 _rect.bottom() +
                 common.size(common.WidthIndicator)
-                )
+            )
             _rect.setTop(_rect.bottom() - common.size(common.WidthIndicator))
             _rect.setLeft(
                 common.size(common.WidthIndicator) +
                 option.rect.height() - common.size(common.HeightSeparator)
-                )
+            )
             painter.drawRect(_rect)
 
         # Active indicator
@@ -1147,7 +1146,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
             rect.setLeft(
                 option.rect.left() +
                 common.size(common.WidthIndicator) + option.rect.height()
-                )
+            )
             painter.setOpacity(0.5)
             painter.setBrush(common.color(common.GreenColor))
             painter.drawRoundedRect(

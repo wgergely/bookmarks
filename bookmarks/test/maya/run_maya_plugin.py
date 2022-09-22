@@ -5,8 +5,8 @@ Make sure to run this from the Python boundled with the Maya installation.
 THe script will test the Maya plugin `initializePlugin` and `uninitializePlugin`.
 
 """
-import sys
 import os
+import sys
 
 sys.path.append(
     os.path.normpath(
@@ -20,11 +20,9 @@ sys.path.append(
     )
 )
 
-
 from PySide2 import QtCore, QtWidgets
 import maya.standalone as standalone
 import maya.cmds as cmds
-
 
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseOpenGLES, True)
 QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
@@ -36,6 +34,7 @@ app.setQuitOnLastWindowClosed(False)
 standalone.initialize(name='python')
 
 from bookmarks.maya import plugin
+
 plugin.init_environment('BOOKMARKS_ROOT')
 
 cmds.evalDeferred(lambda: plugin.initializePlugin('Bookmarks'))

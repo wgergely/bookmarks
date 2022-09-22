@@ -489,7 +489,8 @@ def get_ranges(arr, padding):
         if idx + 1 != len(arr):
             if arr[idx + 1] != n + 1:  # break coming up
                 k += 1
-    return ','.join(['-'.join(sorted(list(set([blocks[k][0], blocks[k][-1]])))) for k in blocks])
+    return ','.join(
+        ['-'.join(sorted(list(set([blocks[k][0], blocks[k][-1]])))) for k in blocks])
 
 
 def update_slack_configured(source_paths, bookmark_row_data, ref):
@@ -569,7 +570,8 @@ class InfoWorker(BaseWorker):
     def _process_data(self, ref):
         pp = ref()[common.ParentPathRole]
         st = ref()[common.PathRole]
-        flags = ref()[common.FlagsRole] | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsDragEnabled
+        flags = ref()[
+                    common.FlagsRole] | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsDragEnabled
         item_type = ref()[common.TypeRole]
 
         if not st:
@@ -748,6 +750,7 @@ class ThumbnailWorker(BaseWorker):
     delegates to paint thumbnails.
 
     """
+
     def is_valid(self, ref):
         return False if (
                 not ref() or
@@ -755,7 +758,6 @@ class ThumbnailWorker(BaseWorker):
                 ref()[common.ThumbnailLoaded] or
                 ref()[common.FlagsRole] & common.MarkedAsArchived
         ) else True
-
 
     @process
     @common.error
@@ -829,7 +831,6 @@ class ThumbnailWorker(BaseWorker):
             if QtCore.QFileInfo(source).size() >= pow(1024, 3) * 2:
                 return True
 
-
             res = images.ImageCache.oiio_make_thumbnail(
                 source,
                 destination,
@@ -843,7 +844,8 @@ class ThumbnailWorker(BaseWorker):
 
             # We should never get here ideally, but if we do we'll mark the item
             # with a bespoke 'failed' thumbnail
-            fpath = common.get_rsc(f'{common.GuiResource}/failed.{common.thumbnail_format}')
+            fpath = common.get_rsc(
+                f'{common.GuiResource}/failed.{common.thumbnail_format}')
             hash = common.get_hash(fpath)
 
             with images.lock:
@@ -862,7 +864,8 @@ class ThumbnailWorker(BaseWorker):
 
     @common.error
     def queue_items(self, refs):
-        v = common.settings.value(common.SettingsSection, common.DontGenerateThumbnailsKey)
+        v = common.settings.value(common.SettingsSection,
+                                  common.DontGenerateThumbnailsKey)
         v = False if v is None else v
         if v:
             return None
@@ -873,6 +876,7 @@ class TransactionsWorker(BaseWorker):
     """This worker processes database transactions.
 
     """
+
     @common.error
     def process_data(self):
         verify_thread_affinity()
@@ -891,6 +895,7 @@ class TransactionsWorker(BaseWorker):
 
 class ShotgunWorker(BaseWorker):
     """This worker is used to retrieve data from ShotGrid."""
+
     @common.error
     def process_data(self):
         verify_thread_affinity()

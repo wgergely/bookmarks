@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 """Bookmarks test environment setup and teardown."""
-import uuid
-import shutil
-import unittest
 import os
-import string
 import random
+import shutil
+import string
+import unittest
+import uuid
 
-from PySide2 import QtCore, QtGui, QtWidgets
-
+from PySide2 import QtCore
 
 PRODUCT = f'bookmarks_test_{uuid.uuid1().hex}'
 PRODUCT_ROOT = '{}/{}'.format(
@@ -17,12 +16,12 @@ PRODUCT_ROOT = '{}/{}'.format(
     PRODUCT
 )
 
-
 ranges = (
     # (0x0030, 0x0039),
     (0x0041, 0x005A),
     (0x00C0, 0x0240),
 )
+
 
 def random_str(length):
     r = str()
@@ -31,11 +30,12 @@ def random_str(length):
             r += chr(random.randrange(*_range))
     return r
 
+
 def random_ascii(length):
     latters = string.ascii_uppercase + string.ascii_lowercase + string.digits
     # Create a list of str characters within the range 0000-D7FF
     random_strs = [''.join(random.choice(latters))
-                       for _ in range(0, length)]
+                   for _ in range(0, length)]
     return ''.join(random_strs)
 
 
@@ -62,7 +62,6 @@ class BaseCase(unittest.TestCase):
 
         if not os.path.isdir(common.temp_path()):
             os.makedirs(common.temp_path())
-
 
     @classmethod
     def tearDownClass(cls):

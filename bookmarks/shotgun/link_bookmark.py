@@ -4,14 +4,12 @@
 The widgets are used to link a ShotGrid entity with a local bookmark item.
 
 """
-from PySide2 import QtWidgets, QtCore, QtGui
 
+from . import actions as sg_actions
+from . import link
+from . import shotgun
 from .. import common
 from .. import database
-from . import shotgun
-from . import link
-from . import actions as sg_actions
-
 
 instance = None
 

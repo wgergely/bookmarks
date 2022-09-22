@@ -186,12 +186,12 @@ class Highlighter(QtGui.QSyntaxHighlighter):
                                     match.start(
                                         2
                                     ) - 1, 1, char_format
-                                    )
+                                )
                                 self.setFormat(
                                     match.start(
                                         2
                                     ) + len(grp), 1, char_format
-                                    )
+                                )
 
             if case['flag'] == ItalicsHighlight:
                 it = case['re'].finditer(text)
@@ -216,12 +216,12 @@ class Highlighter(QtGui.QSyntaxHighlighter):
                                     match.start(
                                         2
                                     ) - 1, 1, char_format
-                                    )
+                                )
                                 self.setFormat(
                                     match.start(
                                         2
                                     ) + len(grp), 1, char_format
-                                    )
+                                )
 
             if case['flag'] == BoldHighlight:
                 it = case['re'].finditer(text)
@@ -245,12 +245,12 @@ class Highlighter(QtGui.QSyntaxHighlighter):
                                     match.start(
                                         2
                                     ) - 1, 1, char_format
-                                    )
+                                )
                                 self.setFormat(
                                     match.start(
                                         2
                                     ) + len(grp), 1, char_format
-                                    )
+                                )
 
             char_format.setFont(_font)
             char_format.setForeground(_foreground)

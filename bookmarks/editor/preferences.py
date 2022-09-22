@@ -330,6 +330,7 @@ class PreferenceEditor(base.BasePropertyEditor):
     """Property editor used to edit application preferences.
 
     """
+
     def __init__(self, parent=None):
         super().__init__(
             SECTIONS,

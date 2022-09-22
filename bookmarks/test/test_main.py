@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-from PySide2 import QtCore, QtGui, QtWidgets
 
-from .. import common
 from . import base
+from .. import common
 
 
 class Test(base.BaseCase):

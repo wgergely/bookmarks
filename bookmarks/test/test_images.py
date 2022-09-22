@@ -3,10 +3,10 @@
 import os
 import shutil
 
-from PySide2 import QtCore, QtGui, QtWidgets
+from PySide2 import QtCore, QtGui
 
-from .. import common
 from . import base
+from .. import common
 
 
 class Test(base.BaseCase):
@@ -21,7 +21,7 @@ class Test(base.BaseCase):
         open(common.temp_path() + '/' + 'thumbnail.png', 'a').close()
 
         root = __file__ + os.sep + os.pardir + os.sep + \
-            os.pardir + os.sep + 'rsc' + os.sep + 'gui'
+               os.pardir + os.sep + 'rsc' + os.sep + 'gui'
         root = os.path.normpath(root)
         for f in os.listdir(root):
             shutil.copy(root + os.sep + f, common.temp_path())

@@ -22,7 +22,8 @@ class BaseQuickSwitchMenu(contextmenu.BaseContextMenu):
     def add_switch_menu(self, idx, label):
         """Adds the items needed to quickly change bookmarks or assets."""
         off_pixmap = images.ImageCache.get_rsc_pixmap(
-            'icon_bw', common.color(common.TextSecondaryColor), common.size(common.WidthMargin))
+            'icon_bw', common.color(common.TextSecondaryColor),
+            common.size(common.WidthMargin))
         on_pixmap = images.ImageCache.get_rsc_pixmap(
             'check', common.color(common.GreenColor), common.size(common.WidthMargin))
 
@@ -73,8 +74,10 @@ class SwitchBookmarkMenu(BaseQuickSwitchMenu):
             'icon': ui.get_icon('add', color=common.color(common.GreenColor)),
             'text': 'Add new bookmark...',
             'action': actions.show_add_bookmark,
-            'shortcut': shortcuts.string(shortcuts.MainWidgetShortcuts, shortcuts.AddItem),
-            'description': shortcuts.hint(shortcuts.MainWidgetShortcuts, shortcuts.AddItem),
+            'shortcut': shortcuts.string(shortcuts.MainWidgetShortcuts,
+                                         shortcuts.AddItem),
+            'description': shortcuts.hint(shortcuts.MainWidgetShortcuts,
+                                          shortcuts.AddItem),
         }
 
 
@@ -94,6 +97,8 @@ class SwitchAssetMenu(BaseQuickSwitchMenu):
             'icon': ui.get_icon('add', color=common.color(common.GreenColor)),
             'text': 'Create new asset...',
             'action': actions.show_add_asset,
-            'shortcut': shortcuts.string(shortcuts.MainWidgetShortcuts, shortcuts.AddItem),
-            'description': shortcuts.hint(shortcuts.MainWidgetShortcuts, shortcuts.AddItem),
+            'shortcut': shortcuts.string(shortcuts.MainWidgetShortcuts,
+                                         shortcuts.AddItem),
+            'description': shortcuts.hint(shortcuts.MainWidgetShortcuts,
+                                          shortcuts.AddItem),
         }

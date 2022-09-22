@@ -6,10 +6,10 @@ The widgets are used to link a ShotGrid entity with a local item.
 """
 from PySide2 import QtWidgets, QtCore, QtGui
 
-from .. import common
-from .. import ui
 from . import actions as sg_actions
 from . import shotgun
+from .. import common
+from .. import ui
 
 
 class BaseLinkWidget(QtWidgets.QDialog):
@@ -87,7 +87,8 @@ class BaseLinkWidget(QtWidgets.QDialog):
         self.visit_button.clicked.connect(self.visit)
         self.create_button.clicked.connect(self.create)
 
-        self.combobox.model().sourceModel().entityDataReceived.connect(self.select_candidate)
+        self.combobox.model().sourceModel().entityDataReceived.connect(
+            self.select_candidate)
 
     @common.error
     @common.debug
@@ -194,7 +195,9 @@ class BaseLinkWidget(QtWidgets.QDialog):
         common.center_window(self)
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth), (common.size(common.WidthMargin) * 2) + (common.size(common.HeightRow) * 2))
+        return QtCore.QSize(common.size(common.DefaultWidth),
+                            (common.size(common.WidthMargin) * 2) + (
+                                        common.size(common.HeightRow) * 2))
 
 
 class EntityNameEditor(QtWidgets.QDialog):
@@ -250,4 +253,6 @@ class EntityNameEditor(QtWidgets.QDialog):
         super(EntityNameEditor, self).done(result)
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth), (common.size(common.WidthMargin) * 2) + (common.size(common.HeightRow) * 2))
+        return QtCore.QSize(common.size(common.DefaultWidth),
+                            (common.size(common.WidthMargin) * 2) + (
+                                        common.size(common.HeightRow) * 2))

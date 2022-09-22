@@ -272,7 +272,6 @@ def publish_footage(
     except Exception as e:
         log.error(e)
 
-
     try:
         from ..teams import message
 

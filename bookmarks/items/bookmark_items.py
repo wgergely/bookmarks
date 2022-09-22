@@ -3,18 +3,16 @@
 
 """
 import os
-from PySide2 import QtWidgets, QtGui, QtCore
 
-from .. import common
-from ..threads import threads
-from .. import contextmenu
+from PySide2 import QtGui, QtCore
 
-from .. import actions
-
+from . import delegate
 from . import models
 from . import views
-from . import delegate
-
+from .. import actions
+from .. import common
+from .. import contextmenu
+from ..threads import threads
 
 DEFAULT_ITEM_FLAGS = models.DEFAULT_ITEM_FLAGS | QtCore.Qt.ItemIsDropEnabled
 
@@ -120,9 +118,9 @@ class BookmarksModel(models.BaseModel):
             # Item flags. Active and favourite flags will be only set if the
             # bookmark exist
             if all((
-                server == common.active(common.ServerKey),
-                job == common.active(common.JobKey),
-                root == common.active(common.RootKey)
+                    server == common.active(common.ServerKey),
+                    job == common.active(common.JobKey),
+                    root == common.active(common.RootKey)
             )) and exists:
                 flags = flags | common.MarkedAsActive
 
@@ -159,7 +157,7 @@ class BookmarksModel(models.BaseModel):
                 common.AssetCountRole: 0,
                 common.FileDetailsRole: None,
                 common.SequenceRole: None,
-                common.EntryRole: [entry,],
+                common.EntryRole: [entry, ],
                 common.FileInfoLoaded: False,
                 common.StartPathRole: None,
                 common.EndPathRole: None,

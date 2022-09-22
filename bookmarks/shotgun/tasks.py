@@ -4,18 +4,16 @@ when publishing to shotgun.
 
 """
 import functools
+
 from PySide2 import QtWidgets, QtCore, QtGui
 
-from .. import common
-from .. import ui
-
-from .. import images
-from .. import contextmenu
 from . import shotgun
-
-from ..editor import base_widgets
+from .. import common
+from .. import contextmenu
+from .. import images
+from .. import ui
 from ..editor import base
-
+from ..editor import base_widgets
 
 instance = None
 NoStepName = '(Tasks without Step)'
@@ -177,11 +175,13 @@ class ProxyModel(QtCore.QSortFilterProxyModel):
         return False
 
     def _user_filter_accepts(self, entity):
-        if self.user_filter == -2 and ('task_assignees' not in entity or not entity['task_assignees']):
+        if self.user_filter == -2 and (
+                'task_assignees' not in entity or not entity['task_assignees']):
             return True
         elif self.user_filter == -1:
             return True
-        elif self.user_filter >= 0 and 'task_assignees' in entity and entity['task_assignees']:
+        elif self.user_filter >= 0 and 'task_assignees' in entity and entity[
+            'task_assignees']:
             for user in entity['task_assignees']:
                 if self.user_filter == user['id']:
                     return True
@@ -215,7 +215,8 @@ class TaskModel(QtCore.QAbstractItemModel):
         pixmap1 = images.ImageCache.get_rsc_pixmap(
             'sg', common.color(common.GreenColor), common.size(common.WidthMargin))
         pixmap2 = images.ImageCache.get_rsc_pixmap(
-            'check', common.color(common.TextSelectedColor), common.size(common.WidthMargin))
+            'check', common.color(common.TextSelectedColor),
+            common.size(common.WidthMargin))
         icon = QtGui.QIcon()
         icon.addPixmap(pixmap1, mode=QtGui.QIcon.Normal)
         icon.addPixmap(pixmap2, mode=QtGui.QIcon.Active)
@@ -229,6 +230,7 @@ class TaskModel(QtCore.QAbstractItemModel):
         """Builds the internal node hierarchy base on the given entity data.
 
         """
+
         def get_children(parent_node):
             for data in parent_node.data['children']:
                 node = InteralNode(data, parentNode=parent_node)
@@ -592,20 +594,24 @@ class TaskPicker(QtWidgets.QDialog):
 
     def _connect_signals(self):
         self.user_editor.currentIndexChanged.connect(
-            lambda: self.task_editor.model().set_user_filter(self.user_editor.currentData()))
+            lambda: self.task_editor.model().set_user_filter(
+                self.user_editor.currentData()))
         self.user_editor.currentIndexChanged.connect(
             lambda x: self.task_editor.model().invalidateFilter())
 
         self.user_editor.currentTextChanged.connect(
-            functools.partial(self.save_selection, self.user_editor, common.CurrentUserKey))
+            functools.partial(self.save_selection, self.user_editor,
+                              common.CurrentUserKey))
 
         self.asset_editor.currentIndexChanged.connect(
-            lambda: self.task_editor.model().set_asset_filter(self.asset_editor.currentData()))
+            lambda: self.task_editor.model().set_asset_filter(
+                self.asset_editor.currentData()))
         self.asset_editor.currentIndexChanged.connect(
             lambda x: self.task_editor.model().invalidateFilter())
 
         self.asset_editor.currentTextChanged.connect(
-            functools.partial(self.save_selection, self.asset_editor, common.CurrentAssetKey))
+            functools.partial(self.save_selection, self.asset_editor,
+                              common.CurrentAssetKey))
 
         self.task_editor.selectionModel().currentChanged.connect(
             self.task_editor.save_selection)
@@ -732,4 +738,5 @@ class TaskPicker(QtWidgets.QDialog):
         QtCore.QTimer.singleShot(100, self.init_items)
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth) * 1.5, common.size(common.DefaultHeight) * 1.3)
+        return QtCore.QSize(common.size(common.DefaultWidth) * 1.5,
+                            common.size(common.DefaultHeight) * 1.3)

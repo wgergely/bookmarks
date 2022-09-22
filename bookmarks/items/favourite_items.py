@@ -7,9 +7,9 @@ import os
 
 from PySide2 import QtCore
 
-from . import models
 from . import delegate
 from . import file_items
+from . import models
 from .. import actions
 from .. import common
 from .. import contextmenu
@@ -127,7 +127,8 @@ class FavouritesModel(file_items.FilesModel):
             flags = models.DEFAULT_ITEM_FLAGS
             seq, sequence_path = file_items.get_sequence_elements(filepath)
 
-            if (seq and (sequence_path in common.favourites or filepath in common.favourites)) or (
+            if (seq and (
+                    sequence_path in common.favourites or filepath in common.favourites)) or (
                     filepath in common.favourites):
                 flags = flags | common.MarkedAsFavourite
 

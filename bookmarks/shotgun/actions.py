@@ -4,12 +4,11 @@
 """
 import os
 
-from PySide2 import QtCore, QtWidgets, QtGui
+from PySide2 import QtCore, QtWidgets
 
-
-from .. import database
-from .. import common
 from . import shotgun
+from .. import common
+from .. import database
 
 
 @common.debug
@@ -114,7 +113,8 @@ def test_shotgun_connection(sg_properties):
 
 @common.error
 @common.debug
-def create_entity(entity_type, entity_name, request_data=None, create_data=None, verify_bookmark=True, verify_all=False):
+def create_entity(entity_type, entity_name, request_data=None, create_data=None,
+                  verify_bookmark=True, verify_all=False):
     """Creates a new ShotGrid entity linked to the currently active  project.
 
     """
@@ -331,19 +331,19 @@ def get_status_codes(sg):
 
 
 def create_published_file(
-    sg,
-    version_entity,
-    name,
-    file_name,
-    file_path,
-    version,
-    description,
-    project_entity,
-    asset_entity,
-    user_entity,
-    task_entity,
-    published_file_type_entity,
-    local_storage_entity
+        sg,
+        version_entity,
+        name,
+        file_name,
+        file_path,
+        version,
+        description,
+        project_entity,
+        asset_entity,
+        user_entity,
+        task_entity,
+        published_file_type_entity,
+        local_storage_entity
 ):
     """Creates a new PublishedFile entity on ShotGrid.
 
@@ -372,7 +372,8 @@ def create_published_file(
             'local_path_windows': shotgun.sanitize_path(file_path, '\\'),
             'local_storage': local_storage_entity,
             'name': file_name,
-            'url': QtCore.QUrl.fromLocalFile(file_path).toString(options=QtCore.QUrl.FullyEncoded)
+            'url': QtCore.QUrl.fromLocalFile(file_path).toString(
+                options=QtCore.QUrl.FullyEncoded)
         },
         'path_cache': file_path.replace(common.active(common.ServerKey), '').strip('/'),
     }
@@ -386,12 +387,12 @@ def create_published_file(
 
 
 def verify_published_file_version(
-    sg,
-    name,
-    version,
-    project_entity,
-    asset_entity,
-    published_file_type_entity,
+        sg,
+        name,
+        version,
+        project_entity,
+        asset_entity,
+        published_file_type_entity,
 ):
     entity = sg.find_one(
         'PublishedFile',
@@ -438,18 +439,18 @@ def upload_movie(sg, version_entity, version_movie, num_tries=3):
 
 
 def create_version(
-    sg,
-    file_name,
-    file_path,
-    version_movie,
-    version_sequence,
-    version_cache,
-    description,
-    project_entity,
-    asset_entity,
-    task_entity,
-    user_entity,
-    status_entity,
+        sg,
+        file_name,
+        file_path,
+        version_movie,
+        version_sequence,
+        version_cache,
+        description,
+        project_entity,
+        asset_entity,
+        task_entity,
+        user_entity,
+        status_entity,
 ):
     """Add a new Version entity to ShotGrid."""
     if not version_cache:

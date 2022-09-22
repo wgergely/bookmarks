@@ -2,8 +2,8 @@
 """Bookmarks test environment setup and teardown."""
 import os
 
-from .. import common
 from . import base
+from .. import common
 
 
 class Test(base.BaseCase):
@@ -61,12 +61,15 @@ class Test(base.BaseCase):
         self.assertIsInstance(common.get_rsc(common.stylesheet_file), str)
         self.assertTrue(os.path.isfile(common.get_rsc(common.stylesheet_file)))
 
+        self.assertIsInstance(
+            common.get_rsc(f'{common.TemplateResource}/{common.job_template}'), str)
+        self.assertTrue(os.path.isfile(
+            common.get_rsc(f'{common.TemplateResource}/{common.job_template}')))
 
-        self.assertIsInstance(common.get_rsc(f'{common.TemplateResource}/{common.job_template}'), str)
-        self.assertTrue(os.path.isfile(common.get_rsc(f'{common.TemplateResource}/{common.job_template}')))
-
-        self.assertIsInstance(common.get_rsc(f'{common.TemplateResource}/{common.asset_template}'), str)
-        self.assertTrue(os.path.isfile(common.get_rsc(f'{common.TemplateResource}/{common.asset_template}')))
+        self.assertIsInstance(
+            common.get_rsc(f'{common.TemplateResource}/{common.asset_template}'), str)
+        self.assertTrue(os.path.isfile(
+            common.get_rsc(f'{common.TemplateResource}/{common.asset_template}')))
 
     def test_check_type(self):
         common.typecheck_on = True
@@ -95,7 +98,6 @@ class Test(base.BaseCase):
         self.assertIsInstance(_v, str)
         self.assertIn(_v, common.hashes.values())
 
-
         l = len(common.hashes)
         for _ in range(10):
             _v = common.get_hash(v)
@@ -111,7 +113,8 @@ class Test(base.BaseCase):
 
     def test_get_platform(self):
         self.assertIn(
-            common.get_platform(), (common.PlatformWindows, common.PlatformMacOS, common.PlatformUnsupported))
+            common.get_platform(),
+            (common.PlatformWindows, common.PlatformMacOS, common.PlatformUnsupported))
 
     def test_get_username(self):
         self.assertIsInstance(common.get_username(), str)

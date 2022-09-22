@@ -10,18 +10,16 @@ arbitary string, eg. 'job', or 'asset' as defined by `JobTemplateMode` and
 `AssetTemplateMode`.
 
 """
-import zipfile
 import functools
+import zipfile
 
 from PySide2 import QtCore, QtWidgets, QtGui
 
-from . import common
-from . import ui
-from . import images
-from . import contextmenu
 from . import actions
-
-
+from . import common
+from . import contextmenu
+from . import images
+from . import ui
 
 JobTemplateMode = 'job'
 AssetTemplateMode = 'asset'
@@ -124,7 +122,8 @@ class TemplateListDelegate(ui.ListWidgetDelegate):
         """Custom editor for editing the template's name."""
         editor = ui.LineEdit(parent=parent)
         editor.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        editor.setStyleSheet(f'background-color: {common.rgb(common.color(common.BackgroundDarkColor))};')
+        editor.setStyleSheet(
+            f'background-color: {common.rgb(common.color(common.BackgroundDarkColor))};')
         validator = QtGui.QRegExpValidator(parent=editor)
         validator.setRegExp(QtCore.QRegExp(r'[\_\-a-zA-z0-9]+'))
         editor.setValidator(validator)
@@ -408,7 +407,8 @@ class TemplateListWidget(ui.ListWidget):
         menu.exec_()
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth) * 0.15, common.size(common.DefaultWidth) * 0.2)
+        return QtCore.QSize(common.size(common.DefaultWidth) * 0.15,
+                            common.size(common.DefaultWidth) * 0.2)
 
 
 class TemplatesPreviewWidget(QtWidgets.QListWidget):
@@ -433,14 +433,16 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
         size = QtCore.QSize(0, common.size(common.HeightRow) * 0.8)
 
         folder_pixmap = images.ImageCache.get_rsc_pixmap(
-            'folder', common.color(common.TextSecondaryColor), common.size(common.WidthMargin))
+            'folder', common.color(common.TextSecondaryColor),
+            common.size(common.WidthMargin))
         folder_icon = QtGui.QIcon()
         folder_icon.addPixmap(folder_pixmap, QtGui.QIcon.Normal)
         folder_icon.addPixmap(folder_pixmap, QtGui.QIcon.Selected)
         folder_icon.addPixmap(folder_pixmap, QtGui.QIcon.Disabled)
 
         file_pixmap = images.ImageCache.get_rsc_pixmap(
-            'file', common.color(common.GreenColor), common.size(common.WidthMargin), opacity=0.5)
+            'file', common.color(common.GreenColor), common.size(common.WidthMargin),
+            opacity=0.5)
         file_icon = QtGui.QIcon()
         file_icon.addPixmap(file_pixmap, QtGui.QIcon.Normal)
         file_icon.addPixmap(file_pixmap, QtGui.QIcon.Selected)
@@ -490,7 +492,8 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
         return False
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth) * 0.15, common.size(common.DefaultWidth) * 0.2)
+        return QtCore.QSize(common.size(common.DefaultWidth) * 0.15,
+                            common.size(common.DefaultWidth) * 0.2)
 
 
 class TemplatesWidget(QtWidgets.QSplitter):
@@ -551,4 +554,5 @@ class TemplatesWidget(QtWidgets.QSplitter):
             index.data(TemplateContentsRole))
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth), common.size(common.DefaultHeight))
+        return QtCore.QSize(common.size(common.DefaultWidth),
+                            common.size(common.DefaultHeight))

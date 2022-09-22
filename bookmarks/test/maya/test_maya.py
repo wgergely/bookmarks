@@ -4,6 +4,7 @@
 
 import unittest
 
+
 @unittest.skip('Skipping Maya tests.')
 class Test(unittest.TestCase):
 
@@ -155,7 +156,6 @@ class Test(unittest.TestCase):
         self.assertIsInstance(r, str)
         with self.assertRaises(RuntimeError):
             r = maya.widget._instance.import_scene('BOGUS/SCENE/null.ma')
-
 
     def test_get_geo_sets(self):
         try:

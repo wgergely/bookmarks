@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
-from PySide2 import QtCore, QtGui, QtWidgets
-
-from .. import actions
-from .. import common
 
 from . import base
+from .. import actions
+from .. import common
 
 
 class Test(base.BaseCase):
@@ -89,7 +87,7 @@ class Test(base.BaseCase):
             self.assertTrue(os.path.isdir(destination))
 
             destination = common.temp_path() + '/' + base.random_str(12) + \
-                '.' + common.favorite_file_ext
+                          '.' + common.favorite_file_ext
 
             v = actions.export_favourites(destination=destination)
             self.assertIsNotNone(v)
@@ -102,7 +100,7 @@ class Test(base.BaseCase):
             if not os.path.isdir(destination):
                 os.makedirs(destination)
             destination = common.temp_path() + '/' + base.random_str(12) + \
-                '.' + common.favorite_file_ext
+                          '.' + common.favorite_file_ext
             actions.export_favourites(destination=destination)
 
         for f in os.listdir(common.temp_path()):
@@ -149,7 +147,6 @@ class TestWidgetActions(base.BaseCase):
 
             actions.add_bookmark(server, job, 'data/asset')
             actions.add_bookmark(server, job, 'data/shot')
-
 
     def test_toggle_sequence(self):
         pass

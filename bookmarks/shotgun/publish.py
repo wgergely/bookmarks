@@ -10,21 +10,17 @@ import os
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
+from . import actions as sg_actions
+from . import publish_widgets
+from . import shotgun
 from .. import common
-from .. import ui
 from .. import database
-
 from .. import images
+from .. import ui
 from ..editor import base
 from ..tokens import tokens
 
-from . import shotgun
-from . import actions as sg_actions
-from . import publish_widgets
-
-
 instance = None
-
 
 MOV_FORMATS = (
     'mp4',
@@ -276,7 +272,7 @@ class PublishWidget(base.BasePropertyEditor):
             b3 = s.group(1).rstrip('v').rstrip('_').rstrip(
                 '-') + s.group(3)  # version notation
             b4 = s.group(1).rstrip('v').rstrip('_').rstrip('-') + \
-                s.group(3).strip('_').strip('-')  # version notation
+                 s.group(3).strip('_').strip('-')  # version notation
 
             for x in (b0, b1, b2, b3, b4):
                 paths.append(p(d, x))
@@ -319,7 +315,7 @@ class PublishWidget(base.BasePropertyEditor):
             b3 = s.group(1).rstrip('v').rstrip('_').rstrip(
                 '-') + s.group(3)  # version notation
             b4 = s.group(1).rstrip('v').rstrip('_').rstrip('-') + \
-                s.group(3).strip('_').strip('-')  # version notation
+                 s.group(3).strip('_').strip('-')  # version notation
 
             for x in (b0, b1, b2, b3, b4):
                 paths.append(p(d, x))
@@ -782,6 +778,7 @@ class PublishWidget(base.BasePropertyEditor):
 
 if __name__ == '__main__':
     import bookmarks.standalone as standalone
+
     app = standalone.StandaloneApp([])
     w = PublishWidget()
     w.exec_()

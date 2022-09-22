@@ -10,10 +10,10 @@ QFont and QFontMetrics instances can be retrieved using:
 
 """
 import os
+
 from PySide2 import QtGui, QtWidgets
 
 from .. import common
-
 
 PrimaryFontRole = 0
 SecondaryFontRole = 1

@@ -12,10 +12,10 @@ from PySide2 import QtCore, QtGui, QtWidgets
 from .. import actions
 from .. import common
 from .. import contextmenu
+from .. import images
 from .. import shortcuts
 from .. import templates
 from .. import ui
-from .. import images
 from ..editor import base
 
 SECTIONS = {
@@ -100,7 +100,8 @@ class AddJobWidget(base.BasePropertyEditor):
     def init_data(self):
         items = []
 
-        for name, path in self.parent().job_editor.item_generator(self.server, emit_progress=False):
+        for name, path in self.parent().job_editor.item_generator(self.server,
+                                                                  emit_progress=False):
             items.append(name)
 
         completer = QtWidgets.QCompleter(items, parent=self)
@@ -336,11 +337,11 @@ class JobListWidget(ui.ListViewWidget):
 
             _name = (
                 name.
-                    replace('_', ' ').
-                    replace('  ', ' ').
-                    strip().
-                    replace('/', '  |  ').
-                    strip().upper()
+                replace('_', ' ').
+                replace('  ', ' ').
+                strip().
+                replace('/', '  |  ').
+                strip().upper()
             )
 
             item.setData(_name, role=QtCore.Qt.DisplayRole)

@@ -140,4 +140,5 @@ class FFMpegWidget(base.BasePropertyEditor):
         )
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth) * 0.66, common.size(common.DefaultHeight) * 0.66)
+        return QtCore.QSize(common.size(common.DefaultWidth) * 0.66,
+                            common.size(common.DefaultHeight) * 0.66)

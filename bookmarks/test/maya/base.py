@@ -1,23 +1,23 @@
 #!mayapy
 # -*- coding: utf-8 -*-
-#pylint: disable=E0401
+# pylint: disable=E0401
 """Maya module testing base methods."""
 import os
 import sys
 
-from PySide2 import QtCore
-
-import maya.standalone
-import maya.mel
 import maya.cmds
+import maya.mel
+import maya.standalone
+from PySide2 import QtCore
 
 k = 'BOOKMARKS_ROOT'
 
-path = __file__ +  os.pardir.join([os.path.sep,] * 5)
+path = __file__ + os.pardir.join([os.path.sep, ] * 5)
 path = os.path.normpath(path)
-assert(os.path.isdir(path))
+assert (os.path.isdir(path))
 
-plugin =  __file__ +  os.pardir.join([os.path.sep,] * 4) + os.path.sep + 'maya' + os.path.sep + 'plugin.py'
+plugin = __file__ + os.pardir.join(
+    [os.path.sep, ] * 4) + os.path.sep + 'maya' + os.path.sep + 'plugin.py'
 plugin = os.path.normpath(plugin)
 assert os.path.isfile(plugin)
 
@@ -55,7 +55,6 @@ def init_maya_standalone():
 
 
 def load_plugin():
-
     if not os.path.isfile(plugin):
         raise RuntimeError('Could not find `plugin.py`')
 
@@ -66,7 +65,6 @@ def load_plugin():
 
 
 def unload_plugin():
-
     if not os.path.isfile(plugin):
         raise RuntimeError('Could not find `plugin.py`')
 
@@ -103,7 +101,8 @@ def verify_environ():
                     raise RuntimeError('Invalid file')
                 break
     if b is None:
-        raise RuntimeError('The mayapy executable was not found in the path. This should be added to the path befre running this script. The executable should be located in the $MAYA_ROOT/bin folder.')
+        raise RuntimeError(
+            'The mayapy executable was not found in the path. This should be added to the path befre running this script. The executable should be located in the $MAYA_ROOT/bin folder.')
 
 
 def init():

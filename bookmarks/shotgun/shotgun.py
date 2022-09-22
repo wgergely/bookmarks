@@ -30,21 +30,17 @@ These values must be set in the bookmark database before initiating a connection
 https://developer.shotgunsoftware.com/python-api/reference.html
 
 """
-import pprint
 import contextlib
+import pprint
 import uuid
 
 import shotgun_api3
-
 from PySide2 import QtCore, QtWidgets, QtGui
 
-from .. import database
-
 from .. import common
-from .. import ui
+from .. import database
 from .. import images
 from .. import log
-
 
 EntityRole = QtCore.Qt.UserRole + 1000
 IdRole = QtCore.Qt.UserRole + 1001
@@ -54,19 +50,25 @@ NameRole = QtCore.Qt.UserRole + 1003
 ENTITY_URL = '{domain}/detail/{entity_type}/{entity_id}'
 
 fields = {
-    'LocalStorage': ['type', 'id', 'code', 'description', 'mac_path', 'windows_path', 'linux_path'],
+    'LocalStorage': ['type', 'id', 'code', 'description', 'mac_path', 'windows_path',
+                     'linux_path'],
     'PublishedFileType': ['type', 'id', 'code', 'description', 'short_name'],
-    'Project': ['type', 'id', 'name', 'is_template', 'is_demo', 'is_template_project', 'archived'],
+    'Project': ['type', 'id', 'name', 'is_template', 'is_demo', 'is_template_project',
+                'archived'],
     'Asset': ['type', 'id', 'code', 'project', 'description', 'notes'],
     'Sequence': ['type', 'id', 'code', 'project', 'description', 'notes'],
-    'Shot': ['type', 'id', 'code', 'project', 'description', 'notes', 'cut_in', 'cut_out', 'cut_duration', 'sg_cut_in', 'sg_cut_out', 'sg_cut_duration'],
-    'Task': ['type', 'id', 'content', 'sg_description', 'project', 'entity', 'step', 'notes', 'color', 'task_assignees', 'start_date', 'due_date'],
+    'Shot': ['type', 'id', 'code', 'project', 'description', 'notes', 'cut_in', 'cut_out',
+             'cut_duration', 'sg_cut_in', 'sg_cut_out', 'sg_cut_duration'],
+    'Task': ['type', 'id', 'content', 'sg_description', 'project', 'entity', 'step',
+             'notes', 'color', 'task_assignees', 'start_date', 'due_date'],
     'Status': ['id', 'name', 'type', 'code', 'bg_color'],
     'HumanUser': ['type', 'id', 'name', 'firstname', 'lastname', 'projects'],
-    'Version': ['type', 'id', 'code', 'description', 'sg_task', 'sg_path_to_frames', 'sg_path_to_movie', 'sg_path_to_geometry', 'sg_status_list', 'project', 'entity', 'tasks', 'user'],
-    'PublishedFile': ['type', 'id', 'code', 'name', 'description', 'entity', 'version', 'version_number', 'project'],
+    'Version': ['type', 'id', 'code', 'description', 'sg_task', 'sg_path_to_frames',
+                'sg_path_to_movie', 'sg_path_to_geometry', 'sg_status_list', 'project',
+                'entity', 'tasks', 'user'],
+    'PublishedFile': ['type', 'id', 'code', 'name', 'description', 'entity', 'version',
+                      'version_number', 'project'],
 }
-
 
 SG_CONNECTIONS = {}
 sg_connecting_message = None
@@ -82,21 +84,24 @@ def sanitize_path(path, separator):
     path = path.rstrip('{domain}/detail/{entity_type}/{entity_id}')
     if len(path) == 2 and path.endswith('{domain}/detail/{entity_type}/{entity_id}'):
         path += '{domain}/detail/{entity_type}/{entity_id}'
-    local_path = path.replace('\\', separator).replace('{domain}/detail/{entity_type}/{entity_id}', separator)
+    local_path = path.replace('\\', separator).replace(
+        '{domain}/detail/{entity_type}/{entity_id}', separator)
     while True:
-        new_path = local_path.replace('{domain}/detail/{entity_type}/{entity_id}', '{domain}/detail/{entity_type}/{entity_id}')
+        new_path = local_path.replace('{domain}/detail/{entity_type}/{entity_id}',
+                                      '{domain}/detail/{entity_type}/{entity_id}')
         if new_path == local_path:
             break
         else:
             local_path = new_path
     while True:
-        new_path = local_path[0] + local_path[1:].replace('{domain}/detail/{entity_type}/{entity_id}', '{domain}/detail/{entity_type}/{entity_id}')
+        new_path = local_path[0] + local_path[1:].replace(
+            '{domain}/detail/{entity_type}/{entity_id}',
+            '{domain}/detail/{entity_type}/{entity_id}')
         if new_path == local_path:
             break
         else:
             local_path = new_path
     return local_path
-
 
 
 @contextlib.contextmanager
@@ -132,7 +137,8 @@ def connection(sg_properties):
         yield sg
     except Exception as e:
         if QtWidgets.QApplication.instance():
-            common.signals.sgConnectionFailed.emit('{domain}/detail/{entity_type}/{entity_id}'.format(e))
+            common.signals.sgConnectionFailed.emit(
+                '{domain}/detail/{entity_type}/{entity_id}'.format(e))
         raise
     else:
         sg.close()
@@ -372,7 +378,8 @@ class EntityModel(QtCore.QAbstractItemModel):
     """
 
     entityDataRequested = QtCore.Signal(str, str, str, str, str, str,
-                                        list, list)  # uuid, server, job, root, asset, entity_type, filters, fields"""
+                                        list,
+                                        list)  # uuid, server, job, root, asset, entity_type, filters, fields"""
     entityDataReceived = QtCore.Signal(str, list)
 
     def __init__(self, items, parent=None):
@@ -423,7 +430,8 @@ class EntityModel(QtCore.QAbstractItemModel):
         icon.addPixmap(pixmap, QtGui.QIcon.Active)
         icon.addPixmap(pixmap, QtGui.QIcon.Selected)
         pixmap = images.ImageCache.get_rsc_pixmap(
-            'sg', common.color(common.TextDisabledColor), common.size(common.HeightRow), opacity=0.66)
+            'sg', common.color(common.TextDisabledColor), common.size(common.HeightRow),
+            opacity=0.66)
         icon.addPixmap(pixmap, QtGui.QIcon.Disabled)
         return icon
 
@@ -439,7 +447,8 @@ class EntityModel(QtCore.QAbstractItemModel):
 
     def index(self, row, column, parent=QtCore.QModelIndex()):
         if self._waiting_for_data:
-            return self.createIndex(row, column, '{domain}/detail/{entity_type}/{entity_id}')
+            return self.createIndex(row, column,
+                                    '{domain}/detail/{entity_type}/{entity_id}')
         try:
             return self.createIndex(row, column, self.internal_data[row])
         except:

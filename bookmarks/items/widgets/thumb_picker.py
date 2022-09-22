@@ -2,11 +2,10 @@
 """Simple thumbnail image picker.
 
 """
-from PySide2 import QtCore, QtWidgets, QtGui
+from PySide2 import QtCore, QtWidgets
 
 from ... import common
 from ... import images
-
 
 instance = None
 

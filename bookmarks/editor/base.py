@@ -194,7 +194,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
         self.setFocusProxy(self.scroll_area)
         self.scroll_area.setFocusPolicy(QtCore.Qt.NoFocus)
 
-
     def _create_ui(self):
         o = common.size(common.WidthMargin)
 

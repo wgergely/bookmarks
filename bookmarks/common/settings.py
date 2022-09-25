@@ -15,6 +15,114 @@ from PySide2 import QtCore
 from .. import common
 from .. import log
 
+SECTIONS = {
+    'active': (
+        'active/server',
+        'active/job',
+        'active/root',
+        'active/asset',
+        'active/task',
+        'active/file',
+    ),
+    'user': (
+        'user/servers',
+        'user/bookmarks',
+        'user/favourites',
+        'user/current_tab',
+    ),
+    'settings': (
+        'settings/jobs_have_clients',
+        'settings/job_scan_depth',
+        'settings/ui_scale',
+        'settings/show_menu_icons',
+        'settings/paint_thumbnail_bg',
+        'settings/disable_oiio',
+        'settings/always_on_top',
+        'settings/frameless',
+        'settings/bin_ffmpeg',
+        'settings/bin_rv',
+        'settings/bin_rvpush',
+        'settings/bin_oiiotool',
+    ),
+    'filters': (
+        'filters/active',
+        'filters/archived',
+        'filters/favourites',
+        'filters/buttons',
+        'filters/collapsed',
+        'filters/text',
+        'filters/text_history',
+        'filters/sort_by_basename',
+        'filters/sort_by',
+        'filters/sort_order',
+        'filters/row_heights',
+        'filters/selection',
+    ),
+    'window': (
+        'window/main_geo',
+        'window/main_state',
+        'window/bookmark_editor_geo',
+        'window/bookmark_editor_state',
+    ),
+    'slack': (
+        'slack/user',
+    ),
+    'shotgrid': (
+        'shotgrid/link_multiple_filter',
+        'shotgrid/publish_task',
+        'shotgrid/publish_type',
+        'shotgrid/publish_version',
+        'shotgrid/current_user',
+        'shotgrid/current_asset',
+        'shotgrid/current_selection',
+        'shotgrid/sg_user',
+        'shotgrid/sg_storage',
+        'shotgrid/sg_type',
+    ),
+    'file_saver': (
+        'file_saver/task',
+        'file_saver/element',
+        'file_saver/extension',
+        'file_saver/template',
+        'file_saver/user',
+    ),
+    'bookmark_editor': (
+        'bookmark_editor/server',
+        'bookmark_editor/job',
+        'bookmark_editor/root',
+    ),
+    'ffmpeg': (
+        'ffmpeg/preset',
+        'ffmpeg/size',
+        'ffmpeg/timecode',
+    ),
+    'maya': (
+        'maya/sync_workspace',
+        'maya/workspace_save_warnings',
+        'maya/push_capture_to_rv',
+        'maya/reveal_capture',
+        'maya/publish_capture',
+        'maya/export_type',
+        'maya/export_set',
+        'maya/export_timeline',
+        'maya/export_versioning',
+    ),
+    'publish': (
+        'publish/type',
+        'publish/make_video',
+        'publish/preset',
+        'publish/size',
+        'publish/timecode',
+        'publish/copy_to_clipboard',
+        'publish/reveal',
+    ),
+}
+
+KEYS = set()
+for k in SECTIONS:
+    KEYS.update({f for f in SECTIONS[k]})
+
+
 SynchronisedActivePaths = 0
 PrivateActivePaths = 1
 

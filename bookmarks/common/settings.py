@@ -119,8 +119,9 @@ SECTIONS = {
 }
 
 KEYS = set()
-for k in SECTIONS:
-    KEYS.update({f for f in SECTIONS[k]})
+for __k in SECTIONS:
+    KEYS.update({f for f in SECTIONS[__k]})
+del __k
 
 SynchronisedActivePaths = 0
 PrivateActivePaths = 1

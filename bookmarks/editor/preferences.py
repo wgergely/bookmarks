@@ -365,54 +365,12 @@ class PreferenceEditor(base.BasePropertyEditor):
     @common.debug
     def init_data(self, *args, **kwargs):
         self.thumbnail_editor.setDisabled(True)
-
-        for section in SECTIONS.values():
-            for _section in section.values():
-                if not isinstance(_section, dict):
-                    continue
-                for group in _section.values():
-                    if not isinstance(group, dict):
-                        continue
-                    for row in group.values():
-                        if 'key' not in row or not row['key']:
-                            continue
-                        if not hasattr(self, row['key'] + '_editor'):
-                            continue
-
-                        editor = getattr(self, row['key'] + '_editor')
-                        v = common.settings.value(
-                            common.SettingsSection,
-                            row['key'],
-                        )
-                        self.current_data[row['key']] = v
-
-                        if v is not None:
-                            editor.blockSignals(True)
-                            try:
-                                if hasattr(
-                                        editor, 'setCheckState'
-                                ) and v is not None:
-                                    editor.setCheckState(
-                                        QtCore.Qt.CheckState(v)
-                                    )
-                                elif hasattr(editor, 'setText') and v is not None:
-                                    editor.setText(v)
-                                elif hasattr(
-                                        editor, 'setCurrentText'
-                                ) and v is not None:
-                                    editor.setCurrentText(v)
-                            except:
-                                pass
-                            finally:
-                                editor.blockSignals(False)
-
-                        self._connect_editor_signals(row['key'], None, editor)
+        self.load_saved_user_settings(common.SECTIONS['settings'])
+        self._connect_settings_save_signals(common.SECTIONS['settings'])
 
     @common.error
     @common.debug
     def save_changes(self, *args, **kwargs):
-        for k, v in self.changed_data.items():
-            common.settings.setValue(common.SettingsSection, k, v)
         return True
 
     @common.error

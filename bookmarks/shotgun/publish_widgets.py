@@ -392,19 +392,12 @@ class TaskEditor(shotgun.EntityComboBox):
             return
         k = 'content'
         if k in entity and entity[k]:
-            common.settings.setValue(
-                common.UIStateSection,
-                common.PublishTask,
-                entity[k]
-            )
+            common.settings.setValue(common.PublishTask, entity[k])
 
     @common.error
     @common.debug
     def restore_selection(self, *args, **kwargs):
-        v = common.settings.value(
-            common.UIStateSection,
-            common.PublishTask
-        )
+        v = common.settings.value(common.PublishTask)
         if not v:
             self.setCurrentIndex(0)
             return
@@ -563,19 +556,12 @@ class PublishedFileTypeEditor(shotgun.EntityComboBox):
             return
         k = 'code'
         if k in entity and entity[k]:
-            common.settings.setValue(
-                common.UIStateSection,
-                common.PublishFileType,
-                entity[k]
-            )
+            common.settings.setValue(common.PublishFileType, entity[k])
 
     @common.error
     @common.debug
     def restore_selection(self, *args, **kwargs):
-        v = common.settings.value(
-            common.UIStateSection,
-            common.PublishFileType
-        )
+        v = common.settings.value(common.UIStateSection, common.PublishFileType)
         if not v:
             self.setCurrentIndex(0)
             return

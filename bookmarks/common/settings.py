@@ -224,12 +224,12 @@ def init_settings():
     common.settings.load_active_values()
     common.update_private_values()
 
-    v = common.settings.value(CurrentUserPicksSection, ServersKey)
+    v = common.settings.value(ServersKey)
     if not isinstance(v, dict):
         v = {}
     common.servers = v
 
-    v = common.settings.value(CurrentUserPicksSection, FavouritesKey)
+    v = common.settings.value(FavouritesKey)
     if not v or not isinstance(v, dict):
         v = {}
 
@@ -253,7 +253,7 @@ def _init_bookmarks():
     # Save default items to cache
     common.default_bookmarks = _static
 
-    _custom = common.settings.value(CurrentUserPicksSection, BookmarksKey)
+    _custom = common.settings.value(BookmarksKey)
     _custom = _custom if _custom else {}
 
     # Merge static and custom bookmarks
@@ -279,7 +279,7 @@ def active(k, path=False, args=False):
     """Get the current active item.
 
     Args:
-        k (str): The name of the path segment, eg. `common.ServerKey`.
+        k (str): The name of the path segment, e.g. `common.ServerKey`.
         path (bool, optional): If True, will return a path to the active item.
         args (bool, optional): If `True`, will return all components that make up the active path.
 
@@ -371,11 +371,11 @@ class UserSettings(QtCore.QSettings):
     Active Path:
         The active path is saved in the following segments:
 
-        * ActiveSection/ServerKey (str):    Server, eg. '//server/data'.
+        * ActiveSection/ServerKey (str):    Server, e.g. '//server/data'.
         * ActiveSection/JobKey (str):       Job folder name inside the server.
-        * ActiveSection/RootKey (str):      Job-relative bookmark path, eg. 'seq_010/shots'.
-        * ActiveSection/AssetKey (str):     Job folder name inside the root, eg. 'shot_010'.
-        * ActiveSection/TaskKey (str):      A folder, eg. 'scenes', 'renders', etc.
+        * ActiveSection/RootKey (str):      Job-relative bookmark path, e.g. 'seq_010/shots'.
+        * ActiveSection/AssetKey (str):     Job folder name inside the root, e.g. 'shot_010'.
+        * ActiveSection/TaskKey (str):      A folder, e.g. 'scenes', 'renders', etc.
         * ActiveSection/FileKey (str):      A relative file path.
 
     """
@@ -493,5 +493,5 @@ class UserSettings(QtCore.QSettings):
         if common.active_mode == PrivateActivePaths and key in SECTIONS['active']:
             return
 
-        super().setValue(k, v)
-        super().setValue(k + '_type', type(v).__name__)
+        super().setValue(key, v)
+        super().setValue(f'{key}_type', type(v).__name__)

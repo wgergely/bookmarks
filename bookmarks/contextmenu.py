@@ -34,7 +34,7 @@ def _showEvent_override(cls, event):
     """Private utility method for manually calculating the width of
     `BaseContextMenu`.
 
-    I might be misunderstaing how styling menus effect appearance and resulting
+    I might be misunderstanding how styling menus effect appearance and resulting
     size. What is certain, that QT doesn't seem to be able to display the menus
     with a correct width, and hence we'll calculate width manually here.
 
@@ -45,10 +45,7 @@ def _showEvent_override(cls, event):
     CONTEXT_MENU_HEIGHT = common.size(common.WidthMargin) * 2
     CONTEXT_MENU_ICON_PADDING = common.size(common.WidthMargin)
 
-    show_icons = common.settings.value(
-        common.SettingsSection,
-        common.ShowMenuIconsKey
-    )
+    show_icons = common.settings.value(common.ShowMenuIconsKey)
     show_icons = not show_icons if show_icons is not None else True
 
     for action in cls.actions():
@@ -144,10 +141,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             })
 
         """
-        show_icons = common.settings.value(
-            common.SettingsSection,
-            common.ShowMenuIconsKey
-        )
+        show_icons = common.settings.value(common.ShowMenuIconsKey)
         show_icons = not show_icons if show_icons is not None else True
 
         if not parent:

@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """Bookmarks test environment setup and teardown."""
 import os
+import random
+
+from PySide2 import QtCore
 
 from . import base
 from .. import common
@@ -31,109 +34,53 @@ class Test(base.BaseCase):
         v = common.active(common.AssetKey, args=True)
         self.assertIsInstance(v, (type(None), tuple))
 
-    # def test_values(self):
-    #     v = common.settings.value(common.UIStateSection, common.CurrentList)
-    #     self.assertIsNone(v)
-    #
-    #     for _ in range(100):
-    #         v = base.random_str(128)
-    #         common.settings.setValue(
-    #             common.UIStateSection,
-    #             common.CurrentList,
-    #             v
-    #         )
-    #         _v = common.settings.value(
-    #             common.UIStateSection,
-    #             common.CurrentList,
-    #         )
-    #         self.assertEqual(v, _v)
-    #
-    #     for _ in range(100):
-    #         v = base.random_ascii(128)
-    #         common.settings.setValue(
-    #             common.UIStateSection,
-    #             common.CurrentList,
-    #             v
-    #         )
-    #         _v = common.settings.value(
-    #             common.UIStateSection,
-    #             common.CurrentList,
-    #         )
-    #         self.assertEqual(v, _v)
-    #
-    #     for _ in range(100):
-    #         v = {0: base.random_ascii(128), 1: base.random_str(128)}
-    #         common.settings.setValue(
-    #             common.UIStateSection,
-    #             common.CurrentList,
-    #             v
-    #         )
-    #         _v = common.settings.value(
-    #             common.UIStateSection,
-    #             common.CurrentList,
-    #         )
-    #         self.assertEqual(v, _v)
-    #
-    #     for _ in range(100):
-    #         v = random.randrange(99999)
-    #         common.settings.setValue(
-    #             common.UIStateSection,
-    #             common.CurrentList,
-    #             v
-    #         )
-    #         _v = common.settings.value(
-    #             common.UIStateSection,
-    #             common.CurrentList,
-    #         )
-    #         self.assertEqual(v, _v)
-    #
-    #     v = None
-    #     common.settings.setValue(
-    #         common.UIStateSection,
-    #         common.CurrentList,
-    #         v
-    #     )
-    #     _v = common.settings.value(
-    #         common.UIStateSection,
-    #         common.CurrentList,
-    #     )
-    #     self.assertEqual(v, _v)
-    #
-    #     v = 'None'
-    #     common.settings.setValue(
-    #         common.UIStateSection,
-    #         common.CurrentList,
-    #         v
-    #     )
-    #     _v = common.settings.value(
-    #         common.UIStateSection,
-    #         common.CurrentList,
-    #     )
-    #     self.assertEqual(v, _v)
-    #
-    #     v = 0.5
-    #     common.settings.setValue(
-    #         common.UIStateSection,
-    #         common.CurrentList,
-    #         v
-    #     )
-    #     _v = common.settings.value(
-    #         common.UIStateSection,
-    #         common.CurrentList,
-    #     )
-    #     self.assertEqual(v, _v)
-    #
-    #     v = QtCore.QRect(0,0,50,50)
-    #     common.settings.setValue(
-    #         common.UIStateSection,
-    #         common.CurrentList,
-    #         v
-    #     )
-    #     _v = common.settings.value(
-    #         common.UIStateSection,
-    #         common.CurrentList,
-    #     )
-    #     self.assertEqual(v, _v)
+    def test_values(self):
+        v = common.settings.value(common.CurrentList)
+        self.assertIsNone(v)
+
+        for _ in range(100):
+            v = base.random_str(128)
+            common.settings.setValue(common.CurrentList, v)
+            _v = common.settings.value(common.CurrentList)
+            self.assertEqual(v, _v)
+
+        for _ in range(100):
+            v = base.random_ascii(128)
+            common.settings.setValue(common.CurrentList, v)
+            _v = common.settings.value(common.CurrentList)
+            self.assertEqual(v, _v)
+
+        for _ in range(100):
+            v = {0: base.random_ascii(128), 1: base.random_str(128)}
+            common.settings.setValue(common.CurrentList, v)
+            _v = common.settings.value(common.CurrentList)
+            self.assertEqual(v, _v)
+
+        for _ in range(100):
+            v = random.randrange(99999)
+            common.settings.setValue(common.CurrentList, v)
+            _v = common.settings.value(common.CurrentList)
+            self.assertEqual(v, _v)
+
+        v = None
+        common.settings.setValue(common.CurrentList, v)
+        _v = common.settings.value(common.CurrentList)
+        self.assertEqual(v, _v)
+
+        v = 'None'
+        common.settings.setValue(common.CurrentList, v)
+        _v = common.settings.value(common.UIStateSection)
+        self.assertEqual(v, _v)
+
+        v = 0.5
+        common.settings.setValue(common.CurrentList, v)
+        _v = common.settings.value(common.CurrentList)
+        self.assertEqual(v, _v)
+
+        v = QtCore.QRect(0, 0, 50, 50)
+        common.settings.setValue(common.CurrentList, v)
+        _v = common.settings.value(common.CurrentList)
+        self.assertEqual(v, _v)
 
     def test_get_user_settings_path(self):
         v = common.get_user_settings_path()

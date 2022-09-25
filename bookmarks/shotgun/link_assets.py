@@ -194,10 +194,7 @@ class LinkMultiple(QtWidgets.QDialog):
         self.table.createEntity.connect(self.create_entity)
 
     def restore_current_filter(self):
-        v = common.settings.value(
-            common.UIStateSection,
-            common.LinkMultipleCurrentFilter
-        )
+        v = common.settings.value(common.LinkMultipleCurrentFilter)
         if v:
             self.blockSignals(True)
             self.entity_type_filter.setCurrentText(v)
@@ -209,11 +206,7 @@ class LinkMultiple(QtWidgets.QDialog):
             self.entity_type_filter.currentIndex(),
             role=QtCore.Qt.DisplayRole
         )
-        common.settings.setValue(
-            common.UIStateSection,
-            common.LinkMultipleCurrentFilter,
-            v,
-        )
+        common.settings.setValue(common.LinkMultipleCurrentFilter, v)
 
     def emit_filter_changed(self, *args, **kwargs):
         v = self.entity_type_filter.currentData(role=QtCore.Qt.DisplayRole)

@@ -174,24 +174,6 @@ class ToggleSessionModeButton(ui.ClickableIconButton):
 
         return 'Invalid session lock.'
 
-    def toolTip(self):
-        return self.whatsThis()
-
-    def whatsThis(self):
-        return 'Private Active Paths:\n{}\n{}\n{}\n{}\n{}\n\n{}\n{}\n{}\n{}\n{}'.format(
-            common.instance(
-            )._active_section_values[common.ServerKey],
-            common.settings._active_section_values[common.JobKey],
-            common.settings._active_section_values[common.RootKey],
-            common.settings._active_section_values[common.AssetKey],
-            common.settings._active_section_values[common.TaskKey],
-            common.active(common.ServerKey),
-            common.active(common.JobKey),
-            common.active(common.RootKey),
-            common.active(common.AssetKey),
-            common.active(common.TaskKey),
-        )
-
 
 class StatusBar(QtWidgets.QWidget):
     def __init__(self, parent=None):

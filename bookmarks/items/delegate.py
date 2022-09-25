@@ -1037,10 +1037,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         o = 1.0 if selected or active or hover else 0.9
 
         # Background
-        if common.settings.value(
-                common.SettingsSection,
-                common.ShowThumbnailBackgroundKey
-        ):
+        if common.settings.value(common.ShowThumbnailBackgroundKey):
             painter.setOpacity(o)
             color = color if color else common.color(common.SeparatorColor)
             painter.setBrush(color)

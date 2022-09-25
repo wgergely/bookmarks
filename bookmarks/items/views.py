@@ -67,11 +67,7 @@ class ListsWidget(QtWidgets.QStackedWidget):
             idx = common.FavouriteTab
 
         # Save tab to user settings
-        common.settings.setValue(
-            common.UIStateSection,
-            common.CurrentList,
-            idx
-        )
+        common.settings.setValue(common.CurrentList, idx)
         super().setCurrentIndex(idx)
         self.currentWidget().setFocus()
 

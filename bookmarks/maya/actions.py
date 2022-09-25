@@ -30,10 +30,7 @@ from ..external import rv
 @common.debug
 def set_workspace(*args, **kwargs):
     # Get preference
-    v = common.settings.value(
-        common.SettingsSection,
-        common.WorkspaceSyncKey
-    )
+    v = common.settings.value(common.WorkspaceSyncKey)
     # Set default value if none has been set previously
     v = QtCore.Qt.Unchecked if v is None else v
 
@@ -164,10 +161,7 @@ def save_warning(*args):
 
     """
     # Get preference
-    v = common.settings.value(
-        common.SettingsSection,
-        common.SaveWarningsKey
-    )
+    v = common.settings.value(common.SaveWarningsKey)
     # Set default value if none has been set previously
     v = QtCore.Qt.Unchecked if v is None else v
 
@@ -508,10 +502,7 @@ def capture_viewport(size=1.0):
 
 def push_capture(path):
     # Get preference
-    v = common.settings.value(
-        common.SettingsSection,
-        common.PushCaptureToRVKey
-    )
+    v = common.settings.value(common.PushCaptureToRVKey)
     # Set default value if none has been set previously
     v = QtCore.Qt.Unchecked if v is None else v
 
@@ -524,10 +515,7 @@ def push_capture(path):
 
 def reveal_capture(path):
     # Get preference
-    v = common.settings.value(
-        common.SettingsSection,
-        common.RevealCaptureKey
-    )
+    v = common.settings.value(common.RevealCaptureKey)
     # Set default value if none has been set previously
     v = QtCore.Qt.Unchecked if v is None else v
 
@@ -543,10 +531,7 @@ def publish_capture(workspace, capture_folder, scene_info, ext):
 
     """
     # Get preference
-    v = common.settings.value(
-        common.SettingsSection,
-        common.PublishCaptureKey
-    )
+    v = common.settings.value(common.PublishCaptureKey)
     # Set default value if none has been set previously
     v = QtCore.Qt.Unchecked if v is None else v
 

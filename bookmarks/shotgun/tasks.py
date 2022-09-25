@@ -470,17 +470,10 @@ class TaskView(QtWidgets.QTreeView):
 
     def save_selection(self, current, previous):
         v = current.data(QtCore.Qt.DisplayRole)
-        common.settings.setValue(
-            common.PublishVersionSection,
-            common.CurrentSelectionKey,
-            v
-        )
+        common.settings.setValue(common.CurrentSelectionKey, v)
 
     def restore_selection(self):
-        v = common.settings.value(
-            common.PublishVersionSection,
-            common.CurrentSelectionKey,
-        )
+        v = common.settings.value(common.CurrentSelectionKey)
 
         index = self.indexAt(QtCore.QPoint(0, 0))
         while index.isValid():

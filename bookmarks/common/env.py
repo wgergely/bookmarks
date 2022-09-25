@@ -20,7 +20,7 @@ def get_binary(binary_name):
     environment values in a ``{PREFIX}_{BINARY_NAME}`` format,
     e.g. ``BOOKMARKS_FFMPEG``, or ``BOOKMARKS_RV``. These environment variables
     should point to an appropriate executable, e.g.
-    ``BOOKMARKS_FFMPEG=C:/ffmpeg/ffmpeg.exe``
+    ``BOOKMARKS_FFMPEG=C:/ffmpeg/ffmpe.g.exe``
 
     If the environment variable is absent, we'll look at the PATH environment to
     see if the binary is available there.
@@ -159,11 +159,7 @@ class EnvPathEditor(QtWidgets.QWidget):
                 continue
             editor = getattr(self, f'{name}_editor')
             editor.textChanged.connect(
-                functools.partial(
-                    common.settings.setValue,
-                    common.SettingsSection,
-                    f'bin_{name}'
-                )
+                functools.partial(common.settings.setValue, f'bin_{name}')
             )
 
             button1 = getattr(self, f'{name}_button1')

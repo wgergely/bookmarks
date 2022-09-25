@@ -511,10 +511,7 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         """Slot called when an active asset changes.
 
         """
-        v = common.settings.value(
-            common.SettingsSection,
-            common.WorkspaceWarningsKey
-        )
+        v = common.settings.value(common.WorkspaceWarningsKey)
         v = QtCore.Qt.Unchecked if v is None else v
 
         # Do nothing if explicitly set not to show warnings

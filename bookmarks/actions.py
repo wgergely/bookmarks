@@ -377,7 +377,7 @@ def set_active(k, v):
 
     common.active_paths[common.active_mode][k] = v
     if common.active_mode == common.SynchronisedActivePaths:
-        common.settings.setValue(common.ActiveSection, k, v)
+        common.settings.setValue(k, v)
 
 
 @common.error
@@ -824,11 +824,7 @@ def toggle_stays_on_top():
     flags = w.windowFlags()
     state = flags & QtCore.Qt.WindowStaysOnTopHint
 
-    common.settings.setValue(
-        common.UIStateSection,
-        common.WindowAlwaysOnTopKey,
-        not state
-    )
+    common.settings.setValue(common.WindowAlwaysOnTopKey, not state)
     w.hide()
     w.update_window_flags()
     w.activateWindow()
@@ -845,11 +841,7 @@ def toggle_frameless():
     flags = w.windowFlags()
     state = flags & QtCore.Qt.FramelessWindowHint
 
-    common.settings.setValue(
-        common.UIStateSection,
-        common.WindowFramelessKey,
-        not state
-    )
+    common.settings.setValue(common.WindowFramelessKey, not state)
 
     w.hide()
     w.update_window_flags()

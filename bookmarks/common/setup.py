@@ -143,10 +143,7 @@ def _init_config():
 
 
 def _init_ui_scale():
-    v = common.settings.value(
-        common.SettingsSection,
-        common.UIScaleKey
-    )
+    v = common.settings.value(common.UIScaleKey)
 
     if v is None or not isinstance(v, str):
         common.ui_scale = 1.0

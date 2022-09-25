@@ -94,14 +94,6 @@ def add_section(icon, label, parent, color=None):
     return parent
 
 
-def _save_local_value(key, value):
-    common.settings.setValue(
-        common.CurrentUserPicksSection,
-        key,
-        value
-    )
-
-
 class BasePropertyEditor(QtWidgets.QDialog):
     """Base class for constructing a property editor widget.
 
@@ -308,6 +300,9 @@ class BasePropertyEditor(QtWidgets.QDialog):
     def _add_row(self, v, grp, _grp):
         row = ui.add_row(v['name'], parent=_grp, height=None)
 
+        key = v['key']
+        key = key.replace('/', '_') if key else key
+
         if 'description' in v and v['description']:
             row.setStatusTip(v['description'])
             row.setToolTip(v['description'])
@@ -333,31 +328,21 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
             # Set the editor as an attribute on the widget for later
             # access
-            if v['key'] is not None:
-                setattr(
-                    self,
-                    v['key'] + '_editor',
-                    editor
-                )
+            if key is not None:
+                setattr(self, f'{key}_editor', editor)
             else:
-                setattr(
-                    self,
-                    v['name'].lower() + '_editor',
-                    editor
-                )
+                setattr(self, f'{v["name"].lower()}_editor', editor)
 
             if hasattr(editor, 'setAlignment'):
                 editor.setAlignment(self._alignment)
 
             if (
-                    v['key'] is not None and
+                    key is not None and
                     self._db_table in database.TABLES and
-                    v['key'] in database.TABLES[self._db_table]
+                    key in database.TABLES[self._db_table]
             ):
-                _type = database.TABLES[self._db_table][v['key']]['type']
-                self._connect_editor_signals(
-                    v['key'], _type, editor
-                )
+                _type = database.TABLES[self._db_table][key]['type']
+                self._connect_editor_signals(key, _type, editor)
 
             if 'validator' in v and v['validator']:
                 if hasattr(editor, 'setValidator'):
@@ -392,17 +377,13 @@ class BasePropertyEditor(QtWidgets.QDialog):
                 v['button'], parent=row
             )
 
-            if v['key'] is not None:
-                if hasattr(self, v['key'] + '_button_clicked'):
-                    button.clicked.connect(
-                        getattr(self, v['key'] + '_button_clicked')
-                    )
+            if key is not None:
+                if hasattr(self, f'{key}_button_clicked'):
+                    button.clicked.connect(getattr(self, f'{key}_button_clicked'))
             else:
-                if hasattr(self, v['name'].lower() + '_button_clicked'):
+                if hasattr(self, f'{v["name"].lower()}_button_clicked'):
                     button.clicked.connect(
-                        getattr(
-                            self, v['name'].lower() + '_button_clicked'
-                        )
+                        getattr(self, f'{v["name"].lower()}_button_clicked')
                     )
             row.layout().addWidget(button, 0)
 
@@ -411,17 +392,15 @@ class BasePropertyEditor(QtWidgets.QDialog):
                 v['button2'], parent=row
             )
 
-            if v['key'] is not None:
-                if hasattr(self, v['key'] + '_button2_clicked'):
+            if key is not None:
+                if hasattr(self, f'{key}_button2_clicked'):
                     button2.clicked.connect(
-                        getattr(self, v['key'] + '_button2_clicked')
+                        getattr(self, f'{key}_button2_clicked')
                     )
             else:
-                if hasattr(self, v['name'].lower() + '_button2_clicked'):
+                if hasattr(self, f'{v["name"].lower()}_button2_clicked'):
                     button2.clicked.connect(
-                        getattr(
-                            self, v['name'].lower() + '_button2_clicked'
-                        )
+                        getattr(self, f'{v["name"].lower()}_button2_clicked')
                     )
             row.layout().addWidget(button2, 0)
 
@@ -533,18 +512,18 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
     def _connect_settings_save_signals(self, keys):
         """Utility method for connecting editor signals to save their current
-        value in the user common.
+        value in the user setting file.
 
         Args:
-            keys (tuple):   A list of editor keys that save their current value
-                            in the user common.
+            keys (tuple):   A tuple of user setting keys.
 
         """
         for k in keys:
-            if not hasattr(self, k + '_editor'):
+            _k = k.replace('/', '_')
+            if not hasattr(self, f'{_k}_editor'):
                 continue
 
-            editor = getattr(self, k + '_editor')
+            editor = getattr(self, f'{_k}_editor')
 
             if hasattr(editor, 'currentTextChanged'):
                 signal = getattr(editor, 'currentTextChanged')
@@ -555,7 +534,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
             else:
                 continue
 
-            signal.connect(functools.partial(_save_local_value, k))
+            func = functools.partial(common.settings.setValue, k)
+            signal.connect(func)
 
     def load_saved_user_settings(self, keys):
         """Utility method will load user setting values and apply them to the
@@ -563,21 +543,19 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         Args:
             keys (tuple):   A list of editor keys that save their current value
-                            in the user common.
+                            in the user settings file.
 
         """
         for k in keys:
-            if not hasattr(self, k + '_editor'):
+            _k = k.replace('/', '_')
+            if not hasattr(self, f'{_k}_editor'):
                 continue
 
-            v = common.settings.value(
-                common.CurrentUserPicksSection,
-                k
-            )
+            v = common.settings.value(k)
             if not v:
                 continue
 
-            editor = getattr(self, k + '_editor')
+            editor = getattr(self, f'{_k}_editor')
 
             if hasattr(editor, 'setCurrentText'):
                 if not isinstance(v, str):
@@ -599,8 +577,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
                 editor.blockSignals(True)
                 editor.setCheckState(QtCore.Qt.CheckState(v))
                 editor.blockSignals(False)
-            else:
-                continue
 
     @QtCore.Slot()
     def set_thumbnail_source(self):
@@ -639,7 +615,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         db = database.get_db(self.server, self.job, self.root)
         for k in database.TABLES[self._db_table]:
             # Skip items that don't have editors
-            if not hasattr(self, k + '_editor'):
+            if not hasattr(self, f'{k}_editor'):
                 continue
 
             # If the source is not returning a valid value we won't  be able to
@@ -648,7 +624,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
                 self.current_data[k] = None
                 continue
 
-            editor = getattr(self, k + '_editor')
+            editor = getattr(self, f'{k}_editor')
             v = db.value(self.db_source(), k, self._db_table)
             if v is not None:
 
@@ -702,11 +678,11 @@ class BasePropertyEditor(QtWidgets.QDialog):
                     v = datetime.datetime.fromtimestamp(
                         float(v)
                     ).strftime('%Y-%m-%d %H:%M:%S')
-                except Exception as e:
+                except:
                     v = 'error'
 
-            if hasattr(self, k + '_editor'):
-                editor = getattr(self, k + '_editor')
+            if hasattr(self, f'{k}_editor'):
+                editor = getattr(self, f'{k}_editor')
                 editor.setDisabled(True)
                 editor.setText(v)
 
@@ -842,13 +818,19 @@ class BasePropertyEditor(QtWidgets.QDialog):
     def update_changed_database_value(self, table, source, key, value):
         """Slot responsible updating the gui when a database value has changed.
 
+        Args:
+            table (str): Name of the db table.
+            source (str): Source file path.
+            key (str): Database key.
+            value (object): The new database value.
+
         """
         if source != self.db_source():
             return
 
-        if not hasattr(self, key + '_editor'):
+        if not hasattr(self, f'{key}_editor'):
             return
-        editor = getattr(self, key + '_editor')
+        editor = getattr(self, f'{key}_editor')
 
         self.current_data[key] = value
         self.changed_data[key] = value

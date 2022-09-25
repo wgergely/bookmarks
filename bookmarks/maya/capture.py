@@ -217,7 +217,7 @@ def snap(*args, **kwargs):
             frame is used.
         clipboard (bool, optional): Whether to add the output image to the
             global clipboard. This allows to easily paste the snapped image
-            into another application, eg. into Photoshop.
+            into another application, e.g. into Photoshop.
 
     Keywords:
         See `capture`.

@@ -24,6 +24,9 @@ instance = None
 
 
 def close():
+    """Close the :class:`AssetPropertyEditor` window.
+
+    """
     global instance
     if instance is None:
         return
@@ -36,6 +39,15 @@ def close():
 
 
 def show(server, job, root, asset=None):
+    """Show the :class:`AssetPropertyEditor` window.
+
+    Args:
+        server (str): Server name.
+        job (str): Job name.
+        root (str): Root name.
+        asset (str, optional): Asset name. Defaults to `None`.
+
+    """
     global instance
 
     close()
@@ -61,16 +73,16 @@ SECTIONS = {
                     'key': None,
                     'validator': base.namevalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': 'Name, eg. \'SH0010\'',
-                    'description': 'The asset\'s name, eg. \'SH0010\'.',
+                    'placeholder': 'Enter name, e.g. \'SH0010\'',
+                    'description': 'The asset\'s name, e.g. \'SH0010\'',
                 },
                 1: {
                     'name': 'Description',
                     'key': 'description',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': 'A description, eg. \'My first shot\'',
-                    'description': 'A short description of the asset, eg. \'My '
+                    'placeholder': 'A description, e.g. \'My first shot\'',
+                    'description': 'A short description of the asset, e.g. \'My '
                                    'first shot.\'.',
                 },
             },
@@ -117,16 +129,16 @@ SECTIONS = {
                     'key': 'shotgun_id',
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': 'ShotGrid Project ID, eg. \'123\'',
+                    'placeholder': 'ShotGrid Project ID, e.g. \'123\'',
                     'description': 'The ShotGrid ID number this item is associated '
-                                   'with. Eg. \'123\'.',
+                                   'with. e.g. \'123\'.',
                 },
                 3: {
                     'name': 'Name',
                     'key': 'shotgun_name',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': 'ShotGrid entity name, eg. \'MyProject\'',
+                    'placeholder': 'ShotGrid entity name, e.g. \'MyProject\'',
                     'description': 'The ShotGrid entity name. The entity can be a '
                                    'shot, sequence or asset.\nClick "Link with '
                                    'ShotGrid" to get the name and the id from the '
@@ -146,24 +158,24 @@ SECTIONS = {
                     'key': 'cut_in',
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': 'In frame, eg. \'1150\'',
-                    'description': 'The frame this asset starts at, eg. \'1150\'.',
+                    'placeholder': 'In frame, e.g. \'1150\'',
+                    'description': 'The frame this asset starts at, e.g. \'1150\'.',
                 },
                 1: {
                     'name': 'Out Frame',
                     'key': 'cut_out',
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': 'Out frame, eg. \'1575\'',
-                    'description': 'The frame this asset ends at, eg. \'1575\'.',
+                    'placeholder': 'Out frame, e.g. \'1575\'',
+                    'description': 'The frame this asset ends at, e.g. \'1575\'.',
                 },
                 2: {
                     'name': 'Cut Duration',
                     'key': 'cut_duration',
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': 'Duration in frames, eg. \'425\'',
-                    'description': 'The asset\'s duration in frames, eg. \'425\'.',
+                    'placeholder': 'Duration in frames, e.g. \'425\'',
+                    'description': 'The asset\'s duration in frames, e.g. \'425\'.',
                 },
             },
         },
@@ -181,7 +193,7 @@ SECTIONS = {
                     'widget': ui.LineEdit,
                     'placeholder': 'https://my.custom-url.com',
                     'description': 'A custom url of the bookmarks, '
-                                   'eg. https://sheets.google.com/123',
+                                   'e.g. https://sheets.google.com/123',
                     'button': 'Visit',
                 },
                 1: {
@@ -191,7 +203,7 @@ SECTIONS = {
                     'widget': ui.LineEdit,
                     'placeholder': 'https://my.custom-url.com',
                     'description': 'A custom url of the bookmarks, '
-                                   'eg. https://sheets.google.com/123',
+                                   'e.g. https://sheets.google.com/123',
                     'button': 'Visit',
                 }
             }

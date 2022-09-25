@@ -211,7 +211,7 @@ def _input_path_from_seq(seq):
 
 
 def _output_path_from_seq(seq, ext):
-    """Return preformatted output path for ffmpeg.
+    """Return preformatted output path for ffmpe.g.
 
     """
     return os.path.normpath(
@@ -289,7 +289,7 @@ def convert(
         path, preset, server=None, job=None, root=None, asset=None, task=None,
         size=(None, None), timecode=False
 ):
-    """Start a convert process using ffmpeg.
+    """Start a convert process using ffmpe.g.
 
     Args:
         path (str): Path to image file to convert.

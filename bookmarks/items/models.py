@@ -367,7 +367,7 @@ class BaseModel(QtCore.QAbstractListModel):
         )
 
     def sort_order(self):
-        """The currently set order of the items eg. 'descending'."""
+        """The currently set order of the items e.g. 'descending'."""
         return self._sort_order
 
     @common.status_bar_message('Sorting items...')
@@ -518,13 +518,12 @@ class BaseModel(QtCore.QAbstractListModel):
         """
         raise NotImplementedError('Abstract method must be implemented by subclass.')
 
-    def get_local_setting(self, key_type, key=None, section=common.ListFilterSection):
+    def get_local_setting(self, key_type, key=None):
         """Get a value stored in the user settings.
 
         Args:
             key_type (str): A filter key type.
             key (str): A key the value is associated with.
-            section (str): A settings `section`. Defaults to `common.ListFilterSection`.
 
         Returns:
             The value saved in `user_settings`, or `None` if not found.
@@ -536,26 +535,24 @@ class BaseModel(QtCore.QAbstractListModel):
         if not isinstance(key, str):
             key = key.decode('utf-8')
         k = '{}/{}'.format(key_type, common.get_hash(key))
-        return common.settings.value(section, k)
+        return common.settings.value(k)
 
     @common.error
     @common.debug
-    def set_local_setting(self, key_type, v, key=None,
-                          section=common.ListFilterSection):
+    def set_local_setting(self, key_type, v, key=None):
         """Set a value to store in `user_settings`.
 
         Args:
             key_type (str): A filter key type.
             v (any):    A value to store.
             key (type): A key the value is associated with.
-            section (type): A settings `section`. Defaults to `common.ListFilterSection`.
 
         """
         key = key if key else self.user_settings_key()
         if not key:
             return None
         k = f'{key_type}/{common.get_hash(key)}'
-        common.settings.setValue(section, k, v)
+        common.settings.setValue(k, v)
 
     def setData(self, index, data, role=QtCore.Qt.DisplayRole):
         if not index.isValid():
@@ -771,7 +768,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
     def init_filter_values(self, *args, **kwargs):
         """Load the saved widget filters from `user_settings`.
 
-        This determines if eg. archived items are visible in the view.
+        This determines if e.g. archived items are visible in the view.
 
         """
         model = self.sourceModel()

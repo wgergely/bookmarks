@@ -30,8 +30,8 @@ SECTIONS = {
                     'key': None,
                     'validator': base.jobnamevalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': 'Name, eg. `MY_NEW_JOB`',
-                    'description': 'The job\'s name, eg. `MY_NEW_JOB`.',
+                    'placeholder': 'Name, e.g. `MY_NEW_JOB`',
+                    'description': 'The job\'s name, e.g. `MY_NEW_JOB`.',
                 },
             },
             1: {
@@ -251,9 +251,7 @@ class JobListWidget(ui.ListViewWidget):
         if emit_progress:
             self.progressUpdate.emit('')
 
-        has_subdir = common.settings.value(
-            common.SettingsSection, common.JobsHaveSubdirs
-        )
+        has_subdir = common.settings.value(common.JobsHaveSubdirs)
         has_subdir = QtCore.Qt.Unchecked if has_subdir is None else \
             QtCore.Qt.CheckState(
                 has_subdir

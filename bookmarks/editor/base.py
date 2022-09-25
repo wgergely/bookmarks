@@ -300,8 +300,10 @@ class BasePropertyEditor(QtWidgets.QDialog):
     def _add_row(self, v, grp, _grp):
         row = ui.add_row(v['name'], parent=_grp, height=None)
 
-        key = v['key']
-        key = key.replace('/', '_') if key else key
+        k = v['key']
+        _k = k.replace('/', '_') if k else k
+        name = v['name']
+        _name = name.lower()
 
         if 'description' in v and v['description']:
             row.setStatusTip(v['description'])
@@ -315,8 +317,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
             else:
                 editor = v['widget'](parent=row)
                 if isinstance(editor, QtWidgets.QCheckBox):
-                    # We don't want checkboxes to fully extend across a
-                    # row
+                    # We don't want checkboxes to fully extend across a row
                     editor.setSizePolicy(
                         QtWidgets.QSizePolicy.Maximum,
                         QtWidgets.QSizePolicy.Maximum,
@@ -328,21 +329,21 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
             # Set the editor as an attribute on the widget for later
             # access
-            if key is not None:
-                setattr(self, f'{key}_editor', editor)
+            if k is not None:
+                setattr(self, f'{_k}_editor', editor)
             else:
-                setattr(self, f'{v["name"].lower()}_editor', editor)
+                setattr(self, f'{_name}_editor', editor)
 
             if hasattr(editor, 'setAlignment'):
                 editor.setAlignment(self._alignment)
 
             if (
-                    key is not None and
+                    k is not None and
                     self._db_table in database.TABLES and
-                    key in database.TABLES[self._db_table]
+                    k in database.TABLES[self._db_table]
             ):
-                _type = database.TABLES[self._db_table][key]['type']
-                self._connect_editor_signals(key, _type, editor)
+                _type = database.TABLES[self._db_table][k]['type']
+                self._connect_editor_signals(k, _type, editor)
 
             if 'validator' in v and v['validator']:
                 if hasattr(editor, 'setValidator'):
@@ -377,13 +378,13 @@ class BasePropertyEditor(QtWidgets.QDialog):
                 v['button'], parent=row
             )
 
-            if key is not None:
-                if hasattr(self, f'{key}_button_clicked'):
-                    button.clicked.connect(getattr(self, f'{key}_button_clicked'))
+            if k is not None:
+                if hasattr(self, f'{_k}_button_clicked'):
+                    button.clicked.connect(getattr(self, f'{_k}_button_clicked'))
             else:
-                if hasattr(self, f'{v["name"].lower()}_button_clicked'):
+                if hasattr(self, f'{_name}_button_clicked'):
                     button.clicked.connect(
-                        getattr(self, f'{v["name"].lower()}_button_clicked')
+                        getattr(self, f'{_name}_button_clicked')
                     )
             row.layout().addWidget(button, 0)
 
@@ -392,15 +393,15 @@ class BasePropertyEditor(QtWidgets.QDialog):
                 v['button2'], parent=row
             )
 
-            if key is not None:
-                if hasattr(self, f'{key}_button2_clicked'):
+            if k is not None:
+                if hasattr(self, f'{_k}_button2_clicked'):
                     button2.clicked.connect(
-                        getattr(self, f'{key}_button2_clicked')
+                        getattr(self, f'{_k}_button2_clicked')
                     )
             else:
-                if hasattr(self, f'{v["name"].lower()}_button2_clicked'):
+                if hasattr(self, f'{_name}_button2_clicked'):
                     button2.clicked.connect(
-                        getattr(self, f'{v["name"].lower()}_button2_clicked')
+                        getattr(self, f'{_name}_button2_clicked')
                     )
             row.layout().addWidget(button2, 0)
 
@@ -618,7 +619,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
             if not hasattr(self, f'{k}_editor'):
                 continue
 
-            # If the source is not returning a valid value we won't  be able to
+            # If the source is not returning a valid value we won't be able to
             # load data from the database.
             if self.db_source() is None:
                 self.current_data[k] = None

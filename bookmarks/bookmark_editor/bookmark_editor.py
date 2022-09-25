@@ -242,10 +242,7 @@ class BookmarkListWidget(ui.ListWidget):
         if not self.window().job():
             return
 
-        max_recursion = common.settings.value(
-            common.SettingsSection,
-            common.RecurseDepth
-        )
+        max_recursion = common.settings.value(common.RecurseDepth)
         try:
             max_recursion = int(max_recursion)
         except:

@@ -224,7 +224,7 @@ class EntityNameEditor(QtWidgets.QDialog):
 
         row = ui.add_row('Enter Entity Name', parent=self)
         self.editor = ui.LineEdit(parent=self)
-        self.editor.setPlaceholderText('Enter an entity name, eg. \'SH0010\'')
+        self.editor.setPlaceholderText('Enter an entity name, e.g. \'SH0010\'')
         self.setFocusProxy(self.editor)
 
         row.layout().addWidget(self.editor, 1)

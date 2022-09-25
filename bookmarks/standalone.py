@@ -47,10 +47,7 @@ def show():
                                                                    BookmarksAppWindow):
         raise RuntimeError('Window can only be show in StandaloneMode.')
 
-    state = common.settings.value(
-        common.UIStateSection,
-        common.WindowStateKey,
-    )
+    state = common.settings.value(common.WindowStateKey)
     state = QtCore.Qt.WindowNoState if state is None else QtCore.Qt.WindowState(
         state)
 
@@ -348,10 +345,7 @@ class BookmarksAppWindow(main.MainWidget):
         """Load previously saved window flag values from user common.
 
         """
-        self._frameless = common.settings.value(
-            common.UIStateSection,
-            common.WindowFramelessKey,
-        )
+        self._frameless = common.settings.value(common.WindowFramelessKey)
 
         if not self._frameless:
             self.setWindowFlags(
@@ -366,10 +360,7 @@ class BookmarksAppWindow(main.MainWidget):
             self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
             self.setAttribute(QtCore.Qt.WA_NoSystemBackground, True)
 
-        self._ontop = common.settings.value(
-            common.UIStateSection,
-            common.WindowAlwaysOnTopKey
-        )
+        self._ontop = common.settings.value(common.WindowAlwaysOnTopKey)
 
         if self._ontop:
             self.setWindowFlags(
@@ -397,24 +388,13 @@ class BookmarksAppWindow(main.MainWidget):
     @common.debug
     @QtCore.Slot()
     def save_window(self, *args, **kwargs):
-        common.settings.setValue(
-            common.UIStateSection,
-            common.WindowGeometryKey,
-            self.saveGeometry()
-        )
-        common.settings.setValue(
-            common.UIStateSection,
-            common.WindowStateKey,
-            int(self.windowState())
-        )
+        common.settings.setValue(common.WindowGeometryKey, self.saveGeometry())
+        common.settings.setValue(common.WindowStateKey, int(self.windowState()))
 
     @common.error
     @common.debug
     def restore_window(self, *args, **kwargs):
-        geometry = common.settings.value(
-            common.UIStateSection,
-            common.WindowGeometryKey,
-        )
+        geometry = common.settings.value(common.WindowGeometryKey)
         if geometry is not None:
             self.restoreGeometry(geometry)
 

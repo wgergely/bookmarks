@@ -36,10 +36,7 @@ def show():
     if not common.bookmark_editor_widget:
         common.bookmark_editor_widget = BookmarkEditorWidget()
 
-    state = common.settings.value(
-        common.UIStateSection,
-        common.BookmarkEditorStateKey,
-    )
+    state = common.settings.value(common.BookmarkEditorStateKey)
     state = QtCore.Qt.WindowNoState if state is None else QtCore.Qt.WindowState(
         state
     )

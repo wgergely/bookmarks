@@ -123,10 +123,7 @@ class MainWidget(QtWidgets.QWidget):
         `self.stacked_widget.setCurrentIndex()` returning an incorrect tab.
 
         """
-        idx = common.settings.value(
-            common.UIStateSection,
-            common.CurrentList
-        )
+        idx = common.settings.value(common.CurrentList)
         idx = common.BookmarkTab if idx is None or idx is False else idx
         idx = idx if idx >= common.BookmarkTab else common.BookmarkTab
 

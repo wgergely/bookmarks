@@ -864,8 +864,7 @@ class ThumbnailWorker(BaseWorker):
 
     @common.error
     def queue_items(self, refs):
-        v = common.settings.value(common.SettingsSection,
-                                  common.DontGenerateThumbnailsKey)
+        v = common.settings.valuecommon.DontGenerateThumbnailsKey)
         v = False if v is None else v
         if v:
             return None

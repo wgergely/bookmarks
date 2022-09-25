@@ -49,7 +49,7 @@ class AddServerEditor(QtWidgets.QDialog):
 
         self.editor = ui.LineEdit(parent=self)
         self.editor.setPlaceholderText(
-            'Enter the path to a server, eg. \'//my_server/jobs\''
+            'Enter the path to a server, e.g. \'//my_server/jobs\''
         )
         self.setFocusProxy(self.editor)
         self.editor.setFocusPolicy(QtCore.Qt.StrongFocus)

@@ -249,10 +249,7 @@ class TaskModel(BaseModel):
         if not isinstance(data, dict):
             return
 
-        current_folder = common.settings.value(
-            common.CurrentUserPicksSection,
-            'task'
-        )
+        current_folder = common.settings.value(common.TaskKey)
 
         for v in sorted(
                 data[tokens.AssetFolderConfig].values(), key=lambda x: x['value']
@@ -324,10 +321,7 @@ class TemplateModel(BaseModel):
         if not isinstance(data, dict):
             return
 
-        template = common.settings.value(
-            common.FileSaverSection,
-            common.CurrentTemplateKey
-        )
+        template = common.settings.value(common.CurrentTemplateKey)
         for v in data[tokens.FileNameConfig].values():
             if template == v['name']:
                 pixmap = images.ImageCache.get_rsc_pixmap(
@@ -452,7 +446,7 @@ class PrefixEditor(QtWidgets.QDialog):
         QtWidgets.QHBoxLayout(self)
 
         self.editor = ui.LineEdit(parent=self)
-        self.editor.setPlaceholderText('Enter a prefix, eg. \'MYB\'')
+        self.editor.setPlaceholderText('Enter a prefix, e.g. \'MYB\'')
         self.editor.setValidator(base.textvalidator)
         self.setFocusProxy(self.editor)
         self.editor.setFocusPolicy(QtCore.Qt.StrongFocus)

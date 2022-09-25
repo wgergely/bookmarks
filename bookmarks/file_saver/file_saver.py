@@ -158,7 +158,7 @@ SECTIONS = {
                     'key': 'description',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': 'A short description, eg. \'Compositing files\'',
+                    'placeholder': 'A short description, e.g. \'Compositing files\'',
                     'description': 'A short description of the file\'s '
                                    'contents.\nIndicate significant changes and '
                                    'notes here.',
@@ -172,7 +172,7 @@ SECTIONS = {
                     'widget': ui.LineEdit,
                     'placeholder': 'Prefix not yet set!',
                     'description': 'A short prefix used to identify the job '
-                                   'eg.\'MYB\'.',
+                                   'e.g.\'MYB\'.',
                     'button': 'Edit'
                 },
                 1: {
@@ -180,8 +180,8 @@ SECTIONS = {
                     'key': 'element',
                     'validator': base.textvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': 'The element being saved, eg. \'CastleInterior\'',
-                    'description': 'The name of the element being saved. Eg., '
+                    'placeholder': 'The element being saved, e.g. \'CastleInterior\'',
+                    'description': 'The name of the element being saved. e.g., '
                                    '\'ForegroundTower\', or \'BackgroundElements\'',
                 },
                 2: {
@@ -189,9 +189,9 @@ SECTIONS = {
                     'key': 'version',
                     'validator': base.versionvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': 'A version number, eg. \'v001\'',
+                    'placeholder': 'A version number, e.g. \'v001\'',
                     'description': 'A version number with, or without, '
-                                   'a preceeding \'v\'. Eg. \'v001\'.',
+                                   'a preceeding \'v\'. e.g. \'v001\'.',
                     'button': '+',
                     'button2': '-',
                 },
@@ -200,8 +200,8 @@ SECTIONS = {
                     'key': 'user',
                     'validator': base.textvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': 'Your name, eg. \'JohnDoe\'',
-                    'description': 'The name of the current user, eg. \'JohnDoe\','
+                    'placeholder': 'Your name, e.g. \'JohnDoe\'',
+                    'description': 'The name of the current user, e.g. \'JohnDoe\','
                                    ' or \'JD\'',
                 },
                 4: {
@@ -209,8 +209,8 @@ SECTIONS = {
                     'key': 'extension',
                     'validator': None,
                     'widget': file_saver_widgets.ExtensionComboBox,
-                    'placeholder': 'File extension, eg. \'exr\'',
-                    'description': 'A file extension, without the leading dot. Eg.'
+                    'placeholder': 'File extension, e.g. \'exr\'',
+                    'description': 'A file extension, without the leading dot. e.g.'
                                    ' \'ma\'',
                 },
             },
@@ -220,9 +220,9 @@ SECTIONS = {
                     'key': 'template',
                     'validator': base.textvalidator,
                     'widget': file_saver_widgets.TemplateComboBox,
-                    'placeholder': 'Custom prefix, eg. \'MYB\'',
+                    'placeholder': 'Custom prefix, e.g. \'MYB\'',
                     'description': 'A short name of the bookmark (or job) used '
-                                   'when saving files.\n\nEg. '
+                                   'when saving files.\n\ne.g. '
                                    '\'MYB_sh0010_anim_v001.ma\' where \'MYB\' is '
                                    'the prefix specified here.',
                     'button': 'Edit'

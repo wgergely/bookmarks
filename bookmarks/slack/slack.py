@@ -535,18 +535,11 @@ class UsersWidget(QtWidgets.QListView):
     @QtCore.Slot(QtCore.QModelIndex)
     def save_selection(self, index):
         v = index.data(QtCore.Qt.DisplayRole)
-        common.settings.setValue(
-            common.UIStateSection,
-            common.SlackUserKey,
-            v
-        )
+        common.settings.setValue(common.SlackUserKey, v)
 
     @QtCore.Slot()
     def restore_selection(self):
-        v = common.settings.value(
-            common.UIStateSection,
-            common.SlackUserKey,
-        )
+        v = common.settings.value(common.SlackUserKey)
 
         if v is None:
             return

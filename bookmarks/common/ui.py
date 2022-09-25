@@ -268,20 +268,14 @@ def draw_aliased_text(painter, font, rect, text, align, color, elide=None):
 @QtCore.Slot(str)
 def save_selection(widget, key, *args, **kwargs):
     index = common.get_selected_index(widget)
-    common.settings.setValue(
-        common.UIStateSection,
-        key,
-        index.data(QtCore.Qt.DisplayRole) if index.isValid() else None
-    )
+    v = index.data(QtCore.Qt.DisplayRole) if index.isValid() else None
+    common.settings.setValue(key, v)
 
 
 @QtCore.Slot(QtWidgets.QWidget)
 @QtCore.Slot(str)
 def restore_selection(widget, key, *args, **kwargs):
-    v = common.settings.value(
-        common.UIStateSection,
-        key
-    )
+    v = common.settings.value(key)
     if not v:
         widget.selectionModel().clear()
         return

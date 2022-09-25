@@ -6,7 +6,7 @@ The templates are used to create a job's or an asset's folder structure.
 
 The list of template files are stored (in Windows) in the
 `%localappdata%/{product}/{mode}_template` folder. The `{mode}` can be any
-arbitary string, eg. 'job', or 'asset' as defined by `JobTemplateMode` and
+arbitary string, e.g. 'job', or 'asset' as defined by `JobTemplateMode` and
 `AssetTemplateMode`.
 
 """
@@ -37,7 +37,7 @@ def get_template_folder(mode):
     the given `mode`.
 
     Args:
-        mode (str): A template mode, eg. `JobTemplateMode`.
+        mode (str): A template mode, e.g. `JobTemplateMode`.
 
     Returns:
         str: Path to the folder where the template zip files are stored.

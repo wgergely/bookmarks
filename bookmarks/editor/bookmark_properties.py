@@ -57,9 +57,9 @@ SECTIONS = {
                     'key': 'prefix',
                     'validator': base.namevalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': 'Custom prefix, eg. \'MYB\'',
+                    'placeholder': 'Custom prefix, e.g. \'MYB\'',
                     'description': 'A short name of the bookmark (or job) used '
-                                   'when saving files.\n\nEg. '
+                                   'when saving files.\n\ne.g. '
                                    '\'MYB_sh0010_anim_v001.ma\' where \'MYB\' is '
                                    'the prefix specified here.',
                     'button': 'Suggest'
@@ -71,9 +71,9 @@ SECTIONS = {
                     'key': 'description',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': 'A short description, eg. \'Character assets\'',
+                    'placeholder': 'A short description, e.g. \'Character assets\'',
                     'description': 'A description of this bookmark, '
-                                   'eg. \'Character assets\'.',
+                                   'e.g. \'Character assets\'.',
                 },
             },
             2: {
@@ -82,10 +82,10 @@ SECTIONS = {
                     'key': 'framerate',
                     'validator': base.floatvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': 'Framerate, eg. \'23.976\'',
+                    'placeholder': 'Framerate, e.g. \'23.976\'',
                     'description': 'The framerate of the bookmark, eg, '
                                    '\'25.0\'.\n\nUsed by Bookmarks to control the '
-                                   'format of scenes inside hosts, eg. Maya.'
+                                   'format of scenes inside hosts, e.g. Maya.'
                 },
                 1: {
                     'name': 'Width',
@@ -93,7 +93,7 @@ SECTIONS = {
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Width in pixels',
-                    'description': 'The output width in pixels, eg. \'1920\''
+                    'description': 'The output width in pixels, e.g. \'1920\''
                 },
                 2: {
                     'name': 'Height',
@@ -101,17 +101,17 @@ SECTIONS = {
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Height in pixels',
-                    'description': 'The output height in pixels, eg. \'1080\''
+                    'description': 'The output height in pixels, e.g. \'1080\''
                 },
                 3: {
                     'name': 'Default Start Frame',
                     'key': 'startframe',
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': 'Start frame, eg. \'1001\'',
+                    'placeholder': 'Start frame, e.g. \'1001\'',
                     'description': 'A default start frame for all subsequent '
                                    'assets.\n\nThis can be useful when the project '
-                                   'has a custom start frame, eg. \'1001\' instead '
+                                   'has a custom start frame, e.g. \'1001\' instead '
                                    'of \'1\' or \'0\'.',
                 },
                 4: {
@@ -119,9 +119,9 @@ SECTIONS = {
                     'key': 'duration',
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': 'Duration, eg. \'150\'',
+                    'placeholder': 'Duration, e.g. \'150\'',
                     'description': 'The default duration of an asset in frames, '
-                                   'eg. \'150\'',
+                                   'e.g. \'150\'',
                 },
             },
             3: {
@@ -130,7 +130,7 @@ SECTIONS = {
                     'key': 'identifier',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': 'A file name, eg. \'workspace.mel\'',
+                    'placeholder': 'A file name, e.g. \'workspace.mel\'',
                     'description': 'Only folders containing the file specified '
                                    'above will be read as assets.\n\nUsing the '
                                    'default Maya Workspace the identifier normally '
@@ -216,9 +216,9 @@ SECTIONS = {
                     'key': 'shotgun_domain',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': 'Domain, eg. https://mystudio.shotgunstudio.com',
+                    'placeholder': 'Domain, e.g. https://mystudio.shotgunstudio.com',
                     'description': 'The domain, including http:// or https://, '
-                                   'used by shotgun. Eg. '
+                                   'used by shotgun. e.g. '
                                    '\'https://mystudio.shotgunstudio.com\'',
                     'button': 'Visit',
                     'button2': 'Verify'
@@ -239,7 +239,7 @@ SECTIONS = {
                     'widget': ui.LineEdit,
                     'placeholder': 'abcdefghijklmno3bqr*1',
                     'description': 'A ShotGrid Script API Key, '
-                                   'eg. \'abcdefghijklmno3bqr*1\'.\n\nA valid '
+                                   'e.g. \'abcdefghijklmno3bqr*1\'.\n\nA valid '
                                    'script has to be set up for your ogranisation '
                                    'for Bookmarks to be able to connect to '
                                    'ShotGrid. Consult the ShotGrid documentation for '
@@ -278,16 +278,16 @@ SECTIONS = {
                     'key': 'shotgun_id',
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
-                    'placeholder': 'ShotGrid Project ID, eg. \'123\'',
+                    'placeholder': 'ShotGrid Project ID, e.g. \'123\'',
                     'description': 'The ShotGrid ID number this item is associated '
-                                   'with. Eg. \'123\'.',
+                                   'with. e.g. \'123\'.',
                 },
                 3: {
                     'name': 'Name',
                     'key': 'shotgun_name',
                     'validator': None,
                     'widget': ui.LineEdit,
-                    'placeholder': 'ShotGrid project name, eg. \'MyProject\'',
+                    'placeholder': 'ShotGrid project name, e.g. \'MyProject\'',
                     'description': 'The ShotGrid project name',
                 },
             }
@@ -306,7 +306,7 @@ SECTIONS = {
                     'widget': ui.LineEdit,
                     'placeholder': 'https://my.custom-url.com',
                     'description': 'A custom url of the bookmarks, '
-                                   'eg. https://sheets.google.com/123',
+                                   'e.g. https://sheets.google.com/123',
                     'button': 'Visit',
                 },
                 1: {
@@ -316,7 +316,7 @@ SECTIONS = {
                     'widget': ui.LineEdit,
                     'placeholder': 'https://my.custom-url.com',
                     'description': 'A custom url of the bookmarks, '
-                                   'eg. https://sheets.google.com/123',
+                                   'e.g. https://sheets.google.com/123',
                     'button': 'Visit',
                 }
             }

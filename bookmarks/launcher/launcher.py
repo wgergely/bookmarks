@@ -14,21 +14,21 @@ from .. import ui
 DEFAULT_ITEM = {
     0: {
         'key': 'name',
-        'placeholder': 'Name, eg. "Maya"',
+        'placeholder': 'Name, e.g. "Maya"',
         'widget': ui.LineEdit,
-        'description': 'Enter the item\'s name, eg. Maya',
+        'description': 'Enter the item\'s name, e.g. Maya',
         'button': None,
     },
     1: {
         'key': 'path',
-        'placeholder': 'Path, eg. "C:/maya/maya.exe"',
+        'placeholder': 'Path, e.g. "C:/maya/maya.exe"',
         'widget': ui.LineEdit,
         'description': 'Path to the executable.',
         'button': 'Pick',
     },
     2: {
         'key': 'thumbnail',
-        'placeholder': 'Path to an image, eg. "C:/images/maya.png"',
+        'placeholder': 'Path to an image, e.g. "C:/images/maya.png"',
         'widget': ui.LineEdit,
         'description': 'Path to an image file used to represent this item',
         'button': 'Pick',

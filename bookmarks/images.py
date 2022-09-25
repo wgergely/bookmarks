@@ -974,7 +974,7 @@ class ImageCache(QtCore.QObject):
                 os.remove(destination + '.lock')
                 return False
 
-            # [BUG] Not all codec formats are supported by ffmpeg. There does
+            # [BUG] Not all codec formats are supported by ffmpe.g. There does
             # not seem to be (?) error handling and an unsupported codec will
             # crash ffmpeg and the rest of the app.
             codec_name = source_spec.get_string_attribute('ffmpeg:codec_name')

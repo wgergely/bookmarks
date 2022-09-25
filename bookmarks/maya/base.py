@@ -327,7 +327,7 @@ def find_project_folder(key):
     """Return the relative path of a project folder.
 
     Args:
-        key (str): The name of a Maya project folder name, eg. 'sourceImages'.
+        key (str): The name of a Maya project folder name, e.g. 'sourceImages'.
 
     Return:
         str: The name of the folder that corresponds with `key`.

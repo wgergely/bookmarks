@@ -122,7 +122,6 @@ KEYS = set()
 for k in SECTIONS:
     KEYS.update({f for f in SECTIONS[k]})
 
-
 SynchronisedActivePaths = 0
 PrivateActivePaths = 1
 
@@ -355,7 +354,11 @@ def bookmark_key(*args):
 def update_private_values():
     for k in ActiveSectionCacheKeys:
         common.active_paths[PrivateActivePaths][k] = \
-        common.active_paths[SynchronisedActivePaths][k]
+            common.active_paths[SynchronisedActivePaths][k]
+
+
+_true = {'True', 'true', '1', True}
+_false = {'False', 'false', 'None', 'none', '0', '', False, None}
 
 
 class UserSettings(QtCore.QSettings):
@@ -435,57 +438,59 @@ class UserSettings(QtCore.QSettings):
         common.check_type(v, dict)
         self.setValue(CurrentUserPicksSection, FavouritesKey, v)
 
-    def value(self, section, key):
-        """Get a values from the user settings file.
+    def value(self, key):
+        """Get a value from the user settings file.
 
         Overrides the default `value()` method to provide type checking.
         Types are saved in `{key}_type`.
 
         Args:
-            section (str):  A section name.
-            key (str): A key name.
+            key (str): A settings key.
 
         Returns:
-            The value stored in `user_settings` or `None` if not found.
+            The value stored in settings or `None` if not found.
 
         """
-        k = f'{section}/{key}'
+        if key not in KEYS:
+            raise KeyError(
+                f'{key} is an invalid key value. Must be one of\n{",".join(sorted(KEYS))}'
+            )
 
-        t = super().value(k + '_type')
-        v = super().value(k)
+        v = super().value(key)
+        t = super().value(f'{key}_type')
         if v is None:
-            return
+            return None
 
         try:
             if t == 'NoneType':
                 v = None
-            elif t == 'bool':
-                # Convert any loose representation back to `bool()`
-                if not isinstance(v, bool):
-                    if v.lower() in ['true', '1']:
-                        v = True
-                    elif v.lower() in ['false', '0', 'none']:
-                        v = False
+            elif t == 'bool' and not isinstance(v, bool):
+                v = True if v in _true else (False if v in _false else v)
             elif t == 'str' and not isinstance(v, str):
-                v = v.encode('utf-8')
-            elif t == 'str' and not isinstance(v, str):
-                try:
-                    v = str(v)
-                except:
-                    pass
+                v = str(v)
             elif t == 'int' and not isinstance(v, int):
                 v = int(v)
             elif t == 'float' and not isinstance(v, float):
                 v = float(v)
         except:
-            log.error('Type conversion failed')
+            log.error(f'Could not convert {type(v)} to {t}')
 
         return v
 
-    def setValue(self, section, key, v):
-        k = f'{section}/{key}'
+    def setValue(self, key, v):
+        """Set a value to the user settings file.
 
-        if section == ActiveSection and common.active_mode == PrivateActivePaths:
+        Overrides the default `value()` method to provide type checking.
+        Types are saved in `{key}_type`.
+
+        Args:
+            key (str): A settings key.
+            v (object): The value to save.
+
+        """
+        # Skip saving active values when PrivateActivePaths is on
+        if common.active_mode == PrivateActivePaths and key in SECTIONS['active']:
             return
+
         super().setValue(k, v)
         super().setValue(k + '_type', type(v).__name__)

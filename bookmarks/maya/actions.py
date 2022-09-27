@@ -255,10 +255,10 @@ def open_scene(path):
     """Opens the given path using ``cmds.file``.
 
     Returns:
-        str: The name of the input scene if the load was successfull.
+        str: The name of the input scene if loaded successfully.
 
     Raises:
-        RuntimeError: When and invalid scene file is passed.
+        RuntimeError: When an invalid scene file is encountered.
 
     """
     p = common.get_sequence_endpath(path)
@@ -381,7 +381,7 @@ def capture_viewport(size=1.0):
     """Saves a versioned capture to the ``capture_folder`` defined in the
     preferences.
 
-    The script will output to an image sequence and if FFFmpeg can be found
+    The script will output to an image sequence and if FFMpeg can be found
     converts it to a h264 movie file.
     It will also try to create a ``latest`` folder with a copy of the last
     exported image sequence.
@@ -438,7 +438,7 @@ def capture_viewport(size=1.0):
             if panel_widget:
                 panel_widget.hide()
         except:
-            log.error('# An error occured hiding {}'.format(panel))
+            log.error(f'# An error occurred hiding {panel}')
 
     width = int(cmds.getAttr('defaultResolution.width') * size)
     height = int(cmds.getAttr('defaultResolution.height') * size)

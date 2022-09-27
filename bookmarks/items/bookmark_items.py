@@ -96,9 +96,9 @@ class BookmarksModel(models.BaseModel):
             if not len(v.values()) >= 3:
                 continue
 
-            server = v[common.ServerKey]
-            job = v[common.JobKey]
-            root = v[common.RootKey]
+            server = v['server']
+            job = v['job']
+            root = v['root']
 
             file_info = QtCore.QFileInfo(k)
             exists = file_info.exists()
@@ -118,9 +118,9 @@ class BookmarksModel(models.BaseModel):
             # Item flags. Active and favourite flags will be only set if the
             # bookmark exist
             if all((
-                    server == common.active(common.ServerKey),
-                    job == common.active(common.JobKey),
-                    root == common.active(common.RootKey)
+                    server == common.active('server'),
+                    job == common.active('job'),
+                    root == common.active('root')
             )) and exists:
                 flags = flags | common.MarkedAsActive
 
@@ -197,12 +197,12 @@ class BookmarksModel(models.BaseModel):
             return
 
         server, job, root = index.data(common.ParentPathRole)
-        actions.set_active(common.ServerKey, server)
-        actions.set_active(common.JobKey, job)
-        actions.set_active(common.RootKey, root)
+        actions.set_active('server', server)
+        actions.set_active('job', job)
+        actions.set_active('root', root)
 
     def source_path(self):
-        return ('bookmarks',)
+        return 'bookmarks',
 
     def data_type(self):
         return common.FileItem
@@ -210,8 +210,8 @@ class BookmarksModel(models.BaseModel):
     def default_row_size(self):
         return QtCore.QSize(1, common.size(common.HeightBookmark))
 
-    def user_settings_key(self):
-        return common.BookmarksKey
+    def filter_setting_dict_key(self):
+        return 'bookmarks'
 
 
 class BookmarksWidget(views.ThreadedBaseWidget):

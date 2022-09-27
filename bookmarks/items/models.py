@@ -86,8 +86,8 @@ def initdata(func):
 
 @functools.lru_cache(maxsize=4194304)
 def filter_includes_row(filtertext, searchable):
-    """Checks if the filter string contains any double dashes (--) and if the
-    the filter text is found in the searchable string.
+    """Checks if the filter string contains any double dashes (--) and if the filter
+    text is found in the searchable string.
 
     If both true, the row will be hidden.
 
@@ -187,7 +187,7 @@ class BaseModel(QtCore.QAbstractListModel):
         self._load_message = ''
         self._generate_thumbnails = True
         self._task = None
-        self._sort_role = None
+        self._sort_by = None
         self._sort_order = None
         self.row_size = QtCore.QSize(self.default_row_size())
 
@@ -196,8 +196,8 @@ class BaseModel(QtCore.QAbstractListModel):
         self.sortingChanged.connect(self.set_sorting)
         self.dataTypeSorted.connect(self.emit_reset_model)
 
-        self.modelAboutToBeReset.connect(common.signals.updateButtons)
-        self.modelReset.connect(common.signals.updateButtons)
+        self.modelAboutToBeReset.connect(common.signals.updateTopBarButtons)
+        self.modelReset.connect(common.signals.updateTopBarButtons)
 
         self.init_sort_values()
         self.init_row_size()
@@ -287,7 +287,7 @@ class BaseModel(QtCore.QAbstractListModel):
         """
         if not self.is_data_type_loaded(self.data_type()):
             return
-        self.set_sort_role(role)
+        self.set_sort_by(role)
         self.set_sort_order(order)
         self.sort_data()
 
@@ -309,11 +309,7 @@ class BaseModel(QtCore.QAbstractListModel):
         """Load the current sort role from the local preferences.
 
         """
-        val = self.get_local_setting(
-            common.CurrentSortRole,
-            key=self.__class__.__name__,
-            section=common.UIStateSection
-        )
+        val = self.get_filter_setting('filters/sort_by')
 
         # Set default if an invalid value is encountered
         if val not in common.DEFAULT_SORT_VALUES:
@@ -322,22 +318,15 @@ class BaseModel(QtCore.QAbstractListModel):
         if isinstance(val, int):
             val = QtCore.Qt.ItemDataRole(val)
 
-        self._sort_role = val
+        self._sort_by = val
 
-        val = self.get_local_setting(
-            common.CurrentSortOrder,
-            key=self.__class__.__name__,
-            section=common.UIStateSection
-        )
+        val = self.get_filter_setting('filters/sort_order')
         self._sort_order = val if isinstance(val, bool) else False
 
     @common.debug
     @common.error
     def init_row_size(self, *args, **kwargs):
-        val = self.get_local_setting(
-            common.CurrentRowHeight,
-            section=common.UIStateSection
-        )
+        val = self.get_filter_setting('filters/row_heights')
 
         h = self.default_row_size().height()
         val = h if val is None else val
@@ -347,24 +336,19 @@ class BaseModel(QtCore.QAbstractListModel):
 
         self.row_size.setHeight(int(val))
 
-    def sort_role(self):
-        return self._sort_role
+    def sort_by(self):
+        return self._sort_by
 
     @common.debug
     @common.error
     @QtCore.Slot(int)
-    def set_sort_role(self, val):
-        """Sets and saves the sort-key."""
-        if val == self.sort_role():
+    def set_sort_by(self, val):
+        """Sets and saves the sort by value."""
+        if val == self.sort_by():
             return
 
-        self._sort_role = val
-        self.set_local_setting(
-            common.CurrentSortRole,
-            val,
-            key=self.__class__.__name__,
-            section=common.UIStateSection
-        )
+        self._sort_by = val
+        self.set_filter_setting('filters/sort_by', val)
 
     def sort_order(self):
         """The currently set order of the items e.g. 'descending'."""
@@ -375,8 +359,10 @@ class BaseModel(QtCore.QAbstractListModel):
     @common.error
     @QtCore.Slot()
     def sort_data(self, *args, **kwargs):
-        """Sorts the model data using the current sort order and role."""
-        sort_role = self.sort_role()
+        """Sorts the model data using the current sort order and role.
+
+        """
+        sort_by = self.sort_by()
         sort_order = self.sort_order()
 
         p = self.source_path()
@@ -390,7 +376,7 @@ class BaseModel(QtCore.QAbstractListModel):
                 ref = common.get_data_ref(p, k, t)
                 if not ref():
                     continue
-                d = common.sort_data(ref, sort_role, sort_order)
+                d = common.sort_data(ref, sort_by, sort_order)
                 common.set_data(p, k, t, d)
         except:
             log.error('Sorting error')
@@ -401,17 +387,17 @@ class BaseModel(QtCore.QAbstractListModel):
     @common.error
     @QtCore.Slot(int)
     def set_sort_order(self, val):
-        """Sets and saves the sort-key."""
+        """Sets and saves the sort order.
+
+        Args:
+            val (int): The new sort order.
+
+        """
         if val == self.sort_order():
             return
 
         self._sort_order = val
-        self.set_local_setting(
-            common.CurrentSortOrder,
-            val,
-            key=self.__class__.__name__,
-            section=common.UIStateSection
-        )
+        self.set_filter_setting('filters/sort_order', val)
 
     @QtCore.Slot()
     def set_interrupt_requested(self):
@@ -509,8 +495,9 @@ class BaseModel(QtCore.QAbstractListModel):
         """The model's task folder. """
         return 'default'
 
-    def user_settings_key(self):
-        """Get the key used to by :meth:`.get_local_setting()` and :meth:`set_local_setting()`.
+    def filter_setting_dict_key(self):
+        """Get the key used to by :meth:`.get_filter_setting()` and
+        :meth:`set_filter_setting()`.
 
         Returns:
             str: A user_settings key value.
@@ -518,41 +505,46 @@ class BaseModel(QtCore.QAbstractListModel):
         """
         raise NotImplementedError('Abstract method must be implemented by subclass.')
 
-    def get_local_setting(self, key_type, key=None):
-        """Get a value stored in the user settings.
+    @common.error
+    @common.debug
+    def get_filter_setting(self, key):
+        """Get a filter value stored in the user settings file.
+        
+        Each filter setting is associated with :meth:`filter_setting_dict_key` and stored
+        in a dictionary object inside the user settings file.
 
         Args:
-            key_type (str): A filter key type.
-            key (str): A key the value is associated with.
+            key (str): Settings key type.
 
         Returns:
-            The value saved in `user_settings`, or `None` if not found.
+            The value saved in user settings, or `None` if not found.
 
         """
-        key = key if key else self.user_settings_key()
-        if not key:
+        dict_key = self.filter_setting_dict_key()
+        if not dict_key:
             return None
-        if not isinstance(key, str):
-            key = key.decode('utf-8')
-        k = '{}/{}'.format(key_type, common.get_hash(key))
-        return common.settings.value(k)
+        v = common.settings.value(key)
+        if not isinstance(v, dict) or dict_key not in v:
+            return None
+        return v[dict_key]
 
     @common.error
     @common.debug
-    def set_local_setting(self, key_type, v, key=None):
-        """Set a value to store in `user_settings`.
+    def set_filter_setting(self, key, v):
+        """Set a filter value in the user settings file.
 
         Args:
-            key_type (str): A filter key type.
-            v (any):    A value to store.
-            key (type): A key the value is associated with.
+            key (str): A filter key.
+            v (object):  A filter value to store.
 
         """
-        key = key if key else self.user_settings_key()
-        if not key:
+        dict_key = self.filter_setting_dict_key()
+        if not dict_key:
             return None
-        k = f'{key_type}/{common.get_hash(key)}'
-        common.settings.setValue(k, v)
+        _v = common.settings.value(key)
+        _v = _v if _v else {}
+        _v[dict_key] = v
+        common.settings.setValue(key, _v)
 
     def setData(self, index, data, role=QtCore.Qt.DisplayRole):
         if not index.isValid():
@@ -706,9 +698,9 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         self.filterTextChanged.connect(self.verify_items.start)
         self.filterFlagChanged.connect(self.verify_items.start)
 
-        self.filterTextChanged.connect(common.signals.updateButtons)
-        self.filterFlagChanged.connect(common.signals.updateButtons)
-        self.modelReset.connect(common.signals.updateButtons)
+        self.filterTextChanged.connect(common.signals.updateTopBarButtons)
+        self.filterFlagChanged.connect(common.signals.updateTopBarButtons)
+        self.modelReset.connect(common.signals.updateTopBarButtons)
 
         self.queued_invalidate_timer.timeout.connect(self.delayed_invalidate)
 
@@ -772,15 +764,15 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
         """
         model = self.sourceModel()
-        self._filter_text = model.get_local_setting(common.TextFilterKey)
+        self._filter_text = model.get_filter_setting('filters/text')
         if self._filter_text is None:
             self._filter_text = ''
 
-        v = model.get_local_setting(common.ActiveFlagFilterKey)
+        v = model.get_filter_setting('filters/active')
         self._filter_flags[common.MarkedAsActive] = v if v is not None else False
-        v = model.get_local_setting(common.ArchivedFlagFilterKey)
+        v = model.get_filter_setting('filters/archived')
         self._filter_flags[common.MarkedAsArchived] = v if v is not None else False
-        v = model.get_local_setting(common.FavouriteFlagFilterKey)
+        v = model.get_filter_setting('filters/favourites')
         self._filter_flags[common.MarkedAsFavourite] = v if v is not None else False
 
     def filter_text(self):
@@ -802,7 +794,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         self._filter_text = v
 
         # Save the text in the user settings file
-        self.sourceModel().set_local_setting(common.TextFilterKey, v)
+        self.sourceModel().set_filter_setting('filters/text', v)
         self.save_history(v)
         self.filterTextChanged.emit(v)
 
@@ -810,17 +802,15 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         if not v:
             return
 
-        _v = self.sourceModel().get_local_setting(common.TextFilterKeyHistory)
+        _v = self.sourceModel().get_filter_setting('filters/text_history')
         _v = _v.split(';') if _v else []
 
         if v.lower() in [f.lower() for f in _v]:
             return
 
         _v.append(v)
-        self.sourceModel().set_local_setting(
-            common.TextFilterKeyHistory,
-            ';'.join(_v[0:MAX_HISTORY])
-        )
+        s = ';'.join(_v[0:MAX_HISTORY])
+        self.sourceModel().set_filter_setting('filters/text_history', s)
 
     def filter_flag(self, flag):
         """Returns the current flag-filter."""
@@ -828,16 +818,21 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
     @QtCore.Slot(int, bool)
     def set_filter_flag(self, flag, v):
-        """Save a widget filter state to `user_settings`."""
+        """Save a filter value to user settings.
+
+        Args:
+                flag (int): The flag to set.
+                v (bool): The value to set.
+        """
         if self._filter_flags[flag] == v:
             return
         self._filter_flags[flag] = v
         if flag == common.MarkedAsActive:
-            self.sourceModel().set_local_setting(common.ActiveFlagFilterKey, v)
+            self.sourceModel().set_filter_setting('filters/active', v)
         if flag == common.MarkedAsArchived:
-            self.sourceModel().set_local_setting(common.ArchivedFlagFilterKey, v)
+            self.sourceModel().set_filter_setting('filters/archived', v)
         if flag == common.MarkedAsFavourite:
-            self.sourceModel().set_local_setting(common.FavouriteFlagFilterKey, v)
+            self.sourceModel().set_filter_setting('filters/favourites', v)
 
     def filterAcceptsColumn(self, source_column, parent=QtCore.QModelIndex()):
         return True

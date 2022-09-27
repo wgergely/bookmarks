@@ -69,6 +69,7 @@ delegate_bg_subdir_rects = {}
 delegate_bg_brushes = {}
 
 color_cache = {}
+color_cache_str = {}
 
 VIEWER_WIDGET_CACHE = {}
 
@@ -138,7 +139,11 @@ slack_widget = None
 gallery_widget = None
 launcher_widget = None
 message_widget = None
+preference_editor_widget = None
 bookmark_editor_widget = None
+bookmark_property_editor = None
+asset_property_editor = None
+file_saver_widget = None
 
 sg_connecting_message = None
 sg_error_message = None

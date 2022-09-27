@@ -124,7 +124,7 @@ class AssetsModel(models.BaseModel):
             filepath = entry.path.replace('\\', '/')
 
             if asset_identifier:
-                identifier = filepath + '/' + asset_identifier
+                identifier = f'{filepath}/{asset_identifier}'
                 if not os.path.isfile(identifier):
                     continue
 
@@ -142,7 +142,7 @@ class AssetsModel(models.BaseModel):
                 flags = flags | common.MarkedAsFavourite
 
             # Is the item currently active?
-            active = common.active(common.AssetKey)
+            active = common.active('asset')
             if active and active == filename:
                 flags = flags | common.MarkedAsActive
 
@@ -212,9 +212,9 @@ class AssetsModel(models.BaseModel):
 
         """
         return (
-            common.active(common.ServerKey),
-            common.active(common.JobKey),
-            common.active(common.RootKey),
+            common.active('server'),
+            common.active('job'),
+            common.active('root'),
         )
 
     def item_generator(self, path):
@@ -251,15 +251,15 @@ class AssetsModel(models.BaseModel):
             return
 
         actions.set_active(
-            common.AssetKey,
+            'asset',
             index.data(common.ParentPathRole)[-1]
         )
 
     def data_type(self):
         return common.FileItem
 
-    def user_settings_key(self):
-        v = [common.active(k) for k in (common.JobKey, common.RootKey)]
+    def filter_setting_dict_key(self):
+        v = [common.active(k) for k in ('server', 'job', 'root')]
         if not all(v):
             return None
         return '/'.join(v)

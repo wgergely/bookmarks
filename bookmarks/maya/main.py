@@ -76,7 +76,7 @@ def show():
         if not match:
             continue
 
-        # We have found our instance and now we'll restore/toggle its state
+        # We have found our instance, and now we'll restore/toggle its state
         # The widget is visible and is currently a floating window
         if not widget.parent():
             widget.setVisible(not widget.isVisible())
@@ -511,7 +511,7 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         """Slot called when an active asset changes.
 
         """
-        v = common.settings.value(common.WorkspaceWarningsKey)
+        v = common.settings.value('maya/workspace_save_warnings')
         v = QtCore.Qt.Unchecked if v is None else v
 
         # Do nothing if explicitly set not to show warnings

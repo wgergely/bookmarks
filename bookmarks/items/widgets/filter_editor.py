@@ -69,7 +69,7 @@ class FilterEditor(QtWidgets.QDialog):
         proxy = self.parent().model()
         model = proxy.sourceModel()
 
-        v = model.get_local_setting(common.TextFilterKeyHistory)
+        v = model.get_filter_setting('filters/text_history')
         v = v.split(';') if v else []
         v.reverse()
         v = [f for f in v if f]

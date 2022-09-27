@@ -495,7 +495,7 @@ def draw_subdirs(bg_rect, clickable_rectangles, filter_text, *args):
 
         # Green the subfolder is set as a text filter
         ftext = '"/' + text + '/"'
-        if (filter_text and ftext.lower() in filter_text.lower()):
+        if filter_text and ftext.lower() in filter_text.lower():
             color = common.color(common.GreenColor)
 
         if rect.contains(cursor_position):
@@ -1037,7 +1037,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         o = 1.0 if selected or active or hover else 0.9
 
         # Background
-        if common.settings.value(common.ShowThumbnailBackgroundKey):
+        if common.settings.value('settings/paint_thumbnail_bg'):
             painter.setOpacity(o)
             color = color if color else common.color(common.SeparatorColor)
             painter.setBrush(color)

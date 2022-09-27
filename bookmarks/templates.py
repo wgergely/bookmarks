@@ -165,7 +165,6 @@ class TemplateListWidget(ui.ListWidget):
             functools.partial(
                 common.save_selection,
                 self,
-                f'{self.__class__.__name__}/{self.mode()}'
             )
         )
         common.signals.templatesChanged.connect(self.init_data)
@@ -230,7 +229,7 @@ class TemplateListWidget(ui.ListWidget):
 
         self.selectionModel().blockSignals(False)
 
-        common.restore_selection(self, f'{self.__class__.__name__}/{self.mode()}')
+        common.restore_selection(self)
         self.progressUpdate.emit('')
 
     def mode(self):
@@ -242,8 +241,6 @@ class TemplateListWidget(ui.ListWidget):
         """
         return self._mode
 
-    @common.error
-    @common.debug
     def create(self, name, destination):
         """The main method used to expand the selected zip template into a
         destination folder.

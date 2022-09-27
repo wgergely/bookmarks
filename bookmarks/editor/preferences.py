@@ -14,35 +14,33 @@ from PySide2 import QtWidgets, QtCore, QtGui
 from . import base
 from .. import actions
 from .. import common
+from .. import log
 from .. import ui
-
-instance = None
 
 
 def close():
     """Closes the :class:`PreferenceEditor` widget.
 
     """
-    global instance
-    if instance is None:
+    if common.preference_editor_widget is None:
         return
     try:
-        instance.close()
-        instance.deleteLater()
+        common.preference_editor_widget.close()
+        common.preference_editor_widget.deleteLater()
     except:
-        pass
-    instance = None
+        log.error('Could not delete widget.')
+    common.preference_editor_widget = None
 
 
 def show():
     """Shows the :class:`PreferenceEditor` widget.
 
     """
-    global instance
     close()
-    instance = PreferenceEditor()
-    instance.open()
-    return instance
+    common.preference_editor_widget = PreferenceEditor()
+    common.restore_window_geometry(common.preference_editor_widget)
+    common.restore_window_state(common.preference_editor_widget)
+    return common.preference_editor_widget
 
 
 class ScaleWidget(QtWidgets.QComboBox):
@@ -139,7 +137,7 @@ SECTIONS = {
             0: {
                 0: {
                     'name': 'Interface Scale',
-                    'key': common.UIScaleKey,
+                    'key': 'settings/ui_scale',
                     'validator': None,
                     'widget': ScaleWidget,
                     'placeholder': '',
@@ -149,18 +147,18 @@ SECTIONS = {
                                    'next time Bookmarks is launched.',
                 },
                 1: {
-                    'name': 'Context Menu Icon',
-                    'key': common.ShowMenuIconsKey,
+                    'name': 'Hide Context Menu Icons',
+                    'key': 'settings/show_menu_icons',
                     'validator': None,
                     'widget': functools.partial(
                         QtWidgets.QCheckBox, 'Hide Menu Icons'
                     ),
-                    'placeholder': 'Check to hide menu icons',
-                    'description': 'Check to hide menu icons',
+                    'placeholder': 'Check to icons',
+                    'description': 'Check to icons',
                 },
                 2: {
                     'name': 'Thumbnail Background Color',
-                    'key': common.ShowThumbnailBackgroundKey,
+                    'key': 'settings/paint_thumbnail_bg',
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Show Color'),
                     'placeholder': 'Check to show a generic thumbnail background '
@@ -170,7 +168,7 @@ SECTIONS = {
                 },
                 3: {
                     'name': 'Image Thumbnails',
-                    'key': common.DontGenerateThumbnailsKey,
+                    'key': 'settings/disable_oiio',
                     'validator': None,
                     'widget': functools.partial(
                         QtWidgets.QCheckBox, 'Don\'t Generate Thumbnails'
@@ -191,7 +189,7 @@ SECTIONS = {
             0: {
                 0: {
                     'name': 'Use Client/Project folders',
-                    'key': common.JobsHaveSubdirs,
+                    'key': 'settings/jobs_have_clients',
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox,
                                                 'Use Client/Project'),
@@ -203,7 +201,7 @@ SECTIONS = {
                 },
                 1: {
                     'name': 'Maximum search depth',
-                    'key': common.RecurseDepth,
+                    'key': 'settings/job_scan_depth',
                     'validator': base.intvalidator,
                     'widget': ui.LineEdit,
                     'placeholder': '3',
@@ -240,7 +238,7 @@ SECTIONS = {
             0: {
                 0: {
                     'name': 'Set Maya Workspace',
-                    'key': common.WorkspaceSyncKey,
+                    'key': 'maya/sync_workspace',
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
@@ -252,7 +250,7 @@ SECTIONS = {
             1: {
                 0: {
                     'name': 'Workspace Save Warning',
-                    'key': common.SaveWarningsKey,
+                    'key': 'maya/workspace_save_warnings',
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
@@ -263,7 +261,7 @@ SECTIONS = {
             2: {
                 0: {
                     'name': 'Push Capture to RV',
-                    'key': common.PushCaptureToRVKey,
+                    'key': 'maya/push_capture_to_rv',
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
@@ -273,7 +271,7 @@ SECTIONS = {
                 },
                 1: {
                     'name': 'Reveal Capture',
-                    'key': common.RevealCaptureKey,
+                    'key': 'maya/reveal_capture',
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
@@ -282,7 +280,7 @@ SECTIONS = {
                 },
                 2: {
                     'name': 'Disable "Latest" Capture',
-                    'key': common.PublishCaptureKey,
+                    'key': 'maya/publish_capture',
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Disable'),
                     'placeholder': None,
@@ -352,10 +350,9 @@ class PreferenceEditor(base.BasePropertyEditor):
         )
 
         self.debug_editor.stateChanged.connect(self.toggle_debug)
-        getattr(
-            self, f'{common.DontGenerateThumbnailsKey}_editor'
-        ).stateChanged.connect(actions.generate_thumbnails_changed)
-
+        self.settings_disable_oiio_editor.stateChanged.connect(
+            actions.generate_thumbnails_changed
+        )
         self.setWindowTitle('Preferences')
 
     def toggle_debug(self, state):

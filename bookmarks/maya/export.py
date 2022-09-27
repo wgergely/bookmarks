@@ -117,13 +117,6 @@ class VersionsComboBox(QtWidgets.QComboBox):
         self.blockSignals(False)
 
 
-SETTING_KEYS = (
-    'mayaexport_type',
-    'mayaexport_set',
-    'mayaexport_timeline',
-    'mayaexport_versioning',
-)
-
 SECTIONS = {
     0: {
         'name': 'Export',
@@ -133,7 +126,7 @@ SECTIONS = {
             0: {
                 0: {
                     'name': 'Select Set',
-                    'key': 'mayaexport_set',
+                    'key': 'maya_export/set',
                     'validator': None,
                     'widget': SetsComboBox,
                     'placeholder': None,
@@ -148,7 +141,7 @@ SECTIONS = {
             1: {
                 0: {
                     'name': 'Export Type',
-                    'key': 'mayaexport_type',
+                    'key': 'maya_export/type',
                     'validator': None,
                     'widget': TypeComboBox,
                     'placeholder': None,
@@ -156,7 +149,7 @@ SECTIONS = {
                 },
                 1: {
                     'name': 'Timeline',
-                    'key': 'mayaexport_timeline',
+                    'key': 'maya_export/timeline',
                     'validator': None,
                     'widget': functools.partial(
                         QtWidgets.QCheckBox, 'Export Timeline'
@@ -185,7 +178,7 @@ SECTIONS = {
             3: {
                 0: {
                     'name': 'Reveal',
-                    'key': 'mayaexport_reveal',
+                    'key': 'maya_export/reveal',
                     'validator': None,
                     'widget': functools.partial(
                         QtWidgets.QCheckBox, 'Reveal after export'
@@ -195,7 +188,7 @@ SECTIONS = {
                 },
                 1: {
                     'name': 'Keep Open',
-                    'key': 'mayaexport_keepopen',
+                    'key': 'maya_export/keep_open',
                     'validator': None,
                     'widget': functools.partial(
                         QtWidgets.QCheckBox, 'Keep window open'
@@ -230,7 +223,7 @@ class ExportWidget(base.BasePropertyEditor):
 
         self._interrupt_requested = False
         self.setWindowTitle('Export Sets')
-        self._connect_settings_save_signals(SETTING_KEYS)
+        self._connect_settings_save_signals(common.SECTIONS['maya_export'])
 
     def init_progress_bar(self):
         self.progress_widget = QtWidgets.QProgressDialog(parent=self)
@@ -241,17 +234,17 @@ class ExportWidget(base.BasePropertyEditor):
     @common.error
     @common.debug
     def init_data(self):
-        self.mayaexport_set_editor.currentIndexChanged.connect(
+        self.maya_export_set_editor.currentIndexChanged.connect(
             self.check_version
         )
-        self.mayaexport_type_editor.currentIndexChanged.connect(
+        self.maya_export_type_editor.currentIndexChanged.connect(
             self.check_version
         )
         self.version_editor.currentIndexChanged.connect(
             self.check_version
         )
 
-        self.load_saved_user_settings(SETTING_KEYS)
+        self.load_saved_user_settings(common.SECTIONS['maya_export'])
         self.check_version()
 
     @QtCore.Slot()
@@ -275,8 +268,8 @@ class ExportWidget(base.BasePropertyEditor):
         """
         self._interrupt_requested = False
 
-        items = self.mayaexport_set_editor.currentData()
-        _k = self.mayaexport_set_editor.currentText()
+        items = self.maya_export_set_editor.currentData()
+        _k = self.maya_export_set_editor.currentText()
         if not items:
             raise RuntimeError(f'{_k} is empty.')
 
@@ -306,7 +299,7 @@ class ExportWidget(base.BasePropertyEditor):
                 raise RuntimeError(f'Could not remove {file_info.fileName()}.')
 
         # Frame range
-        if self.mayaexport_timeline_editor.isChecked():
+        if self.maya_export_timeline_editor.isChecked():
             start = cmds.playbackOptions(query=True, animationStartTime=True)
             end = cmds.playbackOptions(query=True, animationEndTime=True)
         else:
@@ -314,7 +307,7 @@ class ExportWidget(base.BasePropertyEditor):
             end = cmds.currentTime(query=True)
 
         # Plugin
-        k = self.mayaexport_type_editor.currentData()
+        k = self.maya_export_type_editor.currentData()
         if not k:
             raise RuntimeError('Must select an export type.')
 
@@ -341,10 +334,10 @@ class ExportWidget(base.BasePropertyEditor):
             action(file_path, items, int(start), int(end))
             common.signals.fileAdded.emit(file_path)
 
-            if self.mayaexport_reveal_editor.isChecked():
+            if self.maya_export_reveal_editor.isChecked():
                 from .. import actions
                 actions.reveal(file_path)
-            if not self.mayaexport_keepopen_editor.isChecked():
+            if not self.maya_export_keep_open_editor.isChecked():
                 self.close()
         except:
             raise
@@ -358,14 +351,14 @@ class ExportWidget(base.BasePropertyEditor):
             self.check_version()
 
     def db_source(self):
-        k = self.mayaexport_type_editor.currentData()
+        k = self.maya_export_type_editor.currentData()
         ext = PRESETS[k]['extension']
 
         workspace = cmds.workspace(q=True, fn=True)
         if not workspace:
             return None
 
-        set_name = self.mayaexport_set_editor.currentText()
+        set_name = self.maya_export_set_editor.currentText()
         if not set_name:
             return None
 
@@ -501,7 +494,7 @@ class ExportWidget(base.BasePropertyEditor):
                         f'export to fail.'
                     log.error(s)
 
-                # Camera's don't have mesh nodes but we still want to export them!
+                # Camera's don't have mesh nodes, but we still want to export them!
                 if cmds.nodeType(shape) != 'camera':
                     if not cmds.attributeQuery('outMesh', node=shape, exists=True):
                         continue
@@ -656,7 +649,10 @@ class ExportWidget(base.BasePropertyEditor):
         common.check_type(end_frame, (int, float))
         common.check_type(step, (float, int))
 
-        import arnold
+        try:
+            import arnold
+        except ImportError:
+            raise ImportError('Could not find arnold.')
 
         # Let's get the first renderable camera. This is a bit of a leap of faith but
         # ideally there's only one renderable camera in the scene.
@@ -685,7 +681,7 @@ class ExportWidget(base.BasePropertyEditor):
                 self.progress_widget.setValue(fr)
 
             if not start_frame == end_frame:
-                # Create a mock version, if does not exist
+                # Create a mock version, if it does not exist
                 open(destination, 'a').close()
                 _destination = destination.replace(f'.{ext}', '')
                 _destination += '_'
@@ -743,7 +739,7 @@ class ExportWidget(base.BasePropertyEditor):
                 self.progress_widget.setValue(fr)
 
             if not start_frame == end_frame:
-                # Create a mock version, if does not exist
+                # Create a mock version, if it does not exist
                 open(destination, 'a').close()
                 _destination = destination.replace(f'.{ext}', '')
                 _destination += '_'

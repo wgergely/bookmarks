@@ -406,9 +406,9 @@ def get_folder(token):
         str: The current value of tokens.CacheFolder.
 
     """
-    server = common.active(common.ServerKey)
-    job = common.active(common.JobKey)
-    root = common.active(common.RootKey)
+    server = common.active('server')
+    job = common.active('job')
+    root = common.active('root')
 
     if not all((server, job, root)):
         raise RuntimeError('No active bookmark item found.')
@@ -430,9 +430,9 @@ def get_subfolder(token, name):
         str: The value corresponding to the passed sub folder name.
 
     """
-    server = common.active(common.ServerKey)
-    job = common.active(common.JobKey)
-    root = common.active(common.RootKey)
+    server = common.active('server')
+    job = common.active('job')
+    root = common.active('root')
 
     if not all((server, job, root)):
         raise RuntimeError('No active bookmark item found.')

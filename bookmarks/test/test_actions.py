@@ -115,14 +115,14 @@ class Test(base.BaseCase):
         with self.assertRaises(TypeError):
             actions.set_active(None, None)
 
-        for k in common.ActiveSectionCacheKeys:
+        for k in common.SECTIONS['active']:
             actions.set_active(k, base.random_str(32))
 
-        # Should reset and invalidate all active paths if they don't correspont
+        # Should reset and invalidate all active paths if they don't correspond
         # to real folders (the case here)
         common.settings.load_active_values()
 
-        for k in common.ActiveSectionCacheKeys:
+        for k in common.SECTIONS['active']:
             self.assertIsNone(common.active(k))
 
 

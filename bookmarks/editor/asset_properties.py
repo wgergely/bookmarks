@@ -15,27 +15,25 @@ from . import base
 from . import base_widgets
 from .. import common
 from .. import database
+from .. import log
 from .. import templates
 from .. import ui
 from ..shotgun import actions as sg_actions
 from ..shotgun import shotgun
-
-instance = None
 
 
 def close():
     """Close the :class:`AssetPropertyEditor` window.
 
     """
-    global instance
-    if instance is None:
+    if common.asset_property_editor is None:
         return
     try:
-        instance.close()
-        instance.deleteLater()
+        common.asset_property_editor.close()
+        common.asset_property_editor.deleteLater()
     except:
-        pass
-    instance = None
+        log.error('Could not delete widget.')
+    common.asset_property_editor = None
 
 
 def show(server, job, root, asset=None):
@@ -48,17 +46,16 @@ def show(server, job, root, asset=None):
         asset (str, optional): Asset name. Defaults to `None`.
 
     """
-    global instance
-
     close()
-    instance = AssetPropertyEditor(
+    common.asset_property_editor = AssetPropertyEditor(
         server,
         job,
         root,
         asset=asset
     )
-    instance.open()
-    return instance
+    common.restore_window_geometry(common.asset_property_editor)
+    common.restore_window_state(common.asset_property_editor)
+    return common.asset_property_editor
 
 
 SECTIONS = {

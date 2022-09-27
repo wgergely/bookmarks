@@ -45,7 +45,7 @@ def _showEvent_override(cls, event):
     CONTEXT_MENU_HEIGHT = common.size(common.WidthMargin) * 2
     CONTEXT_MENU_ICON_PADDING = common.size(common.WidthMargin)
 
-    show_icons = common.settings.value(common.ShowMenuIconsKey)
+    show_icons = common.settings.value('settings/show_menu_icons')
     show_icons = not show_icons if show_icons is not None else True
 
     for action in cls.actions():
@@ -141,7 +141,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             })
 
         """
-        show_icons = common.settings.value(common.ShowMenuIconsKey)
+        show_icons = common.settings.value('settings/show_menu_icons')
         show_icons = not show_icons if show_icons is not None else True
 
         if not parent:
@@ -163,13 +163,11 @@ class BaseContextMenu(QtWidgets.QMenu):
                 if f'{k}:text' in menu:
                     submenu.setTitle(menu[f'{k}:text'])
 
-                if k + ':action' in menu:
+                if f'{k}:action' in menu:
                     name = menu[f'{k}:text'] if f'{k}:text' in menu else k
-                    icon = menu[f'{k}:icon'] if k + \
-                                                ':icon' in menu and show_icons \
+                    icon = menu[f'{k}:icon'] if f'{k}:icon' in menu and show_icons \
                         else QtGui.QIcon()
-                    shortcut = menu[f'{k}:shortcut'] if k + \
-                                                        ':shortcut' in menu else None
+                    shortcut = menu[f'{k}:shortcut'] if f'{k}:shortcut' in menu else None
 
                     action = submenu.addAction(name)
                     action.setIconVisibleInMenu(True)
@@ -185,7 +183,7 @@ class BaseContextMenu(QtWidgets.QMenu):
                         )
 
                     if isinstance(v, collections.Iterable):
-                        for func in menu[k + ':action']:
+                        for func in menu[f'{k}:action']:
                             action.triggered.connect(func)
                     else:
                         action.triggered.connect(v)
@@ -282,7 +280,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.menu[k][key()] = {
             'text': 'Always on Top',
             'icon': on_icon if on_top_active else None,
-            'action': actions.toggle_stays_on_top
+            'action': actions.toggle_stays_always_on_top
         }
         self.menu[k][key()] = {
             'text': 'Frameless',
@@ -342,7 +340,7 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         m = self.parent().model().sourceModel()
         sort_order = m.sort_order()
-        sort_role = m.sort_role()
+        sort_by = m.sort_by()
 
         k = 'Sort List'
         self.menu[k] = collections.OrderedDict()
@@ -369,7 +367,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         for _k, v in common.DEFAULT_SORT_VALUES.items():
             self.menu[k][key()] = {
                 'text': v,
-                'icon': item_on_icon if sort_role == _k else None,
+                'icon': item_on_icon if sort_by == _k else None,
                 'action': functools.partial(
                     actions.change_sorting,
                     _k,
@@ -922,7 +920,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def task_folder_toggle_menu(self):
-        if not common.active(common.AssetKey):
+        if not common.active('asset'):
             return
 
         item_on_pixmap = ui.get_icon('check', color=common.color(common.GreenColor))
@@ -935,7 +933,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         )
 
         model = common.source_model(common.FileTab)
-        path = common.active(common.AssetKey, path=True)
+        path = common.active('asset', path=True)
         task = model.task()
 
         if not path:
@@ -1434,10 +1432,10 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def sg_publish_menu(self):
-        server = common.active(common.ServerKey)
-        job = common.active(common.JobKey)
-        root = common.active(common.RootKey)
-        asset = common.active(common.AssetKey)
+        server = common.active('server')
+        job = common.active('job')
+        root = common.active('root')
+        asset = common.active('asset')
 
         sg_properties = shotgun.ShotgunProperties(server, job, root, asset)
         if not sg_properties.verify():
@@ -1510,10 +1508,12 @@ class BaseContextMenu(QtWidgets.QMenu):
         """The custom client menu"""
         try:
             from .studioaka import context
+            from .studioaka import publish
+            from .studioaka import publishwidget
         except ModuleNotFoundError:
             return
-        except:
-            raise
+        except ImportError:
+            return
 
         k = u'Studio Aka'
         if k not in self.menu:
@@ -1531,9 +1531,6 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.separator()
 
         if self.index.isValid():
-            from .studioaka import publish
-            from .studioaka import publishwidget
-
             model = self.index.model().sourceModel()
             idx = self.index.model().mapToSource(self.index).row()
             data = model.model_data()

@@ -46,11 +46,9 @@ class BaseCase(unittest.TestCase):
         super(BaseCase, cls).setUpClass()
 
         from .. import common
+        common.product = PRODUCT
         common.initialize(common.StandaloneMode)
         common.typecheck_on = True
-
-        # Set mock product name
-        common.product = PRODUCT
 
         # Create folder used to test the app
         if not os.path.exists(PRODUCT_ROOT):

@@ -275,6 +275,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         self.scroll_area.setWidget(parent)
 
         self._create_sections()
+        parent.layout().addStretch(1)
         self._add_buttons()
 
     def _create_sections(self):
@@ -303,7 +304,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         k = v['key']
         _k = k.replace('/', '_') if k else k
         name = v['name']
-        _name = name.lower()
+        _name = name.lower() if name else name
 
         if 'description' in v and v['description']:
             row.setStatusTip(v['description'])
@@ -803,9 +804,22 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         return super(BasePropertyEditor, self).done(result)
 
+    def changeEvent(self, event):
+        if event.type() == QtCore.QEvent.WindowStateChange:
+            common.save_window_state(self)
+        super().changeEvent(event)
+
+    def hideEvent(self, event):
+        common.save_window_state(self)
+        super().hideEvent(event)
+
+    def closeEvent(self, event):
+        common.save_window_state(self)
+        super().closeEvent(event)
+
     def showEvent(self, event):
         QtCore.QTimer.singleShot(100, self.init_data)
-        common.center_window(self)
+        super().showEvent(event)
 
     def sizeHint(self):
         return QtCore.QSize(

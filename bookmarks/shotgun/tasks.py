@@ -468,24 +468,6 @@ class TaskView(QtWidgets.QTreeView):
         common.move_widget_to_available_geo(widget)
         widget.exec_()
 
-    def save_selection(self, current, previous):
-        v = current.data(QtCore.Qt.DisplayRole)
-        common.settings.setValue(common.CurrentSelectionKey, v)
-
-    def restore_selection(self):
-        v = common.settings.value(common.CurrentSelectionKey)
-
-        index = self.indexAt(QtCore.QPoint(0, 0))
-        while index.isValid():
-            index = self.indexBelow(index)
-
-            if v == index.data(QtCore.Qt.DisplayRole):
-                self.setCurrentIndex(index)
-                self.scrollTo(
-                    index,
-                    QtWidgets.QAbstractItemView.PositionAtCenter
-                )
-
     def adjust_columns(self):
         if not self.model():
             return
@@ -593,8 +575,8 @@ class TaskPicker(QtWidgets.QDialog):
             lambda x: self.task_editor.model().invalidateFilter())
 
         self.user_editor.currentTextChanged.connect(
-            functools.partial(self.save_selection, self.user_editor,
-                              common.CurrentUserKey))
+            functools.partial(common.save_selection, self.user_editor)
+        )
 
         self.asset_editor.currentIndexChanged.connect(
             lambda: self.task_editor.model().set_asset_filter(
@@ -603,11 +585,12 @@ class TaskPicker(QtWidgets.QDialog):
             lambda x: self.task_editor.model().invalidateFilter())
 
         self.asset_editor.currentTextChanged.connect(
-            functools.partial(self.save_selection, self.asset_editor,
-                              common.CurrentAssetKey))
+            functools.partial(common.save_selection, self.asset_editor)
+        )
 
         self.task_editor.selectionModel().currentChanged.connect(
-            self.task_editor.save_selection)
+            functools.partial(common.save_selection, self.task_editor)
+        )
         self.ok_button.clicked.connect(
             lambda: self.done(QtWidgets.QDialog.Accepted))
 
@@ -641,15 +624,15 @@ class TaskPicker(QtWidgets.QDialog):
         self.task_editor.setModel(proxy)
         self.task_editor.set_root_node(model.root_node)
         self.task_editor.expandAll()
-        self.task_editor.restore_selection()
+        common.restore_selection(self.task_editor)
 
         self.init_users(entities)
         self.init_assets(entities)
 
         self._connect_signals()
 
-        self.restore_selection(self.user_editor, common.CurrentUserKey)
-        self.restore_selection(self.asset_editor, common.CurrentAssetKey)
+        common.restore_selection(self.user_editor)
+        common.restore_selection(self.asset_editor)
 
     def init_users(self, entities):
         self.user_editor.clear()
@@ -703,21 +686,6 @@ class TaskPicker(QtWidgets.QDialog):
 
         self.sgEntitySelected.emit(entity)
         super(TaskPicker, self).done(result)
-
-    def save_selection(self, editor, k, v):
-        common.settings.setValue(
-            common.PublishVersionSection,
-            k,
-            v
-        )
-
-    def restore_selection(self, k, v):
-        v = common.settings.value(
-            common.PublishVersionSection,
-            k,
-        )
-        if isinstance(v, str):
-            self.setCurrentText(v)
 
     def double_clicked(self, index):
         if not index.isValid():

@@ -70,21 +70,21 @@ def capture(
         format (str, optional): Name of format, defaults to 'qt'.
         compression (str, optional): Name of compression, defaults to 'H.264'
         quality (int, optional): The quality of the output, defaults to 100
-        off_screen (bool, optional): Whether or not to playblast off screen
+        off_screen (bool, optional): Whether to playblast off-screen
         viewer (bool, optional): Display results in native player
-        show_ornaments (bool, optional): Whether or not model view ornaments
+        show_ornaments (bool, optional): Whether model view ornaments
             (e.g. axis icon, grid and HUD) should be displayed.
         sound (str, optional):  Specify the sound node to be used during
             playblast. When None (default) no sound will be used.
         isolate (list): List of nodes to isolate upon capturing
         maintain_aspect_ratio (bool, optional): Modify height in order to
             maintain aspect ratio.
-        overwrite (bool, optional): Whether or not to overwrite if file
+        overwrite (bool, optional): Whether to overwrite if file
             already exists. If disabled and file exists and error will be
             raised.
         frame_padding (bool, optional): Number of zeros used to pad file name
             for image sequences.
-        raw_frame_numbers (bool, optional): Whether or not to use the exact
+        raw_frame_numbers (bool, optional): Whether to use the exact
             frame numbers from the scene or capture to a sequence starting at
             zero. Defaults to False. When set to True `viewer` can't be used
             and will be forced to False.
@@ -286,7 +286,7 @@ DisplayOptions = {
 }
 
 # These display options require a different command to be queried and set
-_DisplayOptionsRGB = set(['background', 'backgroundTop', 'backgroundBottom'])
+_DisplayOptionsRGB = {'background', 'backgroundTop', 'backgroundBottom'}
 
 ViewportOptions = {
     # renderer
@@ -627,7 +627,7 @@ def _independent_panel(width, height, off_screen=False):
     if not off_screen:
         cmds.showWindow(window)
 
-    # Set the modelEditor of the modelPanel as the active view so it takes
+    # Set the modelEditor of the modelPanel as the active view, so it takes
     # the playback focus. Does seem redundant with the `refresh` added in.
     editor = cmds.modelPanel(panel, query=True, modelEditor=True)
     cmds.modelEditor(editor, edit=True, activeView=True)

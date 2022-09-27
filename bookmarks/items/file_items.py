@@ -342,7 +342,7 @@ class FilesModel(models.BaseModel):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.dataTypeChanged.connect(self.set_data_type)
-        self.dataTypeChanged.connect(common.signals.updateButtons)
+        self.dataTypeChanged.connect(common.signals.updateTopBarButtons)
 
     def refresh_needed(self):
         p = self.source_path()
@@ -642,10 +642,10 @@ class FilesModel(models.BaseModel):
 
         """
         return (
-            common.active(common.ServerKey),
-            common.active(common.JobKey),
-            common.active(common.RootKey),
-            common.active(common.AssetKey)
+            common.active('server'),
+            common.active('job'),
+            common.active('root'),
+            common.active('asset')
         )
 
     def item_generator(self, path):
@@ -683,10 +683,10 @@ class FilesModel(models.BaseModel):
         filepath = parent_role[5] + '/' + \
                    common.get_sequence_endpath(file_info.fileName())
 
-        actions.set_active(common.FileKey, filepath)
+        actions.set_active('file', filepath)
 
     def task(self):
-        return common.active(common.TaskKey)
+        return common.active('task')
 
     @common.error
     def data_type(self):
@@ -704,11 +704,7 @@ class FilesModel(models.BaseModel):
             return common.FileItem
 
         if task not in self._datatype:
-            val = self.get_local_setting(
-                common.CurrentDataType,
-                key=f'{self.__class__.__name__}/{task}',
-                section=common.UIStateSection
-            )
+            val = self.get_filter_setting('filters/collapsed')
             val = common.SequenceItem if val not in (
                 common.FileItem, common.SequenceItem) else val
             self._datatype[task] = val
@@ -734,26 +730,22 @@ class FilesModel(models.BaseModel):
             return
 
         # Set the data type to the user settings file
-        self.set_local_setting(
-            common.CurrentDataType,
-            val,
-            key=f'{self.__class__.__name__}/{task}',
-            section=common.UIStateSection
-        )
+        self.set_filter_setting('filters/collapsed', val)
 
         self.beginResetModel()
         self._datatype[task] = val
         self.endResetModel()
 
-    def user_settings_key(self):
-        if common.active(common.TaskKey) is None:
+    def filter_setting_dict_key(self):
+        if common.active('task') is None:
             return None
 
         keys = (
-            common.JobKey,
-            common.RootKey,
-            common.AssetKey,
-            common.TaskKey,
+            'server',
+            'job',
+            'root',
+            'asset',
+            'task',
         )
         v = [common.active(k) for k in keys]
         if not all(v):

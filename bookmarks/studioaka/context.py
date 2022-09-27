@@ -5,20 +5,29 @@ shall serve as a placeholder for a future Studio Aka pipline integration.
 
 """
 from PySide2 import QtCore
-from akapipe.core import context
-from akapipe.core import database
-from akapipe.core import db
-from akapipe.core import signals
-from akapipe.core import templates
-from akapipe.scenes import sc
+
+try:
+    from akapipe.core import context
+    from akapipe.core import database
+    from akapipe.core import db
+    from akapipe.core import signals
+    from akapipe.core import templates
+    from akapipe.scenes import sc
+except ImportError:
+    print('akapipe was not found.')
 
 from . import base
 from .. import common
 
 
+@common.error
+@common.debug
 def show_akapipe():
     signals.signals.initialized.connect(connect_signals)
-    import akapipe
+    try:
+        import akapipe
+    except ImportError:
+        raise ImportError('akapipe was not found')
     akapipe.show()
 
 

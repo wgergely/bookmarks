@@ -335,7 +335,7 @@ class BaseWorker(QtCore.QObject):
         if not model:
             return
 
-        sort_role = model.sort_role()
+        sort_by = model.sort_by()
         sort_order = model.sort_order()
 
         p = model.source_path()
@@ -346,7 +346,7 @@ class BaseWorker(QtCore.QObject):
             return
         d = common.sort_data(
             ref,
-            sort_role,
+            sort_by,
             sort_order
         )
         if not ref():
@@ -490,7 +490,7 @@ def get_ranges(arr, padding):
             if arr[idx + 1] != n + 1:  # break coming up
                 k += 1
     return ','.join(
-        ['-'.join(sorted(list(set([blocks[k][0], blocks[k][-1]])))) for k in blocks])
+        ['-'.join(sorted({blocks[k][0], blocks[k][-1]})) for k in blocks])
 
 
 def update_slack_configured(source_paths, bookmark_row_data, ref):
@@ -544,10 +544,10 @@ class InfoWorker(BaseWorker):
         """Populates the item with the missing file information.
 
         Args:
-            ref (weakref): An internal model data DataDict instance's weakref.
+            ref (weakref): An internal model data item's weakref.
 
         Returns:
-            bool: `True` if all went well, `False` otherwise.
+            bool: `True` on success, `False` otherwise.
 
         """
         if not self.is_valid(ref):
@@ -568,14 +568,20 @@ class InfoWorker(BaseWorker):
                 ref()[common.FileInfoLoaded] = True
 
     def _process_data(self, ref):
+        """Utility method for :meth:`process_data.
+
+        """
         pp = ref()[common.ParentPathRole]
         st = ref()[common.PathRole]
-        flags = ref()[
-                    common.FlagsRole] | QtCore.Qt.ItemIsEditable | QtCore.Qt.ItemIsDragEnabled
-        item_type = ref()[common.TypeRole]
+        if not pp or not st:
+            raise RuntimeError('Failed to process item.')
 
-        if not st:
-            raise RuntimeError('Not processable.')
+        flags = (
+                ref()[common.FlagsRole] |
+                QtCore.Qt.ItemIsEditable |
+                QtCore.Qt.ItemIsDragEnabled
+        )
+        item_type = ref()[common.TypeRole]
 
         if len(pp) > 4:
             collapsed = common.is_collapsed(st)
@@ -864,7 +870,7 @@ class ThumbnailWorker(BaseWorker):
 
     @common.error
     def queue_items(self, refs):
-        v = common.settings.valuecommon.DontGenerateThumbnailsKey)
+        v = common.settings.value('settings/disable_oiio')
         v = False if v is None else v
         if v:
             return None

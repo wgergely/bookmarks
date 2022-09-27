@@ -64,6 +64,7 @@ def process_image(source):
     if not image or image.isNull():
         raise RuntimeError('Failed to load converted image')
 
+    images.ImageCache.flush(destination)
     if not QtCore.QFile(destination).remove():
         log.error('Could not remove temp image.')
 
@@ -256,17 +257,20 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         disk when `self.save_image()` is called.
 
         """
-        self.save_window()
-        self.hide_window()
+        geo = self.window().saveGeometry()
+
+        def restore_geo(v):
+            self.window().restoreGeometry(v)
 
         try:
             from ..items.widgets import thumb_capture as editor
             widget = editor.show()
-            widget.accepted.connect(self.restore_window)
-            widget.rejected.connect(self.restore_window)
+            self.hide_window()
+            widget.accepted.connect(lambda: restore_geo(geo))
+            widget.rejected.connect(lambda: restore_geo(geo))
             widget.captureFinished.connect(self.process_image)
         except:
-            self.restore_window()
+            restore_geo(geo)
             raise
 
     def hide_window(self):
@@ -274,15 +278,8 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         pos = app.primaryScreen().geometry().bottomRight()
         self.window().move(pos)
 
-    def save_window(self):
-        self._window_pos = self.window().saveGeometry()
-
-    def restore_window(self):
-        self.window().restoreGeometry(self._window_pos)
-
     def _paint_proposed_thumbnail(self, painter):
         o = common.size(common.HeightSeparator)
-        rect = self.rect().adjusted(o, o, -o, -o)
 
         color = common.color(common.SeparatorColor)
         pen = QtGui.QPen(color)

@@ -17,18 +17,17 @@ from .. import log
 
 SECTIONS = {
     'active': (
-        'active/server',
-        'active/job',
-        'active/root',
-        'active/asset',
-        'active/task',
-        'active/file',
+        'server',
+        'job',
+        'root',
+        'asset',
+        'task',
+        'file',
     ),
     'user': (
         'user/servers',
         'user/bookmarks',
         'user/favourites',
-        'user/current_tab',
     ),
     'settings': (
         'settings/jobs_have_clients',
@@ -37,7 +36,7 @@ SECTIONS = {
         'settings/show_menu_icons',
         'settings/paint_thumbnail_bg',
         'settings/disable_oiio',
-        'settings/always_on_top',
+        'settings/always_always_on_top',
         'settings/frameless',
         'settings/bin_ffmpeg',
         'settings/bin_rv',
@@ -56,13 +55,15 @@ SECTIONS = {
         'filters/sort_by',
         'filters/sort_order',
         'filters/row_heights',
-        'filters/selection',
+        'filters/selection_file',
+        'filters/selection_sequence',
     ),
-    'window': (
-        'window/main_geo',
-        'window/main_state',
-        'window/bookmark_editor_geo',
-        'window/bookmark_editor_state',
+    'selection': (
+        'selection/current_tab',
+    ),
+    'state': (
+        'state/geometry',
+        'state/state',
     ),
     'slack': (
         'slack/user',
@@ -102,10 +103,13 @@ SECTIONS = {
         'maya/push_capture_to_rv',
         'maya/reveal_capture',
         'maya/publish_capture',
-        'maya/export_type',
-        'maya/export_set',
-        'maya/export_timeline',
-        'maya/export_versioning',
+    ),
+    'maya_export': (
+        'maya_export/type',
+        'maya_export/set',
+        'maya_export/timeline',
+        'maya_export/version',
+        'maya_export/keep_open',
     ),
     'publish': (
         'publish/type',
@@ -126,87 +130,6 @@ del __k
 SynchronisedActivePaths = 0
 PrivateActivePaths = 1
 
-ActiveSection = 'Active'
-ServerKey = 'Server'
-JobKey = 'Job'
-RootKey = 'Root'
-AssetKey = 'Asset'
-TaskKey = 'Task'
-FileKey = 'File'
-
-ActiveSectionCacheKeys = (
-    ServerKey,
-    JobKey,
-    RootKey,
-    AssetKey,
-    TaskKey,
-    FileKey,
-)
-
-CurrentUserPicksSection = 'UserPicks'
-ServersKey = 'Servers'
-BookmarksKey = 'Bookmarks'
-FavouritesKey = 'Favourites'
-
-SettingsSection = 'Settings'
-
-# Bookmarks editor
-JobsHaveSubdirs = 'JobsHaveSubdirs'
-RecurseDepth = 'RecurseDepth'
-
-UIScaleKey = 'UIScale'
-ShowMenuIconsKey = 'ShowMenuIcons'
-ShowThumbnailBackgroundKey = 'ShowThumbnailBackgroundKey'
-DontGenerateThumbnailsKey = 'DontGenerateThumbnailsKey'
-WorkspaceSyncKey = 'WorkspaceSync'
-SaveWarningsKey = 'SaveWarnings'
-PushCaptureToRVKey = 'PushCaptureToRV'
-RevealCaptureKey = 'RevealCapture'
-PublishCaptureKey = 'PublishCapture'
-
-ListFilterSection = 'ListFilters'
-ActiveFlagFilterKey = 'ActiveFilter'
-ArchivedFlagFilterKey = 'ArchivedFilter'
-FavouriteFlagFilterKey = 'FavouriteFilter'
-TextFilterKey = 'TextFilter'
-TextFilterKeyHistory = 'TextFilterHistory'
-
-UIStateSection = 'UIState'
-WindowGeometryKey = 'WindowGeometry'
-WindowStateKey = 'WindowState'
-BookmarkEditorGeometryKey = 'BookmarkEditorGeometryKey'
-BookmarkEditorStateKey = 'BookmarkEditorStateKey'
-SortByBaseNameKey = 'SortByBaseName'
-WindowAlwaysOnTopKey = 'WindowAlwaysOnTop'
-WindowFramelessKey = 'WindowFrameless'
-InlineButtonsHidden = 'InlineButtonsHidden'
-CurrentRowHeight = 'CurrentRowHeight'
-CurrentList = 'CurrentListIdx'
-CurrentSortRole = 'CurrentSortRole'
-CurrentSortOrder = 'CurrentSortOrder'
-CurrentDataType = 'CurrentDataType'
-FileSelectionKey = 'FileSelection'
-SequenceSelectionKey = 'FileSequenceSelection'
-BookmarkEditorServerKey = 'BookmarkEditorServer'
-BookmarkEditorJobKey = 'BookmarkEditorJob'
-SlackUserKey = 'SlackUser'
-LinkMultipleCurrentFilter = 'LinkMultipleCurrentFilter'
-PublishTask = 'PublishTask'
-PublishFileType = 'PublishFileType'
-
-FileSaverSection = 'FileSaver'
-CurrentFolderKey = 'CurrentFolder'
-CurrentTemplateKey = 'CurrentTemplate'
-
-PublishVersionSection = 'PublishVersion'
-CurrentUserKey = 'CurrentUser'
-CurrentAssetKey = 'CurrentAsset'
-CurrentSelectionKey = 'CurrentSelection'
-
-SGUserKey = 'SGUser'
-SGStorageKey = 'SGStorage'
-SGTypeKey = 'SGType'
-
 
 def init_settings():
     # Initialize the active_paths object
@@ -215,7 +138,7 @@ def init_settings():
         PrivateActivePaths: collections.OrderedDict(),
     }
     for mode in common.active_paths:
-        for key in ActiveSectionCacheKeys:
+        for key in SECTIONS['active']:
             common.active_paths[mode][key] = None
 
     # Create the setting object, this will load the previously saved active
@@ -224,15 +147,14 @@ def init_settings():
     common.settings.load_active_values()
     common.update_private_values()
 
-    v = common.settings.value(ServersKey)
+    v = common.settings.value('user/servers')
     if not isinstance(v, dict):
         v = {}
     common.servers = v
 
-    v = common.settings.value(FavouritesKey)
+    v = common.settings.value('user/favourites')
     if not v or not isinstance(v, dict):
         v = {}
-
     common.favourites = v
     common.signals.favouritesChanged.emit()
 
@@ -253,7 +175,7 @@ def _init_bookmarks():
     # Save default items to cache
     common.default_bookmarks = _static
 
-    _custom = common.settings.value(BookmarksKey)
+    _custom = common.settings.value('user/bookmarks')
     _custom = _custom if _custom else {}
 
     # Merge static and custom bookmarks
@@ -263,14 +185,14 @@ def _init_bookmarks():
     # Remove invalid values before adding
     for k in list(v.keys()):
         if (
-                ServerKey not in v[k]
-                or JobKey not in v[k]
-                or RootKey not in v[k]
+                'server' not in v[k]
+                or 'job' not in v[k]
+                or 'root' not in v[k]
         ):
             del v[k]
             continue
         # Add servers defined in the bookmark items:
-        common.servers[v[k][ServerKey]] = v[k][ServerKey]
+        common.servers[v[k]['server']] = v[k]['server']
 
     common.bookmarks = v
 
@@ -279,7 +201,7 @@ def active(k, path=False, args=False):
     """Get the current active item.
 
     Args:
-        k (str): The name of the path segment, e.g. `common.ServerKey`.
+        k (str): The name of the path segment, e.g. `'server'`.
         path (bool, optional): If True, will return a path to the active item.
         args (bool, optional): If `True`, will return all components that make up the active path.
 
@@ -289,23 +211,26 @@ def active(k, path=False, args=False):
         * tuple (when args=True): Active path elements.
 
     """
+    if k not in SECTIONS['active']:
+        raise KeyError('Invalid key')
+
     if path or args:
         _path = None
         _args = None
-        idx = common.ActiveSectionCacheKeys.index(k)
+        idx = SECTIONS['active'].index(k)
         v = tuple(common.active_paths[common.active_mode][k]
-                  for k in common.ActiveSectionCacheKeys[:idx + 1])
+                  for k in SECTIONS['active'][:idx + 1])
 
         if path:
             _path = '/'.join(v) if all(v) else None
             if args:
-                return (_path, _args)
+                return _path, _args
             return _path
 
         if args:
             _args = v if all(v) else None
             if path:
-                return (_path, _args)
+                return _path, _args
             return _args
 
     return common.active_paths[common.active_mode][k]
@@ -353,7 +278,7 @@ def bookmark_key(*args):
 
 
 def update_private_values():
-    for k in ActiveSectionCacheKeys:
+    for k in SECTIONS['active']:
         common.active_paths[PrivateActivePaths][k] = \
             common.active_paths[SynchronisedActivePaths][k]
 
@@ -371,12 +296,12 @@ class UserSettings(QtCore.QSettings):
     Active Path:
         The active path is saved in the following segments:
 
-        * ActiveSection/ServerKey (str):    Server, e.g. '//server/data'.
-        * ActiveSection/JobKey (str):       Job folder name inside the server.
-        * ActiveSection/RootKey (str):      Job-relative bookmark path, e.g. 'seq_010/shots'.
-        * ActiveSection/AssetKey (str):     Job folder name inside the root, e.g. 'shot_010'.
-        * ActiveSection/TaskKey (str):      A folder, e.g. 'scenes', 'renders', etc.
-        * ActiveSection/FileKey (str):      A relative file path.
+        * active/server (str):    Server, e.g. '//server/data'.
+        * active/job (str):       Job folder name inside the server.
+        * active/root (str):      Job-relative bookmark path, e.g. 'seq_010/shots'.
+        * active/asset (str):     Job folder name inside the root, e.g. 'shot_010'.
+        * active/task (str):      A folder, e.g. 'scenes', 'renders', etc.
+        * active/file (str):      A relative file path.
 
     """
 
@@ -402,9 +327,11 @@ class UserSettings(QtCore.QSettings):
 
         """
         self.sync()
-        for k in ActiveSectionCacheKeys:
-            common.active_paths[SynchronisedActivePaths][k] = self.value(
-                ActiveSection, k)
+        for k in SECTIONS['active']:
+            v = self.value(f'active/{k}')
+            if not isinstance(v, str) or not v:
+                v = None
+            common.active_paths[SynchronisedActivePaths][k] = v
         self.verify_active(SynchronisedActivePaths)
         self.verify_active(PrivateActivePaths)
 
@@ -416,30 +343,30 @@ class UserSettings(QtCore.QSettings):
 
         """
         p = str()
-        for k in ActiveSectionCacheKeys:
+        for k in SECTIONS['active']:
             if common.active_paths[m][k]:
                 p += common.active_paths[m][k]
             if not os.path.exists(p):
                 common.active_paths[m][k] = None
                 if m == SynchronisedActivePaths:
-                    self.setValue(ActiveSection, k, None)
+                    self.setValue(f'active/{k}', None)
             p += '/'
 
     def set_servers(self, v):
         common.check_type(v, dict)
         common.servers = v.copy()
-        self.setValue(CurrentUserPicksSection, ServersKey, v)
+        self.setValue('user/servers', v)
 
     def set_bookmarks(self, v):
         common.check_type(v, dict)
         common.bookmarks = v
-        self.setValue(CurrentUserPicksSection, BookmarksKey, v)
+        self.setValue('user/bookmarks', v)
 
     def set_favourites(self, v):
         common.check_type(v, dict)
-        self.setValue(CurrentUserPicksSection, FavouritesKey, v)
+        self.setValue('user/favourites', v)
 
-    def value(self, key):
+    def value(self, key, default=None):
         """Get a value from the user settings file.
 
         Overrides the default `value()` method to provide type checking.
@@ -447,17 +374,13 @@ class UserSettings(QtCore.QSettings):
 
         Args:
             key (str): A settings key.
+            default (object, optional): The default value if value not set.
 
         Returns:
             The value stored in settings or `None` if not found.
 
         """
-        if key not in KEYS:
-            raise KeyError(
-                f'{key} is an invalid key value. Must be one of\n{",".join(sorted(KEYS))}'
-            )
-
-        v = super().value(key)
+        v = super().value(key, devault=default)
         t = super().value(f'{key}_type')
         if v is None:
             return None

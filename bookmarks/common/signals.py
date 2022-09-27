@@ -17,7 +17,7 @@ class CoreSignals(QtCore.QObject):
     logChanged = QtCore.Signal()
 
     # Top Bar
-    updateButtons = QtCore.Signal()
+    updateTopBarButtons = QtCore.Signal()
     checkSlackToken = QtCore.Signal()
 
     # Status Bar
@@ -33,6 +33,8 @@ class CoreSignals(QtCore.QObject):
     generateThumbnailsChanged = QtCore.Signal()
 
     serversChanged = QtCore.Signal()
+    serverAdded = QtCore.Signal(str)
+    serverRemoved = QtCore.Signal(str)
 
     jobAdded = QtCore.Signal(str)
 

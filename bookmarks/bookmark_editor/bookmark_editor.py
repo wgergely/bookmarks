@@ -42,7 +42,7 @@ class BookmarkContextMenu(contextmenu.BaseContextMenu):
         self.menu[contextmenu.key()] = {
             'text': 'Reveal',
             'action': functools.partial(
-                actions.reveal, self.index.data(QtCore.Qt.UserRole) + '/.'
+                actions.reveal, f'{self.index.data(QtCore.Qt.UserRole)}/.'
             ),
             'icon': ui.get_icon('folder')
         }
@@ -72,9 +72,9 @@ class BookmarkContextMenu(contextmenu.BaseContextMenu):
 
         d = {
             f'{server}/{job}/{root}': {
-                common.ServerKey: server,
-                common.JobKey: job,
-                common.RootKey: root
+                'server': server,
+                'job': job,
+                'root': root
             }
         }
         s = json.dumps(d)
@@ -136,6 +136,8 @@ class BookmarkListWidget(ui.ListWidget):
                 item.data(QtCore.Qt.DisplayRole)
             )
         )
+
+        common.signals.serversChanged.connect(self.init_data)
 
     @QtCore.Slot(QtWidgets.QListWidgetItem)
     def add_remove_bookmark(self, state, v):
@@ -242,18 +244,15 @@ class BookmarkListWidget(ui.ListWidget):
         if not self.window().job():
             return
 
-        max_recursion = common.settings.value(common.RecurseDepth)
-        try:
-            max_recursion = int(max_recursion)
-        except:
-            max_recursion = 3
-        finally:
-            max_recursion = 1 if max_recursion < 1 else max_recursion
+        max_recursion = common.settings.value('settings/job_scan_depth')
+        max_recursion = 3 if not max_recursion else max_recursion
 
         for name, path in self.item_generator(
                 self.window().job_path(),
                 max_recursion=max_recursion
         ):
+            self.progressUpdate.emit(f'Parsing {path}...')
+
             item = QtWidgets.QListWidgetItem()
             item.setFlags(
                 QtCore.Qt.ItemIsEnabled |
@@ -262,6 +261,9 @@ class BookmarkListWidget(ui.ListWidget):
             )
             item.setData(QtCore.Qt.DisplayRole, name)
             item.setData(QtCore.Qt.UserRole, path)
+            item.setData(QtCore.Qt.StatusTipRole, path)
+            item.setData(QtCore.Qt.WhatsThisRole, path)
+            item.setData(QtCore.Qt.ToolTipRole, path)
             item.setSizeHint(QtCore.QSize(0, common.size(common.WidthMargin) * 2))
 
             self.update_state(item)

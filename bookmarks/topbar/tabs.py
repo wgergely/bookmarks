@@ -33,7 +33,7 @@ class BaseTabButton(QtWidgets.QLabel):
         )
 
         self.clicked.connect(self.emit_tab_changed)
-        common.signals.updateButtons.connect(self.update)
+        common.signals.updateTopBarButtons.connect(self.update)
 
     @QtCore.Slot()
     def emit_tab_changed(self):
@@ -209,7 +209,7 @@ class AssetsTabButton(BaseTabButton):
 
     @QtCore.Slot()
     def emit_tab_changed(self):
-        active = common.active(common.RootKey)
+        active = common.active('root')
         if not active:
             return
         super().emit_tab_changed()
@@ -231,7 +231,7 @@ class FilesTabButton(BaseTabButton):
 
     @QtCore.Slot()
     def emit_tab_changed(self):
-        active = common.active(common.AssetKey)
+        active = common.active('asset')
         if not active:
             return
 
@@ -285,7 +285,7 @@ class FilesTabButton(BaseTabButton):
             return super().text()
         return t
 
-        return active_index.data(common.ParentPathRole)[common.TaskKey].lower()
+        return active_index.data(common.ParentPathRole)['task'].lower()
 
 
 class FavouritesTabButton(BaseTabButton):

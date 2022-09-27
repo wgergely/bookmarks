@@ -46,16 +46,6 @@ class PublishTypeComboBox(QtWidgets.QComboBox):
         self.blockSignals(False)
 
 
-SETTING_KEYS = (
-    'akapublish_type',
-    'akapublish_makevideo',
-    'akapublish_videopreset',
-    'akapublish_videosize',
-    'akapublish_videotimecode',
-    'akapublish_copypath',
-    'akapublish_reveal',
-)
-
 SECTIONS = {
     0: {
         'name': 'Aka Publish',
@@ -65,7 +55,7 @@ SECTIONS = {
             0: {
                 0: {
                     'name': 'Publish Type',
-                    'key': 'akapublish_type',
+                    'key': 'publish_type',
                     'validator': None,
                     'widget': PublishTypeComboBox,
                     'placeholder': None,
@@ -75,7 +65,7 @@ SECTIONS = {
             1: {
                 0: {
                     'name': 'Make Video',
-                    'key': 'akapublish_makevideo',
+                    'key': 'publish_makevideo',
                     'validator': None,
                     'widget': functools.partial(
                         QtWidgets.QCheckBox, 'Convert Sequence'
@@ -85,7 +75,7 @@ SECTIONS = {
                 },
                 1: {
                     'name': 'Video Size',
-                    'key': 'akapublish_videosize',
+                    'key': 'publish_videosize',
                     'validator': None,
                     'widget': ffmpeg_widget.SizeComboBox,
                     'placeholder': None,
@@ -93,7 +83,7 @@ SECTIONS = {
                 },
                 2: {
                     'name': 'Video Preset',
-                    'key': 'akapublish_videopreset',
+                    'key': 'publish_videopreset',
                     'validator': None,
                     'widget': ffmpeg_widget.PresetComboBox,
                     'placeholder': None,
@@ -101,7 +91,7 @@ SECTIONS = {
                 },
                 3: {
                     'name': 'Video Timecode',
-                    'key': 'akapublish_videotimecode',
+                    'key': 'publish_videotimecode',
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Add Timecode'),
                     'placeholder': None,
@@ -111,7 +101,7 @@ SECTIONS = {
             2: {
                 0: {
                     'name': 'Copy Path',
-                    'key': 'akapublish_copypath',
+                    'key': 'publish_copypath',
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Copy to Cliboard'),
                     'placeholder': None,
@@ -119,7 +109,7 @@ SECTIONS = {
                 },
                 1: {
                     'name': 'Reveal Publish',
-                    'key': 'akapublish_reveal',
+                    'key': 'publish_reveal',
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Reveal'),
                     'placeholder': None,
@@ -148,12 +138,12 @@ class PublishFootageWidget(base.BasePropertyEditor):
             parent=parent
         )
         self._ref = ref
-        self._connect_settings_save_signals(SETTING_KEYS)
+        self._connect_settings_save_signals(common.SECTIONS['publish'])
 
     @common.error
     @common.debug
     def init_data(self):
-        self.load_saved_user_settings(SETTING_KEYS)
+        self.load_saved_user_settings(common.SECTIONS['publish'])
 
     @common.error
     @common.debug
@@ -161,13 +151,13 @@ class PublishFootageWidget(base.BasePropertyEditor):
         """Start the publish process.
 
         """
-        preset = self.akapublish_type_editor.currentData()
-        ffmpeg_preset = self.akapublish_videopreset_editor.currentData()
-        make_movie = self.akapublish_makevideo_editor.isChecked()
-        copy_path = self.akapublish_copypath_editor.isChecked()
-        add_timecode = self.akapublish_videotimecode_editor.isChecked()
-        video_size = self.akapublish_videosize_editor.currentData()
-        reveal_publish = self.akapublish_reveal_editor.isChecked()
+        preset = self.publish_type_editor.currentData()
+        ffmpeg_preset = self.publish_videopreset_editor.currentData()
+        make_movie = self.publish_makevideo_editor.isChecked()
+        copy_path = self.publish_copypath_editor.isChecked()
+        add_timecode = self.publish_videotimecode_editor.isChecked()
+        video_size = self.publish_videosize_editor.currentData()
+        reveal_publish = self.publish_reveal_editor.isChecked()
 
         data = self._ref()
         if not data:

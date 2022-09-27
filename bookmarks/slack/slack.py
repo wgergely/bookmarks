@@ -21,6 +21,7 @@ See http://api.slack.com/apps for more information.
 
 
 """
+import functools
 import urllib.error
 import urllib.request
 
@@ -528,30 +529,11 @@ class UsersWidget(QtWidgets.QListView):
         # Custom delegate
         self.setItemDelegate(ui.ListWidgetDelegate(parent=self))
 
-        self.clicked.connect(self.save_selection)
-        self.selectionModel().currentChanged.connect(self.save_selection)
-        self.model().modelReset.connect(self.restore_selection)
-
-    @QtCore.Slot(QtCore.QModelIndex)
-    def save_selection(self, index):
-        v = index.data(QtCore.Qt.DisplayRole)
-        common.settings.setValue(common.SlackUserKey, v)
-
-    @QtCore.Slot()
-    def restore_selection(self):
-        v = common.settings.value(common.SlackUserKey)
-
-        if v is None:
-            return
-
-        for n in range(self.model().rowCount()):
-            index = self.model().index(n, 0)
-            if index.data(QtCore.Qt.DisplayRole).lower() == v.lower():
-                self.selectionModel().setCurrentIndex(
-                    index, QtCore.QItemSelectionModel.ClearAndSelect)
-                self.setCurrentIndex(index)
-                self.scrollTo(
-                    index, QtWidgets.QAbstractItemView.PositionAtCenter)
+        save_selection = functools.partial(common.save_selection, self)
+        restore_selection = functools.partial(common.restore_selection, self)
+        self.clicked.connect(save_selection)
+        self.selectionModel().currentChanged.connect(save_selection)
+        self.model().modelReset.connect(restore_selection)
 
 
 class SlackWidget(QtWidgets.QDialog):

@@ -166,7 +166,7 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
 
     def reveal_menu(self):
         self.menu['Reveal...'] = {
-            'action': lambda: actions.reveal(self.index.text() + '/.'),
+            'action': lambda: actions.reveal(f'{self.index.text()}/.'),
             'icon': ui.get_icon('folder'),
         }
 
@@ -225,14 +225,13 @@ class ServerListWidget(ui.ListWidget):
         super(ServerListWidget, self)._connect_signals()
 
         self.selectionModel().selectionChanged.connect(
-            functools.partial(
-                common.save_selection,
-                self,
-                common.BookmarkEditorServerKey
-            )
+            functools.partial(common.save_selection, self)
         )
 
         common.signals.serversChanged.connect(self.init_data)
+        common.signals.serverAdded.connect(
+            functools.partial(common.select_index, self)
+        )
 
     @common.debug
     @common.error
@@ -276,8 +275,15 @@ class ServerListWidget(ui.ListWidget):
         self.selectionModel().blockSignals(True)
         self.clear()
 
-        for server in common.servers:
-            item = QtWidgets.QListWidgetItem(server)
+        for path in common.servers:
+            item = QtWidgets.QListWidgetItem()
+            item.setData(QtCore.Qt.DisplayRole, path)
+            item.setData(QtCore.Qt.UserRole, path)
+            item.setData(QtCore.Qt.UserRole + 1, path)
+            item.setData(QtCore.Qt.StatusTipRole, path)
+            item.setData(QtCore.Qt.WhatsThisRole, path)
+            item.setData(QtCore.Qt.ToolTipRole, path)
+
             size = QtCore.QSize(
                 0,
                 common.size(common.WidthMargin) * 2
@@ -297,7 +303,7 @@ class ServerListWidget(ui.ListWidget):
                     )
 
         self.selectionModel().blockSignals(False)
-        common.restore_selection(self, common.BookmarkEditorServerKey)
+        common.restore_selection(self)
 
     @QtCore.Slot(QtWidgets.QListWidgetItem)
     def validate_item(self, item):

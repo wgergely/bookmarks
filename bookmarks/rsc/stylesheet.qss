@@ -559,3 +559,8 @@ QWidget#mainRow {{
 GalleryWidget QWidget:focus {{
     border: {HeightSeparator}px solid transparent;
 }}
+
+Viewer,
+ImageViewer {{
+    background-color: rgba(20,20,20,250);
+}}

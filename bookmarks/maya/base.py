@@ -683,7 +683,7 @@ class MayaProperties(object):
 
     def get_info(self):
         duration = self.endframe - self.startframe
-        info = 'Resolution:  {w}{h}\nFramerate:  {fps}\nCut:  {start}{' \
+        info = 'Resolution:  {w}{h}\nFrame-rate:  {fps}\nCut:  {start}{' \
                'duration}'.format(
             w='{}'.format(int(self.width)) if (
                     self.width and self.height) else '',

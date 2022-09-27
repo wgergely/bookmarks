@@ -44,7 +44,7 @@ class ScreenCapture(QtWidgets.QDialog):
     """Screen capture widget.
 
     Signals:
-        captureFinished (str): Emited with a filepath to the captured image.
+        captureFinished (str): Emitted with a filepath to the captured image.
 
     """
     captureFinished = QtCore.Signal(str)
@@ -122,7 +122,7 @@ class ScreenCapture(QtWidgets.QDialog):
             self._capture_rect.height()
         )
         if pixmap.isNull():
-            raise RuntimeError('Unknown error occured capturing the pixmap.')
+            raise RuntimeError('Unknown error occurred capturing the pixmap.')
 
         temp_image_path = '{}/{}.{}'.format(
             common.temp_path(),
@@ -260,7 +260,6 @@ class ScreenCapture(QtWidgets.QDialog):
         self._click_pos = event.globalPos()
 
     def mouseReleaseEvent(self, event):
-        """Finalise the caputre"""
         if not isinstance(event, QtGui.QMouseEvent):
             return
 

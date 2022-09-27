@@ -2040,7 +2040,7 @@ class BookmarksWidgetDelegate(BaseDelegate):
 
 
 class AssetsWidgetDelegate(BaseDelegate):
-    """Delegate used by the ``AssetsWidget`` to display the collecteds assets."""
+    """Delegate used by the ``AssetsWidget`` to display the collected assets."""
     fallback_thumb = 'asset_item'
 
     def paint(self, painter, option, index):

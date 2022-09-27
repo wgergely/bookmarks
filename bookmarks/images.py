@@ -197,7 +197,7 @@ def get_thumbnail(server, job, root, source, size=common.thumbnail_size,
 
 def wait_for_lock(source):
     t = 0.0
-    while os.path.isfile(source + '.lock'):
+    while os.path.isfile(f'{source}.lock'):
         if t > 1.0:
             break
         time.sleep(0.1)
@@ -974,7 +974,7 @@ class ImageCache(QtCore.QObject):
                 os.remove(destination + '.lock')
                 return False
 
-            # [BUG] Not all codec formats are supported by ffmpe.g. There does
+            # [BUG] Not all codec formats are supported by ffmpeg. There does
             # not seem to be (?) error handling and an unsupported codec will
             # crash ffmpeg and the rest of the app.
             codec_name = source_spec.get_string_attribute('ffmpeg:codec_name')

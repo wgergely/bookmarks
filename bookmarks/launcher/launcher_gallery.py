@@ -35,9 +35,9 @@ class LauncherGallery(ui.GalleryWidget):
         super().__init__(item_height=common.size(common.HeightRow) * 4, parent=parent)
 
     def item_generator(self):
-        server = common.active(common.ServerKey)
-        job = common.active(common.JobKey)
-        root = common.active(common.RootKey)
+        server = common.active('server')
+        job = common.active('job')
+        root = common.active('root')
 
         if not all((server, job, root)):
             return

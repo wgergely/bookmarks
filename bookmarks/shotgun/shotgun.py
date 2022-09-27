@@ -138,7 +138,7 @@ def connection(sg_properties):
     except Exception as e:
         if QtWidgets.QApplication.instance():
             common.signals.sgConnectionFailed.emit(
-                '{domain}/detail/{entity_type}/{entity_id}'.format(e))
+                '{domain}/detail/{entity_type}/{entity_id}')
         raise
     else:
         sg.close()
@@ -247,25 +247,25 @@ class ShotgunProperties(object):
     @property
     def server(self):
         if self.active:
-            return common.active(common.ServerKey)
+            return common.active('server')
         return self._server
 
     @property
     def job(self):
         if self.active:
-            return common.active(common.JobKey)
+            return common.active('job')
         return self._job
 
     @property
     def root(self):
         if self.active:
-            return common.active(common.RootKey)
+            return common.active('root')
         return self._root
 
     @property
     def asset(self):
         if self.active:
-            return common.active(common.AssetKey)
+            return common.active('asset')
         return self._asset
 
     def _load_values_from_database(self, db):

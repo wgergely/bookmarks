@@ -375,7 +375,7 @@ def create_published_file(
             'url': QtCore.QUrl.fromLocalFile(file_path).toString(
                 options=QtCore.QUrl.FullyEncoded)
         },
-        'path_cache': file_path.replace(common.active(common.ServerKey), '').strip('/'),
+        'path_cache': file_path.replace(common.active('server'), '').strip('/'),
     }
 
     entity = sg.create(

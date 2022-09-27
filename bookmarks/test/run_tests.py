@@ -26,7 +26,7 @@ if __name__ == '__main__':
         loader.loadTestsFromTestCase(bookmarks.test.test_settings.Test),
         loader.loadTestsFromTestCase(bookmarks.test.test_actions.Test),
         loader.loadTestsFromTestCase(bookmarks.test.test_actions.TestWidgetActions),
-        # loader.loadTestsFromTestCase(bookmarks.test.test_bookmark_editor.Test),
+        loader.loadTestsFromTestCase(bookmarks.test.test_bookmark_editor.Test),
     )
     suite = unittest.TestSuite(cases)
     unittest.TextTestRunner(verbosity=2, failfast=True).run(suite)

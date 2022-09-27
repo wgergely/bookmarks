@@ -24,62 +24,54 @@ class Test(base.BaseCase):
         with self.assertRaises(KeyError):
             common.active(base.random_str(128))
 
-        for k in common.ActiveSectionCacheKeys:
-            v = common.active(common.ServerKey)
+        for k in common.SECTIONS['active']:
+            v = common.active(k)
             self.assertIsInstance(v, (type(None), str))
 
-        v = common.active(common.AssetKey, path=True)
+        v = common.active('asset', path=True)
         self.assertIsInstance(v, (type(None), str))
 
-        v = common.active(common.AssetKey, args=True)
+        v = common.active('asset', args=True)
         self.assertIsInstance(v, (type(None), tuple))
 
     def test_values(self):
-        v = common.settings.value(common.CurrentList)
-        self.assertIsNone(v)
-
         for _ in range(100):
             v = base.random_str(128)
-            common.settings.setValue(common.CurrentList, v)
-            _v = common.settings.value(common.CurrentList)
+            common.settings.setValue('test/value', v)
+            _v = common.settings.value('test/value')
             self.assertEqual(v, _v)
 
         for _ in range(100):
             v = base.random_ascii(128)
-            common.settings.setValue(common.CurrentList, v)
-            _v = common.settings.value(common.CurrentList)
+            common.settings.setValue('test/value', v)
+            _v = common.settings.value('test/value')
             self.assertEqual(v, _v)
 
         for _ in range(100):
             v = {0: base.random_ascii(128), 1: base.random_str(128)}
-            common.settings.setValue(common.CurrentList, v)
-            _v = common.settings.value(common.CurrentList)
+            common.settings.setValue('test/value', v)
+            _v = common.settings.value('test/value')
             self.assertEqual(v, _v)
 
         for _ in range(100):
             v = random.randrange(99999)
-            common.settings.setValue(common.CurrentList, v)
-            _v = common.settings.value(common.CurrentList)
+            common.settings.setValue('test/value', v)
+            _v = common.settings.value('test/value')
             self.assertEqual(v, _v)
 
         v = None
-        common.settings.setValue(common.CurrentList, v)
-        _v = common.settings.value(common.CurrentList)
-        self.assertEqual(v, _v)
-
-        v = 'None'
-        common.settings.setValue(common.CurrentList, v)
-        _v = common.settings.value(common.UIStateSection)
+        common.settings.setValue('test/value', v)
+        _v = common.settings.value('test/value')
         self.assertEqual(v, _v)
 
         v = 0.5
-        common.settings.setValue(common.CurrentList, v)
-        _v = common.settings.value(common.CurrentList)
+        common.settings.setValue('test/value', v)
+        _v = common.settings.value('test/value')
         self.assertEqual(v, _v)
 
         v = QtCore.QRect(0, 0, 50, 50)
-        common.settings.setValue(common.CurrentList, v)
-        _v = common.settings.value(common.CurrentList)
+        common.settings.setValue('test/value', v)
+        _v = common.settings.value('test/value')
         self.assertEqual(v, _v)
 
     def test_get_user_settings_path(self):

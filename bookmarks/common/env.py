@@ -20,7 +20,7 @@ def get_binary(binary_name):
     environment values in a ``{PREFIX}_{BINARY_NAME}`` format,
     e.g. ``BOOKMARKS_FFMPEG``, or ``BOOKMARKS_RV``. These environment variables
     should point to an appropriate executable, e.g.
-    ``BOOKMARKS_FFMPEG=C:/ffmpeg/ffmpe.g.exe``
+    ``BOOKMARKS_FFMPEG=C:/ffmpeg/ffmpeg.exe``
 
     If the environment variable is absent, we'll look at the PATH environment to
     see if the binary is available there.
@@ -51,7 +51,12 @@ def get_binary(binary_name):
         except:
             pass
 
-    return _parse_path_env(binary_name)
+    v = _parse_dist_env(binary_name)
+    if v:
+        return v
+    v = _parse_path_env(binary_name)
+
+    return v
 
 
 def _get_user_setting(binary_name):
@@ -68,11 +73,52 @@ def _get_user_setting(binary_name):
 
     """
     from . import common
-    key = f'bin_{binary_name}'.lower()
-    v = common.settings.value(common.SettingsSection, key)
+    key = f'settings/bin_{binary_name}'
+    v = common.settings.value(key)
+    if not v:
+        return
+
     file_info = QtCore.QFileInfo(v)
     if isinstance(v, str) and v and file_info.exists():
         return file_info.filePath()
+    return None
+
+
+def _parse_dist_env(binary_name):
+    from . import env_key
+    if env_key not in os.environ:
+        return
+
+    v = os.environ[env_key]
+    if not QtCore.QFileInfo(v).exists():
+        return
+
+    file_info = QtCore.QFileInfo(v)
+
+    def scan_dir(v):
+        for entry in os.scandir(v):
+            try:
+                if not entry.is_file():
+                    continue
+            except:
+                continue
+
+            match = re.match(
+                rf'^{binary_name}$|{binary_name}\..+',
+                entry.name,
+                flags=re.IGNORECASE
+            )
+            if match:
+                return QtCore.QFileInfo(entry.path).filePath()
+
+        return None
+
+    _v = scan_dir(v)
+    if _v:
+        return _v
+    _v = scan_dir(f'{v}/bin')
+    if _v:
+        return _v
     return None
 
 
@@ -96,7 +142,11 @@ def _parse_path_env(binary_name):
             _filepath = QtCore.QFileInfo(entry.path).filePath()
             _name = _filepath.split('/')[-1]
 
-            match = re.match(rf'{binary_name}.*', _name, flags=re.IGNORECASE)
+            match = re.match(
+                rf'^{binary_name}$|{binary_name}\..+',
+                _name,
+                flags=re.IGNORECASE
+            )
             if not match:
                 continue
 
@@ -159,7 +209,7 @@ class EnvPathEditor(QtWidgets.QWidget):
                 continue
             editor = getattr(self, f'{name}_editor')
             editor.textChanged.connect(
-                functools.partial(common.settings.setValue, f'bin_{name}')
+                functools.partial(common.settings.setValue, f'settings/bin_{name}')
             )
 
             button1 = getattr(self, f'{name}_button1')

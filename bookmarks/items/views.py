@@ -28,8 +28,6 @@ from .. import images
 from .. import ui
 from ..threads import threads
 
-BG_COLOR = QtGui.QColor(0, 0, 0, 50)
-
 
 class ListsWidget(QtWidgets.QStackedWidget):
     """Stacked widget used to hold and toggle the list widgets containing the
@@ -67,7 +65,7 @@ class ListsWidget(QtWidgets.QStackedWidget):
             idx = common.FavouriteTab
 
         # Save tab to user settings
-        common.settings.setValue(common.CurrentList, idx)
+        common.settings.setValue('selection/current_tab', idx)
         super().setCurrentIndex(idx)
         self.currentWidget().setFocus()
 
@@ -123,7 +121,7 @@ class ProgressWidget(QtWidgets.QWidget):
         painter.end()
 
     def mousePressEvent(self, event):
-        """``ProgressWidgeqt`` closes on mouse press events."""
+        """``ProgressWidget`` closes on mouse press events."""
         if not isinstance(event, QtGui.QMouseEvent):
             return
         self.hide()
@@ -248,7 +246,7 @@ class BaseListWidget(QtWidgets.QListView):
         self.delayed_save_selection_timer.setInterval(100)
 
         self.delayed_restore_selection_timer = common.Timer()
-        self.delayed_restore_selection_timer.setInterval(150)
+        self.delayed_restore_selection_timer.setInterval(10)
         self.delayed_restore_selection_timer.setSingleShot(True)
 
         self.setResizeMode(QtWidgets.QListView.Adjust)
@@ -279,8 +277,7 @@ class BaseListWidget(QtWidgets.QListView):
         self.resized.connect(self.filter_editor.setGeometry)
 
         self.delayed_save_selection_timer.timeout.connect(self.save_selection)
-        self.delayed_restore_selection_timer.timeout.connect(
-            self.restore_selection)
+        self.delayed_restore_selection_timer.timeout.connect(self.restore_selection)
 
         self.init_buttons_state()
 
@@ -290,14 +287,15 @@ class BaseListWidget(QtWidgets.QListView):
         """Restore the previous state of the inline icon buttons.
 
         """
-        v = self.model().sourceModel().get_local_setting(
-            common.InlineButtonsHidden,
-            key=self.__class__.__name__,
-            section=common.UIStateSection
-        )
-        v = False if v is None else v
+        model = self.model().sourceModel()
+        v = model.get_filter_setting('filters/buttons')
+        v = False if not v else v
         self._buttons_hidden = v
-        common.sort_by_basename = v
+
+        common.sort_by_basename = (
+            True if v else
+            (False if common.sort_by_basename is None else common.sort_by_basename)
+        )
 
     def buttons_hidden(self):
         """Returns the visibility of the inline icon buttons.
@@ -311,12 +309,7 @@ class BaseListWidget(QtWidgets.QListView):
         """Sets the visibility of the inline icon buttons.
 
         """
-        self.model().sourceModel().set_local_setting(
-            common.InlineButtonsHidden,
-            val,
-            key=self.__class__.__name__,
-            section=common.UIStateSection
-        )
+        self.model().sourceModel().set_filter_setting('filters/buttons', val)
         self._buttons_hidden = val
 
     @common.error
@@ -336,16 +329,15 @@ class BaseListWidget(QtWidgets.QListView):
         proxy.setSourceModel(model)
         self.setModel(proxy)
 
+        self.init_buttons_state()
         model.init_sort_values()
         model.init_row_size()
         proxy.init_filter_values()
 
-        model.updateIndex.connect(
-            self.update, type=QtCore.Qt.DirectConnection)
-
         model.modelReset.connect(proxy.init_filter_values)
         model.modelReset.connect(model.init_sort_values)
         model.modelReset.connect(model.init_row_size)
+        model.modelReset.connect(self.init_buttons_state)
         model.modelReset.connect(self.reset_multitoggle)
 
         self.interruptRequested.connect(model.set_interrupt_requested)
@@ -358,6 +350,11 @@ class BaseListWidget(QtWidgets.QListView):
         model.modelReset.connect(self.save_visible_rows)
         proxy.modelReset.connect(self.save_visible_rows)
         proxy.invalidated.connect(self.save_visible_rows)
+
+        model.modelReset.connect(self.reset_row_layout)
+
+        model.updateIndex.connect(
+            self.update, type=QtCore.Qt.DirectConnection)
 
     @QtCore.Slot(QtCore.QModelIndex)
     def update(self, index):
@@ -422,16 +419,8 @@ class BaseListWidget(QtWidgets.QListView):
         if data_type == common.SequenceItem:
             path = common.get_sequence_startpath(path)
 
-        model.set_local_setting(
-            common.FileSelectionKey,
-            path,
-            section=common.UIStateSection
-        )
-        model.set_local_setting(
-            common.SequenceSelectionKey,
-            common.proxy_path(path),
-            section=common.UIStateSection
-        )
+        model.set_filter_setting('filters/selection_file', path)
+        model.set_filter_setting('filters/selection_sequence', common.proxy_path(path))
 
     @QtCore.Slot()
     def delay_restore_selection(self):
@@ -440,8 +429,9 @@ class BaseListWidget(QtWidgets.QListView):
 
     @QtCore.Slot()
     def restore_selection(self):
-        """Slot called to reselect a previously saved selection."""
+        """Slot called to reselect a previously saved selection.
 
+        """
         proxy = self.model()
         if not proxy or not proxy.rowCount():
             return
@@ -450,15 +440,9 @@ class BaseListWidget(QtWidgets.QListView):
         data_type = model.data_type()
 
         if data_type == common.FileItem:
-            previous = model.get_local_setting(
-                common.FileSelectionKey,
-                section=common.UIStateSection
-            )
+            previous = model.get_filter_setting('filters/selection_file')
         elif data_type == common.SequenceItem:
-            previous = model.get_local_setting(
-                common.SequenceSelectionKey,
-                section=common.UIStateSection
-            )
+            previous = model.get_filter_setting('filters/selection_sequence')
         else:
             return
 
@@ -483,9 +467,14 @@ class BaseListWidget(QtWidgets.QListView):
 
                 # When we found an item, let's make sure it is visible
                 self.scrollTo(
-                    index, hint=QtWidgets.QAbstractItemView.PositionAtCenter)
+                    index,
+                    hint=QtWidgets.QAbstractItemView.PositionAtCenter
+                )
                 self.selectionModel().setCurrentIndex(
-                    index, QtCore.QItemSelectionModel.ClearAndSelect)
+                    index,
+                    QtCore.QItemSelectionModel.ClearAndSelect |
+                    QtCore.QItemSelectionModel.Rows
+                )
                 return
 
         # Select the active item
@@ -627,8 +616,8 @@ class BaseListWidget(QtWidgets.QListView):
         idx = source_index.row()
         data = model.model_data()[idx]
 
-        FILE_DATA = common.get_data(p, k, common.FileItem)
-        SEQ_DATA = common.get_data(p, k, common.SequenceItem)
+        file_data = common.get_data(p, k, common.FileItem)
+        seq_data = common.get_data(p, k, common.SequenceItem)
 
         applied = data[common.FlagsRole] & flag
         collapsed = common.is_collapsed(data[common.PathRole])
@@ -644,26 +633,28 @@ class BaseListWidget(QtWidgets.QListView):
         if collapsed:
             k = common.proxy_path(data[common.PathRole])
             _set_flag(k, mode, data, flag, commit=True)
-            if self.model().sourceModel().model_data() == FILE_DATA:
-                _set_flags(SEQ_DATA, k, mode, flag, commit=False, proxy=True)
+            if self.model().sourceModel().model_data() == file_data:
+                _set_flags(seq_data, k, mode, flag, commit=False, proxy=True)
             else:
-                _set_flags(FILE_DATA, k, mode, flag, commit=False, proxy=True)
+                _set_flags(file_data, k, mode, flag, commit=False, proxy=True)
         else:
             k = data[common.PathRole]
 
             if not can_toggle_flag(k, mode, data, flag):
                 ui.MessageBox(
-                    'Looks like this item belongs to a sequence that has a flag set already.',
-                    'To modify individual sequence items, remove the flag from the sequence first and try again.'
+                    'Looks like this item belongs to a sequence that has a flag set '
+                    'already.',
+                    'To modify individual sequence items, remove the flag from the '
+                    'sequence first and try again.'
                 ).open()
                 self.reset_multitoggle()
                 return False
 
             _set_flag(k, mode, data, flag, commit=True)
-            if self.model().sourceModel().model_data() == FILE_DATA:
-                _set_flags(SEQ_DATA, k, mode, flag, commit=True, proxy=False)
+            if self.model().sourceModel().model_data() == file_data:
+                _set_flags(seq_data, k, mode, flag, commit=True, proxy=False)
             else:
-                _set_flags(FILE_DATA, k, mode, flag, commit=True, proxy=False)
+                _set_flags(file_data, k, mode, flag, commit=True, proxy=False)
 
         return k
 
@@ -673,9 +664,8 @@ class BaseListWidget(QtWidgets.QListView):
     def key_down(self):
         """Custom action on `down` arrow key-press.
 
-        We're implementing a continuous 'scroll' function: reaching the last
-        item in the list will automatically jump to the beginning to the list
-        and vice-versa.
+        We're implementing a continuous scroll: when reaching the last
+        item in the list, we'll jump to the beginning, and vice-versa.
 
         """
         sel = self.selectionModel()
@@ -709,9 +699,8 @@ class BaseListWidget(QtWidgets.QListView):
         """Custom action to perform when the `up` arrow is pressed
         on the keyboard.
 
-        We're implementing a continous 'scroll' function: reaching the last
-        item in the list will automatically jump to the beginning to the list
-        and vice-versa.
+        We're implementing a continuous scroll: when reaching the last
+        item in the list, we'll jump to the beginning, and vice-versa.
 
         """
         sel = self.selectionModel()
@@ -779,8 +768,8 @@ class BaseListWidget(QtWidgets.QListView):
         # Items are hidden...
         count = model.rowCount() - proxy.rowCount()
         if count == 1:
-            return '{} item is hidden ({})'.format(count, reason)
-        return '{} items are hidden ({})'.format(count, reason)
+            return f'{count} item is hidden ({reason})'
+        return f'{count} items are hidden ({reason})'
 
     def get_hint_string(self):
         return 'No items to display'
@@ -864,14 +853,17 @@ class BaseListWidget(QtWidgets.QListView):
         painter.end()
 
     def paint_background_icon(self, widget, event):
-        """Paints a decorative backgorund icon to help distinguish the items.
+        """Paints a decorative background icon to help distinguish the items.
 
         """
         painter = QtGui.QPainter()
         painter.begin(self)
 
         pixmap = images.ImageCache.get_rsc_pixmap(
-            self._background_icon, BG_COLOR, common.size(common.HeightRow) * 3)
+            self._background_icon,
+            common.color(common.OpaqueColor),
+            common.size(common.HeightRow) * 3
+        )
         rect = pixmap.rect()
         rect.moveCenter(self.rect().center())
         painter.drawPixmap(rect, pixmap, pixmap.rect())
@@ -915,13 +907,8 @@ class BaseListWidget(QtWidgets.QListView):
     def set_row_size(self, v):
         proxy = self.model()
         model = proxy.sourceModel()
-
         model.row_size.setHeight(int(v))
-        model.set_local_setting(
-            common.CurrentRowHeight,
-            int(v),
-            section=common.UIStateSection
-        )
+        model.set_filter_setting('filters/row_heights', int(v))
 
     @common.error
     @common.debug
@@ -966,11 +953,15 @@ class BaseListWidget(QtWidgets.QListView):
                     index,
                     QtCore.QItemSelectionModel.ClearAndSelect
                 )
-                self.save_selection()
+                self.selectionModel().select(
+                    index,
+                    QtCore.QItemSelectionModel.ClearAndSelect
+                )
                 self.scrollTo(
                     index,
                     hint=QtWidgets.QAbstractItemView.PositionAtCenter
                 )
+                self.delay_save_selection()
                 return
 
     def dragEnterEvent(self, event):
@@ -1262,7 +1253,7 @@ class BaseListWidget(QtWidgets.QListView):
 
         A double click can `activate` an item, or it can trigger an edit event.
         As each item is associated with multiple editors we have to inspect
-        the doubleclick location before deciding what action to take.
+        the double click location before deciding what action to take.
 
         """
         if not isinstance(event, QtGui.QMouseEvent):
@@ -1318,25 +1309,24 @@ class BaseInlineIconWidget(BaseListWidget):
         self.multi_toggle_item = None
         self.multi_toggle_items = {}
 
-    def clickableRectangleEvent(self, event):
-        """Used to handle a mouse press/release on a clickable element. The
-        clickable rectangles define interactive regions on the list widget, and
-        are set by the delegate.
+    def clickable_rectangle_event(self, event):
+        """Handle mouse press & release events on an item's interactive rectangle.
 
-        For instance, the file widget has a few additional clickable inline icons
-        that control filtering we set the action for here.
+        The clickable rectangles are defined by and stored by the item delegate. See
+        :meth:`BaseDelegate.get_clickable_rectangles`.
 
-        ``Shift`` modifier will add a "positive" filter and hide all items that
-        does not contain the given text.
+        We're implementing filtering by reacting to clicks on item labels:
+        ``shift`` modifier will add a _positive_ filter and hide all items not
+        containing the clicked rectangle's text content.
 
-        The ``alt`` or control modifiers will add a "negative filter" and hide
-        the selected sub-folder from the view.
+        The ``alt`` and ``control`` modifiers will add a _negative filter_ and hide all
+        items containing the clicked rectangle's text content.
 
         """
-
-        # Don't do anything if the inline buttons are hidden
+        # Disable when buttons are hidden
         if self.buttons_hidden():
             return
+
         cursor_position = self.mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)
 
@@ -1345,11 +1335,13 @@ class BaseInlineIconWidget(BaseListWidget):
         if not index.flags() & QtCore.Qt.ItemIsEnabled:
             return
 
+        # Get pressed keyboard modifiers
         modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
         alt_modifier = modifiers & QtCore.Qt.AltModifier
         shift_modifier = modifiers & QtCore.Qt.ShiftModifier
         control_modifier = modifiers & QtCore.Qt.ControlModifier
 
+        # Get clickable rectangles from the delegate
         clickable_rectangles = self.itemDelegate().get_clickable_rectangles(index)
         if not clickable_rectangles:
             return
@@ -1370,8 +1362,7 @@ class BaseInlineIconWidget(BaseListWidget):
                 if shift_modifier:
                     # Shift modifier will add a "positive" filter and hide all items
                     # that does not contain the given text.
-                    # folder_filter = '"/' + text + '/"'
-                    folder_filter = text
+                    folder_filter = f'"/{text}/"'
 
                     if folder_filter in filter_text:
                         filter_text = filter_text.replace(folder_filter, '')
@@ -1382,18 +1373,15 @@ class BaseInlineIconWidget(BaseListWidget):
                     self.repaint(self.rect())
                 elif alt_modifier or control_modifier:
                     # The alt or control modifiers will add a "negative filter"
-                    # and hide the selected subfolder from the view
-                    # folder_filter = '--"/' + text + '/"'
-                    # _folder_filter = '"/' + text + '/"'
-                    folder_filter = f'--"{text}"'
-                    _folder_filter = f'"{text}"'
+                    # and hide the selected sub-folder from the view
+                    folder_filter = f'--"/{text}/"'
+                    _folder_filter = f'"/{text}/"'
 
                     if filter_text:
                         if _folder_filter in filter_text:
-                            filter_text = filter_text.replace(
-                                _folder_filter, '')
+                            filter_text = filter_text.replace(_folder_filter, '')
                         if folder_filter not in filter_text:
-                            folder_filter = filter_text + ' ' + folder_filter
+                            folder_filter = f'{filter_text} {folder_filter}'
 
                     self.model().set_filter_text(folder_filter)
                     self.repaint(self.rect())
@@ -1459,7 +1447,7 @@ class BaseInlineIconWidget(BaseListWidget):
             return
 
         # Let's handle the clickable rectangle event first
-        self.clickableRectangleEvent(event)
+        self.clickable_rectangle_event(event)
 
         index = self.indexAt(event.pos())
         if not index.isValid():
@@ -1517,6 +1505,14 @@ class BaseInlineIconWidget(BaseListWidget):
         if not index.isValid():
             app.restoreOverrideCursor()
             return
+
+        modifiers = app.keyboardModifiers()
+        alt_modifier = modifiers & QtCore.Qt.AltModifier
+        shift_modifier = modifiers & QtCore.Qt.ShiftModifier
+        control_modifier = modifiers & QtCore.Qt.ControlModifier
+
+        if alt_modifier or shift_modifier or control_modifier:
+            self.update(index)
 
         # Status messages
         if self.multi_toggle_pos is None:
@@ -1738,6 +1734,8 @@ class ThreadedBaseWidget(BaseInlineIconWidget):
         """Queues an update request by the threads for later processing."""
         if not ref():
             return
+        if ref()[common.TypeRole] != self.model().sourceModel().data_type():
+            return
         if ref not in self.update_queue:
             self.update_queue.append(ref)
             self.update_queue_timer.start(self.update_queue_timer.interval())
@@ -1750,9 +1748,6 @@ class ThreadedBaseWidget(BaseInlineIconWidget):
             return
 
         if not ref():
-            return
-
-        if ref()[common.TypeRole] != self.model().sourceModel().data_type():
             return
 
         for row in self.visible_rows['proxy_rows']:

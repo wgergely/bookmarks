@@ -27,7 +27,7 @@ class FilterHistoryMenu(contextmenu.BaseContextMenu):
         proxy = w.model()
         model = w.model().sourceModel()
 
-        v = model.get_local_setting(common.TextFilterKeyHistory)
+        v = model.get_filter_setting('filters/text_history')
         v = v.split(';') if v else []
         v.reverse()
 
@@ -55,9 +55,7 @@ class FilterHistoryMenu(contextmenu.BaseContextMenu):
             'text': 'Clear History',
             'action': (
                 functools.partial(proxy.set_filter_text, ''),
-                lambda: model.set_local_setting(
-                    common.TextFilterKeyHistory, '')
-            ),
+                lambda: model.set_filter_setting('filters/text_history', '')),
         }
 
 
@@ -76,7 +74,7 @@ class BaseControlButton(ui.ClickableIconButton):
             description=description,
             parent=parent
         )
-        common.signals.updateButtons.connect(self.update)
+        common.signals.updateTopBarButtons.connect(self.update)
 
 
 class FilterButton(BaseControlButton):
@@ -290,7 +288,7 @@ class SlackButton(BaseControlButton):
 
         """
         args = [common.active(f) for f in (
-            common.ServerKey, common.JobKey, common.RootKey)]
+            'server', 'job', 'root')]
         if not all(args):
             self.setHidden(True)
             return False

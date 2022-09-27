@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """Collection of common utility methods used by UI elements.
 
-Bookmarks has some DPI awareness, although, I'm pretty confident it wasn't
-implemented correctly. Still,
-all size values must be queried using :func:`.size()` to get a DPI dependent pixel
-value.
+The app has some DPI awareness, although, I'm pretty confident it wasn't implemented
+correctly. Still, all size values must be queried using :func:`.size()` to get a DPI
+dependent pixel value.
 
 """
+
 from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
@@ -19,8 +19,8 @@ def size(v):
         v (int): A size value in pixels.
 
     """
-    v = (float(v) * (float(common.dpi) / 72.0)) * float(common.ui_scale_factor)
-    return int(v)
+    _v = (float(v) * (float(common.dpi) / 72.0)) * float(common.ui_scale_factor)
+    return int(_v)
 
 
 def color(v):
@@ -41,8 +41,12 @@ def rgb(v):
             str: The string representation of the color.
 
     """
-    v = 'rgba({})'.format(','.join([str(f) for f in v.getRgb()]))
-    return v
+    r = repr(v)
+    if r not in common.color_cache_str:
+        common.color_cache_str[r] = (
+            'rgba({})'.format(','.join([str(f) for f in v.getRgb()]))
+        )
+    return common.color_cache_str[r]
 
 
 def status_bar_message(message):
@@ -264,55 +268,22 @@ def draw_aliased_text(painter, font, rect, text, align, color, elide=None):
     return width
 
 
-@QtCore.Slot(QtWidgets.QWidget)
-@QtCore.Slot(str)
-def save_selection(widget, key, *args, **kwargs):
-    index = common.get_selected_index(widget)
-    v = index.data(QtCore.Qt.DisplayRole) if index.isValid() else None
-    common.settings.setValue(key, v)
-
-
-@QtCore.Slot(QtWidgets.QWidget)
-@QtCore.Slot(str)
-def restore_selection(widget, key, *args, **kwargs):
-    v = common.settings.value(key)
-    if not v:
-        widget.selectionModel().clear()
-        return
-    select_index(widget, v)
-
-
-@QtCore.Slot(QtWidgets.QWidget)
-@QtCore.Slot(str)
-def select_index(widget, v, *args, **kwargs):
-    selected_index = common.get_selected_index(widget)
-
-    if 'role' in kwargs:
-        role = kwargs['role']
-    else:
-        role = QtCore.Qt.DisplayRole
-
-    for n in range(widget.model().rowCount()):
-        index = widget.model().index(n, 0)
-
-        if v != index.data(role):
-            continue
-
-        if selected_index != index:
-            widget.selectionModel().select(
-                index,
-                QtCore.QItemSelectionModel.ClearAndSelect
-            )
-
-        widget.scrollTo(index, QtWidgets.QAbstractItemView.EnsureVisible)
-        return
-
-    widget.selectionModel().clear()
-
-
 def get_selected_index(widget):
-    if not widget.selectionModel().hasSelection():
+    """Find the index of a selected item of `widget`.
+
+    Args:
+        widget (QWidget): The widget to get the selection from.
+
+    Returns:
+        QPersistentModelIndex: The selected index.
+
+    """
+    if (
+            not hasattr(widget, 'selectionModel') or
+            not widget.selectionModel().hasSelection()
+    ):
         return QtCore.QModelIndex()
+
     index = next(
         (f for f in widget.selectionModel().selectedIndexes()),
         QtCore.QModelIndex()
@@ -320,3 +291,145 @@ def get_selected_index(widget):
     if not index.isValid():
         return QtCore.QModelIndex()
     return QtCore.QPersistentModelIndex(index)
+
+
+@QtCore.Slot(QtWidgets.QWidget)
+@QtCore.Slot(str)
+def save_selection(widget, *args, **kwargs):
+    """Save selected item to the user settings file.
+
+    Args:
+        widget (QWidget): The widget to get the selection from.
+
+    """
+    index = get_selected_index(widget)
+
+    if not index or not index.isValid():
+        return
+    v = index.data(QtCore.Qt.DisplayRole)
+    if not v:
+        return
+
+    k = f'selection/{widget.__class__.__name__}'
+    common.settings.setValue(k, v)
+
+
+@QtCore.Slot(QtWidgets.QWidget)
+@QtCore.Slot(str)
+def restore_selection(widget, *args, **kwargs):
+    """Restore a previously saved item selection.
+
+    Args:
+        widget (QWidget): The widget to get the selection from.
+
+    """
+    k = f'selection/{widget.__class__.__name__}'
+    v = common.settings.value(k)
+    if not hasattr(widget, 'selectionModel'):
+        return
+    if not v:
+        widget.selectionModel().clear()
+        return
+    print(widget, v)
+    select_index(widget, v)
+
+
+@QtCore.Slot(QtWidgets.QWidget)
+@QtCore.Slot(str)
+def select_index(widget, v, *args, **kwargs):
+    if 'role' in kwargs:
+        role = kwargs['role']
+    else:
+        role = QtCore.Qt.DisplayRole
+
+    selected_index = common.get_selected_index(widget)
+    for n in range(widget.model().rowCount()):
+        index = widget.model().index(n, 0)
+
+        if v != index.data(role):
+            continue
+
+        if selected_index == index:
+            widget.scrollTo(
+                index,
+                QtWidgets.QAbstractItemView.PositionAtCenter
+            )
+            return
+
+        widget.selectionModel().select(
+            index,
+            QtCore.QItemSelectionModel.ClearAndSelect |
+            QtCore.QItemSelectionModel.Rows
+        )
+        widget.scrollTo(
+            index,
+            QtWidgets.QAbstractItemView.PositionAtCenter
+        )
+        return
+
+    widget.selectionModel().clear()
+
+
+@common.error
+@common.debug
+@QtCore.Slot()
+def save_window_state(widget, *args, **kwargs):
+    w = widget.window()
+    dict_key = w.__class__.__name__
+
+    v = common.settings.value('state/geometry')
+    v = v if v else {}
+    v[dict_key] = w.saveGeometry()
+    common.settings.setValue('state/geometry', v)
+
+    v = common.settings.value('state/state')
+    v = v if v else {}
+    v[dict_key] = int(widget.windowState())
+    common.settings.setValue('state/state', v)
+
+
+@common.error
+@common.debug
+def restore_window_geometry(widget, *args, **kwargs):
+    """Restore the previously saved window geometry.
+    
+    Args:
+        widget (QWidget): The widget to restore the window geometry.
+        
+    """
+    w = widget.window()
+    dict_key = w.__class__.__name__
+
+    v = common.settings.value('state/geometry')
+    if v and dict_key in v and v[dict_key]:
+        widget.restoreGeometry(v[dict_key])
+
+
+def restore_window_state(widget, *args, **kwargs):
+    """Restore the previously saved window state.
+
+    Args:
+        widget (QWidget): The widget to restore the window geometry.
+
+    """
+    w = widget.window()
+    dict_key = widget.__class__.__name__
+
+    v = common.settings.value('state/state')
+    state = v[dict_key] if v and dict_key in v else None
+    state = QtCore.Qt.WindowNoState if state is None else QtCore.Qt.WindowState(state)
+
+    w.activateWindow()
+    if state == QtCore.Qt.WindowNoState:
+        w.showNormal()
+    elif state & QtCore.Qt.WindowMaximized:
+        w.showMaximized()
+    elif state & QtCore.Qt.WindowFullScreen:
+        w.showFullScreen()
+    else:
+        w.showNormal()
+
+    if hasattr(w, 'open'):
+        w.open()
+
+    return w

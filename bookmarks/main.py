@@ -123,12 +123,12 @@ class MainWidget(QtWidgets.QWidget):
         `self.stacked_widget.setCurrentIndex()` returning an incorrect tab.
 
         """
-        idx = common.settings.value(common.CurrentList)
+        idx = common.settings.value('selection/current_tab')
         idx = common.BookmarkTab if idx is None or idx is False else idx
         idx = idx if idx >= common.BookmarkTab else common.BookmarkTab
 
-        root = common.active_paths[common.SynchronisedActivePaths][common.RootKey]
-        asset = common.active_paths[common.SynchronisedActivePaths][common.AssetKey]
+        root = common.active_paths[common.SynchronisedActivePaths]['root']
+        asset = common.active_paths[common.SynchronisedActivePaths]['asset']
 
         if (
                 not root
@@ -159,7 +159,6 @@ class MainWidget(QtWidgets.QWidget):
         b = self.bookmarks_widget
         a = self.assets_widget
         f = self.files_widget
-        lc = self.topbar_widget
         l = self.tasks_widget
 
         # Make sure the active values are correctly set
@@ -183,7 +182,7 @@ class MainWidget(QtWidgets.QWidget):
 
         l.connect_signals()
 
-        common.signals.tabChanged.connect(common.signals.updateButtons)
+        common.signals.tabChanged.connect(common.signals.updateTopBarButtons)
 
         # Standard activation signals
         b.activated.connect(
@@ -241,7 +240,10 @@ class MainWidget(QtWidgets.QWidget):
         ff.filterTextChanged.emit(ff.filter_text())
 
         for flag in (
-        common.MarkedAsActive, common.MarkedAsArchived, common.MarkedAsFavourite):
+                common.MarkedAsActive,
+                common.MarkedAsArchived,
+                common.MarkedAsFavourite
+        ):
             b.filterFlagChanged.emit(flag, b.filter_flag(flag))
             a.filterFlagChanged.emit(flag, a.filter_flag(flag))
             f.filterFlagChanged.emit(flag, f.filter_flag(flag))
@@ -257,15 +259,7 @@ class MainWidget(QtWidgets.QWidget):
 
     @QtCore.Slot()
     def update_window_title(self):
-        keys = (
-            common.ServerKey,
-            common.JobKey,
-            common.RootKey,
-            common.AssetKey,
-            common.TaskKey,
-            common.FileKey,
-        )
-        values = [common.active(k) for k in keys if common.active(k)]
+        values = [common.active(k) for k in common.SECTIONS['active'] if common.active(k)]
         self.setWindowTitle('/'.join(values))
 
     @common.debug

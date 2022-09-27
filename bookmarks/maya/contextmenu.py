@@ -35,10 +35,10 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         self.capture_menu()
 
     def apply_bookmark_settings_menu(self):
-        server = common.active(common.ServerKey)
-        job = common.active(common.JobKey)
-        root = common.active(common.RootKey)
-        asset = common.active(common.AssetKey)
+        server = common.active('server')
+        job = common.active('job')
+        root = common.active('root')
+        asset = common.active('asset')
 
         if not all((server, job, root, asset)):
             return
@@ -50,7 +50,7 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         }
 
     def save_menu(self):
-        if not all(common.active(common.AssetKey, args=True)):
+        if not all(common.active('asset', args=True)):
             return
 
         scene = QtCore.QFileInfo(cmds.file(query=True, expandName=True))
@@ -153,7 +153,7 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         height = cmds.getAttr("defaultResolution.height")
 
         def size(n):
-            return (int(int(width) * n), int(int(height) * n))
+            return int(int(width) * n), int(int(height) * n)
 
         for n in (1.0, 0.5, 0.25, 1.5, 2.0):
             w, h = size(n)

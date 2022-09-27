@@ -203,7 +203,7 @@ def publish_footage(
         # Create a movie
         if make_movie and idx == 1:
             try:
-                movie_path = ffmpe.g.convert(
+                movie_path = ffmpeg.convert(
                     source_frame,
                     ffmpeg_preset,
                     server=server,
@@ -223,7 +223,7 @@ def publish_footage(
                     sequence=seq,
                     shot=shot,
                     ext=next(
-                        v['output_extension'] for v in ffmpe.g.PRESETS.values()
+                        v['output_extension'] for v in ffmpeg.PRESETS.values()
                         if v['preset'] == ffmpeg_preset
                     ),
                 )

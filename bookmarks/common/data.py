@@ -11,12 +11,12 @@ from PySide2 import QtCore
 from . import common
 
 
-def sort_data(ref, sort_role, sort_order):
-    """Sort the given data using `sort_role` and `sort_order`.
+def sort_data(ref, sort_by, sort_order):
+    """Sort the given data using `sort_by` and `sort_order`.
 
     Args:
         ref (weakref.ref): Pointer to a :class:`~bookmarks.common.core.DataDict` instance.
-        sort_role (int): The role to use to sort the data.
+        sort_by (int): The role to use to sort the data.
         sort_order (bool):  The sort order.
 
     Returns:
@@ -24,16 +24,16 @@ def sort_data(ref, sort_role, sort_order):
 
     """
     common.check_type(ref, weakref.ref)
-    common.check_type(sort_role, (int, QtCore.Qt.ItemDataRole))
+    common.check_type(sort_by, (int, QtCore.Qt.ItemDataRole))
     common.check_type(sort_order, bool)
 
     def sort_key(_idx):
         # If sort_by_basename is `True` we'll use the base file name for sorting
         v = ref().__getitem__(_idx)
-        if common.sort_by_basename and sort_role == common.SortByNameRole and isinstance(
-                v[sort_role], list):
-            return v[sort_role][-1]
-        return v[sort_role]
+        if common.sort_by_basename and sort_by == common.SortByNameRole and isinstance(
+                v[sort_by], list):
+            return v[sort_by][-1]
+        return v[sort_by]
 
     sorted_idxs = sorted(
         ref().keys(),

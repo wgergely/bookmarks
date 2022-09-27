@@ -167,10 +167,10 @@ def proxy_path(v):
 def _proxy_path(v):
     collapsed = is_collapsed(v)
     if collapsed:
-        return collapsed.group(1) + SEQPROXY + collapsed.group(3)
+        return f'{collapsed.group(1)}{SEQPROXY}{collapsed.group(3)}'
     seq = get_sequence(v)
     if seq:
-        return seq.group(1) + SEQPROXY + seq.group(3) + '.' + seq.group(4)
+        return f'{seq.group(1)}{SEQPROXY}{seq.group(3)}.{seq.group(4)}'
     return v
 
 

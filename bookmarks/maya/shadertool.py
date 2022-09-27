@@ -288,41 +288,18 @@ class ShaderView(QtWidgets.QTableView):
         self.setAutoFillBackground(True)
         self.setModel(ShaderModel())
 
-        self._selection = None
         self.callbacks = []
 
         self.activated.connect(self.item_activated)
         self.selectionModel().selectionChanged.connect(self.selection_changed)
 
         self.model().modelReset.connect(self.resizeColumnsToContents)
-        self.model().modelAboutToBeReset.connect(self.save_selection)
-        self.model().modelReset.connect(self.restore_selection)
-
-    def save_selection(self):
-        if not self.selectionModel().hasSelection():
-            return
-        index = next(f for f in self.selectionModel().selectedIndexes())
-        if not index.isValid():
-            return
-        data = index.model().internal_data
-        self._selection = data[index.row()][QtCore.Qt.DisplayRole]
-
-    def restore_selection(self):
-        if not self._selection:
-            return
-
-        for row in range(self.model().rowCount()):
-            v = self.model().internal_data[row][QtCore.Qt.DisplayRole]
-            if v == self._selection:
-                index = self.model().index(row, 0)
-                self.selectionModel().select(
-                    index,
-                    QtCore.QItemSelectionModel.ClearAndSelect |
-                    QtCore.QItemSelectionModel.Rows
-                )
-                self.scrollTo(
-                    index, QtWidgets.QAbstractItemView.PositionAtCenter
-                )
+        self.model().modelAboutToBeReset.connect(
+            functools.partial(common.save_selection, self)
+        )
+        self.model().modelReset.connect(
+            functools.partial(common.restore_selection, self)
+        )
 
     @QtCore.Slot()
     def select_shapes(self, *args, **kwargs):
@@ -342,8 +319,8 @@ class ShaderView(QtWidgets.QTableView):
         index = next(f for f in self.selectionModel().selectedIndexes())
         if not index.isValid():
             return
-        # shader = self.model().internal_data[index.row()]['shader']
-        # cmds.select(shader, replace=True)
+        shader = self.model().internal_data[index.row()]['shader']
+        cmds.select(shader, replace=True)
 
     @QtCore.Slot(QtCore.QModelIndex)
     def item_activated(self, index):

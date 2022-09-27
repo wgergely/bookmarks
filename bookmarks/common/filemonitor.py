@@ -34,7 +34,7 @@ def clear_watchdirs(idx):
 @QtCore.Slot(str)
 def directory_changed(idx, path):
     if idx == FileItemMonitor:
-        if common.active(common.TaskKey, path=True) in path:
+        if common.active('task', path=True) in path:
             model = common.source_model(common.FileTab)
             model.set_refresh_needed(True)
             common.widget(common.FileTab).filter_indicator_widget.repaint()

@@ -100,7 +100,7 @@ def initialize(mode):
 
 
 def uninitialize():
-    """Uninitialize the components used by Bookmarks.
+    """Un-initialize all app components.
 
     """
     from ..threads import threads
@@ -143,10 +143,10 @@ def _init_config():
 
 
 def _init_ui_scale():
-    v = common.settings.value(common.UIScaleKey)
+    v = common.settings.value('settings/ui_scale')
 
     if v is None or not isinstance(v, str):
-        common.ui_scale = 1.0
+        common.ui_scale_factor = 1.0
         return
 
     if '%' not in v:
@@ -157,11 +157,12 @@ def _init_ui_scale():
         v = float(v) * 0.01
     except:
         v = 1.0
-
+    v = round(v, 2)
     if not common.ui_scale_factors or v not in common.ui_scale_factors:
+        print(v)
         v = 1.0
 
-    common.ui_scale = v
+    common.ui_scale_factor = v
 
 
 def _init_dpi():

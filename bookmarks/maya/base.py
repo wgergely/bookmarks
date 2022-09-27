@@ -596,10 +596,10 @@ class MayaProperties(object):
     def __init__(self, parent=None):
         super().__init__()
 
-        server = common.active(common.ServerKey)
-        job = common.active(common.JobKey)
-        root = common.active(common.RootKey)
-        asset = common.active(common.AssetKey)
+        server = common.active('server')
+        job = common.active('job')
+        root = common.active('root')
+        asset = common.active('asset')
 
         if not all((server, job, root, asset)):
             raise RuntimeError('Could not find active asset.')

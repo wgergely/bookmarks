@@ -211,11 +211,11 @@ def _input_path_from_seq(seq):
 
 
 def _output_path_from_seq(seq, ext):
-    """Return preformatted output path for ffmpe.g.
+    """Return preformatted output path for ffmpeg.
 
     """
     return os.path.normpath(
-        seq.group(1).rstrip('.').rstrip('_').rstrip() + '.' + ext
+        f'{seq.group(1).rstrip(".").rstrip("_").rstrip()}.{ext}'
     )
 
 
@@ -289,7 +289,7 @@ def convert(
         path, preset, server=None, job=None, root=None, asset=None, task=None,
         size=(None, None), timecode=False
 ):
-    """Start a convert process using ffmpe.g.
+    """Start a convert process using ffmpeg.
 
     Args:
         path (str): Path to image file to convert.
@@ -325,11 +325,11 @@ def convert(
         raise RuntimeError('FFMpeg is set but the file does not exist.')
     FFMPEG_BIN = os.path.normpath(FFMPEG_BIN)
 
-    server = server if server else common.active(common.ServerKey)
-    job = job if job else common.active(common.JobKey)
-    root = root if root else common.active(common.RootKey)
-    asset = asset if asset else common.active(common.AssetKey)
-    task = task if task else common.active(common.TaskKey)
+    server = server if server else common.active('server')
+    job = job if job else common.active('job')
+    root = root if root else common.active('root')
+    asset = asset if asset else common.active('asset')
+    task = task if task else common.active('task')
 
     if not all((server, job, root, asset, task)):
         raise RuntimeError('Not all required active items are set.')

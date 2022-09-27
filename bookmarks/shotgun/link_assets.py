@@ -194,7 +194,7 @@ class LinkMultiple(QtWidgets.QDialog):
         self.table.createEntity.connect(self.create_entity)
 
     def restore_current_filter(self):
-        v = common.settings.value(common.LinkMultipleCurrentFilter)
+        v = common.settings.value('shotgrid/link_multiple_filter')
         if v:
             self.blockSignals(True)
             self.entity_type_filter.setCurrentText(v)
@@ -206,16 +206,16 @@ class LinkMultiple(QtWidgets.QDialog):
             self.entity_type_filter.currentIndex(),
             role=QtCore.Qt.DisplayRole
         )
-        common.settings.setValue(common.LinkMultipleCurrentFilter, v)
+        common.settings.setValue('shotgrid/link_multiple_filter', v)
 
     def emit_filter_changed(self, *args, **kwargs):
         v = self.entity_type_filter.currentData(role=QtCore.Qt.DisplayRole)
         self.entityTypeFilterChanged.emit(v)
 
     def source(self):
-        server = common.active(common.ServerKey)
-        job = common.active(common.JobKey)
-        root = common.active(common.RootKey)
+        server = common.active('server')
+        job = common.active('job')
+        root = common.active('root')
 
         if not all((server, job, root)):
             return None
@@ -383,9 +383,9 @@ class LinkMultiple(QtWidgets.QDialog):
         """Save the selected entity data to the bookmark database.
 
         """
-        server = common.active(common.ServerKey)
-        job = common.active(common.JobKey)
-        root = common.active(common.RootKey)
+        server = common.active('server')
+        job = common.active('job')
+        root = common.active('root')
 
         for row in self.table.data:
             data = self.table.data[row]

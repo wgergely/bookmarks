@@ -238,7 +238,7 @@ SECTIONS = {
                     'placeholder': 'abcdefghijklmno3bqr*1',
                     'description': 'A ShotGrid Script API Key, '
                                    'e.g. \'abcdefghijklmno3bqr*1\'.\n\nA valid '
-                                   'script has to be set up for your ogranisation '
+                                   'script has to be set up for your organisation '
                                    'for Bookmarks to be able to connect to '
                                    'ShotGrid. Consult the ShotGrid documentation for '
                                    'details on how to set this up.',

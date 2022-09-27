@@ -632,7 +632,7 @@ def _independent_panel(width, height, off_screen=False):
     editor = cmds.modelPanel(panel, query=True, modelEditor=True)
     cmds.modelEditor(editor, edit=True, activeView=True)
 
-    # Force a draw refresh of Maya so it keeps focus on the new panel
+    # Force a draw refresh of Maya, so it keeps focus on the new panel
     # This focus is required to force preview playback in the independent panel
     cmds.refresh(force=True)
 

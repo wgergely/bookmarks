@@ -67,7 +67,7 @@ def get_job_icon(path):
         return QtGui.QIcon(pixmap)
 
     path = common.get_rsc(
-        f'{common.GuiResource}/placeholder.{common.thumbnail_format}'
+        f'{common.GuiResource}/asset_item.{common.thumbnail_format}'
     )
     pixmap = images.ImageCache.get_pixmap(path, common.thumbnail_size)
     return QtGui.QIcon(pixmap)
@@ -96,6 +96,10 @@ class AddJobWidget(base.BasePropertyEditor):
 
         common.signals.templateExpanded.connect(self.close)
         common.signals.jobAdded.connect(self.close)
+        common.signals.serversChanged.connect(self.close)
+
+    def db_source(self):
+        return None
 
     def init_data(self):
         items = []
@@ -112,12 +116,7 @@ class AddJobWidget(base.BasePropertyEditor):
 
     @common.error
     @common.debug
-    def done(self, result):
-        if result == QtWidgets.QDialog.Rejected:
-            return super(base.BasePropertyEditor, self).done(
-                result
-            )  # pylint: disable=E1003
-
+    def save_changes(self):
         if not self.name_editor.text():
             raise ValueError('Must enter a name to create a job.')
 
@@ -154,7 +153,7 @@ class AddJobWidget(base.BasePropertyEditor):
         common.signals.jobAdded.emit(path)
         ui.MessageBox(f'{name} was successfully created.').open()
 
-        return super().done(result)
+        return True
 
 
 class JobContextMenu(contextmenu.BaseContextMenu):
@@ -178,7 +177,7 @@ class JobContextMenu(contextmenu.BaseContextMenu):
     def reveal_menu(self):
         self.menu['Reveal...'] = {
             'action': lambda: actions.reveal(
-                self.index.data(QtCore.Qt.UserRole) + '/.'
+                f'{self.index.data(QtCore.Qt.UserRole)}/.'
             ),
             'icon': ui.get_icon('folder')
         }
@@ -232,11 +231,7 @@ class JobListWidget(ui.ListViewWidget):
         super()._connect_signals()
 
         self.selectionModel().selectionChanged.connect(
-            functools.partial(
-                common.save_selection,
-                self,
-                common.BookmarkEditorJobKey
-            )
+            functools.partial(common.save_selection, self)
         )
 
         common.signals.bookmarkAdded.connect(self.update_text)
@@ -246,12 +241,13 @@ class JobListWidget(ui.ListViewWidget):
         common.signals.jobAdded.connect(
             lambda v: common.select_index(self, v, role=QtCore.Qt.UserRole)
         )
+        common.signals.serversChanged.connect(self.init_data)
 
     def item_generator(self, source, emit_progress=True):
         if emit_progress:
             self.progressUpdate.emit('')
 
-        has_subdir = common.settings.value(common.JobsHaveSubdirs)
+        has_subdir = common.settings.value('settings/jobs_have_clients')
         has_subdir = QtCore.Qt.Unchecked if has_subdir is None else \
             QtCore.Qt.CheckState(
                 has_subdir
@@ -345,6 +341,9 @@ class JobListWidget(ui.ListViewWidget):
             item.setData(_name, role=QtCore.Qt.DisplayRole)
             item.setData(path, role=QtCore.Qt.UserRole)
             item.setData(name, role=QtCore.Qt.UserRole + 1)
+            item.setData(path, role=QtCore.Qt.StatusTipRole)
+            item.setData(path, role=QtCore.Qt.WhatsThisRole)
+            item.setData(path, role=QtCore.Qt.ToolTipRole)
 
             size = QtCore.QSize(0, common.size(common.WidthMargin) * 2)
             item.setSizeHint(size)
@@ -371,7 +370,7 @@ class JobListWidget(ui.ListViewWidget):
 
         self.selectionModel().blockSignals(False)
 
-        common.restore_selection(self, common.BookmarkEditorJobKey)
+        common.restore_selection(self)
         self.progressUpdate.emit('')
 
     @QtCore.Slot()
@@ -383,7 +382,7 @@ class JobListWidget(ui.ListViewWidget):
         if not self.model():
             return
 
-        active_jobs = set([f[common.JobKey] for f in common.bookmarks.values()])
+        active_jobs = set([f['job'] for f in common.bookmarks.values()])
         suffix = ' (Active)'
 
         for n in range(self.model().rowCount()):
@@ -433,7 +432,7 @@ class JobListWidget(ui.ListViewWidget):
     def set_filter(self, v):
         self.selectionModel().blockSignals(True)
         self.model().setFilterWildcard(v)
-        common.restore_selection(self, common.BookmarkEditorJobKey)
+        common.restore_selection(self)
         self.selectionModel().blockSignals(False)
 
     def keyPressEvent(self, event):

@@ -64,7 +64,7 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
         rect.setHeight(rect.height() - common.size(common.HeightSeparator))
         rect.setLeft(common.size(common.WidthIndicator))
 
-        if index.data(QtCore.Qt.DisplayRole) == common.active(common.TaskKey):
+        if index.data(QtCore.Qt.DisplayRole) == common.active('task'):
             o = common.size(common.HeightSeparator)
             _rect = rect.adjusted(o, o, -o, -o)
 
@@ -105,7 +105,7 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
         if not index.data(QtCore.Qt.DisplayRole):
             return
 
-        active = index.data(QtCore.Qt.DisplayRole) == common.active(common.TaskKey)
+        active = index.data(QtCore.Qt.DisplayRole) == common.active('task')
 
         if index.data(common.TodoCountRole):
             color = common.color(
@@ -206,7 +206,7 @@ class TaskFolderModel(models.BaseModel):
         common.signals.taskFolderChanged.connect(self.reset_data)
 
     def source_path(self):
-        return common.active(common.AssetKey, args=True)
+        return common.active('asset', args=True)
 
     def data_type(self):
         return common.FileItem
@@ -295,8 +295,8 @@ class TaskFolderModel(models.BaseModel):
     def default_row_size(self):
         return QtCore.QSize(1, common.size(common.HeightRow) * 1.2)
 
-    def user_settings_key(self):
-        return common.TaskKey
+    def filter_setting_dict_key(self):
+        return 'task'
 
     def file_count(self, source):
         count = 0
@@ -436,7 +436,7 @@ class TaskFolderWidget(views.ThreadedBaseWidget):
         return super().showEvent(event)
 
     def select_active_item(self):
-        key = common.active(common.TaskKey)
+        key = common.active('task')
         if not key:
             return
         for n in range(self.model().rowCount()):

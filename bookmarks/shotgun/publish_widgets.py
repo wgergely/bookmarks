@@ -14,7 +14,7 @@ NOT_CONFIGURED = 'Not configured'
 
 
 class DropWidget(QtWidgets.QWidget):
-    """Widget used to proved an area to drop a file onto.
+    """Widget used to provide an area to drop a file onto.
 
     """
     clicked = QtCore.Signal()
@@ -308,9 +308,9 @@ class StatusEditor(shotgun.EntityComboBox):
         # apart from the # entity type and the server, job, root names.
         model.entityDataRequested.emit(
             model.uuid,
-            common.active(common.ServerKey),
-            common.active(common.JobKey),
-            common.active(common.RootKey),
+            common.active('server'),
+            common.active('job'),
+            common.active('root'),
             None,
             'Status',
             [],
@@ -392,12 +392,12 @@ class TaskEditor(shotgun.EntityComboBox):
             return
         k = 'content'
         if k in entity and entity[k]:
-            common.settings.setValue(common.PublishTask, entity[k])
+            common.settings.setValue('shotgrid/publish_task', entity[k])
 
     @common.error
     @common.debug
     def restore_selection(self, *args, **kwargs):
-        v = common.settings.value(common.PublishTask)
+        v = common.settings.value('shotgrid/publish_task')
         if not v:
             self.setCurrentIndex(0)
             return
@@ -472,7 +472,7 @@ class LocalStorageEditor(shotgun.EntityComboBox):
         )
 
     def select_entity(self):
-        server = common.active(common.ServerKey)
+        server = common.active('server')
         file_info = QtCore.QFileInfo(server)
         apath = file_info.absoluteFilePath()
 
@@ -556,12 +556,12 @@ class PublishedFileTypeEditor(shotgun.EntityComboBox):
             return
         k = 'code'
         if k in entity and entity[k]:
-            common.settings.setValue(common.PublishFileType, entity[k])
+            common.settings.setValue('publish/type', entity[k])
 
     @common.error
     @common.debug
     def restore_selection(self, *args, **kwargs):
-        v = common.settings.value(common.UIStateSection, common.PublishFileType)
+        v = common.settings.value('publish/type')
         if not v:
             self.setCurrentIndex(0)
             return
@@ -616,18 +616,18 @@ class PickFile(QtWidgets.QFileDialog):
         )
 
         args = (
-            common.active(common.ServerKey),
-            common.active(common.JobKey),
-            common.active(common.RootKey),
-            common.active(common.AssetKey),
-            common.active(common.TaskKey),
+            common.active('server'),
+            common.active('job'),
+            common.active('root'),
+            common.active('asset'),
+            common.active('task'),
         )
         if not all(args):
             args = (
-                common.active(common.ServerKey),
-                common.active(common.JobKey),
-                common.active(common.RootKey),
-                common.active(common.AssetKey),
+                common.active('server'),
+                common.active('job'),
+                common.active('root'),
+                common.active('asset'),
             )
         if not all(args):
             return

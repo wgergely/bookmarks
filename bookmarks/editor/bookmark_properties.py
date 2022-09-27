@@ -9,6 +9,7 @@ from . import base_widgets
 from .. import actions
 from .. import common
 from .. import database
+from .. import log
 from .. import ui
 from ..launcher import launcher
 from ..shotgun import actions as sg_actions
@@ -18,31 +19,28 @@ SLACK_API_URL = 'https://api.slack.com/apps'
 TEAMS_WEBHOOK_URL = 'https://docs.microsoft.com/en-us/microsoftteams/platform' \
                     '/webhooks-and-connectors/how-to/add-incoming-webhook'
 
-instance = None
-
 
 def close():
-    global instance
-    if instance is None:
+    if common.bookmark_property_editor is None:
         return
     try:
-        instance.close()
-        instance.deleteLater()
+        common.bookmark_property_editor.close()
+        common.bookmark_property_editor.deleteLater()
     except:
-        pass
-    instance = None
+        log.error('Could not delete widget.')
+    common.bookmark_property_editor = None
 
 
 def show(server, job, root):
-    global instance
     close()
-    instance = BookmarkPropertyEditor(
+    common.bookmark_property_editor = BookmarkPropertyEditor(
         server,
         job,
         root,
     )
-    instance.open()
-    return instance
+    common.restore_window_geometry(common.bookmark_property_editor)
+    common.restore_window_state(common.bookmark_property_editor)
+    return common.bookmark_property_editor
 
 
 SECTIONS = {
@@ -426,7 +424,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
         self.thumbnailUpdated.connect(common.signals.thumbnailUpdated)
 
     def db_source(self):
-        return self.server + '/' + self.job + '/' + self.root
+        return f'{self.server}/{self.job}/{self.root}'
 
     def init_data(self):
         self.init_db_data()
@@ -462,7 +460,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
         return sg_properties
 
     def _create_tokens_editor(self, parent):
-        from .tokens import tokens_editor
+        from ..tokens import tokens_editor
         self.tokens_editor = tokens_editor.TokenConfigEditor(
             self.server,
             self.job,

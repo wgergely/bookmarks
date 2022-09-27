@@ -137,7 +137,7 @@ def get_hash(key):
     before hashing.
 
     Args:
-        key (str): A key string to calculate an md5 hash for.
+        key (str): A key string to calculate a md5 hash for.
 
     Returns:
         str: MD5 hexadecimal digest of the key.
@@ -201,6 +201,8 @@ def error(func):
                 common.signals.showStatusTipMessage.emit(
                     f'Error: {exc_value.__str__()}'
                 )
+
+            raise
 
     return func_wrapper
 

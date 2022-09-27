@@ -26,7 +26,6 @@ for more information.
 
 Attributes:
     SECTIONS (dict): The ui layout definition of the file saver widget.
-    SETTING_KEYS (tuple): A tuple of keys used to save values to the user settings.
     INACTIVE_KEYS (tuple): A tuple of keys used to mark hidden and disabled editors.
 
 
@@ -40,26 +39,24 @@ from . import file_saver_widgets
 from .. import actions
 from .. import common
 from .. import database
+from .. import log
 from .. import ui
 from ..editor import base
 from ..tokens import tokens
-
-instance = None
 
 
 def close():
     """Close the :class:`FileSaverWidget` widget.
 
     """
-    global instance
-    if instance is None:
+    if common.file_saver_widget is None:
         return
     try:
-        instance.close()
-        instance.deleteLater()
+        common.file_saver_widget.close()
+        common.file_saver_widget.deleteLater()
     except:
-        pass
-    instance = None
+        log.error('Could not delete widget.')
+    common.file_saver_widget = None
 
 
 def show(
@@ -81,10 +78,8 @@ def show(
             ``True``. Default is ``False``
 
     """
-    global instance
-
     close()
-    instance = FileSaverWidget(
+    common.file_saver_widget = FileSaverWidget(
         server,
         job,
         root,
@@ -94,35 +89,57 @@ def show(
         create_file=create_file,
         increment=increment,
     )
-    instance.open()
-    return instance
+    common.restore_window_geometry(common.file_saver_widget)
+    common.restore_window_state(common.file_saver_widget)
+    return common.file_saver_widget
 
-
-SETTING_KEYS = (
-    'task',
-    'element',
-    # 'version',
-    'extension',
-    'user',
-    'template'
-)
 
 INACTIVE_KEYS = (
     'bookmark',
     'asset',
-    'task',
+    'file_saver_task',
     'prefix',
-    'element',
+    'file_saver_element',
     'version',
-    'extension',
-    'user',
-    'template',
+    'file_saver_extension',
+    'file_saver_user',
+    'file_saver_template',
 )
 
 SECTIONS = {
     0: {
-        'name': 'File Saver',
-        'icon': '',
+        'name': ' Name Template',
+        'icon': 'file',
+        'color': common.color(common.BackgroundDarkColor),
+        'groups': {
+            0: {
+                0: {
+                    'name': 'Template',
+                    'key': 'file_saver/template',
+                    'validator': base.textvalidator,
+                    'widget': file_saver_widgets.TemplateComboBox,
+                    'placeholder': 'Custom prefix, e.g. \'MYB\'',
+                    'description': 'A short name of the bookmark (or job) used '
+                                   'when saving files.\n\ne.g. '
+                                   '\'MYB_sh0010_anim_v001.ma\' where \'MYB\' is '
+                                   'the prefix specified here.',
+                    'button': 'Edit'
+                },
+                1: {
+                    'name': 'Name',
+                    'key': 'filename',
+                    'validator': None,
+                    'widget': QtWidgets.QLabel,
+                    'placeholder': 'Invalid file name...',
+                    'description': 'The file name, based on the current template.',
+                    'button': 'Reveal'
+                },
+            },
+        },
+    },
+    1: {
+        'name': 'Name Elements',
+        'icon': 'todo',
         'color': common.color(common.BackgroundDarkColor),
         'groups': {
             0: {
@@ -144,7 +161,7 @@ SECTIONS = {
                 },
                 2: {
                     'name': 'Task',
-                    'key': 'task',
+                    'key': 'file_saver/task',
                     'validator': None,
                     'widget': file_saver_widgets.TaskComboBox,
                     'placeholder': None,
@@ -177,7 +194,7 @@ SECTIONS = {
                 },
                 1: {
                     'name': 'Element',
-                    'key': 'element',
+                    'key': 'file_saver/element',
                     'validator': base.textvalidator,
                     'widget': ui.LineEdit,
                     'placeholder': 'The element being saved, e.g. \'CastleInterior\'',
@@ -191,13 +208,13 @@ SECTIONS = {
                     'widget': ui.LineEdit,
                     'placeholder': 'A version number, e.g. \'v001\'',
                     'description': 'A version number with, or without, '
-                                   'a preceeding \'v\'. e.g. \'v001\'.',
+                                   'a preceding \'v\'. e.g. \'v001\'.',
                     'button': '+',
                     'button2': '-',
                 },
                 3: {
                     'name': 'User',
-                    'key': 'user',
+                    'key': 'file_saver/user',
                     'validator': base.textvalidator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Your name, e.g. \'JohnDoe\'',
@@ -206,7 +223,7 @@ SECTIONS = {
                 },
                 4: {
                     'name': 'Format',
-                    'key': 'extension',
+                    'key': 'file_saver/extension',
                     'validator': None,
                     'widget': file_saver_widgets.ExtensionComboBox,
                     'placeholder': 'File extension, e.g. \'exr\'',
@@ -214,35 +231,83 @@ SECTIONS = {
                                    ' \'ma\'',
                 },
             },
-            3: {
-                0: {
-                    'name': 'Template',
-                    'key': 'template',
-                    'validator': base.textvalidator,
-                    'widget': file_saver_widgets.TemplateComboBox,
-                    'placeholder': 'Custom prefix, e.g. \'MYB\'',
-                    'description': 'A short name of the bookmark (or job) used '
-                                   'when saving files.\n\ne.g. '
-                                   '\'MYB_sh0010_anim_v001.ma\' where \'MYB\' is '
-                                   'the prefix specified here.',
-                    'button': 'Edit'
-                },
-            },
-            4: {
-                0: {
-                    'name': ' ',
-                    'key': 'filename',
-                    'validator': None,
-                    'widget': QtWidgets.QLabel,
-                    # 'widget': ui.LineEdit,
-                    'placeholder': 'Invalid file name...',
-                    'description': 'The file name, based on the current template.',
-                    'button': 'Reveal'
-                },
-            },
         },
     },
 }
+
+
+def increment_version(v, dir, name, func, increment):
+    """Increments the version number by one or to the smallest/largest
+    available version number based on existing files found in the
+    destination folder.
+
+    """
+    if not v:
+        v = 'v001'
+
+    prefix = 'v' if v.startswith('v') else ''
+    padding = len(v.replace('v', ''))
+    try:
+        n = int(v.replace('v', ''))
+    except:
+        return 'v001'
+
+    if not dir:
+        return 'v001'
+    _dir = QtCore.QDir(dir)
+
+    if not _dir.exists():
+        # We can freely increment the version number, as there won't be any conflicts
+        n += increment
+        if n < 0:
+            n = 0
+        if n > 999:
+            n = 999
+        return '{}{}'.format(prefix, '{}'.format(n).zfill(padding))
+
+    # Let's scan the destination directory for existing versions to make
+    # sure we're only suggesting valid versions
+    if v not in name:
+        return 'v001'
+    idx = name.index(v)
+
+    _arr = []
+    for entry in os.scandir(_dir.path()):
+        if len(name) != len(entry.name):
+            continue
+        if name[:idx] != entry.name[:idx]:
+            continue
+
+        _v = entry.name[idx:idx + len(v)]
+        _prefix = 'v' if _v.startswith('v') else ''
+        _padding = len(_v.replace('v', ''))
+        try:
+            _n = int(_v.replace('v', ''))
+        except ValueError:
+            continue
+        _arr.append(_n)
+
+    if not _arr:
+        n += increment
+        if n < 0:
+            n = 0
+        if n > 999:
+            n = 999
+        return '{}{}'.format(prefix, '{}'.format(n).zfill(padding))
+
+    _n = func(_arr)
+    _n += increment
+
+    if func is max and _n <= n:
+        _n = n + increment
+    if func is min and _n >= n:
+        _n = n + increment
+    if _n < 0:
+        _n = 0
+    if _n > 999:
+        _n = 999
+
+    return '{}{}'.format(_prefix, '{}'.format(_n).zfill(_padding))
 
 
 class FileSaverWidget(base.BasePropertyEditor):
@@ -308,7 +373,7 @@ class FileSaverWidget(base.BasePropertyEditor):
 
                 # Te file exists and we requested an incremented version number
                 if self._increment and file_info.exists():
-                    v = self.increment_version(
+                    v = increment_version(
                         v, self.parent_folder(), name, max, 1
                     )
                     self.version_editor.setText(v)
@@ -327,9 +392,9 @@ class FileSaverWidget(base.BasePropertyEditor):
         self.thumbnail_editor.update()
 
         for k in INACTIVE_KEYS:
-            if not hasattr(self, k + '_editor'):
+            if not hasattr(self, f'{k}_editor'):
                 continue
-            editor = getattr(self, k + '_editor')
+            editor = getattr(self, f'{k}_editor')
             editor.parent().setDisabled(True)
             editor.parent().parent().setHidden(True)
 
@@ -337,7 +402,7 @@ class FileSaverWidget(base.BasePropertyEditor):
 
     def _connect_signals(self):
         super(FileSaverWidget, self)._connect_signals()
-        self._connect_settings_save_signals(SETTING_KEYS)
+        self._connect_settings_save_signals(common.SECTIONS['file_saver'])
 
     def name(self):
         return self.filename_editor.text()
@@ -351,7 +416,7 @@ class FileSaverWidget(base.BasePropertyEditor):
         bookmark = '/'.join((self.server, self.job, self.root))
         asset_root = '/'.join((self.server, self.job, self.root, self.asset))
 
-        template = self.template_editor.currentData(QtCore.Qt.UserRole)
+        template = self.file_saver_template_editor.currentData(QtCore.Qt.UserRole)
         config = tokens.get(self.server, self.job, self.root)
 
         def _strip(s):
@@ -365,9 +430,10 @@ class FileSaverWidget(base.BasePropertyEditor):
             )
 
         def _get(k):
-            if not hasattr(self, k + '_editor'):
+            if not hasattr(self, f'{k}_editor'):
+                log.error(f'Could not find {k}_editor')
                 return ''
-            editor = getattr(self, k + '_editor')
+            editor = getattr(self, f'{k}_editor')
             if hasattr(editor, 'currentText'):
                 v = editor.currentText()
             elif hasattr(editor, 'text'):
@@ -383,29 +449,29 @@ class FileSaverWidget(base.BasePropertyEditor):
             self.parent_folder(),
             re.IGNORECASE
         )
-        seq = match.group(1) if match else '###'
+        seq = match.group(1) if match else '{invalid_token}'
         match = re.match(
             r'.*(?:SH|SHOT)([0-9]+).*',
             self.parent_folder(),
             re.IGNORECASE
         )
-        shot = match.group(1) if match else '###'
+        shot = match.group(1) if match else '{invalid_token}'
 
         v = config.expand_tokens(
             template,
             asset_root=asset_root,
             bookmark=bookmark,
             asset=_get('asset'),
-            user=_get('user'),
+            user=_get('file_saver_user'),
             version=_get('version').lower(),
-            task=_get('task'),
-            mode=_get('task'),
-            element=_get('element'),
+            task=_get('file_saver_task'),
+            mode=_get('file_saver_task'),
+            element=_get('file_saver_element'),
             seq=seq,
             shot=shot,
             sequence=seq,
             project=self.job,
-            ext=_get('extension').lower()
+            ext=_get('file_saver_extension').lower()
         )
         v = _strip(v)
         v = v.replace(
@@ -415,11 +481,18 @@ class FileSaverWidget(base.BasePropertyEditor):
             )
         )
 
+        v = v.replace(
+            '###',
+            '<span style="color:{}">###</span>'.format(
+                common.rgb(common.color(common.RedColor))
+            )
+        )
+
         self.filename_editor.setText(v)
 
     @QtCore.Slot()
     def verify_unique(self):
-        """Checks if the proposed file name exists already, and if does,
+        """Checks if the proposed file name exists already, and if it does,
         makes the output file name red.
 
         """
@@ -443,7 +516,7 @@ class FileSaverWidget(base.BasePropertyEditor):
         if self._file:
             return QtCore.QFileInfo(self._file).dir().path()
 
-        folder = self.task_editor.currentData(QtCore.Qt.UserRole)
+        folder = self.file_saver_task_editor.currentData(QtCore.Qt.UserRole)
         if not folder:
             return None
         return '/'.join((self.server, self.job, self.root, self.asset, folder))
@@ -457,7 +530,7 @@ class FileSaverWidget(base.BasePropertyEditor):
 
         if not self.parent_folder():
             return None
-        return self.parent_folder() + '/' + self.name()
+        return f'{self.parent_folder()}/{self.name()}'
 
     @common.error
     @common.debug
@@ -475,16 +548,16 @@ class FileSaverWidget(base.BasePropertyEditor):
         if self.asset:
             self.asset_editor.setCurrentText(self.asset)
 
-        self.user_editor.blockSignals(True)
+        self.file_saver_user_editor.blockSignals(True)
         if self._file is not None:
-            self.user_editor.setText('-')
+            self.file_saver_user_editor.setText('-')
         else:
-            self.user_editor.setText(common.get_username())
-        self.user_editor.blockSignals(False)
+            self.file_saver_user_editor.setText(common.get_username())
+        self.file_saver_user_editor.blockSignals(False)
 
         # Load previously set values from the user settings file
         if self._file is None:
-            self.load_saved_user_settings(SETTING_KEYS)
+            self.load_saved_user_settings(common.SECTIONS['file_saver'])
 
         # Prefix
         self.prefix_editor.setReadOnly(True)
@@ -535,7 +608,7 @@ class FileSaverWidget(base.BasePropertyEditor):
         # Increment the version by one if the file already exists
         if QtCore.QFileInfo(self.db_source()).exists():
             v = self.version_editor.text()
-            v = self.increment_version(
+            v = increment_version(
                 v, self.parent_folder(), self.name(), max, 1
             )
             self.version_editor.setText(v)
@@ -573,7 +646,7 @@ class FileSaverWidget(base.BasePropertyEditor):
 
         """
         name = self.name()
-        if not name or '{invalid_token}' in name:
+        if not name or '{invalid_token}' in name or '###' in name:
             raise RuntimeError('Invalid token in output name')
 
         self.create_file()
@@ -597,7 +670,7 @@ class FileSaverWidget(base.BasePropertyEditor):
         _dir = self.parent_folder()
 
         name = self.name()
-        if not name or not _dir or '{invalid_token}' in name:
+        if not name or not _dir or '{invalid_token}' in name or '###' in name:
             raise RuntimeError('Invalid token in output name')
 
         _dir = QtCore.QDir(_dir)
@@ -607,9 +680,7 @@ class FileSaverWidget(base.BasePropertyEditor):
         file_info = QtCore.QFileInfo(self.db_source())
         if file_info.exists():
             raise RuntimeError(
-                '{} already exists. Try incrementing the version number.'.format(
-                    name
-                )
+                f'{name} already exists. Try incrementing the version number.'
             )
 
         path = file_info.absoluteFilePath()
@@ -617,10 +688,10 @@ class FileSaverWidget(base.BasePropertyEditor):
         self.itemCreated.emit(path)
 
     @QtCore.Slot()
-    def task_button_clicked(self):
+    def file_saver_task_button_clicked(self):
         """Lets the user select a custom save destination.
 
-        The selection has to be inside the currently seleted asset, otherwise
+        The selection has to be inside the currently selected asset, otherwise
         will be rejected. If the folder is not part of the current available
         options, it will be added as a new option.
 
@@ -651,16 +722,30 @@ class FileSaverWidget(base.BasePropertyEditor):
         """Adds a task folder to the folder editor.
 
         """
-        for n in range(self.task_editor.count()):
-            v = self.task_editor.itemData(n, role=QtCore.Qt.UserRole)
+        k = 'file_saver/task'
+        k = f'{k.replace("/", "_")}_editor'
+
+        if not hasattr(self, k):
+            return
+
+        editor = getattr(self, k)
+
+        for n in range(editor.count()):
+            v = editor.itemData(n, role=QtCore.Qt.UserRole)
             if v == relative_path:
-                self.task_editor.setCurrentIndex(n)
+                editor.setCurrentIndex(n)
                 return
 
-        self.task_editor.model().add_item(relative_path)
-        self.task_editor.blockSignals(True)
-        self.task_editor.setCurrentIndex(self.task_editor.count() - 1)
-        self.task_editor.blockSignals(False)
+        editor.model().add_item(relative_path)
+        editor.blockSignals(True)
+        editor.setCurrentIndex(editor.count() - 1)
+        editor.blockSignals(False)
+
+    @QtCore.Slot()
+    def file_saver_template_button_clicked(self):
+        from ..editor import bookmark_properties
+        self.close()
+        bookmark_properties.show(self.server, self.job, self.root)
 
     @QtCore.Slot()
     def filename_button_clicked(self):
@@ -712,7 +797,7 @@ class FileSaverWidget(base.BasePropertyEditor):
 
         """
         v = self.version_editor.text()
-        v = self.increment_version(
+        v = increment_version(
             v, self.parent_folder(), self.name(), max, 1
         )
         self.version_editor.setText(v)
@@ -723,81 +808,7 @@ class FileSaverWidget(base.BasePropertyEditor):
 
         """
         v = self.version_editor.text()
-        v = self.increment_version(
+        v = increment_version(
             v, self.parent_folder(), self.name(), min, -1
         )
         self.version_editor.setText(v)
-
-    def increment_version(self, v, dir, name, func, increment):
-        """Increments the version number by one or to the smallest/largest
-        available version number based on existing files found in the
-        destination folder.
-
-        """
-        if not v:
-            v = 'v001'
-
-        prefix = 'v' if v.startswith('v') else ''
-        padding = len(v.replace('v', ''))
-        try:
-            n = int(v.replace('v', ''))
-        except:
-            return 'v001'
-
-        if not dir:
-            return 'v001'
-        _dir = QtCore.QDir(dir)
-
-        if not _dir.exists():
-            # We can freely increment the version number as there won't be any
-            # conflicts
-            n += increment
-            if n < 0:
-                n = 0
-            if n > 999:
-                n = 999
-            return '{}{}'.format(prefix, '{}'.format(n).zfill(padding))
-
-        # Let's scan the destination directory for existing versions to make
-        # sure we're only suggesting valid versions
-        if v not in name:
-            return 'v001'
-        idx = name.index(v)
-
-        _arr = []
-        for entry in os.scandir(_dir.path()):
-            if len(name) != len(entry.name):
-                continue
-            if name[:idx] != entry.name[:idx]:
-                continue
-
-            _v = entry.name[idx:idx + len(v)]
-            _prefix = 'v' if _v.startswith('v') else ''
-            _padding = len(_v.replace('v', ''))
-            try:
-                _n = int(_v.replace('v', ''))
-            except ValueError:
-                continue
-            _arr.append(_n)
-
-        if not _arr:
-            n += increment
-            if n < 0:
-                n = 0
-            if n > 999:
-                n = 999
-            return '{}{}'.format(prefix, '{}'.format(n).zfill(padding))
-
-        _n = func(_arr)
-        _n += increment
-
-        if func is max and _n <= n:
-            _n = n + increment
-        if func is min and _n >= n:
-            _n = n + increment
-        if _n < 0:
-            _n = 0
-        if _n > 999:
-            _n = 999
-
-        return '{}{}'.format(_prefix, '{}'.format(_n).zfill(_padding))

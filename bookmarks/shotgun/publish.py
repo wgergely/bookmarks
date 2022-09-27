@@ -2,7 +2,7 @@
 """The publish widget used by Bookmarks to create new PublishedFiles and Version
 entities on ShotGrid.
 
-Our publish logic creates `Version` and `PublishFile` entites linked against
+Our publish logic creates `Version` and `PublishFile` entities linked against
 the current active project and asset and uploads any custom thumbnails set.
 
 """
@@ -365,16 +365,16 @@ class PublishWidget(base.BasePropertyEditor):
         v = self.file_editor.path()
 
         config = tokens.get(
-            common.active(common.ServerKey),
-            common.active(common.JobKey),
-            common.active(common.RootKey)
+            common.active('server'),
+            common.active('job'),
+            common.active('root')
         )
         exts = config.get_extensions(tokens.SceneFormat)
         return QtCore.QFileInfo(v).suffix().lower() in exts
 
     @property
     def server(self):
-        return common.active(common.ServerKey)
+        return common.active('server')
 
     @server.setter
     def server(self, v):
@@ -382,7 +382,7 @@ class PublishWidget(base.BasePropertyEditor):
 
     @property
     def job(self):
-        return common.active(common.JobKey)
+        return common.active('job')
 
     @job.setter
     def job(self, v):
@@ -390,7 +390,7 @@ class PublishWidget(base.BasePropertyEditor):
 
     @property
     def root(self):
-        return common.active(common.RootKey)
+        return common.active('root')
 
     @root.setter
     def root(self, v):
@@ -398,7 +398,7 @@ class PublishWidget(base.BasePropertyEditor):
 
     @property
     def asset(self):
-        return common.active(common.AssetKey)
+        return common.active('asset')
 
     @asset.setter
     def asset(self, v):
@@ -406,7 +406,7 @@ class PublishWidget(base.BasePropertyEditor):
 
     @property
     def task(self):
-        return common.active(common.TaskKey)
+        return common.active('task')
 
     def db_source(self):
         p = self.file_editor.path()

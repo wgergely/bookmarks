@@ -311,8 +311,8 @@ class FavouritesModel(file_items.FilesModel):
     def task(self):
         return 'favourites'
 
-    def user_settings_key(self):
-        return self.task()
+    def filter_setting_dict_key(self):
+        return 'favourites'
 
 
 class FavouritesWidget(file_items.FilesWidget):

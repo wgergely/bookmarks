@@ -9,6 +9,7 @@ widget.
 
 """
 import ctypes
+import functools
 import os
 
 from PySide2 import QtWidgets, QtGui, QtCore
@@ -47,12 +48,15 @@ def show():
                                                                    BookmarksAppWindow):
         raise RuntimeError('Window can only be show in StandaloneMode.')
 
-    state = common.settings.value(common.WindowStateKey)
-    state = QtCore.Qt.WindowNoState if state is None else QtCore.Qt.WindowState(
-        state)
+    dict_key = common.main_widget.__class__.__name__
+    v = common.settings.value('state/state')
+
+    state = v[dict_key] if v and dict_key in v else None
+    state = QtCore.Qt.WindowNoState if state is None else QtCore.Qt.WindowState(state)
 
     common.main_widget.activateWindow()
-    common.main_widget.restore_window()
+    common.restore_window_geometry(common.main_widget)
+
     if state == QtCore.Qt.WindowNoState:
         common.main_widget.showNormal()
     elif state & QtCore.Qt.WindowMaximized:
@@ -85,7 +89,7 @@ class TrayMenu(contextmenu.BaseContextMenu):
     def __init__(self, parent=None):
         super().__init__(QtCore.QModelIndex(), parent=parent)
 
-        self.stays_on_top = False
+        self.stays_always_on_top = False
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose, False)
         self.setStyleSheet(None)
 
@@ -288,7 +292,7 @@ class BookmarksAppWindow(main.MainWidget):
         super().__init__(parent=None)
 
         self._frameless = False
-        self._ontop = False
+        self._always_on_top = False
         self.headerwidget = None
 
         self.resize_initial_pos = QtCore.QPoint(-1, -1)
@@ -345,7 +349,7 @@ class BookmarksAppWindow(main.MainWidget):
         """Load previously saved window flag values from user common.
 
         """
-        self._frameless = common.settings.value(common.WindowFramelessKey)
+        self._frameless = common.settings.value('settings/frameless')
 
         if not self._frameless:
             self.setWindowFlags(
@@ -360,9 +364,9 @@ class BookmarksAppWindow(main.MainWidget):
             self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
             self.setAttribute(QtCore.Qt.WA_NoSystemBackground, True)
 
-        self._ontop = common.settings.value(common.WindowAlwaysOnTopKey)
+        self._always_on_top = common.settings.value('settings/always_always_on_top')
 
-        if self._ontop:
+        if self._always_on_top:
             self.setWindowFlags(
                 self.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
         else:
@@ -384,23 +388,11 @@ class BookmarksAppWindow(main.MainWidget):
         rect = rect.adjusted(o, o, -o, -o)
         painter.drawRoundedRect(rect, o * 3, o * 3)
 
-    @common.error
-    @common.debug
-    @QtCore.Slot()
-    def save_window(self, *args, **kwargs):
-        common.settings.setValue(common.WindowGeometryKey, self.saveGeometry())
-        common.settings.setValue(common.WindowStateKey, int(self.windowState()))
-
-    @common.error
-    @common.debug
-    def restore_window(self, *args, **kwargs):
-        geometry = common.settings.value(common.WindowGeometryKey)
-        if geometry is not None:
-            self.restoreGeometry(geometry)
-
     def _get_offset_rect(self, offset):
         """Returns an expanded/contracted edge rectangle based on the widget's
-        geomtery. Used to get the valid area for resize-operations."""
+        geometry. Used to get the valid area for resize-operations.
+
+        """
         rect = self.rect()
         center = rect.center()
         rect.setHeight(rect.height() + offset)
@@ -481,7 +473,8 @@ class BookmarksAppWindow(main.MainWidget):
         """Extra signal connections when Bookmarks runs in standalone mode.
 
         """
-        self.headerwidget.widgetMoved.connect(self.save_window)
+        func = functools.partial(common.save_window_state, self)
+        self.headerwidget.widgetMoved.connect(func)
         self.headerwidget.findChild(MinimizeButton).clicked.connect(
             actions.toggle_minimized)
         self.headerwidget.findChild(CloseButton).clicked.connect(
@@ -492,7 +485,7 @@ class BookmarksAppWindow(main.MainWidget):
 
     def hideEvent(self, event):
         """Custom hide event."""
-        self.save_window()
+        common.save_window_state(self)
         super().hideEvent(event)
 
     def closeEvent(self, event):
@@ -511,7 +504,7 @@ class BookmarksAppWindow(main.MainWidget):
             )
         except:
             pass
-        self.save_window()
+        common.save_window_state(self)
 
     def mousePressEvent(self, event):
         """The mouse press event responsible for setting the properties needed
@@ -589,7 +582,7 @@ class BookmarksAppWindow(main.MainWidget):
             return
 
         if self.resize_initial_pos != QtCore.QPoint(-1, -1):
-            self.save_window()
+            common.save_window_state(self)
             if hasattr(common.widget(), 'reset'):
                 common.widget().reset()
 
@@ -602,11 +595,13 @@ class BookmarksAppWindow(main.MainWidget):
 
     def changeEvent(self, event):
         if event.type() == QtCore.QEvent.WindowStateChange:
-            self.save_window()
+            common.save_window_state(self)
+        super().changeEvent(event)
 
     def showEvent(self, event):
         if not self.is_initialized:
             QtCore.QTimer.singleShot(100, self.initialize)
+        super().showEvent(event)
 
 
 class BookmarksApp(QtWidgets.QApplication):

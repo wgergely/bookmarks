@@ -24,7 +24,7 @@ ROW_SIZE = QtCore.QSize(1, common.size(common.HeightRow))
 def init_data(func):
     @functools.wraps(func)
     def func_wrapper(self, *args, **kwargs):
-        return func(self, *common.active(common.AssetKey, args=True))
+        return func(self, *common.active('asset', args=True))
 
     return func_wrapper
 
@@ -79,7 +79,7 @@ class BookmarksModel(BaseModel):
         super(BookmarksModel, self).__init__(parent=parent)
 
     def init_data(self, load_all=False):
-        k = common.active(common.RootKey, path=True)
+        k = common.active('root', path=True)
         if not k or not QtCore.QFileInfo(k).exists():
             return
 
@@ -109,7 +109,7 @@ class BookmarksModel(BaseModel):
             return
 
         for k in sorted(common.bookmarks.keys()):
-            active = common.active(common.RootKey, path=True) == k
+            active = common.active('root', path=True) == k
             self._data[len(self._data)] = {
                 QtCore.Qt.DisplayRole: self.display_name(k),
                 QtCore.Qt.DecorationRole: ui.get_icon(
@@ -135,7 +135,7 @@ class BookmarkComboBox(QtWidgets.QComboBox):
 
 class AssetsModel(BaseModel):
     def init_data(self, load_all=False):
-        k = common.active(common.AssetKey, path=True)
+        k = common.active('asset', path=True)
         if not k or not QtCore.QFileInfo(k).exists():
             return
 
@@ -162,7 +162,7 @@ class AssetsModel(BaseModel):
             return
 
         # Let's get the identifier from the bookmark database
-        db = database.get_db(*common.active(common.RootKey, args=True))
+        db = database.get_db(*common.active('root', args=True))
         ASSET_IDENTIFIER = db.value(
             db.source(),
             'identifier',
@@ -183,7 +183,7 @@ class AssetsModel(BaseModel):
                 if not QtCore.QFileInfo(identifier).exists():
                     continue
 
-            active = common.active(common.AssetKey, path=True) == entry.name
+            active = common.active('asset', path=True) == entry.name
             self._data[len(self._data)] = {
                 QtCore.Qt.DisplayRole: self.display_name(filepath),
                 QtCore.Qt.DecorationRole: ui.get_icon(
@@ -200,7 +200,7 @@ class AssetsModel(BaseModel):
             }
 
     def display_name(self, v):
-        k = common.active(common.RootKey, path=True)
+        k = common.active('root', path=True)
         return v.replace(k, '').strip('/').split('/', maxsplit=1)[0]
 
 
@@ -239,17 +239,15 @@ class TaskModel(BaseModel):
     def init_data(self):
         self._data = {}
 
-        k = common.active(common.AssetKey, path=True)
+        k = common.active('asset', path=True)
         if not k or not QtCore.QFileInfo(k).exists():
             return
 
         # Load the available task folders from the active bookmark item's `tokens`.
-        config = tokens.get(*common.active(common.RootKey, args=True))
+        config = tokens.get(*common.active('root', args=True))
         data = config.data()
         if not isinstance(data, dict):
             return
-
-        current_folder = common.settings.value(common.TaskKey)
 
         for v in sorted(
                 data[tokens.AssetFolderConfig].values(), key=lambda x: x['value']
@@ -260,7 +258,7 @@ class TaskModel(BaseModel):
                 continue
 
             for _v in sorted(v['subfolders'].values(), key=lambda x: x['value']):
-                if current_folder == _v['value']:
+                if common.active('task') == _v['value']:
                     pixmap = images.ImageCache.get_rsc_pixmap(
                         'check', common.color(common.GreenColor),
                         common.size(common.WidthMargin) * 2
@@ -309,9 +307,9 @@ class TaskModel(BaseModel):
 
 class TemplateModel(BaseModel):
     def init_data(self):
-        server = common.active(common.ServerKey)
-        job = common.active(common.JobKey)
-        root = common.active(common.RootKey)
+        server = common.active('server')
+        job = common.active('job')
+        root = common.active('root')
 
         if not all((server, job, root)):
             return
@@ -321,7 +319,7 @@ class TemplateModel(BaseModel):
         if not isinstance(data, dict):
             return
 
-        template = common.settings.value(common.CurrentTemplateKey)
+        template = common.settings.value('file_saver/template')
         for v in data[tokens.FileNameConfig].values():
             if template == v['name']:
                 pixmap = images.ImageCache.get_rsc_pixmap(
@@ -356,9 +354,9 @@ class TemplateComboBox(QtWidgets.QComboBox):
 
 class ExtensionModel(BaseModel):
     def init_data(self):
-        server = common.active(common.ServerKey)
-        job = common.active(common.JobKey)
-        root = common.active(common.RootKey)
+        server = common.active('server')
+        job = common.active('job')
+        root = common.active('root')
 
         if not all((server, job, root)):
             return
@@ -439,11 +437,18 @@ class PrefixEditor(QtWidgets.QDialog):
     """
 
     def __init__(self, parent=None):
-        super(PrefixEditor, self).__init__(parent=parent)
+        super().__init__(parent=parent)
+        self.ok_button = None
+        self.editor = None
+
         self._create_ui()
+        self._connect_signals()
+        self.init_data()
 
     def _create_ui(self):
         QtWidgets.QHBoxLayout(self)
+
+        self.setWindowTitle('Edit Prefix')
 
         self.editor = ui.LineEdit(parent=self)
         self.editor.setPlaceholderText('Enter a prefix, e.g. \'MYB\'')
@@ -452,22 +457,15 @@ class PrefixEditor(QtWidgets.QDialog):
         self.editor.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.ok_button = ui.PaintedButton('Save', parent=self)
 
-        self.ok_button.clicked.connect(
-            lambda: self.done(QtWidgets.QDialog.Accepted)
-        )
-        self.editor.returnPressed.connect(
-            lambda: self.done(QtWidgets.QDialog.Accepted)
-        )
-
-        self.setWindowTitle('Edit Prefix')
         self.layout().addWidget(self.editor, 1)
         self.layout().addWidget(self.ok_button, 0)
 
-        self.init_data()
+    def _connect_signals(self):
+        self.ok_button.clicked.connect(lambda: self.done(QtWidgets.QDialog.Accepted))
+        self.editor.returnPressed.connect(lambda: self.done(QtWidgets.QDialog.Accepted))
+        self.accepted.connect(self.save_changes)
 
     def init_data(self):
-        self.parent().prefix_editor.setText(self.editor.text())
-
         p = self.parent()
         db = database.get_db(p.server, p.job, p.root)
 
@@ -482,15 +480,17 @@ class PrefixEditor(QtWidgets.QDialog):
 
         self.editor.setText(v)
 
-    def done(self, result):
-        if result == QtWidgets.QDialog.Rejected:
-            super(PrefixEditor, self).done(result)
+    def save_changes(self):
+        if self.editor.text() == self.parent().prefix_editor.text():
             return
 
-        p = self.parent()
-        p.prefix_editor.setText(self.editor.text())
+        self.parent().prefix_editor.setText(self.editor.text())
 
-        db = database.get_db(p.server, p.job, p.root)
+        db = database.get_db(
+            self.parent().server,
+            self.parent().job,
+            self.parent().root  #
+        )
         with db.connection():
             db.setValue(
                 db.source(),
@@ -499,19 +499,7 @@ class PrefixEditor(QtWidgets.QDialog):
                 table=database.BookmarkTable
             )
 
-        super(PrefixEditor, self).done(result)
-
     def sizeHint(self):
         return QtCore.QSize(
             common.size(common.DefaultWidth) * 0.5, common.size(common.HeightRow)
         )
-
-
-if __name__ == '__main__':
-    import bookmarks.standalone as standalone
-
-    app = standalone.StandaloneApp([])
-
-    w = TemplateComboBox()
-    w.show()
-    app.exec_()

@@ -218,20 +218,6 @@ class ImageViewer(QtWidgets.QWidget):
             self.window().rect().center().y() - (br.height() / 2)
         )
 
-    def paintEvent(self, event):
-        painter = QtGui.QPainter()
-        painter.begin(self)
-        pen = QtGui.QPen(common.color(common.SeparatorColor))
-        pen.setWidth(common.size(common.HeightSeparator))
-        painter.setPen(pen)
-
-        painter.setRenderHint(QtGui.QPainter.Antialiasing)
-
-        painter.setBrush(common.color(common.SeparatorColor))
-        painter.drawRect(self.rect())
-
-        painter.end()
-
     def keyPressEvent(self, event):
         """Catching and forward key press events."""
         event.accept()

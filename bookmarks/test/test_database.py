@@ -68,7 +68,7 @@ class Test(base.BaseCase):
                 elif _type == float:
                     v = float(random.randrange(99999))
                 elif _type == dict:
-                    v = {0: base.random_ascii(36), 0: base.random_str(36)}
+                    v = {0: base.random_ascii(36), 1: base.random_str(36)}
                     db.setValue(db.source(), k, v, t)
                     _v = db.value(db.source(), k, t)
                     self.assertNotEqual(v, _v)

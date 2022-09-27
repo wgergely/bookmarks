@@ -197,7 +197,7 @@ class BaseLinkWidget(QtWidgets.QDialog):
     def sizeHint(self):
         return QtCore.QSize(common.size(common.DefaultWidth),
                             (common.size(common.WidthMargin) * 2) + (
-                                        common.size(common.HeightRow) * 2))
+                                    common.size(common.HeightRow) * 2))
 
 
 class EntityNameEditor(QtWidgets.QDialog):
@@ -255,4 +255,4 @@ class EntityNameEditor(QtWidgets.QDialog):
     def sizeHint(self):
         return QtCore.QSize(common.size(common.DefaultWidth),
                             (common.size(common.WidthMargin) * 2) + (
-                                        common.size(common.HeightRow) * 2))
+                                    common.size(common.HeightRow) * 2))

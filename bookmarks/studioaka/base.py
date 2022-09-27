@@ -71,7 +71,7 @@ def get_client_project():
                 (None, None, None).
 
     """
-    job = common.active(common.JobKey)
+    job = common.active('job')
     if '/' not in job:
         return None, None
     if job.count('/') > 1:
@@ -87,11 +87,11 @@ def item_generator(path):
     """
     try:
         from akapipe.core import templates
-    except:
+    except ImportError:
         return
         yield
 
-    server = common.active(common.ServerKey)
+    server = common.active('server')
     client, project = get_client_project()
     if not all((client, project)):
         return

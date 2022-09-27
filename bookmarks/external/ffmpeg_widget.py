@@ -41,7 +41,7 @@ class PresetComboBox(QtWidgets.QComboBox):
 
     def init_data(self):
         self.blockSignals(True)
-        for v in ffmpe.g.PRESETS.values():
+        for v in ffmpeg.PRESETS.values():
             self.addItem(v['name'], userData=v['preset'])
         self.blockSignals(False)
 
@@ -54,16 +54,10 @@ class SizeComboBox(QtWidgets.QComboBox):
 
     def init_data(self):
         self.blockSignals(True)
-        for v in ffmpe.g.SIZE_PRESETS.values():
+        for v in ffmpeg.SIZE_PRESETS.values():
             self.addItem(v['name'], userData=v['value'])
         self.blockSignals(False)
 
-
-SETTING_KEYS = (
-    'ffmpeg_preset',
-    'ffmpeg_size',
-    'ffmpeg_timecode',
-)
 
 SECTIONS = {
     0: {
@@ -119,12 +113,12 @@ class FFMpegWidget(base.BasePropertyEditor):
             parent=parent
         )
         self._file = source
-        self._connect_settings_save_signals(SETTING_KEYS)
+        self._connect_settings_save_signals(common.SECTIONS['ffmpeg'])
 
     @common.error
     @common.debug
     def init_data(self):
-        self.load_saved_user_settings(SETTING_KEYS)
+        self.load_saved_user_settings(common.SECTIONS['ffmpeg'])
 
     @common.error
     @common.debug
@@ -132,7 +126,7 @@ class FFMpegWidget(base.BasePropertyEditor):
         """Start the conversion process.
 
         """
-        return ffmpe.g.convert(
+        return ffmpeg.convert(
             self._file,
             self.ffmpeg_preset_editor.currentData(),
             size=self.ffmpeg_size_editor.currentData(),

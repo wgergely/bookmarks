@@ -207,7 +207,7 @@ def draw_aliased_text(painter, font, rect, text, align, color, elide=None):
     """Allows drawing aliased text using *QPainterPath*.
 
     This is slow to calculate but ensures the rendered text looks *smooth* (on
-    Windows espcially, I noticed a lot of aliasing issues). We're also eliding
+    Windows especially, I noticed a lot of aliasing issues). We're also eliding
     the given text to the width of the given rectangle.
 
     Args:

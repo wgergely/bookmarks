@@ -494,15 +494,15 @@ def draw_subdirs(bg_rect, clickable_rectangles, filter_text, *args):
         color = common.color(common.BackgroundDarkColor)
 
         # Green the subfolder is set as a text filter
-        ftext = '"/' + text + '/"'
+        ftext = f'"{text}"'
         if filter_text and ftext.lower() in filter_text.lower():
             color = common.color(common.GreenColor)
 
         if rect.contains(cursor_position):
             o = 1.0
-            if alt_modifier:
+            if alt_modifier or control_modifier:
                 color = common.color(common.RedColor)
-            if shift_modifier or control_modifier:
+            elif shift_modifier or control_modifier:
                 color = common.color(common.GreenColor)
 
         painter.setOpacity(o)
@@ -1811,6 +1811,11 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         if not index.data(common.ParentPathRole):
             return
 
+        modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
+        alt_modifier = modifiers & QtCore.Qt.AltModifier
+        shift_modifier = modifiers & QtCore.Qt.ShiftModifier
+        control_modifier = modifiers & QtCore.Qt.ControlModifier
+
         # The description rectangle for bookmark items is not clickable,
         # unlike on asset and files items
         description_rect = self.get_description_rect(rectangles, index)
@@ -1860,7 +1865,11 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
             cursor_position
         ) else color
 
-        filter_text = self.parent().model().filter_text()
+        if r.contains(cursor_position):
+            if alt_modifier or control_modifier:
+                color = common.color(common.RedColor)
+            elif shift_modifier or control_modifier:
+                color = common.color(common.GreenColor)
 
         painter.setBrush(color)
         pen = QtGui.QPen(color.darker(220))
@@ -1874,6 +1883,9 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         offset = 0
         o = common.size(common.WidthIndicator)
         painter.setPen(QtCore.Qt.NoPen)
+
+        filter_text = self.parent().model().filter_text()
+
         for segment in text_segments.values():
             text, color = segment
             _text = text

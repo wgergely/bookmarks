@@ -1516,3 +1516,64 @@ class GalleryWidget(QtWidgets.QDialog):
     def showEvent(self, event):
         if not self.parent():
             common.center_window(self)
+
+
+
+
+class AbstractListModel(QtCore.QAbstractListModel):
+    """Generic base model used to store custom data.
+
+    """
+
+    row_size = QtCore.QSize(1, common.size(common.HeightRow))
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
+        self._data = {}
+
+        self.beginResetModel()
+        self.init_data()
+        self.endResetModel()
+
+    def rowCount(self, parent=QtCore.QModelIndex()):
+        return len(self._data)
+
+    def display_name(self, v):
+        return v.split('/')[-1]
+
+    def init_data(self, *args, **kwargs):
+        raise NotImplementedError('Abstract method must be implemented by subclass.')
+
+    def index(self, row, column, parent=QtCore.QModelIndex()):
+        return self.createIndex(row, 0, parent=parent)
+
+    def data(self, index, role=QtCore.Qt.DisplayRole):
+        if not index.isValid():
+            return None
+        idx = index.row()
+        if idx not in self._data:
+            return None
+        if role not in self._data[idx]:
+            return None
+        return self._data[idx][role]
+
+    def flags(self, index):
+        v = self.data(index, role=common.FlagsRole)
+        if v is not None:
+            return v
+        return (
+                QtCore.Qt.ItemNeverHasChildren |
+                QtCore.Qt.ItemIsEnabled |
+                QtCore.Qt.ItemIsSelectable
+        )
+
+    def _add_separator(self, label):
+        self._data[len(self._data)] = {
+            QtCore.Qt.DisplayRole: label,
+            QtCore.Qt.DecorationRole: None,
+            QtCore.Qt.ForegroundRole: common.color(common.TextDisabledColor),
+            QtCore.Qt.SizeHintRole: self.row_size,
+            QtCore.Qt.UserRole: None,
+            common.FlagsRole: QtCore.Qt.NoItemFlags
+        }

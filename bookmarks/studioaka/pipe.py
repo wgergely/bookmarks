@@ -6,16 +6,6 @@ shall serve as a placeholder for a future Studio Aka pipline integration.
 """
 from PySide2 import QtCore
 
-try:
-    from akapipe.core import context
-    from akapipe.core import database
-    from akapipe.core import db
-    from akapipe.core import signals
-    from akapipe.core import templates
-    from akapipe.scenes import sc
-except ImportError:
-    print('akapipe was not found.')
-
 from . import base
 from .. import common
 
@@ -23,6 +13,8 @@ from .. import common
 @common.error
 @common.debug
 def show_akapipe():
+    from akapipe.core import signals
+
     signals.signals.initialized.connect(connect_signals)
     try:
         import akapipe
@@ -44,6 +36,10 @@ def connect_signals():
 @QtCore.Slot(str)
 @QtCore.Slot(str)
 def bookmark_activated(server, job, root):
+    from akapipe.core import context
+    from akapipe.core import database
+    from akapipe.core import db
+
     if not all((server, job, root)):
         return
 
@@ -70,14 +66,24 @@ def bookmark_activated(server, job, root):
 @QtCore.Slot(str)
 @QtCore.Slot(str)
 def asset_activated(server, job, root, asset):
-    """The asset activation in bookmarks covers setting both
-    the active asset in akapipe and changing the current workspace.
+    """Slot connected to the `signals.assetActivated` signal.
 
-    We have to do some gymnastics but using the tokens we can
+    The slot is responsible for setting the workspace and active asset in akapipe.
+    We have to do some gymnastics because akapipe differentiates between shot and asset
+    assets, and the path patterns differ, whilst Bookmarks makes no such distinction.
+
+    but using the tokens we can
     find out the asset/shot type from the file path and the
     workspace type too.
 
     """
+    from akapipe.core import context
+    from akapipe.core import database
+    from akapipe.core import db
+    from akapipe.core import signals
+    from akapipe.core import templates
+    from akapipe.scenes import sc
+
     bookmark_activated(server, job, root)
 
     if not all((server, job, root, asset)):

@@ -397,3 +397,66 @@ class Timer(QtCore.QTimer):
 @functools.lru_cache(maxsize=1048576)
 def is_dir(path):
     return QtCore.QFileInfo(path).isDir()
+
+
+def get_sequence_and_shot(s):
+    """Returns the sequence and shot name of the given path.
+
+    E.g. if the path is `C:/SEQ050/SH010/my_file.ma` will return
+    `('SEQ050', 'SH010')`.
+
+    Args:
+        s (str): A file or folder path.
+
+    Returns:
+        tuple (str, str):    Sequence and shot name, or `(None, None)`
+                                    if not found.
+
+    """
+    common.check_type(s, str)
+
+    match = re.search(
+        r'(SQ|SEQ|SEQUENCE)([0-9]+)',
+        s,
+        flags=re.IGNORECASE
+    )
+
+    if match and match.groups():
+        seq = ''.join(match.groups())
+    else:
+        seq = None
+
+    match = re.search(
+        r'(SH|SHOT)([0-9]+)',
+        s,
+        flags=re.IGNORECASE
+    )
+
+    if match and match.groups():
+        shot = ''.join(match.groups())
+    else:
+        shot = None
+
+    return seq, shot
+
+
+def get_dir_entry_from_path(path):
+    """Get a scandir entry from a path
+
+    Args:
+        path (str): Path to  directory
+
+    Returns:
+         scandir.DirEntry: A scandir entry item, or None if not found.
+
+    """
+    file_info = QtCore.QFileInfo(path)
+    if not file_info.exists():
+        return None
+    _path = file_info.dir().path()
+    for entry in os.scandir(_path):
+        if not entry.is_dir():
+            continue
+        if entry.name == file_info.fileName():
+            return entry
+    return None

@@ -322,6 +322,14 @@ SECTIONS = {
                     'placeholder': None,
                     'description': 'Reveal the published files in the explorer.',
                 },
+                2: {
+                    'name': 'Teams Notification',
+                    'key': 'publish/teams_notification',
+                    'validator': None,
+                    'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
+                    'placeholder': None,
+                    'description': 'Send a notification of the publish to a Teams channel.',
+                },
             },
         },
     },
@@ -533,6 +541,9 @@ class PublishWidget(base.BasePropertyEditor):
         kwargs['publish_copy_path'] = self.publish_copy_path_editor.isChecked()
         kwargs['publish_reveal'] = self.publish_reveal_editor.isChecked()
 
+        v = self.publish_teams_notification_editor.isChecked()
+        kwargs['publish_teams_notification'] = v
+
         # Overrides
         kwargs.update(_kwargs)
         return kwargs
@@ -581,6 +592,7 @@ class PublishWidget(base.BasePropertyEditor):
             self.write_manifest(destination, payload=payload)
             self.post_publish(destination, kwargs)
 
+            self.post_teams_message(destination, kwargs, payload=payload)
             return True
         except:
             raise
@@ -595,11 +607,14 @@ class PublishWidget(base.BasePropertyEditor):
         temp = f'{_dir.path()}/temp.{common.thumbnail_format}'
         dest = f'{_dir.path()}/thumbnail.{common.thumbnail_format}'
 
-        self.thumbnail_editor.save_image(
-            destination=temp
-        )
+        self.thumbnail_editor.save_image(destination=temp)
+
         if QtCore.QFileInfo(temp).exists():
-            images.ImageCache.oiio_make_thumbnail(temp, dest, size=common.thumbnail_size)
+            images.ImageCache.oiio_make_thumbnail(
+                temp,
+                dest,
+                size=common.thumbnail_size
+            )
             images.ImageCache.flush(temp)
             images.ImageCache.flush(dest)
             QtCore.QFile(temp).remove()
@@ -840,3 +855,33 @@ class PublishWidget(base.BasePropertyEditor):
             actions.reveal(QtCore.QFileInfo(destination).dir().path())
         if kwargs['publish_copy_path']:
             actions.copy_path(destination)
+
+    def post_teams_message(self, destination, kwargs, payload=None):
+        if not kwargs['publish_teams_notification']:
+            return
+
+        from .teams import message
+
+        db = database.get_db(*common.active('root', args=True))
+        webhook = db.value(db.source(), 'teamstoken', database.BookmarkTable)
+        if not webhook:
+            return
+
+        sequence = kwargs['sequence']
+        shot = kwargs['shot']
+
+        if all((sequence, shot)):
+            asset = f'{sequence}_{shot}'
+        else:
+            asset = kwargs['asset']
+
+        payload = message.get_payload(
+            message.PUBLISH_MESSAGE,
+            thumbnail=payload['thumbnail'],
+            asset=asset,
+            path=destination,
+            date=time.strftime('%d/%m/%Y %H:%M:%S'),
+            user=common.get_username(),
+            publish_type=kwargs['asset'],
+        )
+        message.send(webhook, payload)

@@ -2,7 +2,6 @@
 """Widgets used by :class:`bookmarks.file_saver.file_saver.FileSaverWidget`.
 
 """
-import functools
 import os
 
 from PySide2 import QtCore, QtWidgets, QtGui
@@ -18,186 +17,67 @@ NoMode = 'invalid'
 SceneMode = 'scene'
 CacheMode = 'export'
 
-ROW_SIZE = QtCore.QSize(1, common.size(common.HeightRow))
 
-
-def init_data(func):
-    @functools.wraps(func)
-    def func_wrapper(self, *args, **kwargs):
-        return func(self, *common.active('asset', args=True))
-
-    return func_wrapper
-
-
-class BaseModel(QtCore.QAbstractListModel):
-    """Generic base model used to store custom data.
-
-    """
-
+class BookmarksModel(ui.AbstractListModel):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        self._data = {}
-
-        self.beginResetModel()
-        self.init_data()
-        self.endResetModel()
-
-    def rowCount(self, parent=QtCore.QModelIndex()):
-        return len(self._data)
-
-    def display_name(self, v):
-        return v.split('/')[-1]
-
-    @init_data
-    def init_data(self, source, server, job, root):
-        raise NotImplementedError('Abstract method must be implemented by subclass.')
-
-    def index(self, row, column, parent=QtCore.QModelIndex()):
-        return self.createIndex(row, 0, parent=parent)
-
-    def data(self, index, role=QtCore.Qt.DisplayRole):
-        if not index.isValid():
-            return None
-        idx = index.row()
-        if idx not in self._data:
-            return None
-        if role not in self._data[idx]:
-            return None
-        return self._data[idx][role]
-
-    def flags(self, index):
-        return (
-                QtCore.Qt.ItemNeverHasChildren |
-                QtCore.Qt.ItemIsEnabled |
-                QtCore.Qt.ItemIsSelectable
-        )
-
-
-class BookmarksModel(BaseModel):
-    def __init__(self, parent=None):
-        super(BookmarksModel, self).__init__(parent=parent)
-
-    def init_data(self, load_all=False):
+    def init_data(self):
         k = common.active('root', path=True)
         if not k or not QtCore.QFileInfo(k).exists():
             return
 
-        pixmap = images.ImageCache.get_rsc_pixmap(
+        icon = ui.get_icon(
             'bookmark',
-            common.color(common.SeparatorColor),
-            common.size(common.WidthMargin) * 2
+            size=common.size(common.WidthMargin) * 2,
+            color=common.color(common.SeparatorColor)
         )
-        icon = QtGui.QIcon(pixmap)
 
-        if not load_all:
-            self._data[0] = {
-                QtCore.Qt.DisplayRole: self.display_name(k),
-                QtCore.Qt.DecorationRole: ui.get_icon(
-                    'check', color=common.color(common.GreenColor)
-                ),
-                QtCore.Qt.ForegroundRole: common.color(common.TextSelectedColor),
-                QtCore.Qt.SizeHintRole: ROW_SIZE,
-                QtCore.Qt.StatusTipRole: k,
-                QtCore.Qt.AccessibleDescriptionRole: k,
-                QtCore.Qt.WhatsThisRole: k,
-                QtCore.Qt.ToolTipRole: k,
-            }
-            return
-
-        if not common.bookmarks:
-            return
-
-        for k in sorted(common.bookmarks.keys()):
-            active = common.active('root', path=True) == k
-            self._data[len(self._data)] = {
-                QtCore.Qt.DisplayRole: self.display_name(k),
-                QtCore.Qt.DecorationRole: ui.get_icon(
-                    'check', color=common.color(common.GreenColor)
-                ) if active else icon,
-                QtCore.Qt.ForegroundRole: common.color(
-                    common.TextSelectedColor
-                ) if active else common.color(common.TextSecondaryColor),
-                QtCore.Qt.SizeHintRole: ROW_SIZE,
-                QtCore.Qt.StatusTipRole: k,
-                QtCore.Qt.AccessibleDescriptionRole: k,
-                QtCore.Qt.WhatsThisRole: k,
-                QtCore.Qt.ToolTipRole: k,
-            }
+        self._data[len(self._data)] = {
+            QtCore.Qt.DisplayRole: self.display_name(k),
+            QtCore.Qt.DecorationRole: ui.get_icon(
+                'check', color=common.color(common.GreenColor)
+            ),
+            QtCore.Qt.ForegroundRole: common.color(common.TextSelectedColor),
+            QtCore.Qt.SizeHintRole: self.row_size,
+            QtCore.Qt.StatusTipRole: k,
+            QtCore.Qt.AccessibleDescriptionRole: k,
+            QtCore.Qt.WhatsThisRole: k,
+            QtCore.Qt.ToolTipRole: k,
+        }
 
 
 class BookmarkComboBox(QtWidgets.QComboBox):
     def __init__(self, parent=None):
-        super(BookmarkComboBox, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
         self.setModel(BookmarksModel())
 
 
-class AssetsModel(BaseModel):
-    def init_data(self, load_all=False):
+class AssetsModel(ui.AbstractListModel):
+    def init_data(self):
         k = common.active('asset', path=True)
         if not k or not QtCore.QFileInfo(k).exists():
             return
 
-        pixmap = images.ImageCache.get_rsc_pixmap(
+        icon = ui.get_icon(
             'asset',
-            common.color(common.SeparatorColor),
-            common.size(common.WidthMargin) * 2
-        )
-        icon = QtGui.QIcon(pixmap)
-
-        if not load_all:
-            self._data[0] = {
-                QtCore.Qt.DisplayRole: self.display_name(k),
-                QtCore.Qt.DecorationRole: ui.get_icon(
-                    'check', color=common.color(common.GreenColor)
-                ),
-                QtCore.Qt.ForegroundRole: common.color(common.TextSelectedColor),
-                QtCore.Qt.SizeHintRole: ROW_SIZE,
-                QtCore.Qt.StatusTipRole: k,
-                QtCore.Qt.AccessibleDescriptionRole: k,
-                QtCore.Qt.WhatsThisRole: k,
-                QtCore.Qt.ToolTipRole: k,
-            }
-            return
-
-        # Let's get the identifier from the bookmark database
-        db = database.get_db(*common.active('root', args=True))
-        ASSET_IDENTIFIER = db.value(
-            db.source(),
-            'identifier',
-            database.BookmarkTable
+            size=common.size(common.WidthMargin) * 2,
+            color=common.color(common.SeparatorColor)
         )
 
-        for entry in os.scandir(db.source()):
-            if entry.name.startswith('.'):
-                continue
-            if not entry.is_dir():
-                continue
-            filepath = entry.path.replace('\\', '/')
-
-            if ASSET_IDENTIFIER:
-                identifier = '{}/{}'.format(
-                    filepath, ASSET_IDENTIFIER
-                )
-                if not QtCore.QFileInfo(identifier).exists():
-                    continue
-
-            active = common.active('asset', path=True) == entry.name
-            self._data[len(self._data)] = {
-                QtCore.Qt.DisplayRole: self.display_name(filepath),
-                QtCore.Qt.DecorationRole: ui.get_icon(
-                    'check', color=common.color(common.GreenColor)
-                ) if active else icon,
-                QtCore.Qt.ForegroundRole: common.color(
-                    common.TextSelectedColor
-                ) if active else common.color(common.TextSecondaryColor),
-                QtCore.Qt.SizeHintRole: ROW_SIZE,
-                QtCore.Qt.StatusTipRole: filepath,
-                QtCore.Qt.AccessibleDescriptionRole: filepath,
-                QtCore.Qt.WhatsThisRole: filepath,
-                QtCore.Qt.ToolTipRole: filepath,
-            }
+        self._data[len(self._data)] = {
+            QtCore.Qt.DisplayRole: self.display_name(k),
+            QtCore.Qt.DecorationRole: ui.get_icon(
+                'check', color=common.color(common.GreenColor)
+            ),
+            QtCore.Qt.ForegroundRole: common.color(common.TextSelectedColor),
+            QtCore.Qt.SizeHintRole: self.row_size,
+            QtCore.Qt.StatusTipRole: k,
+            QtCore.Qt.AccessibleDescriptionRole: k,
+            QtCore.Qt.WhatsThisRole: k,
+            QtCore.Qt.ToolTipRole: k,
+        }
 
     def display_name(self, v):
         k = common.active('root', path=True)
@@ -206,14 +86,14 @@ class AssetsModel(BaseModel):
 
 class AssetComboBox(QtWidgets.QComboBox):
     def __init__(self, parent=None):
-        super(AssetComboBox, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
         self.setModel(AssetsModel())
 
 
 class TaskComboBox(QtWidgets.QComboBox):
     def __init__(self, mode=SceneMode, parent=None):
-        super(TaskComboBox, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
         self.setModel(TaskModel(mode=mode))
 
@@ -225,10 +105,10 @@ class TaskComboBox(QtWidgets.QComboBox):
         model.init_data()
 
 
-class TaskModel(BaseModel):
+class TaskModel(ui.AbstractListModel):
     def __init__(self, mode, parent=None):
         self._mode = mode
-        super(TaskModel, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
     def mode(self):
         return self._mode
@@ -236,6 +116,8 @@ class TaskModel(BaseModel):
     def set_mode(self, v):
         self._mode = v
 
+    @common.error
+    @common.debug
     def init_data(self):
         self._data = {}
 
@@ -244,77 +126,69 @@ class TaskModel(BaseModel):
             return
 
         # Load the available task folders from the active bookmark item's `tokens`.
-        config = tokens.get(*common.active('root', args=True))
-        data = config.data()
-        if not isinstance(data, dict):
-            return
+        self._add_separator('Scenes')
+        self._add_subfolders(tokens.SceneFolder, 'icon_bw')
+        self._add_separator('Caches')
+        self._add_subfolders(tokens.CacheFolder, 'file')
+        self._add_separator('Custom (click \'Pick\' to add new)')
 
-        for v in sorted(
-                data[tokens.AssetFolderConfig].values(), key=lambda x: x['value']
-        ):
-            if v['name'] != self._mode:
-                continue
-            if 'subfolders' not in v:
-                continue
+    def _add_subfolders(self, token, icon):
+        folder = tokens.get_folder(token)
+        description = tokens.get_description(token)
+        for sub_folder in tokens.get_subfolders(token):
 
-            for _v in sorted(v['subfolders'].values(), key=lambda x: x['value']):
-                if common.active('task') == _v['value']:
-                    pixmap = images.ImageCache.get_rsc_pixmap(
-                        'check', common.color(common.GreenColor),
-                        common.size(common.WidthMargin) * 2
-                    )
-                else:
-                    pixmap = images.ImageCache.get_rsc_pixmap(
-                        'icon_bw', None, common.size(common.WidthMargin) * 2
-                    )
-                icon = QtGui.QIcon(pixmap)
+            if common.active('task') == sub_folder:
+                _icon = ui.get_icon(
+                    'check',
+                    color=common.color(common.GreenColor),
+                    size=common.size(common.WidthMargin) * 2
+                )
+            else:
+                _icon = ui.get_icon(
+                    icon,
+                    size=common.size(common.WidthMargin) * 2
+                )
 
-                name = '{}/{}'.format(v['value'], _v['value'])
-                self._data[len(self._data)] = {
-                    QtCore.Qt.DisplayRole: self.display_name(name),
-                    QtCore.Qt.DecorationRole: icon,
-                    QtCore.Qt.ForegroundRole: common.color(common.TextColor) if v[
-                                                                                    'name'] == 'scene' else common.color(
-                        common.TextSecondaryColor
-                    ),
-                    QtCore.Qt.SizeHintRole: ROW_SIZE,
-                    QtCore.Qt.StatusTipRole: _v['description'],
-                    QtCore.Qt.AccessibleDescriptionRole: _v['description'],
-                    QtCore.Qt.WhatsThisRole: _v['description'],
-                    QtCore.Qt.ToolTipRole: _v['description'],
-                    QtCore.Qt.UserRole: name,
-                }
+            v = f'{folder}/{sub_folder}'
+            self._data[len(self._data)] = {
+                QtCore.Qt.DisplayRole: self.display_name(v),
+                QtCore.Qt.DecorationRole: _icon,
+                QtCore.Qt.ForegroundRole: common.color(common.TextColor),
+                QtCore.Qt.SizeHintRole: self.row_size,
+                QtCore.Qt.StatusTipRole: description,
+                QtCore.Qt.AccessibleDescriptionRole: description,
+                QtCore.Qt.WhatsThisRole: description,
+                QtCore.Qt.ToolTipRole: description,
+                QtCore.Qt.UserRole: v,
+            }
 
     def add_item(self, path):
         self.modelAboutToBeReset.emit()
-
         self.beginResetModel()
 
-        pixmap = images.ImageCache.get_rsc_pixmap(
-            'folder', common.color(common.SeparatorColor),
-            common.size(common.WidthMargin) * 2
+        _icon = ui.get_icon(
+            'folder',
+            size=common.size(common.WidthMargin) * 2
         )
+
         self._data[len(self._data)] = {
-            QtCore.Qt.DisplayRole: path.split('/').pop(),
-            QtCore.Qt.DecorationRole: QtGui.QIcon(pixmap),
+            QtCore.Qt.DisplayRole: self.display_name(path),
+            QtCore.Qt.DecorationRole: _icon,
             QtCore.Qt.ForegroundRole: common.color(common.TextColor),
-            QtCore.Qt.SizeHintRole: ROW_SIZE,
+            QtCore.Qt.SizeHintRole: self.row_size,
             QtCore.Qt.UserRole: path,
         }
 
         self.endResetModel()
 
 
-class TemplateModel(BaseModel):
+class TemplateModel(ui.AbstractListModel):
     def init_data(self):
-        server = common.active('server')
-        job = common.active('job')
-        root = common.active('root')
-
-        if not all((server, job, root)):
+        args = common.active('root', args=True)
+        if not all(args):
             return
 
-        config = tokens.get(server, job, root)
+        config = tokens.get(*args)
         data = config.data()
         if not isinstance(data, dict):
             return
@@ -322,21 +196,21 @@ class TemplateModel(BaseModel):
         template = common.settings.value('file_saver/template')
         for v in data[tokens.FileNameConfig].values():
             if template == v['name']:
-                pixmap = images.ImageCache.get_rsc_pixmap(
-                    'check', common.color(common.GreenColor),
-                    common.size(common.WidthMargin) * 2
+                icon = ui.get_icon(
+                    'check',
+                    color=common.color(common.GreenColor),
+                    size=common.size(common.WidthMargin) * 2
                 )
             else:
-                pixmap = images.ImageCache.get_rsc_pixmap(
-                    'file', common.color(common.SeparatorColor),
-                    common.size(common.WidthMargin) * 2
+                icon = ui.get_icon(
+                    'file',
+                    size=common.size(common.WidthMargin) * 2
                 )
-            icon = QtGui.QIcon(pixmap)
 
             self._data[len(self._data)] = {
                 QtCore.Qt.DisplayRole: v['name'],
                 QtCore.Qt.DecorationRole: icon,
-                QtCore.Qt.SizeHintRole: ROW_SIZE,
+                QtCore.Qt.SizeHintRole: self.row_size,
                 QtCore.Qt.StatusTipRole: v['description'],
                 QtCore.Qt.AccessibleDescriptionRole: v['description'],
                 QtCore.Qt.WhatsThisRole: v['description'],
@@ -347,12 +221,12 @@ class TemplateModel(BaseModel):
 
 class TemplateComboBox(QtWidgets.QComboBox):
     def __init__(self, parent=None):
-        super(TemplateComboBox, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
         self.setModel(TemplateModel())
 
 
-class ExtensionModel(BaseModel):
+class FormatModel(ui.AbstractListModel):
     def init_data(self):
         server = common.active('server')
         job = common.active('job')
@@ -367,25 +241,26 @@ class ExtensionModel(BaseModel):
             return
 
         for v in data[tokens.FileFormatConfig].values():
-            if v['flag'] == tokens.ImageFormat:
-                continue
+            self._add_separator(v['name'])
+
             for ext in [f.lower().strip() for f in v['value'].split(',')]:
                 try:
-                    pixmap = images.ImageCache.get_rsc_pixmap(
-                        ext, None, common.size(common.WidthMargin) * 2,
+                    icon = ui.get_icon(
+                        ext,
+                        color=None,
+                        size=common.size(common.WidthMargin) * 2,
                         resource=common.FormatResource
                     )
                 except:
-                    pixmap = images.ImageCache.get_rsc_pixmap(
-                        'placeholder', common.color(common.SeparatorColor),
-                        common.size(common.WidthMargin) * 2
+                    icon = ui.get_icon(
+                        'file',
+                        size=common.size(common.WidthMargin) * 2
                     )
 
-                icon = QtGui.QIcon(pixmap)
                 self._data[len(self._data)] = {
                     QtCore.Qt.DisplayRole: ext,
                     QtCore.Qt.DecorationRole: icon,
-                    QtCore.Qt.SizeHintRole: ROW_SIZE,
+                    QtCore.Qt.SizeHintRole: self.row_size,
                     QtCore.Qt.StatusTipRole: v['description'],
                     QtCore.Qt.AccessibleDescriptionRole: v['description'],
                     QtCore.Qt.WhatsThisRole: v['description'],
@@ -394,41 +269,11 @@ class ExtensionModel(BaseModel):
                 }
 
 
-class ExtensionComboBox(QtWidgets.QComboBox):
+class FormatComboBox(QtWidgets.QComboBox):
     def __init__(self, parent=None):
-        super(ExtensionComboBox, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
-        self.setModel(ExtensionModel())
-
-
-class FileNamePreview(QtWidgets.QLabel):
-    def __init__(self, parent=None):
-        super(FileNamePreview, self).__init__(parent=parent)
-        self.setSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding,
-            QtWidgets.QSizePolicy.Fixed
-        )
-        self.setFixedHeight(common.size(common.HeightRow))
-        self.setAlignment(QtCore.Qt.AlignCenter)
-        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-
-        self.setText('Hello world')
-
-    def paintEvent(self, event):
-        painter = QtGui.QPainter()
-        painter.begin(self)
-
-        o = common.size(common.HeightSeparator)
-        rect = self.rect().adjusted(o, o, -o, -o)
-        pen = QtGui.QPen(common.color(common.SeparatorColor))
-        pen.setWidthF(common.size(common.HeightSeparator))
-        painter.setPen(pen)
-        painter.setBrush(common.color(common.BackgroundDarkColor))
-
-        o = common.size(common.WidthIndicator)
-        painter.drawRoundedRect(rect, o, o)
-        painter.end()
+        self.setModel(FormatModel())
 
 
 class PrefixEditor(QtWidgets.QDialog):

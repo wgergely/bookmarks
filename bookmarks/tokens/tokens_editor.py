@@ -15,9 +15,10 @@ from .. import ui
 from ..editor import base
 
 SECTIONS = (
-    (tokens.FileNameConfig, 'Templates: File Names'),
-    (tokens.AssetFolderConfig, 'Templates: Asset Folders'),
-    (tokens.FileFormatConfig, 'Templates: Formats'),
+    (tokens.PublishConfig, 'Configure publish folders'),
+    (tokens.FileNameConfig, 'Configure file-name templates'),
+    (tokens.AssetFolderConfig, 'Configure asset folders'),
+    (tokens.FileFormatConfig, 'Configure file-format filters'),
 )
 
 
@@ -321,6 +322,14 @@ class TokenConfigEditor(QtWidgets.QWidget):
                 )
 
                 row.layout().addWidget(editor)
+
+                if section == tokens.PublishConfig:
+                    editor.setValidator(base.tokenvalidator)
+                    button = ui.PaintedButton('+', parent=row)
+                    button.clicked.connect(
+                        functools.partial(self.show_token_editor, editor)
+                    )
+                    row.layout().addWidget(button, 0)
 
                 if section == tokens.FileNameConfig:
                     editor.setValidator(base.tokenvalidator)

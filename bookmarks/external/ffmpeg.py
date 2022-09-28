@@ -29,6 +29,11 @@ def _safe_format(s, **kwargs):
     return string.Formatter().vformat(s, (), SafeDict(**kwargs))
 
 
+H264HQ = 0
+H264LQ = 1
+DNxHD90 = 2
+
+
 _preset_info = ', drawtext=fontfile={FONT}:text=\'{' \
                'LABEL}%{{frame_num}}\':start_number={' \
                'STARTFRAME}:x=lh:y=h-(lh*2.5):fontcolor=white:fontsize=ceil(' \
@@ -108,7 +113,7 @@ SIZE_PRESETS = {
 }
 
 PRESETS = {
-    0: {
+    H264HQ: {
         'name': 'H.264 | MP4 | HQ',
         'description': 'Creates a H.264 video, can be used to preview or publish '
                        'image sequence previews',
@@ -118,7 +123,7 @@ PRESETS = {
         ),
         'output_extension': 'mp4',
     },
-    1: {
+    H264LQ: {
         'name': 'H.264 | MP4 | LQ',
         'description': 'Creates a H.264 video, can be used to preview or publish '
                        'image sequence previews',
@@ -128,7 +133,7 @@ PRESETS = {
         ),
         'output_extension': 'mp4'
     },
-    2: {
+    DNxHD90: {
         'name': 'DNxHD | MOV | 1080p (90Mbps)',
         'description': 'DNxHD video for Avid - output size must be set to 1080p',
         'preset': _safe_format(
@@ -287,7 +292,7 @@ def _get_progress_bar(startframe, endframe):
 @common.debug
 def convert(
         path, preset, server=None, job=None, root=None, asset=None, task=None,
-        size=(None, None), timecode=False
+        size=(None, None), timecode=False, output_path=None
 ):
     """Start a convert process using ffmpeg.
 
@@ -300,6 +305,7 @@ def convert(
         asset (str): A path segment.
         task (str): A path segment.
         size (tuple(int, int)): The output video width in pixels.
+        output_path (str): Video output path.
 
     Returns:
         str: The path to the generated movie file or `None` when the process fails.
@@ -316,14 +322,15 @@ def convert(
     common.check_type(asset, (str, None))
     common.check_type(task, (str, None))
     common.check_type(size, (tuple, None))
+    common.check_type(output_path, (str, None))
 
     # First, let's check if FFMPEG is available.
-    FFMPEG_BIN = common.get_binary('ffmpeg')
-    if not FFMPEG_BIN:
+    ffmpeg_bin = common.get_binary('ffmpeg')
+    if not ffmpeg_bin:
         raise RuntimeError('Could not find FFMpeg binary.')
-    if not QtCore.QFileInfo(FFMPEG_BIN).exists():
+    if not QtCore.QFileInfo(ffmpeg_bin).exists():
         raise RuntimeError('FFMpeg is set but the file does not exist.')
-    FFMPEG_BIN = os.path.normpath(FFMPEG_BIN)
+    ffmpeg_bin = os.path.normpath(ffmpeg_bin)
 
     server = server if server else common.active('server')
     job = job if job else common.active('job')
@@ -339,7 +346,7 @@ def convert(
         PRESETS[f]['output_extension'] for f in PRESETS
         if PRESETS[f]['preset'] == preset
     )
-    output_path = _output_path_from_seq(seq, ext)
+    output_path = output_path if output_path else _output_path_from_seq(seq, ext)
 
     # Let's use the input image size if not specified directly
     if not all(size):
@@ -363,7 +370,7 @@ def convert(
 
     # Get all properties and construct the ffmpeg command
     cmd = preset.format(
-        BIN=FFMPEG_BIN,
+        BIN=ffmpeg_bin,
         FRAMERATE=_get_framerate(server, job, root),
         STARTFRAME=startframe,
         INPUT=_input_path_from_seq(seq),
@@ -418,4 +425,5 @@ def convert(
                 '\n'.join(lines[-5:])
             ).open()
             return None
+
     return output_path

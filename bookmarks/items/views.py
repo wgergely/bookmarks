@@ -1362,7 +1362,7 @@ class BaseInlineIconWidget(BaseListWidget):
                 if shift_modifier:
                     # Shift modifier will add a "positive" filter and hide all items
                     # that does not contain the given text.
-                    folder_filter = f'"/{text}/"'
+                    folder_filter = f'"{text}"'
 
                     if folder_filter in filter_text:
                         filter_text = filter_text.replace(folder_filter, '')
@@ -1374,8 +1374,8 @@ class BaseInlineIconWidget(BaseListWidget):
                 elif alt_modifier or control_modifier:
                     # The alt or control modifiers will add a "negative filter"
                     # and hide the selected sub-folder from the view
-                    folder_filter = f'--"/{text}/"'
-                    _folder_filter = f'"/{text}/"'
+                    folder_filter = f'--"{text}"'
+                    _folder_filter = f'"{text}"'
 
                     if filter_text:
                         if _folder_filter in filter_text:

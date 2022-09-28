@@ -61,7 +61,7 @@ def add_section(icon, label, parent, color=None):
 
     """
     common.check_type(icon, (None, str))
-    common.check_type(label, str)
+    common.check_type(label,  (None, str))
     common.check_type(parent, QtWidgets.QWidget)
     common.check_type(color, (QtGui.QColor, None))
 
@@ -410,6 +410,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
         """Add a header button to help reveal the given section widget.
 
         """
+        if not name:
+            return
         button = QtWidgets.QPushButton(
             name,
             parent=self.section_headers_widget

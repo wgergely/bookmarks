@@ -31,7 +31,6 @@ Attributes:
 
 """
 import os
-import re
 
 from PySide2 import QtWidgets, QtCore
 
@@ -183,7 +182,7 @@ SECTIONS = {
             },
             2: {
                 0: {
-                    'name': 'Prefix',
+                    'name': 'Project Prefix',
                     'key': 'prefix',
                     'validator': base.textvalidator,
                     'widget': ui.LineEdit,
@@ -193,7 +192,7 @@ SECTIONS = {
                     'button': 'Edit'
                 },
                 1: {
-                    'name': 'Element',
+                    'name': 'Specify Element',
                     'key': 'file_saver/element',
                     'validator': base.textvalidator,
                     'widget': ui.LineEdit,
@@ -202,7 +201,7 @@ SECTIONS = {
                                    '\'ForegroundTower\', or \'BackgroundElements\'',
                 },
                 2: {
-                    'name': 'Version',
+                    'name': 'File Version',
                     'key': 'version',
                     'validator': base.versionvalidator,
                     'widget': ui.LineEdit,
@@ -225,7 +224,7 @@ SECTIONS = {
                     'name': 'Format',
                     'key': 'file_saver/extension',
                     'validator': None,
-                    'widget': file_saver_widgets.ExtensionComboBox,
+                    'widget': file_saver_widgets.FormatComboBox,
                     'placeholder': 'File extension, e.g. \'exr\'',
                     'description': 'A file extension, without the leading dot. e.g.'
                                    ' \'ma\'',
@@ -341,7 +340,7 @@ class FileSaverWidget(base.BasePropertyEditor):
         self._file_path = None
 
         self.update_timer = common.Timer(parent=self)
-        self.update_timer.setInterval(10)
+        self.update_timer.setInterval(100)
         self.update_timer.setSingleShot(False)
         self.update_timer.timeout.connect(self.verify_unique)
 
@@ -349,7 +348,7 @@ class FileSaverWidget(base.BasePropertyEditor):
             self.set_file(file)
             return
 
-        self.update_timer.timeout.connect(self.set_name)
+        self.update_timer.timeout.connect(self.update_expanded_template)
         self.update_timer.timeout.connect(self.set_thumbnail_source)
 
     def file_path(self):
@@ -408,16 +407,16 @@ class FileSaverWidget(base.BasePropertyEditor):
         return self.filename_editor.text()
 
     @QtCore.Slot()
-    def set_name(self):
+    def update_expanded_template(self):
         """Slot connected to the update timer used to preview the current
         file name.
 
         """
-        bookmark = '/'.join((self.server, self.job, self.root))
-        asset_root = '/'.join((self.server, self.job, self.root, self.asset))
-
         template = self.file_saver_template_editor.currentData(QtCore.Qt.UserRole)
         config = tokens.get(self.server, self.job, self.root)
+
+        if not self.parent_folder():
+            return tokens.invalid_token
 
         def _strip(s):
             return (
@@ -444,41 +443,26 @@ class FileSaverWidget(base.BasePropertyEditor):
             return _strip(v)
 
         # Get generic shot and sequence numbers from the current asset name
-        match = re.match(
-            r'.*(?:SQ|SEQ|SEQUENCE)([0-9]+).*',
-            self.parent_folder(),
-            re.IGNORECASE
-        )
-        seq = match.group(1) if match else '{invalid_token}'
-        match = re.match(
-            r'.*(?:SH|SHOT)([0-9]+).*',
-            self.parent_folder(),
-            re.IGNORECASE
-        )
-        shot = match.group(1) if match else '{invalid_token}'
-
+        seq, shot = common.get_sequence_and_shot(self.parent_folder())
         v = config.expand_tokens(
             template,
-            asset_root=asset_root,
-            bookmark=bookmark,
             asset=_get('asset'),
             user=_get('file_saver_user'),
             version=_get('version').lower(),
             task=_get('file_saver_task'),
-            mode=_get('file_saver_task'),
-            element=_get('file_saver_element'),
-            seq=seq,
+            element=_get('file_saver_element') if _get('file_saver_element') else 'main',
+            sh=shot,
             shot=shot,
+            sq=seq,
+            seq=seq,
             sequence=seq,
-            project=self.job,
             ext=_get('file_saver_extension').lower()
         )
         v = _strip(v)
+        r = common.rgb(common.color(common.RedColor))
         v = v.replace(
-            '{invalid_token}',
-            '<span style="color:{}">{{invalid_token}}</span>'.format(
-                common.rgb(common.color(common.RedColor))
-            )
+            tokens.invalid_token,
+            f'<span style="color:{r}">{tokens.invalid_token}</span>'
         )
 
         v = v.replace(
@@ -599,7 +583,7 @@ class FileSaverWidget(base.BasePropertyEditor):
             return
 
         # Increment the version if the source already exists
-        self.set_name()
+        self.update_expanded_template()
 
         # Set a default the version string if not set previously
         if not self.version_editor.text():
@@ -646,7 +630,7 @@ class FileSaverWidget(base.BasePropertyEditor):
 
         """
         name = self.name()
-        if not name or '{invalid_token}' in name or '###' in name:
+        if not name or tokens.invalid_token in name or '###' in name:
             raise RuntimeError('Invalid token in output name')
 
         self.create_file()
@@ -670,7 +654,7 @@ class FileSaverWidget(base.BasePropertyEditor):
         _dir = self.parent_folder()
 
         name = self.name()
-        if not name or not _dir or '{invalid_token}' in name or '###' in name:
+        if not name or not _dir or tokens.invalid_token in name or '###' in name:
             raise RuntimeError('Invalid token in output name')
 
         _dir = QtCore.QDir(_dir)
@@ -708,7 +692,7 @@ class FileSaverWidget(base.BasePropertyEditor):
         if not _dir:
             return
 
-        if source not in _dir:
+        if source not in _dir or source == _dir:
             ui.ErrorBox(
                 'Invalid selection',
                 'Make sure to select a folder inside the current asset.'
@@ -716,6 +700,9 @@ class FileSaverWidget(base.BasePropertyEditor):
             return
 
         relative_path = _dir.replace(source, '').strip('/')
+        if not relative_path:
+            raise RuntimeError('Invalid folder selection.')
+
         self.add_task(relative_path)
 
     def add_task(self, relative_path):

@@ -10,13 +10,13 @@ from ... import common
 from ... import images
 
 
-def show(path, ref, parent, oiio=False):
+def show(path, ref, parent, oiio=False, max_size=-1):
     k = repr(parent)
     if k not in common.VIEWER_WIDGET_CACHE:
         common.VIEWER_WIDGET_CACHE[k] = ImageViewer(parent=parent)
 
     common.VIEWER_WIDGET_CACHE[k].show()
-    common.VIEWER_WIDGET_CACHE[k].set_image(path, ref, oiio=oiio)
+    common.VIEWER_WIDGET_CACHE[k].set_image(path, ref, max_size=max_size, oiio=oiio)
 
 
 def get_item_info(ref):
@@ -183,7 +183,7 @@ class ImageViewer(QtWidgets.QWidget):
 
     @QtCore.Slot(str)
     @QtCore.Slot(weakref.ref)
-    def set_image(self, source, ref, oiio=False):
+    def set_image(self, source, ref, max_size=-1, oiio=False):
         """Loads an image and displays the contents as a QPixmap item.
 
         """
@@ -192,9 +192,10 @@ class ImageViewer(QtWidgets.QWidget):
         self._source = source
         self._ref = ref
 
-        if oiio is False and QtCore.QFileInfo(
-                source
-        ).suffix().lower() not in images.QT_IMAGE_FORMATS:
+        if (
+                oiio is False and
+                QtCore.QFileInfo(source).suffix().lower() not in images.QT_IMAGE_FORMATS
+        ):
             raise RuntimeError('Qt cannot display the source image.')
 
         # Wait for the thread to finish loading the thumbnail

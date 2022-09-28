@@ -1834,3 +1834,14 @@ def delete_selected_files(index):
             v[common.FlagsRole] = QtCore.Qt.NoItemFlags | common.MarkedAsArchived
 
     index.model().invalidateFilter()
+
+
+@common.error
+@common.debug
+@selection
+def show_publish_widget(index):
+    from . import publish as editor
+
+    index = QtCore.QPersistentModelIndex(index)
+    widget = editor.show(index)
+    return widget

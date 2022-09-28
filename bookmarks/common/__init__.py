@@ -144,6 +144,7 @@ bookmark_editor_widget = None
 bookmark_property_editor = None
 asset_property_editor = None
 file_saver_widget = None
+publish_widget = None
 
 sg_connecting_message = None
 sg_error_message = None

@@ -6,9 +6,9 @@ functionality is limited and is currently only used to signal new publishes.
 
 import base64
 import json
-import os
 
 import requests
+from PySide2 import QtGui, QtCore
 
 from .. import common
 from .. import images
@@ -23,14 +23,6 @@ PUBLISH_MESSAGE = {
                 "type": "AdaptiveCard",
                 "body": [
                     {
-                        "type": "TextBlock",
-                        "text": "Publish",
-                        "fontType": "Default",
-                        "size": "Large",
-                        "weight": "Bolder",
-                        "spacing": "Large"
-                    },
-                    {
                         "type": "ColumnSet",
                         "columns": [
                             {
@@ -39,18 +31,12 @@ PUBLISH_MESSAGE = {
                                     {
                                         "type": "TextBlock",
                                         "isSubtle": True,
-                                        "horizontalAlignment": "Left",
-                                        "text": "Shot"
+                                        "text": "Asset",
+                                        "horizontalAlignment": "Left"
                                     },
                                     {
                                         "type": "TextBlock",
                                         "text": "Type",
-                                        "isSubtle": True,
-                                        "horizontalAlignment": "Left",
-                                    },
-                                    {
-                                        "type": "TextBlock",
-                                        "text": "Path",
                                         "isSubtle": True,
                                         "horizontalAlignment": "Left",
                                     },
@@ -65,7 +51,13 @@ PUBLISH_MESSAGE = {
                                         "text": "Date",
                                         "isSubtle": True,
                                         "horizontalAlignment": "Left"
-                                    }
+                                    },
+                                    {
+                                        "type": "TextBlock",
+                                        "text": "Path",
+                                        "isSubtle": True,
+                                        "horizontalAlignment": "Left",
+                                    },
                                 ],
                                 "verticalContentAlignment": "Top",
                                 "horizontalAlignment": "Left",
@@ -78,34 +70,35 @@ PUBLISH_MESSAGE = {
                                 "items": [
                                     {
                                         "type": "TextBlock",
-                                        "text": "<SEQ>_<SHOT>",
+                                        "text": "<ASSET>",
                                         "weight": "Bolder",
-                                        "horizontalAlignment": "Left"
+                                        "horizontalAlignment": "Left",
+                                        "wrap": True
                                     },
                                     {
                                         "type": "TextBlock",
                                         "horizontalAlignment": "Left",
-                                        "text": "<TYPE>"
-                                    },
-                                    {
-                                        "type": "RichTextBlock",
-                                        "inlines": [
-                                            {
-                                                "type": "TextRun",
-                                                "text": "<PATH>"
-                                            }
-                                        ]
+                                        "text": "<TASK>",
+                                        "wrap": True
                                     },
                                     {
                                         "type": "TextBlock",
                                         "text": "<USER>",
-                                        "horizontalAlignment": "Left"
+                                        "horizontalAlignment": "Left",
+                                        "wrap": True,
                                     },
                                     {
                                         "type": "TextBlock",
                                         "text": "<DATE>",
-                                        "horizontalAlignment": "Left"
-                                    }
+                                        "horizontalAlignment": "Left",
+                                        "wrap": True,
+                                    },
+                                    {
+                                        "type": "TextBlock",
+                                        "horizontalAlignment": "Left",
+                                        "text": "<PATH>",
+                                        "wrap": True
+                                    },
                                 ],
                             }
                         ],
@@ -117,7 +110,7 @@ PUBLISH_MESSAGE = {
                     }
                 ],
                 "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-                "version": "1.3",
+                "version": "1.2",
                 "verticalContentAlignment": "Top"
             }
         }
@@ -151,8 +144,7 @@ def send(webhook, payload):
 def get_payload(
         card,
         thumbnail=None,
-        seq='SEQ###',
-        shot='SH###',
+        asset='',
         publish_type='',
         path='',
         date='',
@@ -164,22 +156,22 @@ def get_payload(
         dict: The payload data as a dictionary.
 
     """
-    if not thumbnail or not os.path.isfile(thumbnail):
-        thumbnail = images.ImageCache.get_rsc_pixmap(
-            'placeholder',
-            None,
-            common.thumbnail_size,
-            get_path=True
-        )
+    image = QtGui.QImage(thumbnail)
+    image = images.ImageCache.resize_image(image, 256)
 
-    base64_thumbnail = base64.b64encode(open(thumbnail, 'rb').read()).decode()
+    ba = QtCore.QByteArray()
+    buffer = QtCore.QBuffer(ba)
+    buffer.open(QtCore.QIODevice.WriteOnly)
+    image.save(buffer, 'PNG')
+    base64_data = ba.toBase64().data().decode('utf-8')
+
     data = json.dumps(card)
     data = data. \
-        replace('<IMAGE>', base64_thumbnail). \
-        replace('<TYPE>', publish_type). \
-        replace('<SEQ>', seq). \
-        replace('<SHOT>', shot). \
+        replace('<IMAGE>', base64_data). \
+        replace('<TASK>', publish_type). \
+        replace('<ASSET>', asset). \
         replace('<PATH>', path). \
         replace('<USER>', user). \
         replace('<DATE>', date)
+
     return json.loads(data)

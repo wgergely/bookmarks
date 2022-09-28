@@ -116,6 +116,7 @@ SECTIONS = {
         'publish/task',
         'publish/copy_path',
         'publish/reveal',
+        'publish/teams_notification',
     ),
 }
 

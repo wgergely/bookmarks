@@ -50,6 +50,7 @@ TOKENS_DB_KEY = 'tokens'
 
 FileFormatConfig = 'FileFormatConfig'
 FileNameConfig = 'FileNameConfig'
+PublishConfig = 'PublishConfig'
 AssetFolderConfig = 'AssetFolderConfig'
 
 SceneFormat = 0b1
@@ -154,26 +155,25 @@ DEFAULT_TOKEN_CONFIG = {
     },
     FileNameConfig: {
         0: {
-            'name': 'Asset Scene File',
+            'name': 'Asset Scene Task',
             'value': '{prefix}_{asset}_{mode}_{element}_{user}_{version}.{ext}',
-            'description': 'Uses the project prefix, asset, mode, element, '
+            'description': 'Uses the project prefix, asset, task, element, '
                            'user and version names'
         },
         1: {
-            'name': 'Asset Scene File (without mode and element)',
+            'name': 'Asset Scene File (without task and element)',
             'value': '{prefix}_{asset}_{user}_{version}.{ext}',
             'description': 'Uses the project prefix, asset, user and version names'
         },
         2: {
-            'name': 'Shot Scene File',
-            'value': '{prefix}_SEQ{seq}_SH{shot}_{mode}_{element}_{user}_{'
-                     'version}.{ext}',
+            'name': 'Shot Scene Task',
+            'value': '{prefix}_{seq}_{shot}_{mode}_{element}_{user}_{version}.{ext}',
             'description': 'Uses the project prefix, sequence, shot, mode, element, '
                            'user and version names'
         },
         3: {
-            'name': 'Shot Scene File (without mode and element)',
-            'value': '{prefix}_SEQ{seq}_SH{shot}_{user}_{version}.{ext}',
+            'name': 'Shot Scene Task (without task and element)',
+            'value': '{prefix}_{seq}_{shot}_{user}_{version}.{ext}',
             'description': 'Uses the project prefix, sequence, shot, user and '
                            'version names'
         },
@@ -186,6 +186,32 @@ DEFAULT_TOKEN_CONFIG = {
             'name': 'Non-Versioned Element',
             'value': '{element}.{ext}',
             'description': 'A non-versioned element file'
+        },
+    },
+    PublishConfig: {
+        0: {
+            'name': 'Shot Task',
+            'value': '{server}/{job}/publish/{sequence}_{shot}/{task}/{element}/{prefix}_{sequence}_{shot}_{task}_{element}.{ext}',
+            'description': 'Publish a shot task element',
+            'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
+        },
+        1: {
+            'name': 'Asset Task',
+            'value': '{server}/{job}/publish/asset_{asset}/{task}/{element}/{prefix}_{asset}_{task}_{element}.{ext}',
+            'description': 'Publish an asset task element',
+            'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
+        },
+        3: {
+            'name': 'Shot Thumbnail',
+            'value': '{server}/{job}/publish/{sequence}_{shot}/thumbnail.{ext}',
+            'description': 'Publish an shot thumbnail',
+            'filter': ImageFormat,
+        },
+        4: {
+            'name': 'Asset Thumbnail',
+            'value': '{server}/{job}/publish/asset_{asset}/thumbnail.{ext}',
+            'description': 'Publish an asset thumbnail',
+            'filter': ImageFormat,
         },
     },
     AssetFolderConfig: {
@@ -399,11 +425,11 @@ def get(server, job, root, force=False):
 
 
 def get_folder(token):
-    """Find the name of the `tokens.CacheFolder` folder based on
+    """Find the value an asset folder token based on
     the bookmark item's token configuration.
 
     Returns:
-        str: The current value of tokens.CacheFolder.
+        str: The current folder value.
 
     """
     server = common.active('server')
@@ -414,20 +440,20 @@ def get_folder(token):
         raise RuntimeError('No active bookmark item found.')
 
     config = get(server, job, root)
-    v = config.get_asset_folder_name(token)
+    v = config.get_asset_folder(token)
     return v if v else token
 
 
 def get_subfolder(token, name):
-    """Find the name of a subdirectory in the `config.CacheFolder` folder based on
-    the bookmark item's token configuration.
+    """Find the value an asset sub-folder based on the bookmark item's token
+    configuration.
 
     Args:
-        token (str): A folder name, e.g. `tokens.CacheFolder`.
-        name (str): The name of a sub folder.
+        token (str): Asset folder token, e.g. `tokens.CacheFolder`.
+        name (str): Sub-folder token.
 
     Returns:
-        str: The value corresponding to the passed sub folder name.
+        str: The value of the current asset sub-folder.
 
     """
     server = common.active('server')
@@ -438,8 +464,49 @@ def get_subfolder(token, name):
         raise RuntimeError('No active bookmark item found.')
 
     config = get(server, job, root)
-    v = config.get_asset_subfolder_name(token, name)
+    v = config.get_asset_subfolder(token, name)
     return v if v else name
+
+
+def get_subfolders(token):
+    """Find all asset sub-folder values based on the bookmark item's token configuration.
+
+    Args:
+        token (str): Asset folder token, e.g. `tokens.CacheFolder`.
+
+    Returns:
+        list: A list of current asset sub-folder values.
+
+    """
+    server = common.active('server')
+    job = common.active('job')
+    root = common.active('root')
+
+    if not all((server, job, root)):
+        raise RuntimeError('No active bookmark item found.')
+
+    config = get(server, job, root)
+    return config.get_asset_subfolders(token)
+
+def get_description(token):
+    """Get a description of a token.
+
+    Args:
+        token (str): A token, e.g. `tokens.SceneFormat`.
+
+    Returns:
+        str: Description of the item.
+
+    """
+    server = common.active('server')
+    job = common.active('job')
+    root = common.active('root')
+
+    if not all((server, job, root)):
+        raise RuntimeError('No active bookmark item found.')
+
+    config = get(server, job, root)
+    return config.get_description(token)
 
 
 class TokenConfig(QtCore.QObject):
@@ -488,14 +555,16 @@ class TokenConfig(QtCore.QObject):
                 TOKENS_DB_KEY,
                 database.BookmarkTable
             )
-            # Let's do some very basic sanity check for the returned data
-            if (
-                    isinstance(v, dict) and
-                    FileFormatConfig in v and
-                    FileNameConfig in v and
-                    AssetFolderConfig in v
-            ):
-                self._data = v
+            if not v or not isinstance(v, dict):
+                v = {}
+
+            # Patch data with default values if any section is missing
+            for k in DEFAULT_TOKEN_CONFIG:
+                if k not in v:
+                    v[k] = DEFAULT_TOKEN_CONFIG[k].copy()
+
+            self._data = v
+
             return self._data
         except (RuntimeError, ValueError, TypeError):
             log.error('Failed to get token config from the database.')
@@ -556,38 +625,40 @@ class TokenConfig(QtCore.QObject):
                 )
             )
 
-    def get_description(self, item, force=False):
-        """Utility method used to get the description of an item.
+    def get_description(self, token, force=False):
+        """Utility method used to get the description of a token.
 
         Args:
-            item (str):    A file-format or a folder name, e.g. 'anim'.
+            token (str):    A file-format or a folder name, e.g. 'anim'.
             force (bool, optional): Force retrieve tokens from the database.
 
         Returns:
-            str: The description of the item.
+            str: The description of the token.
 
         """
-        data = self.data(force=force)
+        common.check_type(token, str)
 
-        common.check_type(item, str)
+        data = self.data(force=force)
+        if not data:
+            return ''
 
         for value in data.values():
             for v in value.values():
-                if item.lower() == v['value'].lower():
+                if token.lower() == v['value'].lower():
                     return v['description']
 
                 if 'subfolders' not in v:
                     continue
 
                 for _v in v['subfolders'].values():
-                    if item.lower() == _v['value'].lower():
+                    if token.lower() == _v['value'].lower():
                         return _v['description']
         return ''
 
     def expand_tokens(
-            self, s, user=getpass.getuser(), version='v001',
-            host=socket.gethostname(), task='anim',
-            ext=common.thumbnail_format, prefix=None, **_kwargs
+            self, s, user=common.get_username(), version='v001',
+            host=socket.gethostname(), task='main',
+            ext=None, prefix=None, **_kwargs
     ):
         """Expands all valid tokens of the given string, based on the current
         database values.
@@ -612,12 +683,20 @@ class TokenConfig(QtCore.QObject):
         kwargs = self.get_tokens(
             user=user,
             version=version,
+            ver=version,
             host=host,
+            workstation=host,
             task=task,
+            mode=task,
             ext=ext,
+            extension=ext,
+            format=ext,
             prefix=prefix,
             **_kwargs
         )
+
+        for k in [f for f in kwargs if kwargs[f] is None]:
+            del kwargs[k]
 
         # To avoid KeyErrors when invalid tokens are passed we will replace
         # the these with a custom marker
@@ -646,6 +725,7 @@ class TokenConfig(QtCore.QObject):
 
         tokens['server'] = self.server
         tokens['job'] = self.job
+        tokens['project'] = self.job
         tokens['root'] = self.root
 
         tokens['bookmark'] = f'{self.server}/{self.job}/{self.root}'
@@ -702,7 +782,7 @@ class TokenConfig(QtCore.QObject):
             if not isinstance(v['value'], str):
                 continue
             extensions += [f.strip() for f in v['value'].split(',')]
-        return tuple(sorted(list(set(extensions))))
+        return tuple(sorted(set(extensions)))
 
     def check_task(self, task, force=False):
         common.check_type(task, str)
@@ -741,7 +821,7 @@ class TokenConfig(QtCore.QObject):
             return set(self.get_extensions(v['filter']))
         return set()
 
-    def get_asset_folder_name(self, k, force=False):
+    def get_asset_folder(self, k, force=False):
         """Return the name of an asset folder based on the current token config
         values.
 
@@ -755,8 +835,9 @@ class TokenConfig(QtCore.QObject):
                 return v['value']
         return None
 
-    def get_asset_subfolder_name(self, token, folder, force=False):
-        """Returns the value of a sub folder in the token config.
+    def get_asset_subfolder(self, token, folder, force=False):
+        """Returns the value of an asset sub-folder based on the current token config
+        values.
 
         Args:
             token (str): An asset folder name (not value!),
@@ -781,3 +862,30 @@ class TokenConfig(QtCore.QObject):
                 if subfolder['name'] == folder:
                     return subfolder['value']
         return None
+
+
+    def get_asset_subfolders(self, token, force=False):
+        """Returns the value of an asset sub-folder based on the current token config
+        values.
+
+        Args:
+            token (str): An asset folder name (not value!),
+                e.g.`tokens.ExportFolder`.
+            force (bool, optional): Force reload data from the database.
+
+        Returns:
+            list: A tuple of folder names.
+
+        """
+        data = self.data(force=force)
+        if not data:
+            return []
+
+        for v in data[AssetFolderConfig].values():
+            if v['name'] != token:
+                continue
+            if 'subfolders' not in v:
+                continue
+            return sorted({_v['value'] for _v in v['subfolders'].values()})
+
+        return []

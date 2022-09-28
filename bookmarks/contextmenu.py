@@ -491,12 +491,12 @@ class BaseContextMenu(QtWidgets.QMenu):
         if not self.index.isValid():
             return
 
-        maxwidth = common.size(common.DefaultWidth) * 0.4
+        max_width = common.size(common.DefaultWidth) * 0.4
 
         k = 'Copy Path'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
-            self.menu['{}:icon'.format(k)] = ui.get_icon('copy')
+            self.menu[f'{k}:icon'] = ui.get_icon('copy')
 
         path = self.index.data(common.PathRole)
         metrics = QtGui.QFontMetrics(self.font())
@@ -506,8 +506,8 @@ class BaseContextMenu(QtWidgets.QMenu):
             m = key()
             n = actions.copy_path(path, mode=mode, copy=False)
 
-            if metrics.horizontalAdvance(n) > maxwidth:
-                n = metrics.elidedText(n, QtCore.Qt.ElideMiddle, maxwidth)
+            if metrics.horizontalAdvance(n) > max_width:
+                n = metrics.elidedText(n, QtCore.Qt.ElideMiddle, max_width)
 
             self.menu[k][m] = {
                 'text': n,
@@ -542,8 +542,8 @@ class BaseContextMenu(QtWidgets.QMenu):
             return
 
         path = f'$JOB/{path}'
-        if metrics.horizontalAdvance(path) > maxwidth:
-            n = metrics.elidedText(path, QtCore.Qt.ElideMiddle, maxwidth)
+        if metrics.horizontalAdvance(path) > max_width:
+            n = metrics.elidedText(path, QtCore.Qt.ElideMiddle, max_width)
 
         self.menu[k][m] = {
             'text': n,
@@ -1507,13 +1507,13 @@ class BaseContextMenu(QtWidgets.QMenu):
     def extra_menu(self):
         """The custom client menu"""
         try:
-            from .studioaka import context
-            from .studioaka import publish
-            from .studioaka import publishwidget
+            import akapipe
         except ModuleNotFoundError:
             return
         except ImportError:
             return
+
+        from .studioaka import pipe
 
         k = u'Studio Aka'
         if k not in self.menu:
@@ -1525,30 +1525,8 @@ class BaseContextMenu(QtWidgets.QMenu):
             'icon': ui.get_icon(
                 'studioaka', color=common.color(common.GreenColor)
             ),
-            'action': context.show_akapipe
+            'action': pipe.show_akapipe
         }
-
-        self.separator()
-
-        if self.index.isValid():
-            model = self.index.model().sourceModel()
-            idx = self.index.model().mapToSource(self.index).row()
-            data = model.model_data()
-            ref = weakref.ref(data[idx])
-
-            path = self.index.data(common.PathRole)
-            ext = path.split('.')[-1]
-            valid = [v for v in publish.PRESETS.values() if ext in v['formats']]
-            valid = valid if common.is_collapsed(path) else False
-
-            if valid:
-                self.menu[k][key()] = {
-                    'text': 'Publish Footage',
-                    'icon': ui.get_icon(
-                        'studioaka', color=common.color(common.GreenColor)
-                    ),
-                    'action': functools.partial(publishwidget.show, ref)
-                }
 
     def delete_selected_files_menu(self):
         if not self.index.isValid():
@@ -1558,4 +1536,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             'icon': ui.get_icon('close', color=common.color(common.RedColor)),
             'text': 'Delete',
             'action': actions.delete_selected_files,
+        }
+
+    def publish_menu(self):
+        pixmap = ui.get_icon('file', color=common.color(common.GreenColor))
+        self.menu[key()] = {
+            'icon': pixmap,
+            'text': 'Publish...',
+            'action': actions.show_publish_widget,
         }

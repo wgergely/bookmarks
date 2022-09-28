@@ -112,12 +112,9 @@ SECTIONS = {
         'maya_export/keep_open',
     ),
     'publish': (
-        'publish/type',
-        'publish/make_video',
-        'publish/preset',
-        'publish/size',
-        'publish/timecode',
-        'publish/copy_to_clipboard',
+        'publish/template',
+        'publish/task',
+        'publish/copy_path',
         'publish/reveal',
     ),
 }

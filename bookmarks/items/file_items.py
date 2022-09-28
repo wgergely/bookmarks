@@ -282,6 +282,9 @@ class FilesWidgetContextMenu(contextmenu.BaseContextMenu):
         self.separator()
         self.launcher_menu()
         self.separator()
+        if self.index and self.index.isValid() and self.index.flags() & QtCore.Qt.ItemIsEnabled:
+            self.publish_menu()
+            self.separator()
         if self.index.flags() & QtCore.Qt.ItemIsEnabled:
             self.sg_publish_menu()
             self.sg_rv_menu()

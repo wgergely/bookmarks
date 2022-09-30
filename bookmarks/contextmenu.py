@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
-"""Contextmenu implementation used across Bookmarks.
+"""The base context menu implementation used across Bookmarks.
 
-All context menus used across Bookmarks derive from the `BaseContextMenu`.
-
-The `BaseContextMenu` contains all context menu options but the abstract `setup`
-method must be overriden to define which menus will appear.
+All context menus derive from the :class:`BaseContextMenu`. The class contains the 
+definitions of _all_ menu options. See :meth:`BaseContextMenu.setup` for menu overrides 
+and definitions. 
 
 """
 import collections
 import functools
 import uuid
-import weakref
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
@@ -26,13 +24,13 @@ from .shotgun import shotgun
 
 
 def key():
-    """Utility method used to generate a hexidecimal uuid string."""
+    """Utility method used to generate a hexadecimal uuid string."""
     return uuid.uuid1().hex
 
 
-def _showEvent_override(cls, event):
+def show_event_override(cls, event):
     """Private utility method for manually calculating the width of
-    `BaseContextMenu`.
+    :class:.`BaseContextMenu`.
 
     I might be misunderstanding how styling menus effect appearance and resulting
     size. What is certain, that QT doesn't seem to be able to display the menus
@@ -42,29 +40,29 @@ def _showEvent_override(cls, event):
     widths = []
     metrics = QtGui.QFontMetrics(cls.font())
 
-    CONTEXT_MENU_HEIGHT = common.size(common.WidthMargin) * 2
-    CONTEXT_MENU_ICON_PADDING = common.size(common.WidthMargin)
+    menu_height = common.size(common.WidthMargin) * 2
+    icon_padding = common.size(common.WidthMargin)
 
     show_icons = common.settings.value('settings/show_menu_icons')
     show_icons = not show_icons if show_icons is not None else True
 
     for action in cls.actions():
         w = 0
-        w += CONTEXT_MENU_HEIGHT
+        w += menu_height
         if show_icons:
-            w += CONTEXT_MENU_ICON_PADDING
+            w += icon_padding
         if action.text():
             w += metrics.horizontalAdvance(action.text())
         if action.shortcut() and action.shortcut().toString(
                 format=QtGui.QKeySequence.NativeText
         ):
-            w += CONTEXT_MENU_ICON_PADDING
+            w += icon_padding
             w += metrics.horizontalAdvance(
                 action.shortcut().toString(
                     format=QtGui.QKeySequence.NativeText
                 )
             )
-        w += CONTEXT_MENU_HEIGHT
+        w += menu_height
         widths.append(int(w))
 
     if not widths:
@@ -76,18 +74,35 @@ def _showEvent_override(cls, event):
 class BaseContextMenu(QtWidgets.QMenu):
     """Base class containing the context menu definitions.
 
-    The internal menu structure is defined in `self.menu`, a
-    `collections.OrderedDict` instance. The data is expanded into a UI layout by
-    `self.create_menu`. The menu is principally designed to work with
-    index-based views and as a result the default constructor takes a
-    QModelIndex, stored in `self.index`.
+    The internal menu structure is defined in :attr:`BaseContextMenu.menu`,
+    a `collections.OrderedDict` instance. This data is populated by the *_menu methods
+    and expanded into a UI layout by :meth:`BaseContextMenu.create_menu`. The menu is
+    principally designed to work with index-based views and as a result the default
+    constructor takes a QModelIndex, stored in :attr:`BaseContextMenu.index`.
+
+    The internal :attr:`BaseContextMenu.menu` dict object assumes the following form:
+
+    .. code-block:: python
+
+        self.menu = collections.OrderedDict({
+            'uuid1': {
+                'text': 'My Menu Item',
+                'icon': get_icon('my_menu_icon'),   # QIcon
+                'shortcut: QtGui.QShortcut('Ctrl+M'), # QtGui.QShortcut
+                'disabled': False,
+                'action': my_menu_function1,         # a method to execute
+            },
+            'uuid2': {
+                'text': 'My Menu Item2',
+                'icon': get_icon('my_menu_icon'),
+                'shortcut: QtGui.QShortcut('Ctrl+N'),
+                'disabled': True,
+                'action': my_menu_function2,
+            }
+        })
 
     Properties:
         index (QModelIndex): The index the context menu is associated with.
-
-    Methods:
-        create_menu():  Populates the menu with actions based on the
-                        ``self.menu`` given.
 
     """
 
@@ -106,9 +121,7 @@ class BaseContextMenu(QtWidgets.QMenu):
     @common.debug
     @common.error
     def setup(self):
-        """An abstract method that must be overridden by subclasses.
-
-        Call the methods to define which menu items should be showing.
+        """Override this method do define which menus will appear in subclasses.
 
         """
         raise NotImplementedError('Abstract method must be implemented by subclass.')
@@ -116,29 +129,7 @@ class BaseContextMenu(QtWidgets.QMenu):
     @common.debug
     @common.error
     def create_menu(self, menu, parent=None):
-        """Translates the internal `self.menu` data into a menus and actions.
-
-        The menu structure is defined in the internal `self.menu` dict object
-        and assumes the following form:
-
-        .. code-block:: python
-
-            self.menu = collections.OrderedDict({
-                'uuid1': {
-                    'text': 'My Menu Item',
-                    'icon': get_icon('my_menu_icon'),   # QIcon
-                    'shortcut: QtGui.QShortcut('Ctrl+M'), # QtGui.QShortcut
-                    'disabled': False,
-                    'action': my_menu_function1,         # a method to execute
-                },
-                'uuid2': {
-                    'text': 'My Menu Item2',
-                    'icon': get_icon('my_menu_icon'),
-                    'shortcut: QtGui.QShortcut('Ctrl+N'),
-                    'disabled': True,
-                    'action': my_menu_function2,
-                }
-            })
+        """Expands the internal :attr:`BaseContextMenu.menu` dict data.
 
         """
         show_icons = common.settings.value('settings/show_menu_icons')
@@ -155,7 +146,7 @@ class BaseContextMenu(QtWidgets.QMenu):
                 submenu = QtWidgets.QMenu(k, parent=parent)
                 submenu.create_menu = self.create_menu
                 submenu.showEvent = functools.partial(
-                    _showEvent_override, submenu
+                    show_event_override, submenu
                 )
 
                 if f'{k}:icon' in menu and show_icons:
@@ -236,7 +227,7 @@ class BaseContextMenu(QtWidgets.QMenu):
                     action.setVisible(True)
 
     def showEvent(self, event):
-        _showEvent_override(self, event)
+        show_event_override(self, event)
 
     def separator(self, menu=None):
         if menu is None:
@@ -244,6 +235,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         menu['separator' + key()] = None
 
     def window_menu(self):
+        """General application window specific actions.
+
+        """
         if common.init_mode == common.EmbeddedMode:
             return
 
@@ -324,7 +318,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[k][key()] = {
                 'text': 'Full Screen',
                 'icon': on_icon if full_screen else None,
-                'action': actions.toggle_fullscreen,
+                'action': actions.toggle_full_screen,
                 'shortcut': shortcuts.get(
                     shortcuts.MainWidgetShortcuts, shortcuts.FullScreen
                 ).key(),
@@ -336,6 +330,9 @@ class BaseContextMenu(QtWidgets.QMenu):
             pass
 
     def sort_menu(self):
+        """List item sorting options.
+
+        """
         item_on_icon = ui.get_icon('check', color=common.color(common.GreenColor))
 
         m = self.parent().model().sourceModel()
@@ -376,10 +373,13 @@ class BaseContextMenu(QtWidgets.QMenu):
             }
 
     def reveal_item_menu(self):
+        """List item file reveal options.
+
+        """
         if not self.index.isValid():
             return
 
-        path = common.get_sequence_startpath(
+        path = common.get_sequence_start_path(
             self.index.data(common.PathRole)
         )
 
@@ -399,6 +399,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         return
 
     def bookmark_url_menu(self):
+        """Bookmark item URL actions.
+
+        """
         if not self.index.isValid():
             return
         if not self.index.data(common.PathRole):
@@ -446,6 +449,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.separator(self.menu[k])
 
     def asset_url_menu(self):
+        """Asset item URL actions.
+
+        """
         if not self.index.isValid():
             return
         if not self.index.data(common.PathRole):
@@ -488,6 +494,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.separator(self.menu[k])
 
     def copy_menu(self):
+        """List item path copy actions.
+
+        """
         if not self.index.isValid():
             return
 
@@ -552,6 +561,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def toggle_item_flags_menu(self):
+        """List item filter flag toggle actions.
+
+        """
         if not self.index.isValid():
             return
 
@@ -562,7 +574,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         favourite = self.index.flags() & common.MarkedAsFavourite
         archived = self.index.flags() & common.MarkedAsArchived
 
-        if self.__class__.__name__ == 'BookmarksWidgetContextMenu':
+        if self.__class__.__name__ == 'BookmarkItemViewContextMenu':
             text = 'Remove Bookmark'
         else:
             text = 'Archived'
@@ -602,12 +614,15 @@ class BaseContextMenu(QtWidgets.QMenu):
         return
 
     def list_filter_menu(self):
+        """List item filter actions.
+
+        """
         item_on = ui.get_icon('check', color=common.color(common.GreenColor))
         item_off = None
 
         k = 'List Filters'
         self.menu[k] = collections.OrderedDict()
-        self.menu['{}:icon'.format(k)] = ui.get_icon('filter')
+        self.menu[f'{k}:icon'] = ui.get_icon('filter')
 
         self.menu[k]['EditSearchFilter'] = {
             'text': 'Edit Search Filter...',
@@ -684,6 +699,9 @@ class BaseContextMenu(QtWidgets.QMenu):
             }
 
     def row_size_menu(self):
+        """List item row size actions.
+
+        """
         k = 'Change Row Height'
         self.menu[k] = collections.OrderedDict()
         self.menu[f'{k}:icon'] = ui.get_icon('expand')
@@ -729,6 +747,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def refresh_menu(self):
+        """List item reload/refresh options.
+
+        """
         self.menu[key()] = {
             'text': 'Refresh List',
             'action': actions.refresh,
@@ -744,6 +765,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def preferences_menu(self):
+        """Application preferences actions.
+
+        """
         self.menu[key()] = {
             'text': 'Preferences...',
             'action': actions.show_preferences,
@@ -759,6 +783,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def quit_menu(self):
+        """Application shutdown options.
+
+        """
         if common.init_mode == common.EmbeddedMode:
             return
         self.menu[key()] = {
@@ -775,16 +802,10 @@ class BaseContextMenu(QtWidgets.QMenu):
             )
         }
 
-    def title(self):
-        if not self.index.isValid():
-            return
-        title = self.index.data(common.PathRole).split('/')[-1]
-        self.menu[key()] = {
-            'text': title,
-            'disabled': True,
-        }
-
     def thumbnail_menu(self):
+        """Thumbnail image specific actions.
+
+        """
         if not self.index.isValid():
             return
 
@@ -816,6 +837,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             'icon': ui.get_icon('image'),
             'action': actions.preview_thumbnail
         }
+
         self.menu[key()] = {
             'text': 'Preview Image',
             'icon': ui.get_icon('image'),
@@ -870,11 +892,14 @@ class BaseContextMenu(QtWidgets.QMenu):
             }
 
     def bookmark_editor_menu(self):
+        """Bookmark item properties editor.
+
+        """
         icon = ui.get_icon('add', color=common.color(common.GreenColor))
         self.menu[key()] = {
-            'text': 'Edit Active Bookmarks...',
+            'text': 'Add & Remove Bookmark Items...',
             'icon': icon,
-            'action': actions.show_add_bookmark,
+            'action': actions.show_bookmarker,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
                 shortcuts.AddItem
@@ -886,6 +911,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def add_asset_to_bookmark_menu(self):
+        """Add asset to bookmark item actions.
+
+        """
         if not self.index.isValid():
             return
         server, job, root = self.index.data(common.ParentPathRole)[0:3]
@@ -898,11 +926,14 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def collapse_sequence_menu(self):
+        """File item collapse toggle actions.
+
+        """
         expand_pixmap = ui.get_icon('expand')
         collapse_pixmap = ui.get_icon('collapse', common.color(common.GreenColor))
 
-        currenttype = self.parent().model().sourceModel().data_type()
-        groupped = currenttype == common.SequenceItem
+        current_type = self.parent().model().sourceModel().data_type()
+        groupped = current_type == common.SequenceItem
 
         self.menu[key()] = {
             'text': 'Show Sequences' if groupped else 'Show Files',
@@ -920,6 +951,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def task_folder_toggle_menu(self):
+        """File item task folder picker menu.
+
+        """
         if not common.active('asset'):
             return
 
@@ -962,6 +996,9 @@ class BaseContextMenu(QtWidgets.QMenu):
             }
 
     def remove_favourite_menu(self):
+        """List item favourite actions.
+
+        """
         self.menu[key()] = {
             'text': 'Remove from starred...',
             'icon': ui.get_icon('close', color=common.color(common.RedColor)),
@@ -970,6 +1007,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def control_favourites_menu(self):
+        """Favourite item actions.
+
+        """
         remove_icon = ui.get_icon('close')
 
         self.menu[key()] = {
@@ -993,6 +1033,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def add_file_menu(self):
+        """Add file actions.
+
+        """
         self.menu[key()] = {
             'text': 'Add File...',
             'icon': ui.get_icon('add', color=common.color(common.GreenColor)),
@@ -1008,6 +1051,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def add_file_to_asset_menu(self):
+        """Add file to asset actions.
+
+        """
         if not self.index.isValid():
             return
 
@@ -1019,6 +1065,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def notes_menu(self):
+        """Note editor actions.
+
+        """
         if not self.index.isValid():
             return
 
@@ -1037,6 +1086,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def edit_selected_bookmark_menu(self):
+        """Bookmark item properties editor actions.
+
+        """
         if not self.index.isValid():
             return
 
@@ -1065,6 +1117,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def bookmark_clipboard_menu(self):
+        """Bookmark item properties clipboard actions.
+
+        """
         if not self.index.isValid():
             return
 
@@ -1107,6 +1162,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def asset_clipboard_menu(self):
+        """Asset item properties clipboard menu.
+
+        """
         if not self.index.isValid():
             return
 
@@ -1149,6 +1207,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def edit_active_bookmark_menu(self):
+        """Active bookmark item property menu.
+
+        """
         settings_icon = ui.get_icon('settings')
 
         k = 'Properties'
@@ -1163,6 +1224,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def edit_selected_asset_menu(self):
+        """Selected asset item property menu.
+
+        """
         if not self.index.isValid():
             return
 
@@ -1189,6 +1253,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def edit_active_asset_menu(self):
+        """Selected asset item property menu.
+
+        """
         settings_icon = ui.get_icon('settings')
 
         k = 'Properties'
@@ -1211,6 +1278,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def edit_selected_file_menu(self):
+        """Selected file item property menu.
+
+        """
         if not self.index.isValid():
             return
 
@@ -1236,7 +1306,10 @@ class BaseContextMenu(QtWidgets.QMenu):
             ),
         }
 
-    def show_addasset_menu(self):
+    def show_add_asset_menu(self):
+        """Add asset menu actions.
+
+        """
         add_pixmap = ui.get_icon('add', color=common.color(common.GreenColor))
         self.menu[key()] = {
             'icon': add_pixmap,
@@ -1253,6 +1326,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def launcher_menu(self):
+        """Application launcher menu actions.
+
+        """
         self.menu[key()] = {
             'icon': ui.get_icon('icon'),
             'text': 'Application Launcher',
@@ -1260,6 +1336,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def sg_thumbnail_menu(self):
+        """ShotGrid thumbnail image menu actions.
+
+        """
         if not self.index.isValid():
             return
 
@@ -1288,7 +1367,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         k = 'ShotGrid'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
-            self.menu['{}:icon'.format(k)] = ui.get_icon('sg')
+            self.menu[f'{k}:icon'] = ui.get_icon('sg')
 
         self.menu[k][key()] = {
             'text': 'Upload Thumbnail to ShotGrid...',
@@ -1299,6 +1378,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def sg_url_menu(self):
+        """ShotGrid URL menu actions.
+
+        """
         if not self.index.isValid():
             return
         if not self.index.data(common.PathRole):
@@ -1331,6 +1413,9 @@ class BaseContextMenu(QtWidgets.QMenu):
             }
 
     def sg_link_bookmark_menu(self):
+        """ShotGrid bookmark item menu actions.
+
+        """
         if not self.index.isValid():
             return
 
@@ -1355,6 +1440,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def sg_link_asset_menu(self):
+        """ShotGrid asset linker menu actions.
+
+        """
         if not self.index.isValid():
             return
         if len(self.index.data(common.ParentPathRole)) < 4:
@@ -1373,7 +1461,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         server, job, root, asset = self.index.data(common.ParentPathRole)[0:4]
         for entity_type in ('Asset', 'Shot', 'Sequence'):
             self.menu[k][key()] = {
-                'text': 'Link item with ShotGrid {}'.format(entity_type.title()),
+                'text': f'Link item with ShotGrid {entity_type.title()}',
                 'icon': ui.get_icon('sg'),
                 'action': functools.partial(
                     sg_actions.link_asset_entity, server, job, root, asset,
@@ -1382,6 +1470,9 @@ class BaseContextMenu(QtWidgets.QMenu):
             }
 
     def sg_link_assets_menu(self):
+        """ShotGrid batch asset linker menu actions.
+
+        """
         sg_properties = shotgun.ShotgunProperties(active=True)
         sg_properties.init()
         if not sg_properties.verify(bookmark=True):
@@ -1402,6 +1493,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.separator(self.menu[k])
 
     def sg_rv_menu(self):
+        """ShotGrid RV menu actions.
+
+        """
         if not self.index.isValid():
             return
 
@@ -1413,7 +1507,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[k] = collections.OrderedDict()
             self.menu[f'{k}:icon'] = ui.get_icon('sg')
 
-        path = common.get_sequence_startpath(
+        path = common.get_sequence_start_path(
             self.index.data(common.PathRole)
         )
 
@@ -1432,6 +1526,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def sg_publish_menu(self):
+        """ShotGrid publish menu actions.
+
+        """
         server = common.active('server')
         job = common.active('job')
         root = common.active('root')
@@ -1491,6 +1588,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def import_json_menu(self):
+        """JSON property import menu.
+
+        """
         k = 'Properties'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
@@ -1505,7 +1605,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.separator(menu=self.menu[k])
 
     def extra_menu(self):
-        """The custom client menu"""
+        """A placeholder for site-specific menu actions.
+
+        """
         try:
             import akapipe
         except ModuleNotFoundError:
@@ -1529,6 +1631,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def delete_selected_files_menu(self):
+        """Delete file item menu actions.
+
+        """
         if not self.index.isValid():
             return
 
@@ -1539,6 +1644,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         }
 
     def publish_menu(self):
+        """Publish file item menu actions.
+
+        """
         pixmap = ui.get_icon('file', color=common.color(common.GreenColor))
         self.menu[key()] = {
             'icon': pixmap,

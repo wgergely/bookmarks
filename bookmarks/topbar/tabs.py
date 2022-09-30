@@ -245,7 +245,7 @@ class FilesTabButton(BaseTabButton):
         self.clicked.emit()
 
     def paintEvent(self, event):
-        """Indicating the visibility of the TaskFolderWidget."""
+        """Indicating the visibility of the TaskItemView."""
         if common.widget(common.TaskTab).isHidden():
             super().paintEvent(event)
             return

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Interface to interact with the item data cache.
 
 All data loaded by the item models are stored in :attr:`~bookmarks.common.item_data`.

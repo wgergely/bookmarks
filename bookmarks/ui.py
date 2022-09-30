@@ -346,7 +346,7 @@ class MessageBox(QtWidgets.QDialog):
         while self.fade_in.state() != QtCore.QAbstractAnimation.Stopped:
             QtCore.QCoreApplication.processEvents()
 
-    def exec_(self):
+    def exec(self):
         common.center_window(self)
         self.show()
         if self.fade_in.state() != QtCore.QAbstractAnimation.Running:
@@ -1518,10 +1518,8 @@ class GalleryWidget(QtWidgets.QDialog):
             common.center_window(self)
 
 
-
-
 class AbstractListModel(QtCore.QAbstractListModel):
-    """Generic base model used to store custom data.
+    """Generic list model used to store custom data.
 
     """
 

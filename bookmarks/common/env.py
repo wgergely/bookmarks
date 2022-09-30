@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""Utility methods and classes used to parse environment values.
+
+Mainly used to get binary paths, such as ffmpeg.
+
+"""
 import functools
 import os
 import re
@@ -36,7 +42,7 @@ def get_binary(binary_name):
     if binary_name.lower() not in [f.lower() for f in external_binaries]:
         raise ValueError(f'{binary_name} is not a recognised binary name.')
 
-    v = _get_user_setting(binary_name)
+    v = get_user_setting(binary_name)
     if v:
         return v
 
@@ -59,7 +65,7 @@ def get_binary(binary_name):
     return v
 
 
-def _get_user_setting(binary_name):
+def get_user_setting(binary_name):
     """Check if there's a corresponding user setting for the given binary name.
 
     The user settings are stored using the binary name prefixed with a 'bin',
@@ -174,6 +180,9 @@ class EnvPathEditor(QtWidgets.QWidget):
         self.init_data()
 
     def _create_ui(self):
+        """Create ui.
+
+        """
         QtWidgets.QVBoxLayout(self)
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(0)
@@ -203,6 +212,9 @@ class EnvPathEditor(QtWidgets.QWidget):
             setattr(self, f'{name}_button2', button2)
 
     def _connect_signals(self):
+        """Connect signals.
+
+        """
         from . import common
         for name in external_binaries:
             if not name:
@@ -219,6 +231,9 @@ class EnvPathEditor(QtWidgets.QWidget):
 
     @QtCore.Slot(str)
     def pick(self, name):
+        """Pick a binary file from the file explorer.
+
+        """
         from . import common
 
         editor = getattr(self, f'{name}_editor')
@@ -236,6 +251,12 @@ class EnvPathEditor(QtWidgets.QWidget):
 
     @QtCore.Slot(str)
     def reveal(self, name):
+        """Reveal a binary file in the file explorer.
+
+        Args:
+            name (str): The name of the binary file to be revealed.
+
+        """
         from .. import actions
         editor = getattr(self, f'{name}_editor')
         v = editor.text()
@@ -246,6 +267,9 @@ class EnvPathEditor(QtWidgets.QWidget):
         actions.reveal(editor.text())
 
     def init_data(self):
+        """Load data.
+
+        """
         for name in external_binaries:
             v = get_binary(name)
             if not name:

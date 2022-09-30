@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Defines :class:`.FontDatabase`, a utility class used to load and store fonts used by Bookmarks.
 
 The :class:`.FontDatabase` instance is saved at :attr:`bookmarks.common.font_db`.

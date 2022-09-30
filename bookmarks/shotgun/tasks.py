@@ -40,7 +40,7 @@ def show():
 
 
 class TaskViewContextMenu(contextmenu.BaseContextMenu):
-    """The context menu associated with the AssetsWidget."""
+    """The context menu associated with the AssetItemView."""
 
     @common.debug
     @common.error

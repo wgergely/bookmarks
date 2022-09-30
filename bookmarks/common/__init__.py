@@ -19,25 +19,37 @@ Tip:
         common.initialize(common.EmbeddedMode)
 
 
-Attributes:
+The app can be run in two modes. As a standalone application, or embedded in a
+PySide2 environment. The base-layers can be initialized with:
 
-    debug_on (bool): Debug logging is on when True. See :func:`~bookmarks.common.core.debug()`.
-    typecheck_on (bool): Type checking on when True. See :func:`~bookmarks.common.core.check_type()`.
-    init_mode (int): Initialization mode. See :func:`~bookmarks.common.setup.initialize()`
-    active_mode (int): Determines how the active paths are saved and loaded.
-        See :mod:`~bookmarks.common.sessionlock` and :mod:`~bookmarks.common.settings`.
-    signals (QtCore.QObject): A QObject that holds common application signals.
-        See :mod:`~bookmarks.common.signals`.
-    settings (QtCore.QSettings): The user settings instance. See :mod:`~bookmarks.common.settings`.
-    item_data (common.DataDict): Cache used to store item data. See :mod:`~bookmarks.common.data`.
+.. code-block:: python
+
+    from bookmarks import common
+    common.initialize(common.EmbeddedMode) # or common.StandaloneMode
+
+:func:`bookmarks.exec_()` is a utility method for starting Bookmarks in
+:attr:`common.StandaloneMode`, whilst :attr:`common.EmbeddedMode` is useful when
+running from inside a host DCC. Currently only the Maya plugin makes use of this mode.
+See :mod:`bookmarks.maya` and :mod:`bookmarks.common` for the related methods.
 
 """
+#: Debug logging is on when `True`. See :func:`~bookmarks.common.core.debug`.
 debug_on = False
+
+#: Type checking on when `True`. See :func:`~bookmarks.common.core.check_type`.
 typecheck_on = True
+
+#: Initialization mode. See :func:`~bookmarks.common.setup.initialize`
 init_mode = None
+
+#: Determines how the active paths are saved and loaded.
+#: See :mod:`~bookmarks.common.sessionlock` and :mod:`~bookmarks.common.settings`.
 active_mode = None
 
+#: A QObject that holds common application signals. See :mod:`~bookmarks.common.signals`.
 signals = None
+
+#: User settings instance. See :mod:`bookmarks.common.settings`
 settings = None
 
 ui_scale_factor = 1.0  # Global ui scaling factor
@@ -58,6 +70,7 @@ db_connections = {}
 
 active_paths = None
 
+#: Cache used to store item data. See :mod:`~bookmarks.common.data`.
 item_data = {}
 monitors = {}
 
@@ -140,11 +153,12 @@ gallery_widget = None
 launcher_widget = None
 message_widget = None
 preference_editor_widget = None
-bookmark_editor_widget = None
+bookmarker_widget = None
 bookmark_property_editor = None
 asset_property_editor = None
 file_saver_widget = None
 publish_widget = None
+maya_export_widget = None
 
 sg_connecting_message = None
 sg_error_message = None
@@ -159,9 +173,8 @@ __initial_values__ = {
 from .core import *
 from .data import *
 from .env import *
-from .filemonitor import *
+from .monitor import *
 from .font import *
-from .lists import *
 from .sequence import *
 from .sessionlock import *
 from .settings import *

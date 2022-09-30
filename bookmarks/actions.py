@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """Actions modules.
 
-A list common actions used across `Bookmarks`.
+A list common user-triggered actions used across `Bookmarks`.
 
 """
 import functools
@@ -20,7 +20,10 @@ from . import images
 
 
 def must_be_initialized(func):
-    """A decorator to make sure the main widget is created and initialized
+    """A utility decorator function.
+    
+    It makes sure decorated functions only run when :attr:`common.main_widget` exists and
+    initialized. 
 
     """
 
@@ -35,8 +38,8 @@ def must_be_initialized(func):
 
 @common.error
 @common.debug
-def edit_default_bookmarks():
-    """Opens `common.default_bookmarks_template`.
+def reveal_default_bookmarks_json():
+    """Reveals :attr:`common.default_bookmarks_template` in the file explorer.
 
     """
     reveal(
@@ -49,15 +52,17 @@ def edit_default_bookmarks():
 @common.error
 @common.debug
 def add_server(v):
-    """Add an item to the list of user specified servers.
+    """Add a server item to the list of user specified servers.
 
     Args:
         v (str): A path to server, e.g. `Q:/jobs`.
 
     """
+    common.check_type(v, str)
+
     for bookmark in common.default_bookmarks.values():
         if bookmark['server'] == v:
-            raise RuntimeError('Cannot add server (server is already set)')
+            raise RuntimeError(f'Cannot add {v}. Server is already a default server.)')
 
     common.servers[v] = v
     common.settings.set_servers(common.servers)
@@ -68,7 +73,7 @@ def add_server(v):
 @common.error
 @common.debug
 def remove_server(v):
-    """Remove an item from the list of user specified servers.
+    """Remove a server item from the list of user specified servers.
 
     Args:
         v (str): A path to server, e.g. `Q:/jobs`.
@@ -80,9 +85,9 @@ def remove_server(v):
 
     bookmarks = [_v for _v in common.bookmarks.values() if v in _v['server']]
     if bookmarks:
-        raise RuntimeError(f'Can\'t remove "{v}".\nServer has {len(bookmarks)} '
-                           f'active bookmarks.'
-                           )
+        raise RuntimeError(
+            f'Can\'t remove "{v}".\nServer has {len(bookmarks)} active bookmarks.'
+       )
 
     if v in common.servers:
         del common.servers[v]
@@ -139,7 +144,7 @@ def add_bookmark(server, job, root):
 
 
 def remove_bookmark(server, job, root):
-    """Remove the given bookmark from the settings file.
+    """Remove the given bookmark from the user settings file.
 
     Removing the bookmark will also close and delete the bookmarks' database.
 
@@ -489,12 +494,9 @@ def toggle_inline_icons():
 
 @common.error
 @common.debug
-@QtCore.Slot()
+@QtCore.Slot(QtCore.Qt.CheckState)
 @must_be_initialized
 def generate_thumbnails_changed(state):
-    if state == QtCore.Qt.Checked:
-        return
-
     from .threads import threads
 
     for t in (common.FileTab, common.FavouriteTab):
@@ -609,8 +611,8 @@ def reset_row_size():
 
 @common.error
 @common.debug
-def show_add_bookmark():
-    from .bookmark_editor import bookmark_editor_widget as editor
+def show_bookmarker():
+    from .bookmarker import main as editor
     widget = editor.show()
     return widget
 
@@ -647,7 +649,7 @@ def show_add_file(
     if not all(args):
         return None
 
-    from .file_saver import file_saver as editor
+    from .file_saver import main as editor
     widget = editor.show(
         server,
         job,
@@ -713,7 +715,7 @@ def edit_file(f):
     if not all((server, job, root, asset)):
         return
 
-    from .file_saver import file_saver as editor
+    from .file_saver import main as editor
     widget = editor.show(
         server,
         job,
@@ -766,7 +768,7 @@ def show_slack():
 def add_item():
     idx = common.current_tab()
     if idx == common.BookmarkTab:
-        show_add_bookmark()
+        show_bookmarker()
     elif idx == common.AssetTab:
         show_add_asset()
     elif idx == common.FileTab:
@@ -813,7 +815,7 @@ def toggle_flag(flag, v):
 
 @common.error
 @common.debug
-def toggle_fullscreen():
+def toggle_full_screen():
     if common.main_widget.isFullScreen():
         common.main_widget.showNormal()
     else:
@@ -1006,7 +1008,7 @@ def preview_thumbnail(index):
         return
 
     source = index.data(common.PathRole)
-    source = common.get_sequence_startpath(source)
+    source = common.get_sequence_start_path(source)
 
     # Let's try to open the image outright
     # If this fails, we will try and look for a saved thumbnail image,
@@ -1042,7 +1044,7 @@ def preview_image(index):
         return
 
     source = index.data(common.PathRole)
-    source = common.get_sequence_startpath(source)
+    source = common.get_sequence_start_path(source)
 
     if QtCore.QFileInfo(source).suffix() not in images.get_oiio_extensions():
         raise RuntimeError(f'{source} is not a valid image file.')
@@ -1146,7 +1148,7 @@ def reveal(item):
     else:
         return
 
-    path = common.get_sequence_endpath(path)
+    path = common.get_sequence_end_path(path)
     if common.get_platform() == common.PlatformWindows:
         if QtCore.QFileInfo(path).isFile():
             args = ['/select,', QtCore.QDir.toNativeSeparators(path)]
@@ -1196,9 +1198,9 @@ def copy_path(path, mode=common.WindowsPath, first=True, copy=True):
 
     """
     if first:
-        path = common.get_sequence_startpath(path)
+        path = common.get_sequence_start_path(path)
     else:
-        path = common.get_sequence_endpath(path)
+        path = common.get_sequence_end_path(path)
 
     if mode is None and copy:
         QtWidgets.QApplication.clipboard().setText(path)
@@ -1211,7 +1213,7 @@ def copy_path(path, mode=common.WindowsPath, first=True, copy=True):
         r'[\/\\]',
         r'/',
         path,
-        flags=re.IGNORECASE | re.UNICODE
+        flags=re.IGNORECASE
     ).strip('/')
 
     if mode == common.WindowsPath:
@@ -1232,7 +1234,7 @@ def copy_path(path, mode=common.WindowsPath, first=True, copy=True):
             r'[\/\\]',
             r'\\',
             path,
-            flags=re.IGNORECASE | re.UNICODE
+            flags=re.IGNORECASE
         )
 
     if copy:
@@ -1261,9 +1263,9 @@ def execute(index, first=False):
         return
     path = index.data(common.PathRole)
     if first:
-        path = common.get_sequence_startpath(path)
+        path = common.get_sequence_start_path(path)
     else:
-        path = common.get_sequence_endpath(path)
+        path = common.get_sequence_end_path(path)
 
     url = QtCore.QUrl.fromLocalFile(path)
     QtGui.QDesktopServices.openUrl(url)
@@ -1372,7 +1374,7 @@ def execute_detached(path):
 @common.debug
 @common.error
 def pick_launcher_item():
-    from .launcher import launcher_gallery as editor
+    from .launcher import gallery as editor
     widget = editor.show()
     widget.itemSelected.connect(execute_detached)
 
@@ -1644,7 +1646,7 @@ def extract_zip_template(source, destination, name):
     arbitrary name of a job or an asset item to be created.
 
     Args:
-        source (str):           Path to a *.zip archive.
+        source (str):           Path to a zip archive.
         destination (str):      Path to a folder
         name (str):             Name of the root folder where the archive
                                     contents will be expanded to.

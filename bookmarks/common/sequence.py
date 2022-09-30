@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Common methods used to work with sequentially numbered file items.
 
 A sequence item is a file that has a number component that can be incremented. See
@@ -18,13 +19,6 @@ and is marked by the :attr:`.SEQSTART`, sequence range and :attr:`.SEQEND` chara
     s = 'C:/test/my_image_sequence_{1-200}.png'
     common.is_collapsed(s) # = True
 
-
-Attributes:
-    SEQSTART (str): Character used to encapsulate the sequence range of collapsed items.
-    SEQEND (str): Character used to encapsulate the sequence range of collapsed items.
-    SEQPROXY (str): Placeholder sequence marker used to associate settings and database values
-        with sequence items.
-
 """
 import functools
 import re
@@ -34,43 +28,57 @@ from PySide2 import QtCore
 
 from .. import common
 
+#: Start character used to encapsulate the sequence range of collapsed items.
 SEQSTART = '{'
+
+#: End character used to encapsulate the sequence range of collapsed items.
 SEQEND = '}'
+
+#: Placeholder sequence marker used to associate settings and database values
+#: with sequence items.
 SEQPROXY = f'{SEQSTART}0{SEQEND}'
 
+#: Regular expression used to find sequence items
 IsSequenceRegex = re.compile(
     rf'^(.+?)({SEQSTART}.*{SEQEND})(.*)$',
-    flags=re.IGNORECASE | re.UNICODE
+    flags=re.IGNORECASE
 )
+
+#: Regular expression used to get the first frame of a collapsed sequence
 SequenceStartRegex = re.compile(
     rf'^(.*){SEQSTART}([0-9]+).*{SEQEND}(.*)$',
-    flags=re.IGNORECASE | re.UNICODE
+    flags=re.IGNORECASE
 )
+
+#: Regular expression used to get the last frame of a collapsed sequence
 SequenceEndRegex = re.compile(
     rf'^(.*){SEQSTART}.*?([0-9]+){SEQEND}(.*)$',
-    flags=re.IGNORECASE | re.UNICODE
+    flags=re.IGNORECASE
 )
+
+#: Regular expression used to get the path components of a collapsed sequence
 GetSequenceRegex = re.compile(
     r'^(.*?)([0-9]+)([0-9\\/]*|[^0-9\\/]*(?=.+?))\.([^\.]+)$',
-    flags=re.IGNORECASE | re.UNICODE)
-
+    flags=re.IGNORECASE
+)
 
 @functools.lru_cache(maxsize=4194304)
 def is_collapsed(s):
-    """Checks the presence :attr:`.SEQSTART` and :attr:`.SEQEND` markers.
+    """Checks the presence :attr:`SEQSTART` and :attr:`SEQEND` markers.
 
-    When Bookmarks is displaying a sequence of files as a single item,
-    the item is *collapsed*. Every collapsed item contains the :attr:`.SEQEND`, sequence range and
-    :attr:`.SEQSTART` elements. For instance: ``image_sequence_{001-233}.png`` is a collapsed item.
+    When Bookmarks is displaying a sequence of files as a single item, the item is
+    *collapsed*. Every collapsed item contains the :attr:`SEQEND`, sequence range and
+    :attr:`SEQSTART` elements.
 
     Example:
 
         .. code-block:: python
+            :lineno:
 
-            filename = 'job_sh010_animation_[001-299]_gw.png'
+            filename = 'job_sh010_animation_{001-299}_gw.png'
             m = is_collapsed(filename)
             prefix = match.group(1) # = 'job_sh010_animation_'
-            sequence_string = match.group(2) # = '[001-299]'
+            sequence_string = match.group(2) # = '{001-299}'
             suffix = match.group(3) # = '_gw.png'
 
     Args:
@@ -89,7 +97,7 @@ def is_collapsed(s):
 
 @functools.lru_cache(maxsize=4194304)
 def get_sequence(s):
-    """Check if the given text contains a sequence element.
+    """Checks if the given text contains a sequence element.
 
     Strictly speaking, a sequence is any file that has a valid number element.
     There can only be **one** incremental element - it will always be the
@@ -175,7 +183,7 @@ def _proxy_path(v):
 
 
 @functools.lru_cache(maxsize=4194304)
-def get_sequence_startpath(path):
+def get_sequence_start_path(path):
     """Checks if given string is collapsed, and if so, returns the path of
     the first item of the sequence.
 
@@ -198,7 +206,7 @@ def get_sequence_startpath(path):
 
 
 @functools.lru_cache(maxsize=4194304)
-def get_sequence_endpath(path):
+def get_sequence_end_path(path):
     """Checks if given string is collapsed, and if so, returns the path of
     the last item of the sequence.
 

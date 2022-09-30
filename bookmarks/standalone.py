@@ -346,7 +346,7 @@ class BookmarksAppWindow(main.MainWidget):
             self.layout().setContentsMargins(0, 0, 0, 0)
 
     def update_window_flags(self, v=None):
-        """Load previously saved window flag values from user common.
+        """Load previously saved window flag values from user setting files.
 
         """
         self._frameless = common.settings.value('settings/frameless')
@@ -610,7 +610,7 @@ class BookmarksApp(QtWidgets.QApplication):
     The app will start with OpenGL and high dpi support and initializes
     the submodules.
 
-    See :func:`bookmarks.exec_`.
+    See :func:`bookmarks.exec`.
 
     """
 

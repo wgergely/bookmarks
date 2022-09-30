@@ -11,7 +11,7 @@ from .. import common
 from .. import database
 from .. import log
 from .. import ui
-from ..launcher import launcher
+from ..launcher import main as launcher
 from ..shotgun import actions as sg_actions
 from ..shotgun import shotgun
 

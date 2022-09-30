@@ -97,4 +97,6 @@ autodoc_member_order = 'bysource'
 
 autodoc_default_options = {
     'autosummary': True,
+    'member-order': 'bysource',
+    'show-inheritance': True,
 }

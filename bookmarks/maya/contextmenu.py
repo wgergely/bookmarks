@@ -72,7 +72,7 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
             return
 
         path = self.index.data(common.PathRole)
-        path = common.get_sequence_endpath(path)
+        path = common.get_sequence_end_path(path)
         file_info = QtCore.QFileInfo(path)
 
         _s = file_info.suffix().lower()

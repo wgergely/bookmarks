@@ -1,9 +1,5 @@
 """Maya cache export classes and functions.
 
-Attributes:
-    PRESETS (dict): List of implemented export formats.
-    SECTIONS (dict): UI layout definition.
-
 """
 import functools
 import time
@@ -22,29 +18,32 @@ from .. import ui
 from ..editor import base
 from ..tokens import tokens
 
-instance = None
-
 
 def close():
-    global instance
-    if instance is None:
+    """Close :class:`ExportWidget`.
+
+    """
+    if common.maya_export_widget is None:
         return
     try:
-        instance.close()
-        instance.deleteLater()
+        common.maya_export_widget.close()
+        common.maya_export_widget.deleteLater()
     except:
-        pass
-    instance = None
+        log.error('Could not close the editor')
+    common.maya_export_widget = None
 
 
 def show():
-    global instance
+    """Show :class:`ExportWidget`.
+
+    """
     close()
-    instance = ExportWidget()
-    instance.open()
-    return instance
+    common.maya_export_widget = ExportWidget()
+    common.maya_export_widget.open()
+    return common.maya_export_widget
 
 
+#: Maya cache export presets
 PRESETS = {
     'alembic': {
         'name': 'Alembic',
@@ -117,6 +116,7 @@ class VersionsComboBox(QtWidgets.QComboBox):
         self.blockSignals(False)
 
 
+#:  UI definition of :class:`ExportWidget`
 SECTIONS = {
     0: {
         'name': 'Export',
@@ -226,6 +226,9 @@ class ExportWidget(base.BasePropertyEditor):
         self._connect_settings_save_signals(common.SECTIONS['maya_export'])
 
     def init_progress_bar(self):
+        """Initializes the export progress bar.
+
+        """
         self.progress_widget = QtWidgets.QProgressDialog(parent=self)
         self.progress_widget.setFixedWidth(common.size(common.DefaultWidth))
         self.progress_widget.setLabelText('Exporting, please wait...')
@@ -234,6 +237,7 @@ class ExportWidget(base.BasePropertyEditor):
     @common.error
     @common.debug
     def init_data(self):
+        """Initializes the editor."""
         self.maya_export_set_editor.currentIndexChanged.connect(
             self.check_version
         )
@@ -249,6 +253,9 @@ class ExportWidget(base.BasePropertyEditor):
 
     @QtCore.Slot()
     def check_version(self, *args, **kwargs):
+        """Verify export item version.
+
+        """
         if self.version_editor.currentData() is None:
             return
 
@@ -351,6 +358,9 @@ class ExportWidget(base.BasePropertyEditor):
             self.check_version()
 
     def db_source(self):
+        """Item database source.
+
+        """
         k = self.maya_export_type_editor.currentData()
         ext = PRESETS[k]['extension']
 
@@ -386,10 +396,16 @@ class ExportWidget(base.BasePropertyEditor):
         return file_path
 
     def keyPressEvent(self, event):
+        """Key press event handler.
+
+        """
         if event.key() == QtCore.Qt.Key_Escape:
             self._interrupt_requested = True
 
     def sizeHint(self):
+        """Size hint.
+
+        """
         return QtCore.QSize(
             common.size(common.DefaultWidth) * 0.66,
             common.size(common.DefaultHeight * 1.2)
@@ -405,6 +421,7 @@ class ExportWidget(base.BasePropertyEditor):
             end_frame (int): End frame.
             destination (str): Path to the output file.
             outliner_set (tuple): A list of transforms contained in a geometry set.
+            step (float): Frame step.
 
         """
         common.check_type(destination, str)
@@ -413,9 +430,7 @@ class ExportWidget(base.BasePropertyEditor):
         common.check_type(end_frame, (int, float))
         common.check_type(step, (float, int))
 
-        ext = destination.split('.')[-1]
         _destination = str(destination)
-        start_time = time.time()
 
         cmds.select(outliner_set, replace=True)
 
@@ -442,6 +457,7 @@ class ExportWidget(base.BasePropertyEditor):
             end_frame (int): End frame.
             destination (str): Path to the output file.
             outliner_set (tuple): A list of transforms contained in a geometry set.
+            step (int, float): Frame step.
 
         """
         common.check_type(destination, str)
@@ -640,7 +656,7 @@ class ExportWidget(base.BasePropertyEditor):
             end_frame (int): End frame.
             destination (str): Path to the output file.
             outliner_set (tuple): A list of transforms contained in a geometry set.
-
+            step (float, int): Frame step.
 
         """
         common.check_type(destination, str)
@@ -669,7 +685,7 @@ class ExportWidget(base.BasePropertyEditor):
         start_time = time.time()
 
         for fr in range(start_frame, end_frame + 1):
-            QtWidgets.QApplication.instance().processEvents()
+            QtWidgets.QApplication.common.maya_export_widget().processEvents()
             if self._interrupt_requested:
                 self._interrupt_requested = False
                 return
@@ -712,6 +728,7 @@ class ExportWidget(base.BasePropertyEditor):
             end_frame (int): End frame.
             destination (str): Path to the output file.
             outliner_set (tuple): A list of transforms contained in a geometry set.
+            step (float, int): Frame step.
 
         """
         common.check_type(destination, str)
@@ -727,7 +744,7 @@ class ExportWidget(base.BasePropertyEditor):
         cmds.select(outliner_set, replace=True)
 
         for fr in range(start_frame, end_frame + 1):
-            QtWidgets.QApplication.instance().processEvents()
+            QtWidgets.QApplication.common.maya_export_widget().processEvents()
             if self._interrupt_requested:
                 self._interrupt_requested = False
                 return

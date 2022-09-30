@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Bookmarks's status bar used to display item information.
+"""Bookmarks' status bar used to display item information.
 
 """
 import functools
@@ -10,98 +10,17 @@ from . import actions
 from . import common
 from . import images
 from . import ui
-from .threads import threads
 
 HEIGHT = common.size(common.WidthMargin) + (common.size(common.WidthIndicator) * 2)
 
 
-def get_thread_status():
-    items = []
-    for k in threads.THREADS:
-        thread = threads.get_thread(k)
-        items.append(repr(thread.worker.objectName()))
-        try:
-            for i in threads.THREADS[k]['queue']:
-                items.append(repr(i))
-        except RuntimeError:
-            pass
-    return '\n'.join(items)
-
-
-class ThreadStatus(QtWidgets.QWidget):
-    """A progress label used to display the number of items currently in the
-    processing queues across all threads.
-
-    """
-
-    def __init__(self, parent=None):
-        super(ThreadStatus, self).__init__(parent=parent)
-        self.update_timer = common.Timer(parent=self)
-        self.update_timer.setObjectName('ThreadStatusTimer')
-        self.update_timer.setInterval(100)
-        self.update_timer.setSingleShot(False)
-        self.update_timer.timeout.connect(self.update)
-
-        self.setFixedHeight(HEIGHT)
-        self.metrics = common.font_db.primary_font(common.size(common.FontSizeSmall))[1]
-
-        cnx = QtCore.Qt.QueuedConnection
-        common.signals.threadItemsQueued.connect(self.update_timer.start, cnx)
-
-    def show_debug_info(self):
-        editor = QtWidgets.QTextBrowser(parent=self)
-        editor.setWindowFlags(QtCore.Qt.Window)
-        editor.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        editor.setMinimumWidth(common.size(common.DefaultWidth))
-        editor.setMinimumHeight(common.size(common.DefaultHeight))
-        timer = common.Timer(parent=editor)
-        timer.setInterval(333)
-        timer.setSingleShot(False)
-        timer.timeout.connect(
-            lambda: editor.setPlainText(get_thread_status()))
-        timer.start()
-        editor.show()
-
-    def mouseReleaseEvent(self, event):
-        if not self.rect().contains(event.pos()):
-            return
-        self.show_debug_info()
-
-    def paintEvent(self, event):
-        painter = QtGui.QPainter()
-        painter.begin(self)
-        common.draw_aliased_text(
-            painter,
-            common.font_db.primary_font(common.size(common.FontSizeSmall))[0],
-            self.rect(),
-            self.text(),
-            QtCore.Qt.AlignCenter,
-            common.color(common.GreenColor)
-        )
-        painter.end()
-
-    def update(self):
-        self.setFixedWidth(
-            self.metrics.horizontalAdvance(self.text()) + common.size(common.WidthMargin))
-        super(ThreadStatus, self).update()
-
-    def text(self):
-        c = 0
-        for k in threads.THREADS:
-            c += len(threads.queue(k))
-        if not c:
-            self.update_timer.stop()
-            return ''
-        return f'Processing... ({c} items left)'
-
-
-class MessageWidget(QtWidgets.QStatusBar):
+class StatusBarWidget(QtWidgets.QStatusBar):
     """Bookmark's status bar, below the list widgets.
 
     """
 
     def __init__(self, parent=None):
-        super(MessageWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
         self.thread_status_widget = None
         self.toggle_mode_widget = None
@@ -118,6 +37,9 @@ class MessageWidget(QtWidgets.QStatusBar):
         common.signals.clearStatusBarMessage.connect(self.clearMessage)
 
     def paintEvent(self, event):
+        """Paint event handler.
+
+        """
         painter = QtGui.QPainter()
         painter.begin(self)
 
@@ -136,7 +58,8 @@ class MessageWidget(QtWidgets.QStatusBar):
 
 
 class ToggleSessionModeButton(ui.ClickableIconButton):
-    """Button used to toggle between Synronised and Private modes.
+    """Button used to toggle between the active path mode between
+    ``common.SynchronisedActivePaths`` and ``common.PrivateActivePaths``.
 
     """
     ContextMenu = None
@@ -154,18 +77,31 @@ class ToggleSessionModeButton(ui.ClickableIconButton):
         common.signals.activeModeChanged.connect(self.update)
 
     def pixmap(self):
+        """Get pixmap based on the current status.
+
+        """
         if common.active_mode == common.SynchronisedActivePaths:
-            return images.ImageCache.get_rsc_pixmap('check',
-                                                    common.color(common.GreenColor),
-                                                    self._size)
+            return images.ImageCache.get_rsc_pixmap(
+                'check',
+                common.color(common.GreenColor),
+                self._size
+            )
         if common.active_mode == common.PrivateActivePaths:
-            return images.ImageCache.get_rsc_pixmap('crossed',
-                                                    common.color(common.RedColor),
-                                                    self._size)
-        return images.ImageCache.get_rsc_pixmap('crossed', common.color(common.RedColor),
-                                                self._size)
+            return images.ImageCache.get_rsc_pixmap(
+                'crossed',
+                common.color(common.RedColor),
+                self._size
+            )
+        return images.ImageCache.get_rsc_pixmap(
+            'crossed',
+            common.color(common.RedColor),
+            self._size
+        )
 
     def statusTip(self):
+        """Status tip message.
+
+        """
         if common.active_mode == common.SynchronisedActivePaths:
             return 'This session sets active paths. Click to toggle.'
 
@@ -176,6 +112,10 @@ class ToggleSessionModeButton(ui.ClickableIconButton):
 
 
 class StatusBar(QtWidgets.QWidget):
+    """The main status bar widget.
+
+    """
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.message_widget = None
@@ -190,22 +130,18 @@ class StatusBar(QtWidgets.QWidget):
 
         self.setFixedHeight(HEIGHT)
 
-        self._create_ui()
         self._connect_signals()
 
-    def _create_ui(self):
-        pass
-
     def _connect_signals(self):
+        """Connect signals.
+
+        """
         QtWidgets.QHBoxLayout(self)
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(0)
 
-        self.message_widget = MessageWidget(parent=self)
+        self.message_widget = StatusBarWidget(parent=self)
         self.layout().addWidget(self.message_widget, 1)
-
-        self.thread_status_widget = ThreadStatus(parent=self)
-        self.layout().addWidget(self.thread_status_widget, 0)
 
         self.toggle_mode_widget = ToggleSessionModeButton(
             parent=self)

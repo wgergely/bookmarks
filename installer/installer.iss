@@ -2,8 +2,8 @@
 #define MyAppVersion "0.6.0"
 #define MyAppPublisher "Gergely Wootsch"
 #define MyAppURL "http:\\github.com\wgergely\bookmarks"
-#define MyAppExeName "bookmarks.exe"
-#define MyAppExeDName "bookmarks_d.exe"
+#define MyAppExeName "Bookmarks.exe"
+#define MyAppExeDName "Bookmarks_d.exe"
 
 [Setup]
 AppId={{C6A64D39-06F7-4229-92B1-5AFEADF201CB}
@@ -15,6 +15,8 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
+
+LicenseFile={#SourcePath}..\LICENCE
 
 ArchitecturesInstallIn64BitMode=x64
 ArchitecturesAllowed=x64
@@ -36,22 +38,26 @@ LZMAUseSeparateProcess=yes
 LZMADictionarySize=65536
 LZMANumFastBytes=64
 
-WizardStyle=modern
 VersionInfoVersion={#MyAppVersion}
 VersionInfoCompany={#MyAppPublisher}
-VersionInfoDescription=
-VersionInfoTextVersion=
 VersionInfoCopyright={#MyAppPublisher}
-VersionInfoProductName=
-VersionInfoProductVersion=
 AppCopyright={#MyAppPublisher}
-ShowLanguageDialog=no
-WizardImageFile={#SourcePath}WIZMODERNIMAGE.BMP
-WizardImageBackColor=clGray
-WizardSmallImageFile={#SourcePath}WIZMODERNSMALLIMAGE.BMP
+
 UsePreviousGroup=false
 UninstallDisplayIcon={#SourcePath}..\bookmarks\rsc\icon.ico
 UninstallDisplayName={#MyAppName}
+
+DisableWelcomePage=no
+ShowLanguageDialog=no
+
+WizardStyle=modern
+WizardImageFile={#SourcePath}WIZMODERNIMAGE.BMP
+WizardSmallImageFile={#SourcePath}WIZMODERNSMALLIMAGE.BMP
+BackColor=clBlack
+BackColor2=clBlack
+BackSolid=false
+WizardImageBackColor=clBlack
+BackColorDirection=toptobottom
 
 [Languages]
 Name: english; MessagesFile: compiler:Default.isl

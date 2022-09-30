@@ -25,10 +25,6 @@ thread-specific database controllers. E.g.:
     with db.connection():
         v = db.value(*args)
 
-
-Attributes:
-    TABLES (dict):  Bookmark database tables and column definitions.
-
 """
 import base64
 import functools
@@ -42,16 +38,23 @@ from PySide2 import QtCore, QtWidgets
 from . import common
 from . import log
 
+#: Database table name
 AssetTable = 'AssetData'
+#: Database table name
 BookmarkTable = 'BookmarkData'
+#: Database table name
 InfoTable = 'InfoData'
 
+#: Database column name
 IdColumn = 'id'
+#: Database column name
 DescriptionColumn = 'description'
+#: Database column name
 NotesColumn = 'notes'
 
 database_connect_retries = 100
 
+#: SQLite database structure definition
 TABLES = {
     AssetTable: {
         IdColumn: {
@@ -229,6 +232,8 @@ TABLES = {
         }
     }
 }
+
+#: Database clipboard
 CLIPBOARD = {
     BookmarkTable: {},
     AssetTable: {},
@@ -295,7 +300,9 @@ def remove_db(server, job, root):
 
 
 def remove_all_connections():
-    """Closes and deletes all database controller instances."""
+    """Closes and deletes all database controller instances.
+
+    """
     for k in list(common.db_connections):
         common.db_connections[k].close()
         common.db_connections[k].deleteLater()
@@ -364,17 +371,26 @@ def paste_properties(server, job, root, asset=None, table=BookmarkTable):
 
 @functools.lru_cache(maxsize=4194304)
 def b64encode(v):
+    """Base64 encode function.
+
+    """
     common.check_type(v, str)
     return base64.b64encode(v.encode('utf-8')).decode('utf-8')
 
 
 @functools.lru_cache(maxsize=4194304)
 def b64decode(v):
+    """Base64 decode function.
+
+    """
     common.check_type(v, bytes)
     return base64.b64decode(v).decode('utf-8')
 
 
 def sleep():
+    """Utility script used to sleep for a certain amount of time.
+
+    """
     app = QtWidgets.QApplication.instance()
     if app and app.thread() == QtCore.QThread.currentThread():
         QtCore.QThread.msleep(25)
@@ -395,6 +411,9 @@ def set_flag(server, job, root, k, mode, flag):
 
 
 def _verify_args(source, key, table, value=None):
+    """Verify input arguments.
+
+    """
     common.check_type(source, (str, tuple))
 
     if isinstance(key, str) and key not in TABLES[table]:
@@ -419,6 +438,9 @@ def _verify_args(source, key, table, value=None):
 
 @functools.lru_cache(maxsize=4194304)
 def load_json(value):
+    """Load a base 64 encoded json value.
+
+    """
     return json.loads(
         b64decode(value.encode('utf-8')),
         parse_int=int,
@@ -427,6 +449,9 @@ def load_json(value):
 
 
 def convert_return_values(table, key, value):
+    """Utility function used enforce data types.
+
+    """
     if value is None:
         return None
     if key not in TABLES[table]:
@@ -557,12 +582,9 @@ class BookmarkDB(QtCore.QObject):
         args = []
 
         for k, v in TABLES[table].items():
-            args.append('{} {}'.format(k, v['sql']))
+            args.append(f'{k} {v["sql"]}')
 
-        sql = 'CREATE TABLE IF NOT EXISTS {table} ({args})'.format(
-            table=table,
-            args=','.join(args)
-        )
+        sql = f'CREATE TABLE IF NOT EXISTS {table} ({",".join(args)})'
         self.connection().execute(sql)
 
     def _patch_table(self, table):
@@ -570,7 +592,7 @@ class BookmarkDB(QtCore.QObject):
         required columns are missing.
 
         """
-        sql = 'PRAGMA table_info(\'{}\');'.format(table)
+        sql = f'PRAGMA table_info(\'{table}\');'
 
         table_info = self.connection().execute(sql).fetchall()
 
@@ -578,13 +600,13 @@ class BookmarkDB(QtCore.QObject):
         missing = list(set(TABLES[table]) - set(columns))
 
         for column in missing:
-            cmd = 'ALTER TABLE {} ADD COLUMN {};'.format(table, column)
+            cmd = f'ALTER TABLE {table} ADD COLUMN {column};'
             try:
                 self.connection().execute(cmd)
-                log.success('Added missing column {}'.format(missing))
+                log.success(f'Added missing column {missing}')
             except Exception as e:
                 log.error(
-                    'Failed to add missing column {}\n{}'.format(column, e))
+                    f'Failed to add missing column {column}\n{e}')
                 raise
 
     def _add_info(self):
@@ -687,7 +709,7 @@ class BookmarkDB(QtCore.QObject):
             columns = [f[0] for f in cursor.description]
             row = cursor.fetchone()
         except Exception as e:
-            log.error('Failed to get value from database.\n{}'.format(e))
+            log.error(f'Failed to get value from database.\n{e}')
             raise
 
         values = {}
@@ -818,4 +840,4 @@ class BookmarkDB(QtCore.QObject):
                 table, source, key, _value)
 
         except Exception as e:
-            log.error('Failed to set value.\n{}'.format(e))
+            log.error(f'Failed to set value.\n{e}')

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Various methods used to initialize Bookmarks, mainly, :func:`.initialize()` and
 :func:`.uninitialize()`.
 
@@ -159,7 +160,6 @@ def _init_ui_scale():
         v = 1.0
     v = round(v, 2)
     if not common.ui_scale_factors or v not in common.ui_scale_factors:
-        print(v)
         v = 1.0
 
     common.ui_scale_factor = v

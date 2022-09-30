@@ -96,11 +96,13 @@ def test_shotgun_connection(sg_properties):
     with shotgun.connection(sg_properties) as sg:
         if not sg.find('Project', []):
             raise ValueError(
-                'Could not find any projects. Are you sure the script has all the needed permissions to run?')
+                'Could not find any projects. Are you sure the script'
+                'has all the needed permissions to run?'
+            )
 
         info = ''
         for k, v in sg.info().items():
-            info += '{}: {}'.format(k, v)
+            info += f'{k}: {v}'
             info += '\n'
 
     from .. import ui

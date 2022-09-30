@@ -1,21 +1,38 @@
-=====================
-Welcome to Bookmarks!
-=====================
-
-
 .. automodule:: bookmarks
+
+
+Contents
+========
+
+.. toctree::
+    :maxdepth: 4
+    :hidden:
+
+    introduction
+
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Technical Documentation
+
+    modules
 
 
 .. toctree::
     :hidden:
-    :maxdepth: 2
+    :caption: Project Links
 
-    introduction
-    api
+    GitHub <https://github.com/wgergely/bookmarks>
+    Website <https://bookmarks.gergely-wootsch.com/html/index.html>
 
 
-Indices and tables
-==================
+Index
+=====
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+
+
+

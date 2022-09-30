@@ -48,7 +48,7 @@ def get_item_info(ref):
         return info
 
     s = ref()[common.PathRole]
-    s = common.get_sequence_endpath(s)
+    s = common.get_sequence_end_path(s)
 
     buf = images.oiio_get_buf(s)
     if not buf:

@@ -22,7 +22,10 @@ from .. import images
 from ..tokens import tokens
 
 
-class TaskFolderContextMenu(contextmenu.BaseContextMenu):
+class TaskItemContextMenu(contextmenu.BaseContextMenu):
+    """Context menu associated with :class:`TaskItemView`.
+
+    """
     @common.debug
     @common.error
     def setup(self):
@@ -36,25 +39,36 @@ class TaskFolderContextMenu(contextmenu.BaseContextMenu):
         self.refresh_menu()
 
 
-class TaskFolderWidgetDelegate(delegate.BaseDelegate):
-    """The delegate used to paint the available subfolders inside the asset
-    folder."""
+class TaskItemViewDelegate(delegate.ItemDelegate):
+    """Delegate used to paint :class:`TaskItemView`.
+    
+    """
 
     def paint(self, painter, option, index):
-        """The main paint method."""
+        """The main paint method.
+        
+        """
         args = self.get_paint_arguments(painter, option, index)
         self.paint_background(*args)
         self.paint_name(*args)
 
     def get_description_rect(self, *args, **kwargs):
+        """Get description rectangle.
+        
+        """
         return QtCore.QRect()
 
     def get_text_segments(self, *args, **kwargs):
+        """Get text segments.
+        
+        """
         return []
 
     @delegate.paintmethod
     def paint_background(self, *args):
-        """Paints the background."""
+        """Paints the background.
+        
+        """
         rectangles, painter, option, index, selected, focused, active, archived, \
         favourite, hover, font, metrics, cursor_position = args
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
@@ -99,7 +113,9 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
     @delegate.paintmethod
     def paint_name(self, *args):
         """Paints the name and the number of files available for the given
-        data-key."""
+        task item.
+        
+        """
         rectangles, painter, option, index, selected, focused, active, archived, \
         favourite, hover, font, metrics, cursor_position = args
         if not index.data(QtCore.Qt.DisplayRole):
@@ -192,12 +208,8 @@ class TaskFolderWidgetDelegate(delegate.BaseDelegate):
         return self.parent().model().sourceModel().row_size
 
 
-class TaskFolderModel(models.BaseModel):
-    """This model holds all the necessary data needed to display items to
-    select for selecting the asset subfolders and/or bookmarks and assets.
-
-    The model keeps track of the selections internally and is updated
-    via the signals and slots.
+class TaskItemModel(models.ItemModel):
+    """Task folder item model used to get task folders of an asset item.
 
     """
 
@@ -354,13 +366,13 @@ class TaskFolderModel(models.BaseModel):
                     yield entry
 
 
-class TaskFolderWidget(views.ThreadedBaseWidget):
+class TaskItemView(views.ThreadedItemView):
     """The view responsible for displaying the available data-keys.
 
     """
-    SourceModel = TaskFolderModel
-    Delegate = TaskFolderWidgetDelegate
-    ContextMenu = TaskFolderContextMenu
+    SourceModel = TaskItemModel
+    Delegate = TaskItemViewDelegate
+    ContextMenu = TaskItemContextMenu
 
     queues = ()
 

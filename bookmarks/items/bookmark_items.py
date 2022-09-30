@@ -1,5 +1,49 @@
 # -*- coding: utf-8 -*-
-"""The view and model used to display bookmark items.
+"""Bookmark items at their core are simple file paths made up of a ``server``, ``job``
+and ``root`` components. We usually store them in the following form:
+
+.. code-block:: python
+
+    {
+        '//path/to/my/server/my_job/my_shots': {
+            'server': '//path_to_my/server',
+            'job': 'my_job',
+            'root': 'my_shots'
+        }
+    }
+
+
+:class:`BookmarkItemModel` is responsible for loading saved bookmark items and
+:class:`BookmarkItemView` for displaying them. See
+:meth:`BookmarkItemModel.item_generator` for how the model finds saved bookmark items.
+
+Properties like description, frame-range, frame-rate, or ShotGrid linkage are stored in
+SQLite databases located at each bookmark item's root folder. See
+:mod:`bookmarks.database` more details.
+
+Throughout the app, data interfaces usually require a bookmark item, commonly as
+separate server, job, root arguments. See :func:`~bookmarks.common.settings.active` to
+see how active path components can be queried.
+
+Note:
+    The term "active" refers to items the user has activated, e.g. double-clicked. If the
+    user activates a bookmark item, then the path components that make up that item will
+    become active.
+
+    .. code-block:: python
+
+        server, job, root = common.active('root', args=True)
+        job = common.active('job')
+
+
+Views and models can access path segments using the
+:attr:`~bookmarks.common.ParentPathRole` role. E.g.:
+
+.. code-block:: python
+
+    # ...in case of a QtCore.QModelIndex item:
+    server, job, root = index.data(common.ParentPathRole)[0:3]
+
 
 """
 import os
@@ -14,11 +58,12 @@ from .. import common
 from .. import contextmenu
 from ..threads import threads
 
+#: Default item flags used by the item model.
 DEFAULT_ITEM_FLAGS = models.DEFAULT_ITEM_FLAGS | QtCore.Qt.ItemIsDropEnabled
 
 
-class BookmarksWidgetContextMenu(contextmenu.BaseContextMenu):
-    """Context menu associated with the BookmarksWidget.
+class BookmarkItemViewContextMenu(contextmenu.BaseContextMenu):
+    """Context menu associated with the BookmarkItemView.
 
     Methods:
         refresh: Refreshes the collector and repopulates the widget.
@@ -58,8 +103,8 @@ class BookmarksWidgetContextMenu(contextmenu.BaseContextMenu):
         self.quit_menu()
 
 
-class BookmarksModel(models.BaseModel):
-    """The model used store the data necessary to display bookmarks.
+class BookmarkItemModel(models.ItemModel):
+    """The model used store the data necessary to display bookmark item.
 
     """
     queues = (threads.BookmarkInfo, threads.BookmarkThumbnail)
@@ -76,7 +121,7 @@ class BookmarksModel(models.BaseModel):
     @common.error
     @common.debug
     def init_data(self):
-        """Collects the data needed to populate the bookmarks model.
+        """Initialises the model data.
 
         """
         p = self.source_path()
@@ -183,10 +228,16 @@ class BookmarksModel(models.BaseModel):
         self.activeChanged.emit(self.active_index())
 
     def item_generator(self):
+        """Returns the items to be processed by :meth:`init_data`.
+
+        """
         for item in common.bookmarks.items():
             yield item
 
     def save_active(self):
+        """Save the active bookmark item.
+
+        """
         index = self.active_index()
 
         if not index.isValid():
@@ -205,20 +256,34 @@ class BookmarksModel(models.BaseModel):
         return 'bookmarks',
 
     def data_type(self):
+        """The data type of the model.
+
+        """
         return common.FileItem
 
     def default_row_size(self):
+        """The default row size of the model items.
+
+        """
         return QtCore.QSize(1, common.size(common.HeightBookmark))
 
     def filter_setting_dict_key(self):
+        """The custom dictionary key used to save filter settings to the user settings
+        file.
+
+        """
         return 'bookmarks'
 
 
-class BookmarksWidget(views.ThreadedBaseWidget):
-    """The view used to display the contents of a ``BookmarksModel`` instance."""
-    SourceModel = BookmarksModel
-    Delegate = delegate.BookmarksWidgetDelegate
-    ContextMenu = BookmarksWidgetContextMenu
+class BookmarkItemView(views.ThreadedItemView):
+    """The view used to display bookmark item.
+
+    See :class:`BookmarkItemModel`.
+
+    """
+    SourceModel = BookmarkItemModel
+    Delegate = delegate.BookmarkItemViewDelegate
+    ContextMenu = BookmarkItemViewContextMenu
 
     queues = (threads.BookmarkInfo, threads.BookmarkThumbnail)
 

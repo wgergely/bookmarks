@@ -1,5 +1,40 @@
 # -*- coding: utf-8 -*-
-"""The view and model used to display file items.
+"""File items are files found inside an asset item. They're made up of ``server``,
+``job``, ``root``, ``asset``, ``task`` and ``file`` path segments.
+
+.. code-block:: python
+
+    # The following file path...
+    my_file = '//my/server/my_job/my_asset/my_task_folder/take1/my_file.psd
+    # ...is constructed like this:
+    my_file = f'{server}/{job}/{root}/{asset}/{task}/take1/my_file.psd'
+    # Note the relative path segment ``take1/my_file.psd``
+
+
+Note the two new path segments file items introduce: ``task`` items, and a relative
+`file` segment, ``take1/my_file.psd``.
+
+:class:`FileItemModel` will always load recursively **all** files found in a specified
+task folder. In the real world, these correspond to workspace folders used by DCCs,
+such as the `scenes`, `cache`, `images`, `render`, etc. folders. These folders are the
+main containers for file items.
+
+:class:`FileItemModel` will always load files from inside the active task folder. We
+set the active task folder using :class:`~bookmarks.items.task_items.TaskItemView`.
+
+The relative file path segment is what :class:`FileItemView` displays.
+This segment often includes a series of subdirectories the view represents as
+interactive labels. These labels can be used to filter list view.
+
+Note:
+    In summary , :class:`FileItemModel` will **not** load file items from the root
+    of an asset item, but from subdirectories called ``task`` items. It will load
+    all files from all subdirectories from this folder but provides filter options in the
+    form of interactive labels.
+
+Important to note that :class:`FileItemModel` interacts with two data sets
+simultaneously: a _collapsed_ sequence item, and a regular file items.
+See the :mod:`~bookmarks.common.sequence` module for details on sequence recognition.
 
 """
 import functools
@@ -18,6 +53,14 @@ from .. import log
 from ..threads import threads
 from ..tokens import tokens
 
+
+active_keys = {
+    'server',
+    'job',
+    'root',
+    'asset',
+    'task',
+}
 
 def add_path_to_mime(mime, path):
     """Adds the given path to the mime data."""
@@ -160,7 +203,7 @@ class ItemDrag(QtGui.QDrag):
         shift_modifier = modifiers & QtCore.Qt.ShiftModifier
 
         if no_modifier:
-            source = common.get_sequence_endpath(source)
+            source = common.get_sequence_end_path(source)
             pixmap, _ = images.get_thumbnail(
                 index.data(common.ParentPathRole)[0],
                 index.data(common.ParentPathRole)[1],
@@ -179,9 +222,9 @@ class ItemDrag(QtGui.QDrag):
                 'file', common.color(common.TextSecondaryColor),
                 common.size(common.HeightRow)
             )
-            source = common.get_sequence_startpath(source)
+            source = common.get_sequence_start_path(source)
         elif shift_modifier:
-            source = common.get_sequence_startpath(source) + ', ++'
+            source = common.get_sequence_start_path(source) + ', ++'
             pixmap = images.ImageCache.get_rsc_pixmap(
                 'multiples_files', common.color(common.TextSecondaryColor),
                 common.size(common.HeightRow)
@@ -272,7 +315,7 @@ class DragPixmapFactory(QtWidgets.QWidget):
         painter.end()
 
 
-class FilesWidgetContextMenu(contextmenu.BaseContextMenu):
+class FileItemViewContextMenu(contextmenu.BaseContextMenu):
     @common.error
     @common.debug
     def setup(self):
@@ -318,7 +361,7 @@ class FilesWidgetContextMenu(contextmenu.BaseContextMenu):
         self.quit_menu()
 
 
-class FilesModel(models.BaseModel):
+class FileItemModel(models.ItemModel):
     """Model used to list files in an asset.
 
     The model will load files from one task folder at any given time. The current
@@ -380,17 +423,16 @@ class FilesModel(models.BaseModel):
     @common.error
     @common.debug
     def init_data(self):
-        """The method is responsible for getting the bare-bones file items by
-        running a file-iterator stemming from ``self.source_path()``.
+        """The method is responsible for getting the bare-bones file item data by
+        running a recursive file-iterator stemming from ``self.source_path()``.
 
         Additional information, like description, item flags or thumbnails are
         fetched by thread workers.
 
-        The method will iterate through all items returned by
-        ``self.item_generator()`` and will gather information for both individual
-        ``FileItems`` and collapsed ``SequenceItems`` (switch between the two
-        datasets using the ``dataTypeChanged`` signal with the desired data
-        type).
+        The method iterate the items returned by
+        ``self.item_generator()`` and gathers information for both individual
+        ``FileItems`` and collapsed ``SequenceItems``, excluding items the current
+        token filters exclude.
 
         """
         common.settings.load_active_values()
@@ -652,7 +694,7 @@ class FilesModel(models.BaseModel):
         )
 
     def item_generator(self, path):
-        """Recursive iterator for retrieving files from all sub-folders.
+        """Recursive iterator for retrieving files from all task sub-folders.
 
         """
         try:
@@ -669,6 +711,9 @@ class FilesModel(models.BaseModel):
                 yield entry
 
     def save_active(self):
+        """Saves the current active item.
+
+        """
         index = self.active_index()
 
         if not index.isValid():
@@ -684,11 +729,14 @@ class FilesModel(models.BaseModel):
 
         file_info = QtCore.QFileInfo(index.data(common.PathRole))
         filepath = parent_role[5] + '/' + \
-                   common.get_sequence_endpath(file_info.fileName())
+                   common.get_sequence_end_path(file_info.fileName())
 
         actions.set_active('file', filepath)
 
     def task(self):
+        """Active task folder.
+
+        """
         return common.active('task')
 
     @common.error
@@ -718,6 +766,20 @@ class FilesModel(models.BaseModel):
     @common.error
     @QtCore.Slot(int)
     def set_data_type(self, val):
+        """Set the model's data type.
+
+        The model can serv items as collapsed sequence items, or as standard,
+        individual file items. When the data type is set to ``common.SequenceItem``
+        file sequences will be collapsed into a single sequence item. When the data
+        type is ``common.FileItem`` each item will be displayed individually.
+
+        In practice only :class:`FileItemModel` implements collapsed
+        ``common.SequenceItem`` items.
+
+        Args:
+            val (int): A data type, one of ``common.FileItem``, ``common.SequenceItem``.
+
+        """
         if val not in (common.FileItem, common.SequenceItem):
             raise ValueError(f'{val} is not a valid `data_type`.')
 
@@ -740,17 +802,14 @@ class FilesModel(models.BaseModel):
         self.endResetModel()
 
     def filter_setting_dict_key(self):
+        """A custom dictionary key used to store filter settings in the user settings
+        file.
+
+        """
         if common.active('task') is None:
             return None
 
-        keys = (
-            'server',
-            'job',
-            'root',
-            'asset',
-            'task',
-        )
-        v = [common.active(k) for k in keys]
+        v = [common.active(k) for k in active_keys]
         if not all(v):
             return None
 
@@ -782,13 +841,13 @@ class FilesModel(models.BaseModel):
             path = index.data(common.PathRole)
 
             if no_modifier:
-                path = common.get_sequence_endpath(path)
+                path = common.get_sequence_end_path(path)
                 add_path_to_mime(mime, path)
             elif alt_modifier and shift_modifier:
                 path = QtCore.QFileInfo(path).dir().path()
                 add_path_to_mime(mime, path)
             elif alt_modifier:
-                path = common.get_sequence_startpath(path)
+                path = common.get_sequence_start_path(path)
                 add_path_to_mime(mime, path)
             elif shift_modifier:
                 paths = common.get_sequence_paths(index)
@@ -797,18 +856,18 @@ class FilesModel(models.BaseModel):
         return mime
 
 
-class FilesWidget(views.ThreadedBaseWidget):
-    """The view used to display the contents of a ``FilesModel`` instance.
+class FileItemView(views.ThreadedItemView):
+    """The view used to display :class:`FileItemModel` items.
 
     """
-    SourceModel = FilesModel
-    Delegate = delegate.FilesWidgetDelegate
-    ContextMenu = FilesWidgetContextMenu
+    SourceModel = FileItemModel
+    Delegate = delegate.FileItemViewDelegate
+    ContextMenu = FileItemViewContextMenu
 
     queues = (threads.FileInfo, threads.FileThumbnail)
 
     def __init__(self, icon='file', parent=None):
-        super(FilesWidget, self).__init__(
+        super(FileItemView, self).__init__(
             icon=icon,
             parent=parent
         )
@@ -848,7 +907,7 @@ class FilesWidget(views.ThreadedBaseWidget):
         drag = ItemDrag(index, self)
         common.main_widget.topbar_widget.slack_drop_area_widget.setHidden(False)
         QtCore.QTimer.singleShot(1, self.viewport().update)
-        drag.exec_(supported_actions)
+        drag.exec(supported_actions)
         common.main_widget.topbar_widget.slack_drop_area_widget.setHidden(True)
 
         self.drag_source_index = QtCore.QModelIndex()

@@ -428,14 +428,15 @@ QToolTip {{
 	border: {HeightSeparator}px solid {SeparatorColor};
 }}
 
-QProgressBar {{
+QProgressBar, QProgressDialog {{
 	border: {HeightSeparator}px solid {SeparatorColor};
 	border-radius: {WidthIndicator1}px;
 	background-color: {BackgroundDarkColor};
 	text-align: center;
 }}
 
-QProgressBar::chunk {{
+QProgressBar::chunk,
+QProgressDialog::chunk {{
     background-color: {GreenColor};
     width: {WidthIndicator}px;
 		margin: 0;

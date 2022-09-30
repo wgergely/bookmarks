@@ -401,7 +401,7 @@ class PublishWidget(base.BasePropertyEditor):
         kwargs = self.get_publish_kwargs()
 
         p = self._index.data(common.PathRole)
-        p = common.get_sequence_startpath(p)
+        p = common.get_sequence_start_path(p)
 
         i = QtCore.QFileInfo(p)
 

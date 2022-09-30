@@ -25,7 +25,7 @@ HIGHLIGHT_RULES = {
         're': re.compile(
             r'((?:rvlink|file|http)[s]?:[/\\][/\\](?:[a-zA-Z]|[0-9]|[$-_@.&+]|['
             r'!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
-            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE
+            flags=re.IGNORECASE | re.MULTILINE
         ),
         'flag': PathHighlight
     },
@@ -33,7 +33,7 @@ HIGHLIGHT_RULES = {
         're': re.compile(
             r'((?:[a-zA-Z]{1})[s]?:[/\\](?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),'
             r']|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
-            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE
+            flags=re.IGNORECASE | re.MULTILINE
         ),
         'flag': PathHighlight
     },
@@ -41,14 +41,14 @@ HIGHLIGHT_RULES = {
         're': re.compile(
             r'([/\\]{1,2}(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F]['
             r'0-9a-fA-F]))+)',
-            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE
+            flags=re.IGNORECASE | re.MULTILINE
         ),
         'flag': PathHighlight
     },
     'heading': {
         're': re.compile(
             r'^(?<!#)#{1,2}(?!#)',
-            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE
+            flags=re.IGNORECASE | re.MULTILINE
         ),
         'flag': HeadingHighlight
     },
@@ -56,21 +56,21 @@ HIGHLIGHT_RULES = {
         're': re.compile(
             # Group(2) captures the contents
             r'([\"\'])((?:(?=(\\?))\3.)*?)\1',
-            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE
+            flags=re.IGNORECASE | re.MULTILINE
         ),
         'flag': QuoteHighlight
     },
     'italics': {
         're': re.compile(
             r'([\_])((?:(?=(\\?))\3.)*?)\1',  # Group(2) captures the contents
-            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE
+            flags=re.IGNORECASE | re.MULTILINE
         ),
         'flag': ItalicsHighlight
     },
     'bold': {
         're': re.compile(
             r'([\*])((?:(?=(\\?))\3.)*?)\1',  # Group(2) captures the contents
-            flags=re.IGNORECASE | re.UNICODE | re.MULTILINE
+            flags=re.IGNORECASE | re.MULTILINE
         ),
         'flag': BoldHighlight
     },
@@ -515,7 +515,7 @@ class DragIndicatorButton(QtWidgets.QLabel):
         overlay_widget.show()
 
         # Starting the drag...
-        drag.exec_(QtCore.Qt.CopyAction)
+        drag.exec(QtCore.Qt.CopyAction)
 
         # Cleanup after drag has finished...
         overlay_widget.close()

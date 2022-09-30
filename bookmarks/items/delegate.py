@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
-"""The delegate used to draw bookmark, asset and file items.
+"""Item delegate used to draw bookmark, asset and file items.
 
-The list widgets have a number of custom features, such as clickable in-line
-icons, folder names,
-custom thumbnails that the delegate implements. All items are made up of a series
-of rectangles
-that the pain methods use to place drawn elements. See :func:`get_rectangles`.
+Defines :class:`ItemDelegate`, the base delegate class, subclasses and helper functions.
 
-The downside of painting everything manually is that the paint performance is
-poor. For this
-reason the delegate tries to cache as much of the information as possible.
+The list views have a number of custom features, such as clickable in-line icons,
+folder names, custom thumbnails that the delegate implements. Since we're using list
+views with a single column, the item layout is defined by a series of custom rectangles
+(see :func:`get_rectangles`.). These are used by the paint methods use to drawn
+elements and the views to define interactive regions.
+
+The downside of painting manually a complex layout is performance and no doubt the
+module could be more optimised. Still, most of the expensive functions are backed by
+caches.
 
 """
 import functools
@@ -22,11 +24,11 @@ from .. import images
 
 regex_remove_version = re.compile(
     rf'(.*)(v)([{common.SEQSTART}0-9\-{common.SEQEND}]+.*)',
-    flags=re.IGNORECASE | re.UNICODE
+    flags=re.IGNORECASE
 )
 regex_remove_seq_marker = re.compile(
     rf'[{common.SEQSTART}{common.SEQEND}]*',
-    flags=re.IGNORECASE | re.UNICODE
+    flags=re.IGNORECASE
 )
 
 HOVER_COLOR = QtGui.QColor(255, 255, 255, 10)
@@ -252,7 +254,7 @@ def get_file_text_segments(s, k, f):
 
 
 def get_filedetail_text_segments(index):
-    """Returns the `FilesWidget` item `common.FileDetailsRole` segments
+    """Returns the `FileItemView` item `common.FileDetailsRole` segments
     associated with custom colors.
 
     Args:
@@ -707,8 +709,8 @@ def draw_description(clickable_rectangles, left_limit, right_limit, offset, *arg
     painter.drawPath(path)
 
 
-class BaseDelegate(QtWidgets.QAbstractItemDelegate):
-    """The main delegate used to represent lists derived from `base.BaseListWidget`.
+class ItemDelegate(QtWidgets.QAbstractItemDelegate):
+    """The main delegate used to represent lists derived from `base.BaseItemView`.
 
     """
     fallback_thumb = 'placeholder'
@@ -1929,7 +1931,7 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
     @paintmethod
     def paint_file_name(self, *args):
         """Paints the subfolders and the filename of the current file inside the
-        ``FilesWidget``."""
+        ``FileItemView``."""
         rectangles, painter, option, index, _, _, _, _, _, _, font, metrics, _ = args
         self._clickable_rectangles[index.row()] = []
 
@@ -2024,12 +2026,12 @@ class BaseDelegate(QtWidgets.QAbstractItemDelegate):
         painter.drawPixmap(rect, pixmap, pixmap.rect())
 
 
-class BookmarksWidgetDelegate(BaseDelegate):
+class BookmarkItemViewDelegate(ItemDelegate):
     """The delegate used to paint the bookmark items."""
     fallback_thumb = 'bookmark_item'
 
     def paint(self, painter, option, index):
-        """Defines how the ``BookmarksWidget`` should be painted."""
+        """Defines how the ``BookmarkItemView`` should be painted."""
         args = self.get_paint_arguments(painter, option, index)
 
         self.paint_background(*args)
@@ -2051,12 +2053,12 @@ class BookmarksWidgetDelegate(BaseDelegate):
         return self.parent().model().sourceModel().row_size
 
 
-class AssetsWidgetDelegate(BaseDelegate):
-    """Delegate used by the ``AssetsWidget`` to display the collected assets."""
+class AssetItemViewDelegate(ItemDelegate):
+    """Delegate used by the ``AssetItemView`` to display the collected assets."""
     fallback_thumb = 'asset_item'
 
     def paint(self, painter, option, index):
-        """Defines how the ``AssetsWidget``'s' items should be painted."""
+        """Defines how the ``AssetItemView``'s' items should be painted."""
         # The index might still be populated...
         if index.data(QtCore.Qt.DisplayRole) is None:
             return
@@ -2079,16 +2081,16 @@ class AssetsWidgetDelegate(BaseDelegate):
         return self.parent().model().sourceModel().row_size
 
 
-class FilesWidgetDelegate(BaseDelegate):
-    """QAbstractItemDelegate associated with ``FilesWidget``."""
+class FileItemViewDelegate(ItemDelegate):
+    """QAbstractItemDelegate associated with ``FileItemView``."""
     MAX_SUBDIRS = 6
     fallback_thumb = 'file_item'
 
     def __init__(self, parent=None):
-        super(FilesWidgetDelegate, self).__init__(parent=parent)
+        super(FileItemViewDelegate, self).__init__(parent=parent)
 
     def paint(self, painter, option, index):
-        """Defines how the ``FilesWidget``'s' items should be painted."""
+        """Defines how the ``FileItemView``'s' items should be painted."""
 
         args = self.get_paint_arguments(painter, option, index)
 
@@ -2122,5 +2124,5 @@ class FilesWidgetDelegate(BaseDelegate):
         return self.parent().model().sourceModel().row_size
 
 
-class FavouritesWidgetDelegate(FilesWidgetDelegate):
+class FavouritesWidgetDelegate(FileItemViewDelegate):
     fallback_thumb = 'favourite'

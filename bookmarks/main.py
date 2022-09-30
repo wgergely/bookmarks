@@ -2,12 +2,12 @@
 """Bookmarks' main widget.
 
 :class:`.MainWidget` consist of :class:`bookmarks.topbar.TopBarWidget`,
-:class:`bookmarks.statusbar.StatusBarWidget`,
+:class:`bookmarks.statusbar.StatusBar`,
 and :class:`bookmarks.items.views.ListsWidget`. The latter is the container
 for the three main list item widgets:
-:class:`bookmarks.items.bookmark_items.BookmarksWidget`,
-:class:`bookmarks.items.asset_items.AssetsWidget` and
-:class:`bookmarks.items.files.FilesWidget`.
+:class:`bookmarks.items.bookmark_items.BookmarkItemView`,
+:class:`bookmarks.items.asset_items.AssetItemView` and
+:class:`bookmarks.items.files.FileItemView`.
 
 Important:
 
@@ -96,10 +96,10 @@ class MainWidget(QtWidgets.QWidget):
         self.layout().setSpacing(0)
 
         self.stacked_widget = views.ListsWidget(parent=self)
-        self.bookmarks_widget = bookmark_items.BookmarksWidget(parent=self)
-        self.assets_widget = asset_items.AssetsWidget(parent=self)
-        self.files_widget = file_items.FilesWidget(parent=self)
-        self.tasks_widget = task_items.TaskFolderWidget(parent=self.files_widget)
+        self.bookmarks_widget = bookmark_items.BookmarkItemView(parent=self)
+        self.assets_widget = asset_items.AssetItemView(parent=self)
+        self.files_widget = file_items.FileItemView(parent=self)
+        self.tasks_widget = task_items.TaskItemView(parent=self.files_widget)
         self.tasks_widget.setHidden(True)
         self.favourites_widget = favourite_items.FavouritesWidget(parent=self)
 
@@ -308,7 +308,7 @@ class MainWidget(QtWidgets.QWidget):
             connect(shortcuts.Quit, common.uninitialize)
             connect(shortcuts.Minimize, actions.toggle_minimized)
             connect(shortcuts.Maximize, actions.toggle_maximized)
-            connect(shortcuts.FullScreen, actions.toggle_fullscreen)
+            connect(shortcuts.FullScreen, actions.toggle_full_screen)
             connect(shortcuts.OpenNewInstance, actions.exec_instance)
 
         connect(shortcuts.ToggleSearch, common.signals.toggleFilterButton)

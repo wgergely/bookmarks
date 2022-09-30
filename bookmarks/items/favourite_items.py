@@ -66,7 +66,7 @@ class FavouritesWidgetContextMenu(contextmenu.BaseContextMenu):
         self.quit_menu()
 
 
-class FavouritesModel(file_items.FilesModel):
+class FavouritesModel(file_items.FileItemModel):
     """The model responsible for displaying the saved favourites."""
     queues = (threads.FavouriteInfo, threads.FavouriteThumbnail)
 
@@ -315,7 +315,7 @@ class FavouritesModel(file_items.FilesModel):
         return 'favourites'
 
 
-class FavouritesWidget(file_items.FilesWidget):
+class FavouritesWidget(file_items.FileItemView):
     """The widget responsible for showing all the items marked as favourites."""
     SourceModel = FavouritesModel
     Delegate = delegate.FavouritesWidgetDelegate

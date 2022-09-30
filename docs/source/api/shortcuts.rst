@@ -1,4 +1,0 @@
-shortcuts
-=========
-
-.. automodule:: bookmarks.shortcuts

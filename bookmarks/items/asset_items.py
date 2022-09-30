@@ -1,5 +1,23 @@
 # -*- coding: utf-8 -*-
-"""The view and model used to display asset items.
+"""Asset items in their simplest sense are file paths made up of ``server``, ``job``, ``root``
+and ``asset`` components.
+
+.. code-block:: python
+
+    server, job, root, asset = common.active('asset', args=True)
+    asset = f'{server}/{job}/{root}/{asset}'
+
+Bookmarks considers any folder in the root of a bookmark item to be an asset. Note that
+we don't have any notion of asset types (like how some pipelines make a distinction
+between shots and assets), nor do we understand nested assets by default (like a
+``SEQ010/SH010 `` structure).
+
+Asset data is queried by :class:`AssetItemModel`, and displayed by
+:class:`AssetItemView`. Any custom logic of how assets are queried should be
+implemented in :meth:`AssetItemModel.item_generator`.
+
+Asset items have their own bespoke list of attributes, stored in the bookmark item's
+database. See :mod:`bookmarks.database` for more details.
 
 """
 import functools
@@ -19,28 +37,30 @@ from ..threads import threads
 
 
 def get_display_name(file_name):
-    """Transform a source file name to a display name.
+    """Manipulate the given file name to a display friendly name.
 
     Args:
-        file_name (str): Source file name.
+        file_name (str): Source asset item file name.
 
     Returns:
-        str: Display name.
+        str: A modified asset item display name.
 
     """
     return file_name
-    # return re.sub(r'[_]+', ' ', file_name).strip('_').strip('')
 
 
-class AssetsWidgetContextMenu(contextmenu.BaseContextMenu):
-    """The context menu associated with :class:`AssetsWidget`."""
+class AssetItemViewContextMenu(contextmenu.BaseContextMenu):
+    """The context menu associated with :class:`AssetItemView`."""
 
     @common.debug
     @common.error
     def setup(self):
+        """Create the context menu.
+
+        """
         self.extra_menu()
         self.separator()
-        self.show_addasset_menu()
+        self.show_add_asset_menu()
         self.add_file_to_asset_menu()
         self.separator()
         self.launcher_menu()
@@ -72,9 +92,9 @@ class AssetsWidgetContextMenu(contextmenu.BaseContextMenu):
         self.quit_menu()
 
 
-class AssetsModel(models.BaseModel):
+class AssetItemModel(models.ItemModel):
     """The model containing all item information needed to represent assets.
-    Used in conjunction with :class:`.AssetsWidget`.
+    Used in conjunction with :class:`.AssetItemView`.
 
     """
     queues = (threads.AssetInfo, threads.AssetThumbnail)
@@ -218,7 +238,10 @@ class AssetsModel(models.BaseModel):
         )
 
     def item_generator(self, path):
-        """Yields DirEntry instances to be processed in init_data.
+        """Yields the asset items to be processed by :meth:`init_data`.
+
+        Yields:
+            DirEntry: Entry instances of valid asset folders.
 
         """
         try:
@@ -241,6 +264,9 @@ class AssetsModel(models.BaseModel):
             yield entry
 
     def save_active(self):
+        """Saves the active item.
+
+        """
         index = self.active_index()
 
         if not index.isValid():
@@ -256,23 +282,32 @@ class AssetsModel(models.BaseModel):
         )
 
     def data_type(self):
+        """Model data type.
+
+        """
         return common.FileItem
 
     def filter_setting_dict_key(self):
+        """Dict key used to filter values to the user settings file."""
         v = [common.active(k) for k in ('server', 'job', 'root')]
         if not all(v):
             return None
         return '/'.join(v)
 
     def default_row_size(self):
+        """Default row size.
+
+        """
         return QtCore.QSize(1, common.size(common.HeightAsset))
 
 
-class AssetsWidget(views.ThreadedBaseWidget):
-    """A thread-supported view used to display the contents of :class:`.AssetsModel`."""
-    SourceModel = AssetsModel
-    Delegate = delegate.AssetsWidgetDelegate
-    ContextMenu = AssetsWidgetContextMenu
+class AssetItemView(views.ThreadedItemView):
+    """The view used to display :class:`.AssetItemModel` item.
+
+    """
+    SourceModel = AssetItemModel
+    Delegate = delegate.AssetItemViewDelegate
+    ContextMenu = AssetItemViewContextMenu
 
     queues = (threads.AssetInfo, threads.AssetThumbnail)
 
@@ -291,7 +326,7 @@ class AssetsWidget(views.ThreadedBaseWidget):
         common.signals.sgAssetsLinked.connect(self.start_delayed_queue_timer)
 
     def inline_icons_count(self):
-        """The number of icons on the right - hand side."""
+        """The number of in-line icons."""
         if self.width() < common.size(common.DefaultWidth) * 0.5:
             return 0
         if self.buttons_hidden():
@@ -299,9 +334,13 @@ class AssetsWidget(views.ThreadedBaseWidget):
         return 6
 
     def get_hint_string(self):
+        """A hint string to show when the view is empty."""
         return 'No items. Select right-click - Add Asset to add a new asset.'
 
     def mouseReleaseEvent(self, event):
+        """Mouse release event handler.
+
+        """
         if not isinstance(event, QtGui.QMouseEvent):
             return
 
@@ -327,6 +366,9 @@ class AssetsWidget(views.ThreadedBaseWidget):
             return
 
     def showEvent(self, event):
+        """Show event handler.
+
+        """
         source_index = self.model().sourceModel().active_index()
         if source_index.isValid():
             index = self.model().mapFromSource(source_index)

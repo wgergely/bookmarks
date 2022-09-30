@@ -172,7 +172,7 @@ def _get_sequence_start_end(path):
     ext = path.split('.')[-1]
     path = path.replace('\\', '/')
     if common.is_collapsed(path):
-        path = common.get_sequence_startpath(path)
+        path = common.get_sequence_start_path(path)
 
     seq = common.get_sequence(path)
     if not seq:
@@ -350,7 +350,7 @@ def convert(
 
     # Let's use the input image size if not specified directly
     if not all(size):
-        buf = images.oiio_get_buf(common.get_sequence_startpath(path))
+        buf = images.oiio_get_buf(common.get_sequence_start_path(path))
         spec = buf.spec()
         width = spec.width
         height = spec.height

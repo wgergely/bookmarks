@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-"""The publish widget used by Bookmarks to create new PublishedFiles and Version
+"""The publishing widget used by Bookmarks to create new PublishedFiles and Version
 entities on ShotGrid.
 
-Our publish logic creates `Version` and `PublishFile` entities linked against
+Our publishing logic creates `Version` and `PublishFile` entities linked against
 the current active project and asset and uploads any custom thumbnails set.
 
 """
@@ -234,7 +234,7 @@ class PublishWidget(base.BasePropertyEditor):
 
         # Get the last entry of the sequence and check if the file is valid
         if common.is_collapsed(v):
-            v = common.get_sequence_endpath(v)
+            v = common.get_sequence_end_path(v)
         file_info = QtCore.QFileInfo(v)
         if not file_info.exists():
             raise RuntimeError('Could not find file.')
@@ -344,19 +344,15 @@ class PublishWidget(base.BasePropertyEditor):
                     # an fprint style sequence notation
                     _file_info = QtCore.QFileInfo(entry.path)
                     seq = common.get_sequence(_file_info.filePath())
-                    fprint_path = '{}{}{}.{}'.format(
-                        seq.group(1),
-                        '%0{}d'.format(len(seq.group(2))),
-                        seq.group(3),
-                        seq.group(4)
-                    )
+                    d = f'%0{len(seq.group(2))}d'
+                    fprint_path = f'{seq.group(1)}{d}{seq.group(3)}.{seq.group(4)}'
                     self.version_sequence_editor.setText(fprint_path)
                     return
 
     def is_scene_file(self):
         """Checks if the selected file is a scene.
 
-        This is used to check if we should publish the scene file in addittion
+        This is used to check if we should publish the scene file in addition
         to a version.
 
         """
@@ -775,10 +771,3 @@ class PublishWidget(base.BasePropertyEditor):
             return
         self.version_cache_editor.setText(file_path)
 
-
-if __name__ == '__main__':
-    import bookmarks.standalone as standalone
-
-    app = standalone.StandaloneApp([])
-    w = PublishWidget()
-    w.exec_()

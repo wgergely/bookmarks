@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
-"""The `templates.py` adds the methods and widgets needed to create items based
-on zip template files.
+"""The `templates.py` adds the methods and widgets needed to create items based on zip
+template files.
 
 The templates are used to create a job's or an asset's folder structure.
 
-The list of template files are stored (in Windows) in the
-`%localappdata%/{product}/{mode}_template` folder. The `{mode}` can be any
-arbitary string, e.g. 'job', or 'asset' as defined by `JobTemplateMode` and
-`AssetTemplateMode`.
+The list of template files are stored (in Windows) in the `%localappdata%/{product}/{
+mode}_template` folder. The `{mode}` can be any arbitrary string, e.g. 'job', or 'asset'
+as defined by `JobTemplateMode` and `AssetTemplateMode`.
 
 """
 import functools
@@ -77,7 +76,7 @@ class TemplateContextMenu(contextmenu.BaseContextMenu):
 
     def add_menu(self):
         self.menu[contextmenu.key()] = {
-            'text': 'Add new {} template...'.format(self.parent().mode()),
+            'text': f'Add new {self.parent().mode()} template...',
             'action': functools.partial(
                 actions.pick_template,
                 self.parent().mode()

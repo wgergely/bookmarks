@@ -91,7 +91,7 @@ from bookmarks import common
 common.initialize(common.EmbeddedMode) # or common.StandaloneMode
 ```
 
-[`bookmarks.exec_()`](api/main.md#bookmarks.exec_) is a utility method for starting Bookmarks in
+[`bookmarks.exec_()`](api/main.md#bookmarks.exec) is a utility method for starting Bookmarks in
 `common.StandaloneMode`, whilst `common.EmbeddedMode` is useful when
 running from inside a host DCC. Currently only the Maya plugin makes use of this mode.
 See `bookmarks.maya` and [`bookmarks.common`](api/common.md#module-bookmarks.common) for the related methods.

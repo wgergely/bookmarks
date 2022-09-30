@@ -1,16 +1,16 @@
-"""Definitions of the core bookmark, asset, file item list widgets and their
-respective models.
+"""Definitions of bookmark, asset, file item views and models.
 
-Each list item widget derives from :class:`.views.ThreadedBaseWidget`, a heavily
-customized QListView widget. The views are rendered by :class:`.delegate.BaseDelegate` and
-data is served by :class:`.models.BaseModel` instances.
+Each view derives from :class:`.views.ThreadedItemView`, a heavily
+customized QListView widget. The views are rendered by :class:`.delegate.ItemDelegate` and
+data is served by :class:`.models.ItemModel` instances.
 
+See the item specific submodules for more information:
 
-Hint
-----
+* :mod:`~bookmarks.items.bookmark_items`
+* :mod:`~bookmarks.items.asset_items`
+* :mod:`~bookmarks.items.file_items`
 
-To customize which items are read and how they're displayed, take a look at
-:meth:`.models.BaseModel.item_generator` and :meth:`.models.BaseModel.init_data`
-methods and their implementation in the item models.
+To customize the items served by a model take a look at
+:meth:`.models.ItemModel.item_generator` and :meth:`.models.ItemModel.init_data` methods.
 
 """

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-"""The base view used to display bookmark, asset and file items.
+"""Base views used to show bookmark, asset, file and favourite items.
 
-The view uses :class:`~bookmarks.items.models.BaseModel` for getting the item data,
-:class:`~bookmarks.items.delegate.rst.BaseDelegate` to paint the items.
+The view uses :class:`~bookmarks.items.models.ItemModel` for getting the item data,
+:class:`~bookmarks.items.delegate.rst.ItemDelegate` to paint the items.
 
-The base list is a customised QListView, :class:`.BaseInlineIconWidget` adds
-inline icon capabilities, and :class:`.ThreadedBaseWidget` implements data updating
-with the helper threads.
+:class:`BaseItemView` is a customised QListView widget augmented by
+:class:`.InlineIconView` (adds inline icon functionality),
+and :class:`.ThreadedItemView` that implement threading related functionality.
 
 """
 import collections
@@ -30,9 +30,10 @@ from ..threads import threads
 
 
 class ListsWidget(QtWidgets.QStackedWidget):
-    """Stacked widget used to hold and toggle the list widgets containing the
-    bookmarks, assets, files and favourites."""
+    """This stacked widget contains the main bookmark, asset, file and favourite item
+    views.
 
+    """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setObjectName('BrowserStackedWidget')
@@ -183,8 +184,8 @@ class FilterOnOverlayWidget(ProgressWidget):
         self.repaint()
 
 
-class BaseListWidget(QtWidgets.QListView):
-    """The base class of all subsequent Bookmark, asset and files list views.
+class BaseItemView(QtWidgets.QListView):
+    """The base view of all subsequent bookmark, asset and files item views.
 
     """
     customContextMenuRequested = QtCore.Signal(
@@ -317,12 +318,12 @@ class BaseListWidget(QtWidgets.QListView):
     def set_model(self, model):
         """Add a model to the view.
 
-        The BaseModel subclasses are wrapped in a QSortFilterProxyModel. All
+        The ItemModel subclasses are wrapped in a QSortFilterProxyModel. All
         the necessary internal signal-slot connections needed for the proxy, model
         and the view to communicate are made here.
 
         """
-        common.check_type(model, models.BaseModel)
+        common.check_type(model, models.ItemModel)
 
         proxy = models.FilterProxyModel(parent=self)
 
@@ -355,6 +356,10 @@ class BaseListWidget(QtWidgets.QListView):
 
         model.updateIndex.connect(
             self.update, type=QtCore.Qt.DirectConnection)
+
+        common.signals.paintThumbnailBGChanged.connect(
+            self.repaint_visible_rows
+        )
 
     @QtCore.Slot(QtCore.QModelIndex)
     def update(self, index):
@@ -417,7 +422,7 @@ class BaseListWidget(QtWidgets.QListView):
 
         path = index.data(common.PathRole)
         if data_type == common.SequenceItem:
-            path = common.get_sequence_startpath(path)
+            path = common.get_sequence_start_path(path)
 
         model.set_filter_setting('filters/selection_file', path)
         model.set_filter_setting('filters/selection_sequence', common.proxy_path(path))
@@ -1286,11 +1291,12 @@ class BaseListWidget(QtWidgets.QListView):
             self.activate(index)
 
 
-class BaseInlineIconWidget(BaseListWidget):
-    """Multi-toggle capable widget with clickable in-line icons."""
+class InlineIconView(BaseItemView):
+    """Adds multi-toggle and clickable in-line icons to :class:`BaseItemView`.
 
+    """
     def __init__(self, icon='bw_icon', parent=None):
-        super(BaseInlineIconWidget, self).__init__(icon=icon, parent=parent)
+        super(InlineIconView, self).__init__(icon=icon, parent=parent)
 
         self.multi_toggle_pos = None
         self.multi_toggle_state = None
@@ -1313,7 +1319,7 @@ class BaseInlineIconWidget(BaseListWidget):
         """Handle mouse press & release events on an item's interactive rectangle.
 
         The clickable rectangles are defined by and stored by the item delegate. See
-        :meth:`BaseDelegate.get_clickable_rectangles`.
+        :meth:`ItemDelegate.get_clickable_rectangles`.
 
         We're implementing filtering by reacting to clicks on item labels:
         ``shift`` modifier will add a _positive_ filter and hide all items not
@@ -1388,7 +1394,7 @@ class BaseInlineIconWidget(BaseListWidget):
                     return
 
     def mousePressEvent(self, event):
-        """The `BaseInlineIconWidget`'s mousePressEvent initiates multi-row
+        """The `InlineIconView`'s mousePressEvent initiates multi-row
         flag toggling.
 
         This event is responsible for setting ``multi_toggle_pos``, the start
@@ -1404,7 +1410,7 @@ class BaseInlineIconWidget(BaseListWidget):
         cursor_position = self.mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)
         if not index.isValid() or not index.flags() & QtCore.Qt.ItemIsEnabled:
-            super(BaseInlineIconWidget, self).mousePressEvent(event)
+            super(InlineIconView, self).mousePressEvent(event)
             self.reset_multitoggle()
             return
 
@@ -1423,18 +1429,18 @@ class BaseInlineIconWidget(BaseListWidget):
             self.multi_toggle_state = not index.flags() & common.MarkedAsArchived
             self.multi_toggle_idx = delegate.ArchiveRect
 
-        super(BaseInlineIconWidget, self).mousePressEvent(event)
+        super(InlineIconView, self).mousePressEvent(event)
 
     def enterEvent(self, event):
         QtWidgets.QApplication.instance().restoreOverrideCursor()
-        super(BaseInlineIconWidget, self).enterEvent(event)
+        super(InlineIconView, self).enterEvent(event)
 
     def leaveEvent(self, event):
         app = QtWidgets.QApplication.instance()
         app.restoreOverrideCursor()
 
     def mouseReleaseEvent(self, event):
-        """Concludes `BaseInlineIconWidget`'s multi-item toggle operation, and
+        """Concludes `InlineIconView`'s multi-item toggle operation, and
         resets the associated variables.
 
         The inline icon buttons are also triggered here. We're using the
@@ -1452,12 +1458,12 @@ class BaseInlineIconWidget(BaseListWidget):
         index = self.indexAt(event.pos())
         if not index.isValid():
             self.reset_multitoggle()
-            super(BaseInlineIconWidget, self).mouseReleaseEvent(event)
+            super(InlineIconView, self).mouseReleaseEvent(event)
             return
 
         if self.multi_toggle_items:
             self.reset_multitoggle()
-            super(BaseInlineIconWidget, self).mouseReleaseEvent(event)
+            super(InlineIconView, self).mouseReleaseEvent(event)
             self.model().invalidateFilter()
             return
 
@@ -1484,10 +1490,10 @@ class BaseInlineIconWidget(BaseListWidget):
         if rectangles[delegate.TodoRect].contains(cursor_position):
             actions.show_todos()
 
-        super(BaseInlineIconWidget, self).mouseReleaseEvent(event)
+        super(InlineIconView, self).mouseReleaseEvent(event)
 
     def mouseMoveEvent(self, event):
-        """``BaseInlineIconWidget``'s mouse move event is responsible for
+        """``InlineIconView``'s mouse move event is responsible for
         handling the multi-toggle operations and repainting the current index
         under the mouse.
 
@@ -1526,7 +1532,7 @@ class BaseInlineIconWidget(BaseListWidget):
                     self.update(index)
                 elif rectangles[delegate.AddAssetRect].contains(cursor_position):
                     common.signals.showStatusTipMessage.emit(
-                        'Add new item...')
+                        'Add New Item...')
                     self.update(index)
                 elif rectangles[delegate.TodoRect].contains(cursor_position):
                     common.signals.showStatusTipMessage.emit(
@@ -1573,7 +1579,7 @@ class BaseInlineIconWidget(BaseListWidget):
                     app.setOverrideCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
             else:
                 app.restoreOverrideCursor()
-            super(BaseInlineIconWidget, self).mouseMoveEvent(event)
+            super(InlineIconView, self).mouseMoveEvent(event)
             return
 
         if event.buttons() == QtCore.Qt.NoButton:
@@ -1615,8 +1621,9 @@ class BaseInlineIconWidget(BaseListWidget):
             return
 
 
-class ThreadedBaseWidget(BaseInlineIconWidget):
-    """Extends the base-class with the methods used to interface with threads.
+class ThreadedItemView(InlineIconView):
+    """Extends the :class:`InlineIconView` with the methods used to interface with
+    threads.
 
     """
     workerInitialized = QtCore.Signal(str)

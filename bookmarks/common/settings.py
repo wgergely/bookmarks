@@ -87,10 +87,10 @@ SECTIONS = {
         'file_saver/template',
         'file_saver/user',
     ),
-    'bookmark_editor': (
-        'bookmark_editor/server',
-        'bookmark_editor/job',
-        'bookmark_editor/root',
+    'bookmarker': (
+        'bookmarker/server',
+        'bookmarker/job',
+        'bookmarker/root',
     ),
     'ffmpeg': (
         'ffmpeg/preset',
@@ -196,10 +196,10 @@ def _init_bookmarks():
 
 
 def active(k, path=False, args=False):
-    """Get the current active item.
+    """Get an active path segment stored in the user settings.
 
     Args:
-        k (str): The name of the path segment, e.g. `'server'`.
+        k (str): One of the following segment names: `'server', 'job', 'root', 'asset', 'task', 'file'`
         path (bool, optional): If True, will return a path to the active item.
         args (bool, optional): If `True`, will return all components that make up the active path.
 
@@ -266,7 +266,7 @@ def strip(s):
     return re.sub(
         r'\\', '/',
         s,
-        flags=re.UNICODE | re.IGNORECASE
+        flags=re.IGNORECASE
     ).strip().rstrip('/')
 
 
@@ -286,20 +286,7 @@ _false = {'False', 'false', 'None', 'none', '0', '', False, None}
 
 
 class UserSettings(QtCore.QSettings):
-    """An `ini` config file to store all local user common.
-
-    This is where the current bookmarks, saved favourites, active bookmark,
-    assets and files and other widget states are kept.
-
-    Active Path:
-        The active path is saved in the following segments:
-
-        * active/server (str):    Server, e.g. '//server/data'.
-        * active/job (str):       Job folder name inside the server.
-        * active/root (str):      Job-relative bookmark path, e.g. 'seq_010/shots'.
-        * active/asset (str):     Job folder name inside the root, e.g. 'shot_010'.
-        * active/task (str):      A folder, e.g. 'scenes', 'renders', etc.
-        * active/file (str):      A relative file path.
+    """An INI config file used to store local user settings.
 
     """
 
@@ -413,6 +400,11 @@ class UserSettings(QtCore.QSettings):
         # Skip saving active values when PrivateActivePaths is on
         if common.active_mode == PrivateActivePaths and key in SECTIONS['active']:
             return
+
+        if key == 'settings/disable_oiio':
+            common.signals.generateThumbnailsChanged.emit(v)
+        if key == 'settings/paint_thumbnail_bg':
+            common.signals.paintThumbnailBGChanged.emit(v)
 
         super().setValue(key, v)
         super().setValue(f'{key}_type', type(v).__name__)

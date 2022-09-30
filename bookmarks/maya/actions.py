@@ -139,7 +139,7 @@ def save_scene(increment=False, type='mayaAscii'):
 @common.error
 @common.debug
 def execute(index):
-    file_path = common.get_sequence_endpath(
+    file_path = common.get_sequence_end_path(
         index.data(common.PathRole)
     )
     file_info = QtCore.QFileInfo(file_path)
@@ -261,7 +261,7 @@ def open_scene(path):
         RuntimeError: When an invalid scene file is encountered.
 
     """
-    p = common.get_sequence_endpath(path)
+    p = common.get_sequence_end_path(path)
     file_info = QtCore.QFileInfo(p)
 
     _s = file_info.suffix().lower()
@@ -307,7 +307,7 @@ def import_scene(path, reference=False):
         name = _basename.replace('_'.join(nms), '').strip('_')
         return nm, name
 
-    p = common.get_sequence_endpath(path)
+    p = common.get_sequence_end_path(path)
     file_info = QtCore.QFileInfo(p)
     _s = file_info.suffix().lower()
     if _s not in ('ma', 'mb', 'abc'):

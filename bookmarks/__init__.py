@@ -1,21 +1,32 @@
 # -*- coding: utf-8 -*-
-"""Bookmarks is a lightweight asset manager written in Python designed to
-browse and manage project content of animation, VFX and film projects.
+""".. centered:: |logo|
+
+.. centered:: |label1| |label2| |label3| |label4|
+
+
+=====================
+Welcome to Bookmarks!
+=====================
+
+
+Bookmarks is a lightweight Python asset manager designed to browse and manage content
+of animation, VFX and film projects.
 
 
 Features
 --------
 
-The app displays content as separate ``bookmark``, ``asset`` and ``file`` items. Each
-``bookmark`` item contains a series of ``asset`` items that in turn contain ``file``
-items. ``Bookmark`` and ``asset`` items can be configured independently to link with,
-for instance, ``ShotGrid`` entities or set up with properties, like frame-rate,
-resolution, and custom urls. These properties can be used to quickly configure scenes
-in host applications, like Maya, and to access related external resources.
+Bookmarks displays project content as :mod:`bookmark<bookmarks.items.bookmark_items>`,
+:mod:`asset<bookmarks.items.asset_items>` and :mod:`file<bookmarks.items.file_items>`
+items. Each bookmark item contains a series of asset items that in turn contain the
+file items. Bookmark and asset items can be configured independently to link with,
+for instance, `ShotGrid` entities or be set up with properties, like frame-rate,
+resolution, and custom URLs. These properties can be used to quickly configure scenes
+in host applications, e.g. Maya, and to access related external resources.
 
-The app provides simple tools to create new jobs from ZIP file templates (although this
-is usually something very site specific) and options to annotate and filter existing
-items. It can also preview images files using ``OpenImageIO``.
+The app provides simple tools to create jobs and assets using ZIP templates, templated
+file-names and options to annotate and filter existing items, and preview images using
+`OpenImageIO`.
 
 
 Background
@@ -41,49 +52,36 @@ The simplest way to start Bookmarks as a standalone application is to run:
 Dependencies
 ------------
 
-The following python packages are required to run Bookmarks:
+* `Python3 <https://github.com/python/cpython>`_ -  Tested against 3.9
+* `PySide2 <https://pypi.org/project/PySide2>`_ - Tested against Qt 5.15.2
+* `OpenImageIO <https://github.com/OpenImageIO/oiio>`_ - Tested against 2.3
+* `numpy <https://pypi.org/project/numpy>`_
+* `slack_sdk <https://pypi.org/project/slack_sdk>`_
+* `psutil <https://pypi.org/project/psutil>`_
+* `shotgun_api3 <https://github.com/shotgunsoftware/python-api>`_
 
-* ``Python3``: Tested against 3.9.
-* ``PySide2``: Tested against Qt 5.15.2. https://pypi.org/project/PySide2
-* ``OpenImageIO``: Used to generate thumbnails for image items https://github.com/OpenImageIO/oiio
-* ``numpy``: https://pypi.org/project/numpy
-* ``slack_sdk``: https://pypi.org/project/slack_sdk
-* ``psutil``: https://pypi.org/project/psutil
-* ``shotgun_api3``: https://github.com/shotgunsoftware/python-api
+Warning:
 
-Currently, Windows is the only supported platform (although much of the codebase should
-be platform-agnostic).
-
-Note:
-
-    OpenImageIO does not currently maintain installable python packages.
+    * Currently, Windows is the only supported platform (although much of the codebase should be platform-agnostic).
+    * OpenImageIO does not currently maintain installable python packages.
 
 
+.. |logo| image:: https://github.com/wgergely/bookmarks/blob/main/bookmarks/rsc/gui/icon.png?raw=true
+   :height: 300px
+   :width: 300px
+   :alt: Bookmarks - Lightweight asset manager designed for VFX, animation, film productions
 
-Modes
------
+.. |label1| image:: https://img.shields.io/badge/Python-3.8%2B-lightgrey
+   :height: 18px
 
-Bookmarks can be run in two modes. As a standalone application, or embedded in a
-PySide2 environment. The base-layers can be initialized with:
+.. |label2| image:: https://img.shields.io/badge/Python-PySide2-lightgrey
+   :height: 18px
 
-.. code-block:: python
+.. |label3| image:: https://img.shields.io/badge/Platform-Windows-lightgrey
+   :height: 18px
 
-    from bookmarks import common
-    common.initialize(common.EmbeddedMode) # or common.StandaloneMode
-
-:func:`exec_()` is a utility method for starting Bookmarks in
-:attr:`common.StandaloneMode`, whilst :attr:`common.EmbeddedMode` is useful when
-running from inside a host DCC. Currently only the Maya plugin makes use of this mode.
-See :mod:`bookmarks.maya` and :mod:`bookmarks.common` for the related methods.
-
-
-Links
------
-
-`Github Repository <https://github.com/wgergely/bookmarks>`_
-
-`Documentation <https://bookmarks.gergely-wootsch.com/html/index.html>`_
-
+.. |label4| image:: https://img.shields.io/badge/Version-v0.6.0-green
+   :height: 18px
 
 """
 import importlib
@@ -93,14 +91,25 @@ import sys
 
 from PySide2 import QtWidgets
 
+#: Package author
 __author__ = 'Gergely Wootsch'
-__website__ = 'https://github.com/wgergely/bookmarks'
-__email__ = 'hello@gergely-wootsch.com'
-__version__ = '0.6.0'
-__version_info__ = (0, 6, 0)
-__copyright__ = f'Copyright (C) 2022 {__author__}'
 
-# Python 2 is not supported
+#: Project homepage
+__website__ = 'https://github.com/wgergely/bookmarks'
+
+#: Author email
+__email__ = 'hello@gergely-wootsch.com'
+
+#: Project version
+__version__ = '0.6.0'
+
+#: Project version
+__version_info__ = __version__.split('.')
+
+#: Project copyright
+__copyright__ = f'Copyright (c) 2022 {__author__}'
+
+# Specify python support
 if sys.version_info[0] < 3 and sys.version_info[1] < 7:
     raise RuntimeError('Bookmarks requires Python 3.7.0 or later.')
 
@@ -142,7 +151,7 @@ def info():
     )
 
 
-def exec_(print_info=True):
+def exec(print_info=True):
     """Opens the Bookmark app.
 
     The method creates :class:`bookmarks.standalone.BookmarksApp`,
@@ -160,3 +169,10 @@ def exec_(print_info=True):
     standalone.show()
 
     QtWidgets.QApplication.instance().exec_()
+
+
+def exec_(*args, **kwargs):
+    """Shadows :func:`exec`. Exists for compatibility.
+
+    """
+    return exec(*args, **kwargs)

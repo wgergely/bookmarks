@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """A list of ShotGrid specific actions.
 
 """
@@ -267,8 +266,7 @@ def save_entity_data_to_db(server, job, root, source, table, entity, value_map):
             if not _v:
                 continue
 
-            # If the entity has data and we have nothing set currently in our
-            # database
+            # Entity has data, and we have nothing set currently in our database
             cval = db.value(s, k, t)
             if not cval and _v:
                 db.setValue(s, k, _v, t)
@@ -321,7 +319,7 @@ def get_status_codes(sg):
             continue
         entities.append(entity)
 
-    # Lets find out the default and mark the item as such
+    # Let's find out the default and mark the item as such
     v = schema['sg_status_list']['properties']['default_value']['value']
     for entity in entities:
         if entity['code'] == v:

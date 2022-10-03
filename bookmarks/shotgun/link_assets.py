@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """The widget used to link multiple local assets with ShotGrid entities.
 
 """
@@ -19,7 +18,7 @@ instance = None
 NOT_LINKED = 'Not linked'
 CURRENT_VALUES = 'Linked (keep current values)'
 
-ROW_HEIGHT = common.size(common.HeightRow)
+ROW_HEIGHT = common.size(common.size_row_height)
 ENTITY_TYPES = ('Asset', 'Shot', 'Sequence')
 
 
@@ -70,9 +69,9 @@ class TableWidget(QtWidgets.QTableWidget):
         header.setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
         header.setSectionResizeMode(3, QtWidgets.QHeaderView.Fixed)
 
-        self.setColumnWidth(1, common.size(common.HeightRow))
-        self.setColumnWidth(2, common.size(common.DefaultWidth) * 0.4)
-        self.setColumnWidth(3, common.size(common.DefaultWidth) * 0.2)
+        self.setColumnWidth(1, common.size(common.size_row_height))
+        self.setColumnWidth(2, common.size(common.size_width) * 0.4)
+        self.setColumnWidth(3, common.size(common.size_width) * 0.2)
 
         self.setShowGrid(False)
 
@@ -89,9 +88,9 @@ class TableWidget(QtWidgets.QTableWidget):
         _item = QtWidgets.QTableWidgetItem(name)
         _item.setFlags(QtCore.Qt.ItemIsEnabled)
         _item.setTextAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
-        pixmap = images.ImageCache.get_rsc_pixmap(
-            'asset', common.color(common.BackgroundDarkColor),
-            common.size(common.WidthMargin))
+        pixmap = images.ImageCache.rsc_pixmap(
+            'asset', common.color(common.color_dark_background),
+            common.size(common.size_margin))
         icon = QtGui.QIcon()
         icon.addPixmap(pixmap, QtGui.QIcon.Normal)
         _item.setIcon(icon)
@@ -101,9 +100,9 @@ class TableWidget(QtWidgets.QTableWidget):
         item.setFlags(QtCore.Qt.NoItemFlags)
         item.setTextAlignment(QtCore.Qt.AlignCenter)
         self.setItem(row, 1, item)
-        pixmap = images.ImageCache.get_rsc_pixmap(
-            'branch_closed', common.color(common.BackgroundDarkColor),
-            common.size(common.WidthMargin))
+        pixmap = images.ImageCache.rsc_pixmap(
+            'branch_closed', common.color(common.color_dark_background),
+            common.size(common.size_margin))
         label = QtWidgets.QLabel()
         label.setPixmap(pixmap)
         self.setCellWidget(row, 1, label)
@@ -163,7 +162,7 @@ class LinkMultiple(QtWidgets.QDialog):
             common.set_stylesheet(self)
 
         QtWidgets.QVBoxLayout(self)
-        o = common.size(common.WidthMargin)
+        o = common.size(common.size_margin)
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
 
@@ -225,6 +224,9 @@ class LinkMultiple(QtWidgets.QDialog):
     @common.error
     @common.debug
     def init_data(self):
+        """Initializes data.
+
+        """
         if not self.source():
             raise RuntimeError('Invalid context.')
 
@@ -421,9 +423,17 @@ class LinkMultiple(QtWidgets.QDialog):
             )
 
     def showEvent(self, event):
+        """Show event handler.
+
+        """
         common.center_window(self)
         QtCore.QTimer.singleShot(100, self.init_data)
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth),
-                            common.size(common.DefaultHeight))
+        """Returns a size hint.
+
+        """
+        return QtCore.QSize(
+            common.size(common.size_width),
+            common.size(common.size_height)
+        )

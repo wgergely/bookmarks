@@ -43,8 +43,8 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.autosectionlabel',
     'sphinx.ext.githubpages',
-    'sphinx_markdown_builder',
     'autodocsumm',
+    'sphinx_markdown_builder',
 ]
 
 napoleon_google_docstring = True
@@ -93,10 +93,10 @@ highlight_language = "python"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-autodoc_member_order = 'bysource'
-
 autodoc_default_options = {
     'autosummary': True,
-    'member-order': 'bysource',
+    'member-order': 'groupwise',
     'show-inheritance': True,
+    'preserve_defaults': True,
 }
+autodoc_preserve_defaults = True

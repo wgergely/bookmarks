@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Generic item gallery widget.
 
 """
@@ -9,6 +8,9 @@ from ... import ui
 
 
 def close():
+    """Closes the :class:`ThumbnailLibrary` editor.
+
+    """
     if common.gallery_widget is None:
         return
     try:
@@ -20,6 +22,9 @@ def close():
 
 
 def show():
+    """Opens the :class:`ThumbnailLibrary` editor.
+
+    """
     close()
     common.gallery_widget = ThumbnailLibrary()
     common.gallery_widget.open()
@@ -27,8 +32,14 @@ def show():
 
 
 class ThumbnailLibrary(ui.GalleryWidget):
+    """Editor used to show a list of predefined thumbnail icons.
+
+    """
     def item_generator(self):
-        for entry in os.scandir(common.get_rsc(common.ThumbnailResource)):
+        """Yields a list of predefined thumbnail icons.
+
+        """
+        for entry in os.scandir(common.rsc(common.ThumbnailResource)):
             if not entry.name.endswith(common.thumbnail_format):
                 continue
             label = entry.name.replace('thumb_', '').split('.')[0]

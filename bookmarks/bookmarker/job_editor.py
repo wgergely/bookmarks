@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Editor widget used by :class:`~bookmarks.bookmarker.main.BookmarkerWidget` to add and
 select jobs found inside a server.
 
@@ -23,17 +22,18 @@ from .. import templates
 from .. import ui
 from ..editor import base
 
+#: UI layout definition
 SECTIONS = {
     0: {
         'name': 'Add Job',
         'icon': '',
-        'color': common.color(common.BackgroundDarkColor),
+        'color': common.color(common.color_dark_background),
         'groups': {
             0: {
                 0: {
                     'name': 'Name',
                     'key': None,
-                    'validator': base.jobnamevalidator,
+                    'validator': base.job_name_validator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Name, e.g. `MY_NEW_JOB`',
                     'description': 'The job\'s name, e.g. `MY_NEW_JOB`.',
@@ -71,7 +71,7 @@ def get_job_icon(path):
             continue
         return QtGui.QIcon(pixmap)
 
-    path = common.get_rsc(
+    path = common.rsc(
         f'{common.GuiResource}/asset_item.{common.thumbnail_format}'
     )
     pixmap = images.ImageCache.get_pixmap(path, common.thumbnail_size)
@@ -98,14 +98,19 @@ class AddJobWidget(base.BasePropertyEditor):
 
         self.jobs = None
         self.setWindowTitle(f'{self.server}: Add Job')
-        self.setFixedHeight(common.size(common.DefaultHeight) * 0.66)
+        self.setFixedHeight(common.size(common.size_height) * 0.66)
 
         common.signals.templateExpanded.connect(self.close)
         common.signals.jobAdded.connect(self.close)
         common.signals.serversChanged.connect(self.close)
 
     def db_source(self):
-        """Database connection source."""
+        """A file path to use as the source of database values.
+
+        Returns:
+            str: The database source file.
+
+        """
         return None
 
     def init_data(self):
@@ -128,7 +133,7 @@ class AddJobWidget(base.BasePropertyEditor):
     @common.error
     @common.debug
     def save_changes(self):
-        """Create a new job item based on the user selections.
+        """Saves changes.
 
         """
         if not self.name_editor.text():
@@ -176,7 +181,9 @@ class JobContextMenu(contextmenu.BaseContextMenu):
     """
 
     def setup(self):
-        """Create the context menu."""
+        """Creates the context menu.
+
+        """
         self.add_menu()
         self.separator()
         self.reveal_menu()
@@ -189,7 +196,7 @@ class JobContextMenu(contextmenu.BaseContextMenu):
         """
         self.menu['Add Job...'] = {
             'action': self.parent().add,
-            'icon': ui.get_icon('add', color=common.color(common.GreenColor))
+            'icon': ui.get_icon('add', color=common.color(common.color_green))
         }
 
     def reveal_menu(self):
@@ -239,7 +246,7 @@ class JobItemEditor(ui.ListViewWidget):
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
         )
-        self.setMinimumWidth(common.size(common.DefaultWidth) * 0.2)
+        self.setMinimumWidth(common.size(common.size_width) * 0.2)
 
         self._connect_signals()
         self._init_shortcuts()
@@ -381,7 +388,7 @@ class JobItemEditor(ui.ListViewWidget):
             item.setData(path, role=QtCore.Qt.WhatsThisRole)
             item.setData(path, role=QtCore.Qt.ToolTipRole)
 
-            size = QtCore.QSize(0, common.size(common.WidthMargin) * 2)
+            size = QtCore.QSize(0, common.size(common.size_margin) * 2)
             item.setSizeHint(size)
 
             _icon = get_job_icon(path)
@@ -434,7 +441,7 @@ class JobItemEditor(ui.ListViewWidget):
 
             if item.data(QtCore.Qt.UserRole + 1) in active_jobs:
                 item.setData(
-                    common.color(common.GreenColor),
+                    common.color(common.color_green),
                     role=QtCore.Qt.ForegroundRole
                 )
                 if suffix not in item.data(QtCore.Qt.DisplayRole):
@@ -445,7 +452,7 @@ class JobItemEditor(ui.ListViewWidget):
                 continue
 
             item.setData(
-                common.color(common.TextColor),
+                common.color(common.color_text),
                 role=QtCore.Qt.ForegroundRole
             )
             name = item.data(QtCore.Qt.DisplayRole).replace(suffix, '')

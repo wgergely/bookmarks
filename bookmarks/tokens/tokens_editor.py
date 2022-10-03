@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Various widgets used to edit token values.
 
 See the :mod:`bookmarks.tokens.tokens` for the interface details.
@@ -108,12 +107,18 @@ class TokenEditor(QtWidgets.QDialog):
         item = item.data(QtCore.Qt.DisplayRole)
 
     def sizeHint(self):
+        """Returns a size hint.
+
+        """
         return QtCore.QSize(
             self.parent().geometry().width(),
-            common.size(common.HeightRow) * 7
+            common.size(common.size_row_height) * 7
         )
 
     def showEvent(self, event):
+        """Show event handler.
+
+        """
         editor = self.parent()
         geo = editor.rect()
         pos = editor.mapToGlobal(geo.bottomLeft())
@@ -137,7 +142,7 @@ class FormatEditor(QtWidgets.QDialog):
         self._create_ui()
 
     def _create_ui(self):
-        o = common.size(common.WidthMargin)
+        o = common.size(common.size_margin)
         QtWidgets.QVBoxLayout(self)
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
@@ -158,7 +163,7 @@ class FormatEditor(QtWidgets.QDialog):
 
         row = ui.add_row(
             None, height=common.size(
-                common.HeightRow
+                common.size_row_height
             ), parent=self
         )
         row.layout().addWidget(self.save_button, 1)
@@ -188,7 +193,7 @@ class SubfolderEditor(QtWidgets.QDialog):
         self._create_ui()
 
     def _create_ui(self):
-        o = common.size(common.WidthMargin)
+        o = common.size(common.size_margin)
         QtWidgets.QVBoxLayout(self)
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
@@ -222,7 +227,7 @@ class SubfolderEditor(QtWidgets.QDialog):
 
         row = ui.add_row(
             None, height=common.size(
-                common.HeightRow
+                common.size_row_height
             ), parent=self
         )
         row.layout().addWidget(self.save_button, 1)
@@ -264,8 +269,8 @@ class TokenConfigEditor(QtWidgets.QWidget):
         common.set_stylesheet(self)
 
         QtWidgets.QVBoxLayout(self)
-        o = common.size(common.WidthMargin)
-        h = common.size(common.HeightRow)
+        o = common.size(common.size_margin)
+        h = common.size(common.size_row_height)
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(o)
 
@@ -289,7 +294,7 @@ class TokenConfigEditor(QtWidgets.QWidget):
                 '',
                 section_name,
                 self,
-                color=common.color(common.BackgroundDarkColor)
+                color=common.color(common.color_dark_background)
             )
 
             # Save header data for later use
@@ -324,7 +329,7 @@ class TokenConfigEditor(QtWidgets.QWidget):
                 row.layout().addWidget(editor)
 
                 if section == tokens.PublishConfig:
-                    editor.setValidator(base.tokenvalidator)
+                    editor.setValidator(base.token_validator)
                     button = ui.PaintedButton('+', parent=row)
                     button.clicked.connect(
                         functools.partial(self.show_token_editor, editor)
@@ -332,7 +337,7 @@ class TokenConfigEditor(QtWidgets.QWidget):
                     row.layout().addWidget(button, 0)
 
                 if section == tokens.FileNameConfig:
-                    editor.setValidator(base.tokenvalidator)
+                    editor.setValidator(base.token_validator)
                     button = ui.PaintedButton('+', parent=row)
                     button.clicked.connect(
                         functools.partial(self.show_token_editor, editor)
@@ -363,6 +368,9 @@ class TokenConfigEditor(QtWidgets.QWidget):
                         button.setDisabled(True)
 
     def init_data(self):
+        """Initializes data.
+
+        """
         self.tokens = tokens.get(self.server, self.job, self.root)
 
     def contextMenuEvent(self, event):
@@ -462,19 +470,17 @@ class TokenConfigEditor(QtWidgets.QWidget):
         if v != self.current_data[key]:
             self.changed_data[key] = v
             editor.setStyleSheet(
-                'color: {};'.format(common.rgb(common.color(common.GreenColor)))
+                'color: {};'.format(common.rgb(common.color(common.color_green)))
             )
             return
 
         if key in self.changed_data:
             del self.changed_data[key]
-        editor.setStyleSheet(
-            'color: {};'.format(common.rgb(common.color(common.TextColor)))
-        )
+        editor.setStyleSheet(f'color: {common.rgb(common.color(common.color_text))};')
 
     @QtCore.Slot()
     def save_changes(self):
-        """Saves changed values to the bookmark database.
+        """Saves changes.
 
         """
         if not self.changed_data:

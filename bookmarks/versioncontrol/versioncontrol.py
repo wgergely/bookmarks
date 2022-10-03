@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Online version checking mechanism.
 
 Version control is implemented using GitHub's REST API.

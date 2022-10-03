@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Bookmark items at their core are simple file paths made up of a ``server``, ``job``
 and ``root`` components. We usually store them in the following form:
 
@@ -18,25 +17,31 @@ and ``root`` components. We usually store them in the following form:
 :meth:`BookmarkItemModel.item_generator` for how the model finds saved bookmark items.
 
 Properties like description, frame-range, frame-rate, or ShotGrid linkage are stored in
-SQLite databases located at each bookmark item's root folder. See
+sqlite3 databases located at each bookmark item's root folder. See
 :mod:`bookmarks.database` more details.
 
 Throughout the app, data interfaces usually require a bookmark item, commonly as
 separate server, job, root arguments. See :func:`~bookmarks.common.settings.active` to
 see how active path components can be queried.
 
-Note:
-    The term "active" refers to items the user has activated, e.g. double-clicked. If the
-    user activates a bookmark item, then the path components that make up that item will
+Hint:
+    The term "active" refers to items the user has activated, e.g. double-clicked. When
+    an item is activated all path components that make up that item will
     become active.
 
     .. code-block:: python
 
-        server, job, root = common.active('root', args=True)
+        server = common.active('server')
         job = common.active('job')
+        root = common.active('root')
+
+        # Or...
+
+        server, job, root = common.active('root', args=True)
 
 
-Views and models can access path segments using the
+
+Model items store their path segments using the
 :attr:`~bookmarks.common.ParentPathRole` role. E.g.:
 
 .. code-block:: python
@@ -73,6 +78,9 @@ class BookmarkItemViewContextMenu(contextmenu.BaseContextMenu):
     @common.debug
     @common.error
     def setup(self):
+        """Creates the context menu.
+
+        """
         self.extra_menu()
         self.bookmark_editor_menu()
         self.separator()
@@ -121,7 +129,7 @@ class BookmarkItemModel(models.ItemModel):
     @common.error
     @common.debug
     def init_data(self):
-        """Initialises the model data.
+        """Collects the data needed to populate the bookmark item model.
 
         """
         p = self.source_path()
@@ -253,6 +261,12 @@ class BookmarkItemModel(models.ItemModel):
         actions.set_active('root', root)
 
     def source_path(self):
+        """The bookmark list's source paths.
+
+        There's no file source for bookmark items, so we're returning some arbitrary
+        names.
+
+        """
         return 'bookmarks',
 
     def data_type(self):
@@ -262,10 +276,10 @@ class BookmarkItemModel(models.ItemModel):
         return common.FileItem
 
     def default_row_size(self):
-        """The default row size of the model items.
+        """Returns the default item size.
 
         """
-        return QtCore.QSize(1, common.size(common.HeightBookmark))
+        return QtCore.QSize(1, common.size(common.size_bookmark_row_height))
 
     def filter_setting_dict_key(self):
         """The custom dictionary key used to save filter settings to the user settings
@@ -294,6 +308,9 @@ class BookmarkItemView(views.ThreadedItemView):
         )
 
     def mouseReleaseEvent(self, event):
+        """Event handler.
+
+        """
         if not isinstance(event, QtGui.QMouseEvent):
             return
 
@@ -321,11 +338,16 @@ class BookmarkItemView(views.ThreadedItemView):
             return
 
     def inline_icons_count(self):
-        """The number of row-icons an item has."""
+        """Inline buttons count.
+
+        """
         if self.buttons_hidden():
             return 0
         return 6
 
     def get_hint_string(self):
+        """Returns an informative hint text.
+
+        """
         return 'No active bookmark items found. Right-click -> "Edit Active Bookmarks" ' \
                'to add new ones.'

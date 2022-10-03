@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Bookmarks test environment setup and teardown."""
 import os
 import shutil

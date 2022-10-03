@@ -19,7 +19,13 @@ from . import export
 
 
 class PluginContextMenu(contextmenu.BaseContextMenu):
+    """Maya plugin context menu.
+
+    """
     def setup(self):
+        """Creates the context menu.
+
+        """
         self.apply_bookmark_settings_menu()
         self.separator()
         self.save_menu()
@@ -35,6 +41,9 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         self.capture_menu()
 
     def apply_bookmark_settings_menu(self):
+        """Apply settings action.
+
+        """
         server = common.active('server')
         job = common.active('job')
         root = common.active('root')
@@ -45,11 +54,14 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
 
         self.menu[contextmenu.key()] = {
             'text': 'Apply scene settings...',
-            'icon': ui.get_icon('check', color=common.color(common.GreenColor)),
+            'icon': ui.get_icon('check', color=common.color(common.color_green)),
             'action': actions.apply_settings
         }
 
     def save_menu(self):
+        """Save scene action.
+
+        """
         if not all(common.active('asset', args=True)):
             return
 
@@ -57,7 +69,7 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
 
         self.menu[contextmenu.key()] = {
             'text': 'Save Scene...',
-            'icon': ui.get_icon('add_file', color=common.color(common.GreenColor)),
+            'icon': ui.get_icon('add_file', color=common.color(common.color_green)),
             'action': lambda: actions.save_scene(increment=False)
         }
         if common.get_sequence(scene.fileName()):
@@ -68,6 +80,9 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
             }
 
     def open_import_scene_menu(self):
+        """Scene open actions.
+
+        """
         if not self.index.isValid():
             return
 
@@ -110,6 +125,9 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         }
 
     def export_menu(self):
+        """Cache export actions.
+
+        """
         k = contextmenu.key()
         self.menu[k] = {
             'text': 'Export...',
@@ -118,6 +136,9 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         }
 
     def shader_tool_menu(self):
+        """Shader tool action.
+
+        """
         k = contextmenu.key()
         self.menu[k] = {
             'text': 'Show Shader Tool',
@@ -125,6 +146,9 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         }
 
     def import_camera_menu(self):
+        """Import camera template action.
+
+        """
         k = contextmenu.key()
         self.menu[k] = {
             'text': 'Import Camera Template',
@@ -132,6 +156,8 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         }
 
     def viewport_presets_menu(self):
+        """Viewport display preset action.
+        """
         from . import viewport
         k = 'Viewport Presets'
         self.menu[k] = collections.OrderedDict()
@@ -145,6 +171,9 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
             }
 
     def capture_menu(self):
+        """Capture viewport action.
+
+        """
         k = 'Capture Viewport'
         self.menu[k] = collections.OrderedDict()
         self.menu[f'{k}:icon'] = ui.get_icon('capture_thumbnail')
@@ -152,11 +181,11 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         width = cmds.getAttr("defaultResolution.width")
         height = cmds.getAttr("defaultResolution.height")
 
-        def size(n):
+        def _size(n):
             return int(int(width) * n), int(int(height) * n)
 
         for n in (1.0, 0.5, 0.25, 1.5, 2.0):
-            w, h = size(n)
+            w, h = _size(n)
             self.menu[k][f'capture{n}'] = {
                 'text': f'Capture  |  @{n}  |  {w}x{h}px',
                 'action': functools.partial(actions.capture_viewport, size=n),
@@ -164,6 +193,9 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
             }
 
     def show_window_menu(self):
+        """Show plugin window action.
+
+        """
         if not hasattr(self.parent(), 'clicked'):
             return
         self.menu['show'] = {
@@ -177,15 +209,21 @@ class MayaButtonWidgetContextMenu(PluginContextMenu):
     """The context-menu associated with the BrowserButton."""
 
     def __init__(self, parent=None):
-        super(MayaButtonWidgetContextMenu, self).__init__(
+        super().__init__(
             QtCore.QModelIndex(), parent=parent
         )
 
 
 class MayaWidgetContextMenu(PluginContextMenu):
+    """Context menu associated with :class:`MayaWidget`.
+
+    """
     @common.error
     @common.debug
     def setup(self):
+        """Creates the context menu.
+
+        """
         self.apply_bookmark_settings_menu()
         self.separator()
         self.save_menu()

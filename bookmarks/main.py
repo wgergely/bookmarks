@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Bookmarks' main widget.
 
 :class:`.MainWidget` consist of :class:`bookmarks.topbar.TopBarWidget`,
@@ -37,6 +36,9 @@ from .topbar import topbar
 
 
 def init():
+    """Creates the :class:`MainWidget` instance.
+
+    """
     if common.init_mode == common.StandaloneMode:
         raise RuntimeError("Cannot be initialized in `StandaloneMode`.")
 
@@ -101,7 +103,7 @@ class MainWidget(QtWidgets.QWidget):
         self.files_widget = file_items.FileItemView(parent=self)
         self.tasks_widget = task_items.TaskItemView(parent=self.files_widget)
         self.tasks_widget.setHidden(True)
-        self.favourites_widget = favourite_items.FavouritesWidget(parent=self)
+        self.favourites_widget = favourite_items.FavouriteItemView(parent=self)
 
         self.stacked_widget.addWidget(self.bookmarks_widget)
         self.stacked_widget.addWidget(self.assets_widget)
@@ -180,7 +182,8 @@ class MainWidget(QtWidgets.QWidget):
         a.activated.connect(
             lambda: common.signals.tabChanged.emit(common.FileTab))
 
-        l.connect_signals()
+        common.signals.tabChanged.connect(l.tab_changed)
+        common.widget(common.FileTab).resized.connect(l.resize_widget)
 
         common.signals.tabChanged.connect(common.signals.updateTopBarButtons)
 
@@ -259,6 +262,9 @@ class MainWidget(QtWidgets.QWidget):
 
     @QtCore.Slot()
     def update_window_title(self):
+        """Slot used to update the window title.
+
+        """
         values = [common.active(k) for k in common.SECTIONS['active'] if common.active(k)]
         self.setWindowTitle('/'.join(values))
 
@@ -331,22 +337,22 @@ class MainWidget(QtWidgets.QWidget):
     def _paint_background(self, painter):
         rect = QtCore.QRect(self.rect())
         pen = QtGui.QPen(QtGui.QColor(35, 35, 35, 255))
-        pen.setWidth(common.size(common.HeightSeparator))
+        pen.setWidth(common.size(common.size_separator))
         painter.setPen(pen)
-        painter.setBrush(common.color(common.SeparatorColor).darker(110))
+        painter.setBrush(common.color(common.color_separator).darker(110))
         painter.drawRect(rect)
 
     def _paint_loading(self, painter):
         font, metrics = common.font_db.primary_font(
-            common.size(common.FontSizeMedium))
+            common.size(common.size_font_medium))
         rect = QtCore.QRect(self.rect())
         align = QtCore.Qt.AlignCenter
         color = QtGui.QColor(255, 255, 255, 80)
 
         pixmaprect = QtCore.QRect(rect)
         center = pixmaprect.center()
-        s = common.size(common.HeightAsset) * 1.5
-        o = common.size(common.WidthMargin)
+        s = common.size(common.size_asset_row_height) * 1.5
+        o = common.size(common.size_margin)
 
         pixmaprect.setWidth(s)
         pixmaprect.setHeight(s)
@@ -361,7 +367,7 @@ class MainWidget(QtWidgets.QWidget):
                 QtCore.QMargins(o * 3, o * 3, o * 3, o * 3)),
             o, o)
 
-        pixmap = images.ImageCache.get_rsc_pixmap(
+        pixmap = images.ImageCache.rsc_pixmap(
             'icon_bw', None, s)
         painter.setOpacity(0.5)
         painter.drawPixmap(pixmaprect, pixmap, pixmap.rect())
@@ -373,6 +379,9 @@ class MainWidget(QtWidgets.QWidget):
             painter, font, rect, 'Loading...', align, color)
 
     def paintEvent(self, event):
+        """Event handler.
+
+        """
         painter = QtGui.QPainter()
         painter.begin(self)
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
@@ -384,7 +393,10 @@ class MainWidget(QtWidgets.QWidget):
         painter.end()
 
     def sizeHint(self):
+        """Returns a size hint.
+
+        """
         return QtCore.QSize(
-            common.size(common.DefaultWidth),
-            common.size(common.DefaultHeight)
+            common.size(common.size_width),
+            common.size(common.size_height)
         )

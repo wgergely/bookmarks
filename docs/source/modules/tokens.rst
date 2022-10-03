@@ -8,6 +8,6 @@ tokens
 
 
 .. toctree::
+    :glob:
 
-    tokens/tokens
-    tokens/tokens_editor
+    tokens/*

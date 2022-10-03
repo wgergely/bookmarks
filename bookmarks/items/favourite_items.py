@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Classes responsible for viewing and editing items marked as favourites.
 
 """
@@ -39,10 +38,16 @@ def _check_sequence(path):
     return path
 
 
-class FavouritesWidgetContextMenu(contextmenu.BaseContextMenu):
+class FavouriteItemViewContextMenu(contextmenu.BaseContextMenu):
+    """Context menu associated with :class:`FavouriteItemView`.
+
+    """
     @common.error
     @common.debug
     def setup(self):
+        """Creates the context menu.
+
+        """
         self.extra_menu()
         self.separator()
         self.control_favourites_menu()
@@ -66,12 +71,12 @@ class FavouritesWidgetContextMenu(contextmenu.BaseContextMenu):
         self.quit_menu()
 
 
-class FavouritesModel(file_items.FileItemModel):
+class FavouriteItemModel(file_items.FileItemModel):
     """The model responsible for displaying the saved favourites."""
     queues = (threads.FavouriteInfo, threads.FavouriteThumbnail)
 
     def __init__(self, *args, **kwargs):
-        super(FavouritesModel, self).__init__(*args, **kwargs)
+        super(FavouriteItemModel, self).__init__(*args, **kwargs)
 
         self.reset_timer = common.Timer(parent=self)
         self.reset_timer.setInterval(10)
@@ -94,15 +99,16 @@ class FavouritesModel(file_items.FileItemModel):
     @common.status_bar_message('Loading My Files...')
     @models.initdata
     def init_data(self):
+        """Collects the data needed to populate the favourite item model.
+
+        """
         __p = self.source_path()
         __k = self.task()
         t = common.FileItem
         data = common.get_data(__p, __k, t)
 
-        SEQUENCE_DATA = common.DataDict()
+        sequence_data = common.DataDict()
 
-        nth = 1
-        c = 0
         for entry, source_paths in self.item_generator():
             if self._interrupt_requested:
                 break
@@ -183,7 +189,7 @@ class FavouritesModel(file_items.FileItemModel):
             if seq:
                 # If the sequence has not yet been added to our dictionary
                 # of sequences we add it here
-                if sequence_path not in SEQUENCE_DATA:  # ... and create it if it doesn't exist
+                if sequence_path not in sequence_data:  # ... and create it if it doesn't exist
                     sequence_name = sequence_path.split('/')[-1]
                     flags = models.DEFAULT_ITEM_FLAGS
 
@@ -193,7 +199,7 @@ class FavouritesModel(file_items.FileItemModel):
                     sort_by_name_role = list(sort_by_name_role)
                     sort_by_name_role[7] = sequence_name.lower()
 
-                    SEQUENCE_DATA[sequence_path] = common.DataDict({
+                    sequence_data[sequence_path] = common.DataDict({
                         QtCore.Qt.DisplayRole: sequence_name,
                         QtCore.Qt.EditRole: sequence_name,
                         common.PathRole: sequence_path,
@@ -227,19 +233,19 @@ class FavouritesModel(file_items.FileItemModel):
                         common.ShotgunLinkedRole: False,
                     })
 
-                SEQUENCE_DATA[sequence_path][common.FramesRole].append(seq.group(2))
-                SEQUENCE_DATA[sequence_path][common.EntryRole].append(entry)
+                sequence_data[sequence_path][common.FramesRole].append(seq.group(2))
+                sequence_data[sequence_path][common.EntryRole].append(entry)
             else:
                 # Copy the existing file item
-                SEQUENCE_DATA[filepath] = common.DataDict(data[idx])
-                SEQUENCE_DATA[filepath][common.IdRole] = -1
+                sequence_data[filepath] = common.DataDict(data[idx])
+                sequence_data[filepath][common.IdRole] = -1
 
         # Cast the sequence data back onto the model
         t = common.SequenceItem
         data = common.get_data(__p, __k, t)
 
         # Casting the sequence data back onto the model
-        for idx, v in enumerate(SEQUENCE_DATA.values()):
+        for idx, v in enumerate(sequence_data.values()):
             if idx >= common.max_list_items:
                 break  # Let's limit the maximum number of items we load
 
@@ -309,31 +315,43 @@ class FavouritesModel(file_items.FileItemModel):
             yield args
 
     def task(self):
+        """The model's associated task.
+
+        """
         return 'favourites'
 
     def filter_setting_dict_key(self):
+        """The custom dictionary key used to save filter settings to the user settings
+        file.
+
+        """
         return 'favourites'
 
 
-class FavouritesWidget(file_items.FileItemView):
-    """The widget responsible for showing all the items marked as favourites."""
-    SourceModel = FavouritesModel
-    Delegate = delegate.FavouritesWidgetDelegate
-    ContextMenu = FavouritesWidgetContextMenu
+class FavouriteItemView(file_items.FileItemView):
+    """The widget responsible for showing all the items marked as favourites.
+    
+    """
+    SourceModel = FavouriteItemModel
+    Delegate = delegate.FavouriteItemViewDelegate
+    ContextMenu = FavouriteItemViewContextMenu
 
     queues = (threads.FavouriteInfo, threads.FavouriteThumbnail)
 
     def __init__(self, icon='favourite', parent=None):
-        super(FavouritesWidget, self).__init__(
+        super().__init__(
             icon=icon,
             parent=parent
         )
 
     def toggle_item_flag(self, index, flag, state=None, commit_now=True):
+        """:meth:`~bookmarks.items.view.BaseItemView` override.
+
+        """
         if flag != common.MarkedAsFavourite:
             return
 
-        super(FavouritesWidget, self).toggle_item_flag(
+        super().toggle_item_flag(
             index,
             flag,
             state=False,
@@ -341,6 +359,9 @@ class FavouritesWidget(file_items.FileItemView):
         )
 
     def dragEnterEvent(self, event):
+        """Event handler.
+
+        """
         if event.source() == self:
             return
 
@@ -350,14 +371,22 @@ class FavouritesWidget(file_items.FileItemView):
         self.drop_indicator_widget.hide()
 
     def dragLeaveEvent(self, event):
+        """Paint event handler.
+
+        """
         self.drop_indicator_widget.hide()
 
     def dragMoveEvent(self, event):
+        """Event handler.
+
+        """
         if event.mimeData().hasUrls():
             event.accept()
 
     def dropEvent(self, event):
-        """Event responsible for adding the dropped file to the favourites."""
+        """Event handler.
+
+        """
         self.drop_indicator_widget.hide()
 
         if event.source() == self:
@@ -390,6 +419,9 @@ class FavouritesWidget(file_items.FileItemView):
             )
 
     def get_hint_string(self):
+        """Returns an informative hint text.
+
+        """
         model = self.model().sourceModel()
         if not model.rowCount():
-            return 'You didn\'t save any items yet.'
+            return 'No favourite items saved yet.'

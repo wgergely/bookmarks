@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Widgets used by :class:`bookmarks.file_saver.file_saver.FileSaverWidget`.
 
 """
@@ -19,26 +18,32 @@ CacheMode = 'export'
 
 
 class BookmarkItemModel(ui.AbstractListModel):
+    """Bookmark item picker model.
+
+    """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
     def init_data(self):
+        """Initializes data.
+
+        """
         k = common.active('root', path=True)
         if not k or not QtCore.QFileInfo(k).exists():
             return
 
         icon = ui.get_icon(
             'bookmark',
-            size=common.size(common.WidthMargin) * 2,
-            color=common.color(common.SeparatorColor)
+            size=common.size(common.size_margin) * 2,
+            color=common.color(common.color_separator)
         )
 
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: self.display_name(k),
             QtCore.Qt.DecorationRole: ui.get_icon(
-                'check', color=common.color(common.GreenColor)
+                'check', color=common.color(common.color_green)
             ),
-            QtCore.Qt.ForegroundRole: common.color(common.TextSelectedColor),
+            QtCore.Qt.ForegroundRole: common.color(common.color_selected_text),
             QtCore.Qt.SizeHintRole: self.row_size,
             QtCore.Qt.StatusTipRole: k,
             QtCore.Qt.AccessibleDescriptionRole: k,
@@ -48,6 +53,9 @@ class BookmarkItemModel(ui.AbstractListModel):
 
 
 class BookmarkComboBox(QtWidgets.QComboBox):
+    """Bookmark item picker.
+
+    """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
@@ -55,23 +63,29 @@ class BookmarkComboBox(QtWidgets.QComboBox):
 
 
 class AssetItemModel(ui.AbstractListModel):
+    """Asset item picker model.
+
+    """
     def init_data(self):
+        """Initializes data.
+
+        """
         k = common.active('asset', path=True)
         if not k or not QtCore.QFileInfo(k).exists():
             return
 
         icon = ui.get_icon(
             'asset',
-            size=common.size(common.WidthMargin) * 2,
-            color=common.color(common.SeparatorColor)
+            size=common.size(common.size_margin) * 2,
+            color=common.color(common.color_separator)
         )
 
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: self.display_name(k),
             QtCore.Qt.DecorationRole: ui.get_icon(
-                'check', color=common.color(common.GreenColor)
+                'check', color=common.color(common.color_green)
             ),
-            QtCore.Qt.ForegroundRole: common.color(common.TextSelectedColor),
+            QtCore.Qt.ForegroundRole: common.color(common.color_selected_text),
             QtCore.Qt.SizeHintRole: self.row_size,
             QtCore.Qt.StatusTipRole: k,
             QtCore.Qt.AccessibleDescriptionRole: k,
@@ -80,11 +94,20 @@ class AssetItemModel(ui.AbstractListModel):
         }
 
     def display_name(self, v):
+        """Returns a customized display name.
+
+        Args:
+            v (str): The name of the asset item to modify.
+
+        """
         k = common.active('root', path=True)
         return v.replace(k, '').strip('/').split('/', maxsplit=1)[0]
 
 
 class AssetComboBox(QtWidgets.QComboBox):
+    """Asset item picker.
+
+    """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
@@ -92,12 +115,18 @@ class AssetComboBox(QtWidgets.QComboBox):
 
 
 class TaskComboBox(QtWidgets.QComboBox):
+    """Task item picker.
+
+    """
     def __init__(self, mode=SceneMode, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
         self.setModel(TaskModel(mode=mode))
 
     def set_mode(self, mode):
+        """Sets the mode of the task picker.
+
+        """
         model = self.model()
         model.set_mode(mode)
 
@@ -106,19 +135,31 @@ class TaskComboBox(QtWidgets.QComboBox):
 
 
 class TaskModel(ui.AbstractListModel):
+    """Task item picker model.
+
+    """
     def __init__(self, mode, parent=None):
         self._mode = mode
         super().__init__(parent=parent)
 
     def mode(self):
+        """Returns the mode of the task picker.
+
+        """
         return self._mode
 
     def set_mode(self, v):
+        """Sets the mode of the task picker.
+
+        """
         self._mode = v
 
     @common.error
     @common.debug
     def init_data(self):
+        """Initializes data.
+
+        """
         self._data = {}
 
         k = common.active('asset', path=True)
@@ -127,12 +168,12 @@ class TaskModel(ui.AbstractListModel):
 
         # Load the available task folders from the active bookmark item's `tokens`.
         self._add_separator('Scenes')
-        self._add_subfolders(tokens.SceneFolder, 'icon_bw')
+        self._add_sub_folders(tokens.SceneFolder, 'icon_bw')
         self._add_separator('Caches')
-        self._add_subfolders(tokens.CacheFolder, 'file')
+        self._add_sub_folders(tokens.CacheFolder, 'file')
         self._add_separator('Custom (click \'Pick\' to add new)')
 
-    def _add_subfolders(self, token, icon):
+    def _add_sub_folders(self, token, icon):
         folder = tokens.get_folder(token)
         description = tokens.get_description(token)
         for sub_folder in tokens.get_subfolders(token):
@@ -140,20 +181,20 @@ class TaskModel(ui.AbstractListModel):
             if common.active('task') == sub_folder:
                 _icon = ui.get_icon(
                     'check',
-                    color=common.color(common.GreenColor),
-                    size=common.size(common.WidthMargin) * 2
+                    color=common.color(common.color_green),
+                    size=common.size(common.size_margin) * 2
                 )
             else:
                 _icon = ui.get_icon(
                     icon,
-                    size=common.size(common.WidthMargin) * 2
+                    size=common.size(common.size_margin) * 2
                 )
 
             v = f'{folder}/{sub_folder}'
             self._data[len(self._data)] = {
                 QtCore.Qt.DisplayRole: self.display_name(v),
                 QtCore.Qt.DecorationRole: _icon,
-                QtCore.Qt.ForegroundRole: common.color(common.TextColor),
+                QtCore.Qt.ForegroundRole: common.color(common.color_text),
                 QtCore.Qt.SizeHintRole: self.row_size,
                 QtCore.Qt.StatusTipRole: description,
                 QtCore.Qt.AccessibleDescriptionRole: description,
@@ -163,18 +204,24 @@ class TaskModel(ui.AbstractListModel):
             }
 
     def add_item(self, path):
+        """Adds a new task item.
+
+        Args:
+            path (str): The path of the item to add.
+
+        """
         self.modelAboutToBeReset.emit()
         self.beginResetModel()
 
         _icon = ui.get_icon(
             'folder',
-            size=common.size(common.WidthMargin) * 2
+            size=common.size(common.size_margin) * 2
         )
 
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: self.display_name(path),
             QtCore.Qt.DecorationRole: _icon,
-            QtCore.Qt.ForegroundRole: common.color(common.TextColor),
+            QtCore.Qt.ForegroundRole: common.color(common.color_text),
             QtCore.Qt.SizeHintRole: self.row_size,
             QtCore.Qt.UserRole: path,
         }
@@ -183,7 +230,13 @@ class TaskModel(ui.AbstractListModel):
 
 
 class TemplateModel(ui.AbstractListModel):
+    """Template item picker model.
+
+    """
     def init_data(self):
+        """Initializes data.
+
+        """
         args = common.active('root', args=True)
         if not all(args):
             return
@@ -198,13 +251,13 @@ class TemplateModel(ui.AbstractListModel):
             if template == v['name']:
                 icon = ui.get_icon(
                     'check',
-                    color=common.color(common.GreenColor),
-                    size=common.size(common.WidthMargin) * 2
+                    color=common.color(common.color_green),
+                    size=common.size(common.size_margin) * 2
                 )
             else:
                 icon = ui.get_icon(
                     'file',
-                    size=common.size(common.WidthMargin) * 2
+                    size=common.size(common.size_margin) * 2
                 )
 
             self._data[len(self._data)] = {
@@ -220,6 +273,9 @@ class TemplateModel(ui.AbstractListModel):
 
 
 class TemplateComboBox(QtWidgets.QComboBox):
+    """Template item picker.
+
+    """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
@@ -227,7 +283,13 @@ class TemplateComboBox(QtWidgets.QComboBox):
 
 
 class FormatModel(ui.AbstractListModel):
+    """Format item picker model.
+
+    """
     def init_data(self):
+        """Initializes data.
+
+        """
         server = common.active('server')
         job = common.active('job')
         root = common.active('root')
@@ -248,13 +310,13 @@ class FormatModel(ui.AbstractListModel):
                     icon = ui.get_icon(
                         ext,
                         color=None,
-                        size=common.size(common.WidthMargin) * 2,
+                        size=common.size(common.size_margin) * 2,
                         resource=common.FormatResource
                     )
                 except:
                     icon = ui.get_icon(
                         'file',
-                        size=common.size(common.WidthMargin) * 2
+                        size=common.size(common.size_margin) * 2
                     )
 
                 self._data[len(self._data)] = {
@@ -270,6 +332,9 @@ class FormatModel(ui.AbstractListModel):
 
 
 class FormatComboBox(QtWidgets.QComboBox):
+    """Format item picker.
+
+    """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
@@ -297,7 +362,7 @@ class PrefixEditor(QtWidgets.QDialog):
 
         self.editor = ui.LineEdit(parent=self)
         self.editor.setPlaceholderText('Enter a prefix, e.g. \'MYB\'')
-        self.editor.setValidator(base.textvalidator)
+        self.editor.setValidator(base.text_validator)
         self.setFocusProxy(self.editor)
         self.editor.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.ok_button = ui.PaintedButton('Save', parent=self)
@@ -311,6 +376,9 @@ class PrefixEditor(QtWidgets.QDialog):
         self.accepted.connect(self.save_changes)
 
     def init_data(self):
+        """Initializes data.
+
+        """
         p = self.parent()
         db = database.get_db(p.server, p.job, p.root)
 
@@ -326,6 +394,9 @@ class PrefixEditor(QtWidgets.QDialog):
         self.editor.setText(v)
 
     def save_changes(self):
+        """Saves changes.
+
+        """
         if self.editor.text() == self.parent().prefix_editor.text():
             return
 
@@ -345,6 +416,10 @@ class PrefixEditor(QtWidgets.QDialog):
             )
 
     def sizeHint(self):
+        """Returns a size hint.
+
+        """
         return QtCore.QSize(
-            common.size(common.DefaultWidth) * 0.5, common.size(common.HeightRow)
+            common.size(common.size_width) * 0.5,
+            common.size(common.size_row_height)
         )

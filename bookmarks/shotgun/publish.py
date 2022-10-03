@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """The publishing widget used by Bookmarks to create new PublishedFiles and Version
 entities on ShotGrid.
 
@@ -22,10 +21,13 @@ from ..tokens import tokens
 
 instance = None
 
+#: Valid movie formats
 MOV_FORMATS = (
     'mp4',
     'mov'
 )
+
+#: Valid sequence formats
 SEQ_FORMATS = (
     'jpg',
     'png'
@@ -57,11 +59,12 @@ def basename(v):
     return v.strip('.').strip('-').strip('_')
 
 
+#: UI layout definition
 SECTIONS = {
     0: {
         'name': 'Publish File',
         'icon': '',
-        'color': common.color(common.BackgroundDarkColor),
+        'color': common.color(common.color_dark_background),
         'groups': {
             0: {
                 0: {
@@ -240,9 +243,7 @@ class PublishWidget(base.BasePropertyEditor):
             raise RuntimeError('Could not find file.')
 
         # Setting the path and thumbnail. The path is stored in `file_editor`.
-        # `self.db_source` # uses this path to return it's value.
-
-        # The name should be a
+        # `self.db_source` uses this path to return its value.
         self.file_editor.set_path(file_info.filePath())
         self.set_thumbnail_source()
         self.init_db_data()
@@ -341,7 +342,7 @@ class PublishWidget(base.BasePropertyEditor):
                 # A match, let's set the sequence path
                 if file_info.baseName() in entry.name:
                     # Reading the ShotGrid source code, looks like they're expecting
-                    # an fprint style sequence notation
+                    # a fprint style sequence notation
                     _file_info = QtCore.QFileInfo(entry.path)
                     seq = common.get_sequence(_file_info.filePath())
                     d = f'%0{len(seq.group(2))}d'
@@ -402,9 +403,18 @@ class PublishWidget(base.BasePropertyEditor):
 
     @property
     def task(self):
+        """The model's associated task.
+
+        """
         return common.active('task')
 
     def db_source(self):
+        """A file path to use as the source of database values.
+
+        Returns:
+            str: The database source file.
+
+        """
         p = self.file_editor.path()
         if not p:
             return None
@@ -413,12 +423,15 @@ class PublishWidget(base.BasePropertyEditor):
         return p
 
     def init_data(self):
+        """Initializes data.
+
+        """
         self.init_db_data()
 
     @common.error
     @common.debug
     def save_changes(self):
-        """Publishes the file to shotgun.
+        """Saves changes.
 
         """
         if not self.file_editor.path():

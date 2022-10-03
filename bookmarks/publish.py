@@ -21,6 +21,9 @@ from .tokens import tokens
 
 
 def close():
+    """Closes the :class:`PublishWidget` editor.
+
+    """
     if common.publish_widget is None:
         return
     try:
@@ -32,6 +35,9 @@ def close():
 
 
 def show(index):
+    """Shows the :class:`PublishWidget` editor.
+
+    """
     close()
     if common.publish_widget is None:
         common.publish_widget = PublishWidget(index)
@@ -118,8 +124,14 @@ def get_payload(kwargs, destination):
 
 
 class TemplateModel(ui.AbstractListModel):
+    """Model used to list all available publish templates.
+
+    """
 
     def init_data(self):
+        """Initializes data.
+
+        """
         args = common.active('root', args=True)
         if not all(args):
             return
@@ -132,14 +144,14 @@ class TemplateModel(ui.AbstractListModel):
         template = common.settings.value('publish/template')
         for v in data[tokens.PublishConfig].values():
             if template == v['name']:
-                pixmap = images.ImageCache.get_rsc_pixmap(
-                    'check', common.color(common.GreenColor),
-                    common.size(common.WidthMargin) * 2
+                pixmap = images.ImageCache.rsc_pixmap(
+                    'check', common.color(common.color_green),
+                    common.size(common.size_margin) * 2
                 )
             else:
-                pixmap = images.ImageCache.get_rsc_pixmap(
-                    'file', common.color(common.SeparatorColor),
-                    common.size(common.WidthMargin) * 2
+                pixmap = images.ImageCache.rsc_pixmap(
+                    'file', common.color(common.color_separator),
+                    common.size(common.size_margin) * 2
                 )
             icon = QtGui.QIcon(pixmap)
 
@@ -156,6 +168,9 @@ class TemplateModel(ui.AbstractListModel):
 
 
 class TemplateComboBox(QtWidgets.QComboBox):
+    """Publish template picker.
+
+    """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
@@ -169,6 +184,9 @@ class TaskModel(ui.AbstractListModel):
     @common.error
     @common.debug
     def init_data(self):
+        """Initializes data.
+
+        """
         self._data = {}
 
         k = common.active('asset', path=True)
@@ -176,27 +194,27 @@ class TaskModel(ui.AbstractListModel):
             return
 
         # Load the available task folders from the active bookmark item's `tokens`.
-        self._add_subfolders(tokens.SceneFolder)
+        self._add_sub_folders(tokens.SceneFolder)
         self._add_separator('Custom (click \'Add\' to add new)')
 
     def _add_separator(self, label):
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: label,
             QtCore.Qt.DecorationRole: None,
-            QtCore.Qt.ForegroundRole: common.color(common.TextDisabledColor),
+            QtCore.Qt.ForegroundRole: common.color(common.color_disabled_text),
             QtCore.Qt.SizeHintRole: self.row_size,
             QtCore.Qt.UserRole: None,
             common.FlagsRole: QtCore.Qt.NoItemFlags
         }
 
-    def _add_subfolders(self, token):
-        _icon = ui.get_icon('icon_bw', size=common.size(common.WidthMargin) * 2)
+    def _add_sub_folders(self, token):
+        _icon = ui.get_icon('icon_bw', size=common.size(common.size_margin) * 2)
         description = tokens.get_description(token)
         for sub_folder in tokens.get_subfolders(token):
             self._data[len(self._data)] = {
                 QtCore.Qt.DisplayRole: self.display_name(sub_folder),
                 QtCore.Qt.DecorationRole: _icon,
-                QtCore.Qt.ForegroundRole: common.color(common.TextColor),
+                QtCore.Qt.ForegroundRole: common.color(common.color_text),
                 QtCore.Qt.SizeHintRole: self.row_size,
                 QtCore.Qt.StatusTipRole: description,
                 QtCore.Qt.AccessibleDescriptionRole: description,
@@ -206,7 +224,10 @@ class TaskModel(ui.AbstractListModel):
             }
 
     def add_item(self, task):
-        icon = ui.get_icon('icon_bw', size=common.size(common.WidthMargin) * 2)
+        """Adds a new task item.
+
+        """
+        icon = ui.get_icon('icon_bw', size=common.size(common.size_margin) * 2)
 
         self.modelAboutToBeReset.emit()
         self.beginResetModel()
@@ -214,7 +235,7 @@ class TaskModel(ui.AbstractListModel):
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: self.display_name(task),
             QtCore.Qt.DecorationRole: icon,
-            QtCore.Qt.ForegroundRole: common.color(common.TextColor),
+            QtCore.Qt.ForegroundRole: common.color(common.color_text),
             QtCore.Qt.SizeHintRole: self.row_size,
             QtCore.Qt.UserRole: task,
         }
@@ -223,17 +244,21 @@ class TaskModel(ui.AbstractListModel):
 
 
 class TaskComboBox(QtWidgets.QComboBox):
+    """Task picker.
+
+    """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
         self.setModel(TaskModel())
 
 
+#: UI layout definition
 SECTIONS = {
     0: {
         'name': None,
         'icon': None,
-        'color': common.color(common.BackgroundDarkColor),
+        'color': common.color(common.color_dark_background),
         'groups': {
             0: {
                 0: {
@@ -258,7 +283,7 @@ SECTIONS = {
     1: {
         'name': 'Template',
         'icon': None,
-        'color': common.color(common.BackgroundDarkColor),
+        'color': common.color(common.color_dark_background),
         'groups': {
             0: {
                 0: {
@@ -291,7 +316,7 @@ SECTIONS = {
                 3: {
                     'name': 'Specify Element',
                     'key': 'element',
-                    'validator': base.textvalidator,
+                    'validator': base.text_validator,
                     'widget': ui.LineEdit,
                     'placeholder': 'The element being published, e.g. \'CastleInterior\'',
                     'description': 'The name of the element being published. E.g., '
@@ -303,7 +328,7 @@ SECTIONS = {
     2: {
         'name': 'Post-Publish',
         'icon': None,
-        'color': common.color(common.BackgroundDarkColor),
+        'color': common.color(common.color_dark_background),
         'groups': {
             0: {
                 0: {
@@ -363,13 +388,22 @@ class PublishWidget(base.BasePropertyEditor):
         self._connect_settings_save_signals(common.SECTIONS['publish'])
 
     def init_progress_bar(self):
+        """Initializes the progress bar.
+
+        """
         self.progress_widget = QtWidgets.QProgressDialog(parent=self)
-        self.progress_widget.setFixedWidth(common.size(common.DefaultWidth))
+        self.progress_widget.setFixedWidth(common.size(common.size_width))
         self.progress_widget.setLabelText('Publishing, please wait...')
         self.progress_widget.setWindowTitle('Publish')
         self.progress_widget.close()
 
     def db_source(self):
+        """A file path to use as the source of database values.
+
+        Returns:
+            str: The database source file.
+
+        """
         v = self._index.data(common.PathRole)
         if common.is_collapsed(v):
             return common.proxy_path(v)
@@ -378,6 +412,9 @@ class PublishWidget(base.BasePropertyEditor):
     @common.error
     @common.debug
     def init_data(self):
+        """Initializes data.
+
+        """
         if not self._index.isValid():
             raise ValueError('Invalid index value.')
 
@@ -459,7 +496,7 @@ class PublishWidget(base.BasePropertyEditor):
         """Set source item label.
 
         """
-        c = common.rgb(common.color(common.GreenColor))
+        c = common.rgb(common.color(common.color_green))
         n = self._index.data(common.PathRole)
 
         self.source_editor.setText(
@@ -481,7 +518,7 @@ class PublishWidget(base.BasePropertyEditor):
             **kwargs
         )
 
-        r = common.rgb(common.color(common.RedColor))
+        r = common.rgb(common.color(common.color_red))
         v = v.replace(
             tokens.invalid_token,
             f'<span style="color:{r}">{tokens.invalid_token}</span>'
@@ -489,7 +526,7 @@ class PublishWidget(base.BasePropertyEditor):
         v = v.replace(
             '###',
             '<span style="color:{}">###</span>'.format(
-                common.rgb(common.color(common.RedColor))
+                common.rgb(common.color(common.color_red))
             )
         )
 
@@ -551,7 +588,7 @@ class PublishWidget(base.BasePropertyEditor):
     @common.error
     @common.debug
     def save_changes(self):
-        """Initialize the publish process.
+        """Saves changes.
 
         """
         kwargs = self.get_publish_kwargs()
@@ -600,7 +637,7 @@ class PublishWidget(base.BasePropertyEditor):
             self.progress_widget.close()
 
     def save_thumbnail(self, destination, payload=None):
-        """Saves the current thumbnail to the publish folder.
+        """Saves the current thumbnail to the `publish` folder.
 
         """
         _dir = QtCore.QFileInfo(destination).dir()
@@ -857,6 +894,9 @@ class PublishWidget(base.BasePropertyEditor):
             actions.copy_path(destination)
 
     def post_teams_message(self, destination, kwargs, payload=None):
+        """Post-publish Teams notification action.
+
+        """
         if not kwargs['publish_teams_notification']:
             return
 

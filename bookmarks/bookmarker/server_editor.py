@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Editor widget used by
 :class:`~bookmarks.bookmarker.main.BookmarkerWidget`
 to select and save a new server item.
@@ -40,12 +39,12 @@ class AddServerEditor(QtWidgets.QDialog):
 
         QtWidgets.QVBoxLayout(self)
 
-        o = common.size(common.WidthMargin)
+        o = common.size(common.size_margin)
         self.layout().setSpacing(o)
         self.layout().setContentsMargins(o, o, o, o)
 
         self.ok_button = ui.PaintedButton('Done', parent=self)
-        self.ok_button.setFixedHeight(common.size(common.HeightRow))
+        self.ok_button.setFixedHeight(common.size(common.size_row_height))
         self.pick_button = ui.PaintedButton('Pick', parent=self)
 
         self.editor = ui.LineEdit(parent=self)
@@ -85,7 +84,7 @@ class AddServerEditor(QtWidgets.QDialog):
         self.pick_button.clicked.connect(self.pick)
         self.editor.textChanged.connect(
             lambda: self.editor.setStyleSheet(
-                'color: {};'.format(common.rgb(common.color(common.GreenColor)))
+                'color: {};'.format(common.rgb(common.color(common.color_green)))
             )
         )
 
@@ -123,7 +122,7 @@ class AddServerEditor(QtWidgets.QDialog):
             # Indicate the selected item is invalid and keep the editor open
             self.editor.setStyleSheet(
                 'color: {0}; border-color: {0}'.format(
-                    common.rgb(common.color(common.RedColor))
+                    common.rgb(common.color(common.color_red))
                 )
             )
             self.editor.blockSignals(True)
@@ -152,11 +151,12 @@ class AddServerEditor(QtWidgets.QDialog):
         common.center_window(self)
 
     def sizeHint(self):
-        """Window size hint.
+        """Returns a size hint.
 
         """
         return QtCore.QSize(
-            common.size(common.DefaultWidth), common.size(common.HeightRow) * 2
+            common.size(common.size_width),
+            common.size(common.size_row_height) * 2
         )
 
 
@@ -166,7 +166,7 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
     """
 
     def setup(self):
-        """Create the menu.
+        """Creates the context menu.
 
         """
         self.add_menu()
@@ -190,7 +190,7 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
         """
         self.menu['Add New Server...'] = {
             'action': self.parent().add,
-            'icon': ui.get_icon('add', color=common.color(common.GreenColor))
+            'icon': ui.get_icon('add', color=common.color(common.color_green))
         }
 
     def reveal_menu(self):
@@ -208,7 +208,7 @@ class ServerContextMenu(contextmenu.BaseContextMenu):
         """
         self.menu['Remove'] = {
             'action': self.parent().remove,
-            'icon': ui.get_icon('close', color=common.color(common.RedColor))
+            'icon': ui.get_icon('close', color=common.color(common.color_red))
         }
 
     def refresh_menu(self):
@@ -246,7 +246,7 @@ class ServerItemEditor(ui.ListWidget):
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
         )
-        self.setMinimumWidth(common.size(common.DefaultWidth) * 0.2)
+        self.setMinimumWidth(common.size(common.size_width) * 0.2)
 
         self._connect_signals()
         self._init_shortcuts()
@@ -342,7 +342,7 @@ class ServerItemEditor(ui.ListWidget):
 
             size = QtCore.QSize(
                 0,
-                common.size(common.WidthMargin) * 2
+                common.size(common.size_margin) * 2
             )
             item.setSizeHint(size)
             self.validate_item(item)
@@ -370,17 +370,17 @@ class ServerItemEditor(ui.ListWidget):
 
         self.blockSignals(True)
 
-        pixmap = images.ImageCache.get_rsc_pixmap(
-            'server', common.color(common.TextColor),
-            common.size(common.HeightRow) * 0.8
+        pixmap = images.ImageCache.rsc_pixmap(
+            'server', common.color(common.color_text),
+            common.size(common.size_row_height) * 0.8
         )
-        pixmap_selected = images.ImageCache.get_rsc_pixmap(
-            'server', common.color(common.TextSelectedColor),
-            common.size(common.HeightRow) * 0.8
+        pixmap_selected = images.ImageCache.rsc_pixmap(
+            'server', common.color(common.color_selected_text),
+            common.size(common.size_row_height) * 0.8
         )
-        pixmap_disabled = images.ImageCache.get_rsc_pixmap(
-            'close', common.color(common.RedColor),
-            common.size(common.HeightRow) * 0.8
+        pixmap_disabled = images.ImageCache.rsc_pixmap(
+            'close', common.color(common.color_red),
+            common.size(common.size_row_height) * 0.8
         )
         icon = QtGui.QIcon()
 

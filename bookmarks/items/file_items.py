@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """File items are files found inside an asset item. They're made up of ``server``,
 ``job``, ``root``, ``asset``, ``task`` and ``file`` path segments.
 
@@ -24,7 +23,7 @@ set the active task folder using :class:`~bookmarks.items.task_items.TaskItemVie
 
 The relative file path segment is what :class:`FileItemView` displays.
 This segment often includes a series of subdirectories the view represents as
-interactive labels. These labels can be used to filter list view.
+interactive labels. These labels can be used to filter the list view.
 
 Note:
     In summary , :class:`FileItemModel` will **not** load file items from the root
@@ -33,8 +32,8 @@ Note:
     form of interactive labels.
 
 Important to note that :class:`FileItemModel` interacts with two data sets
-simultaneously: a _collapsed_ sequence item, and a regular file items.
-See the :mod:`~bookmarks.common.sequence` module for details on sequence recognition.
+simultaneously: a *collapsed* sequence and a regular file data set.
+See the :mod:`~bookmarks.common.sequence` module for details on sequence definitions.
 
 """
 import functools
@@ -115,6 +114,16 @@ def get_path_elements(name, path, _source_path):
 
 @functools.lru_cache(maxsize=4194304)
 def get_sequence_elements(filepath):
+    """cache-backed utility function to retrieve the sequence elements from the given file
+    path.
+
+    Args:
+        filepath (str): A file path.
+
+    Returns:
+        The regex match instance and a proxy sequence path.
+
+    """
     try:
         seq = common.get_sequence(filepath)
     except RuntimeError:
@@ -122,8 +131,7 @@ def get_sequence_elements(filepath):
 
     sequence_path = None
     if seq:
-        sequence_path = seq.group(1) + common.SEQPROXY + \
-                        seq.group(3) + '.' + seq.group(4)
+        sequence_path = f'{seq.group(1)}{common.SEQPROXY}{seq.group(3)}.{seq.group(4)}'
     return seq, sequence_path
 
 
@@ -137,23 +145,25 @@ class DropIndicatorWidget(QtWidgets.QWidget):
         self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
 
     def paintEvent(self, event):
-        """Paints the indicator area."""
+        """Event handler.
+
+        """
         painter = QtGui.QPainter()
         painter.begin(self)
-        pen = QtGui.QPen(common.color(common.BlueColor))
-        pen.setWidth(common.size(common.WidthIndicator))
+        pen = QtGui.QPen(common.color(common.color_blue))
+        pen.setWidth(common.size(common.size_indicator))
         painter.setPen(pen)
-        painter.setBrush(common.color(common.BlueColor))
+        painter.setBrush(common.color(common.color_blue))
         painter.setOpacity(0.35)
         painter.drawRect(self.rect())
         painter.setOpacity(1.0)
         common.draw_aliased_text(
             painter,
-            common.font_db.primary_font(common.size(common.FontSizeMedium))[0],
+            common.font_db.primary_font(common.size(common.size_font_medium))[0],
             self.rect(),
             'Drop to add bookmark',
             QtCore.Qt.AlignCenter,
-            common.color(common.BlueColor)
+            common.color(common.color_blue)
         )
         painter.end()
 
@@ -174,11 +184,11 @@ class ItemDrag(QtGui.QDrag):
         model = index.model().sourceModel()
         self.setMimeData(model.mimeData([index, ]))
 
-        def get(s, color=common.color(common.GreenColor)):
-            return images.ImageCache.get_rsc_pixmap(
+        def _get(s, color=common.color(common.color_green)):
+            return images.ImageCache.rsc_pixmap(
                 s, color,
                 common.size(
-                    common.WidthMargin
+                    common.size_margin
                 ) * common.pixel_ratio
             )
 
@@ -186,11 +196,11 @@ class ItemDrag(QtGui.QDrag):
         self.setDragCursor(get('add_circle'), QtCore.Qt.CopyAction)
         self.setDragCursor(get('file'), QtCore.Qt.MoveAction)
         self.setDragCursor(
-            get('close', color=common.color(common.RedColor)),
+            _get('close', color=common.color(common.color_red)),
             QtCore.Qt.ActionMask
         )
         self.setDragCursor(
-            get('close', color=common.color(common.RedColor)),
+            _get('close', color=common.color(common.color_red)),
             QtCore.Qt.IgnoreAction
         )
 
@@ -209,25 +219,25 @@ class ItemDrag(QtGui.QDrag):
                 index.data(common.ParentPathRole)[1],
                 index.data(common.ParentPathRole)[2],
                 source,
-                size=common.size(common.HeightRow),
+                size=common.size(common.size_row_height),
             )
         elif alt_modifier and shift_modifier:
-            pixmap = images.ImageCache.get_rsc_pixmap(
-                'folder', common.color(common.TextSecondaryColor),
-                common.size(common.HeightRow)
+            pixmap = images.ImageCache.rsc_pixmap(
+                'folder', common.color(common.color_secondary_text),
+                common.size(common.size_row_height)
             )
             source = QtCore.QFileInfo(source).dir().path()
         elif alt_modifier:
-            pixmap = images.ImageCache.get_rsc_pixmap(
-                'file', common.color(common.TextSecondaryColor),
-                common.size(common.HeightRow)
+            pixmap = images.ImageCache.rsc_pixmap(
+                'file', common.color(common.color_secondary_text),
+                common.size(common.size_row_height)
             )
             source = common.get_sequence_start_path(source)
         elif shift_modifier:
             source = common.get_sequence_start_path(source) + ', ++'
-            pixmap = images.ImageCache.get_rsc_pixmap(
-                'multiples_files', common.color(common.TextSecondaryColor),
-                common.size(common.HeightRow)
+            pixmap = images.ImageCache.rsc_pixmap(
+                'multiples_files', common.color(common.color_secondary_text),
+                common.size(common.size_row_height)
             )
         else:
             return
@@ -246,19 +256,19 @@ class DragPixmapFactory(QtWidgets.QWidget):
         self._text = text
 
         _, metrics = common.font_db.primary_font(
-            common.size(common.FontSizeMedium)
+            common.size(common.size_font_medium)
         )
         self._text_width = metrics.horizontalAdvance(text)
 
-        width = self._text_width + common.size(common.WidthMargin)
-        width = common.size(common.DefaultWidth) + common.size(
-            common.WidthMargin
-        ) if width > common.size(common.DefaultWidth) else width
+        width = self._text_width + common.size(common.size_margin)
+        width = common.size(common.size_width) + common.size(
+            common.size_margin
+        ) if width > common.size(common.size_width) else width
 
-        self.setFixedHeight(common.size(common.HeightRow))
+        self.setFixedHeight(common.size(common.size_row_height))
 
         longest_edge = max((pixmap.width(), pixmap.height()))
-        o = common.size(common.WidthIndicator)
+        o = common.size(common.size_indicator)
         self.setFixedWidth(
             longest_edge + (o * 2) + width
         )
@@ -282,43 +292,52 @@ class DragPixmapFactory(QtWidgets.QWidget):
         return pixmap
 
     def paintEvent(self, event):
+        """Event handler.
+
+        """
         painter = QtGui.QPainter()
         painter.begin(self)
 
         painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.color(common.BackgroundDarkColor))
+        painter.setBrush(common.color(common.color_dark_background))
         painter.setOpacity(0.6)
         painter.drawRoundedRect(self.rect(), 4, 4)
         painter.setOpacity(1.0)
 
         pixmap_rect = QtCore.QRect(
-            0, 0, common.size(common.HeightRow), common.size(common.HeightRow)
+            0, 0, common.size(common.size_row_height), common.size(common.size_row_height)
         )
         painter.drawPixmap(pixmap_rect, self._pixmap, self._pixmap.rect())
 
-        width = self._text_width + common.size(common.WidthIndicator)
+        width = self._text_width + common.size(common.size_indicator)
         width = 640 if width > 640 else width
         rect = QtCore.QRect(
-            common.size(common.HeightRow) + common.size(common.WidthIndicator),
+            common.size(common.size_row_height) + common.size(common.size_indicator),
             0,
             width,
             self.height()
         )
         common.draw_aliased_text(
             painter,
-            common.font_db.primary_font(common.size(common.FontSizeMedium))[0],
+            common.font_db.primary_font(common.size(common.size_font_medium))[0],
             rect,
             self._text,
             QtCore.Qt.AlignCenter,
-            common.color(common.TextSelectedColor)
+            common.color(common.color_selected_text)
         )
         painter.end()
 
 
 class FileItemViewContextMenu(contextmenu.BaseContextMenu):
+    """Context menu associated with :class:`FileItemView`.
+
+    """
     @common.error
     @common.debug
     def setup(self):
+        """Creates the context menu.
+
+        """
         if self.index.flags() & QtCore.Qt.ItemIsEnabled:
             self.extra_menu()
         self.task_folder_toggle_menu()
@@ -391,6 +410,9 @@ class FileItemModel(models.ItemModel):
         self.dataTypeChanged.connect(common.signals.updateTopBarButtons)
 
     def refresh_needed(self):
+        """Returns the refresh states of the current model data set.
+
+        """
         p = self.source_path()
         k = self.task()
         t = common.FileItem
@@ -405,6 +427,9 @@ class FileItemModel(models.ItemModel):
         return data.refresh_needed
 
     def set_refresh_needed(self, v):
+        """Sets the refresh status of the current model data set.
+
+        """
         p = self.source_path()
         k = self.task()
         t = common.FileItem
@@ -447,7 +472,7 @@ class FileItemModel(models.ItemModel):
         _dirs = []
         data = common.get_data(p, k, t)
 
-        SEQUENCE_DATA = common.DataDict()  # temporary dict for temp data
+        sequence_data = common.DataDict()  # temporary dict for temp data
 
         # Reset file system watcher
         _source_path = '/'.join(p + (k,))
@@ -575,7 +600,7 @@ class FileItemModel(models.ItemModel):
             if seq:
                 # If the sequence has not yet been added to our dictionary
                 # of sequences we add it here
-                if sequence_path not in SEQUENCE_DATA:  # create if it doesn't exist
+                if sequence_path not in sequence_data:  # create if it doesn't exist
                     sequence_name = sequence_path.split('/')[-1]
                     flags = models.DEFAULT_ITEM_FLAGS
 
@@ -585,7 +610,7 @@ class FileItemModel(models.ItemModel):
                     sort_by_name_role = list(sort_by_name_role)
                     sort_by_name_role[7] = sequence_name.lower()
 
-                    SEQUENCE_DATA[sequence_path] = common.DataDict(
+                    sequence_data[sequence_path] = common.DataDict(
                         {
                             QtCore.Qt.DisplayRole: sequence_name,
                             QtCore.Qt.EditRole: sequence_name,
@@ -626,18 +651,18 @@ class FileItemModel(models.ItemModel):
                         }
                     )
 
-                SEQUENCE_DATA[sequence_path][common.FramesRole].append(seq.group(2))
-                SEQUENCE_DATA[sequence_path][common.EntryRole].append(entry)
+                sequence_data[sequence_path][common.FramesRole].append(seq.group(2))
+                sequence_data[sequence_path][common.EntryRole].append(entry)
             else:
                 # Copy the existing file item
-                SEQUENCE_DATA[filepath] = common.DataDict(data[idx])
-                SEQUENCE_DATA[filepath][common.IdRole] = -1
+                sequence_data[filepath] = common.DataDict(data[idx])
+                sequence_data[filepath][common.IdRole] = -1
 
         # Cast the sequence data back onto the model
         t = common.SequenceItem
         data = common.get_data(p, k, t)
 
-        for idx, v in enumerate(SEQUENCE_DATA.values()):
+        for idx, v in enumerate(sequence_data.values()):
             if idx >= common.max_list_items:
                 break  # Let's limit the maximum number of items we load
 
@@ -671,8 +696,8 @@ class FileItemModel(models.ItemModel):
             data[idx][common.IdRole] = idx
             data[idx][common.DataTypeRole] = common.SequenceItem
 
-        common.clear_watchdirs(common.FileItemMonitor)
-        common.set_watchdirs(common.FileItemMonitor, list(set(_dirs)))
+        common.clear_watch_directories(common.FileItemMonitor)
+        common.add_watch_directories(common.FileItemMonitor, list(set(_dirs)))
         self.set_refresh_needed(False)
 
     def disable_filter(self):
@@ -734,7 +759,7 @@ class FileItemModel(models.ItemModel):
         actions.set_active('file', filepath)
 
     def task(self):
-        """Active task folder.
+        """The model's associated task.
 
         """
         return common.active('task')
@@ -802,7 +827,7 @@ class FileItemModel(models.ItemModel):
         self.endResetModel()
 
     def filter_setting_dict_key(self):
-        """A custom dictionary key used to store filter settings in the user settings
+        """The custom dictionary key used to save filter settings to the user settings
         file.
 
         """
@@ -883,16 +908,25 @@ class FileItemView(views.ThreadedItemView):
         common.signals.fileAdded.connect(self.show_item)
 
     def inline_icons_count(self):
+        """Inline buttons count.
+
+        """
         if self.buttons_hidden():
             return 0
         return 3
 
     def action_on_enter_key(self):
+        """Custom key action.
+
+        """
         index = common.get_selected_index(self)
         if not index.isValid():
             self.activate(index)
 
     def startDrag(self, supported_actions):
+        """Drag action start.
+
+        """
         index = common.get_selected_index(self)
         if not index.isValid():
             return
@@ -907,12 +941,15 @@ class FileItemView(views.ThreadedItemView):
         drag = ItemDrag(index, self)
         common.main_widget.topbar_widget.slack_drop_area_widget.setHidden(False)
         QtCore.QTimer.singleShot(1, self.viewport().update)
-        drag.exec(supported_actions)
+        drag.exec_(supported_actions)
         common.main_widget.topbar_widget.slack_drop_area_widget.setHidden(True)
 
         self.drag_source_index = QtCore.QModelIndex()
 
     def get_hint_string(self):
+        """Returns an informative hint text.
+
+        """
         model = self.model().sourceModel()
         k = model.task()
         if not k:

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Bookmarks' status bar used to display item information.
 
 """
@@ -11,7 +10,7 @@ from . import common
 from . import images
 from . import ui
 
-HEIGHT = common.size(common.WidthMargin) + (common.size(common.WidthIndicator) * 2)
+HEIGHT = common.size(common.size_margin) + (common.size(common.size_indicator) * 2)
 
 
 class StatusBarWidget(QtWidgets.QStatusBar):
@@ -43,16 +42,16 @@ class StatusBarWidget(QtWidgets.QStatusBar):
         painter = QtGui.QPainter()
         painter.begin(self)
 
-        font, _ = common.font_db.secondary_font(common.size(common.FontSizeSmall))
+        font, _ = common.font_db.secondary_font(common.size(common.size_font_small))
         common.draw_aliased_text(
             painter,
             font,
             self.rect().marginsRemoved(QtCore.QMargins(
-                common.size(common.WidthIndicator), 0, common.size(common.WidthIndicator),
+                common.size(common.size_indicator), 0, common.size(common.size_indicator),
                 0)),
             '  {}  '.format(self.currentMessage()),
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
-            common.color(common.TextColor)
+            common.color(common.color_text)
         )
         painter.end()
 
@@ -67,8 +66,8 @@ class ToggleSessionModeButton(ui.ClickableIconButton):
     def __init__(self, parent=None):
         super().__init__(
             'check',
-            (common.color(common.GreenColor), common.color(common.RedColor)),
-            common.size(common.WidthMargin),
+            (common.color(common.color_green), common.color(common.color_red)),
+            common.size(common.size_margin),
             description=f'Click to toggle {common.product}.',
             parent=parent
         )
@@ -81,20 +80,20 @@ class ToggleSessionModeButton(ui.ClickableIconButton):
 
         """
         if common.active_mode == common.SynchronisedActivePaths:
-            return images.ImageCache.get_rsc_pixmap(
+            return images.ImageCache.rsc_pixmap(
                 'check',
-                common.color(common.GreenColor),
+                common.color(common.color_green),
                 self._size
             )
         if common.active_mode == common.PrivateActivePaths:
-            return images.ImageCache.get_rsc_pixmap(
+            return images.ImageCache.rsc_pixmap(
                 'crossed',
-                common.color(common.RedColor),
+                common.color(common.color_red),
                 self._size
             )
-        return images.ImageCache.get_rsc_pixmap(
+        return images.ImageCache.rsc_pixmap(
             'crossed',
-            common.color(common.RedColor),
+            common.color(common.color_red),
             self._size
         )
 
@@ -146,4 +145,4 @@ class StatusBar(QtWidgets.QWidget):
         self.toggle_mode_widget = ToggleSessionModeButton(
             parent=self)
         self.layout().addWidget(self.toggle_mode_widget, 0)
-        self.layout().addSpacing(common.size(common.WidthIndicator) * 2)
+        self.layout().addSpacing(common.size(common.size_indicator) * 2)

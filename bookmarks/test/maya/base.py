@@ -1,6 +1,4 @@
 #!mayapy
-# -*- coding: utf-8 -*-
-# pylint: disable=E0401
 """Maya module testing base methods."""
 import os
 import sys

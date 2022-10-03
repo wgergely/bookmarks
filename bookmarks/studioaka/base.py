@@ -23,7 +23,7 @@ def get_seq_shot(path):
         path (unicode): Path to a file or a folder.
 
     Returns:
-        tuple(unicode, unicode):    Sequence and shot name, or `(None, None)`
+        tuple(unicode, unicode): Sequence and shot name, or `(None, None)`
                                     if not found.
 
     """

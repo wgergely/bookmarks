@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """A list of widgets and methods used by :class:`bookmarks.editor.base.BasePropertyEditor`.
 
 """
@@ -12,8 +11,8 @@ from .. import images
 from .. import log
 from .. import ui
 
-THUMBNAIL_EDITOR_SIZE = common.size(common.WidthMargin) * 10
-HEIGHT = common.size(common.HeightRow) * 0.8
+THUMBNAIL_EDITOR_SIZE = common.size(common.size_margin) * 10
+HEIGHT = common.size(common.size_row_height) * 0.8
 TEMP_THUMBNAIL_PATH = '{temp}/{product}/temp/{uuid}.{ext}'
 
 ProjectTypes = ('Project',)
@@ -72,33 +71,45 @@ def process_image(source):
 
 
 class BaseComboBox(QtWidgets.QComboBox):
+    """Base combobox used by :class:`~bookmarks.editor.base.BasePropertyEditor`.
+
+    """
     def __init__(self, parent=None):
-        super(BaseComboBox, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
         self.init_items()
 
     @common.error
     @common.debug
     def init_items(self):
+        """Initializes the items.
+
+        """
         pass
 
     def addItem(self, *args, **kwargs):
-        super(BaseComboBox, self).addItem(*args, **kwargs)
+        """Custom add item function.
+
+        """
+        super().addItem(*args, **kwargs)
         self.decorate_item()
 
     def decorate_item(self, error=False):
+        """Changes the appearance of the item.
+
+        """
         idx = self.count() - 1
-        sg_pixmap = images.ImageCache.get_rsc_pixmap(
-            'sg', common.color(common.SeparatorColor),
-            common.size(common.WidthMargin) * 2
+        sg_pixmap = images.ImageCache.rsc_pixmap(
+            'sg', common.color(common.color_separator),
+            common.size(common.size_margin) * 2
         )
-        check_pixmap = images.ImageCache.get_rsc_pixmap(
-            'check', common.color(common.GreenColor),
-            common.size(common.WidthMargin) * 2
+        check_pixmap = images.ImageCache.rsc_pixmap(
+            'check', common.color(common.color_green),
+            common.size(common.size_margin) * 2
         )
-        error_pixmap = images.ImageCache.get_rsc_pixmap(
-            'close', common.color(common.RedColor),
-            common.size(common.WidthMargin) * 2
+        error_pixmap = images.ImageCache.rsc_pixmap(
+            'close', common.color(common.color_red),
+            common.size(common.size_margin) * 2
         )
 
         error_icon = QtGui.QIcon(error_pixmap)
@@ -121,29 +132,44 @@ class BaseComboBox(QtWidgets.QComboBox):
         )
 
 
-class ProjectTypesWidget(BaseComboBox):
+class SGProjectTypesWidget(BaseComboBox):
+    """ShotGrid entity type picker.
+
+    """
     def init_items(self):
+        """Initialize items.
+        
+        """
         for entity_type in ProjectTypes:
             self.addItem(entity_type)
 
 
-class AssetTypesWidget(BaseComboBox):
+class SGAssetTypesWidget(BaseComboBox):
+    """ShotGrid entity type picker.
+
+    """
     def init_items(self):
+        """Initialize items.
+
+        """
         for entity_type in AssetTypes:
             self.addItem(entity_type)
 
 
 class ThumbnailContextMenu(contextmenu.BaseContextMenu):
-    """Context menu associated with the ThumbnailEditorWidget.
+    """Context menu associated with the :class:`ThumbnailEditorWidget`.
 
     """
 
     def setup(self):
-        add_pixmap = images.ImageCache.get_rsc_pixmap(
-            'add', common.color(common.GreenColor), common.size(common.WidthMargin)
+        """Creates the context menu.
+
+        """
+        add_pixmap = images.ImageCache.rsc_pixmap(
+            'add', common.color(common.color_green), common.size(common.size_margin)
         )
-        remove_pixmap = images.ImageCache.get_rsc_pixmap(
-            'close', common.color(common.RedColor), common.size(common.WidthMargin)
+        remove_pixmap = images.ImageCache.rsc_pixmap(
+            'close', common.color(common.color_red), common.size(common.size_margin)
         )
 
         self.menu['Capture...'] = {
@@ -172,10 +198,10 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
             self, server, job, root, size=THUMBNAIL_EDITOR_SIZE, source=None,
             fallback_thumb='placeholder', parent=None
     ):
-        super(ThumbnailEditorWidget, self).__init__(
+        super().__init__(
             'pick_image',
-            (common.color(common.BlueColor),
-             common.color(common.BackgroundDarkColor)),
+            (common.color(common.color_blue),
+             common.color(common.color_dark_background)),
             size=size,
             description='Drag-and-drop an image to add, click to capture, '
                         'or right-click to pick a custom thumbnail...',
@@ -199,14 +225,29 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         self.clicked.connect(self.capture)
 
     def image(self):
+        """The current thumbnail image.
+        
+        """
         return self._image
 
     def process_image(self, source):
+        """Load and set an image from a source file.
+        
+        Args:
+            source (str): The path to the image file.
+            
+        """
         image = process_image(source)
         self.set_image(image)
 
     @QtCore.Slot()
     def set_image(self, image):
+        """Sets the given QImage as the current image.
+        
+        Args:
+            image (QImage): The image to set.            
+            
+        """
         if not isinstance(image, QtGui.QImage) or image.isNull():
             self._image = QtGui.QImage()
             self._image.setDevicePixelRatio(common.pixel_ratio)
@@ -215,7 +256,9 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         self.update()
 
     def save_image(self, destination=None):
-        """Save the selected thumbnail image to the disc."""
+        """Saves the selected thumbnail image to the file.
+        
+        """
         if not isinstance(self._image, QtGui.QImage) or self._image.isNull():
             return
 
@@ -239,11 +282,17 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
 
     @QtCore.Slot()
     def reset_image(self):
+        """Clears the selected thumbnail image.
+        
+        """
         self.set_image(None)
 
     @common.error
     @common.debug
     def pick_image(self):
+        """Pick image action.
+        
+        """
         from ..items.widgets import thumb_picker as editor
         widget = editor.show()
         widget.fileSelected.connect(self.process_image)
@@ -259,31 +308,34 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         """
         geo = self.window().saveGeometry()
 
-        def restore_geo(v):
+        def _restore_geo(v):
             self.window().restoreGeometry(v)
 
         try:
             from ..items.widgets import thumb_capture as editor
             widget = editor.show()
             self.hide_window()
-            widget.accepted.connect(lambda: restore_geo(geo))
-            widget.rejected.connect(lambda: restore_geo(geo))
+            widget.accepted.connect(lambda: _restore_geo(geo))
+            widget.rejected.connect(lambda: _restore_geo(geo))
             widget.captureFinished.connect(self.process_image)
         except:
-            restore_geo(geo)
+            _restore_geo(geo)
             raise
 
     def hide_window(self):
+        """Move the window out of view.
+        
+        """
         app = QtWidgets.QApplication.instance()
         pos = app.primaryScreen().geometry().bottomRight()
         self.window().move(pos)
 
     def _paint_proposed_thumbnail(self, painter):
-        o = common.size(common.HeightSeparator)
+        o = common.size(common.size_separator)
 
-        color = common.color(common.SeparatorColor)
+        color = common.color(common.color_separator)
         pen = QtGui.QPen(color)
-        pen.setWidthF(common.size(common.HeightSeparator))
+        pen.setWidthF(common.size(common.size_separator))
         painter.setPen(pen)
 
         image = images.ImageCache.resize_image(
@@ -306,12 +358,12 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
 
     def _paint_background(self, painter):
         painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.color(common.SeparatorColor))
+        painter.setBrush(common.color(common.color_separator))
         painter.drawRect(self.rect())
 
     def _paint_current_thumbnail(self, painter):
         if not all((self.server, self.job, self.root)):
-            pixmap = images.ImageCache.get_rsc_pixmap(
+            pixmap = images.ImageCache.rsc_pixmap(
                 self.fallback_thumb, None, self.rect().height()
             )
         else:
@@ -327,11 +379,11 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         if not isinstance(pixmap, QtGui.QPixmap) or pixmap.isNull():
             return
 
-        o = common.size(common.HeightSeparator)
+        o = common.size(common.size_separator)
 
-        color = common.color(common.SeparatorColor)
+        color = common.color(common.color_separator)
         pen = QtGui.QPen(color)
-        pen.setWidthF(common.size(common.HeightSeparator))
+        pen.setWidthF(common.size(common.size_separator))
         painter.setPen(pen)
 
         s = float(self.rect().height())
@@ -349,6 +401,9 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         painter.drawPixmap(rect, pixmap, pixmap.rect())
 
     def contextMenuEvent(self, event):
+        """Context menu event handler.
+        
+        """
         menu = ThumbnailContextMenu(QtCore.QModelIndex(), parent=self)
         pos = self.rect().center()
         pos = self.mapToGlobal(pos)
@@ -356,6 +411,9 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         menu.exec_()
 
     def paintEvent(self, event):
+        """Paint event handler.
+        
+        """
         option = QtWidgets.QStyleOption()
         option.initFrom(self)
         hover = option.state & QtWidgets.QStyle.State_MouseOver
@@ -379,6 +437,9 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
             painter.end()
 
     def enterEvent(self, event):
+        """Enter event handler.
+        
+        """
         app = QtWidgets.QApplication.instance()
         if self.isEnabled():
             if app.overrideCursor():
@@ -387,16 +448,22 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
                 app.restoreOverrideCursor()
                 app.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CrossCursor))
 
-        super(ThumbnailEditorWidget, self).enterEvent(event)
+        super().enterEvent(event)
 
     def leaveEvent(self, event):
-        super(ThumbnailEditorWidget, self).leaveEvent(event)
+        """Leave event handler.
+        
+        """
+        super().leaveEvent(event)
         app = QtWidgets.QApplication.instance()
         if self.isEnabled():
             if app.overrideCursor():
                 app.restoreOverrideCursor()
 
     def dragEnterEvent(self, event):
+        """Drag event handler.
+        
+        """
         if event.mimeData().hasUrls():
             self._drag_in_progress = True
             self.repaint()
@@ -405,6 +472,9 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
             event.ignore()
 
     def dragMoveEvent(self, event):
+        """Drag move event handler.
+        
+        """
         if event.mimeData().hasUrls():
             self._drag_in_progress = True
             event.accept()
@@ -414,11 +484,17 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         event.ignore()
 
     def dragLeaveEvent(self, event):
+        """Drag leave event handler.
+        
+        """
         self._drag_in_progress = False
         self.repaint()
         return True
 
     def dropEvent(self, event):
+        """Drop event handler.
+        
+        """
         self._drag_in_progress = False
         self.repaint()
 
@@ -430,4 +506,7 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         self.repaint()
 
     def supportedDropActions(self):
+        """Supported drop actions.
+        
+        """
         return QtCore.Qt.CopyAction | QtCore.Qt.MoveAction

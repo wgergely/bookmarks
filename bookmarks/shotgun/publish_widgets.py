@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Tree view and model used to display ShotGrid Steps and Tasks.
 
 """
@@ -28,7 +27,7 @@ class DropWidget(QtWidgets.QWidget):
         self._placeholder_text = None
 
         self.setAcceptDrops(True)
-        self.setFixedHeight(common.size(common.HeightRow) * 4)
+        self.setFixedHeight(common.size(common.size_row_height) * 4)
         self.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.Fixed
@@ -88,9 +87,9 @@ class DropWidget(QtWidgets.QWidget):
     def _draw_background(self, painter, hover):
         painter.setOpacity(0.55 if hover else 0.45)
 
-        o = common.size(common.WidthIndicator) * 1.5
+        o = common.size(common.size_indicator) * 1.5
         painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.color(common.SeparatorColor))
+        painter.setBrush(common.color(common.color_separator))
         painter.drawRoundedRect(self.rect(), o, o)
 
         if self._path:
@@ -98,10 +97,10 @@ class DropWidget(QtWidgets.QWidget):
 
         rect = self.rect().adjusted(o, o, -o, -o)
 
-        color = common.color(common.GreenColor) if hover else common.color(
-            common.SeparatorColor)
+        color = common.color(common.color_green) if hover else common.color(
+            common.color_separator)
         pen = QtGui.QPen(color)
-        pen.setWidthF(common.size(common.HeightSeparator) * 2)
+        pen.setWidthF(common.size(common.size_separator) * 2)
         pen.setStyle(QtCore.Qt.DashLine)
         pen.setCapStyle(QtCore.Qt.RoundCap)
         pen.setJoinStyle(QtCore.Qt.RoundJoin)
@@ -120,12 +119,12 @@ class DropWidget(QtWidgets.QWidget):
 
         painter.setOpacity(1.0 if hover else 0.8)
 
-        o = common.size(common.WidthMargin) * 1.5
+        o = common.size(common.size_margin) * 1.5
 
-        color = common.color(common.GreenColor) if hover else common.color(
-            common.TextSecondaryColor)
-        color = common.color(common.TextSelectedColor) if self._path else color
-        color = common.color(common.GreenColor) if self._drag_in_progress else color
+        color = common.color(common.color_green) if hover else common.color(
+            common.color_secondary_text)
+        color = common.color(common.color_selected_text) if self._path else color
+        color = common.color(common.color_green) if self._drag_in_progress else color
 
         if self._path:
             rect = self.rect().adjusted(o * 3, o, -o, -o)
@@ -134,7 +133,7 @@ class DropWidget(QtWidgets.QWidget):
 
         common.draw_aliased_text(
             painter,
-            common.font_db.primary_font(common.size(common.FontSizeLarge))[0],
+            common.font_db.primary_font(common.size(common.size_font_large))[0],
             rect,
             v,
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
@@ -148,24 +147,24 @@ class DropWidget(QtWidgets.QWidget):
             icon = 'file'
 
         if hover:
-            color = common.color(common.GreenColor)
+            color = common.color(common.color_green)
         else:
-            color = common.color(common.TextDisabledColor)
+            color = common.color(common.color_disabled_text)
 
         if self._path:
             icon = 'check'
-            color = common.color(common.GreenColor)
+            color = common.color(common.color_green)
 
         if self._drag_in_progress:
             icon = 'add_file'
-            color = common.color(common.GreenColor)
+            color = common.color(common.color_green)
 
-        h = common.size(common.WidthMargin)
-        pixmap = images.ImageCache.get_rsc_pixmap(icon, color, h)
+        h = common.size(common.size_margin)
+        pixmap = images.ImageCache.rsc_pixmap(icon, color, h)
 
         prect = pixmap.rect()
         prect.moveCenter(self.rect().center())
-        prect.moveLeft(common.size(common.WidthMargin) * 2)
+        prect.moveLeft(common.size(common.size_margin) * 2)
 
         painter.drawPixmap(prect, pixmap, pixmap.rect())
 
@@ -290,7 +289,7 @@ class StatusEditor(shotgun.EntityComboBox):
     """Lets the user select a status code."""
 
     def __init__(self, parent=None):
-        super(StatusEditor, self).__init__([NOT_SELECTED, ], parent=parent)
+        super().__init__([NOT_SELECTED, ], parent=parent)
         self.init_data()
         self.model().sourceModel().entityDataReceived.connect(self.select_default)
 
@@ -303,9 +302,6 @@ class StatusEditor(shotgun.EntityComboBox):
         # Disable filtering
         self.model().set_entity_type(None)
 
-        # 'Status' entities are retrieved by `sg_actions.get_status_codes`,
-        # which use our arguments here and so we don't have to pass anything
-        # apart from the # entity type and the server, job, root names.
         model.entityDataRequested.emit(
             model.uuid,
             common.active('server'),

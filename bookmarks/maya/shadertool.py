@@ -128,6 +128,12 @@ class RenameDialog(QtWidgets.QDialog):
         self.done(QtWidgets.QDialog.Accepted)
 
     def sizeHint(self):
+        """Returns a size hint.
+
+        """
+        """Returns a size hint.
+
+        """
         return QtCore.QSize(480, 60)
 
 
@@ -207,6 +213,9 @@ class ShaderModel(QtCore.QAbstractTableModel):
         return None
 
     def init_data(self):
+        """Initializes data.
+
+        """
         self.beginResetModel()
 
         arnold_shaders = cmds.listNodeTypes(
@@ -623,6 +632,9 @@ class ShadersWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
 
     @QtCore.Slot()
     def init_data(self):
+        """Initializes data.
+
+        """
         arnold_shaders = cmds.listNodeTypes(
             'rendernode/arnold/shader/surface'
         )
@@ -763,19 +775,28 @@ class ShadersWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
             )
 
     def paintEvent(self, event):
+        """Event handler.
+
+        """
         painter = QtGui.QPainter()
         painter.begin(self)
         painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.color(common.BackgroundColor))
+        painter.setBrush(common.color(common.color_background))
         painter.drawRect(self.rect())
         painter.end()
 
     def showEvent(self, event):
+        """Event handler.
+
+        """
         super().showEvent(event)
         self.shader_view.model().init_data()
         self.shader_view.init_callbacks()
 
     def hideEvent(self, event):
+        """Event handler.
+
+        """
         super().hideEvent(event)
         self.shader_view.remove_callbacks()
 

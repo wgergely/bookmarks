@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """The module contains interface used to get and modify a bookmark item's token
 values.
 
@@ -26,15 +25,8 @@ Use :func:`.get` to retrieve token config controller instances.
         ext='exr'
     )
 
-Attributes:
-    DEFAULT_TOKEN_CONFIG (dict): The default token configuration structure.
-    TOKENS_DB_KEY (str): The database column name used to store the token
-        configuration data.
-    invalid_token (str): The default string to mark a token invalid.
-
 """
 import collections
-import getpass
 import json
 import socket
 import string
@@ -46,6 +38,7 @@ from .. import common
 from .. import database
 from .. import log
 
+#: The database column name
 TOKENS_DB_KEY = 'tokens'
 
 FileFormatConfig = 'FileFormatConfig'
@@ -73,6 +66,7 @@ AllFormat = (
         MiscFormat
 )
 
+#: Invalid token marker string
 invalid_token = '{invalid_token}'
 
 SceneFolder = 'scene'
@@ -84,6 +78,7 @@ PublishFolder = 'publish'
 TextureFolder = 'textures'
 MiscFolder = 'other'
 
+#: The default token value configuration
 DEFAULT_TOKEN_CONFIG = {
     FileFormatConfig: {
         0: {
@@ -393,9 +388,9 @@ def get(server, job, root, force=False):
     bookmark item.
 
     Args:
-        server (str): Server path segment.
-        job (str): Job path segment.
-        root (str): Root path segment.
+        server (str): `server` path segment.
+        job (str): `job` path segment.
+        root (str): `root` path segment.
         force (bool, optional): Force retrieve tokens from the database.
 
     Returns:
@@ -488,6 +483,7 @@ def get_subfolders(token):
     config = get(server, job, root)
     return config.get_asset_subfolders(token)
 
+
 def get_description(token):
     """Get a description of a token.
 
@@ -577,7 +573,7 @@ class TokenConfig(QtCore.QObject):
         JSON object.
 
         Args:
-            data (dict):  The token config data to save.
+            data (dict): The token config data to save.
 
         """
         common.check_type(data, dict)
@@ -629,7 +625,7 @@ class TokenConfig(QtCore.QObject):
         """Utility method used to get the description of a token.
 
         Args:
-            token (str):    A file-format or a folder name, e.g. 'anim'.
+            token (str): A file-format or a folder name, e.g. 'anim'.
             force (bool, optional): Force retrieve tokens from the database.
 
         Returns:
@@ -666,7 +662,7 @@ class TokenConfig(QtCore.QObject):
         Invalid tokens will be marked :attr:`.invalid_token`.
 
         Args:
-            s (str):    The string containing tokens to be expanded.
+            s (str): The string containing tokens to be expanded.
             user (str, optional): Username.
             version (str, optional): The version string.
             host (str, optional): The name of the current machine/host.
@@ -764,7 +760,7 @@ class TokenConfig(QtCore.QObject):
         """Returns a list of extensions associated with the given flag.
 
         Args:
-            flag (int):     A format filter flag.
+            flag (int): A format filter flag.
             force (bool, optional): Force retrieve tokens from the database.
 
         Returns:
@@ -862,7 +858,6 @@ class TokenConfig(QtCore.QObject):
                 if subfolder['name'] == folder:
                     return subfolder['value']
         return None
-
 
     def get_asset_subfolders(self, token, force=False):
         """Returns the value of an asset sub-folder based on the current token config

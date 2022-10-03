@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Utility methods and classes used to parse environment values.
 
 Mainly used to get binary paths, such as ffmpeg.
@@ -99,9 +98,7 @@ def _parse_dist_env(binary_name):
     if not QtCore.QFileInfo(v).exists():
         return
 
-    file_info = QtCore.QFileInfo(v)
-
-    def scan_dir(v):
+    def _scan_dir(v):
         for entry in os.scandir(v):
             try:
                 if not entry.is_file():
@@ -119,10 +116,10 @@ def _parse_dist_env(binary_name):
 
         return None
 
-    _v = scan_dir(v)
+    _v = _scan_dir(v)
     if _v:
         return _v
-    _v = scan_dir(f'{v}/bin')
+    _v = _scan_dir(f'{v}/bin')
     if _v:
         return _v
     return None
@@ -194,7 +191,7 @@ class EnvPathEditor(QtWidgets.QWidget):
         for name in external_binaries:
             row = ui.add_row(
                 name,
-                padding=common.size(common.WidthMargin),
+                padding=common.size(common.size_margin),
                 parent=self
             )
 
@@ -267,7 +264,7 @@ class EnvPathEditor(QtWidgets.QWidget):
         actions.reveal(editor.text())
 
     def init_data(self):
-        """Load data.
+        """Initializes data.
 
         """
         for name in external_binaries:

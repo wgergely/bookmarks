@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Maya-specific methods and values.
 
 """
@@ -22,6 +21,7 @@ from ..tokens import tokens
 GEO_SUFFIX = 'export'
 TEMP_NAMESPACE = f'Temp_{uuid.uuid4().hex}'
 
+#: Maya frame-rate enum definitions
 MAYA_FPS = {
     'hour': 2.777777777777778e-4,
     'min': 0.0166667,
@@ -70,12 +70,15 @@ MAYA_FPS = {
     '48000fps': 48000.0,
 }
 
+#: Default viewport display options
 DisplayOptions = {
     "displayGradient": True,
     "background": (0.5, 0.5, 0.5),
     "backgroundTop": (0.6, 0.6, 0.6),
     "backgroundBottom": (0.4, 0.4, 0.4),
 }
+
+#: Default camera display options
 CameraOptions = {
     "displayGateMask": False,
     "displayResolution": False,
@@ -88,6 +91,8 @@ CameraOptions = {
     "overscan": 1.0,
     "depthOfField": False,
 }
+
+#: Default camera capture options
 CaptureOptions = {
     "wireframeOnShaded": False,
     "displayAppearance": 'smoothShaded',
@@ -124,18 +129,33 @@ CaptureOptions = {
     "motionTrails": False
 }
 
+#: Default frame padding
 DefaultPadding = 4
 
+#: Default cache export path template
 CACHE_PATH = '{workspace}/{export_dir}/{set}/{set}.{ext}'
+
+#: Default cache directory template
 DEFAULT_CACHE_DIR = '{export_dir}/{ext}'
+
+#: Viewport capture direction name
 DEFAULT_CAPTURE_DIR = 'capture'
+
+#: Default cache destination template
 CACHE_LAYER_PATH = '{workspace}/{export_dir}/{set}/{set}_{layer}.{ext}'
+
+#: Default capture destination path template
 CAPTURE_DESTINATION = '{workspace}/{capture_folder}/{scene}/{scene}'
+
+#: Default capture file path template
 CAPTURE_FILE = '{workspace}/{capture_folder}/{scene}/{scene}.{frame}.{ext}'
+#: Default capture agnostic publish path template
 CAPTURE_PUBLISH_DIR = '{workspace}/{capture_folder}/latest'
+#: Default capture agnostic publish file name template
 AGNOSTIC_CAPTURE_FILE = '{workspace}/{capture_folder}/latest/{asset}_capture_{' \
                         'frame}.{ext}'
 
+#: Workspace file format rules
 EXPORT_FILE_RULES = {
     'Alembic': 'abc',
     'alembicimport': 'abc',
@@ -161,13 +181,15 @@ EXPORT_FILE_RULES = {
     'USD Export': 'usd',
 }
 
+#: Default render template
 RENDER_NAME_TEMPLATE = '<RenderLayer>/<Version>/<RenderPass>/<RenderLayer>_' \
                        '<RenderPass>_<Version>'
 
 SUFFIX_LABEL = 'Select a suffix for this import.\n\n\
 Suffixes are always unique and help differentiate imports when the same file \
-is imported mutiple times.'
+is imported multiple times.'
 
+# The list of database tables and column containing relevant properties
 DB_KEYS = {
     database.BookmarkTable: (
         'width',
@@ -216,6 +238,12 @@ def patch_workspace_file_rules():
 
 
 def set_startframe(frame):
+    """Sets the scene's animation start time.
+
+    Args:
+        frame (int): The start frame.
+
+    """
     if not isinstance(frame, int):
         frame = int(round(frame, 0))
 
@@ -235,6 +263,12 @@ def set_startframe(frame):
 
 
 def set_endframe(frame):
+    """Sets the scene's animation end time.
+
+    Args:
+        frame (int): The end frame.
+
+    """
     if not isinstance(frame, int):
         frame = int(round(frame, 0))
 
@@ -254,6 +288,9 @@ def set_endframe(frame):
 
 
 def apply_default_render_values():
+    """Sets the default render values for the current scene.
+
+    """
     cmds.setAttr('perspShape.renderable', 0)
 
     # Enable versioned outputs
@@ -285,11 +322,17 @@ def apply_default_render_values():
 
 
 def set_render_resolution(width, height):
+    """Sets the render resolution of the current scene.
+
+    """
     cmds.setAttr('defaultResolution.width', width)
     cmds.setAttr('defaultResolution.height', height)
 
 
 def set_framerate(fps):
+    """Sets the frame-rate speed of the current scene.
+
+    """
     if not isinstance(fps, float):
         fps = float(fps)
 
@@ -320,6 +363,9 @@ def set_framerate(fps):
 
 
 def get_framerate():
+    """Returns the value of the current frame-rate enum.
+
+    """
     return MAYA_FPS[cmds.currentUnit(query=True, time=True)]
 
 
@@ -579,6 +625,9 @@ def get_geo_sets():
 
 
 def capture_viewport_destination():
+    """Returns a tuple of destination parameters.
+
+    """
     # Note that CAPTURE_DESTINATION does not actually refer to the full filename
     # the padded frame numbers and the extensions are added to the base name
     # by `capture.py`
@@ -593,6 +642,9 @@ def capture_viewport_destination():
 
 
 class MayaProperties(object):
+    """Utility class used to interface with values stored in the bookmark item's database.
+
+    """
     def __init__(self, parent=None):
         super().__init__()
 
@@ -609,6 +661,9 @@ class MayaProperties(object):
         self.init_data(server, job, root, asset)
 
     def init_data(self, server, job, root, asset):
+        """Initializes the maya properties instance.
+
+        """
         # Bookmark properties
         db = database.get_db(server, job, root)
         for k in DB_KEYS[database.BookmarkTable]:
@@ -626,6 +681,9 @@ class MayaProperties(object):
 
     @property
     def framerate(self):
+        """A current frame-rate value.
+
+        """
         v = self.data['framerate']
         if isinstance(v, (float, int)) and float(v) in MAYA_FPS.values():
             return v
@@ -633,6 +691,9 @@ class MayaProperties(object):
 
     @property
     def startframe(self):
+        """A current start-frame value.
+
+        """
         # If the asset has an explicit in frame, we'll use that
         v = self.data['cut_in']
         if isinstance(v, (float, int)):
@@ -647,8 +708,12 @@ class MayaProperties(object):
 
     @property
     def endframe(self):
-        # If the asset has an explicit out frame set that is bigger than the start
-        # frame we'll use that value
+        """A current end-frame value.
+
+        If the asset has an explicit out frame set that is bigger than the start
+        frame we'll use that value instead.
+
+        """
         v = self.data['cut_out']
         if isinstance(v, (float, int)):
             if v > self.startframe:
@@ -669,6 +734,9 @@ class MayaProperties(object):
 
     @property
     def width(self):
+        """A current width value.
+
+        """
         v = self.data['width']
         if isinstance(v, (float, int)):
             return v
@@ -676,12 +744,18 @@ class MayaProperties(object):
 
     @property
     def height(self):
+        """A current height value.
+
+        """
         v = self.data['height']
         if isinstance(v, (float, int)):
             return v
         return cmds.getAttr('defaultResolution.height')
 
     def get_info(self):
+        """Returns an informative text about the current Maya properties.
+
+        """
         duration = self.endframe - self.startframe
         info = 'Resolution:  {w}{h}\nFrame-rate:  {fps}\nCut:  {start}{' \
                'duration}'.format(

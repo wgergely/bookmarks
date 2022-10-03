@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Collection of common utility methods used by UI elements.
 
 The app has some DPI awareness, although, I'm pretty confident it wasn't implemented
@@ -10,7 +9,6 @@ dependent pixel value.
 from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
-
 
 
 def size(v):
@@ -51,8 +49,15 @@ def rgb(v):
 
 
 def status_bar_message(message):
+    """Decorator function used to show a status bar message.
+    
+    """
+
     def decorator(function):
+        """Function decorator."""
+
         def wrapper(*args, **kwargs):
+            """Function wrapper."""
             from .. import log
             from . import signals
 
@@ -68,34 +73,49 @@ def status_bar_message(message):
     return decorator
 
 
-def fit_screen_geometry(widget):
+def fit_screen_geometry(w):
+    """Fit the given widget's size to the available screen geometry.
+    
+    
+    Args:
+        w (QtWidget): The widget to fit to screen geometry.
+        
+    """
     app = QtWidgets.QApplication.instance()
     for screen in app.screens():
         _geo = screen.availableGeometry()
         if _geo.contains(common.cursor.pos(screen)):
-            widget.setGeometry(_geo)
+            w.setGeometry(_geo)
             return
 
 
-def center_window(widget):
-    widget.adjustSize()
+def center_window(w):
+    """Move the given widget to the available screen geometry's middle.
+
+    Args:
+        w (QWidget): The widget to center.
+
+    """
+    w.adjustSize()
     app = QtWidgets.QApplication.instance()
     for screen in app.screens():
         _geo = screen.availableGeometry()
-        r = widget.rect()
+        r = w.rect()
         if _geo.contains(common.cursor.pos(screen)):
-            widget.move(_geo.center() + (r.topLeft() - r.center()))
+            w.move(_geo.center() + (r.topLeft() - r.center()))
             return
 
 
-def move_widget_to_available_geo(widget):
-    """Moves the widget inside the available screen geometry, if any of the
-    edges fall outside it.
+def move_widget_to_available_geo(w):
+    """Moves the given widget inside available screen geometry.
+
+    Args:
+        w (QWidget): The widget to move.
 
     """
     app = QtWidgets.QApplication.instance()
-    if widget.window():
-        screen_idx = app.desktop().screenNumber(widget.window())
+    if w.window():
+        screen_idx = app.desktop().screenNumber(w.window())
     else:
         screen_idx = app.desktop().primaryScreen()
 
@@ -104,10 +124,10 @@ def move_widget_to_available_geo(widget):
 
     # Widget's rectangle in the global screen space
     rect = QtCore.QRect()
-    topLeft = widget.mapToGlobal(widget.rect().topLeft())
-    rect.setTopLeft(topLeft)
-    rect.setWidth(widget.rect().width())
-    rect.setHeight(widget.rect().height())
+    top_left = w.mapToGlobal(w.rect().topLeft())
+    rect.setTopLeft(top_left)
+    rect.setWidth(w.rect().width())
+    rect.setHeight(w.rect().height())
 
     x = rect.x()
     y = rect.y()
@@ -121,26 +141,36 @@ def move_widget_to_available_geo(widget):
     if rect.bottom() > screen_rect.bottom():
         y = screen_rect.bottom() - rect.height()
 
-    widget.move(x, y)
+    w.move(x, y)
 
 
-def set_stylesheet(widget):
-    """Set Bookmark's custom stylesheet to the given widget.
-
-    The tokenized stylesheet is stored in `common.stylesheet_file`.
+def set_stylesheet(w):
+    """Apply the app's custom stylesheet to the given widget.
 
     Args:
-            widget (QWidget): A widget t apply the stylesheet to.
+        w (QWidget): A widget to apply the stylesheet to.
 
     Returns:
             str: The stylesheet applied to the widget.
 
     """
-    if common.stylesheet:
-        widget.setStyleSheet(common.stylesheet)
-        return
+    if not common.stylesheet:
+        init_stylesheet()
 
-    path = common.get_rsc(common.stylesheet_file)
+    w.setStyleSheet(common.stylesheet)
+
+
+def init_stylesheet():
+    """Loads and stores the custom stylesheet used by the app.
+    
+    The stylesheet template is stored in the ``rsc/stylesheet.qss`` file, and we use
+    the values in ``config.json`` to expand it.
+
+    Returns:
+        str: The stylesheet.
+    
+    """
+    path = common.rsc(common.stylesheet_file)
 
     with open(path, 'r', encoding='utf-8') as f:
         f.seek(0)
@@ -149,47 +179,48 @@ def set_stylesheet(widget):
     try:
         from .. import images
         primary = common.font_db.primary_font(
-            size(common.FontSizeMedium))[0].family()
+            size(common.size_font_medium))[0].family()
         secondary = common.font_db.secondary_font(
-            size(common.FontSizeSmall)
+            size(common.size_font_small)
         )[0].family()
 
         qss = qss.format(
-            PrimaryFont=primary,
-            SecondaryFont=secondary,
-            FontSizeSmall=int(size(common.FontSizeSmall)),
-            FontSizeMedium=int(size(common.FontSizeMedium)),
-            FontSizeLarge=int(size(common.FontSizeLarge)),
-            HeightSeparator=int(size(common.HeightSeparator)),
-            WidthIndicator=int(size(common.WidthIndicator)),
-            WidthIndicator1=int(size(common.WidthIndicator) * 1.33),
-            WidthIndicator2=int(size(common.WidthIndicator) * 1.8),
-            WidthMargin=int(size(common.WidthMargin)),
-            WidthMargin2=int(size(common.WidthMargin) * 2),
-            WidthMargin3=int(size(common.WidthMargin) * 4),
-            SmallHeight=int(size(common.HeightRow) * 0.66),
-            BackgroundColor=rgb(common.color(common.BackgroundColor)),
-            BackgroundLightColor=rgb(common.color(common.BackgroundLightColor)),
-            BackgroundDarkColor=rgb(common.color(common.BackgroundDarkColor)),
-            TextColor=rgb(common.color(common.TextColor)),
-            TextSecondaryColor=rgb(common.color(common.TextSecondaryColor)),
-            TextSelectedColor=rgb(common.color(common.TextSelectedColor)),
-            TextDisabledColor=rgb(common.color(common.TextDisabledColor)),
-            GreenColor=rgb(common.color(common.GreenColor)),
-            RedColor=rgb(common.color(common.RedColor)),
-            SeparatorColor=rgb(common.color(common.SeparatorColor)),
-            BlueColor=rgb(common.color(common.BlueColor)),
-            OpaqueColor=rgb(common.color(common.OpaqueColor)),
-            branch_closed=images.ImageCache.get_rsc_pixmap(
+            font_primary=primary,
+            font_secondary=secondary,
+            size_font_small=int(size(common.size_font_small)),
+            size_font_medium=int(size(common.size_font_medium)),
+            size_font_large=int(size(common.size_font_large)),
+            size_separator=int(size(common.size_separator)),
+            size_indicator=int(size(common.size_indicator)),
+            size_indicator1=int(size(common.size_indicator) * 1.33),
+            size_indicator2=int(size(common.size_indicator) * 1.8),
+            size_margin=int(size(common.size_margin)),
+            size_margin2=int(size(common.size_margin) * 2),
+            size_margin3=int(size(common.size_margin) * 4),
+            size_row_height=int(size(common.size_row_height)),
+            size_row_height2=int(size(common.size_row_height) * 0.66),
+            color_background=rgb(common.color(common.color_background)),
+            color_light_background=rgb(common.color(common.color_light_background)),
+            color_dark_background=rgb(common.color(common.color_dark_background)),
+            color_text=rgb(common.color(common.color_text)),
+            color_secondary_text=rgb(common.color(common.color_secondary_text)),
+            color_selected_text=rgb(common.color(common.color_selected_text)),
+            color_disabled_text=rgb(common.color(common.color_disabled_text)),
+            color_green=rgb(common.color(common.color_green)),
+            color_red=rgb(common.color(common.color_red)),
+            color_separator=rgb(common.color(common.color_separator)),
+            color_blue=rgb(common.color(common.color_blue)),
+            color_opaque=rgb(common.color(common.color_opaque)),
+            branch_closed=images.ImageCache.rsc_pixmap(
                 'branch_closed', None, None, get_path=True
             ),
-            branch_open=images.ImageCache.get_rsc_pixmap(
+            branch_open=images.ImageCache.rsc_pixmap(
                 'branch_open', None, None, get_path=True
             ),
-            check=images.ImageCache.get_rsc_pixmap(
+            check=images.ImageCache.rsc_pixmap(
                 'check', None, None, get_path=True
             ),
-            close=images.ImageCache.get_rsc_pixmap(
+            close=images.ImageCache.rsc_pixmap(
                 'close', None, None, get_path=True
             )
         )
@@ -200,24 +231,24 @@ def set_stylesheet(widget):
         raise
 
     common.stylesheet = qss
-    widget.setStyleSheet(common.stylesheet)
-    return common.stylesheet
+    return qss
 
 
 def draw_aliased_text(painter, font, rect, text, align, color, elide=None):
-    """Allows drawing aliased text using *QPainterPath*.
+    """Allows drawing aliased text using QPainterPaths.
 
     This is slow to calculate but ensures the rendered text looks *smooth* (on
     Windows especially, I noticed a lot of aliasing issues). We're also eliding
     the given text to the width of the given rectangle.
 
     Args:
-            painter (QPainter):         The active painter.
-            font (QFont):               The font to use to paint.
-            rect (QRect):               The rectangle to fit the text in.
-            text (str):             The text to paint.
-            align (Qt.AlignmentFlag):   The alignment flags.
-            color (QColor):             The color to use.
+            painter (QPainter): The active painter.
+            font (QFont): The font to use to paint.
+            rect (QRect): The rectangle to fit the text in.
+            text (str): The text to paint.
+            align (Qt.AlignmentFlag): The alignment flags.
+            color (QColor): The color to use.
+            elide (bool): Elides the source text if True.
 
     Returns:
             int: The width of the drawn text in pixels.
@@ -336,12 +367,15 @@ def restore_selection(widget, *args, **kwargs):
 
 @QtCore.Slot(QtWidgets.QWidget)
 @QtCore.Slot(str)
-def select_index(widget, v, *args, **kwargs):
-    if 'role' in kwargs:
-        role = kwargs['role']
-    else:
-        role = QtCore.Qt.DisplayRole
+def select_index(widget, v, *args, role=QtCore.Qt.DisplayRole, **kwargs):
+    """Utility function used to select and reveal an item index in a view.
 
+    Args:
+        widget (QWidget): The view containing the item to select.
+        v (str): The value of role.
+        role (QtCore.Qt.ItemDataRole): The value's role.
+
+    """
     selected_index = common.get_selected_index(widget)
     for n in range(widget.model().rowCount()):
         index = widget.model().index(n, 0)
@@ -374,6 +408,12 @@ def select_index(widget, v, *args, **kwargs):
 @common.debug
 @QtCore.Slot()
 def save_window_state(widget, *args, **kwargs):
+    """Saves the current state of a window.
+
+    Args:
+        widget (QWidget): A widget or window.
+
+    """
     w = widget.window()
     dict_key = w.__class__.__name__
 
@@ -435,7 +475,6 @@ def restore_window_state(widget, *args, **kwargs):
     return w
 
 
-
 def widget(idx=None):
     """Retrieves the currently visible list widget if idx is None,
     otherwise, returns the specified widget.
@@ -495,6 +534,12 @@ def source_model(idx=None):
 
 
 def active_index(idx=None):
+    """Get the active index of the current, or given list index.
+
+    Args:
+        idx (int, optional): A tab index number, e.g. ``common.FileTab``.
+
+    """
     common.check_type(idx, (int, None))
     return source_model(idx=idx).active_index()
 

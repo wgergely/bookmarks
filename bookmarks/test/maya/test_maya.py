@@ -1,5 +1,4 @@
 #!mayapy
-# -*- coding: utf-8 -*-
 """Make sure the $MAYA_ROOT/bin directory is in $PATH before running the test."""
 
 import unittest

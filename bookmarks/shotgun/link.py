@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Shotgun Entity linker widgets.
 
 The widgets are used to link a ShotGrid entity with a local item.
@@ -48,20 +47,20 @@ class BaseLinkWidget(QtWidgets.QDialog):
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
-        o = common.size(common.WidthMargin)
+        o = common.size(common.size_margin)
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
 
         row = ui.add_row(
             'Select {}'.format(self.entity_type.title()),
-            height=common.size(common.HeightRow),
+            height=common.size(common.size_row_height),
             parent=self
         )
 
         self.combobox = shotgun.EntityComboBox(
             ['Select entity...', ], parent=self)
         self.combobox.model().set_entity_type(self.entity_type)
-        self.combobox.setMinimumWidth(common.size(common.DefaultWidth) * 0.5)
+        self.combobox.setMinimumWidth(common.size(common.size_width) * 0.5)
 
         self.create_button = ui.PaintedButton(
             'Create New', parent=self)
@@ -71,7 +70,7 @@ class BaseLinkWidget(QtWidgets.QDialog):
         row.layout().addWidget(self.visit_button, 0)
         row.layout().addWidget(self.create_button, 0)
 
-        row = ui.add_row(None, height=common.size(common.HeightRow), parent=self)
+        row = ui.add_row(None, height=common.size(common.size_row_height), parent=self)
 
         self.link_button = ui.PaintedButton(
             'Link {} Entity'.format(self.entity_type.title()),
@@ -191,13 +190,23 @@ class BaseLinkWidget(QtWidgets.QDialog):
         QtGui.QDesktopServices.openUrl(url)
 
     def showEvent(self, event):
+        """Show event handler.
+
+        """
         QtCore.QTimer.singleShot(100, self.request_data)
         common.center_window(self)
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth),
-                            (common.size(common.WidthMargin) * 2) + (
-                                    common.size(common.HeightRow) * 2))
+        """Returns a size hint.
+
+        """
+        return QtCore.QSize(
+            common.size(common.size_width),
+            (
+                (common.size(common.size_margin) * 2) +
+                (common.size(common.size_row_height) * 2)
+            )
+        )
 
 
 class EntityNameEditor(QtWidgets.QDialog):
@@ -218,7 +227,7 @@ class EntityNameEditor(QtWidgets.QDialog):
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
-        o = common.size(common.WidthMargin)
+        o = common.size(common.size_margin)
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
 
@@ -237,6 +246,9 @@ class EntityNameEditor(QtWidgets.QDialog):
             lambda: self.done(QtWidgets.QDialog.Accepted))
 
     def showEvent(self, event):
+        """Show event handler.
+
+        """
         self.adjustSize()
         self.editor.setFocus()
         common.center_window(self)
@@ -253,6 +265,13 @@ class EntityNameEditor(QtWidgets.QDialog):
         super(EntityNameEditor, self).done(result)
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth),
-                            (common.size(common.WidthMargin) * 2) + (
-                                    common.size(common.HeightRow) * 2))
+        """Returns a size hint.
+
+        """
+        return QtCore.QSize(
+            common.size(common.size_width),
+            (
+                (common.size(common.size_margin) * 2) +
+                (common.size(common.size_row_height) * 2)
+            )
+        )

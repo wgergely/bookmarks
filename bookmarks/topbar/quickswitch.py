@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Quick item switch menus used by the top bar.
 
 """
@@ -21,11 +20,11 @@ class BaseQuickSwitchMenu(contextmenu.BaseContextMenu):
 
     def add_switch_menu(self, idx, label):
         """Adds the items needed to quickly change bookmarks or assets."""
-        off_pixmap = images.ImageCache.get_rsc_pixmap(
-            'icon_bw', common.color(common.TextSecondaryColor),
-            common.size(common.WidthMargin))
-        on_pixmap = images.ImageCache.get_rsc_pixmap(
-            'check', common.color(common.GreenColor), common.size(common.WidthMargin))
+        off_pixmap = images.ImageCache.rsc_pixmap(
+            'icon_bw', common.color(common.color_secondary_text),
+            common.size(common.size_margin))
+        on_pixmap = images.ImageCache.rsc_pixmap(
+            'check', common.color(common.color_green), common.size(common.size_margin))
 
         self.menu[label] = {
             'disabled': True
@@ -46,7 +45,7 @@ class BaseQuickSwitchMenu(contextmenu.BaseContextMenu):
                 index.data(common.ParentPathRole)[1],
                 index.data(common.ParentPathRole)[2],
                 index.data(common.PathRole),
-                size=common.size(common.WidthMargin) * 4,
+                size=common.size(common.size_margin) * 4,
                 fallback_thumb='icon_bw'
             )
             pixmap = pixmap if pixmap else off_pixmap
@@ -62,6 +61,9 @@ class SwitchBookmarkMenu(BaseQuickSwitchMenu):
     @common.error
     @common.debug
     def setup(self):
+        """Creates the context menu.
+
+        """
         self.add_menu()
         self.separator()
         self.add_switch_menu(
@@ -71,8 +73,8 @@ class SwitchBookmarkMenu(BaseQuickSwitchMenu):
 
     def add_menu(self):
         self.menu['add'] = {
-            'icon': ui.get_icon('add', color=common.color(common.GreenColor)),
-            'text': 'Add & Remove Bookmark Items...',
+            'icon': ui.get_icon('add', color=common.color(common.color_green)),
+            'text': 'Add/Remove Bookmark Items...',
             'action': actions.show_bookmarker,
             'shortcut': shortcuts.string(shortcuts.MainWidgetShortcuts,
                                          shortcuts.AddItem),
@@ -85,6 +87,9 @@ class SwitchAssetMenu(BaseQuickSwitchMenu):
     @common.error
     @common.debug
     def setup(self):
+        """Creates the context menu.
+
+        """
         self.add_menu()
         self.separator()
         self.add_switch_menu(
@@ -94,7 +99,7 @@ class SwitchAssetMenu(BaseQuickSwitchMenu):
 
     def add_menu(self):
         self.menu['add'] = {
-            'icon': ui.get_icon('add', color=common.color(common.GreenColor)),
+            'icon': ui.get_icon('add', color=common.color(common.color_green)),
             'text': 'Create new asset...',
             'action': actions.show_add_asset,
             'shortcut': shortcuts.string(shortcuts.MainWidgetShortcuts,

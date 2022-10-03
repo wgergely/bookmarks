@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Defines the small control buttons found on the right-hand side of the top bar.
 
 
@@ -20,6 +19,9 @@ class FilterHistoryMenu(contextmenu.BaseContextMenu):
     @common.error
     @common.debug
     def setup(self):
+        """Creates the context menu.
+
+        """
         self.history_menu()
 
     def history_menu(self):
@@ -51,7 +53,7 @@ class FilterHistoryMenu(contextmenu.BaseContextMenu):
         self.separator()
 
         self.menu[contextmenu.key()] = {
-            'icon': ui.get_icon('close', color=common.color(common.RedColor)),
+            'icon': ui.get_icon('close', color=common.color(common.color_red)),
             'text': 'Clear History',
             'action': (
                 functools.partial(proxy.set_filter_text, ''),
@@ -64,13 +66,13 @@ class BaseControlButton(ui.ClickableIconButton):
 
     def __init__(self, pixmap, description,
                  color=(
-                         common.color(common.TextSelectedColor),
-                         common.color(common.TextDisabledColor)),
+                         common.color(common.color_selected_text),
+                         common.color(common.color_disabled_text)),
                  parent=None):
         super().__init__(
             pixmap,
             color,
-            common.size(common.WidthMargin),
+            common.size(common.size_margin),
             description=description,
             parent=parent
         )
@@ -139,10 +141,10 @@ class ToggleSequenceButton(BaseControlButton):
 
     def pixmap(self):
         if self.state():
-            return images.ImageCache.get_rsc_pixmap('collapse', self._on_color,
-                                                    common.size(common.WidthMargin))
-        return images.ImageCache.get_rsc_pixmap('expand', self._off_color,
-                                                common.size(common.WidthMargin))
+            return images.ImageCache.rsc_pixmap('collapse', self._on_color,
+                                                    common.size(common.size_margin))
+        return images.ImageCache.rsc_pixmap('expand', self._off_color,
+                                                common.size(common.size_margin))
 
     def state(self):
         if not common.widget():
@@ -179,10 +181,10 @@ class ToggleArchivedButton(BaseControlButton):
 
     def pixmap(self):
         if self.state():
-            return images.ImageCache.get_rsc_pixmap('archivedVisible', self._on_color,
-                                                    common.size(common.WidthMargin))
-        return images.ImageCache.get_rsc_pixmap('archivedHidden', self._off_color,
-                                                common.size(common.WidthMargin))
+            return images.ImageCache.rsc_pixmap('archivedVisible', self._on_color,
+                                                    common.size(common.size_margin))
+        return images.ImageCache.rsc_pixmap('archivedHidden', self._off_color,
+                                                common.size(common.size_margin))
 
     def state(self):
         if not common.widget():

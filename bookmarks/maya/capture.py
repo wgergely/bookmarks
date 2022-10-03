@@ -74,7 +74,7 @@ def capture(
         viewer (bool, optional): Display results in native player
         show_ornaments (bool, optional): Whether model view ornaments
             (e.g. axis icon, grid and HUD) should be displayed.
-        sound (str, optional):  Specify the sound node to be used during
+        sound (str, optional): Specify the sound node to be used during
             playblast. When None (default) no sound will be used.
         isolate (list): List of nodes to isolate upon capturing
         maintain_aspect_ratio (bool, optional): Modify height in order to
@@ -841,12 +841,6 @@ def _get_screen_size():
 def _in_standalone():
     return not hasattr(cmds, 'about') or cmds.about(batch=True)
 
-
-# --------------------------------
-#
-# Apply version specific settings
-#
-# --------------------------------
 
 version = mel.eval('getApplicationVersionAsFloat')
 if version > 2015:

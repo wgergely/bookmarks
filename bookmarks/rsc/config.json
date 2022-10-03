@@ -25,108 +25,108 @@
   ],
   "bold_font": "bmRobotoBold",
   "medium_font": "bmRobotoMedium",
-  "FontSizeSmall": 11.0,
-  "FontSizeMedium": 12.0,
-  "FontSizeLarge": 16.0,
-  "HeightRow": 34.0,
-  "HeightBookmark": 40.0,
-  "HeightAsset": 64.0,
-  "HeightSeparator": 1.0,
-  "WidthMargin": 18.0,
-  "WidthIndicator": 4.0,
-  "DefaultWidth": 640.0,
-  "DefaultHeight": 480.0,
-  "BackgroundColor": [
+  "size_font_small": 11.0,
+  "size_font_medium": 12.0,
+  "size_font_large": 16.0,
+  "size_row_height": 34.0,
+  "size_bookmark_row_height": 40.0,
+  "size_asset_row_height": 64.0,
+  "size_separator": 1.0,
+  "size_margin": 18.0,
+  "size_indicator": 4.0,
+  "size_width": 640.0,
+  "size_height": 480.0,
+  "color_background": [
     85,
     85,
     85,
     255
   ],
-  "BackgroundLightColor": [
+  "color_light_background": [
     145,
     145,
     145,
     255
   ],
-  "BackgroundDarkColor": [
+  "color_dark_background": [
     65,
     65,
     65,
     255
   ],
-  "TextColor": [
+  "color_text": [
     225,
     225,
     225,
     255
   ],
-  "TextSecondaryColor": [
+  "color_secondary_text": [
     175,
     175,
     175,
     255
   ],
-  "TextSelectedColor": [
+  "color_selected_text": [
     255,
     255,
     255,
     255
   ],
-  "TextDisabledColor": [
+  "color_disabled_text": [
     145,
     145,
     145,
     255
   ],
-  "SeparatorColor": [
+  "color_separator": [
     40,
     40,
     40,
     255
   ],
-  "BlueLightColor": [
+  "color_light_blue": [
     50,
     50,
     195,
     180
   ],
-  "BlueColor": [
+  "color_blue": [
     107,
     135,
     185,
     255
   ],
-  "RedLightColor": [
+  "color_red2": [
     190,
     50,
     50,
     180
   ],
-  "RedColor": [
+  "color_red": [
     219,
     114,
     114,
     255
   ],
-  "GreenLightColor": [
+  "color_light_green": [
     80,
     150,
     100,
     180
   ],
-  "GreenColor": [
+  "color_green": [
     90,
     200,
     155,
     255
   ],
-  "GreenAltColor": [
+  "color_dark_green": [
     110,
     190,
     160,
     255
   ],
-  "OpaqueColor": [
+  "color_opaque": [
     0,
     0,
     0,

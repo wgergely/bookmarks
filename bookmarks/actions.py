@@ -1,7 +1,8 @@
-# -*- coding: utf-8 -*-
-"""Actions modules.
+"""A series of high-level functions.
 
-A list common user-triggered actions used across `Bookmarks`.
+These functions are usually triggered by the user, either by ui interaction or
+via keyboard shortcuts. Some of these
+
 
 """
 import functools
@@ -9,7 +10,6 @@ import json
 import os
 import re
 import subprocess
-import weakref
 import zipfile
 
 from PySide2 import QtCore, QtWidgets, QtGui
@@ -29,11 +29,31 @@ def must_be_initialized(func):
 
     @functools.wraps(func)
     def func_wrapper(*args, **kwargs):
+        """Function wrapper.
+
+        """
         if common.main_widget is None or not common.main_widget.is_initialized:
             return
         return func(*args, **kwargs)
 
     return func_wrapper
+
+
+def toggle_debug(state):
+    """Toggles debugging.
+
+    Args:
+        state (QtCore.Qt.CheckState): Debugging state.
+
+    """
+    if not isinstance(state, QtCore.Qt.CheckState):
+        state = bool(state)
+    else:
+        if state == QtCore.Qt.Checked:
+            state = True
+        elif state == QtCore.Qt.Unchecked:
+            state = False
+    common.debug_on = state
 
 
 @common.error
@@ -43,7 +63,7 @@ def reveal_default_bookmarks_json():
 
     """
     reveal(
-        common.get_rsc(
+        common.rsc(
             f'{common.TemplateResource}/{common.default_bookmarks_template}'
         )
     )
@@ -52,10 +72,10 @@ def reveal_default_bookmarks_json():
 @common.error
 @common.debug
 def add_server(v):
-    """Add a server item to the list of user specified servers.
+    """Adds a server item to the list of user specified servers.
 
     Args:
-        v (str): A path to server, e.g. `Q:/jobs`.
+        v (str): A path to a server, e.g. `Q:/jobs`.
 
     """
     common.check_type(v, str)
@@ -76,7 +96,7 @@ def remove_server(v):
     """Remove a server item from the list of user specified servers.
 
     Args:
-        v (str): A path to server, e.g. `Q:/jobs`.
+        v (str): A path to a server, e.g. `Q:/jobs`.
 
     """
     for bookmark in common.default_bookmarks.values():
@@ -87,7 +107,7 @@ def remove_server(v):
     if bookmarks:
         raise RuntimeError(
             f'Can\'t remove "{v}".\nServer has {len(bookmarks)} active bookmarks.'
-       )
+        )
 
     if v in common.servers:
         del common.servers[v]
@@ -98,36 +118,12 @@ def remove_server(v):
 
 
 def add_bookmark(server, job, root):
-    """Save the given bookmark in `user_settings`.
-
-    Each bookmark is stored as dictionary entry:
-
-
-    .. code-block:: python
-
-        bookmarks = {
-            '//server/jobs/MyFirstJob/data/shots': {
-                {
-                    'server': '//server/jobs',
-                    'job':  'MyFirstJob',
-                    'root':  'data/shots'
-                }
-            },
-            '//server/jobs/MySecondJob/data/shots': {
-                {
-                    'server': '//server/jobs',
-                    'job':  'MySecondJob',
-                    'root':  'data/shots'
-                }
-            }
-        }
-
-    Saved bookmarks can be retrieved using `common.settings.get_bookmarks`
+    """Add the given bookmark item and save it in the user settings file.
 
     Args:
-        server (str): A path segment.
-        job (str): A path segment.
-        root (str): A path segment.
+        server (str): `server` path segment.
+        job (str): `job` path segment.
+        root (str): `root` path segment.
 
     """
     for arg in (server, job, root):
@@ -146,11 +142,12 @@ def add_bookmark(server, job, root):
 def remove_bookmark(server, job, root):
     """Remove the given bookmark from the user settings file.
 
-    Removing the bookmark will also close and delete the bookmarks' database.
+    Removing a bookmark item will close and delete the item's database controller
+    instances.
 
     Args:
-        server (str): A path segment.
-        job (str): A path segment.
+        server (str): `server` path segment.
+        job (str): `job` path segment.
         root (str): A path segment.
 
     """
@@ -180,6 +177,13 @@ def remove_bookmark(server, job, root):
 
 
 def add_favourite(source_paths, source):
+    """Add and save a favourite item.
+
+    Args:
+        source_paths (list): A list of parent paths.
+        source (str): The item to save as a favourite item.
+
+    """
     common.check_type(source_paths, (tuple, list))
     common.check_type(source, str)
 
@@ -189,6 +193,13 @@ def add_favourite(source_paths, source):
 
 
 def remove_favourite(source_paths, source):
+    """Remove a saved favourite item.
+
+    Args:
+        source_paths (list): A list of parent paths.
+        source (str): The item to save as a favourite item.
+
+    """
     common.check_type(source_paths, (tuple, list))
     common.check_type(source, str)
 
@@ -203,7 +214,10 @@ def remove_favourite(source_paths, source):
 @common.error
 @common.debug
 def clear_favourites(prompt=True):
-    """Clear the list of saved items.
+    """Clear the list of saved favourite items.
+
+    Args:
+        prompt (bool): If True, will prompt the user for confirmation.
 
     """
     if prompt:
@@ -223,7 +237,11 @@ def clear_favourites(prompt=True):
 @common.error
 @common.debug
 def export_favourites(*args, destination=None):
-    """Saves all My File items as a zip archive.
+    """Saves all favourite items to a zip file.
+
+    Args:
+        args (tuple): A `server`, `job`, `root` argument tuple.
+        destination (str): The path to save the zip file to. Optional.
 
     """
     common.check_type(destination, (None, str))
@@ -231,7 +249,7 @@ def export_favourites(*args, destination=None):
     if destination is None:
         destination, _ = QtWidgets.QFileDialog.getSaveFileName(
             caption='Select where to save your favourites',
-            filter='*.{}'.format(common.favorite_file_ext),
+            filter=f'*.{common.favorite_file_ext}',
             dir=QtCore.QStandardPaths.writableLocation(
                 QtCore.QStandardPaths.HomeLocation
             ),
@@ -359,7 +377,6 @@ def import_favourites(*args, source=None):
             with db.connection():
                 db.setValue(source, k, database.b64decode(v), table=table)
 
-    common.favourites = data
     common.settings.set_favourites(data)
     common.signals.favouritesChanged.emit()
 
@@ -415,6 +432,12 @@ def set_active(k, v):
 @common.error
 @common.debug
 def set_task_folder(v):
+    """Sets the active task folder.
+
+    Args:
+        v (str): A `task` path segment, e.g. 'scenes'.
+
+    """
     set_active('task', v)
     common.source_model(common.FileTab).reset_data()
     common.widget(common.FileTab).model().invalidateFilter()
@@ -424,6 +447,9 @@ def set_task_folder(v):
 @common.debug
 @must_be_initialized
 def toggle_sequence():
+    """Toggles the data type of the file item model.
+
+    """
     if common.current_tab() not in (common.FileTab, common.FavouriteTab):
         return
 
@@ -439,6 +465,9 @@ def toggle_sequence():
 @common.debug
 @must_be_initialized
 def toggle_archived_items():
+    """Toggles the ``MarkedAsArchived`` item filter of the current tab model.
+
+    """
     w = common.widget()
     proxy = w.model()
     val = proxy.filter_flag(common.MarkedAsArchived)
@@ -450,6 +479,9 @@ def toggle_archived_items():
 @common.debug
 @must_be_initialized
 def toggle_active_item():
+    """Toggles the ``MarkedAsActive`` item filter of the current tab model.
+
+    """
     w = common.widget()
     proxy = w.model()
     val = proxy.filter_flag(common.MarkedAsActive)
@@ -461,6 +493,9 @@ def toggle_active_item():
 @common.debug
 @must_be_initialized
 def toggle_favourite_items():
+    """Toggles the ``MarkedAsFavourite`` item filter of the current tab model.
+
+    """
     w = common.widget()
     proxy = w.model()
     val = proxy.filter_flag(common.MarkedAsFavourite)
@@ -472,6 +507,9 @@ def toggle_favourite_items():
 @common.debug
 @must_be_initialized
 def adjust_tab_button_size(*args, **kwargs):
+    """Slot used to adjust the size of the top bar buttons size.
+
+    """
     w = common.main_widget.topbar_widget
     w.button(common.BookmarkTab).adjust_size()
     w.button(common.AssetTab).adjust_size()
@@ -483,6 +521,9 @@ def adjust_tab_button_size(*args, **kwargs):
 @common.debug
 @must_be_initialized
 def toggle_inline_icons():
+    """Toggles the inline icon visibility of the current tab view.
+
+    """
     widget = common.widget()
     state = not widget.buttons_hidden()
 
@@ -497,6 +538,12 @@ def toggle_inline_icons():
 @QtCore.Slot(QtCore.Qt.CheckState)
 @must_be_initialized
 def generate_thumbnails_changed(state):
+    """Slot called when the thumbnail generating preference has changed.
+
+    Args:
+        state (QtCore.Qt.CheckState): The preference state.
+
+    """
     from .threads import threads
 
     for t in (common.FileTab, common.FavouriteTab):
@@ -512,6 +559,10 @@ def generate_thumbnails_changed(state):
 @QtCore.Slot()
 @must_be_initialized
 def toggle_task_view():
+    """Shows or hides the visibility of the
+    :class:~bookmarks.items.task_items.TaskItemView`` widget.
+
+    """
     if common.current_tab() != common.FileTab:
         return
     common.widget(common.TaskTab).setHidden(
@@ -523,6 +574,9 @@ def toggle_task_view():
 
 @must_be_initialized
 def toggle_filter_editor():
+    """Toggles the search filter editor view of the current item view.
+
+    """
     w = common.widget()
     if w.filter_editor.isHidden():
         w.filter_editor.open()
@@ -555,6 +609,7 @@ def selection(func):
     @functools.wraps(func)
     @must_be_initialized
     def func_wrapper():
+        """Function wrapper."""
         index = common.selected_index()
         if not index.isValid():
             return None
@@ -567,6 +622,9 @@ def selection(func):
 @common.debug
 @must_be_initialized
 def increase_row_size():
+    """Increases the row size of the current tab view.
+
+    """
     widget = common.widget()
     proxy = widget.model()
     model = proxy.sourceModel()
@@ -583,6 +641,9 @@ def increase_row_size():
 @common.debug
 @must_be_initialized
 def decrease_row_size():
+    """Decreases the row size of the current tab view.
+
+    """
     widget = common.widget()
     proxy = widget.model()
     model = proxy.sourceModel()
@@ -599,6 +660,9 @@ def decrease_row_size():
 @common.debug
 @must_be_initialized
 def reset_row_size():
+    """Reset the current tab view row size to its default value.
+
+    """
     widget = common.widget()
     proxy = widget.model()
     model = proxy.sourceModel()
@@ -612,6 +676,9 @@ def reset_row_size():
 @common.error
 @common.debug
 def show_bookmarker():
+    """Shows :class:`~bookmarks.bookmarker.main.BookmarkerWidget`.
+
+    """
     from .bookmarker import main as editor
     widget = editor.show()
     return widget
@@ -620,6 +687,15 @@ def show_bookmarker():
 @common.error
 @common.debug
 def show_add_asset(server=None, job=None, root=None):
+    """Shows :class:`~bookmarks.editor.asset_properties.AssetPropertyEditor` to create
+    a new asset item.
+
+    Args:
+        server (str): `server` path segment. Optional.
+        job (str): `job` path segment. Optional.
+        root (str): `root` path segment. Optional.
+
+    """
     if not all((server, job, root)):
         server = common.active('server')
         job = common.active('job')
@@ -638,6 +714,20 @@ def show_add_asset(server=None, job=None, root=None):
 def show_add_file(
         asset=None, extension=None, file=None, create_file=True, increment=False
 ):
+    """Shows :class:`~bookmarks.file_saver.FileSaverWidget` to add a new empty template
+    path file.
+
+    Args:
+        asset (str): Name of the asset.
+        extension (str): An format, e.g. 'psd'.
+        file (str): Path to an existing file. Optional.
+        create_file (bool): Creates an empty file if True.
+        increment (bool): Increment the version number element of ``file``.
+
+    Returns:
+        The editor widget instance.
+
+    """
     server = common.active('server')
     job = common.active('job')
     root = common.active('root')
@@ -666,13 +756,16 @@ def show_add_file(
 
 @common.error
 @common.debug
-def show_add_favourite():
-    raise NotImplementedError('Function not yet implemented')
-
-
-@common.error
-@common.debug
 def edit_bookmark(server=None, job=None, root=None):
+    """Shows :class:`~bookmarks.editor.bookmark_properties.BookmarkPropertyEditor` to
+    edit the properties of a bookmark item.
+
+    Args:
+        server (str): `server` path segment. Optional.
+        job (str): `job` path segment. Optional.
+        root (str): `root` path segment. Optional.
+
+    """
     if not all((server, job, root)):
         server = common.active('server')
         job = common.active('job')
@@ -688,6 +781,13 @@ def edit_bookmark(server=None, job=None, root=None):
 @common.error
 @common.debug
 def edit_asset(asset=None):
+    """Shows :class:`~bookmarks.editor.asset_properties.AssetPropertyEditor` to
+    edit the properties of a bookmark item.
+
+    Args:
+        asset (str): `asset` path segment.
+
+    """
     server = common.active('server')
     job = common.active('job')
     root = common.active('root')
@@ -707,6 +807,9 @@ def edit_asset(asset=None):
 @common.error
 @common.debug
 def edit_file(f):
+    """Edit the given file.
+
+    """
     server = common.active('server')
     job = common.active('job')
     root = common.active('root')
@@ -730,6 +833,9 @@ def edit_file(f):
 @common.error
 @common.debug
 def show_preferences():
+    """Shows the :class:`~bookmarks.editor.preferences.PreferenceEditor` editor widget.
+
+    """
     from .editor import preferences as editor
     widget = editor.show()
     return widget
@@ -766,6 +872,9 @@ def show_slack():
 @common.error
 @common.debug
 def add_item():
+    """Triggers the current tab's add item action.
+
+    """
     idx = common.current_tab()
     if idx == common.BookmarkTab:
         show_bookmarker()
@@ -774,13 +883,16 @@ def add_item():
     elif idx == common.FileTab:
         show_add_file()
     elif idx == common.FavouriteTab:
-        show_add_favourite()
+        pass
 
 
 @common.error
 @common.debug
 @selection
 def edit_item(index):
+    """Action used to open an item editor.
+
+    """
     pp = index.data(common.ParentPathRole)
     if len(pp) == 3:
         server, job, root = index.data(common.ParentPathRole)[0:3]
@@ -800,6 +912,12 @@ def edit_item(index):
 @common.error
 @common.debug
 def refresh(idx=None):
+    """Refresh the model of an item view.
+
+    Args:
+        idx (int): The item tab number. Optional.
+
+    """
     w = common.widget(idx=idx)
     model = w.model().sourceModel()
     model.reset_data(force=True)
@@ -808,6 +926,13 @@ def refresh(idx=None):
 @common.error
 @common.debug
 def toggle_flag(flag, v):
+    """Toggle an item filter flag in the current item tab.
+
+    Args:
+        flag (int): An item filter flag.
+        v (bool): The filter flag value.
+
+    """
     proxy = common.widget().model()
     proxy.set_filter_flag(flag, v)
     proxy.filterFlagChanged.emit(flag, v)
@@ -816,6 +941,9 @@ def toggle_flag(flag, v):
 @common.error
 @common.debug
 def toggle_full_screen():
+    """Toggle :class:`~bookmarks.standalone.BookmarksAppWindow` full-screen view.
+
+    """
     if common.main_widget.isFullScreen():
         common.main_widget.showNormal()
     else:
@@ -825,6 +953,9 @@ def toggle_full_screen():
 @common.error
 @common.debug
 def toggle_maximized():
+    """Toggle :class:`~bookmarks.standalone.BookmarksAppWindow` maximized view.
+
+    """
     if common.main_widget.isMaximized():
         common.main_widget.showNormal()
     else:
@@ -834,6 +965,9 @@ def toggle_maximized():
 @common.error
 @common.debug
 def toggle_minimized():
+    """Toggle :class:`~bookmarks.standalone.BookmarksAppWindow` minimized view.
+
+    """
     if common.main_widget.isMinimized():
         common.main_widget.showNormal()
     else:
@@ -843,6 +977,9 @@ def toggle_minimized():
 @common.error
 @common.debug
 def toggle_stays_always_on_top():
+    """Toggle :class:`~bookmarks.standalone.BookmarksAppWindow` stacking value.
+
+    """
     if common.init_mode == common.EmbeddedMode:
         return
 
@@ -859,25 +996,10 @@ def toggle_stays_always_on_top():
 
 @common.error
 @common.debug
-def toggle_frameless():
-    if common.init_mode == common.EmbeddedMode:
-        return
-
-    w = common.main_widget
-    flags = w.windowFlags()
-    state = flags & QtCore.Qt.FramelessWindowHint
-
-    common.settings.setValue('settings/frameless', not state)
-
-    w.hide()
-    w.update_window_flags()
-    w.activateWindow()
-    w.showNormal()
-
-
-@common.error
-@common.debug
 def exec_instance():
+    """Opens a new app instance.
+
+    """
     if common.get_platform() == common.PlatformWindows:
         if common.env_key not in os.environ:
             s = 'Bookmarks does not seem to be installed correctly:\n'
@@ -897,6 +1019,9 @@ def exec_instance():
 @common.debug
 @must_be_initialized
 def change_tab(idx):
+    """Changes the current item tab.
+
+    """
     if common.current_tab() == idx:
         return
     common.signals.tabChanged.emit(idx)
@@ -905,6 +1030,9 @@ def change_tab(idx):
 @common.error
 @common.debug
 def next_tab():
+    """Shows the next available item tab.
+
+    """
     n = common.current_tab()
     n += 1
     if n > (common.main_widget.stacked_widget.count() - 1):
@@ -916,6 +1044,9 @@ def next_tab():
 @common.error
 @common.debug
 def previous_tab():
+    """Shows the previous item tab.
+
+    """
     n = common.current_tab()
     n -= 1
     if n < 0:
@@ -928,6 +1059,9 @@ def previous_tab():
 @common.error
 @common.debug
 def change_sorting(role, order):
+    """Change the sorting role of the current item view model.
+
+    """
     model = common.widget().model().sourceModel()
     model.sortingChanged.emit(role, order)
 
@@ -935,6 +1069,9 @@ def change_sorting(role, order):
 @common.error
 @common.debug
 def toggle_sort_order():
+    """Change the sorting order of the current item view model.
+
+    """
     model = common.widget().model().sourceModel()
     order = model.sort_order()
     role = model.sort_by()
@@ -945,6 +1082,12 @@ def toggle_sort_order():
 @common.debug
 @selection
 def copy_selected_path(index):
+    """Copies the path of the given item to the clipboard.
+
+    Args:
+        index (QtCore.QModelIndex): The item index.
+
+    """
     if not index.data(common.FileInfoLoaded):
         return
     if common.get_platform() == common.PlatformMacOS:
@@ -964,6 +1107,12 @@ def copy_selected_path(index):
 @common.debug
 @selection
 def copy_selected_alt_path(index):
+    """Copies the path of the given item to the clipboard.
+
+    Args:
+        index (QtCore.QModelIndex): The item index.
+
+    """
     if not index.data(common.FileInfoLoaded):
         return
     copy_path(
@@ -977,10 +1126,16 @@ def copy_selected_alt_path(index):
 @common.error
 @selection
 def show_todos(index):
+    """Shows the :class:`~bookmarks.notes.NoteEditor` editor.
+
+    Args:
+        index (QtCore.QModelIndex): The item index.
+
+    """
     from . import notes
     parent = common.widget()
     editors = [f for f in parent.children() if isinstance(
-        f, notes.TodoEditorWidget
+        f, notes.NoteEditor
     )]
     if editors:
         for editor in editors:
@@ -988,7 +1143,7 @@ def show_todos(index):
 
     source_index = parent.model().mapToSource(index)
 
-    editor = notes.TodoEditorWidget(source_index, parent=parent)
+    editor = notes.NoteEditor(source_index, parent=parent)
     parent.resized.connect(editor.setGeometry)
     editor.finished.connect(editor.deleteLater)
     editor.open()
@@ -1027,10 +1182,7 @@ def preview_thumbnail(index):
         return
 
     # Let's get a weakref to the model data
-    model = index.model()
-    data = model.sourceModel().model_data()
-    idx = model.mapToSource(index).row()
-    ref = weakref.ref(data[idx])
+    ref = common.get_ref_from_source_index(index)
 
     from .items.widgets import image_viewer
     image_viewer.show(source, ref, common.widget(), oiio=False)
@@ -1040,6 +1192,12 @@ def preview_thumbnail(index):
 @common.error
 @selection
 def preview_image(index):
+    """Shows a preview of the given image.
+
+    Args:
+        index (QtCore.QModelIndex): The item index.
+
+    """
     if not index.isValid():
         return
 
@@ -1050,10 +1208,7 @@ def preview_image(index):
         raise RuntimeError(f'{source} is not a valid image file.')
 
     # Let's get a weakref to the model data
-    model = index.model()
-    data = model.sourceModel().model_data()
-    idx = model.mapToSource(index).row()
-    ref = weakref.ref(data[idx])
+    ref = common.get_ref_from_source_index(index)
 
     from .items.widgets import image_viewer
     image_viewer.show(source, ref, common.widget(), oiio=True)
@@ -1063,6 +1218,12 @@ def preview_image(index):
 @common.error
 @selection
 def reveal_selected(index):
+    """Reveal the currently selected item in the file explorer.
+
+    Args:
+        index (QtCore.QModelIndex): The item index.
+
+    """
     reveal(index)
 
 
@@ -1070,6 +1231,12 @@ def reveal_selected(index):
 @common.error
 @selection
 def reveal_url(index):
+    """Opens the given item's primary ULR.
+
+    Args:
+        index (QtCore.QModelIndex): The item index.
+
+    """
     source_path = index.data(common.ParentPathRole)
     if len(source_path) == 3:
         table = database.BookmarkTable
@@ -1090,6 +1257,12 @@ def reveal_url(index):
 @common.error
 @selection
 def toggle_favourite(index):
+    """Toggles the ``MarkedAsFavourite`` flag of the given item.
+
+    Args:
+        index (QtCore.QModelIndex): The item index.
+
+    """
     common.widget().save_selection()
     common.widget().toggle_item_flag(index, common.MarkedAsFavourite)
     common.widget().update(index)
@@ -1099,6 +1272,12 @@ def toggle_favourite(index):
 @common.error
 @selection
 def toggle_archived(index):
+    """Toggles the ``MarkedAsArchived`` flag of the given item.
+
+    Args:
+        index (QtCore.QModelIndex): The item index.
+
+    """
     if index.data(common.FlagsRole) & common.MarkedAsDefault:
         from . import ui
         ui.MessageBox('Default bookmark items cannot be archived.').open()
@@ -1114,6 +1293,12 @@ def toggle_archived(index):
 @common.debug
 @common.error
 def show_asset(path):
+    """Slot used to reveal an asset item in the asset tab.
+
+    Args:
+        path (str): Path of the asset item.
+
+    """
     index = common.active_index(common.BookmarkTab)
     if not index or not index.isValid():
         return
@@ -1152,7 +1337,7 @@ def reveal(item):
     if common.get_platform() == common.PlatformWindows:
         if QtCore.QFileInfo(path).isFile():
             args = ['/select,', QtCore.QDir.toNativeSeparators(path)]
-        elif QtCore.QFileInfo(path).isDir():
+        elif common.is_dir(path):
             path = os.path.normpath(path)
             args = [path, ]
         else:
@@ -1180,21 +1365,23 @@ def reveal(item):
 @common.debug
 @common.error
 def copy_path(path, mode=common.WindowsPath, first=True, copy=True):
-    """Copy a file path to the clipboard.
+    """Copies the given path to the clipboard.
 
-    The path will be conformed to the given `mode` (e.g. forward slashes
-    converted to back-slashes for `WindowsPath`).
+    The path will be conformed to the given mode. E.g. forward slashes
+    converted to back-slashes for `WindowsPath`.
 
     Args:
-        path (str): Description of parameter `path`.
-        mode (int):     Any of `WindowsPath`, `UnixPath`, `SlackPath` or
-                        `MacOSPath`. Defaults to `WindowsPath`.
-        first (bool):   If `True` copy the first item of a sequence.
-        copy (bool):    If copy is false the converted path won't be copied to
-                        the clipboard. Defaults to `True`.
+        path (str): A file path.
+        mode (int):
+            Any of ``WindowsPath``, ``UnixPath``, ``SlackPath`` or ``MacOSPath``.
+            Defaults to ``WindowsPath``.
+        first (bool): When `True`, copies the first item of a sequence.
+        copy (bool):
+            When `False`, the converted path won't be copied to the clipboard.
+            Defaults to `True`.
 
     Returns:
-        str: The converted path.
+        str: The path copied to the clipboard.
 
     """
     if first:
@@ -1250,6 +1437,7 @@ def execute(index, first=False):
 
     Args:
         index (QModelIndex or str): A list item index or a path to a file.
+        first (bool): Execute the first item of a collapsed sequence.
 
     """
     common.check_type(index, (QtCore.QModelIndex, str))
@@ -1274,6 +1462,12 @@ def execute(index, first=False):
 @common.debug
 @common.error
 def test_slack_token(token):
+    """Tests the given slack api token.
+
+    Args:
+        token (str): The slack api token.
+
+    """
     from .slack import slack
     client = slack.SlackClient(token)
     client.verify_token()
@@ -1282,6 +1476,12 @@ def test_slack_token(token):
 @common.debug
 @common.error
 def suggest_prefix(job):
+    """Suggests a prefix for the given job.
+
+    Args:
+        job (Job): The `job` to suggest prefix for.
+
+    """
     substrings = re.sub(r'[\_\-\s]+', ';', job).split(';')
     if (not substrings or len(substrings) < 2) and len(job) > 3:
         prefix = job[0:3].upper()
@@ -1294,6 +1494,12 @@ def suggest_prefix(job):
 @common.error
 @selection
 def capture_thumbnail(index):
+    """Captures a thumbnail for the given index.
+
+    Args:
+        index (QtCore.QModelIndex): The item index.
+
+    """
     server, job, root = index.data(common.ParentPathRole)[0:3]
     source = index.data(common.PathRole)
 
@@ -1325,6 +1531,12 @@ def capture_thumbnail(index):
 @common.error
 @selection
 def pick_thumbnail_from_file(index):
+    """Picks a thumbnail for the given index.
+
+    Args:
+        index (QtCore.QModelIndex): The item index.
+
+    """
     server, job, root = index.data(common.ParentPathRole)[0:3]
     source = index.data(common.PathRole)
 
@@ -1345,7 +1557,13 @@ def pick_thumbnail_from_file(index):
 @common.error
 @selection
 def pick_thumbnail_from_library(index):
-    server, job, root = index.data(common.ParentPathRole)[0:3]
+    """Picks a thumbnail for the given index.
+
+    Args:
+        index (QtCore.QModelIndex): The item index.
+
+    """
+    server, job, root = index.data(common.ParentPathRole)[0:3][0:3]
     source = index.data(common.PathRole)
 
     if not all((server, job, root, source)):
@@ -1355,7 +1573,7 @@ def pick_thumbnail_from_library(index):
     widget = editor.show()
 
     widget.itemSelected.connect(
-        lambda v: images.load_thumbnail_from_image(server, job, root, source, v)
+        lambda v: images.create_thumbnail_from_image(server, job, root, source, v)
     )
     widget.itemSelected.connect(
         lambda _: index.model().sourceModel().updateIndex.emit(index)
@@ -1363,17 +1581,27 @@ def pick_thumbnail_from_library(index):
 
 
 def execute_detached(path):
-    proc = QtCore.QProcess()
-    proc.setProgram('cmd.exe')
-    proc.setArguments(
-        ['/c', 'start', '/i', "%windir%\explorer.exe", os.path.normpath(path)]
-    )
-    proc.startDetached()
+    """Utility function used to execute a file as a detached process.
+
+    On Windows, we'll call the give file through the explorer. This is so, that the
+    new process does not inherit the current environment.
+
+    """
+    if common.get_platform() == common.PlatformWindows:
+        proc = QtCore.QProcess()
+        proc.setProgram('cmd.exe')
+        proc.setArguments(
+            ['/c', 'start', '/i', "%windir%\explorer.exe", os.path.normpath(path)]
+        )
+        proc.startDetached()
 
 
 @common.debug
 @common.error
 def pick_launcher_item():
+    """Slot called when a launcher item was clicked.
+
+    """
     from .launcher import gallery as editor
     widget = editor.show()
     widget.itemSelected.connect(execute_detached)
@@ -1410,6 +1638,9 @@ def remove_thumbnail(index):
 @common.error
 @common.debug
 def copy_properties():
+    """Copy the selected item's properties.
+
+    """
     idx = common.current_tab()
     if idx == common.BookmarkTab:
         copy_bookmark_properties()
@@ -1422,6 +1653,9 @@ def copy_properties():
 @common.error
 @common.debug
 def paste_properties():
+    """Paste previously copied item properties to the selected item.
+
+    """
     idx = common.current_tab()
     if idx == common.BookmarkTab:
         paste_bookmark_properties()
@@ -1435,6 +1669,12 @@ def paste_properties():
 @common.debug
 @selection
 def copy_bookmark_properties(index):
+    """Copy bookmark properties to clipboard.
+
+    Args:
+        index (QModelIndex): Index of the currently selected item.
+
+    """
     server, job, root = index.data(common.ParentPathRole)[0:3]
     database.copy_properties(
         server,
@@ -1449,6 +1689,12 @@ def copy_bookmark_properties(index):
 @common.debug
 @selection
 def paste_bookmark_properties(index):
+    """Paste bookmark properties from clipboard to the selected item.
+
+    Args:
+        index (QModelIndex): Index of the currently selected item.
+
+    """
     server, job, root = index.data(common.ParentPathRole)[0:3]
     database.paste_properties(
         server,
@@ -1463,6 +1709,12 @@ def paste_bookmark_properties(index):
 @common.debug
 @selection
 def copy_asset_properties(index):
+    """Copy asset properties to clipboard.
+
+    Args:
+        index (QModelIndex): Index of the currently selected item.
+
+    """
     server, job, root, asset = index.data(common.ParentPathRole)[0:4]
     database.copy_properties(
         server,
@@ -1477,6 +1729,12 @@ def copy_asset_properties(index):
 @common.debug
 @selection
 def paste_asset_properties(index):
+    """Paste asset properties from clipboard to the selected item.
+
+    Args:
+        index (QModelIndex): Index of the currently selected item.
+
+    """
     server, job, root, asset = index.data(common.ParentPathRole)[0:4]
     database.paste_properties(
         server,
@@ -1490,6 +1748,9 @@ def paste_asset_properties(index):
 @common.error
 @common.debug
 def toggle_active_mode():
+    """Toggle the active path mode.
+
+    """
     common.active_mode = int(not bool(common.active_mode))
     common.write_current_mode_to_lock()
 
@@ -1504,6 +1765,9 @@ def toggle_active_mode():
 @common.error
 @common.debug
 def import_asset_properties_from_json():
+    """Import and apply asset properties from a JSON file.
+
+    """
     source, _ = QtWidgets.QFileDialog.getOpenFileName(
         caption='Select *.json file to import properties from',
         filter='*.json'
@@ -1577,6 +1841,9 @@ def import_asset_properties_from_json():
 @common.error
 @selection
 def convert_image_sequence(index):
+    """Convert the selected image sequence to a movie file.
+
+    """
     from .external import ffmpeg_widget
     ffmpeg_widget.show(index.data(common.PathRole))
 
@@ -1586,7 +1853,8 @@ def add_zip_template(source, mode, prompt=False):
 
     Args:
         source (str): Path to a source file.
-        mode (str): A template mode, e.g. 'job' or 'asset'
+        mode (str): A template mode, e.g. 'job' or 'asset'.
+        prompt (bool): Prompt user to confirm override for existing files.
 
     Returns:
         str: Path to the saved template file, or `None`.
@@ -1613,7 +1881,7 @@ def add_zip_template(source, mode, prompt=False):
     from . import templates
     root = templates.get_template_folder(mode)
     name = QtCore.QFileInfo(source).fileName()
-    file_info = QtCore.QFileInfo('{}/{}'.format(root, name))
+    file_info = QtCore.QFileInfo(f'{root}/{name}')
 
     # Let's check if file exists before we copy anything...
     s = 'A template file with the same name exists already.'
@@ -1646,13 +1914,13 @@ def extract_zip_template(source, destination, name):
     arbitrary name of a job or an asset item to be created.
 
     Args:
-        source (str):           Path to a zip archive.
-        destination (str):      Path to a folder
-        name (str):             Name of the root folder where the archive
-                                    contents will be expanded to.
+        source (str): Path to a zip archive.
+        destination (str): Path to a folder
+        name (str):
+            Name of the root folder where the archive contents will be expanded to.
 
     Returns:
-        str:                    Path to the expanded archive contents.
+        str: Path to the expanded archive contents.
 
     """
     for arg in (source, destination, name):
@@ -1709,6 +1977,7 @@ def remove_zip_template(source, prompt=True):
 
     Args:
         source (str): Path to a zip template file.
+        prompt (bool): Prompt the user for confirmation.
 
     """
     common.check_type(source, str)
@@ -1771,6 +2040,9 @@ def pick_template(mode):
 
 
 def show_sg_error_message(v):
+    """Shows a ShotGrid error message.
+
+    """
     from . import ui
     common.sg_error_message = ui.ErrorBox(
         'An error occurred.',
@@ -1779,6 +2051,9 @@ def show_sg_error_message(v):
 
 
 def show_sg_connecting_message():
+    """Shows a ShotGrid connection progress message.
+
+    """
     from . import ui
     common.sg_connecting_message = ui.MessageBox(
         'ShotGrid is connecting, please wait...', no_buttons=True
@@ -1788,6 +2063,9 @@ def show_sg_connecting_message():
 
 
 def hide_sg_connecting_message():
+    """Hides a ShotGrid connection progress message.
+
+    """
     try:
         common.sg_connecting_message.hide()
         QtWidgets.QApplication.instance().processEvents()
@@ -1799,6 +2077,9 @@ def hide_sg_connecting_message():
 @common.error
 @selection
 def delete_selected_files(index):
+    """Deletes the selected file items.
+
+    """
     from . import ui
     from . import log
     mbox = ui.MessageBox(
@@ -1842,8 +2123,10 @@ def delete_selected_files(index):
 @common.debug
 @selection
 def show_publish_widget(index):
+    """Shows the :class:`~bookmarks.publish.editor.PublishWidget` editor.
+
+    """
     from . import publish as editor
 
-    index = QtCore.QPersistentModelIndex(index)
     widget = editor.show(index)
     return widget

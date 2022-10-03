@@ -1,13 +1,11 @@
 external
-========
+=============
 
 .. automodule:: bookmarks.external
     :members:
 
 
 .. toctree::
-    :maxdepth: 3
+    :glob:
 
-    external/ffmpeg
-    external/ffmpeg_widget
-    external/rv
+    external/*

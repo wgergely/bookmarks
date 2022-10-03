@@ -1,4 +1,3 @@
-====================
 bookmarker
 ====================
 
@@ -8,9 +7,6 @@ bookmarker
 
 
 .. toctree::
-    :maxdepth: 3
+    :glob:
 
-    bookmarker/main
-    bookmarker/server_editor
-    bookmarker/bookmark_editor
-    bookmarker/job_editor
+    bookmarker/*

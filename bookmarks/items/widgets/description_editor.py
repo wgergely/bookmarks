@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Widget used to edit the description of an item.
 
 """
@@ -11,7 +10,7 @@ from ...items import delegate
 
 
 class DescriptionEditorWidget(ui.LineEdit):
-    """The editor used to edit the desciption of items."""
+    """The editor used to edit the description of items."""
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -29,6 +28,9 @@ class DescriptionEditorWidget(ui.LineEdit):
             self.parent().resized.connect(self.update_editor)
 
     def action(self):
+        """Edit action.
+
+        """
         index = common.get_selected_index(self.parent())
         if not index.isValid():
             self.hide()
@@ -94,6 +96,9 @@ class DescriptionEditorWidget(ui.LineEdit):
         self.selectAll()
 
     def showEvent(self, event):
+        """Event handler.
+
+        """
         index = common.get_selected_index(self.parent())
         if not index.isValid():
             self.hide()
@@ -107,8 +112,10 @@ class DescriptionEditorWidget(ui.LineEdit):
         self.setFocus()
 
     def eventFilter(self, widget, event):
-        """We're filtering the enter key event here, otherwise, the
-        list widget would close open finishing editing.
+        """Event filter handler.
+
+        We're filtering the enter key event here, otherwise, the list widget would
+        close open finishing editing.
 
         """
         if not event.type() == QtCore.QEvent.KeyPress:
@@ -121,7 +128,7 @@ class DescriptionEditorWidget(ui.LineEdit):
         escape = event.key() == QtCore.Qt.Key_Escape
 
         tab = event.key() == QtCore.Qt.Key_Tab
-        backtab = event.key() == QtCore.Qt.Key_Backtab
+        back_tab = event.key() == QtCore.Qt.Key_Backtab
 
         return_ = event.key() == QtCore.Qt.Key_Return
         enter = event.key() == QtCore.Qt.Key_Enter
@@ -142,7 +149,7 @@ class DescriptionEditorWidget(ui.LineEdit):
 
             return True
 
-        if (shift and tab) or backtab:
+        if (shift and tab) or back_tab:
             self.action()
             self.parent().key_up()
             self.parent().key_tab()
@@ -152,6 +159,8 @@ class DescriptionEditorWidget(ui.LineEdit):
         return False
 
     def focusOutEvent(self, event):
-        """Closes the editor on focus loss."""
+        """Event handler.
+
+        """
         if event.lostFocus():
             self.hide()

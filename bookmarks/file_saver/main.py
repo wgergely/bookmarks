@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """The module contains the definition of :class:`FileSaverWidget`, the main widget used
 by Bookmarks to create versioned template files.
 
@@ -50,7 +49,7 @@ def close():
         common.file_saver_widget.close()
         common.file_saver_widget.deleteLater()
     except:
-        log.error('Could not delete widget.')
+        pass
     common.file_saver_widget = None
 
 
@@ -61,10 +60,10 @@ def show(
     """Show the :class:`FileSaverWidget` widget.
 
     Args:
-        server (str): The name of the `server`.
-        job (str): The name of the `job`.
-        root (str): The name of the `root`.
-        asset (str): The name of the `asset`.
+        server (str): `server` path segment.
+        job (str): `job` path segment.
+        root (str): `root` path segment.
+        asset (str): `asset` path segment.
         extension (str): Optional file extension. Default is ``None``.
         file (str): Optional, path to an existing file.
         create_file (bool): Optional, when ``True`` the widget will create empty
@@ -101,17 +100,18 @@ INACTIVE_KEYS = (
     'file_saver_template',
 )
 
+#: UI layout definition
 SECTIONS = {
     0: {
         'name': 'Name Template',
         'icon': 'file',
-        'color': common.color(common.BackgroundDarkColor),
+        'color': common.color(common.color_dark_background),
         'groups': {
             0: {
                 0: {
                     'name': 'Template',
                     'key': 'file_saver/template',
-                    'validator': base.textvalidator,
+                    'validator': base.text_validator,
                     'widget': widgets.TemplateComboBox,
                     'placeholder': 'Custom prefix, e.g. \'MYB\'',
                     'description': 'A short name of the bookmark (or job) used '
@@ -135,7 +135,7 @@ SECTIONS = {
     1: {
         'name': 'Name Elements',
         'icon': 'todo',
-        'color': common.color(common.BackgroundDarkColor),
+        'color': common.color(common.color_dark_background),
         'groups': {
             0: {
                 0: {
@@ -180,7 +180,7 @@ SECTIONS = {
                 0: {
                     'name': 'Project Prefix',
                     'key': 'prefix',
-                    'validator': base.textvalidator,
+                    'validator': base.text_validator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Prefix not yet set!',
                     'description': 'A short prefix used to identify the job '
@@ -190,7 +190,7 @@ SECTIONS = {
                 1: {
                     'name': 'Specify Element',
                     'key': 'file_saver/element',
-                    'validator': base.textvalidator,
+                    'validator': base.text_validator,
                     'widget': ui.LineEdit,
                     'placeholder': 'The element being saved, e.g. \'CastleInterior\'',
                     'description': 'The name of the element being saved. e.g., '
@@ -199,7 +199,7 @@ SECTIONS = {
                 2: {
                     'name': 'File Version',
                     'key': 'version',
-                    'validator': base.versionvalidator,
+                    'validator': base.version_validator,
                     'widget': ui.LineEdit,
                     'placeholder': 'A version number, e.g. \'v001\'',
                     'description': 'A version number with, or without, '
@@ -210,7 +210,7 @@ SECTIONS = {
                 3: {
                     'name': 'User',
                     'key': 'file_saver/user',
-                    'validator': base.textvalidator,
+                    'validator': base.text_validator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Your name, e.g. \'JohnDoe\'',
                     'description': 'The name of the current user, e.g. \'JohnDoe\','
@@ -348,9 +348,18 @@ class FileSaverWidget(base.BasePropertyEditor):
         self.update_timer.timeout.connect(self.set_thumbnail_source)
 
     def file_path(self):
+        """File path.
+
+        """
         return self._file_path
 
     def set_file(self, file):
+        """Set the given file as the current file.
+
+        Args:
+            file (str): Path to a file.
+
+        """
         self._file = file
 
         self.version_editor.setText('')
@@ -400,6 +409,9 @@ class FileSaverWidget(base.BasePropertyEditor):
         self._connect_settings_save_signals(common.SECTIONS['file_saver'])
 
     def name(self):
+        """Returns the current name.
+
+        """
         return self.filename_editor.text()
 
     @QtCore.Slot()
@@ -455,7 +467,7 @@ class FileSaverWidget(base.BasePropertyEditor):
             ext=_get('file_saver_extension').lower()
         )
         v = _strip(v)
-        r = common.rgb(common.color(common.RedColor))
+        r = common.rgb(common.color(common.color_red))
         v = v.replace(
             tokens.invalid_token,
             f'<span style="color:{r}">{tokens.invalid_token}</span>'
@@ -464,7 +476,7 @@ class FileSaverWidget(base.BasePropertyEditor):
         v = v.replace(
             '###',
             '<span style="color:{}">###</span>'.format(
-                common.rgb(common.color(common.RedColor))
+                common.rgb(common.color(common.color_red))
             )
         )
 
@@ -482,11 +494,11 @@ class FileSaverWidget(base.BasePropertyEditor):
 
         if self._filelist[self.db_source()]:
             self.filename_editor.setStyleSheet(
-                'color:{};'.format(common.rgb(common.color(common.RedColor)))
+                'color:{};'.format(common.rgb(common.color(common.color_red)))
             )
         else:
             self.filename_editor.setStyleSheet(
-                'color:{};'.format(common.rgb(common.color(common.GreenColor)))
+                'color:{};'.format(common.rgb(common.color(common.color_green)))
             )
 
     def parent_folder(self):
@@ -502,7 +514,12 @@ class FileSaverWidget(base.BasePropertyEditor):
         return '/'.join((self.server, self.job, self.root, self.asset, folder))
 
     def db_source(self):
-        """The final file path."""
+        """A file path to use as the source of database values.
+
+        Returns:
+            str: The database source file.
+
+        """
         if self._file:
             if common.is_collapsed(self._file):
                 return common.proxy_path(self._file)
@@ -611,7 +628,10 @@ class FileSaverWidget(base.BasePropertyEditor):
         else:
             self.task_editor.set_mode(widgets.NoMode)
 
-    def exec(self):
+    def exec_(self):
+        """Customized exec function.
+
+        """
         result = super().exec_()
         if result == QtWidgets.QDialog.Rejected:
             return QtWidgets.QDialog.Rejected
@@ -622,7 +642,7 @@ class FileSaverWidget(base.BasePropertyEditor):
     @common.error
     @common.debug
     def save_changes(self):
-        """Creates a new empty file or updates and existing item.
+        """Saves changes.
 
         """
         name = self.name()
@@ -633,7 +653,6 @@ class FileSaverWidget(base.BasePropertyEditor):
         self.save_changed_data_to_db()
         self.thumbnail_editor.save_image()
         self.thumbnailUpdated.emit(self.db_source())
-        self.itemUpdated.emit(self.db_source())
         self._file_path = self.db_source()
         return True
 
@@ -726,6 +745,9 @@ class FileSaverWidget(base.BasePropertyEditor):
 
     @QtCore.Slot()
     def file_saver_template_button_clicked(self):
+        """Button click action.
+
+        """
         from ..editor import bookmark_properties
         self.close()
         bookmark_properties.show(self.server, self.job, self.root)
@@ -771,6 +793,9 @@ class FileSaverWidget(base.BasePropertyEditor):
 
     @QtCore.Slot()
     def prefix_button_clicked(self):
+        """Button click action.
+
+        """
         editor = widgets.PrefixEditor(parent=self)
         editor.open()
 

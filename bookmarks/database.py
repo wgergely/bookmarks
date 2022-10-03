@@ -1,18 +1,17 @@
-# -*- coding: utf-8 -*-
-"""Defines :class:`BookmarkDB`, the sqlite3 database interface used to store item properties,
-such as custom descriptions, flags, ``width``, ``height``, :mod:`bookmarks.tokens.tokens`
-values, etc.
+"""Defines :class:`BookmarkDB`, the sqlite3 database interface used to store item
+properties, such as custom descriptions, flags, ``width``, ``height``,
+:mod:`bookmarks.tokens.tokens` values, etc.
 
-Each bookmark item has its own database file and are stored in ``common.bookmark_cache_dir``, in
-the root of the bookmark item. E.g.:
+Each bookmark item has its own database file stored in the root of the bookmark item's
+cache folder (defined by :attr:``common.bookmark_cache_dir``).
 
 .. code-block:: python
 
-    path = f'//server/job/root/{common.bookmark_cache_dir}/{common.bookmark_database}'
+    db_path = f'{server}/{job}/{root}/{common.bookmark_cache_dir}/{common.bookmark_database}'
 
 
-The database table layout is defined in :attr:`.TABLES`, which defines the sqlite and python types
-for each column.
+The database table layout is defined by :attr:`TABLES`, which defines the sqlite3 and
+python types for each column.
 
 
 Don't create DatabaseDB instances directly, instead use :func:`.get_db` to get cached,
@@ -21,9 +20,11 @@ thread-specific database controllers. E.g.:
 .. code-block:: python
 
     from bookmarks import database
+
     db = database.get_db(server, job, root)
     with db.connection():
         v = db.value(*args)
+
 
 """
 import base64
@@ -54,7 +55,7 @@ NotesColumn = 'notes'
 
 database_connect_retries = 100
 
-#: SQLite database structure definition
+#: sqlite3 database structure definition
 TABLES = {
     AssetTable: {
         IdColumn: {
@@ -243,14 +244,14 @@ CLIPBOARD = {
 def get_db(server, job, root, force=False):
     """Creates a database controller associated with a bookmark item.
 
-    SQLite cannot share the same connection instance between threads, hence we
+    sqlite3 cannot share the same connection instance between threads, hence we
     create and cache controllers per thread. The cached entries are stored
     in `common.db_connections`.
 
     Args:
-        server (str): The name of the `server`.
-        job (str): The name of the `job`.
-        root (str): The name of the `root`.
+        server (str): `server` path segment.
+        job (str): `job` path segment.
+        root (str): `root` path segment.
         force (bool): Force retry connecting to the database.
 
     Returns:
@@ -280,9 +281,9 @@ def remove_db(server, job, root):
     """Removes and closes a cached a bookmark database connection.
 
     Args:
-        server (str):   A server.
-        job (str):      A job.
-        root (str):     A root.
+        server (str): `server` path segment.
+        job (str): `job` path segment.
+        root (str): `root` path segment.
 
     """
     key = '/'.join((server, job, root))
@@ -315,9 +316,9 @@ def copy_properties(server, job, root, asset=None, table=BookmarkTable):
     """Copies the database properties from the specified item to ``CLIPBOARD``.
 
     Args:
-        server (str): Source server name.
-        job (str): Source job name.
-        root (str): Source root name.
+        server (str): `server` path segment.
+        job (str): `job` path segment.
+        root (str): `root` path segment.
         asset (str, optional): Source asset name.
         table (str, optional): Source table name.
 
@@ -348,9 +349,9 @@ def paste_properties(server, job, root, asset=None, table=BookmarkTable):
     """Loads the copied item properties from CLIPBOARD and saves it in the target item's database.
 
     Args:
-        server (str): The target server name.
-        job (str): The target job name.
-        root (str): The target root name.
+        server (str): `server` path segment.
+        job (str): `job` path segment.
+        root (str): `root` path segment.
         asset (str, optional): The target asset name.
         table (str, optional): Target database table.
 
@@ -481,7 +482,7 @@ def convert_return_values(table, key, value):
 
 
 class BookmarkDB(QtCore.QObject):
-    """Database connector used to interface with the bookmark item's SQLite database.
+    """Database connector used to interface with the bookmark item's sqlite3 database.
 
     """
 
@@ -567,13 +568,21 @@ class BookmarkDB(QtCore.QObject):
                 can't create the folder.
 
         """
-        file_info = QtCore.QFileInfo(self.root())
-        if file_info.exists():
+        _cache_dir = QtCore.QDir(self.root())
+        _thumb_dir = QtCore.QDir(f'{self.root()}/thumbnails')
+        if not _cache_dir.exists():
+            if not _cache_dir.mkpath('.'):
+                log.error(f'Could not create {_cache_dir.path()}')
+                return False
+            if not _thumb_dir.mkpath('.'):
+                log.error(f'Could not create {_thumb_dir.path()}')
+                return False
             return True
-        _dir = file_info.dir()
-        if _dir.exists() and _dir.mkdir(common.bookmark_cache_dir):
-            return True
-        return False
+
+        if not _thumb_dir.exists() and not _thumb_dir.mkpath('.'):
+            log.error(f'Could not create {_thumb_dir.path()}')
+            return False
+        return True
 
     def _create_table(self, table):
         """Creates a table based on the passed table definition.
@@ -658,6 +667,9 @@ class BookmarkDB(QtCore.QObject):
                 sleep()
 
     def root(self):
+        """Returns the `root` path.
+
+        """
         return self._bookmark_root
 
     def is_valid(self):
@@ -672,9 +684,15 @@ class BookmarkDB(QtCore.QObject):
         return self._is_valid
 
     def connection(self):
+        """Returns the connection instance.
+
+        """
         return self._connection
 
     def close(self):
+        """Closes the connection.
+
+        """
         try:
             self._connection.commit()
             self._connection.close()
@@ -698,6 +716,9 @@ class BookmarkDB(QtCore.QObject):
         return self._bookmark
 
     def get_row(self, source, table):
+        """Gets a row from the database.
+
+        """
         common.check_type(source, str)
         common.check_type(table, str)
 
@@ -733,12 +754,12 @@ class BookmarkDB(QtCore.QObject):
         """Returns a value from the `database`.
 
         Args:
-            source (str):       Path to a file or folder.
-            key (str):  A column, or a list of columns.
+            source (str): Path to a file or folder.
+            key (str): A column, or a list of columns.
             table (str, optional): Optional table parameter, defaults to `AssetTable`.
 
         Returns:
-            data:                   The requested value or `None`.
+            The value stored in the database, or None.
 
         """
         if not self.is_valid():
@@ -766,7 +787,7 @@ class BookmarkDB(QtCore.QObject):
         return convert_return_values(table, key, value)
 
     def setValue(self, source, key, value, table=AssetTable):
-        """Set a value in the database.
+        """Sets the given value in the database.
 
         Example:
 
@@ -811,7 +832,7 @@ class BookmarkDB(QtCore.QObject):
         _hash = common.get_hash(source)
         values = []
 
-        # Earlier versions of the SQLITE library lack `UPSERT` or `WITH`
+        # Earlier versions of the sqlite3 library lack `UPSERT` or `WITH`
         # A workaround is found here:
         # https://stackoverflow.com/questions/418898/sqlite-upsert-not-insert-or-replace
         for k in TABLES[table]:

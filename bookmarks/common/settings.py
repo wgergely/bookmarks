@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Defines a customized QSettings object used to store user settings.
 
 The user settings are stored in an ini file stored at :func:`.get_user_settings_path`.
@@ -15,6 +14,8 @@ from PySide2 import QtCore
 from .. import common
 from .. import log
 
+
+#: section/key definitions
 SECTIONS = {
     'active': (
         'server',
@@ -37,7 +38,6 @@ SECTIONS = {
         'settings/paint_thumbnail_bg',
         'settings/disable_oiio',
         'settings/always_always_on_top',
-        'settings/frameless',
         'settings/bin_ffmpeg',
         'settings/bin_rv',
         'settings/bin_rvpush',
@@ -130,6 +130,9 @@ PrivateActivePaths = 1
 
 
 def init_settings():
+    """Initializes the :class:`UserSettings` instance.
+
+    """
     # Initialize the active_paths object
     common.active_paths = {
         SynchronisedActivePaths: collections.OrderedDict(),
@@ -248,7 +251,7 @@ def get_default_bookmarks():
         dict: The parsed data.
 
     """
-    source = common.get_rsc(
+    source = common.rsc(
         f'{common.TemplateResource}/{common.default_bookmarks_template}')
 
     data = {}
@@ -263,6 +266,15 @@ def get_default_bookmarks():
 
 
 def strip(s):
+    """Replace and strip backslashes.
+
+    Args:
+        s (str): The string to modify.
+
+    Returns:
+        str: The modified string.
+
+    """
     return re.sub(
         r'\\', '/',
         s,
@@ -270,12 +282,26 @@ def strip(s):
     ).strip().rstrip('/')
 
 
-def bookmark_key(*args):
-    k = '/'.join([strip(f) for f in args]).rstrip('/')
+def bookmark_key(server, job, root):
+    """Returns a generic string representation of a bookmark item.
+
+    Args:
+        server (str): `server` path segment.
+        job (str): `job` path segment.
+        root (str): `root` path segment.
+
+    Returns:
+        str: The bookmark item key.
+
+    """
+    k = '/'.join([strip(f) for f in (server, job, root)]).rstrip('/')
     return k
 
 
 def update_private_values():
+    """Copy the ``SynchronisedActivePaths`` values to ``PrivateActivePaths``.
+
+    """
     for k in SECTIONS['active']:
         common.active_paths[PrivateActivePaths][k] = \
             common.active_paths[SynchronisedActivePaths][k]
@@ -338,17 +364,36 @@ class UserSettings(QtCore.QSettings):
             p += '/'
 
     def set_servers(self, v):
+        """Set and save the given server values.
+
+        Args:
+            v (dict):
+
+        """
         common.check_type(v, dict)
         common.servers = v.copy()
         self.setValue('user/servers', v)
 
     def set_bookmarks(self, v):
+        """Set and save the given bookmark item values.
+
+        Args:
+            v (dict): The bookmark item values.
+
+        """
         common.check_type(v, dict)
         common.bookmarks = v
         self.setValue('user/bookmarks', v)
 
     def set_favourites(self, v):
+        """Set and save the given favourite item values.
+
+        Args:
+            v (dict): The favourite item values.
+
+        """
         common.check_type(v, dict)
+        common.favourites = v
         self.setValue('user/favourites', v)
 
     def value(self, key, default=None):

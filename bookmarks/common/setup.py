@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Various methods used to initialize Bookmarks, mainly, :func:`.initialize()` and
 :func:`.uninitialize()`.
 
@@ -133,7 +132,7 @@ def _init_config():
     module as properties.
 
     """
-    p = common.get_rsc(common.CONFIG)
+    p = common.rsc(common.CONFIG)
 
     with open(p, 'r', encoding='utf8') as f:
         config = json.loads(f.read())

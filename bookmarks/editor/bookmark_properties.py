@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """The widget used to edit bookmark item properties.
 
 """
@@ -9,7 +8,6 @@ from . import base_widgets
 from .. import actions
 from .. import common
 from .. import database
-from .. import log
 from .. import ui
 from ..launcher import main as launcher
 from ..shotgun import actions as sg_actions
@@ -21,17 +19,31 @@ TEAMS_WEBHOOK_URL = 'https://docs.microsoft.com/en-us/microsoftteams/platform' \
 
 
 def close():
+    """Shows the :class:`BookmarkPropertyEditor` editor.
+
+    """
     if common.bookmark_property_editor is None:
         return
     try:
         common.bookmark_property_editor.close()
         common.bookmark_property_editor.deleteLater()
     except:
-        log.error('Could not delete widget.')
+        pass
     common.bookmark_property_editor = None
 
 
 def show(server, job, root):
+    """Shows the :class:`BookmarkPropertyEditor` editor.
+
+    Args:
+        server (str): 'server' path segment.
+        job (str): 'job' path segment.
+        root (str): 'root' path segment.
+
+    Returns:
+        The editor instance.
+
+    """
     close()
     common.bookmark_property_editor = BookmarkPropertyEditor(
         server,
@@ -43,17 +55,18 @@ def show(server, job, root):
     return common.bookmark_property_editor
 
 
+#: UI layout definition
 SECTIONS = {
     0: {
         'name': 'Settings',
         'icon': 'bookmark',
-        'color': common.color(common.BackgroundDarkColor),
+        'color': common.color(common.color_dark_background),
         'groups': {
             0: {
                 0: {
                     'name': 'Prefix',
                     'key': 'prefix',
-                    'validator': base.namevalidator,
+                    'validator': base.name_validator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Custom prefix, e.g. \'MYB\'',
                     'description': 'A short name of the bookmark (or job) used '
@@ -78,7 +91,7 @@ SECTIONS = {
                 0: {
                     'name': 'Framerate',
                     'key': 'framerate',
-                    'validator': base.floatvalidator,
+                    'validator': base.float_validator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Framerate, e.g. \'23.976\'',
                     'description': 'The framerate of the bookmark, eg, '
@@ -88,7 +101,7 @@ SECTIONS = {
                 1: {
                     'name': 'Width',
                     'key': 'width',
-                    'validator': base.intvalidator,
+                    'validator': base.int_validator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Width in pixels',
                     'description': 'The output width in pixels, e.g. \'1920\''
@@ -96,7 +109,7 @@ SECTIONS = {
                 2: {
                     'name': 'Height',
                     'key': 'height',
-                    'validator': base.intvalidator,
+                    'validator': base.int_validator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Height in pixels',
                     'description': 'The output height in pixels, e.g. \'1080\''
@@ -104,7 +117,7 @@ SECTIONS = {
                 3: {
                     'name': 'Default Start Frame',
                     'key': 'startframe',
-                    'validator': base.intvalidator,
+                    'validator': base.int_validator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Start frame, e.g. \'1001\'',
                     'description': 'A default start frame for all subsequent '
@@ -115,7 +128,7 @@ SECTIONS = {
                 4: {
                     'name': 'Default Duration',
                     'key': 'duration',
-                    'validator': base.intvalidator,
+                    'validator': base.int_validator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Duration, e.g. \'150\'',
                     'description': 'The default duration of an asset in frames, '
@@ -133,17 +146,17 @@ SECTIONS = {
                                    'above will be read as assets.\n\nUsing the '
                                    'default Maya Workspace the identifier normally '
                                    'is \'workspace.mel\', however any other '
-                                   'arbitary file can be used as long it is '
+                                   'arbitrary file can be used as long it is '
                                    'present in the root of an asset '
                                    'folder.\n\nWhen left empty all folders in the '
                                    'bookmark will be read.',
                     'help': 'Only folders containing the file specified here will '
                             'be read as assets.\nUsing the default Maya Workspace '
                             'the identifier normally is \'workspace.mel\', '
-                            'however any other arbitary file can be used as long '
+                            'however any other arbitrary file can be used as long '
                             'it is present in the root of an asset folder.\n\nWhen '
                             'left empty, all folders in the bookmark will be '
-                            'interpeted as assets.',
+                            'interpreted as assets.',
                 }
             }
         }
@@ -151,7 +164,7 @@ SECTIONS = {
     1: {
         'name': 'Slack',
         'icon': 'slack',
-        'color': common.color(common.BackgroundDarkColor),
+        'color': common.color(common.color_dark_background),
         'groups': {
             0: {
                 0: {
@@ -266,15 +279,15 @@ SECTIONS = {
                 1: {
                     'name': 'Type',
                     'key': 'shotgun_type',
-                    'validator': base.intvalidator,
-                    'widget': base_widgets.ProjectTypesWidget,
+                    'validator': base.int_validator,
+                    'widget': base_widgets.SGProjectTypesWidget,
                     'placeholder': None,
                     'description': 'Select the item\'s ShotGrid type',
                 },
                 2: {
                     'name': 'ID',
                     'key': 'shotgun_id',
-                    'validator': base.intvalidator,
+                    'validator': base.int_validator,
                     'widget': ui.LineEdit,
                     'placeholder': 'ShotGrid Project ID, e.g. \'123\'',
                     'description': 'The ShotGrid ID number this item is associated '
@@ -294,7 +307,7 @@ SECTIONS = {
     5: {
         'name': 'Links',
         'icon': 'link',
-        'color': common.color(common.BackgroundDarkColor),
+        'color': common.color(common.color_dark_background),
         'groups': {
             0: {
                 0: {
@@ -323,7 +336,7 @@ SECTIONS = {
     6: {
         'name': 'Application Launcher',
         'icon': 'icon',
-        'color': common.color(common.BackgroundDarkColor),
+        'color': common.color(common.color_dark_background),
         'groups': {
             0: {
                 0: {
@@ -341,7 +354,7 @@ SECTIONS = {
     7: {
         'name': 'Database',
         'icon': 'bookmark',
-        'color': common.color(common.BackgroundDarkColor),
+        'color': common.color(common.color_dark_background),
         'groups': {
             0: {
                 0: {
@@ -424,19 +437,30 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
         self.thumbnailUpdated.connect(common.signals.thumbnailUpdated)
 
     def db_source(self):
+        """A file path to use as the source of database values.
+
+        Returns:
+            str: The database source file.
+
+        """
         return f'{self.server}/{self.job}/{self.root}'
 
     def init_data(self):
+        """Initializes data.
+
+        """
         self.init_db_data()
 
     @common.error
     @common.debug
     def save_changes(self):
+        """Saves changes.
+
+        """
         self.save_changed_data_to_db()
         self.tokens_editor.save_changes()
         self.thumbnail_editor.save_image()
         self.thumbnailUpdated.emit(self.db_source())
-        self.itemUpdated.emit(self.db_source())
         return True
 
     def shotgun_properties(self):
@@ -485,6 +509,9 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
 
     @QtCore.Slot()
     def slacktoken_button_clicked(self):
+        """Slack token button action.
+
+        """
         QtGui.QDesktopServices.openUrl(SLACK_API_URL)
 
     @QtCore.Slot()
@@ -497,10 +524,16 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
 
     @QtCore.Slot()
     def teamstoken_button_clicked(self):
+        """Opens the webhook help url.
+
+        """
         QtGui.QDesktopServices.openUrl(TEAMS_WEBHOOK_URL)
 
     @QtCore.Slot()
     def link_button_clicked(self):
+        """ShoGrid link button click action.
+
+        """
         sg_actions.link_bookmark_entity(self.server, self.job, self.root)
 
     @QtCore.Slot()

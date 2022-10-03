@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Common attributes, methods and flag values.
 
 """
@@ -15,9 +14,12 @@ from PySide2 import QtCore, QtWidgets
 
 from .. import common
 
+#: The config file name
 CONFIG = 'config.json'
 
+#: standalone active path save mode
 StandaloneMode = 'standalone'
+#: standalone active path save mode
 EmbeddedMode = 'embedded'
 
 BookmarkTab = 0
@@ -86,8 +88,8 @@ FormatResource = 'formats'
 TemplateResource = 'templates'
 
 
-def get_rsc(rel_path):
-    """Return a resource item from the `rsc` directory.
+def rsc(rel_path):
+    """Returns a resource item from the `rsc` directory.
 
     """
     v = os.path.normpath('/'.join((__file__, os.pardir, os.pardir, 'rsc', rel_path)))
@@ -168,12 +170,21 @@ def get_hash(key):
 
 
 def error(func):
-    """Function decorator used to handle exceptions and report them to the user.
+    """Decorator function used to handle exceptions and report them to the user.
 
     """
 
     @functools.wraps(func)
     def func_wrapper(*args, **kwargs):
+        """
+
+        Args:
+            *args:
+            **kwargs:
+
+        Returns:
+
+        """
         try:
             return func(*args, **kwargs)
         except:
@@ -213,11 +224,14 @@ def debug(func):
     True.
 
     """
-    DEBUG_MESSAGE = '{trace}(): Executed in {time} secs.'
-    DEBUG_SEPARATOR = ' --> '
+    debug_message = '{trace}(): Executed in {time} secs.'
+    debug_separator = ' --> '
 
     @functools.wraps(func)
     def func_wrapper(*args, **kwargs):
+        """Function wrapper.
+
+        """
         # If global debugging is turned off, do nothing
         if not common.debug_on:
             return func(*args, **kwargs)
@@ -235,8 +249,8 @@ def debug(func):
             trace = [name, ]
             from .. import log
             log.debug(
-                DEBUG_MESSAGE.format(
-                    trace=DEBUG_SEPARATOR.join(trace),
+                debug_message.format(
+                    trace=debug_separator.join(trace),
                     time=time.time() - t
                 )
             )
@@ -320,82 +334,35 @@ def temp_path():
 
 
 def get_thread_key(*args):
+    """Returns the key associated with args and the current thread.
+
+    Args:
+        *args: `server`, `job`, `root` path segments.
+
+    Returns:
+        str: The key value.
+
+    """
     t = repr(QtCore.QThread.currentThread())
     return '/'.join(args) + t
 
 
+@functools.lru_cache(maxsize=1048576)
 def sort_words(s):
+    """Sorts a comma separated list of words found in the given string.
+
+    Returns:
+        str: A comma-separated list of sorted words.
+
+    """
     return ', '.join(sorted(re.findall(r"[\w']+", s)))
-
-
-class DataDict(dict):
-    """A weakref compatible dictionary used to store item data.
-
-    """
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._loaded = False
-        self._refresh_needed = False
-        self._data_type = None
-
-    @property
-    def loaded(self):
-        return self._loaded
-
-    @loaded.setter
-    def loaded(self, v):
-        self._loaded = v
-
-    @property
-    def refresh_needed(self):
-        return self._refresh_needed
-
-    @refresh_needed.setter
-    def refresh_needed(self, v):
-        self._refresh_needed = v
-
-    @property
-    def data_type(self):
-        return self._data_type
-
-    @data_type.setter
-    def data_type(self, v):
-        self._data_type = v
-
-
-class Timer(QtCore.QTimer):
-    """
-    """
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        common.timers[repr(self)] = self
-
-    def setObjectName(self, v):
-        v = '{}_{}'.format(v, uuid.uuid1().hex)
-        super().setObjectName(v)
-
-    @classmethod
-    def delete_timers(cls):
-        for k in list(common.timers):
-            try:
-                common.timers[k].isActive()
-            except:
-                # The C++ object is probably already deleted
-                del common.timers[k]
-                continue
-
-            # Check thread affinity
-            if common.timers[k].thread() != QtCore.QThread.currentThread():
-                continue
-            common.timers[k].stop()
-            common.timers[k].deleteLater()
-            del common.timers[k]
 
 
 @functools.lru_cache(maxsize=1048576)
 def is_dir(path):
+    """Cache-back type query.
+
+    """
     return QtCore.QFileInfo(path).isDir()
 
 
@@ -409,7 +376,7 @@ def get_sequence_and_shot(s):
         s (str): A file or folder path.
 
     Returns:
-        tuple (str, str):    Sequence and shot name, or `(None, None)`
+        tuple (str, str): Sequence and shot name, or `(None, None)`
                                     if not found.
 
     """
@@ -460,3 +427,95 @@ def get_dir_entry_from_path(path):
         if entry.name == file_info.fileName():
             return entry
     return None
+
+
+class DataDict(dict):
+    """Custom dictionary class used to store model item data.
+
+    This class adds compatibility for :class:`weakref.ref` referencing
+    and custom attributes for storing data state.
+
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._loaded = False
+        self._refresh_needed = False
+        self._data_type = None
+
+    @property
+    def loaded(self):
+        """Special attribute used by the item models and associated thread workers.
+
+        When set to `True`, the helper threads have finished populating data and the item
+        is considered fully loaded.
+
+        """
+        return self._loaded
+
+    @loaded.setter
+    def loaded(self, v):
+        self._loaded = v
+
+    @property
+    def refresh_needed(self):
+        """Used to signal that the cached data is out of date and needs updating.
+
+        """
+        return self._refresh_needed
+
+    @refresh_needed.setter
+    def refresh_needed(self, v):
+        self._refresh_needed = v
+
+    @property
+    def data_type(self):
+        """Returns the associated model item type.
+
+        """
+        return self._data_type
+
+    @data_type.setter
+    def data_type(self, v):
+        self._data_type = v
+
+
+class Timer(QtCore.QTimer):
+    """A custom QTimer class used across the app.
+
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        common.timers[repr(self)] = self
+
+    def setObjectName(self, v):
+        """Set the instance object name.
+
+        Args:
+            v (str): Object name.
+
+        """
+        v = f'{v}_{uuid.uuid1().hex}'
+        super().setObjectName(v)
+
+    @classmethod
+    def delete_timers(cls):
+        """Delete all cached timers instances.
+
+        """
+        for k in list(common.timers):
+            try:
+                common.timers[k].isActive()
+            except:
+                # The C++ object is probably already deleted
+                del common.timers[k]
+                continue
+
+            # Check thread affinity
+            if common.timers[k].thread() != QtCore.QThread.currentThread():
+                continue
+            common.timers[k].stop()
+            common.timers[k].deleteLater()
+            del common.timers[k]
+

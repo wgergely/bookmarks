@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Bookmarks test environment setup and teardown."""
 import os
 
@@ -26,50 +25,50 @@ class Test(base.BaseCase):
         self.assertIsNotNone(common.ui_scale_factors)
         self.assertIsNotNone(common.bold_font)
         self.assertIsNotNone(common.medium_font)
-        self.assertIsNotNone(common.FontSizeSmall)
-        self.assertIsNotNone(common.FontSizeMedium)
-        self.assertIsNotNone(common.FontSizeLarge)
-        self.assertIsNotNone(common.HeightRow)
-        self.assertIsNotNone(common.HeightBookmark)
-        self.assertIsNotNone(common.HeightAsset)
-        self.assertIsNotNone(common.HeightSeparator)
-        self.assertIsNotNone(common.WidthMargin)
-        self.assertIsNotNone(common.WidthIndicator)
-        self.assertIsNotNone(common.DefaultWidth)
-        self.assertIsNotNone(common.DefaultHeight)
-        self.assertIsNotNone(common.BackgroundColor)
-        self.assertIsNotNone(common.BackgroundLightColor)
-        self.assertIsNotNone(common.BackgroundDarkColor)
-        self.assertIsNotNone(common.TextColor)
-        self.assertIsNotNone(common.TextSecondaryColor)
-        self.assertIsNotNone(common.TextSelectedColor)
-        self.assertIsNotNone(common.TextDisabledColor)
-        self.assertIsNotNone(common.SeparatorColor)
-        self.assertIsNotNone(common.BlueColor)
-        self.assertIsNotNone(common.RedColor)
-        self.assertIsNotNone(common.GreenColor)
-        self.assertIsNotNone(common.OpaqueColor)
+        self.assertIsNotNone(common.size_font_small)
+        self.assertIsNotNone(common.size_font_medium)
+        self.assertIsNotNone(common.size_font_large)
+        self.assertIsNotNone(common.size_row_height)
+        self.assertIsNotNone(common.size_bookmark_row_height)
+        self.assertIsNotNone(common.size_asset_row_height)
+        self.assertIsNotNone(common.size_separator)
+        self.assertIsNotNone(common.size_margin)
+        self.assertIsNotNone(common.size_indicator)
+        self.assertIsNotNone(common.size_width)
+        self.assertIsNotNone(common.size_height)
+        self.assertIsNotNone(common.color_background)
+        self.assertIsNotNone(common.color_light_background)
+        self.assertIsNotNone(common.color_dark_background)
+        self.assertIsNotNone(common.color_text)
+        self.assertIsNotNone(common.color_secondary_text)
+        self.assertIsNotNone(common.color_selected_text)
+        self.assertIsNotNone(common.color_disabled_text)
+        self.assertIsNotNone(common.color_separator)
+        self.assertIsNotNone(common.color_blue)
+        self.assertIsNotNone(common.color_red)
+        self.assertIsNotNone(common.color_green)
+        self.assertIsNotNone(common.color_opaque)
         self.assertIsNotNone(common.main_widget)
 
     def test_config_resources(self):
         with self.assertRaises(RuntimeError):
-            common.get_rsc(base.random_str(32))
+            common.rsc(base.random_str(32))
 
-        self.assertIsInstance(common.get_rsc('icon.ico'), str)
-        self.assertTrue(os.path.isfile(common.get_rsc('icon.ico')))
+        self.assertIsInstance(common.rsc('icon.ico'), str)
+        self.assertTrue(os.path.isfile(common.rsc('icon.ico')))
 
-        self.assertIsInstance(common.get_rsc(common.stylesheet_file), str)
-        self.assertTrue(os.path.isfile(common.get_rsc(common.stylesheet_file)))
-
-        self.assertIsInstance(
-            common.get_rsc(f'{common.TemplateResource}/{common.job_template}'), str)
-        self.assertTrue(os.path.isfile(
-            common.get_rsc(f'{common.TemplateResource}/{common.job_template}')))
+        self.assertIsInstance(common.rsc(common.stylesheet_file), str)
+        self.assertTrue(os.path.isfile(common.rsc(common.stylesheet_file)))
 
         self.assertIsInstance(
-            common.get_rsc(f'{common.TemplateResource}/{common.asset_template}'), str)
+            common.rsc(f'{common.TemplateResource}/{common.job_template}'), str)
         self.assertTrue(os.path.isfile(
-            common.get_rsc(f'{common.TemplateResource}/{common.asset_template}')))
+            common.rsc(f'{common.TemplateResource}/{common.job_template}')))
+
+        self.assertIsInstance(
+            common.rsc(f'{common.TemplateResource}/{common.asset_template}'), str)
+        self.assertTrue(os.path.isfile(
+            common.rsc(f'{common.TemplateResource}/{common.asset_template}')))
 
     def test_check_type(self):
         common.typecheck_on = True

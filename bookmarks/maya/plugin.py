@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Bookmarks' Maya plugin.
 
 Make sure the BOOKMARKS_ROOT environment variable is set to point the root of the
@@ -80,16 +79,22 @@ def init_environment(key, add_private=False):
 
 
 def is_batch():
+    """Checks if Maya is running in batch mode.
+    """
     return OpenMaya.MGlobal.mayaState() == OpenMaya.MGlobal.kBatch
 
 
 def initializePlugin(name):
+    """Initializes the plugin.
+
+    """
     OpenMaya.MFnPlugin(
         name,
         vendor=__author__,
         version=__version__
     )
 
+    # The plugin won't run in batch mode
     if is_batch():
         return
 
@@ -101,6 +106,9 @@ def initializePlugin(name):
 
 
 def uninitializePlugin(name):
+    """Un-initializes the plugin.
+
+    """
     OpenMaya.MFnPlugin(
         name,
         vendor=__author__,

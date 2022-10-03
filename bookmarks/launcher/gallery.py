@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Main widget used to select a Launcher item.
 
 """
@@ -9,6 +8,9 @@ from .. import ui
 
 
 def close():
+    """Opens the :class:`LauncherGallery` editor.
+
+    """
     if common.launcher_widget is None:
         return
     try:
@@ -20,6 +22,9 @@ def close():
 
 
 def show():
+    """Shows the :class:`LauncherGallery` editor.
+
+    """
     close()
     common.launcher_widget = LauncherGallery()
     common.launcher_widget.open()
@@ -32,9 +37,15 @@ class LauncherGallery(ui.GalleryWidget):
     """
 
     def __init__(self, parent=None):
-        super().__init__(item_height=common.size(common.HeightRow) * 4, parent=parent)
+        super().__init__(
+            item_height=common.size(common.size_row_height) * 4,
+            parent=parent
+        )
 
     def item_generator(self):
+        """Yields the available launcher items stored in the bookmark item database.
+
+        """
         server = common.active('server')
         job = common.active('job')
         root = common.active('root')
@@ -57,4 +68,7 @@ class LauncherGallery(ui.GalleryWidget):
             yield v[k]['name'], v[k]['path'], v[k]['thumbnail']
 
     def focusOutEvent(self, event):
+        """Event handler.
+
+        """
         self.close()

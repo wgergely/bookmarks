@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """The base context menu implementation used across Bookmarks.
 
 All context menus derive from the :class:`BaseContextMenu`. The class contains the 
@@ -40,8 +39,8 @@ def show_event_override(cls, event):
     widths = []
     metrics = QtGui.QFontMetrics(cls.font())
 
-    menu_height = common.size(common.WidthMargin) * 2
-    icon_padding = common.size(common.WidthMargin)
+    menu_height = common.size(common.size_margin) * 2
+    icon_padding = common.size(common.size_margin)
 
     show_icons = common.settings.value('settings/show_menu_icons')
     show_icons = not show_icons if show_icons is not None else True
@@ -121,7 +120,7 @@ class BaseContextMenu(QtWidgets.QMenu):
     @common.debug
     @common.error
     def setup(self):
-        """Override this method do define which menus will appear in subclasses.
+        """Creates the context menu.
 
         """
         raise NotImplementedError('Abstract method must be implemented by subclass.')
@@ -227,9 +226,18 @@ class BaseContextMenu(QtWidgets.QMenu):
                     action.setVisible(True)
 
     def showEvent(self, event):
+        """Show event handler.
+
+        """
         show_event_override(self, event)
 
     def separator(self, menu=None):
+        """Adds a menu separator item.
+
+        Args:
+            menu (str): Specify menu key.
+
+        """
         if menu is None:
             menu = self.menu
         menu['separator' + key()] = None
@@ -243,9 +251,8 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         w = self.parent().window()
         on_top_active = w.windowFlags() & QtCore.Qt.WindowStaysOnTopHint
-        frameless_active = w.windowFlags() & QtCore.Qt.FramelessWindowHint
 
-        on_icon = ui.get_icon('check', color=common.color(common.GreenColor))
+        on_icon = ui.get_icon('check', color=common.color(common.color_green))
         logo_icon = ui.get_icon('icon')
 
         k = 'Window'
@@ -275,11 +282,6 @@ class BaseContextMenu(QtWidgets.QMenu):
             'text': 'Always on Top',
             'icon': on_icon if on_top_active else None,
             'action': actions.toggle_stays_always_on_top
-        }
-        self.menu[k][key()] = {
-            'text': 'Frameless',
-            'icon': on_icon if frameless_active else None,
-            'action': actions.toggle_frameless
         }
 
         self.separator(self.menu[k])
@@ -333,7 +335,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """List item sorting options.
 
         """
-        item_on_icon = ui.get_icon('check', color=common.color(common.GreenColor))
+        item_on_icon = ui.get_icon('check', color=common.color(common.color_green))
 
         m = self.parent().model().sourceModel()
         sort_order = m.sort_order()
@@ -500,7 +502,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         if not self.index.isValid():
             return
 
-        max_width = common.size(common.DefaultWidth) * 0.4
+        max_width = common.size(common.size_width) * 0.4
 
         k = 'Copy Path'
         if k not in self.menu:
@@ -521,7 +523,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[k][m] = {
                 'text': n,
                 'icon': ui.get_icon(
-                    'copy', color=common.color(common.SeparatorColor)
+                    'copy', color=common.color(common.color_separator)
                 ),
                 'action': functools.partial(actions.copy_path, path, mode=mode),
             }
@@ -567,7 +569,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         if not self.index.isValid():
             return
 
-        on_icon = ui.get_icon('check', color=common.color(common.GreenColor))
+        on_icon = ui.get_icon('check', color=common.color(common.color_green))
         favourite_icon = ui.get_icon('favourite')
         archived_icon = ui.get_icon('archivedVisible')
 
@@ -617,7 +619,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """List item filter actions.
 
         """
-        item_on = ui.get_icon('check', color=common.color(common.GreenColor))
+        item_on = ui.get_icon('check', color=common.color(common.color_green))
         item_off = None
 
         k = 'List Filters'
@@ -838,11 +840,13 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': actions.preview_thumbnail
         }
 
-        self.menu[key()] = {
-            'text': 'Preview Image',
-            'icon': ui.get_icon('image'),
-            'action': actions.preview_image
-        }
+        ext = QtCore.QFileInfo(self.index.data(common.PathRole)).suffix().lower()
+        if ext in images.get_oiio_extensions():
+            self.menu[key()] = {
+                'text': 'Preview Image',
+                'icon': ui.get_icon('image'),
+                'action': actions.preview_image
+            }
 
         self.separator()
 
@@ -866,7 +870,10 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         self.separator()
 
-        if QtCore.QFileInfo(item_thumbnail_path).exists():
+        if (
+                QtCore.QFileInfo(item_thumbnail_path).exists() and
+                f'{server}/{job}/{root}' in item_thumbnail_path
+        ):
             self.menu[key()] = {
                 'text': 'Reveal Thumbnail...',
                 'action': functools.partial(
@@ -880,9 +887,12 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[key()] = {
                 'text': 'Remove Thumbnail',
                 'action': actions.remove_thumbnail,
-                'icon': ui.get_icon('close', color=common.color(common.RedColor))
+                'icon': ui.get_icon('close', color=common.color(common.color_red))
             }
-        elif QtCore.QFileInfo(thumbnail_path).exists():
+        elif (
+                QtCore.QFileInfo(thumbnail_path).exists() and
+                f'{server}/{job}/{root}' in thumbnail_path
+        ):
             self.menu[key()] = {
                 'text': 'Reveal File...',
                 'action': functools.partial(
@@ -895,9 +905,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         """Bookmark item properties editor.
 
         """
-        icon = ui.get_icon('add', color=common.color(common.GreenColor))
+        icon = ui.get_icon('add', color=common.color(common.color_green))
         self.menu[key()] = {
-            'text': 'Add & Remove Bookmark Items...',
+            'text': 'Add/Remove Bookmark Items...',
             'icon': icon,
             'action': actions.show_bookmarker,
             'shortcut': shortcuts.get(
@@ -930,7 +940,7 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         """
         expand_pixmap = ui.get_icon('expand')
-        collapse_pixmap = ui.get_icon('collapse', common.color(common.GreenColor))
+        collapse_pixmap = ui.get_icon('collapse', common.color(common.color_green))
 
         current_type = self.parent().model().sourceModel().data_type()
         groupped = current_type == common.SequenceItem
@@ -957,13 +967,13 @@ class BaseContextMenu(QtWidgets.QMenu):
         if not common.active('asset'):
             return
 
-        item_on_pixmap = ui.get_icon('check', color=common.color(common.GreenColor))
+        item_on_pixmap = ui.get_icon('check', color=common.color(common.color_green))
         item_off_pixmap = ui.get_icon('folder')
 
-        k = 'Select Folder'
+        k = 'Select Task'
         self.menu[k] = collections.OrderedDict()
         self.menu[f'{k}:icon'] = ui.get_icon(
-            'folder', color=common.color(common.GreenColor)
+            'folder', color=common.color(common.color_green)
         )
 
         model = common.source_model(common.FileTab)
@@ -1001,7 +1011,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """
         self.menu[key()] = {
             'text': 'Remove from starred...',
-            'icon': ui.get_icon('close', color=common.color(common.RedColor)),
+            'icon': ui.get_icon('close', color=common.color(common.color_red)),
             'checkable': False,
             'action': actions.toggle_favourite
         }
@@ -1038,7 +1048,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """
         self.menu[key()] = {
             'text': 'Add File...',
-            'icon': ui.get_icon('add', color=common.color(common.GreenColor)),
+            'icon': ui.get_icon('add', color=common.color(common.color_green)),
             'action': actions.show_add_file,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
@@ -1060,7 +1070,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         asset = self.index.data(common.ParentPathRole)[3]
         self.menu[key()] = {
             'text': 'Add Template File...',
-            'icon': ui.get_icon('add', color=common.color(common.GreenColor)),
+            'icon': ui.get_icon('add', color=common.color(common.color_green)),
             'action': functools.partial(actions.show_add_file, asset=asset)
         }
 
@@ -1310,7 +1320,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """Add asset menu actions.
 
         """
-        add_pixmap = ui.get_icon('add', color=common.color(common.GreenColor))
+        add_pixmap = ui.get_icon('add', color=common.color(common.color_green))
         self.menu[key()] = {
             'icon': add_pixmap,
             'text': 'Add Asset...',
@@ -1374,7 +1384,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': functools.partial(
                 sg_actions.upload_thumbnail, sg_properties, thumbnail_path
             ),
-            'icon': ui.get_icon('sg', color=common.color(common.GreenColor)),
+            'icon': ui.get_icon('sg', color=common.color(common.color_green)),
         }
 
     def sg_url_menu(self):
@@ -1486,7 +1496,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.separator(self.menu[k])
         self.menu[k][key()] = {
             'text': 'Link Assets with ShotGrid',
-            'icon': ui.get_icon('sg', color=common.color(common.GreenColor)),
+            'icon': ui.get_icon('sg', color=common.color(common.color_green)),
             'action': sg_actions.link_assets,
         }
 
@@ -1545,7 +1555,7 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         self.menu[k][key()] = {
             'text': 'Publish',
-            'icon': ui.get_icon('sg', color=common.color(common.GreenColor)),
+            'icon': ui.get_icon('sg', color=common.color(common.color_green)),
             'action': sg_actions.publish,
         }
 
@@ -1625,7 +1635,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.menu[k][key()] = {
             'text': 'Show Akapipe',
             'icon': ui.get_icon(
-                'studioaka', color=common.color(common.GreenColor)
+                'studioaka', color=common.color(common.color_green)
             ),
             'action': pipe.show_akapipe
         }
@@ -1638,7 +1648,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             return
 
         self.menu[key()] = {
-            'icon': ui.get_icon('close', color=common.color(common.RedColor)),
+            'icon': ui.get_icon('close', color=common.color(common.color_red)),
             'text': 'Delete',
             'action': actions.delete_selected_files,
         }
@@ -1647,7 +1657,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """Publish file item menu actions.
 
         """
-        pixmap = ui.get_icon('file', color=common.color(common.GreenColor))
+        pixmap = ui.get_icon('file', color=common.color(common.color_green))
         self.menu[key()] = {
             'icon': pixmap,
             'text': 'Publish...',

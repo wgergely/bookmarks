@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Module contains all widgets and utility classes used to select a Task
 when publishing to shotgun.
 
@@ -45,6 +44,9 @@ class TaskViewContextMenu(contextmenu.BaseContextMenu):
     @common.debug
     @common.error
     def setup(self):
+        """Creates the context menu.
+
+        """
         self.visit_menu()
 
     def visit_menu(self):
@@ -212,19 +214,19 @@ class TaskModel(QtCore.QAbstractItemModel):
     @common.error
     @common.debug
     def init_icons(self):
-        pixmap1 = images.ImageCache.get_rsc_pixmap(
-            'sg', common.color(common.GreenColor), common.size(common.WidthMargin))
-        pixmap2 = images.ImageCache.get_rsc_pixmap(
-            'check', common.color(common.TextSelectedColor),
-            common.size(common.WidthMargin))
+        pixmap1 = images.ImageCache.rsc_pixmap(
+            'sg', common.color(common.color_green), common.size(common.size_margin))
+        pixmap2 = images.ImageCache.rsc_pixmap(
+            'check', common.color(common.color_selected_text),
+            common.size(common.size_margin))
         icon = QtGui.QIcon()
         icon.addPixmap(pixmap1, mode=QtGui.QIcon.Normal)
         icon.addPixmap(pixmap2, mode=QtGui.QIcon.Active)
         icon.addPixmap(pixmap2, mode=QtGui.QIcon.Selected)
         self.task_icon = icon
 
-        self.step_icon = QtGui.QIcon(images.ImageCache.get_rsc_pixmap(
-            'sg', common.color(common.BlueColor), common.size(common.WidthMargin)))
+        self.step_icon = QtGui.QIcon(images.ImageCache.rsc_pixmap(
+            'sg', common.color(common.color_blue), common.size(common.size_margin)))
 
     def entities_to_nodes(self):
         """Builds the internal node hierarchy base on the given entity data.
@@ -288,7 +290,7 @@ class TaskModel(QtCore.QAbstractItemModel):
             parentNode = parent.internalPointer()
         return parentNode.childCount
 
-    def columnCount(self, parent):  # pylint: disable=W0613
+    def columnCount(self, parent):
         return 5
 
     def parent(self, index):
@@ -346,21 +348,21 @@ class TaskModel(QtCore.QAbstractItemModel):
             return ''
 
         if role == QtCore.Qt.ForegroundRole and column == 0:
-            return common.color(common.TextColor)
+            return common.color(common.color_text)
         if role == QtCore.Qt.ForegroundRole and column > 0:
-            return common.color(common.TextDisabledColor)
+            return common.color(common.color_disabled_text)
 
         if role == QtCore.Qt.FontRole and column == 0:
             font, _ = common.font_db.primary_font(
-                common.size(common.FontSizeMedium))
+                common.size(common.size_font_medium))
             return font
         if role == QtCore.Qt.FontRole and column > 0:
             font, _ = common.font_db.secondary_font(
-                common.size(common.FontSizeSmall))
+                common.size(common.size_font_small))
             return font
 
         if role == QtCore.Qt.SizeHintRole:
-            return QtCore.QSize(0, common.size(common.HeightRow))
+            return QtCore.QSize(0, common.size(common.size_row_height))
 
         if role == QtCore.Qt.DecorationRole and column == 0:
             return self.task_icon
@@ -373,15 +375,15 @@ class TaskModel(QtCore.QAbstractItemModel):
             return entity['name']
 
         if role == QtCore.Qt.ForegroundRole:
-            return common.color(common.BlueColor)
+            return common.color(common.color_blue)
 
         if role == QtCore.Qt.SizeHintRole:
-            return QtCore.QSize(0, common.size(common.HeightRow) * 0.66)
+            return QtCore.QSize(0, common.size(common.size_row_height) * 0.66)
 
         if role == QtCore.Qt.DecorationRole and entity['name'] != NoStepName:
             return self.step_icon
 
-    def data(self, index, role):  # pylint: disable=W0613
+    def data(self, index, role):
         if not index.isValid():
             return None
 
@@ -406,7 +408,7 @@ class TaskModel(QtCore.QAbstractItemModel):
             return QtCore.Qt.ItemIsEnabled
         return QtCore.Qt.ItemIsEnabled
 
-    def headerData(self, section, orientation, role):  # pylint: disable=W0613
+    def headerData(self, section, orientation, role):
         if role != QtCore.Qt.DisplayRole:
             return None
 
@@ -448,7 +450,7 @@ class TaskView(QtWidgets.QTreeView):
         self.setSortingEnabled(False)
         self.setItemsExpandable(True)
         self.setRootIsDecorated(True)
-        self.setIndentation(common.size(common.WidthMargin))
+        self.setIndentation(common.size(common.size_margin))
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
 
         header = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, parent=self)
@@ -472,7 +474,7 @@ class TaskView(QtWidgets.QTreeView):
         if not self.model():
             return
 
-        fixed = common.size(common.DefaultWidth) * 0.3
+        fixed = common.size(common.size_width) * 0.3
         w = (self.rect().width() - fixed) / \
             (self.model().columnCount(QtCore.QModelIndex()) - 1)
         for x in range(self.model().columnCount(QtCore.QModelIndex())):
@@ -536,7 +538,7 @@ class TaskPicker(QtWidgets.QDialog):
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
-        o = common.size(common.WidthMargin)
+        o = common.size(common.size_margin)
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
 
@@ -695,9 +697,17 @@ class TaskPicker(QtWidgets.QDialog):
         self.done(QtWidgets.QDialog.Accepted)
 
     def showEvent(self, event):
+        """Show event handler.
+
+        """
         common.center_window(self)
         QtCore.QTimer.singleShot(100, self.init_items)
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth) * 1.5,
-                            common.size(common.DefaultHeight) * 1.3)
+        """Returns a size hint.
+
+        """
+        return QtCore.QSize(
+            common.size(common.size_width) * 1.5,
+            common.size(common.size_height) * 1.3
+        )

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Contains :class:`.BasePropertyEditor` and its required attributes and methods.
 
 The property editor's layout is defined by a previously specified SECTIONS
@@ -24,25 +23,25 @@ from .. import images
 from .. import log
 from .. import ui
 
-floatvalidator = QtGui.QRegExpValidator()
-floatvalidator.setRegExp(QtCore.QRegExp(r'[0-9]+[\.]?[0-9]*'))
-intvalidator = QtGui.QRegExpValidator()
-intvalidator.setRegExp(QtCore.QRegExp(r'[0-9]+'))
-textvalidator = QtGui.QRegExpValidator()
-textvalidator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9]+'))
-namevalidator = QtGui.QRegExpValidator()
-namevalidator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9\-\_]+'))
-jobnamevalidator = QtGui.QRegExpValidator()
-jobnamevalidator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9\-\_/]+'))
-domainvalidator = QtGui.QRegExpValidator()
-domainvalidator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9/:\.]+'))
-versionvalidator = QtGui.QRegExpValidator()
-versionvalidator.setRegExp(QtCore.QRegExp(r'[v]?[0-9]{1,4}'))
-tokenvalidator = QtGui.QRegExpValidator()
-tokenvalidator.setRegExp(QtCore.QRegExp(r'[0-0a-zA-Z\_\-\.\{\}]*'))
+float_validator = QtGui.QRegExpValidator()
+float_validator.setRegExp(QtCore.QRegExp(r'[0-9]+[\.]?[0-9]*'))
+int_validator = QtGui.QRegExpValidator()
+int_validator.setRegExp(QtCore.QRegExp(r'[0-9]+'))
+text_validator = QtGui.QRegExpValidator()
+text_validator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9]+'))
+name_validator = QtGui.QRegExpValidator()
+name_validator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9\-\_]+'))
+job_name_validator = QtGui.QRegExpValidator()
+job_name_validator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9\-\_/]+'))
+domain_validator = QtGui.QRegExpValidator()
+domain_validator.setRegExp(QtCore.QRegExp(r'[a-zA-Z0-9/:\.]+'))
+version_validator = QtGui.QRegExpValidator()
+version_validator.setRegExp(QtCore.QRegExp(r'[v]?[0-9]{1,4}'))
+token_validator = QtGui.QRegExpValidator()
+token_validator.setRegExp(QtCore.QRegExp(r'[0-0a-zA-Z\_\-\.\{\}]*'))
 
 span = {
-    'start': f'<span style="color:{common.rgb(common.color(common.GreenColor))}">',
+    'start': f'<span style="color:{common.rgb(common.color(common.color_green))}">',
     'end': '</span>',
 }
 
@@ -51,10 +50,10 @@ def add_section(icon, label, parent, color=None):
     """Adds a new section with an icon and a title.
 
     Args:
-        icon (str):         The name of a rsc image.
-        label (str):        The name of the section.
-        parent (QWidget):   A widget to add the section to.
-        color (QColor, optional):     The color of the icon. Defaults to None.
+        icon (str): The name of a rsc image.
+        label (str): The name of the section.
+        parent (QWidget): A widget to add the section to.
+        color (QColor, optional): The color of the icon. Defaults to None.
 
     Returns:
         QWidget:            A widget to add editors to.
@@ -65,7 +64,7 @@ def add_section(icon, label, parent, color=None):
     common.check_type(parent, QtWidgets.QWidget)
     common.check_type(color, (QtGui.QColor, None))
 
-    h = common.size(common.HeightRow)
+    h = common.size(common.size_row_height)
     parent = ui.add_row('', height=None, vertical=True, parent=parent)
 
     if not any((icon, label)):
@@ -76,15 +75,15 @@ def add_section(icon, label, parent, color=None):
 
     if icon:
         w = QtWidgets.QLabel(parent=parent)
-        pixmap = images.ImageCache.get_rsc_pixmap(icon, color, h * 0.8)
+        pixmap = images.ImageCache.rsc_pixmap(icon, color, h * 0.8)
         w.setPixmap(pixmap)
         row.layout().addWidget(w, 0)
 
     if label:
         w = ui.PaintedLabel(
             label,
-            size=common.size(common.FontSizeLarge),
-            color=common.color(common.TextColor),
+            size=common.size(common.size_font_large),
+            color=common.color(common.color_text),
             parent=parent
         )
         row.layout().addWidget(w, 0)
@@ -98,22 +97,23 @@ class BasePropertyEditor(QtWidgets.QDialog):
     """Base class for constructing a property editor widget.
 
     Args:
-        sections (dict):        The data needed to construct the ui layout.
-        server (str):           A server.
-        job (str):              A job.
-        root (str):             A root folder.
-        asset (str):            An optional asset. Defaults to `None`.
-        db_table (str):         An optional name of a bookmark database table.
-                                When not `None`, the editor will load and save data
-                                to the database. Defaults to `None`.
-        buttons (tuple):        Button labels. Defaults to `('Save', 'Cancel')`.
-        alignment (int):        Text alignment. Defaults to `QtCore.Qt.AlignRight`.
-        fallback_thumb (str):   An image name. Defaults to `'placeholder'`.
+        sections (dict): The data needed to construct the ui layout.
+        server (str or None): `server` path segment.
+        job (str or None): `job` path segment.
+        root (str or None): `root` path segment.
+        asset (str or None): `asset` path segment.
+        db_table (str or None):
+            An optional name of a bookmark database table. When not `None`, the editor
+            will load and save data to the database. Defaults to `None`.
+        buttons (tuple): Button labels. Defaults to `('Save', 'Cancel')`.
+        alignment (int): Text alignment. Defaults to `QtCore.Qt.AlignRight`.
+        fallback_thumb (str): An image name. Defaults to `'placeholder'`.
 
     """
+    #: Signal the editor created an item
     itemCreated = QtCore.Signal(str)
 
-    itemUpdated = QtCore.Signal(str)
+    #: Signal emitted when the item's thumbnail was updated
     thumbnailUpdated = QtCore.Signal(str)
 
     def __init__(
@@ -171,8 +171,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
-        self.setMinimumWidth(common.size(common.DefaultWidth) * 0.5)
-        self.setMinimumHeight(common.size(common.DefaultHeight) * 0.5)
+        self.setMinimumWidth(common.size(common.size_width) * 0.5)
+        self.setMinimumHeight(common.size(common.size_height) * 0.5)
 
         if all((server, job, root)):
             if not asset:
@@ -187,7 +187,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         self.scroll_area.setFocusPolicy(QtCore.Qt.NoFocus)
 
     def _create_ui(self):
-        o = common.size(common.WidthMargin)
+        o = common.size(common.size_margin)
 
         QtWidgets.QHBoxLayout(self)
         self.layout().setContentsMargins(0, 0, 0, 0)
@@ -210,8 +210,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
         )
 
         # Separator pixmap
-        pixmap = images.ImageCache.get_rsc_pixmap(
-            'gradient3', None, common.size(common.WidthMargin), opacity=0.5
+        pixmap = images.ImageCache.rsc_pixmap(
+            'gradient3', None, common.size(common.size_margin), opacity=0.5
         )
         separator = QtWidgets.QLabel(parent=self)
         separator.setScaledContents(True)
@@ -222,7 +222,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
             self.left_row.hide()
 
         self.left_row.setStyleSheet(
-            f'background-color: {common.rgb(common.color(common.SeparatorColor))};'
+            f'background-color: {common.rgb(common.color(common.color_separator))};'
         )
         QtWidgets.QHBoxLayout(self.left_row)
         self.left_row.layout().setSpacing(0)
@@ -237,7 +237,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         QtWidgets.QVBoxLayout(self.section_headers_widget)
         self.section_headers_widget.layout().setContentsMargins(0, 0, 0, 0)
         self.section_headers_widget.layout().setSpacing(
-            common.size(common.WidthIndicator)
+            common.size(common.size_indicator)
         )
 
         parent = QtWidgets.QWidget(parent=self)
@@ -417,15 +417,15 @@ class BasePropertyEditor(QtWidgets.QDialog):
             parent=self.section_headers_widget
         )
 
-        font, _ = common.font_db.primary_font(common.size(common.FontSizeSmall))
+        font, _ = common.font_db.primary_font(common.size(common.size_font_small))
         button.setStyleSheet(
             'outline: none;'
             'border: none;'
-            f'color: {common.rgb(common.color(common.BackgroundLightColor))};'
+            f'color: {common.rgb(common.color(common.color_light_background))};'
             'text-align: left;'
             'padding: 0px;'
             'margin: 0px;'
-            f'font-size: {common.size(common.FontSizeSmall)}px;'
+            f'font-size: {common.size(common.size_font_small)}px;'
             f'font-family: "{font.family()}"'
         )
         self.section_headers_widget.layout().addWidget(button)
@@ -436,7 +436,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
     def _add_buttons(self):
         if not self._buttons:
             return
-        h = common.size(common.HeightRow)
+        h = common.size(common.size_row_height)
 
         self.save_button = ui.PaintedButton(
             self._buttons[0], parent=self
@@ -449,13 +449,16 @@ class BasePropertyEditor(QtWidgets.QDialog):
             None, padding=None, height=h * 2, parent=self.right_row
         )
         row.layout().setAlignment(QtCore.Qt.AlignCenter)
-        row.layout().addSpacing(common.size(common.WidthMargin))
+        row.layout().addSpacing(common.size(common.size_margin))
         row.layout().addWidget(self.save_button, 1)
         row.layout().addWidget(self.cancel_button, 0)
-        row.layout().addSpacing(common.size(common.WidthMargin))
+        row.layout().addSpacing(common.size(common.size_margin))
 
     @QtCore.Slot(QtWidgets.QWidget)
     def scroll_to_section(self, widget):
+        """Slot used to scroll to a section when a section header is clicked.
+
+        """
         point = widget.mapTo(self.scroll_area, QtCore.QPoint(0, 0))
         self.scroll_area.verticalScrollBar().setValue(
             point.y() + self.scroll_area.verticalScrollBar().value()
@@ -519,7 +522,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         value in the user setting file.
 
         Args:
-            keys (tuple):   A tuple of user setting keys.
+            keys (tuple): A tuple of user setting keys.
 
         """
         for k in keys:
@@ -546,7 +549,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         corresponding editors.
 
         Args:
-            keys (tuple):   A list of editor keys that save their current value
+            keys (tuple): A list of editor keys that save their current value
                             in the user settings file.
 
         """
@@ -732,9 +735,10 @@ class BasePropertyEditor(QtWidgets.QDialog):
         """Signal called when the user changes a value in the editor.
 
         Args:
-            key (str):          The database key.
-            _type (type):           The data type.
-            editor (QWidget):       The editor widget.
+            key (str): The database key.
+            _type (type): The data type.
+            editor (QWidget): The editor widget.
+            v (object): The changed value.
 
         """
         if v == '':
@@ -753,7 +757,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
             if not isinstance(editor, QtWidgets.QCheckBox):
                 editor.setStyleSheet(
-                    f'color: {common.rgb(common.color(common.GreenColor))};'
+                    f'color: {common.rgb(common.color(common.color_green))};'
                 )
             return
 
@@ -762,34 +766,37 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         if not isinstance(editor, QtWidgets.QCheckBox):
             editor.setStyleSheet(
-                f'color: {common.rgb(common.color(common.TextColor))};'
+                f'color: {common.rgb(common.color(common.color_text))};'
             )
 
     def db_source(self):
-        """A file path the database values are associated with.
+        """A file path to use as the source of database values.
 
         Returns:
-            str: Path to a file.
+            str: The database source file.
 
         """
         raise NotImplementedError('Abstract method must be implemented by subclass.')
 
     @QtCore.Slot()
     def init_data(self):
-        """Initialises the current/default values.
+        """Initializes data.
 
         """
         raise NotImplementedError('Abstract method must be implemented by subclass.')
 
     @QtCore.Slot()
     def save_changes(self):
-        """Abstract method responsible for saving changed data.
+        """Perform save actions and/or data saving.
 
         """
         raise NotImplementedError('Abstract method must be implemented by subclass.')
 
     @QtCore.Slot()
     def done(self, result):
+        """Finish editing the item.
+
+        """
         if result == QtWidgets.QDialog.Rejected:
             if self.changed_data:
                 mbox = ui.MessageBox(
@@ -807,26 +814,41 @@ class BasePropertyEditor(QtWidgets.QDialog):
         return super(BasePropertyEditor, self).done(result)
 
     def changeEvent(self, event):
+        """Change event handler.
+
+        """
         if event.type() == QtCore.QEvent.WindowStateChange:
             common.save_window_state(self)
         super().changeEvent(event)
 
     def hideEvent(self, event):
+        """Hide event handler.
+
+        """
         common.save_window_state(self)
         super().hideEvent(event)
 
     def closeEvent(self, event):
+        """Close event.
+
+        """
         common.save_window_state(self)
         super().closeEvent(event)
 
     def showEvent(self, event):
+        """Show event handler.
+
+        """
         QtCore.QTimer.singleShot(100, self.init_data)
         super().showEvent(event)
 
     def sizeHint(self):
+        """Returns a size hint.
+
+        """
         return QtCore.QSize(
-            common.size(common.DefaultWidth) * 1.33,
-            common.size(common.DefaultHeight) * 1.5
+            common.size(common.size_width) * 1.33,
+            common.size(common.size_height) * 1.5
         )
 
     @QtCore.Slot(str)
@@ -867,6 +889,9 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
     @QtCore.Slot()
     def url1_button_clicked(self):
+        """Url1 button action.
+
+        """
         v = self.url1_editor.text()
         if not v:
             return
@@ -874,6 +899,9 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
     @QtCore.Slot()
     def url2_button_clicked(self):
+        """Url2 button action.
+
+        """
         v = self.url2_editor.text()
         if not v:
             return

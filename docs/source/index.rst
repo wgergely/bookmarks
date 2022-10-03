@@ -13,9 +13,18 @@ Contents
 
 .. toctree::
     :maxdepth: 2
+    :caption: User Guide
+
+    userguide
+
+
+.. toctree::
+    :maxdepth: 2
     :caption: Technical Documentation
 
     modules
+    modindex
+
 
 
 .. toctree::
@@ -23,7 +32,7 @@ Contents
     :caption: Project Links
 
     GitHub <https://github.com/wgergely/bookmarks>
-    Website <https://bookmarks.gergely-wootsch.com/html/index.html>
+    Documentation <https://bookmarks.gergely-wootsch.com/html/index.html>
 
 
 Index

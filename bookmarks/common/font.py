@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Defines :class:`.FontDatabase`, a utility class used to load and store fonts used by Bookmarks.
 
 The :class:`.FontDatabase` instance is saved at :attr:`bookmarks.common.font_db`.
@@ -7,7 +6,7 @@ QFont and QFontMetrics instances can be retrieved using:
 .. code-block:: python
 
     from bookmarks import common
-    font, metrics = common.font_db.primary_font(common.size(common.FontSizeSmall))
+    font, metrics = common.font_db.primary_font(common.size(common.size_font_small))
 
 """
 import os
@@ -16,8 +15,8 @@ from PySide2 import QtGui, QtWidgets
 
 from .. import common
 
-PrimaryFontRole = 0
-SecondaryFontRole = 1
+font_primaryRole = 0
+font_secondaryRole = 1
 MetricsRole = 2
 
 
@@ -43,7 +42,7 @@ class FontDatabase(QtGui.QFontDatabase):
         if common.medium_font in self.families():
             return
 
-        source = common.get_rsc('fonts')
+        source = common.rsc('fonts')
         for entry in os.scandir(source):
             if not entry.name.endswith('ttf'):
                 continue
@@ -60,8 +59,8 @@ class FontDatabase(QtGui.QFontDatabase):
         """The primary font used by the application.
 
         """
-        if font_size in common.font_cache[PrimaryFontRole]:
-            return common.font_cache[PrimaryFontRole][font_size]
+        if font_size in common.font_cache[font_primaryRole]:
+            return common.font_cache[font_primaryRole][font_size]
 
         font = self.font(common.bold_font, 'Bold', font_size)
         if font.family() != common.bold_font:
@@ -70,15 +69,15 @@ class FontDatabase(QtGui.QFontDatabase):
 
         font.setPixelSize(font_size)
         metrics = QtGui.QFontMetrics(font)
-        common.font_cache[PrimaryFontRole][font_size] = (font, metrics)
-        return common.font_cache[PrimaryFontRole][font_size]
+        common.font_cache[font_primaryRole][font_size] = (font, metrics)
+        return common.font_cache[font_primaryRole][font_size]
 
     def secondary_font(self, font_size):
         """The secondary font used by the application.
 
         """
-        if font_size in common.font_cache[SecondaryFontRole]:
-            return common.font_cache[SecondaryFontRole][font_size]
+        if font_size in common.font_cache[font_secondaryRole]:
+            return common.font_cache[font_secondaryRole][font_size]
 
         font = self.font(common.medium_font, 'Medium', font_size)
         if font.family() != common.medium_font:
@@ -87,14 +86,17 @@ class FontDatabase(QtGui.QFontDatabase):
 
         font.setPixelSize(font_size)
         metrics = QtGui.QFontMetrics(font)
-        common.font_cache[SecondaryFontRole][font_size] = (font, metrics)
-        return common.font_cache[SecondaryFontRole][font_size]
+        common.font_cache[font_secondaryRole][font_size] = (font, metrics)
+        return common.font_cache[font_secondaryRole][font_size]
 
 
 def init_font():
+    """Initializes the font cache and database.
+
+    """
     common.font_cache = {
-        PrimaryFontRole: {},
-        SecondaryFontRole: {},
+        font_primaryRole: {},
+        font_secondaryRole: {},
         MetricsRole: {},
     }
     common.font_db = FontDatabase()

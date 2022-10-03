@@ -7,7 +7,6 @@ file_saver
 
 
 .. toctree::
-    :maxdepth: 3
+    :glob:
 
-    file_saver/main
-    file_saver/widgets
+    file_saver/*

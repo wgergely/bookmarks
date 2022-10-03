@@ -54,6 +54,9 @@ def initdata(func):
 
     @functools.wraps(func)
     def func_wrapper(self, *args, **kwargs):
+        """Func wrapper.
+
+        """
         common.settings.load_active_values()
 
         self.beginResetModel()
@@ -85,31 +88,31 @@ def initdata(func):
 
 
 @functools.lru_cache(maxsize=4194304)
-def filter_includes_row(filtertext, searchable):
+def filter_includes_row(filter_text, searchable):
     """Checks if the filter string contains any double dashes (--) and if the filter
     text is found in the searchable string.
 
     If both true, the row will be hidden.
 
     """
-    _filtertext = filtertext
+    _filter_text = filter_text
     it = re.finditer(
         r'(--[^\"\'\[\]\*\s]+)',
-        filtertext,
+        filter_text,
         flags=re.IGNORECASE | re.MULTILINE
     )
     it_quoted = re.finditer(
         r'(--".*?")',
-        filtertext,
+        filter_text,
         flags=re.IGNORECASE | re.MULTILINE
     )
 
     for match in it:
-        _filtertext = re.sub(match.group(1), '', _filtertext)
+        _filter_text = re.sub(match.group(1), '', _filter_text)
     for match in it_quoted:
-        _filtertext = re.sub(match.group(1), '', _filtertext)
+        _filter_text = re.sub(match.group(1), '', _filter_text)
 
-    for text in _filtertext.split():
+    for text in _filter_text.split():
         text = text.strip('"')
         if text not in searchable:
             return False
@@ -117,15 +120,15 @@ def filter_includes_row(filtertext, searchable):
 
 
 @functools.lru_cache(maxsize=4194304)
-def filter_excludes_row(filtertext, searchable):
+def _filter_excludes_row(filter_text, searchable):
     it = re.finditer(
         r'--([^\"\'\[\]\*\s]+)',
-        filtertext,
+        filter_text,
         flags=re.IGNORECASE | re.MULTILINE
     )
     it_quoted = re.finditer(
         r'--"(.*?)"',
-        filtertext,
+        filter_text,
         flags=re.IGNORECASE | re.MULTILINE
     )
 
@@ -149,13 +152,13 @@ class ItemModel(QtCore.QAbstractListModel):
         coreDataLoaded (QtCore.Signal -> weakref.ref, weakref.ref): Signals that the
             bare model data finished loading and that threads can start loading
             missing data.
-        coreDataReset (QtCore.Signal):  Signals that the underlying model data has
+        coreDataReset (QtCore.Signal): Signals that the underlying model data has
             been reset. Used by the thread workers to empty their queues.
-        dataTypeSorted (QtCore.Signal -> int):  Signals that the underlying model
+        dataTypeSorted (QtCore.Signal -> int): Signals that the underlying model
             data was sorted.
         sortingChanged (QtCore.Signal -> int, bool): Emitted when the sorting
             order or sorting role was changed by the user.
-        activeChanged (QtCore.Signal):  Signals :meth:`.ItemModel.active_index`
+        activeChanged (QtCore.Signal): Signals :meth:`.ItemModel.active_index`
             change.
         dataTypeChanged (QtCore.Signal -> int): Emitted when the exposed data type
             changes, e.g. from ``FileItem`` to ``SequenceItem``.
@@ -220,7 +223,7 @@ class ItemModel(QtCore.QAbstractListModel):
         from the file system.
 
         The model itself does not store any data, instead, we're using the
-        :mod:`datacache` module to store item data.
+        :mod:`bookmarks.common.data` module to store item data.
 
         The individual items are returned by :func:`item_generator`.
 
@@ -273,6 +276,9 @@ class ItemModel(QtCore.QAbstractListModel):
 
     @QtCore.Slot(int)
     def emit_reset_model(self, data_type):
+        """Slot used to emit the reset model signals.
+
+        """
         if self.data_type() != data_type:
             return
         self.beginResetModel()
@@ -285,7 +291,7 @@ class ItemModel(QtCore.QAbstractListModel):
         data. Sorting is only possible when the model data is fully loaded.
 
         """
-        if not self.is_data_type_loaded(self.data_type()):
+        if not self.is_data_type_loaded():
             return
         self.set_sort_by(role)
         self.set_sort_order(order)
@@ -301,7 +307,10 @@ class ItemModel(QtCore.QAbstractListModel):
         return ()
 
     def default_row_size(self):
-        return QtCore.QSize(1, common.size(common.HeightRow))
+        """Returns the default item size.
+
+        """
+        return QtCore.QSize(1, common.size(common.size_row_height))
 
     @common.debug
     @common.error
@@ -326,6 +335,9 @@ class ItemModel(QtCore.QAbstractListModel):
     @common.debug
     @common.error
     def init_row_size(self, *args, **kwargs):
+        """Load the current row size from the user settings file.
+
+        """
         val = self.get_filter_setting('filters/row_heights')
 
         h = self.default_row_size().height()
@@ -337,6 +349,9 @@ class ItemModel(QtCore.QAbstractListModel):
         self.row_size.setHeight(int(val))
 
     def sort_by(self):
+        """Current sort role.
+
+        """
         return self._sort_by
 
     @common.debug
@@ -401,11 +416,16 @@ class ItemModel(QtCore.QAbstractListModel):
 
     @QtCore.Slot()
     def set_interrupt_requested(self):
+        """Load interrupt requested by user.
+
+        """
         self._interrupt_requested = True
 
     @QtCore.Slot(int)
-    def is_data_type_loaded(self, t):
-        """Check if the given data type is loaded."""
+    def is_data_type_loaded(self):
+        """Checks whether the current data type is fully loaded.
+
+        """
         p = self.source_path()
         k = self.task()
         t = self.data_type()
@@ -492,15 +512,19 @@ class ItemModel(QtCore.QAbstractListModel):
         return common.FileItem
 
     def task(self):
-        """The model's task folder. """
+        """The model's associated task.
+
+        """
         return 'default'
 
     def filter_setting_dict_key(self):
-        """Get the key used to by :meth:`.get_filter_setting()` and
-        :meth:`set_filter_setting()`.
+        """The custom dictionary key used to save filter settings to the user settings
+        file.
+
+        See :meth:`.get_filter_setting()` and :meth:`set_filter_setting()`.
 
         Returns:
-            str: A user_settings key value.
+            str: The dictionary key.
 
         """
         raise NotImplementedError('Abstract method must be implemented by subclass.')
@@ -535,7 +559,7 @@ class ItemModel(QtCore.QAbstractListModel):
 
         Args:
             key (str): A filter key.
-            v (object):  A filter value to store.
+            v (object): A filter value to store.
 
         """
         dict_key = self.filter_setting_dict_key()
@@ -547,6 +571,9 @@ class ItemModel(QtCore.QAbstractListModel):
         common.settings.setValue(key, _v)
 
     def setData(self, index, data, role=QtCore.Qt.DisplayRole):
+        """Sets the given data to the model's internal data.
+
+        """
         if not index.isValid():
             return False
         if index.row() not in self.model_data():
@@ -557,10 +584,16 @@ class ItemModel(QtCore.QAbstractListModel):
         return True
 
     def supportedDropActions(self):
+        """Returns the supported drop actions.
+
+        """
         return QtCore.Qt.CopyAction
 
     def canDropMimeData(self, data, action, row, column,
                         parent=QtCore.QModelIndex()):
+        """Checks drop support for the given mime data.
+
+        """
         if not self.supportedDropActions() & action:
             return False
         if row == -1:
@@ -581,6 +614,9 @@ class ItemModel(QtCore.QAbstractListModel):
         return True
 
     def dropMimeData(self, data, action, row, column, parent=QtCore.QModelIndex()):
+        """Returns the drop mime data.
+
+        """
         image = data.urls()[0].toLocalFile()
         if not images.oiio_get_buf(image):
             return False
@@ -590,15 +626,19 @@ class ItemModel(QtCore.QAbstractListModel):
 
         proxy = bool(common.is_collapsed(source))
         server, job, root = index.data(common.ParentPathRole)[0:3]
-        images.load_thumbnail_from_image(
+        images.create_thumbnail_from_image(
             server, job, root, source, image, proxy=proxy)
 
         return True
 
     def columnCount(self, parent=QtCore.QModelIndex()):
+        """Number of columns the model has."""
         return 1
 
     def rowCount(self, parent=QtCore.QModelIndex()):
+        """The model's row count.
+
+        """
         p = self.source_path()
         k = self.task()
         t = self.data_type()
@@ -607,6 +647,9 @@ class ItemModel(QtCore.QAbstractListModel):
         return common.data_count(p, k, t)
 
     def index(self, row, column, parent=QtCore.QModelIndex()):
+        """Index of the given row and column.
+
+        """
         p = self.source_path()
         k = self.task()
         t = self.data_type()
@@ -623,6 +666,9 @@ class ItemModel(QtCore.QAbstractListModel):
         return self.createIndex(row, 0, ptr=ptr)
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
+        """Returns and item data associated with the given index.
+
+        """
         if not index.isValid():
             return None
         data = self.model_data()
@@ -632,12 +678,18 @@ class ItemModel(QtCore.QAbstractListModel):
             return data[index.row()][role]
 
     def flags(self, index):
+        """Returns the item's flags.
+
+        """
         v = self.data(index, role=common.FlagsRole)
         if not isinstance(v, QtCore.Qt.ItemFlags) or not v:
             return QtCore.Qt.NoItemFlags
         return v
 
     def parent(self, child):
+        """The parent of an item.
+
+        """
         return QtCore.QModelIndex()
 
 
@@ -650,11 +702,11 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
 
     Attributes:
-        filterFlagChanged (QtCore.Signal -> int, bool):  Emitted when the user changes the
+        filterFlagChanged (QtCore.Signal -> int, bool): Emitted when the user changes the
             current filter flags.
-        filterTextChanged (QtCore.Signal -> str):  Emitted when the user changes the current filter
+        filterTextChanged (QtCore.Signal -> str): Emitted when the user changes the current filter
             text.
-        invalidated (QtCore.Signal):  Emitted after the model has been reset or invalidated.
+        invalidated (QtCore.Signal): Emitted after the model has been reset or invalidated.
 
     """
     filterFlagChanged = QtCore.Signal(int, bool)  # FilterFlag, value
@@ -743,16 +795,25 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         return result
 
     def invalidate(self, *args, **kwargs):
+        """Invalidates the filter.
+
+        """
         result = super(FilterProxyModel, self).invalidate()
         self.invalidated.emit()
         return result
 
     def reset(self, *args, **kwargs):
+        """Resets and invalidates the proxy model.
+
+        """
         result = super(FilterProxyModel, self).reset()
         self.invalidated.emit()
         return result
 
     def sort(self, column, order=QtCore.Qt.AscendingOrder):
+        """Disables sorting.
+
+        """
         raise NotImplementedError('Sorting is not implemented.')
 
     @common.error
@@ -799,6 +860,9 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         self.filterTextChanged.emit(v)
 
     def save_history(self, v):
+        """Saves the filter text history.
+
+        """
         if not v:
             return
 
@@ -821,8 +885,8 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         """Save a filter value to user settings.
 
         Args:
-                flag (int): The flag to set.
-                v (bool): The value to set.
+            flag (int): The flag to set.
+            v (bool): The value to set.
         """
         if self._filter_flags[flag] == v:
             return
@@ -835,6 +899,9 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
             self.sourceModel().set_filter_setting('filters/favourites', v)
 
     def filterAcceptsColumn(self, source_column, parent=QtCore.QModelIndex()):
+        """Checks if the filter accepts the column.
+
+        """
         return True
 
     def filterAcceptsRow(self, idx, parent=None):
@@ -864,9 +931,9 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         if not ref():
             return False
 
-        filtertext = self.filter_text()
-        if filtertext:
-            filtertext = filtertext.strip().lower()
+        filter_text = self.filter_text()
+        if filter_text:
+            filter_text = filter_text.strip().lower()
             if not ref():
                 return False
             d = ref()[idx][common.DescriptionRole]
@@ -883,9 +950,9 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
                          d.strip().lower() + '\n' + \
                          f.strip().lower()
 
-            if not filter_includes_row(filtertext, searchable):
+            if not filter_includes_row(filter_text, searchable):
                 return False
-            if filter_excludes_row(filtertext, searchable):
+            if _filter_excludes_row(filter_text, searchable):
                 return False
 
         if self.filter_flag(common.MarkedAsActive) and active:

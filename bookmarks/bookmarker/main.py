@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """:class:`BookmarkerWidget`, the main editor widget.
 
 The editor is made up of :class:`~bookmarks.bookmarker.server_editor.ServerItemEditor`,
@@ -23,7 +22,7 @@ HINT = 'Activate or disable existing bookmark items, or create new ones using th
 
 
 def close():
-    """Close the editor.
+    """Closes the :class:`BookmarkerWidget` editor.
 
     """
     if common.bookmarker_widget is None:
@@ -32,12 +31,12 @@ def close():
         common.bookmarker_widget.close()
         common.bookmarker_widget.deleteLater()
     except:
-        log.error('Could not delete widget.')
+        pass
     common.bookmarker_widget = None
 
 
 def show():
-    """Show the editor.
+    """Shows the :class:`BookmarkerWidget` editor.
 
     """
     if not common.bookmarker_widget:
@@ -48,7 +47,7 @@ def show():
 
 
 class BookmarkerWidget(QtWidgets.QDialog):
-    """The main editor used to add or remove bookmarks, jobs and servers.
+    """The main editor used to add or remove bookmark items, jobs and servers.
 
     """
 
@@ -72,7 +71,7 @@ class BookmarkerWidget(QtWidgets.QDialog):
         self.info_bar = None
 
         self.setObjectName('AddRemoveBookmarkItemsWidget')
-        self.setWindowTitle('Bookmarker: Add & Remove Bookmarks Items')
+        self.setWindowTitle('Add/Remove Bookmarks Items')
 
         self._create_ui()
         self._connect_signals()
@@ -82,15 +81,15 @@ class BookmarkerWidget(QtWidgets.QDialog):
         common.set_stylesheet(self)
         QtWidgets.QVBoxLayout(self)
 
-        o = common.size(common.WidthIndicator * 1.5)
+        o = common.size(common.size_indicator * 1.5)
         self.layout().setContentsMargins(0, 0, 0, o)
         self.layout().setSpacing(0)
 
-        h = common.size(common.HeightRow) * 0.66
+        h = common.size(common.size_row_height) * 0.66
 
         # =====================================================
 
-        _o = common.size(common.WidthMargin)
+        _o = common.size(common.size_margin)
         main_row = ui.add_row(None, height=None, parent=self)
         main_row.setAttribute(QtCore.Qt.WA_TranslucentBackground, False)
         main_row.setAttribute(QtCore.Qt.WA_NoSystemBackground, False)
@@ -111,7 +110,7 @@ class BookmarkerWidget(QtWidgets.QDialog):
 
         _grp = ui.get_group(
             parent=row, margin=common.size(
-                common.WidthIndicator
+                common.size_indicator
             ) * 1.5
         )
         _grp.setSizePolicy(
@@ -125,7 +124,7 @@ class BookmarkerWidget(QtWidgets.QDialog):
         )
         grp = ui.get_group(
             parent=_grp, margin=common.size(
-                common.WidthIndicator
+                common.size_indicator
             ) * 0.66
         )
         grp.setSizePolicy(
@@ -135,13 +134,13 @@ class BookmarkerWidget(QtWidgets.QDialog):
 
         label = ui.PaintedLabel(
             'Select or add server',
-            color=common.color(common.TextSecondaryColor)
+            color=common.color(common.color_secondary_text)
         )
         self.server_editor = server_editor.ServerItemEditor(parent=grp)
         self.server_add_button = ui.ClickableIconButton(
             'add',
-            (common.color(common.GreenColor),
-             common.color(common.TextSelectedColor)),
+            (common.color(common.color_green),
+             common.color(common.color_selected_text)),
             h,
             description='Click to add a new server',
             state=True,
@@ -160,7 +159,7 @@ class BookmarkerWidget(QtWidgets.QDialog):
 
         _grp = ui.get_group(
             parent=row, margin=common.size(
-                common.WidthIndicator
+                common.size_indicator
             ) * 1.5
         )
         _grp.setSizePolicy(
@@ -182,7 +181,7 @@ class BookmarkerWidget(QtWidgets.QDialog):
 
         grp = ui.get_group(
             parent=_grp, margin=common.size(
-                common.WidthIndicator
+                common.size_indicator
             ) * 0.66
         )
         grp.setSizePolicy(
@@ -192,14 +191,14 @@ class BookmarkerWidget(QtWidgets.QDialog):
 
         label = ui.PaintedLabel(
             'Select or add job folder',
-            color=common.color(common.TextSecondaryColor)
+            color=common.color(common.color_secondary_text)
         )
 
         self.job_editor = job_editor.JobItemEditor(parent=self)
         self.job_add_button = ui.ClickableIconButton(
             'add',
-            (common.color(common.GreenColor),
-             common.color(common.TextSelectedColor)),
+            (common.color(common.color_green),
+             common.color(common.color_selected_text)),
             h,
             description='Click to create a new job',
             state=True,
@@ -220,7 +219,7 @@ class BookmarkerWidget(QtWidgets.QDialog):
 
         _grp = ui.get_group(
             parent=row, margin=common.size(
-                common.WidthIndicator
+                common.size_indicator
             ) * 1.5
         )
         _grp.setSizePolicy(
@@ -235,7 +234,7 @@ class BookmarkerWidget(QtWidgets.QDialog):
         )
         grp = ui.get_group(
             parent=_grp, margin=common.size(
-                common.WidthIndicator
+                common.size_indicator
             ) * 0.66
         )
         grp.setSizePolicy(
@@ -245,14 +244,14 @@ class BookmarkerWidget(QtWidgets.QDialog):
 
         label = ui.PaintedLabel(
             'Select or add root folder',
-            color=common.color(common.TextSecondaryColor)
+            color=common.color(common.color_secondary_text)
         )
 
         self.bookmark_editor = bookmark_editor.BookmarkItemEditor(parent=self)
         self.bookmark_add_button = ui.ClickableIconButton(
             'add',
-            (common.color(common.GreenColor),
-             common.color(common.TextSelectedColor)),
+            (common.color(common.color_green),
+             common.color(common.color_selected_text)),
             h,
             description='Click to select a folder and use it as a bookmark item.',
             state=True,
@@ -270,15 +269,15 @@ class BookmarkerWidget(QtWidgets.QDialog):
         self.info_bar.setStyleSheet(
             'QLabel {{font-family: "{family}";font-size: {size}px;margin: {o} {o} '
             '{o} {o};}}'.format(
-                size=common.size(common.FontSizeSmall) * 0.2,
+                size=common.size(common.size_font_small) * 0.2,
                 family=common.font_db.secondary_font(
-                    common.FontSizeSmall
+                    common.size_font_small
                 )[0].family(),
-                o=common.size(common.WidthIndicator)
+                o=common.size(common.size_indicator)
             )
         )
         self.info_bar.setWordWrap(False)
-        self.info_bar.setFixedHeight(common.size(common.WidthMargin) * 2)
+        self.info_bar.setFixedHeight(common.size(common.size_margin) * 2)
 
         self.layout().addWidget(self.info_bar, 1)
 
@@ -380,18 +379,18 @@ class BookmarkerWidget(QtWidgets.QDialog):
 
         """
         font, metrics = common.font_db.primary_font(
-            common.size(common.FontSizeMedium)
+            common.size(common.size_font_medium)
         )
         v = metrics.elidedText(
             v,
             QtCore.Qt.ElideRight,
-            self.window().rect().width() - common.size(common.WidthMargin) * 2
+            self.window().rect().width() - common.size(common.size_margin) * 2
         )
         self.info_bar.setText(v)
         self.info_bar.repaint()
 
     def init_data(self):
-        """Load item data.
+        """Initializes data.
 
         """
         self.server_editor.init_data()
@@ -412,13 +411,17 @@ class BookmarkerWidget(QtWidgets.QDialog):
         super().closeEvent(event)
 
     def showEvent(self, event):
-        """Show event handler."""
+        """Show event handler.
+
+        """
         QtCore.QTimer.singleShot(100, self.init_data)
         super().showEvent(event)
 
     def sizeHint(self):
-        """Window size hint."""
+        """Returns a size hint.
+
+        """
         return QtCore.QSize(
-            common.size(common.DefaultWidth),
-            common.size(common.DefaultHeight) * 1.33
+            common.size(common.size_width),
+            common.size(common.size_height) * 1.33
         )

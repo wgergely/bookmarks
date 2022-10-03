@@ -34,7 +34,7 @@ def close():
 
 
 def show():
-    """Show :class:`ExportWidget`.
+    """Shows :class:`ExportWidget`.
 
     """
     close()
@@ -77,12 +77,18 @@ PRESETS = {
 
 
 class SetsComboBox(QtWidgets.QComboBox):
+    """Export set picker.
+
+    """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
         self.init_data()
 
     def init_data(self):
+        """Initializes data.
+
+        """
         self.blockSignals(True)
         for k, v in mayabase.get_geo_sets().items():
             self.addItem(k, userData=v)
@@ -90,12 +96,18 @@ class SetsComboBox(QtWidgets.QComboBox):
 
 
 class TypeComboBox(QtWidgets.QComboBox):
+    """Export type picker.
+
+    """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
         self.init_data()
 
     def init_data(self):
+        """Initializes data.
+
+        """
         self.blockSignals(True)
         for k, v in PRESETS.items():
             self.addItem(v['name'], userData=k)
@@ -103,12 +115,18 @@ class TypeComboBox(QtWidgets.QComboBox):
 
 
 class VersionsComboBox(QtWidgets.QComboBox):
+    """Version number picker.
+
+    """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
         self.init_data()
 
     def init_data(self):
+        """Initializes data.
+
+        """
         self.blockSignals(True)
         self.addItem('No Version', userData=None)
         for v in [f'v{str(n).zfill(3)}' for n in range(1, 1000)]:
@@ -116,12 +134,12 @@ class VersionsComboBox(QtWidgets.QComboBox):
         self.blockSignals(False)
 
 
-#:  UI definition of :class:`ExportWidget`
+#: UI layout definition
 SECTIONS = {
     0: {
         'name': 'Export',
         'icon': '',
-        'color': common.color(common.BackgroundDarkColor),
+        'color': common.color(common.color_dark_background),
         'groups': {
             0: {
                 0: {
@@ -230,14 +248,16 @@ class ExportWidget(base.BasePropertyEditor):
 
         """
         self.progress_widget = QtWidgets.QProgressDialog(parent=self)
-        self.progress_widget.setFixedWidth(common.size(common.DefaultWidth))
+        self.progress_widget.setFixedWidth(common.size(common.size_width))
         self.progress_widget.setLabelText('Exporting, please wait...')
         self.progress_widget.setWindowTitle('Export Progress')
 
     @common.error
     @common.debug
     def init_data(self):
-        """Initializes the editor."""
+        """Initializes data.
+
+        """
         self.maya_export_set_editor.currentIndexChanged.connect(
             self.check_version
         )
@@ -270,7 +290,7 @@ class ExportWidget(base.BasePropertyEditor):
     @common.error
     @common.debug
     def save_changes(self):
-        """Start the export process.
+        """Saves changes.
 
         """
         self._interrupt_requested = False
@@ -358,7 +378,10 @@ class ExportWidget(base.BasePropertyEditor):
             self.check_version()
 
     def db_source(self):
-        """Item database source.
+        """A file path to use as the source of database values.
+
+        Returns:
+            str: The database source file.
 
         """
         k = self.maya_export_type_editor.currentData()
@@ -403,12 +426,12 @@ class ExportWidget(base.BasePropertyEditor):
             self._interrupt_requested = True
 
     def sizeHint(self):
-        """Size hint.
+        """Returns a size hint.
 
         """
         return QtCore.QSize(
-            common.size(common.DefaultWidth) * 0.66,
-            common.size(common.DefaultHeight * 1.2)
+            common.size(common.size_width) * 0.66,
+            common.size(common.size_height * 1.2)
         )
 
     def export_maya(
@@ -466,7 +489,7 @@ class ExportWidget(base.BasePropertyEditor):
         common.check_type(end_frame, (int, float))
         common.check_type(step, (float, int))
 
-        def is_intermediate(s):
+        def _is_intermediate(s):
             return cmds.getAttr(f'{s}.intermediateObject')
 
         def teardown():
@@ -494,7 +517,7 @@ class ExportWidget(base.BasePropertyEditor):
         for item in outliner_set:
             shapes = cmds.listRelatives(item, fullPath=True)
             for shape in shapes:
-                if is_intermediate(shape):
+                if _is_intermediate(shape):
                     continue
 
                 basename = shape.split('|')[-1]

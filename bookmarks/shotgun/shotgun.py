@@ -1,12 +1,8 @@
-# -*- coding: utf-8 -*-
 """The module contains the classes and methods needed to provide linkage
 with ShotGrid.
 
-Connection
-----------
-
 In the simplest of cases (e.g. when a bookmark item is active and have already been
-linked with ShotGrid) we can initiate a connection using a ShotgunProperties
+linked with ShotGrid) we can initiate a connection using a :class:`ShotgunProperties`
 instance:
 
 .. code-block:: python
@@ -41,36 +37,52 @@ from .. import common
 from .. import database
 from .. import images
 from .. import log
+from ..threads import threads
 
 EntityRole = QtCore.Qt.UserRole + 1000
 IdRole = QtCore.Qt.UserRole + 1001
 TypeRole = QtCore.Qt.UserRole + 1002
 NameRole = QtCore.Qt.UserRole + 1003
 
+
+#: ShotGrid entity url pattern
 ENTITY_URL = '{domain}/detail/{entity_type}/{entity_id}'
 
+#: A list of entity and field definitions used to assist entity data queries
 fields = {
-    'LocalStorage': ['type', 'id', 'code', 'description', 'mac_path', 'windows_path',
-                     'linux_path'],
+    'LocalStorage': [
+        'type', 'id', 'code', 'description', 'mac_path', 'windows_path', 'linux_path'
+    ],
     'PublishedFileType': ['type', 'id', 'code', 'description', 'short_name'],
-    'Project': ['type', 'id', 'name', 'is_template', 'is_demo', 'is_template_project',
-                'archived'],
+    'Project': [
+        'type', 'id', 'name', 'is_template', 'is_demo', 'is_template_project', 'archived'
+    ],
     'Asset': ['type', 'id', 'code', 'project', 'description', 'notes'],
     'Sequence': ['type', 'id', 'code', 'project', 'description', 'notes'],
-    'Shot': ['type', 'id', 'code', 'project', 'description', 'notes', 'cut_in', 'cut_out',
-             'cut_duration', 'sg_cut_in', 'sg_cut_out', 'sg_cut_duration'],
-    'Task': ['type', 'id', 'content', 'sg_description', 'project', 'entity', 'step',
-             'notes', 'color', 'task_assignees', 'start_date', 'due_date'],
+    'Shot': [
+        'type', 'id', 'code', 'project', 'description', 'notes', 'cut_in', 'cut_out',
+        'cut_duration', 'sg_cut_in', 'sg_cut_out', 'sg_cut_duration'
+    ],
+    'Task': [
+        'type', 'id', 'content', 'sg_description', 'project', 'entity', 'step',
+        'notes', 'color', 'task_assignees', 'start_date', 'due_date'
+    ],
     'Status': ['id', 'name', 'type', 'code', 'bg_color'],
     'HumanUser': ['type', 'id', 'name', 'firstname', 'lastname', 'projects'],
-    'Version': ['type', 'id', 'code', 'description', 'sg_task', 'sg_path_to_frames',
-                'sg_path_to_movie', 'sg_path_to_geometry', 'sg_status_list', 'project',
-                'entity', 'tasks', 'user'],
-    'PublishedFile': ['type', 'id', 'code', 'name', 'description', 'entity', 'version',
-                      'version_number', 'project'],
+    'Version': [
+        'type', 'id', 'code', 'description', 'sg_task', 'sg_path_to_frames',
+        'sg_path_to_movie', 'sg_path_to_geometry', 'sg_status_list', 'project',
+        'entity', 'tasks', 'user'
+    ],
+    'PublishedFile': [
+        'type', 'id', 'code', 'name', 'description', 'entity', 'version',
+        'version_number', 'project'
+    ],
 }
 
+#: ShotGrid connection instance cache
 SG_CONNECTIONS = {}
+
 sg_connecting_message = None
 
 
@@ -87,8 +99,10 @@ def sanitize_path(path, separator):
     local_path = path.replace('\\', separator).replace(
         '{domain}/detail/{entity_type}/{entity_id}', separator)
     while True:
-        new_path = local_path.replace('{domain}/detail/{entity_type}/{entity_id}',
-                                      '{domain}/detail/{entity_type}/{entity_id}')
+        new_path = local_path.replace(
+            '{domain}/detail/{entity_type}/{entity_id}',
+            '{domain}/detail/{entity_type}/{entity_id}'
+        )
         if new_path == local_path:
             break
         else:
@@ -106,7 +120,7 @@ def sanitize_path(path, separator):
 
 @contextlib.contextmanager
 def connection(sg_properties):
-    """Context manager for connecting to ShotGrid using an API Script.
+    """Context manager used for connecting to ShotGrid using an API Script.
 
     The context manager will connect to shotgun on entering and close the
     connection when exiting.
@@ -119,7 +133,8 @@ def connection(sg_properties):
 
     """
     if not sg_properties.verify(connection=True):
-        s = 'Bookmark not yet configured to use ShotGrid. You must enter a valid domain name, script name and api key before connecting.'
+        s = 'Bookmark not yet configured to use ShotGrid. You must enter a valid domain' \
+            'name, script name and api key before connecting.'
         if QtWidgets.QApplication.instance():
             common.signals.sgConnectionFailed.emit(s)
 
@@ -150,13 +165,13 @@ def get_sg(domain, script, key):
     """Method for retrieving a thread specific `ScriptConnection` instance,
     backed by a cache.
 
-    Note:
-        User authentication is not implemented currently.
+    Warning:
+        User authentication is not implemented currently!
 
     Args:
         domain (str): The base url or domain where the shotgun server is located.
         script (str): A valid ShotGrid API Script's name.
-        key (str):  A valid ShotGrid Script's API Key.
+        key (str): A valid ShotGrid Script's API Key.
 
     """
     for arg in (domain, script, key):
@@ -203,19 +218,19 @@ def _get_thread_key(*args):
 
 
 class ShotgunProperties(object):
-    """Returns all ShotGrid properties saved in the BookmarkDB.
+    """Returns all ShotGrid properties saved in the bookmark item database.
 
-    These proerties define the linkage between ShotGrid entities and local assets
+    These properties define the linkage between ShotGrid entities and local assets
     and are required to make ShotGrid connections.
 
     The instance is uninitialized by default, use self.init() to load the values
     from the bookmark database.
 
     Args:
-        server (str): A path segment.
-        job (str): A path segment.
-        root (str): A path segment.
-        asset (str): A path segment.
+        server (str): `server` path segment.
+        job (str): `job` path segment.
+        root (str): `root` path segment.
+        asset (str): `asset` path segment.
         active (bool): Use the active paths when `True`. `False` by default.
 
     """
@@ -291,7 +306,7 @@ class ShotgunProperties(object):
     @common.debug
     @common.error
     def init(self, db=None):
-        """Load all current shotgun values from the bookmars database.
+        """Load all current shotgun values from the bookmark item database.
 
         """
         if not all((self.server, self.job, self.root)):
@@ -360,26 +375,22 @@ class EntityModel(QtCore.QAbstractItemModel):
     """Our custom model used to store ShotGrid entities.
 
     The model itself does not load any data but instead uses a secondary worker
-    thread to do the heavey lifting. The `entityDataRequested` and
-    `entityDataReceived` signals are responsible for requesting and retrieveing
+    thread to do the heavy lifting. The `entityDataRequested` and
+    `entityDataReceived` signals are responsible for requesting and retrieving
     ShotGrid data.
 
-    Each instance has a unique uuid used to match data requests with retreved
+    Each instance has a unique uuid used to match data requests with retrieved
     data.
 
-
-    Signals:
-        entityDataRequested (args):             Emit to request data from ShotGrid with a model
-                                                `uuid`, `server`, `job`, `root`, `asset`, `entity_type`,
-                                                shotgun `filters` and shotgun `fields` arguments.
-        entityDataReceived (str, list):     Emitted by the worker thread when data is
-                                                available with the a uuid, and list of entities.
-
     """
+    #: Signal used to request data from ShotGrid. Takes  `uuid`, `server`, `job`,
+    #: `root`, `asset`, `entity_type`, `filters` and `fields` arguments.
+    entityDataRequested = QtCore.Signal(
+        str, str, str, str, str, str, list, list
+    )
 
-    entityDataRequested = QtCore.Signal(str, str, str, str, str, str,
-                                        list,
-                                        list)  # uuid, server, job, root, asset, entity_type, filters, fields"""
+    #: Signal used by the worker thread when data is ready, with the data's uuid,
+    #: and list of entities.
     entityDataReceived = QtCore.Signal(str, list)
 
     def __init__(self, items, parent=None):
@@ -394,7 +405,6 @@ class EntityModel(QtCore.QAbstractItemModel):
         self.sg_icon = self.get_sg_icon()
         self.spinner_icon = self.get_spinner()
 
-        from ..threads import threads
         common.signals.sgEntityDataReady.connect(
             self.entityDataReceived)
 
@@ -422,23 +432,23 @@ class EntityModel(QtCore.QAbstractItemModel):
 
     def get_sg_icon(self):
         icon = QtGui.QIcon()
-        pixmap = images.ImageCache.get_rsc_pixmap(
-            'sg', common.color(common.SeparatorColor), common.size(common.HeightRow))
+        pixmap = images.ImageCache.rsc_pixmap(
+            'sg', common.color(common.color_separator), common.size(common.size_row_height))
         icon.addPixmap(pixmap, QtGui.QIcon.Normal)
-        pixmap = images.ImageCache.get_rsc_pixmap(
-            'sg', common.color(common.TextSelectedColor), common.size(common.HeightRow))
+        pixmap = images.ImageCache.rsc_pixmap(
+            'sg', common.color(common.color_selected_text), common.size(common.size_row_height))
         icon.addPixmap(pixmap, QtGui.QIcon.Active)
         icon.addPixmap(pixmap, QtGui.QIcon.Selected)
-        pixmap = images.ImageCache.get_rsc_pixmap(
-            'sg', common.color(common.TextDisabledColor), common.size(common.HeightRow),
+        pixmap = images.ImageCache.rsc_pixmap(
+            'sg', common.color(common.color_disabled_text), common.size(common.size_row_height),
             opacity=0.66)
         icon.addPixmap(pixmap, QtGui.QIcon.Disabled)
         return icon
 
     def get_spinner(self):
         icon = QtGui.QIcon()
-        pixmap = images.ImageCache.get_rsc_pixmap(
-            'spinner', common.color(common.TextColor), common.size(common.HeightRow))
+        pixmap = images.ImageCache.rsc_pixmap(
+            'spinner', common.color(common.color_text), common.size(common.size_row_height))
         icon.addPixmap(pixmap, QtGui.QIcon.Normal)
         icon.addPixmap(pixmap, QtGui.QIcon.Active)
         icon.addPixmap(pixmap, QtGui.QIcon.Selected)
@@ -493,7 +503,7 @@ class EntityModel(QtCore.QAbstractItemModel):
         if role == QtCore.Qt.DecorationRole:
             return self._icon(data)
         if role == QtCore.Qt.SizeHintRole:
-            return QtCore.QSize(1, common.size(common.HeightRow))
+            return QtCore.QSize(1, common.size(common.size_row_height))
         return None
 
     def _description(self, v):
@@ -530,8 +540,8 @@ class EntityModel(QtCore.QAbstractItemModel):
         if k in v and v[k]:
             args = [int(f) for f in v['bg_color'].split(',')]
             color = QtGui.QColor(*args)
-            pixmap = images.ImageCache.get_rsc_pixmap(
-                'sg', color, common.size(common.WidthMargin))
+            pixmap = images.ImageCache.rsc_pixmap(
+                'sg', color, common.size(common.size_margin))
             return QtGui.QIcon(pixmap)
 
         # Otherwise return the standard shotgun icon
@@ -583,7 +593,7 @@ class EntityComboBox(QtWidgets.QComboBox):
 
     """
 
-    def __init__(self, items, fixed_height=common.size(common.HeightRow), parent=None):
+    def __init__(self, items, fixed_height=common.size(common.size_row_height), parent=None):
         super(EntityComboBox, self).__init__(parent=parent)
         self.setView(QtWidgets.QListView())
         if not self.parent():

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Editor widget used by :class:`~bookmarks.bookmarker.main.BookmarkerWidget` to save
 bookmark items to the user settings file.
 
@@ -23,7 +22,9 @@ class BookmarkEditorContextMenu(contextmenu.BaseContextMenu):
     """
 
     def setup(self):
-        """Create the context menu."""
+        """Creates the context menu.
+
+        """
         self.add_menu()
         self.separator()
         if isinstance(
@@ -40,7 +41,7 @@ class BookmarkEditorContextMenu(contextmenu.BaseContextMenu):
         self.menu[contextmenu.key()] = {
             'text': 'Pick a new bookmark item...',
             'action': self.parent().add,
-            'icon': ui.get_icon('add', color=common.color(common.GreenColor))
+            'icon': ui.get_icon('add', color=common.color(common.color_green))
         }
 
     def reveal_menu(self):
@@ -122,7 +123,7 @@ class BookmarkItemEditor(ui.ListWidget):
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
         )
-        self.setMinimumWidth(common.size(common.DefaultWidth) * 0.2)
+        self.setMinimumWidth(common.size(common.size_width) * 0.2)
 
         self._connect_signals()
         self._init_shortcuts()
@@ -238,7 +239,7 @@ class BookmarkItemEditor(ui.ListWidget):
         item.setData(QtCore.Qt.UserRole, path)
         size = QtCore.QSize(
             0,
-            common.size(common.WidthMargin) * 2
+            common.size(common.size_margin) * 2
         )
         item.setSizeHint(size)
         self.update_state(item)
@@ -256,7 +257,9 @@ class BookmarkItemEditor(ui.ListWidget):
 
     @QtCore.Slot()
     def init_data(self):
-        """Initialize data."""
+        """Initializes data.
+
+        """
         self.clear()
 
         if not self.window().job():
@@ -282,7 +285,7 @@ class BookmarkItemEditor(ui.ListWidget):
             item.setData(QtCore.Qt.StatusTipRole, path)
             item.setData(QtCore.Qt.WhatsThisRole, path)
             item.setData(QtCore.Qt.ToolTipRole, path)
-            item.setSizeHint(QtCore.QSize(0, common.size(common.WidthMargin) * 2))
+            item.setSizeHint(QtCore.QSize(0, common.size(common.size_margin) * 2))
 
             self.update_state(item)
             self.insertItem(self.count(), item)
@@ -295,7 +298,7 @@ class BookmarkItemEditor(ui.ListWidget):
         check state and icon accordingly.
 
         Args:
-            item(QtWidgets.QListWidgetItem):    The item to verify.
+            item(QtWidgets.QListWidgetItem): The item to verify.
 
         """
         self.blockSignals(True)
@@ -344,6 +347,8 @@ class BookmarkItemEditor(ui.ListWidget):
                 yield _name, _path
 
     def keyPressEvent(self, event):
-        """Handles user interruptions."""
+        """Key press event handler.
+
+        """
         if event.key() == QtCore.Qt.Key_Escape:
             self._interrupt_requested = True

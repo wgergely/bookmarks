@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """The module contains the elements used when initialized in ``StandaloneMode``.
 
 It defines :class:`.BookmarksApp`, Bookmark's custom QApplication, and
@@ -25,6 +24,9 @@ MODEL_ID = f'{common.product}App'
 
 
 def init():
+    """Initializes the main application window.
+
+    """
     if common.init_mode == common.EmbeddedMode:
         raise RuntimeError("Cannot be initialized in `EmbeddedMode`.")
 
@@ -34,6 +36,9 @@ def init():
 
 
 def init_tray():
+    """Initializes the main application tray widget.
+
+    """
     if not common.tray_widget:
         common.tray_widget = Tray()
         common.tray_widget.show()
@@ -41,7 +46,7 @@ def init_tray():
 
 @QtCore.Slot()
 def show():
-    """Shows the main window.
+    """Shows the main application window.
 
     """
     if common.init_mode != common.StandaloneMode or not isinstance(common.main_widget,
@@ -94,6 +99,9 @@ class TrayMenu(contextmenu.BaseContextMenu):
         self.setStyleSheet(None)
 
     def setup(self):
+        """Creates the context menu.
+
+        """
         try:
             self.window_menu()
             self.separator()
@@ -118,7 +126,7 @@ class Tray(QtWidgets.QSystemTrayIcon):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        p = common.get_rsc(
+        p = common.rsc(
             f'{common.GuiResource}{os.path.sep}icon.{common.thumbnail_format}')
         pixmap = QtGui.QPixmap(p)
         icon = QtGui.QIcon(pixmap)
@@ -132,9 +140,15 @@ class Tray(QtWidgets.QSystemTrayIcon):
         self.activated.connect(self.tray_activated)
 
     def window(self):
+        """Returns the main application window.
+
+        """
         return common.main_widget.window()
 
     def tray_activated(self, reason):
+        """Slot connected to the custom tray activation signals.
+
+        """
         if reason == QtWidgets.QSystemTrayIcon.Unknown:
             self.window().show()
             self.window().activateWindow()
@@ -157,9 +171,9 @@ class MinimizeButton(ui.ClickableIconButton):
     def __init__(self, parent=None):
         super().__init__(
             'minimize',
-            (common.color(common.RedColor), common.color(common.TextSecondaryColor)),
-            common.size(common.WidthMargin) -
-            common.size(common.WidthIndicator),
+            (common.color(common.color_red), common.color(common.color_secondary_text)),
+            common.size(common.size_margin) -
+            common.size(common.size_indicator),
             description='Click to minimize the window...',
             parent=parent
         )
@@ -171,9 +185,9 @@ class CloseButton(ui.ClickableIconButton):
     def __init__(self, parent=None):
         super().__init__(
             'close',
-            (common.color(common.RedColor), common.color(common.TextSecondaryColor)),
-            common.size(common.WidthMargin) -
-            common.size(common.WidthIndicator),
+            (common.color(common.color_red), common.color(common.color_secondary_text)),
+            common.size(common.size_margin) -
+            common.size(common.size_indicator),
             description='Click to close the window...',
             parent=parent
         )
@@ -198,8 +212,8 @@ class HeaderWidget(QtWidgets.QWidget):
 
         self.setFocusPolicy(QtCore.Qt.NoFocus)
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
-        self.setFixedHeight(common.size(common.WidthMargin) +
-                            (common.size(common.WidthIndicator) * 2))
+        self.setFixedHeight(common.size(common.size_margin) +
+                            (common.size(common.size_indicator) * 2))
 
         self._create_ui()
 
@@ -219,13 +233,12 @@ class HeaderWidget(QtWidgets.QWidget):
 
         self.layout().addStretch()
         self.layout().addWidget(MinimizeButton(parent=self))
-        self.layout().addSpacing(common.size(common.WidthIndicator) * 2)
+        self.layout().addSpacing(common.size(common.size_indicator) * 2)
         self.layout().addWidget(CloseButton(parent=self))
-        self.layout().addSpacing(common.size(common.WidthIndicator) * 2)
+        self.layout().addSpacing(common.size(common.size_indicator) * 2)
 
     def mousePressEvent(self, event):
-        """Custom ``movePressEvent``.
-        We're setting the properties needed to moving the main window.
+        """Event handler.
 
         """
         if self.double_click_timer.isActive():
@@ -240,7 +253,7 @@ class HeaderWidget(QtWidgets.QWidget):
             self.geometry().topLeft())
 
     def mouseMoveEvent(self, event):
-        """Moves the the parent window when clicked.
+        """Event handler.
 
         """
         if self.double_click_timer.isActive():
@@ -262,7 +275,9 @@ class HeaderWidget(QtWidgets.QWidget):
             self.widgetMoved.emit(bl)
 
     def contextMenuEvent(self, event):
-        """Shows the context menu associated with the tray in the header."""
+        """Event handler.
+
+        """
         widget = TrayMenu(parent=self.window())
         pos = self.window().mapToGlobal(event.pos())
         widget.move(pos)
@@ -270,18 +285,15 @@ class HeaderWidget(QtWidgets.QWidget):
         widget.show()
 
     def mouseDoubleClickEvent(self, event):
+        """Event handler.
+
+        """
         event.accept()
         actions.toggle_maximized()
 
 
 class BookmarksAppWindow(main.MainWidget):
-    """The main application window is an adapted
-    :class:`bookmarks.main.MainWidget` that adds custom sizing and frameless
-    mode.
-
-    Custom resizing and positioning is implemented using the
-    :func:`mousePressEvent`, :func:`mouseMoveEvent` and
-    :func:`mouseReleaseEvent` methods.
+    """The main application window.
 
     """
 
@@ -291,79 +303,22 @@ class BookmarksAppWindow(main.MainWidget):
 
         super().__init__(parent=None)
 
-        self._frameless = False
         self._always_on_top = False
-        self.headerwidget = None
-
-        self.resize_initial_pos = QtCore.QPoint(-1, -1)
-        self.resize_initial_rect = None
-        self.resize_area = None
-        self.resize_overlay = None
-        self.resize_distance = QtWidgets.QApplication.instance().startDragDistance() * 2
-        self.resize_override_icons = {
-            1: QtCore.Qt.SizeFDiagCursor,
-            2: QtCore.Qt.SizeBDiagCursor,
-            3: QtCore.Qt.SizeBDiagCursor,
-            4: QtCore.Qt.SizeFDiagCursor,
-            5: QtCore.Qt.SizeVerCursor,
-            6: QtCore.Qt.SizeHorCursor,
-            7: QtCore.Qt.SizeVerCursor,
-            8: QtCore.Qt.SizeHorCursor,
-        }
 
         common.set_stylesheet(self)
 
         self.installEventFilter(self)
-        self.setMouseTracking(True)
 
-        self.aboutToInitialize.connect(self.init_header)
-        self.aboutToInitialize.connect(self.toggle_header)
         self.initialized.connect(self._connect_standalone_signals)
         self.initialized.connect(init_tray)
 
         self.adjustSize()
         self.update_window_flags()
 
-    @QtCore.Slot()
-    def init_header(self):
-        """Adds a header widget used to move the window around when the
-        *frameless* mode is on.
-
-        """
-        self.headerwidget = HeaderWidget(parent=self)
-        self.layout().insertWidget(0, self.headerwidget, 1)
-        self.headerwidget.setHidden(True)
-
-    @QtCore.Slot()
-    def toggle_header(self):
-        """Adjust the header visibility based on the current window flags."""
-        if self._frameless and self.layout():
-            self.headerwidget.setHidden(False)
-            o = common.size(common.WidthIndicator)
-            self.layout().setContentsMargins(o, o, o, o)
-        elif not self._frameless and self.layout():
-            self.headerwidget.setHidden(True)
-            self.layout().setContentsMargins(0, 0, 0, 0)
-
     def update_window_flags(self, v=None):
         """Load previously saved window flag values from user setting files.
 
         """
-        self._frameless = common.settings.value('settings/frameless')
-
-        if not self._frameless:
-            self.setWindowFlags(
-                self.windowFlags() & ~ QtCore.Qt.FramelessWindowHint)
-            self.setAttribute(QtCore.Qt.WA_TranslucentBackground, False)
-            self.setAttribute(QtCore.Qt.WA_NoSystemBackground, False)
-        else:
-            self.setWindowFlags(
-                self.windowFlags() |
-                QtCore.Qt.FramelessWindowHint
-            )
-            self.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
-            self.setAttribute(QtCore.Qt.WA_NoSystemBackground, True)
-
         self._always_on_top = common.settings.value('settings/always_always_on_top')
 
         if self._always_on_top:
@@ -373,124 +328,24 @@ class BookmarksAppWindow(main.MainWidget):
             self.setWindowFlags(
                 self.windowFlags() & ~ QtCore.Qt.WindowStaysOnTopHint)
 
-    def _paint_background(self, painter):
-        if not self._frameless:
-            super()._paint_background(painter)
-            return
-
-        rect = QtCore.QRect(self.rect())
-        pen = QtGui.QPen(QtGui.QColor(35, 35, 35, 255))
-        pen.setWidth(common.size(common.HeightSeparator) * 2)
-        painter.setPen(pen)
-        painter.setBrush(common.color(common.SeparatorColor).darker(110))
-
-        o = common.size(common.WidthIndicator)
-        rect = rect.adjusted(o, o, -o, -o)
-        painter.drawRoundedRect(rect, o * 3, o * 3)
-
-    def _get_offset_rect(self, offset):
-        """Returns an expanded/contracted edge rectangle based on the widget's
-        geometry. Used to get the valid area for resize-operations.
-
-        """
-        rect = self.rect()
-        center = rect.center()
-        rect.setHeight(rect.height() + offset)
-        rect.setWidth(rect.width() + offset)
-        rect.moveCenter(center)
-        return rect
-
-    def _accept_resize_event(self, event):
-        """Returns `True` if the event can be a window resize event."""
-        if self._get_offset_rect(self.resize_distance * -1).contains(event.pos()):
-            return False
-        if not self._get_offset_rect(self.resize_distance).contains(event.pos()):
-            return False
-        return True
-
-    def _set_resize_icon(self, event, clamp=True):
-        """Sets an override icon to indicate the draggable area."""
-        app = QtWidgets.QApplication.instance()
-        k = self._get_resize_hotspot(event, clamp=clamp)
-        if k:
-            self.grabMouse()
-            icon = self.resize_override_icons[k]
-            if app.overrideCursor():
-                app.changeOverrideCursor(QtGui.QCursor(icon))
-                return k
-            app.restoreOverrideCursor()
-            app.setOverrideCursor(QtGui.QCursor(icon))
-            return k
-        self.releaseMouse()
-        app.restoreOverrideCursor()
-        return k
-
-    def _get_resize_hotspot(self, event, clamp=True):
-        """Returns the resizable area from the event's current position.
-        If clamp is True we will only check in near the areas near the edges.
-
-        """
-        if clamp:
-            if not self._accept_resize_event(event):
-                return None
-
-        # First we have to define the 8 areas showing an indicator icon when
-        # hovered. Edges:
-        rect = self.rect()
-        p = event.pos()
-        edge_hotspots = {
-            5: QtCore.QPoint(p.x(), rect.top()),
-            6: QtCore.QPoint(rect.right(), p.y()),
-            7: QtCore.QPoint(p.x(), rect.bottom()),
-            8: QtCore.QPoint(rect.left(), p.y()),
-        }
-
-        # Corners:
-        topleft_corner = QtCore.QRect(0, 0,
-                                      self.resize_distance, self.resize_distance)
-        topright_corner = QtCore.QRect(topleft_corner)
-        topright_corner.moveRight(rect.width())
-        bottomleft_corner = QtCore.QRect(topleft_corner)
-        bottomleft_corner.moveTop(rect.height() - self.resize_distance)
-        bottomright_corner = QtCore.QRect(topleft_corner)
-        bottomright_corner.moveRight(rect.width())
-        bottomright_corner.moveTop(rect.height() - self.resize_distance)
-
-        corner_hotspots = {
-            1: topleft_corner,
-            2: topright_corner,
-            3: bottomleft_corner,
-            4: bottomright_corner,
-        }
-
-        # We check if the cursor is currently inside one of the corners or edges
-        if any([f.contains(p) for f in corner_hotspots.values()]):
-            return max(corner_hotspots, key=lambda k: corner_hotspots[k].contains(p))
-        return min(edge_hotspots, key=lambda k: (p - edge_hotspots[k]).manhattanLength())
-
     @QtCore.Slot()
     def _connect_standalone_signals(self):
         """Extra signal connections when Bookmarks runs in standalone mode.
 
         """
         func = functools.partial(common.save_window_state, self)
-        self.headerwidget.widgetMoved.connect(func)
-        self.headerwidget.findChild(MinimizeButton).clicked.connect(
-            actions.toggle_minimized)
-        self.headerwidget.findChild(CloseButton).clicked.connect(
-            common.uninitialize)
-
         self.files_widget.activated.connect(actions.execute)
         self.favourites_widget.activated.connect(actions.execute)
 
     def hideEvent(self, event):
-        """Custom hide event."""
+        """Event handler.
+
+        """
         common.save_window_state(self)
         super().hideEvent(event)
 
     def closeEvent(self, event):
-        """Bookmarks won't close when the main window is closed.
-        Instead, it will be hidden to the taskbar and a pop up notice will be shown to the user.
+        """Event handler.
 
         """
         event.ignore()
@@ -506,99 +361,18 @@ class BookmarksAppWindow(main.MainWidget):
             pass
         common.save_window_state(self)
 
-    def mousePressEvent(self, event):
-        """The mouse press event responsible for setting the properties needed
-        by the custom resize methods.
-
-        """
-        if not isinstance(event, QtGui.QMouseEvent):
-            return
-        if not self.window().windowFlags() & QtCore.Qt.FramelessWindowHint:
-            event.ignore()
-            return
-
-        if self._accept_resize_event(event):
-            self.resize_area = self._set_resize_icon(event, clamp=False)
-            self.resize_initial_pos = event.pos()
-            self.resize_initial_rect = self.rect()
-            event.accept()
-            return
-
-        self.resize_initial_pos = QtCore.QPoint(-1, -1)
-        self.resize_initial_rect = None
-        self.resize_area = None
-        event.ignore()
-
-    def mouseMoveEvent(self, event):
-        """Custom mouse move event responsible for resizing the frameless
-        widget's geometry.
-
-        It identifies the dragable edge area, and sets the cursor overrides.
-
-        """
-        if not isinstance(event, QtGui.QMouseEvent):
-            return
-        if not self.window().windowFlags() & QtCore.Qt.FramelessWindowHint:
-            return
-
-        if self.resize_initial_pos == QtCore.QPoint(-1, -1):
-            self._set_resize_icon(event, clamp=True)
-            return
-
-        if self.resize_area is None:
-            return
-
-        o = event.pos() - self.resize_initial_pos
-        geo = self.geometry()
-
-        g_topleft = self.mapToGlobal(
-            self.resize_initial_rect.topLeft())
-        g_bottomright = self.mapToGlobal(
-            self.resize_initial_rect.bottomRight())
-
-        if self.resize_area in (1, 2, 5):
-            geo.setTop(g_topleft.y() + o.y())
-        if self.resize_area in (3, 4, 7):
-            geo.setBottom(g_bottomright.y() + o.y())
-        if self.resize_area in (1, 3, 8):
-            geo.setLeft(g_topleft.x() + o.x())
-        if self.resize_area in (2, 4, 6):
-            geo.setRight(g_bottomright.x() + o.x())
-
-        original_geo = self.geometry()
-        self.move(geo.topLeft())
-        self.setGeometry(geo)
-        if self.geometry().width() > geo.width():
-            self.setGeometry(original_geo)
-
-    def mouseReleaseEvent(self, event):
-        """Resets the custom resize properties to their initial values.
-
-        """
-        if not isinstance(event, QtGui.QMouseEvent):
-            return
-        if not self.window().windowFlags() & QtCore.Qt.FramelessWindowHint:
-            event.ignore()
-            return
-
-        if self.resize_initial_pos != QtCore.QPoint(-1, -1):
-            common.save_window_state(self)
-            if hasattr(common.widget(), 'reset'):
-                common.widget().reset()
-
-        self.resize_initial_pos = QtCore.QPoint(-1, -1)
-        self.resize_initial_rect = None
-        self.resize_area = None
-
-        app = QtWidgets.QApplication.instance()
-        app.restoreOverrideCursor()
-
     def changeEvent(self, event):
+        """Event handler.
+
+        """
         if event.type() == QtCore.QEvent.WindowStateChange:
             common.save_window_state(self)
         super().changeEvent(event)
 
     def showEvent(self, event):
+        """Event handler.
+
+        """
         if not self.is_initialized:
             QtCore.QTimer.singleShot(100, self.initialize)
         super().showEvent(event)
@@ -628,7 +402,7 @@ class BookmarksApp(QtWidgets.QApplication):
 
     def _set_window_icon(self):
         """Set the application icon."""
-        path = common.get_rsc(
+        path = common.rsc(
             f'{common.GuiResource}{os.path.sep}icon.{common.thumbnail_format}')
         pixmap = QtGui.QPixmap(path)
         icon = QtGui.QIcon(pixmap)
@@ -646,6 +420,9 @@ class BookmarksApp(QtWidgets.QApplication):
             assert hresult == 0, "SetCurrentProcessExplicitAppUserModelID failed"
 
     def eventFilter(self, widget, event):
+        """Event filter handler.
+
+        """
         if event.type() == QtCore.QEvent.Enter:
             if hasattr(widget, 'statusTip') and widget.statusTip():
                 common.signals.showStatusTipMessage.emit(widget.statusTip())

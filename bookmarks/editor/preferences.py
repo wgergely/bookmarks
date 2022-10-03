@@ -1,9 +1,4 @@
-# -*- coding: utf-8 -*-
 """:class:`PreferenceEditor` and helper classes used to set application-wide preferences.
-
-Attributes:
-
-    SECTIONS (dict): UI structure and content definitions.
 
 """
 import functools
@@ -28,7 +23,7 @@ def close():
         common.preference_editor_widget.close()
         common.preference_editor_widget.deleteLater()
     except:
-        log.error('Could not delete widget.')
+        pass
     common.preference_editor_widget = None
 
 
@@ -43,14 +38,21 @@ def show():
     return common.preference_editor_widget
 
 
-class ScaleWidget(QtWidgets.QComboBox):
+class UIScaleFactorsCombobox(QtWidgets.QComboBox):
+    """Editor used to pick a ui scale value.
+
+    """
+    
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
         self.init_data()
 
     def init_data(self):
-        size = QtCore.QSize(1, common.size(common.HeightRow) * 0.8)
+        """Initializes data.
+
+        """
+        size = QtCore.QSize(1, common.size(common.size_row_height) * 0.8)
 
         self.blockSignals(True)
         for n in common.ui_scale_factors:
@@ -71,15 +73,18 @@ class ScaleWidget(QtWidgets.QComboBox):
 
 
 class AboutLabel(QtWidgets.QLabel):
+    """Label used to show informative data.
+
+    """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setAlignment(QtCore.Qt.AlignCenter)
 
-        bg = common.rgb(common.color(common.BackgroundDarkColor))
-        bd = common.size(common.HeightSeparator)
-        bc = common.rgb(common.color(common.SeparatorColor))
-        r = common.size(common.WidthMargin) * 0.5
-        c = common.rgb(common.color(common.TextDisabledColor))
+        bg = common.rgb(common.color(common.color_dark_background))
+        bd = common.size(common.size_separator)
+        bc = common.rgb(common.color(common.color_separator))
+        r = common.size(common.size_margin) * 0.5
+        c = common.rgb(common.color(common.color_disabled_text))
 
         self.setStyleSheet(
             f'background-color:{bg};'
@@ -92,15 +97,24 @@ class AboutLabel(QtWidgets.QLabel):
         self.init_data()
 
     def init_data(self):
+        """Initializes data.
+
+        """
         mod = importlib.import_module(__name__.split('.', maxsplit=1)[0])
         self.setText(mod.info())
 
     def mouseReleaseEvent(self, event):
+        """Mouse release event handler.
+
+        """
         mod = importlib.import_module(__name__.split('.', maxsplit=1)[0])
         QtGui.QDesktopServices.openUrl(mod.__website__)
 
 
 class AboutWidget(QtWidgets.QDialog):
+    """Shows informative data about Bookmarks.
+
+    """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         if not self.parent():
@@ -114,7 +128,7 @@ class AboutWidget(QtWidgets.QDialog):
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
-        o = common.size(common.WidthMargin)
+        o = common.size(common.size_margin)
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
 
@@ -128,6 +142,7 @@ class AboutWidget(QtWidgets.QDialog):
         self.ok_button.clicked.connect(self.close)
 
 
+#: UI layout definition
 SECTIONS = {
     0: {
         'name': 'Interface',
@@ -139,7 +154,7 @@ SECTIONS = {
                     'name': 'Interface Scale',
                     'key': 'settings/ui_scale',
                     'validator': None,
-                    'widget': ScaleWidget,
+                    'widget': UIScaleFactorsCombobox,
                     'placeholder': '',
                     'description': 'Scales Bookmark\'s interface by the specified '
                                    'amount.\nUseful for high-dpi displays if the '
@@ -157,14 +172,12 @@ SECTIONS = {
                     'description': 'Check to icons',
                 },
                 2: {
-                    'name': 'Thumbnail Background Color',
+                    'name': 'Show Thumbnail Background',
                     'key': 'settings/paint_thumbnail_bg',
                     'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Show Color'),
-                    'placeholder': 'Check to show a generic thumbnail background '
-                                   'color for transparent images',
-                    'description': 'Check to show a generic thumbnail background '
-                                   'color for transparent images',
+                    'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
+                    'placeholder': 'Check to show show thumbnail background color',
+                    'description': 'Check to show show thumbnail background color'
                 },
                 3: {
                     'name': 'Image Thumbnails',
@@ -202,7 +215,7 @@ SECTIONS = {
                 1: {
                     'name': 'Maximum search depth',
                     'key': 'settings/job_scan_depth',
-                    'validator': base.intvalidator,
+                    'validator': base.int_validator,
                     'widget': ui.LineEdit,
                     'placeholder': '3',
                     'description': 'Set the maximum folder depth to parse.\nParsing large'
@@ -296,7 +309,7 @@ SECTIONS = {
     4: {
         'name': 'About',
         'icon': None,
-        'color': common.color(common.TextSecondaryColor),
+        'color': common.color(common.color_secondary_text),
         'groups': {
             0: {
                 0: {
@@ -349,31 +362,46 @@ class PreferenceEditor(base.BasePropertyEditor):
             parent=parent
         )
 
-        self.debug_editor.stateChanged.connect(self.toggle_debug)
+        self.debug_editor.stateChanged.connect(actions.toggle_debug)
         self.settings_disable_oiio_editor.stateChanged.connect(
             actions.generate_thumbnails_changed
         )
         self.setWindowTitle('Preferences')
 
-    def toggle_debug(self, state):
-        common.debug_on = self.debug_editor.isChecked()
-
     @common.error
     @common.debug
     def init_data(self, *args, **kwargs):
+        """Initializes data.
+
+        """
         self.thumbnail_editor.setDisabled(True)
         self.load_saved_user_settings(common.SECTIONS['settings'])
         self._connect_settings_save_signals(common.SECTIONS['settings'])
 
+    def db_source(self):
+        """A file path to use as the source of database values.
+
+        Returns:
+            str: The database source file.
+
+        """
+        return None
+
     @common.error
     @common.debug
-    def save_changes(self, *args, **kwargs):
+    def save_changes(self):
+        """Saves changes.
+
+        """
         return True
 
     @common.error
     @common.debug
     @QtCore.Slot()
     def info_button_clicked(self, *args, **kwargs):
+        """Info button click action.
+
+        """
         from ..versioncontrol import versioncontrol
         versioncontrol.check()
 
@@ -381,6 +409,9 @@ class PreferenceEditor(base.BasePropertyEditor):
     @common.debug
     @QtCore.Slot()
     def info_button2_clicked(self, *args, **kwargs):
+        """Info button 2 click action.
+
+        """
         w = AboutWidget(parent=self)
         w.open()
 
@@ -388,10 +419,16 @@ class PreferenceEditor(base.BasePropertyEditor):
     @common.debug
     @QtCore.Slot()
     def documentation_button_clicked(self, *args, **kwargs):
+        """Documentation button click action.
+
+        """
         QtGui.QDesktopServices.openUrl(common.github_url)
 
     @common.error
     @common.debug
     @QtCore.Slot()
     def documentation_button2_clicked(self, *args, **kwargs):
+        """Info button 2 click action.
+
+        """
         QtGui.QDesktopServices.openUrl(common.documentation_url)

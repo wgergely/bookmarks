@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Common methods used to work with sequentially numbered file items.
 
 A sequence item is a file that has a number component that can be incremented. See
@@ -73,7 +72,6 @@ def is_collapsed(s):
     Example:
 
         .. code-block:: python
-            :lineno:
 
             filename = 'job_sh010_animation_{001-299}_gw.png'
             m = is_collapsed(filename)
@@ -115,14 +113,14 @@ def get_sequence(s):
             s (str): A file path.
 
     Returns:
-            group 1 (SRE_Match):    All the characters **before** the sequence number.
-            group 2 (SRE_Match):    The sequence number, as a string.
-            group 3 (SRE_Match):    All the characters **after** the sequence number up until the file extensions.
-            group 4 (SRE_Match):    The file extension **without** the '.' dot.
+            group 1 (SRE_Match): All the characters **before** the sequence number.
+            group 2 (SRE_Match): The sequence number, as a string.
+            group 3 (SRE_Match): All the characters **after** the sequence number up until the file extensions.
+            group 4 (SRE_Match): The file extension **without** the '.' dot.
 
     .. code-block:: python
 
-       s = 'job_sh010_animation_v002_wgergely.c4d'
+       s = 'job_sh010_animation_v002_username.c4d'
        m = get_sequence(s)
        if m:
                prefix = match.group(1)
@@ -142,19 +140,18 @@ def get_sequence(s):
 
 
 def proxy_path(v):
-    """Encompasses the logic used to associate preferences with items.
+    """Substitutes range notations (e.g. ``{001-099}``) with :attr:`SEQPROXY`.
 
-    Sequence items need a generic key to save values as the sequence notation
-    might change as files are added/removed to image sequences. Any `FileItem`
-    will use their file path as the key and SequenceItems will use `[0]` in place
-    of their frame-range notation.
+    Any non-collapsed items will use their actual file path. Collapsed sequence items
+    however, need to be represented in a manner independent of their actual start,
+    end and length to associate preferences with them consistently.
 
     Args:
-            v (QModelIndex, weakref.ref, dict or str): Data dict, index or filepath string.
+        v (QModelIndex, weakref.ref, dict or str): Data dict, index or filepath.
 
     Returns:
-            str: The key used to store the item's information in the local
-            preferences and the bookmark item database.
+        str: The key used to store the item's information in the local
+        preferences and the bookmark item database.
 
     """
     if isinstance(v, str):
@@ -167,7 +164,9 @@ def proxy_path(v):
         v = v.data(common.PathRole)
     else:
         raise TypeError(
-            f'Invalid type, expected one of {weakref.ref}, {QtCore.QModelIndex}, {dict}, got {type(v)}')
+            f'Invalid type, expected one of {weakref.ref}, '
+            f'{QtCore.QModelIndex}, {dict}, got {type(v)}'
+        )
     return _proxy_path(v)
 
 

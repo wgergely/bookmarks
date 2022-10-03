@@ -1,12 +1,14 @@
-# -*- coding: utf-8 -*-
-"""The `templates.py` adds the methods and widgets needed to create items based on zip
-template files.
+"""The module used to create job and asset items based on zip template files.
 
-The templates are used to create a job's or an asset's folder structure.
+The template files usually contain a folder structure used to define the skeleton
+of a project file structure.
 
-The list of template files are stored (in Windows) in the `%localappdata%/{product}/{
-mode}_template` folder. The `{mode}` can be any arbitrary string, e.g. 'job', or 'asset'
-as defined by `JobTemplateMode` and `AssetTemplateMode`.
+
+The list of template files are read from/and saved to the folder returned by
+:func:`get_template_folder`.
+
+The template mode can be any arbitrary string - we're defining them as
+:attr:`JobTemplateMode` and :attr:`AssetTemplateMode`.
 
 """
 import functools
@@ -61,10 +63,16 @@ def get_template_folder(mode):
 
 
 class TemplateContextMenu(contextmenu.BaseContextMenu):
+    """Context menu associated with the :class:`TemplatesWidget`.
+
+    """
 
     @common.error
     @common.debug
     def setup(self):
+        """Creates the context menu.
+
+        """
         self.refresh_menu()
         self.separator()
         self.add_menu()
@@ -75,16 +83,22 @@ class TemplateContextMenu(contextmenu.BaseContextMenu):
             self.remove_menu()
 
     def add_menu(self):
+        """Add action menu.
+
+        """
         self.menu[contextmenu.key()] = {
             'text': f'Add new {self.parent().mode()} template...',
             'action': functools.partial(
                 actions.pick_template,
                 self.parent().mode()
             ),
-            'icon': ui.get_icon('add', color=common.color(common.GreenColor))
+            'icon': ui.get_icon('add', color=common.color(common.color_green))
         }
 
     def remove_menu(self):
+        """Remove action menu.
+
+        """
         source = self.index.data(TemplatePathRole)
         self.menu[contextmenu.key()] = {
             'text': 'Delete',
@@ -92,10 +106,13 @@ class TemplateContextMenu(contextmenu.BaseContextMenu):
                 actions.remove_zip_template,
                 source
             ),
-            'icon': ui.get_icon('close', color=common.color(common.RedColor))
+            'icon': ui.get_icon('close', color=common.color(common.color_red))
         }
 
     def refresh_menu(self):
+        """Refresh action menu.
+
+        """
         self.menu[contextmenu.key()] = {
             'text': 'Refresh',
             'action': self.parent().init_data,
@@ -103,17 +120,23 @@ class TemplateContextMenu(contextmenu.BaseContextMenu):
         }
 
     def reveal_menu(self):
-        def reveal():
+        """Reveal action menu.
+
+        """
+        def _reveal():
             actions.reveal(self.index.data(TemplatePathRole))
 
         self.menu[contextmenu.key()] = {
             'text': 'Show in file explorer...',
             'icon': ui.get_icon('folder'),
-            'action': reveal,
+            'action': _reveal,
         }
 
 
 class TemplateListDelegate(ui.ListWidgetDelegate):
+    """Delegate associated with :class:`TemplateListWidget`.
+
+    """
     def __init__(self, parent=None):
         super(TemplateListDelegate, self).__init__(parent=parent)
 
@@ -122,7 +145,7 @@ class TemplateListDelegate(ui.ListWidgetDelegate):
         editor = ui.LineEdit(parent=parent)
         editor.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         editor.setStyleSheet(
-            f'background-color: {common.rgb(common.color(common.BackgroundDarkColor))};')
+            f'background-color: {common.rgb(common.color(common.color_dark_background))};')
         validator = QtGui.QRegExpValidator(parent=editor)
         validator.setRegExp(QtCore.QRegExp(r'[\_\-a-zA-z0-9]+'))
         editor.setValidator(validator)
@@ -132,6 +155,9 @@ class TemplateListDelegate(ui.ListWidgetDelegate):
 
 
 class TemplateListWidget(ui.ListWidget):
+    """Widget used to display a list of available templates.
+
+    """
     """Widget used to display a list of zip template files associated with
     the given `mode`.
 
@@ -170,7 +196,9 @@ class TemplateListWidget(ui.ListWidget):
 
     @QtCore.Slot()
     def init_data(self):
-        """Loads the available zip template files from the template directory."""
+        """Loads the available zip template files from the template directory.
+
+        """
         selected_index = common.get_selected_index(self)
         selected_name = selected_index.data(
             QtCore.Qt.DisplayRole
@@ -183,13 +211,13 @@ class TemplateListWidget(ui.ListWidget):
         dir_ = QtCore.QDir(get_template_folder(self.mode()))
         dir_.setNameFilters(['*.zip', ])
 
-        h = common.size(common.HeightRow)
+        h = common.size(common.size_row_height)
         size = QtCore.QSize(1, h)
 
-        off_pixmap = images.ImageCache.get_rsc_pixmap(
-            'close', common.color(common.SeparatorColor), h)
-        on_pixmap = images.ImageCache.get_rsc_pixmap(
-            'check', common.color(common.GreenColor), h)
+        off_pixmap = images.ImageCache.rsc_pixmap(
+            'close', common.color(common.color_separator), h)
+        on_pixmap = images.ImageCache.rsc_pixmap(
+            'check', common.color(common.color_green), h)
 
         icon = QtGui.QIcon()
         icon.addPixmap(off_pixmap, QtGui.QIcon.Normal)
@@ -291,9 +319,15 @@ class TemplateListWidget(ui.ListWidget):
             self.model().setData(index, previous_path, TemplatePathRole)
 
     def supportedDropActions(self):
+        """Returns the supported drop actions.
+
+        """
         return QtCore.Qt.CopyAction | QtCore.Qt.MoveAction
 
     def dropMimeData(self, index, data, action):
+        """Returns the drop mime data.
+
+        """
         if not data.hasUrls():
             return False
         if action & self.supportedDropActions():
@@ -301,6 +335,9 @@ class TemplateListWidget(ui.ListWidget):
         return True
 
     def eventFilter(self, widget, event):
+        """Event filter handler.
+
+        """
         if widget == self.viewport():
             if event.type() == QtCore.QEvent.DragEnter:
                 if event.mimeData().hasUrls():
@@ -351,31 +388,31 @@ class TemplateListWidget(ui.ListWidget):
             painter.setRenderHint(
                 QtGui.QPainter.SmoothPixmapTransform, on=True)
 
-            painter.setPen(common.color(common.TextSecondaryColor))
+            painter.setPen(common.color(common.color_secondary_text))
 
             _ = painter.setOpacity(0.6) if hover else painter.setOpacity(0.3)
 
-            o = common.size(common.WidthIndicator) * 2
-            _o = common.size(common.HeightSeparator)
+            o = common.size(common.size_indicator) * 2
+            _o = common.size(common.size_separator)
             rect = self.rect().adjusted(_o, _o, -_o, -_o)
             if self._drag_in_progress:
                 op = painter.opacity()
                 painter.setOpacity(1.0)
-                pen = QtGui.QPen(common.color(common.GreenColor))
+                pen = QtGui.QPen(common.color(common.color_green))
                 pen.setWidthF(_o)
                 painter.setPen(pen)
                 painter.setBrush(QtCore.Qt.NoBrush)
                 painter.drawRoundedRect(rect, o, o)
                 painter.setOpacity(op)
 
-            pen = QtGui.QPen(common.color(common.SeparatorColor))
-            pen.setWidthF(common.size(common.HeightSeparator))
+            pen = QtGui.QPen(common.color(common.color_separator))
+            pen.setWidthF(common.size(common.size_separator))
             painter.setPen(pen)
-            painter.setBrush(common.color(common.SeparatorColor))
+            painter.setBrush(common.color(common.color_separator))
             painter.drawRoundedRect(rect, o, o)
 
-            o = common.size(common.WidthIndicator)
-            painter.setPen(common.color(common.TextColor))
+            o = common.size(common.size_indicator)
+            painter.setPen(common.color(common.color_text))
 
             if self.count() > 0:
                 painter.end()
@@ -392,9 +429,15 @@ class TemplateListWidget(ui.ListWidget):
         return False
 
     def showEvent(self, event):
+        """Event handler.
+
+        """
         QtCore.QTimer.singleShot(100, self.init_data)
 
     def contextMenuEvent(self, event):
+        """Event handler.
+
+        """
         item = self.itemAt(event.pos())
         menu = TemplateContextMenu(item, parent=self)
         pos = event.pos()
@@ -403,8 +446,13 @@ class TemplateListWidget(ui.ListWidget):
         menu.exec_()
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth) * 0.15,
-                            common.size(common.DefaultWidth) * 0.2)
+        """Returns a size hint.
+
+        """
+        return QtCore.QSize(
+            common.size(common.size_width) * 0.15,
+            common.size(common.size_width) * 0.2
+        )
 
 
 class TemplatesPreviewWidget(QtWidgets.QListWidget):
@@ -426,18 +474,18 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
         """
         self.clear()
 
-        size = QtCore.QSize(0, common.size(common.HeightRow) * 0.8)
+        size = QtCore.QSize(0, common.size(common.size_row_height) * 0.8)
 
-        folder_pixmap = images.ImageCache.get_rsc_pixmap(
-            'folder', common.color(common.TextSecondaryColor),
-            common.size(common.WidthMargin))
+        folder_pixmap = images.ImageCache.rsc_pixmap(
+            'folder', common.color(common.color_secondary_text),
+            common.size(common.size_margin))
         folder_icon = QtGui.QIcon()
         folder_icon.addPixmap(folder_pixmap, QtGui.QIcon.Normal)
         folder_icon.addPixmap(folder_pixmap, QtGui.QIcon.Selected)
         folder_icon.addPixmap(folder_pixmap, QtGui.QIcon.Disabled)
 
-        file_pixmap = images.ImageCache.get_rsc_pixmap(
-            'file', common.color(common.GreenColor), common.size(common.WidthMargin),
+        file_pixmap = images.ImageCache.rsc_pixmap(
+            'file', common.color(common.color_green), common.size(common.size_margin),
             opacity=0.5)
         file_icon = QtGui.QIcon()
         file_icon.addPixmap(file_pixmap, QtGui.QIcon.Normal)
@@ -452,7 +500,7 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
 
             item = QtWidgets.QListWidgetItem(parent=self)
             item.setData(QtCore.Qt.FontRole, common.font_db.secondary_font(
-                common.size(common.FontSizeSmall))[0])
+                common.size(common.size_font_small))[0])
             item.setData(QtCore.Qt.DisplayRole, f)
             item.setData(QtCore.Qt.SizeHintRole, size)
             item.setData(QtCore.Qt.DecorationRole, icon)
@@ -461,6 +509,9 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
             self.addItem(item)
 
     def eventFilter(self, widget, event):
+        """Event filter handler.
+
+        """
         if widget is not self:
             return False
 
@@ -469,13 +520,13 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
                 return False
             painter = QtGui.QPainter()
             painter.begin(self)
-            painter.setBrush(common.color(common.BackgroundDarkColor))
+            painter.setBrush(common.color(common.color_dark_background))
             painter.setPen(QtCore.Qt.NoPen)
 
             painter.setFont(
-                common.font_db.secondary_font(common.size(common.FontSizeSmall))[0])
+                common.font_db.secondary_font(common.size(common.size_font_small))[0])
             painter.drawRect(self.rect())
-            o = common.size(common.FontSizeMedium)
+            o = common.size(common.size_font_medium)
             rect = self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o))
             painter.drawText(
                 rect,
@@ -488,11 +539,19 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
         return False
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth) * 0.15,
-                            common.size(common.DefaultWidth) * 0.2)
+        """Returns a size hint.
+
+        """
+        return QtCore.QSize(
+            common.size(common.size_width) * 0.15,
+            common.size(common.size_width) * 0.2
+        )
 
 
 class TemplatesWidget(QtWidgets.QSplitter):
+    """Main template list with a template content preview widget.
+
+    """
 
     def __init__(self, mode, parent=None):
         super(TemplatesWidget, self).__init__(parent=parent)
@@ -507,12 +566,15 @@ class TemplatesWidget(QtWidgets.QSplitter):
         )
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        self.setMaximumHeight(common.size(common.DefaultWidth) * 0.3)
+        self.setMaximumHeight(common.size(common.size_width) * 0.3)
 
         self._create_UI()
         self._connect_signals()
 
     def mode(self):
+        """The current template mode.
+
+        """
         return self._mode
 
     def _create_UI(self):
@@ -550,5 +612,10 @@ class TemplatesWidget(QtWidgets.QSplitter):
             index.data(TemplateContentsRole))
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth),
-                            common.size(common.DefaultHeight))
+        """Returns a size hint.
+
+        """
+        return QtCore.QSize(
+            common.size(common.size_width),
+            common.size(common.size_height)
+        )

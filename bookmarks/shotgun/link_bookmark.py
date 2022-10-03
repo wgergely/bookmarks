@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Shotgun Entity linker widgets.
 
 The widgets are used to link a ShotGrid entity with a local bookmark item.
@@ -59,6 +58,12 @@ class LinkBookmarkWidget(link.BaseLinkWidget):
             server, job, root, None, 'Project', value_map, parent=parent)
 
     def db_source(self):
+        """A file path to use as the source of database values.
+
+        Returns:
+            str: The database source file.
+
+        """
         if not all((self.server, self.job, self.root)):
             return None
         return '/'.join((self.server, self.job, self.root))

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Common signals used across Bookmarks.
 
 """

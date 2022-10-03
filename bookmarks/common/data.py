@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Interface to interact with the item data cache.
 
 All data loaded by the item models are stored in :attr:`~bookmarks.common.item_data`.
@@ -18,7 +17,7 @@ def sort_data(ref, sort_by, sort_order):
     Args:
         ref (weakref.ref): Pointer to a :class:`~bookmarks.common.core.DataDict` instance.
         sort_by (int): The role to use to sort the data.
-        sort_order (bool):  The sort order.
+        sort_order (bool): The sort order.
 
     Returns:
         common.DataDict: A sorted copy of the source data.
@@ -29,10 +28,16 @@ def sort_data(ref, sort_by, sort_order):
     common.check_type(sort_order, bool)
 
     def sort_key(_idx):
+        """Returns the sort key of the given item.
+
+        """
         # If sort_by_basename is `True` we'll use the base file name for sorting
         v = ref().__getitem__(_idx)
-        if common.sort_by_basename and sort_by == common.SortByNameRole and isinstance(
-                v[sort_by], list):
+        if (
+                common.sort_by_basename and
+                sort_by == common.SortByNameRole and
+                isinstance(v[sort_by], list)
+        ):
             return v[sort_by][-1]
         return v[sort_by]
 
@@ -87,7 +92,7 @@ def get_task_data(key, task):
         task (str): A task folder.
 
     Returns:
-        common.DataDict:    The cached data.
+        common.DataDict: The cached data.
 
     """
     common.check_type(key, tuple)
@@ -143,17 +148,22 @@ def is_data_loaded(key, task, data_type):
 
 
 def get_data_ref(key, task, data_type):
-    """Get a data pointer from :attr:`bookmarks.common.item_data`.
+    """Get a data pointer from :attr:`bookmarks.common.item_data` cache.
 
     Args:
         key (tuple): A tuple of path segments.
         task (str): A task folder.
-        data_type (int): One of :attr:`bookmarks.common.FileItem` or :attr:`bookmarks.common.SequenceItem`.
+        data_type (int):
+            One of :attr:`bookmarks.common.FileItem` or
+            :attr:`bookmarks.common.SequenceItem`.
 
     Returns:
         weakref.ref: Pointer to the requested data set.
 
     """
+    if not key or not task:
+        return None
+
     common.check_type(key, tuple)
     common.check_type(task, str)
     common.check_type(data_type, int)
@@ -161,6 +171,21 @@ def get_data_ref(key, task, data_type):
     return weakref.ref(
         get_data(key, task, data_type)
     )
+
+
+def get_ref_from_source_index(index):
+    """Get a weakref pointer from source item model index.
+
+    """
+    if not index.isValid():
+        return
+    if not hasattr(index.model(), 'sourceModel'):
+        return None
+
+    model = index.model()
+    data = model.sourceModel().model_data()
+    idx = model.mapToSource(index).row()
+    return weakref.ref(data[idx])
 
 
 def reset_data(key, task):

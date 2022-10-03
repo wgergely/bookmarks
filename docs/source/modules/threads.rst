@@ -1,11 +1,12 @@
 threads
 ===================
 
+
 .. automodule:: bookmarks.threads
     :members:
 
 
 .. toctree::
+    :glob:
 
-    threads/threads
-    threads/workers
+    threads/*

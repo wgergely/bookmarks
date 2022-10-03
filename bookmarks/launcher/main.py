@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Application launcher item definitions and sub-widgets.
 
 """
@@ -11,6 +10,7 @@ from .. import contextmenu
 from .. import images
 from .. import ui
 
+#: Default launcher item definition
 DEFAULT_ITEM = {
     0: {
         'key': 'name',
@@ -35,14 +35,17 @@ DEFAULT_ITEM = {
     },
 }
 
-THUMBNAIL_EDITOR_SIZE = common.size(common.WidthMargin) * 5
+#: Default launcher item size
+THUMBNAIL_EDITOR_SIZE = common.size(common.size_margin) * 5
 
 
 class LauncherItemEditor(QtWidgets.QDialog):
     """Widget used to edit launcher items associated with the current bookmark.
 
     """
+    #: Signal emitted when a launcher item changes
     itemChanged = QtCore.Signal(dict)
+    #: Signal emitted when a launcher item was added
     itemAdded = QtCore.Signal(dict)
 
     def __init__(self, data=None, parent=None):
@@ -65,31 +68,31 @@ class LauncherItemEditor(QtWidgets.QDialog):
         if not self.parent():
             common.set_stylesheet(self)
 
-        o = common.size(common.WidthMargin) * 0.5
+        o = common.size(common.size_margin) * 0.5
 
         QtWidgets.QVBoxLayout(self)
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
 
-        grp = ui.get_group(margin=common.size(common.WidthIndicator),
+        grp = ui.get_group(margin=common.size(common.size_indicator),
                            vertical=False, parent=self)
         grp.layout().setAlignment(QtCore.Qt.AlignCenter)
 
-        h = common.size(common.WidthMargin) * 2
+        h = common.size(common.size_margin) * 2
 
         self.thumbnail_viewer_widget = QtWidgets.QLabel(parent=grp)
-        w = h * len(DEFAULT_ITEM) + (common.size(common.WidthIndicator) * 2)
+        w = h * len(DEFAULT_ITEM) + (common.size(common.size_indicator) * 2)
         self.thumbnail_viewer_widget.setFixedSize(QtCore.QSize(w, w))
         grp.layout().addWidget(self.thumbnail_viewer_widget, 0)
 
         _grp = ui.get_group(margin=common.size(
-            common.WidthIndicator), parent=grp)
+            common.size_indicator), parent=grp)
         _grp.layout().setAlignment(QtCore.Qt.AlignCenter)
 
         for k in DEFAULT_ITEM:
             row = ui.add_row(None, height=None,
-                             padding=common.size(common.WidthIndicator), parent=_grp)
+                             padding=common.size(common.size_indicator), parent=_grp)
             editor = DEFAULT_ITEM[k]['widget']()
             editor.setFixedHeight(h)
 
@@ -120,6 +123,9 @@ class LauncherItemEditor(QtWidgets.QDialog):
 
     @QtCore.Slot()
     def init_data(self, item):
+        """Initializes the editor.
+
+        """
         self.update_thumbnail_image(item['thumbnail'])
 
         for idx in DEFAULT_ITEM:
@@ -129,6 +135,12 @@ class LauncherItemEditor(QtWidgets.QDialog):
 
     @QtCore.Slot(str)
     def update_thumbnail_image(self, path):
+        """Updates the item's thumbnail image.
+
+        Args:
+            path (str): Path to an image file.
+
+        """
         image = QtGui.QImage(path)
         if image.isNull():
             self.thumbnail_viewer_widget.setPixmap(QtGui.QPixmap())
@@ -144,6 +156,9 @@ class LauncherItemEditor(QtWidgets.QDialog):
     @common.error
     @common.debug
     def action(self):
+        """Add item action.
+
+        """
         if not self.name_editor.text():
             raise RuntimeError('Must enter a name.')
 
@@ -169,15 +184,21 @@ class LauncherItemEditor(QtWidgets.QDialog):
 
     @QtCore.Slot()
     def path_button_clicked(self):
+        """Button click action.
+
+        """
         self._pick(self.path_editor, caption='Pick an Executable')
 
     @QtCore.Slot()
     def thumbnail_button_clicked(self):
+        """Button click action.
+
+        """
         self._pick(
             self.thumbnail_editor,
             caption='Pick a Thumbnail',
             filter=images.get_oiio_namefilters(),
-            dir=QtCore.QFileInfo(common.get_rsc(
+            dir=QtCore.QFileInfo(common.rsc(
                 common.FormatResource)).filePath()
         )
 
@@ -201,8 +222,13 @@ class LauncherItemEditor(QtWidgets.QDialog):
         return v
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth),
-                            common.size(common.HeightRow))
+        """Returns a size hint.
+
+        """
+        return QtCore.QSize(
+            common.size(common.size_width),
+            common.size(common.size_row_height)
+        )
 
 
 class LauncherListContextMenu(contextmenu.BaseContextMenu):
@@ -211,9 +237,12 @@ class LauncherListContextMenu(contextmenu.BaseContextMenu):
     """
 
     def setup(self):
+        """Creates the context menu.
+
+        """
         self.menu[contextmenu.key()] = {
             'text': 'Add item...',
-            'icon': ui.get_icon('add', color=common.color(common.GreenColor)),
+            'icon': ui.get_icon('add', color=common.color(common.color_green)),
             'action': self.parent().add_new_item
         }
 
@@ -229,7 +258,7 @@ class LauncherListContextMenu(contextmenu.BaseContextMenu):
 
         self.menu[contextmenu.key()] = {
             'text': 'Remove item',
-            'icon': ui.get_icon('close', color=common.color(common.RedColor)),
+            'icon': ui.get_icon('close', color=common.color(common.color_red)),
             'action': functools.partial(self.parent().remove_item, self.index)
         }
 
@@ -251,14 +280,24 @@ class LauncherListWidget(ui.ListWidget):
             QtWidgets.QSizePolicy.Minimum
         )
 
+    @QtCore.Slot()
     def emit_data_change(self):
+        """Slot connected to the itemAdded signal.
+
+        """
         self.dataUpdated.emit(self.data())
 
     def remove_item(self, item):
+        """Remove launcher item action.
+
+        """
         self.takeItem(self.row(item))
         self.emit_data_change()
 
     def contextMenuEvent(self, event):
+        """Event handler.
+
+        """
         item = self.itemAt(event.pos())
         menu = LauncherListContextMenu(item, parent=self)
         pos = event.pos()
@@ -268,6 +307,9 @@ class LauncherListWidget(ui.ListWidget):
 
     @QtCore.Slot(QtWidgets.QListWidgetItem)
     def edit_item(self, item):
+        """Slot used top edit a widget item.
+
+        """
         editor = LauncherItemEditor(
             data=item.data(QtCore.Qt.UserRole),
             parent=self
@@ -278,6 +320,9 @@ class LauncherListWidget(ui.ListWidget):
 
     @QtCore.Slot()
     def add_new_item(self):
+        """Add new item action.
+
+        """
         editor = LauncherItemEditor(
             data=None,
             parent=self
@@ -289,6 +334,9 @@ class LauncherListWidget(ui.ListWidget):
     @QtCore.Slot(QtWidgets.QListWidgetItem)
     @QtCore.Slot(dict)
     def update_item(self, item, data):
+        """Update item action.
+
+        """
         item.setData(QtCore.Qt.DisplayRole, data['name'])
         item.setData(QtCore.Qt.UserRole, data)
 
@@ -300,12 +348,18 @@ class LauncherListWidget(ui.ListWidget):
         self.emit_data_change()
 
     def data(self):
+        """Returns launcher item data.
+
+        """
         v = {}
         for idx in range(self.count()):
             v[idx] = self.item(idx).data(QtCore.Qt.UserRole)
         return v
 
     def init_data(self, data):
+        """Initialises the editor.
+
+        """
         self.clear()
 
         common.check_type(data, dict)
@@ -314,9 +368,12 @@ class LauncherListWidget(ui.ListWidget):
             self.add_item(data[idx])
 
     def add_item(self, data):
+        """Adds a new launcher item to the editor.
+
+        """
         item = QtWidgets.QListWidgetItem()
 
-        size = QtCore.QSize(1, common.size(common.HeightRow))
+        size = QtCore.QSize(1, common.size(common.size_row_height))
         pixmap = QtGui.QPixmap(data['thumbnail'])
         pixmap.setDevicePixelRatio(common.pixel_ratio)
         icon = QtGui.QIcon(pixmap)
@@ -329,7 +386,13 @@ class LauncherListWidget(ui.ListWidget):
         self.addItem(item)
 
     def value(self):
+        """Returns the launcher item data.
+
+        """
         return self.data()
 
     def setValue(self, v):
+        """Sets the launcher item data.
+
+        """
         self.init_data(v)

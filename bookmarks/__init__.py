@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """.. centered:: |logo|
 
 .. centered:: |label1| |label2| |label3| |label4|
@@ -11,6 +10,9 @@ Welcome to Bookmarks!
 
 Bookmarks is a lightweight Python asset manager designed to browse and manage content
 of animation, VFX and film projects.
+
+
+.. centered:: |image1|
 
 
 Features
@@ -83,6 +85,9 @@ Warning:
 .. |label4| image:: https://img.shields.io/badge/Version-v0.6.0-green
    :height: 18px
 
+.. |image1| image:: userguide/step01.png
+
+
 """
 import importlib
 import os
@@ -133,12 +138,11 @@ def info():
         env = f'{common.env_key} is not set!'
     else:
         env = f'{common.env_key}={os.environ[common.env_key]}'
-
     return '\n'.join(
         (
             __copyright__,
-            f'E-Mail:    {__email__}',
-            f'Website:  {__website__}',
+            f'E-Mail: {__email__}',
+            f'Website: {__website__}',
             '\nPackages\n'
             f'Python {py_ver} {py_c}',
             f'Bookmarks {__version__}',
@@ -151,7 +155,7 @@ def info():
     )
 
 
-def exec(print_info=True):
+def exec_(print_info=True):
     """Opens the Bookmark app.
 
     The method creates :class:`bookmarks.standalone.BookmarksApp`,
@@ -169,10 +173,3 @@ def exec(print_info=True):
     standalone.show()
 
     QtWidgets.QApplication.instance().exec_()
-
-
-def exec_(*args, **kwargs):
-    """Shadows :func:`exec`. Exists for compatibility.
-
-    """
-    return exec(*args, **kwargs)

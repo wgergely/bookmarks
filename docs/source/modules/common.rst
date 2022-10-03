@@ -5,19 +5,9 @@ common
 
 
 .. toctree::
-    :maxdepth: 3
+    :glob:
 
-    common/core
-    common/data
-    common/env
-    common/font
-    common/monitor
-    common/sequence
-    common/sessionlock
-    common/settings/
-    common/setup
-    common/signals
-    common/ui
+    common/*
 
 
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Asset items in their simplest sense are file paths made up of ``server``, ``job``, ``root``
 and ``asset`` components.
 
@@ -55,7 +54,7 @@ class AssetItemViewContextMenu(contextmenu.BaseContextMenu):
     @common.debug
     @common.error
     def setup(self):
-        """Create the context menu.
+        """Creates the context menu.
 
         """
         self.extra_menu()
@@ -113,7 +112,7 @@ class AssetItemModel(models.ItemModel):
     @common.error
     @common.debug
     def init_data(self):
-        """Collects the data needed to populate the asset model.
+        """Collects the data needed to populate the asset item model.
 
         """
         p = self.source_path()
@@ -288,17 +287,20 @@ class AssetItemModel(models.ItemModel):
         return common.FileItem
 
     def filter_setting_dict_key(self):
-        """Dict key used to filter values to the user settings file."""
+        """The custom dictionary key used to save filter settings to the user settings
+        file.
+
+        """
         v = [common.active(k) for k in ('server', 'job', 'root')]
         if not all(v):
             return None
         return '/'.join(v)
 
     def default_row_size(self):
-        """Default row size.
+        """Returns the default item size.
 
         """
-        return QtCore.QSize(1, common.size(common.HeightAsset))
+        return QtCore.QSize(1, common.size(common.size_asset_row_height))
 
 
 class AssetItemView(views.ThreadedItemView):
@@ -326,15 +328,19 @@ class AssetItemView(views.ThreadedItemView):
         common.signals.sgAssetsLinked.connect(self.start_delayed_queue_timer)
 
     def inline_icons_count(self):
-        """The number of in-line icons."""
-        if self.width() < common.size(common.DefaultWidth) * 0.5:
+        """Inline buttons count.
+
+        """
+        if self.width() < common.size(common.size_width) * 0.5:
             return 0
         if self.buttons_hidden():
             return 0
         return 6
 
     def get_hint_string(self):
-        """A hint string to show when the view is empty."""
+        """Returns an informative hint text.
+
+        """
         return 'No items. Select right-click - Add Asset to add a new asset.'
 
     def mouseReleaseEvent(self, event):

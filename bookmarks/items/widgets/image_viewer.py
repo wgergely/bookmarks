@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """A pop-up widget used to display an image preview of a selected item.
 
 """
@@ -11,6 +10,22 @@ from ... import images
 
 
 def show(path, ref, parent, oiio=False, max_size=-1):
+    """Shows the image preview widget.
+
+    Args:
+        path (str): The path to an image file.
+        ref (weakref.ref): A reference to an item data.
+        parent (QWidget): A parent widget.
+        oiio (bool):
+            When `True`, will use OpenImageIO to read the source image.
+            Defaults to `False`.
+        max_size (int):
+            The maximum image size in pixels. If -1, use the source image size.
+
+    Returns:
+        The image preview widget instance.
+
+    """
     k = repr(parent)
     if k not in common.VIEWER_WIDGET_CACHE:
         common.VIEWER_WIDGET_CACHE[k] = ImageViewer(parent=parent)
@@ -18,8 +33,19 @@ def show(path, ref, parent, oiio=False, max_size=-1):
     common.VIEWER_WIDGET_CACHE[k].show()
     common.VIEWER_WIDGET_CACHE[k].set_image(path, ref, max_size=max_size, oiio=oiio)
 
+    return common.VIEWER_WIDGET_CACHE[k]
+
 
 def get_item_info(ref):
+    """Gets a list of informative strings describing the image properties.
+
+    Args:
+        ref (weakref.ref): A reference to an item data.
+
+    Returns:
+        A list of image property strings.
+
+    """
     info = []
 
     if not ref or not ref():
@@ -27,14 +53,14 @@ def get_item_info(ref):
 
     s = ref()[common.PathRole]
     s = s if isinstance(s, str) else ''
-    info.append((common.color(common.TextColor), s if s else ''))
+    info.append((common.color(common.color_text), s if s else ''))
 
     if not ref or not ref():
         return info
 
     s = ref()[common.DescriptionRole]
     s = s if isinstance(s, str) else ''
-    info.append((common.color(common.GreenColor), s if s else ''))
+    info.append((common.color(common.color_green), s if s else ''))
 
     if not ref or not ref():
         return info
@@ -42,7 +68,7 @@ def get_item_info(ref):
     s = ref()[common.FileDetailsRole]
     s = s if isinstance(s, str) else ''
     s = '   |   '.join(s.split(';')) if s else '-'
-    info.append((common.color(common.TextColor), s if s else '-'))
+    info.append((common.color(common.color_text), s if s else '-'))
 
     if not ref or not ref():
         return info
@@ -60,7 +86,7 @@ def get_item_info(ref):
     for n, _s in enumerate([f.strip() for f in s.split('\n') if f]):
         if n > 32:
             break
-        info.append((common.color(common.TextSecondaryColor), _s if _s else ''))
+        info.append((common.color(common.color_secondary_text), _s if _s else ''))
 
     return info
 
@@ -94,18 +120,20 @@ class Viewer(QtWidgets.QGraphicsView):
         self.setMouseTracking(True)
 
     def paintEvent(self, event):
-        """Custom paint event"""
+        """Event handler.
+
+        """
         super().paintEvent(event)
 
         painter = QtGui.QPainter()
         painter.begin(self.viewport())
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
 
-        o = common.size(common.WidthMargin)
+        o = common.size(common.size_margin)
         rect = self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o))
 
         font, metrics = common.font_db.primary_font(
-            common.size(common.FontSizeMedium)
+            common.size(common.size_font_medium)
         )
         rect.setHeight(metrics.height())
 
@@ -120,6 +148,9 @@ class Viewer(QtWidgets.QGraphicsView):
         painter.end()
 
     def wheelEvent(self, event):
+        """Event handler.
+
+        """
         # Zoom Factor
         zoom_in_factor = 1.25
         zoom_out_factor = 1.0 / zoom_in_factor
@@ -146,6 +177,9 @@ class Viewer(QtWidgets.QGraphicsView):
         self.translate(delta.x(), delta.y())
 
     def keyPressEvent(self, event):
+        """Key press event handler.
+
+        """
         event.ignore()
 
 
@@ -186,6 +220,12 @@ class ImageViewer(QtWidgets.QWidget):
     def set_image(self, source, ref, max_size=-1, oiio=False):
         """Loads an image and displays the contents as a QPixmap item.
 
+        Args:
+            source (str): The path to the image.
+            ref (weakref.ref): Pointer to an item data.
+            max_size (int, optional): The maximum image size, or uses source size if -1.
+            oiio (bool, optional): Use OpenImageIO to load the source image.
+
         """
         self.viewer.item.setPixmap(QtGui.QPixmap())
 
@@ -196,7 +236,9 @@ class ImageViewer(QtWidgets.QWidget):
                 oiio is False and
                 QtCore.QFileInfo(source).suffix().lower() not in images.QT_IMAGE_FORMATS
         ):
-            raise RuntimeError('Qt cannot display the source image.')
+            raise RuntimeError(
+                f'Invalid image format. We can only read {images.QT_IMAGE_FORMATS} files.'
+            )
 
         # Wait for the thread to finish loading the thumbnail
         images.wait_for_lock(source)
@@ -207,20 +249,33 @@ class ImageViewer(QtWidgets.QWidget):
             with images.lock:
                 images.ImageCache.flush(source)
 
-            self.viewer.scale(1.0, 1.0)
             self.viewer.setSceneRect(self.rect())
             self.viewer.scene().setSceneRect(self.rect())
             self.viewer.item.setPixmap(pixmap)
             self.viewer.repaint()
 
+        self.viewer.resetMatrix()
         br = self.viewer.item.sceneBoundingRect()
+
+        # Move the pixmap item to the center of the graphics scene
         self.viewer.item.setPos(
             self.window().rect().center().x() - (br.width() / 2),
             self.window().rect().center().y() - (br.height() / 2)
         )
 
+        if not pixmap or pixmap.isNull():
+            return
+
+        _max = max(br.width(), br.height())
+        if _max > common.thumbnail_size:
+            scale_ratio = 1 / (_max / common.thumbnail_size)
+            self.viewer.scale(scale_ratio, scale_ratio)
+            self.viewer.repaint()
+
     def keyPressEvent(self, event):
-        """Catching and forward key press events."""
+        """Key press event handler.
+
+        """
         event.accept()
 
         if event.key() == QtCore.Qt.Key_Down:
@@ -243,4 +298,8 @@ class ImageViewer(QtWidgets.QWidget):
             self.hide()
 
     def showEvent(self, event):
+        """Event handler.
+
+        """
         common.fit_screen_geometry(self)
+

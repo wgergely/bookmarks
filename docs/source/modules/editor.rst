@@ -6,11 +6,6 @@ editor
 
 
 .. toctree::
-    :maxdepth: 3
+    :glob:
 
-    editor/base
-    editor/base_widgets
-    editor/preferences
-    editor/bookmark_properties
-    editor/asset_properties
-
+    editor/*

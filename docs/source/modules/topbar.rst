@@ -1,15 +1,14 @@
 topbar
 ================
 
+
 .. automodule:: bookmarks.topbar
     :members:
 
 
 .. toctree::
+    :glob:
 
-    topbar/buttons
-    topbar/quickswitch
-    topbar/tabs
-    topbar/topbar
+    topbar/*
 
 

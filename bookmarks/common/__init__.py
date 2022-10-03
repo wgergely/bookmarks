@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Core attributes, classes and methods used to define the look and behaviour of
 Bookmarks.
 
@@ -33,28 +32,17 @@ running from inside a host DCC. Currently only the Maya plugin makes use of this
 See :mod:`bookmarks.maya` and :mod:`bookmarks.common` for the related methods.
 
 """
-#: Debug logging is on when `True`. See :func:`~bookmarks.common.core.debug`.
 debug_on = False
-
-#: Type checking on when `True`. See :func:`~bookmarks.common.core.check_type`.
 typecheck_on = True
-
-#: Initialization mode. See :func:`~bookmarks.common.setup.initialize`
 init_mode = None
-
-#: Determines how the active paths are saved and loaded.
-#: See :mod:`~bookmarks.common.sessionlock` and :mod:`~bookmarks.common.settings`.
 active_mode = None
-
-#: A QObject that holds common application signals. See :mod:`~bookmarks.common.signals`.
 signals = None
-
-#: User settings instance. See :mod:`bookmarks.common.settings`
 settings = None
 
 ui_scale_factor = 1.0  # Global ui scaling factor
 dpi = 72.0
 sort_by_basename = False  # Sort models by item basename instead of full name
+
 stylesheet = None
 cursor = None
 font_db = None
@@ -70,15 +58,14 @@ db_connections = {}
 
 active_paths = None
 
-#: Cache used to store item data. See :mod:`~bookmarks.common.data`.
 item_data = {}
 monitors = {}
 
 delegate_paths = {}
 delegate_rectangles = {}
 delegate_text_segments = {}
-delegate_subdir_rects = {}
-delegate_bg_subdir_rects = {}
+delegate_subdir_rectangles = {}
+delegate_bg_subdir_rectangles = {}
 delegate_bg_brushes = {}
 
 color_cache = {}
@@ -95,7 +82,6 @@ image_cache = {}
 
 token_configs = {}
 
-# These values will be overridden by the values in config.json:
 documentation_url = 'https://bookmarks.gergely-wootsch.com/html/index.html'
 github_url = 'https://github.com/wgergely/bookmarks'
 product = 'Bookmarks'
@@ -108,38 +94,43 @@ stylesheet_file = 'stylesheet.qss'
 default_bookmarks_template = 'default_bookmark_items.json'
 job_template = 'Job.zip'
 asset_template = 'Asset.zip'
+
 max_list_items = 999999
 ui_scale_factors = [0.7, 0.8, 0.9, 1.0, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0]
+
 bold_font = 'bmRobotoBold'
 medium_font = 'bmRobotoMedium'
-FontSizeSmall = 11.0
-FontSizeMedium = 12.0
-FontSizeLarge = 16.0
-HeightRow = 34.0
-HeightBookmark = 40.0
-HeightAsset = 64.0
-HeightSeparator = 1.0
-WidthMargin = 18.0
-WidthIndicator = 4.0
-DefaultWidth = 640.0
-DefaultHeight = 480.0
-BackgroundColor = [75, 75, 85, 255]
-BackgroundLightColor = [145, 140, 145, 255]
-BackgroundDarkColor = [65, 60, 65, 255]
-TextColor = [220, 220, 225, 255]
-TextSecondaryColor = [170, 170, 175, 255]
-TextSelectedColor = [250, 250, 255, 255]
-TextDisabledColor = [140, 140, 145, 255]
-SeparatorColor = [35, 35, 40, 255]
-BlueLightColor = [50, 50, 195, 180]
-BlueColor = [107, 135, 185, 255]
-RedLightColor = [190, 50, 50, 180]
-RedColor = [219, 114, 114, 255]
-GreenLightColor = [80, 150, 100, 180]
-GreenColor = [90, 200, 155, 255]
-GreenAltColor = [110, 190, 160, 255]
-OpaqueColor = [0, 0, 15, 30]
+
+size_font_small = 11.0
+size_font_medium = 12.0
+size_font_large = 16.0
+size_row_height = 34.0
+size_bookmark_row_height = 40.0
+size_asset_row_height = 64.0
+size_separator = 1.0
+size_margin = 18.0
+size_indicator = 4.0
+size_width = 640.0
+size_height = 480.0
+
+color_background = [75, 75, 85, 255]
+color_light_background = [145, 140, 145, 255]
+color_dark_background = [65, 60, 65, 255]
+color_text = [220, 220, 225, 255]
+color_secondary_text = [170, 170, 175, 255]
+color_selected_text = [250, 250, 255, 255]
+color_disabled_text = [140, 140, 145, 255]
+color_separator = [35, 35, 40, 255]
+color_light_blue = [50, 50, 195, 180]
+color_blue = [107, 135, 185, 255]
+color_red = [219, 114, 114, 255]
+color_red2 = [190, 50, 50, 180]
+color_green = [90, 200, 155, 255]
+color_dark_green = [110, 190, 160, 255]
+color_light_green = [80, 150, 100, 180]
+color_opaque = [0, 0, 15, 30]
 Transparent = [0, 0, 0, 0]
+
 thumbnail_size = 512.0
 thumbnail_format = 'png'
 
@@ -159,6 +150,9 @@ asset_property_editor = None
 file_saver_widget = None
 publish_widget = None
 maya_export_widget = None
+ffmpeg_export_widget = None
+screen_capture_widget = None
+pick_thumbnail_widget = None
 
 sg_connecting_message = None
 sg_error_message = None
@@ -176,7 +170,7 @@ from .env import *
 from .monitor import *
 from .font import *
 from .sequence import *
-from .sessionlock import *
+from .session_lock import *
 from .settings import *
 from .setup import *
 from .signals import *

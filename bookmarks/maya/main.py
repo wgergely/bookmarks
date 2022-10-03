@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """This module defines :class:`MayaWidget`, Bookmarks' container widget.
 
 """
@@ -34,7 +33,7 @@ def init_tool_button(*args, **kwargs):
 
     if ptr is None:
         common.maya_button_widget = MayaButtonWidget(
-            common.size(common.HeightRow * 2)
+            common.size(common.size_row_height * 2)
         )
         common.maya_button_widget.show()
         return
@@ -42,7 +41,7 @@ def init_tool_button(*args, **kwargs):
     parent = shiboken2.wrapInstance(int(ptr), QtWidgets.QWidget)
     if not parent:
         common.maya_button_widget = MayaButtonWidget(
-            common.size(common.HeightRow * 2)
+            common.size(common.size_row_height * 2)
         )
         common.maya_button_widget.show()
         return
@@ -121,7 +120,7 @@ def show():
                     workspace_control, e=True, collapse=True
                 )
         else:
-            # We'll toggle the visibilty
+            # We'll toggle the visibility
             state = widget.parent().isVisible()
             widget.setVisible(not state)
 
@@ -233,19 +232,21 @@ class PanelPicker(QtWidgets.QDialog):
                 y.append(g.topLeft().y())
                 w += g.width()
                 h += g.height()
-            topleft = QtCore.QPoint(
+            top_left = QtCore.QPoint(
                 min(x),
                 min(y)
             )
             size = QtCore.QSize(w - min(x), h - min(y))
-            geo = QtCore.QRect(topleft, size)
+            geo = QtCore.QRect(top_left, size)
         except:
             pass
 
         self.setGeometry(geo)
 
     def paintEvent(self, event):
-        """Paint the capture window."""
+        """Event handler.
+
+        """
         # Convert click and current mouse positions to local space.
         mouse_pos = self.mapFromGlobal(common.cursor.pos())
         painter = QtGui.QPainter()
@@ -265,32 +266,36 @@ class PanelPicker(QtWidgets.QDialog):
                 continue
 
             self.setCursor(QtCore.Qt.PointingHandCursor)
-            topleft = panel.mapToGlobal(panel.rect().topLeft())
-            topleft = self.mapFromGlobal(topleft)
+            top_left = panel.mapToGlobal(panel.rect().topLeft())
+            top_left = self.mapFromGlobal(top_left)
             bottomright = panel.mapToGlobal(panel.rect().bottomRight())
             bottomright = self.mapFromGlobal(bottomright)
 
-            capture_rect = QtCore.QRect(topleft, bottomright)
-            pen = QtGui.QPen(common.color(common.GreenColor))
-            pen.setWidth(common.size(common.HeightSeparator) * 2)
+            capture_rect = QtCore.QRect(top_left, bottomright)
+            pen = QtGui.QPen(common.color(common.color_green))
+            pen.setWidth(common.size(common.size_separator) * 2)
             painter.setPen(pen)
             painter.setBrush(QtCore.Qt.NoBrush)
             painter.drawRect(capture_rect)
 
             painter.setPen(QtCore.Qt.NoPen)
-            painter.setBrush(common.color(common.GreenColor))
+            painter.setBrush(common.color(common.color_green))
             painter.setOpacity(0.3)
             painter.drawRect(capture_rect)
 
         painter.end()
 
     def keyPressEvent(self, event):
-        """Cancel the capture on keypress."""
+        """Key press event handler.
+
+        """
         if event.key() == QtCore.Qt.Key_Escape:
             self.reject()
 
     def mouseReleaseEvent(self, event):
-        """Finalise the capture."""
+        """Event handler.
+
+        """
         if not isinstance(event, QtGui.QMouseEvent):
             return
 
@@ -305,10 +310,15 @@ class PanelPicker(QtWidgets.QDialog):
         self.done(QtWidgets.QDialog.Rejected)
 
     def mouseMoveEvent(self, event):
-        """Constrain and resize the capture window."""
+        """Event handler.
+
+        """
         self.update()
 
     def showEvent(self, event):
+        """Event handler.
+
+        """
         self._fit_screen_geometry()
         self.fade_in.start()
 
@@ -338,6 +348,9 @@ class MayaButtonWidget(ui.ClickableIconButton):
         self.init_shortcuts()
 
     def init_shortcuts(self):
+        """Initializes the plugin shortcuts.
+
+        """
         shortcut = QtWidgets.QShortcut(
             QtGui.QKeySequence('Ctrl+Alt+Shift+B'), self
         )
@@ -374,6 +387,9 @@ class MayaButtonWidget(ui.ClickableIconButton):
         self.clicked.connect(show)
 
     def paintEvent(self, event):
+        """Event handler.
+
+        """
         option = QtWidgets.QStyleOption()
         option.initFrom(self)
         hover = option.state & QtWidgets.QStyle.State_MouseOver
@@ -387,19 +403,19 @@ class MayaButtonWidget(ui.ClickableIconButton):
         painter.setBrush(QtGui.QColor(0, 0, 0, 10))
 
         if hover:
-            pixmap = images.ImageCache.get_rsc_pixmap(
+            pixmap = images.ImageCache.rsc_pixmap(
                 'icon', None, self.width()
             )
             painter.setOpacity(1.0)
         else:
-            pixmap = images.ImageCache.get_rsc_pixmap(
+            pixmap = images.ImageCache.rsc_pixmap(
                 'icon_bw', None, self.width()
             )
             painter.setOpacity(0.80)
 
         rect = self.rect()
         center = rect.center()
-        o = common.size(common.WidthIndicator) * 2
+        o = common.size(common.size_indicator) * 2
         rect = rect.adjusted(0, 0, -o, -o)
         rect.moveCenter(center)
 
@@ -409,13 +425,21 @@ class MayaButtonWidget(ui.ClickableIconButton):
         painter.end()
 
     def enterEvent(self, event):
+        """Event handler.
+
+        """
         self.update()
 
     def leaveEvent(self, event):
+        """Event handler.
+
+        """
         self.update()
 
     def contextMenuEvent(self, event):
-        """Context menu event."""
+        """Event handler.
+
+        """
         shift_modifier = event.modifiers() & QtCore.Qt.ShiftModifier
         alt_modifier = event.modifiers() & QtCore.Qt.AltModifier
         control_modifier = event.modifiers() & QtCore.Qt.ControlModifier
@@ -573,10 +597,12 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
     @QtCore.Slot(QtCore.QModelIndex)
     @QtCore.Slot(QtCore.QObject)
     def customFilesContextMenuEvent(self, index, parent):
-        """Shows the custom context menu."""
+        """Event handler used to show a custom context menu.
+
+        """
         width = parent.viewport().geometry().width()
-        width = (width * 0.5) if width > common.size(common.DefaultWidth) else width
-        width = width - common.size(common.WidthIndicator)
+        width = (width * 0.5) if width > common.size(common.size_width) else width
+        width = width - common.size(common.size_indicator)
 
         widget = contextmenu.MayaWidgetContextMenu(index, parent=parent)
         if index.isValid():
@@ -589,19 +615,22 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
             widget.move(common.cursor.pos())
 
         widget.setFixedWidth(width)
-        widget.move(widget.x() + common.size(common.WidthIndicator), widget.y())
+        widget.move(widget.x() + common.size(common.size_indicator), widget.y())
         common.move_widget_to_available_geo(widget)
         widget.exec_()
 
     @common.error
     @common.debug
     def show(self, *args, **kwargs):
+        """Show method override.
+
+        """
         kwargs = {
             'dockable': True,
             'allowedArea': None,
             'retain': True,
-            'width': common.size(common.DefaultWidth) * 0.5,
-            'height': common.size(common.DefaultHeight) * 0.5
+            'width': common.size(common.size_width) * 0.5,
+            'height': common.size(common.size_height) * 0.5
         }
 
         try:
@@ -611,15 +640,21 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
             super().show(**kwargs)
 
     def paintEvent(self, event):
+        """Event handler.
+
+        """
         painter = QtGui.QPainter()
         painter.begin(self)
-        painter.setBrush(common.color(common.SeparatorColor))
+        painter.setBrush(common.color(common.color_separator))
         painter.setPen(QtCore.Qt.NoPen)
         painter.drawRect(self.rect())
         painter.end()
 
     def sizeHint(self):
+        """Returns a size hint.
+
+        """
         return QtCore.QSize(
-            common.size(common.DefaultWidth) * 0.5,
-            common.size(common.DefaultHeight) * 0.5
+            common.size(common.size_width) * 0.5,
+            common.size(common.size_height) * 0.5
         )

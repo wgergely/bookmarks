@@ -1,5 +1,6 @@
-# -*- coding: utf-8 -*-
-"""Widget used to edit item notes.
+"""Item note editor.
+
+The main edit widget is :class:`NoteEditor`, a 
 
 """
 import re
@@ -23,24 +24,21 @@ PathHighlight = 0b100000
 HIGHLIGHT_RULES = {
     'url': {
         're': re.compile(
-            r'((?:rvlink|file|http)[s]?:[/\\][/\\](?:[a-zA-Z]|[0-9]|[$-_@.&+]|['
-            r'!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
+            r'((?:rvlink|file|http)[s]?:[/\\][/\\](?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
             flags=re.IGNORECASE | re.MULTILINE
         ),
         'flag': PathHighlight
     },
     'drivepath': {
         're': re.compile(
-            r'((?:[a-zA-Z]{1})[s]?:[/\\](?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),'
-            r']|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
+            r'((?:[a-zA-Z]{1})[s]?:[/\\](?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
             flags=re.IGNORECASE | re.MULTILINE
         ),
         'flag': PathHighlight
     },
     'uncpath': {
         're': re.compile(
-            r'([/\\]{1,2}(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F]['
-            r'0-9a-fA-F]))+)',
+            r'([/\\]{1,2}(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
             flags=re.IGNORECASE | re.MULTILINE
         ),
         'flag': PathHighlight
@@ -87,11 +85,11 @@ class Lockfile(QtCore.QSettings):
         if index.isValid():
             p = '/'.join(index.data(common.ParentPathRole)[0:3])
             f = QtCore.QFileInfo(index.data(common.PathRole))
-            self.config_path = p + '/.bookmark/' + f.baseName() + '.lock'
+            self.config_path = f'{p}/{common.bookmark_cache_dir}/{f.baseName()}.lock'
         else:
             self.config_path = '/'
 
-        super(Lockfile, self).__init__(
+        super().__init__(
             self.config_path,
             QtCore.QSettings.IniFormat,
             parent=parent
@@ -112,7 +110,7 @@ class Highlighter(QtGui.QSyntaxHighlighter):
 
         """
         font = self.document().defaultFont()
-        font.setPixelSize(common.size(common.FontSizeMedium))
+        font.setPixelSize(common.size(common.size_font_medium))
 
         char_format = QtGui.QTextCharFormat()
         char_format.setFont(font)
@@ -151,7 +149,7 @@ class Highlighter(QtGui.QSyntaxHighlighter):
                         if grp:
                             char_format.setAnchor(True)
                             char_format.setForeground(
-                                common.color(common.GreenColor)
+                                common.color(common.color_green)
                             )
                             char_format.setAnchorHref(grp)
                             self.setFormat(
@@ -170,7 +168,7 @@ class Highlighter(QtGui.QSyntaxHighlighter):
                             if grp:
                                 char_format.setAnchor(True)
                                 char_format.setForeground(
-                                    common.color(common.GreenColor)
+                                    common.color(common.color_green)
                                 )
                                 char_format.setAnchorHref(grp)
                                 self.setFormat(
@@ -257,20 +255,18 @@ class Highlighter(QtGui.QSyntaxHighlighter):
             char_format.setFontWeight(_weight)
 
 
-class TodoItemEditor(QtWidgets.QTextBrowser):
-    """Custom QTextBrowser widget for writing `Todo`'s.
+class NoteTextEditor(QtWidgets.QTextBrowser):
+    """Custom QTextBrowser widget for writing note items.
 
     The editor automatically sets its size to accommodate the contents of the
     document.
-    Some of the code has been lifted and implemented from Cameel's implementation.
-
-    https://github.com/cameel/auto-resizing-text-edit/
 
     """
 
     def __init__(self, text, read_only=False, parent=None):
-        super(TodoItemEditor, self).__init__(parent=parent)
-        self.document().setDocumentMargin(common.size(common.WidthMargin))
+        super().__init__(parent=parent)
+
+        self.document().setDocumentMargin(common.size(common.size_margin))
         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 
@@ -289,7 +285,7 @@ class TodoItemEditor(QtWidgets.QTextBrowser):
                 QtCore.Qt.TextEditorInteraction | QtCore.Qt.LinksAccessibleByMouse
             )
 
-        self.setTabStopWidth(common.size(common.WidthMargin))
+        self.setTabStopWidth(common.size(common.size_margin))
         self.setUndoRedoEnabled(True)
 
         self.setSizePolicy(
@@ -297,6 +293,7 @@ class TodoItemEditor(QtWidgets.QTextBrowser):
             QtWidgets.QSizePolicy.Fixed
         )
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
+
         self.document().setUseDesignMetrics(True)
         self.document().setHtml(text)
 
@@ -309,41 +306,21 @@ class TodoItemEditor(QtWidgets.QTextBrowser):
         self.adjust_height()
 
     def adjust_height(self):
+        """Slot used to set the editor height based on the current item contents.
+
+        """
         height = self.document().size().height()
-        if height > (common.size(common.HeightRow) * 2) and not self.isEnabled():
-            self.setFixedHeight(common.size(common.HeightRow) * 2)
+        if height > (common.size(common.size_row_height) * 2) and not self.isEnabled():
+            self.setFixedHeight(common.size(common.size_row_height) * 2)
             return
         self.setFixedHeight(height)
 
-    def get_minHeight(self):
-        """Returns the desired minimum height of the editor."""
-        font, metrics = common.font_db.primary_font(
-            common.size(common.FontSizeMedium)
-        )
-        line_height = (metrics.lineSpacing()) * 1  # Lines tall
-        return line_height
-
-    def get_maxHeight(self):
-        """Returns the desired minimum height of the editor."""
-        font, metrics = common.font_db.primary_font(
-            common.size(common.FontSizeMedium)
-        )
-        line_height = (metrics.lineSpacing()) * 35  # Lines tall
-        return line_height
-
     def keyPressEvent(self, event):
-        """I'm defining custom key events here, the default behaviour is pretty poor.
-
-        In a dream-scenario I would love to implement most of the functions
-        of how atom behaves.
+        """Key press event handler.
 
         """
         cursor = self.textCursor()
         cursor.setVisualNavigation(True)
-
-        no_modifier = event.modifiers() == QtCore.Qt.NoModifier
-        control_modifier = event.modifiers() == QtCore.Qt.ControlModifier
-        shift_modifier = event.modifiers() == QtCore.Qt.ShiftModifier
 
         if event.key() == QtCore.Qt.Key_Backtab:
             cursor.movePosition(
@@ -352,16 +329,20 @@ class TodoItemEditor(QtWidgets.QTextBrowser):
                 cursor.position(),
             )
             return
-        super(TodoItemEditor, self).keyPressEvent(event)
+        super().keyPressEvent(event)
 
     def dragEnterEvent(self, event):
-        """Checking we can consume the content of the drag data..."""
+        """Event handler.
+
+        """
         if not self.canInsertFromMimeData(event.mimeData()):
             return
         event.accept()
 
     def dropEvent(self, event):
-        """Custom drop event to add content from mime-data."""
+        """Event handler.
+
+        """
         index = self.parent().parent().parent().parent().parent().index
         if not index.isValid():
             return
@@ -374,7 +355,10 @@ class TodoItemEditor(QtWidgets.QTextBrowser):
         self.insertFromMimeData(mimedata)
 
     def showEvent(self, event):
-        # Sets the height of the todo item
+        """Event handler.
+
+        """
+        # Sets the height of the note item
         self.adjust_height()
 
         # Move the cursor to the end of the document
@@ -399,6 +383,8 @@ class TodoItemEditor(QtWidgets.QTextBrowser):
 
     def open_url(self, url):
         """We're handling the clicking of anchors here manually."""
+        print(url)
+
         if not url.isValid():
             return
         file_info = QtCore.QFileInfo(url.url())
@@ -412,11 +398,14 @@ class TodoItemEditor(QtWidgets.QTextBrowser):
 
 
 class RemoveNoteButton(ui.ClickableIconButton):
+    """Button used to remove a note item.
+
+    """
     def __init__(self, parent=None):
-        super(RemoveNoteButton, self).__init__(
+        super().__init__(
             'close',
-            (common.color(common.RedColor), common.color(common.RedColor)),
-            common.size(common.WidthMargin),
+            (common.color(common.color_red), common.color(common.color_red)),
+            common.size(common.size_margin),
             description='Click to remove this note',
             parent=parent
         )
@@ -424,6 +413,9 @@ class RemoveNoteButton(ui.ClickableIconButton):
 
     @QtCore.Slot()
     def remove_note(self):
+        """Remove note item action.
+
+        """
         mbox = ui.MessageBox(
             'Remove note?',
             buttons=[ui.YesButton, ui.NoButton]
@@ -449,26 +441,30 @@ class DragIndicatorButton(QtWidgets.QLabel):
     """
 
     def __init__(self, parent=None):
-        super(DragIndicatorButton, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.dragStartPosition = None
 
         self.setFocusPolicy(QtCore.Qt.NoFocus)
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        pixmap = images.ImageCache.get_rsc_pixmap(
-            'drag_indicator', common.color(common.TextSecondaryColor),
-            common.size(common.WidthMargin)
+        pixmap = images.ImageCache.rsc_pixmap(
+            'drag_indicator', common.color(common.color_dark_background),
+            common.size(common.size_margin)
         )
         self.setPixmap(pixmap)
 
     def mousePressEvent(self, event):
-        """Setting the starting drag position here."""
+        """Event handler.
+
+        """
         if not isinstance(event, QtGui.QMouseEvent):
             return
         self.dragStartPosition = event.pos()
 
     def mouseMoveEvent(self, event):
-        """The drag operation is initiated here."""
+        """Event handler.
+
+        """
         if not isinstance(event, QtGui.QMouseEvent):
             return
         left_button = event.buttons() & QtCore.Qt.LeftButton
@@ -491,7 +487,7 @@ class DragIndicatorButton(QtWidgets.QLabel):
         drag.setPixmap(pixmap)
         drag.setHotSpot(
             QtCore.QPoint(
-                pixmap.width() - ((common.size(common.WidthMargin)) * 2),
+                pixmap.width() - ((common.size(common.size_margin)) * 2),
                 pixmap.height() / 2.0
             )
         )
@@ -515,7 +511,7 @@ class DragIndicatorButton(QtWidgets.QLabel):
         overlay_widget.show()
 
         # Starting the drag...
-        drag.exec(QtCore.Qt.CopyAction)
+        drag.exec_(QtCore.Qt.CopyAction)
 
         # Cleanup after drag has finished...
         overlay_widget.close()
@@ -524,12 +520,15 @@ class DragIndicatorButton(QtWidgets.QLabel):
 
 
 class Separator(QtWidgets.QLabel):
+    """A custom label used as an item separator.
+
+    """
     def __init__(self, parent=None):
-        super(Separator, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         pixmap = QtGui.QPixmap(
-            QtCore.QSize(4096, common.size(common.HeightSeparator))
+            QtCore.QSize(4096, common.size(common.size_separator))
         )
-        pixmap.fill(common.color(common.BlueColor))
+        pixmap.fill(common.color(common.color_blue))
         self.setPixmap(pixmap)
 
         self.setHidden(True)
@@ -548,35 +547,40 @@ class Separator(QtWidgets.QLabel):
             QtWidgets.QSizePolicy.Minimum,
             QtWidgets.QSizePolicy.Minimum
         )
-        self.setFixedWidth(common.size(common.HeightSeparator))
+        self.setFixedWidth(common.size(common.size_separator))
 
     def dragEnterEvent(self, event):
+        """Event handler.
+
+        """
         if event.mimeData().hasFormat('bookmarks/todo-drag'):
             event.acceptProposedAction()
 
     def dropEvent(self, event):
-        """Calling the parent's drop event, when the drop is on the separator."""
+        """Event handler.
+
+        """
         self.parent().dropEvent(event)
 
 
-class TodoEditors(QtWidgets.QWidget):
-    """This is a convenience widget for storing the added todo items.
+class NoteContainerWidget(QtWidgets.QWidget):
+    """This widget for storing the added note items.
 
     As this is the container widget, it is responsible for handling the dragging
     and setting the order of the contained child widgets.
 
     Attributes:
-        items (list):       The added todo items.
+        items (list): The added note items.
 
     """
 
     def __init__(self, parent=None):
-        super(TodoEditors, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         QtWidgets.QVBoxLayout(self)
         self.layout().setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter)
-        o = common.size(common.WidthMargin) * 0.5
+        o = common.size(common.size_margin) * 0.5
         self.layout().setContentsMargins(o, o, o, o)
-        self.layout().setSpacing(common.size(common.WidthIndicator) * 2)
+        self.layout().setSpacing(common.size(common.size_indicator) * 2)
 
         self.setAcceptDrops(True)
 
@@ -588,12 +592,16 @@ class TodoEditors(QtWidgets.QWidget):
         self.setFocusPolicy(QtCore.Qt.NoFocus)
 
     def dragEnterEvent(self, event):
-        """Accepting the drag operation."""
+        """Event handler.
+
+        """
         if event.mimeData().hasFormat('bookmarks/todo-drag'):
             event.acceptProposedAction()
 
     def dragMoveEvent(self, event):
-        """Custom drag move event responsible for indicating the drop area."""
+        """Event handler.
+
+        """
         # Move indicator
         idx, y = self._separator_pos(event)
 
@@ -612,6 +620,9 @@ class TodoEditors(QtWidgets.QWidget):
         self.separator.setFixedWidth(self.width())
 
     def dropEvent(self, event):
+        """Event handler.
+
+        """
         if self.drop_target_index == -1:
             event.ignore()
             return
@@ -620,7 +631,7 @@ class TodoEditors(QtWidgets.QWidget):
 
         # Drag from another todo list
         if event.source() not in self.items:
-            text = event.source().findChild(TodoItemEditor).document().toHtml()
+            text = event.source().findChild(NoteTextEditor).document().toHtml()
             self.parent().parent().parent().add_item(idx=0, text=text)
             self.separator.setHidden(True)
             return
@@ -672,7 +683,7 @@ class TodoEditors(QtWidgets.QWidget):
         for line in lines:
             dis.append(y - line)
 
-        # Cases when items is dragged from another editor instance
+        # Case when items is dragged from another editor instance
         if not dis:
             return 0, 0
 
@@ -694,39 +705,42 @@ class TodoEditors(QtWidgets.QWidget):
             return (idx, lines[idx])
 
 
-class TodoItemWidget(QtWidgets.QWidget):
+class NoteItemWidget(QtWidgets.QWidget):
     """The item-wrapper widget for the drag indicator and editor widgets."""
 
     def __init__(self, parent=None):
-        super(TodoItemWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.editor = None
         self.setFocusPolicy(QtCore.Qt.NoFocus)
         self._create_UI()
 
     def _create_UI(self):
         QtWidgets.QHBoxLayout(self)
-        o = common.size(common.WidthIndicator)
+        o = common.size(common.size_indicator)
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(o)
 
     def paintEvent(self, event):
+        """Event handler.
+
+        """
         painter = QtGui.QPainter()
         painter.begin(self)
         painter.setPen(QtCore.Qt.NoPen)
         painter.setBrush(QtGui.QColor(255, 255, 255, 255))
         painter.drawRoundedRect(
-            self.rect(), common.size(common.WidthIndicator),
-            common.size(common.WidthIndicator)
+            self.rect(), common.size(common.size_indicator),
+            common.size(common.size_indicator)
         )
         painter.end()
 
 
-class TodoEditorWidget(QtWidgets.QDialog):
+class NoteEditor(QtWidgets.QDialog):
     """Main widget used to view and edit and add Notes and Tasks."""
 
     def __init__(self, index, parent=None):
-        super(TodoEditorWidget, self).__init__(parent=parent)
-        self.todoeditors_widget = None
+        super().__init__(parent=parent)
+        self.note_container_widget = None
         self._index = index
 
         self.read_only = False
@@ -757,30 +771,19 @@ class TodoEditorWidget(QtWidgets.QDialog):
     def _create_UI(self):
         """Creates the ui layout."""
         QtWidgets.QVBoxLayout(self)
-        o = common.size(common.WidthMargin)
-        self.layout().setSpacing(common.size(common.WidthIndicator))
+        o = common.size(common.size_margin)
+        self.layout().setSpacing(common.size(common.size_indicator))
         self.layout().setContentsMargins(o, o, o, o)
 
         # Top row
-        height = common.size(common.HeightRow) * 0.6666
+        height = common.size(common.size_row_height) * 0.6666
         row = ui.add_row(None, height=height, parent=self)
         row.layout().addSpacing(height * 0.33)
 
-        def paintEvent(event):
-            painter = QtGui.QPainter()
-            painter.begin(row)
-            painter.setPen(QtCore.Qt.NoPen)
-            painter.setBrush(QtGui.QColor(0, 0, 0, 255))
-            rect = row.rect()
-            rect.setTop(rect.bottom())
-            painter.drawRect(rect)
-            painter.end()
-
-        # row.paintEvent = paintEvent
         # Thumbnail
         self.add_button = ui.ClickableIconButton(
             'add',
-            (common.color(common.GreenColor), common.color(common.GreenColor)),
+            (common.color(common.color_green), common.color(common.color_green)),
             height,
             description='Click to add a new Todo item...',
             parent=self
@@ -790,8 +793,8 @@ class TodoEditorWidget(QtWidgets.QDialog):
         # Name label
         text = 'Notes'
         label = ui.PaintedLabel(
-            text, color=common.color(common.TextSecondaryColor),
-            size=common.size(common.FontSizeLarge), parent=self
+            text, color=common.color(common.color_dark_background),
+            size=common.size(common.size_font_large), parent=self
         )
         label.setFixedHeight(height)
 
@@ -822,7 +825,7 @@ class TodoEditorWidget(QtWidgets.QDialog):
 
         text = 'Add Note'
         self.add_label = ui.PaintedLabel(
-            text, color=common.color(common.TextSecondaryColor),
+            text, color=common.color(common.color_dark_background),
             parent=row
         )
 
@@ -830,12 +833,12 @@ class TodoEditorWidget(QtWidgets.QDialog):
         row.layout().addWidget(self.add_label, 0)
         row.layout().addStretch(1)
 
-        self.todoeditors_widget = TodoEditors(parent=self)
-        self.setMinimumHeight(common.size(common.HeightRow) * 3.0)
+        self.note_container_widget = NoteContainerWidget(parent=self)
+        self.setMinimumHeight(common.size(common.size_row_height) * 3.0)
 
         self.scroll_area = QtWidgets.QScrollArea(parent=self)
         self.scroll_area.setWidgetResizable(True)
-        self.scroll_area.setWidget(self.todoeditors_widget)
+        self.scroll_area.setWidget(self.note_container_widget)
 
         self.scroll_area.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.scroll_area.setAttribute(QtCore.Qt.WA_TranslucentBackground)
@@ -843,11 +846,14 @@ class TodoEditorWidget(QtWidgets.QDialog):
         self.layout().addWidget(self.scroll_area)
 
     def clear(self):
-        for idx in reversed(range(len(list(self.todoeditors_widget.items)))):
-            row = self.todoeditors_widget.items.pop(idx)
+        """Deletes all note item editors.
+
+        """
+        for idx in reversed(range(len(list(self.note_container_widget.items)))):
+            row = self.note_container_widget.items.pop(idx)
             for c in row.children():
                 c.deleteLater()
-            self.todoeditors_widget.layout().removeWidget(row)
+            self.note_container_widget.layout().removeWidget(row)
             row.deleteLater()
             del row
 
@@ -884,45 +890,49 @@ class TodoEditorWidget(QtWidgets.QDialog):
 
     @property
     def index(self):
-        """The path used to initialize the widget."""
+        """The path used to initialize the widget.
+
+        """
         return self._index
 
     def eventFilter(self, widget, event):
-        """Using  the custom event filter to paint the background."""
+        """Event filter handler.
+
+        """
         if event.type() == QtCore.QEvent.Paint:
             painter = QtGui.QPainter()
             painter.begin(self)
             font = common.font_db.secondary_font(
-                common.size(common.FontSizeMedium)
+                common.size(common.size_font_medium)
             )[0]
             painter.setFont(font)
             painter.setRenderHints(QtGui.QPainter.Antialiasing)
 
-            o = common.size(common.WidthIndicator)
+            o = common.size(common.size_indicator)
             rect = self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o))
             painter.setBrush(QtGui.QColor(250, 250, 250, 255))
             painter.setPen(QtCore.Qt.NoPen)
             painter.drawRoundedRect(rect, o * 2, o * 2)
 
             center = rect.center()
-            rect.setWidth(rect.width() - common.size(common.WidthMargin))
-            rect.setHeight(rect.height() - common.size(common.WidthMargin))
+            rect.setWidth(rect.width() - common.size(common.size_margin))
+            rect.setHeight(rect.height() - common.size(common.size_margin))
             rect.moveCenter(center)
 
             text = 'Click the plus icon on the top to add a note'
-            text = text if not len(self.todoeditors_widget.items) else ''
+            text = text if not len(self.note_container_widget.items) else ''
             common.draw_aliased_text(
                 painter, font, rect, text, QtCore.Qt.AlignCenter,
-                common.color(common.BackgroundDarkColor)
+                common.color(common.color_dark_background)
             )
             painter.end()
         return False
 
     def _get_next_enabled(self, n):
         hasEnabled = False
-        for i in range(len(self.todoeditors_widget.items)):
-            item = self.todoeditors_widget.items[i]
-            editor = item.findChild(TodoItemEditor)
+        for i in range(len(self.note_container_widget.items)):
+            item = self.note_container_widget.items[i]
+            editor = item.findChild(NoteTextEditor)
             if editor.isEnabled():
                 hasEnabled = True
                 break
@@ -931,38 +941,43 @@ class TodoEditorWidget(QtWidgets.QDialog):
             return -1
 
         # Finding the next enabled editor
-        for _ in range(len(self.todoeditors_widget.items) - n):
+        for _ in range(len(self.note_container_widget.items) - n):
             n += 1
-            if n >= len(self.todoeditors_widget.items):
+            if n >= len(self.note_container_widget.items):
                 return self._get_next_enabled(-1)
-            item = self.todoeditors_widget.items[n]
-            editor = item.findChild(TodoItemEditor)
+            item = self.note_container_widget.items[n]
+            editor = item.findChild(NoteTextEditor)
             if editor.isEnabled():
                 return n
 
     def key_tab(self):
-        """Defining tabbing forward between items."""
-        if not self.todoeditors_widget.items:
+        """Custom key action.
+
+        """
+        if not self.note_container_widget.items:
             return
 
         n = 0
-        for n, item in enumerate(self.todoeditors_widget.items):
-            editor = item.findChild(TodoItemEditor)
+        for n, item in enumerate(self.note_container_widget.items):
+            editor = item.findChild(NoteTextEditor)
             if editor.hasFocus():
                 break
 
         n = self._get_next_enabled(n)
         if n > -1:
-            item = self.todoeditors_widget.items[n]
-            editor = item.findChild(TodoItemEditor)
+            item = self.note_container_widget.items[n]
+            editor = item.findChild(NoteTextEditor)
             editor.setFocus()
             self.scroll_area.ensureWidgetVisible(
                 editor, ymargin=editor.height()
             )
 
     def key_return(self, ):
-        for item in self.todoeditors_widget.items:
-            editor = item.findChild(TodoItemEditor)
+        """Custom key action.
+
+        """
+        for item in self.note_container_widget.items:
+            editor = item.findChild(NoteTextEditor)
 
             if not editor.hasFocus():
                 continue
@@ -970,15 +985,17 @@ class TodoEditorWidget(QtWidgets.QDialog):
             if editor.document().toPlainText():
                 continue
 
-            idx = self.todoeditors_widget.items.index(editor.parent())
-            row = self.todoeditors_widget.items.pop(idx)
+            idx = self.note_container_widget.items.index(editor.parent())
+            row = self.note_container_widget.items.pop(idx)
             self.todoedfitors_widget.layout().removeWidget(row)
             row.deleteLater()
 
             break
 
     def keyPressEvent(self, event):
-        """Custom keypresses."""
+        """Key press event handler.
+
+        """
         control_modifier = event.modifiers() == QtCore.Qt.ControlModifier
         shift_modifier = event.modifiers() == QtCore.Qt.ShiftModifier
 
@@ -1005,16 +1022,20 @@ class TodoEditorWidget(QtWidgets.QDialog):
                 self.key_return()
 
     def add_item(self, idx=None, text=None):
-        """Creates a new widget containing the editor and drag widgets.
+        """Creates a new :class:`NoteItemWidget`editor and adds it to
+        :meth:`NoteContainerWidget.items`.
 
-        The method is responsible for adding the item the EditorsWidget layout
-        and the EditorsWidget.items property.
+        Args:
+            idx (int): The index of the item to be added. Optional.
+            text (str): The text of the item to be added. Optional.
 
         """
-        item = TodoItemWidget(parent=self)
+        item = NoteItemWidget(parent=self)
 
-        editor = TodoItemEditor(
-            text, read_only=self.read_only, parent=item
+        editor = NoteTextEditor(
+            text,
+            read_only=self.read_only,
+            parent=item
         )
         editor.setFocusPolicy(QtCore.Qt.StrongFocus)
         item.layout().addWidget(editor, 1)
@@ -1032,11 +1053,11 @@ class TodoEditorWidget(QtWidgets.QDialog):
             item.layout().addWidget(remove)
 
         if idx is None:
-            self.todoeditors_widget.layout().addWidget(item, 0)
-            self.todoeditors_widget.items.append(item)
+            self.note_container_widget.layout().addWidget(item, 0)
+            self.note_container_widget.items.append(item)
         else:
-            self.todoeditors_widget.layout().insertWidget(idx, item, 0)
-            self.todoeditors_widget.items.insert(idx, item)
+            self.note_container_widget.layout().insertWidget(idx, item, 0)
+            self.note_container_widget.items.insert(idx, item)
 
         editor.setFocus()
         item.editor = editor
@@ -1044,14 +1065,14 @@ class TodoEditorWidget(QtWidgets.QDialog):
 
     @QtCore.Slot()
     def save_settings(self):
-        """Saves the current list of todo items to the assets configuration file."""
+        """Saves the current list of note items to the assets configuration file."""
         if not self.index.isValid():
             return
 
         data = {}
-        for n in range(len(self.todoeditors_widget.items)):
-            item = self.todoeditors_widget.items[n]
-            editor = item.findChild(TodoItemEditor)
+        for n in range(len(self.note_container_widget.items)):
+            item = self.note_container_widget.items[n]
+            editor = item.findChild(NoteTextEditor)
             if not editor.document().toPlainText():
                 continue
             data[n] = {
@@ -1068,8 +1089,10 @@ class TodoEditorWidget(QtWidgets.QDialog):
             db.setValue(source, 'notes', data)
 
     def init_lock(self):
-        """Creates a lock on the current file so it can't be edited by other users.
-        It will also start the auto-save timer.
+        """Creates a lock file.
+
+        This will prevent other sessions editing notes.
+
         """
         if not self.parent():
             return
@@ -1140,6 +1163,9 @@ class TodoEditorWidget(QtWidgets.QDialog):
             self.lock.setValue('open', False)
 
     def showEvent(self, event):
+        """Event handler.
+
+        """
         if self.parent():
             geo = self.parent().viewport().rect()
             self.resize(geo.width(), geo.height())
@@ -1147,12 +1173,18 @@ class TodoEditorWidget(QtWidgets.QDialog):
         self.refresh()
 
     def hideEvent(self, event):
+        """Hide event handler.
+
+        """
         if not self.read_only:
             self.save_settings()
         self.unlock()
 
     def sizeHint(self):
-        """Custom size."""
+        """Returns a size hint.
+
+        """
         return QtCore.QSize(
-            common.size(common.DefaultWidth), common.size(common.DefaultHeight)
+            common.size(common.size_width),
+            common.size(common.size_height)
         )

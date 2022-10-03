@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Thread definitions and associated worker classes.
 
 """

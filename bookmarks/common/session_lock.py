@@ -1,19 +1,17 @@
-# -*- coding: utf-8 -*-
 """Module defines the classes and methods needed to set and edit session lock
 files.
 
-Bookmarks has two session modes. When `common.active_mode` is
-`common.SynchronisedActivePaths`, Bookmarks will save active paths in the user settings
-file. However, when multiple Bookmarks instances are running this poses a problem,
+The app has two session modes. When `common.active_mode` is
+`common.SynchronisedActivePaths`, the app will save active paths in the user settings
+file. However, when multiple app instances are running, this poses a problem,
 because instances will mutually overwrite each other's active paths.
 
-Hence, when a second Bookmarks instance is launched `common.active_mode` is
+Hence, when a second app instance is launched `common.active_mode` is
 automatically set to `common.PrivateActivePaths`. When this mode is active, the initial
 active path values are read from the user settings, but active paths changes won't be
-saved to the user settings. Instead, the paths will be stored in a private data
-container.
+saved to the settings file.
 
-To toggle between the two modes see :func:`bookmarks.actions.toggle_active_mode` and
+To toggle between the two modes use :func:`bookmarks.actions.toggle_active_mode`. Also see
 :class:`bookmarks.statusbar.ToggleSessionModeButton`.
 
 """
@@ -119,6 +117,9 @@ def init_lock():
 
 
 def remove_lock():
+    """Removes the session lock file.
+
+    """
     f = QtCore.QFile(get_lock_path())
     if f.exists():
         if not f.remove():

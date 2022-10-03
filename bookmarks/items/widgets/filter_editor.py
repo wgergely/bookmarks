@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """The widget used set and edit search filters.
 
 """
@@ -31,7 +30,7 @@ class FilterEditor(QtWidgets.QDialog):
 
     def _create_ui(self):
         QtWidgets.QVBoxLayout(self)
-        o = common.size(common.WidthMargin) * 2
+        o = common.size(common.size_margin) * 2
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(0)
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
@@ -40,14 +39,14 @@ class FilterEditor(QtWidgets.QDialog):
             None,
             parent=self,
             padding=0,
-            height=common.size(common.HeightRow)
+            height=common.size(common.size_row_height)
         )
 
         self.history_button = ui.ClickableIconButton(
             'filter',
-            (common.color(common.TextSecondaryColor),
-             common.color(common.TextSecondaryColor)),
-            common.size(common.WidthMargin)
+            (common.color(common.color_secondary_text),
+             common.color(common.color_secondary_text)),
+            common.size(common.size_margin)
         )
         self.history_button.setFocusPolicy(QtCore.Qt.NoFocus)
         row.layout().addWidget(self.history_button, 0)
@@ -66,6 +65,9 @@ class FilterEditor(QtWidgets.QDialog):
         self.ok_button.clicked.connect(self.action)
 
     def set_completer(self):
+        """Sets the editor's completer.
+
+        """
         proxy = self.parent().model()
         model = proxy.sourceModel()
 
@@ -83,10 +85,16 @@ class FilterEditor(QtWidgets.QDialog):
         self.history_button.clicked.connect(self.show_history)
 
     def show_history(self):
+        """Shows the editor's completer.
+
+        """
         self.editor.completer().setCompletionPrefix('')
         self.editor.completer().complete()
 
     def init_text(self):
+        """Sets the current filter text to the editor.
+
+        """
         proxy = self.parent().model()
         text = proxy.filter_text()
         text = text.lower() if text else ''
@@ -95,39 +103,51 @@ class FilterEditor(QtWidgets.QDialog):
 
     @QtCore.Slot()
     def action(self):
+        """Edit action.
+
+        """
         self.finished.emit(self.editor.text())
         self.done(QtWidgets.QDialog.Accepted)
 
     @QtCore.Slot()
     def adjust_size(self):
+        """Adjusts the editor's size.
+
+        """
         if not self.parent():
             return
         geo = self.parent().geometry()
         self.resize(geo.width(), geo.height())
 
     def paintEvent(self, event):
+        """Event handler.
+
+        """
         painter = QtGui.QPainter()
         painter.begin(self)
 
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
 
-        pen = QtGui.QPen(common.color(common.SeparatorColor))
-        pen.setWidthF(common.size(common.HeightSeparator))
+        pen = QtGui.QPen(common.color(common.color_separator))
+        pen.setWidthF(common.size(common.size_separator))
         painter.setPen(pen)
 
-        o = common.size(common.WidthMargin)
-        i = common.size(common.WidthIndicator)
-        r = common.size(common.HeightRow)
+        o = common.size(common.size_margin)
+        i = common.size(common.size_indicator)
+        r = common.size(common.size_row_height)
 
         rect = self.rect().adjusted(o, o, -o, -o)
         rect.setHeight(r + (o * 2))
 
-        painter.setBrush(common.color(common.BackgroundDarkColor))
+        painter.setBrush(common.color(common.color_dark_background))
         painter.setOpacity(0.85)
         painter.drawRoundedRect(rect, i, i)
         painter.end()
 
     def showEvent(self, event):
+        """Event handler.
+
+        """
         self.init_text()
         self.set_completer()
         self.editor.selectAll()

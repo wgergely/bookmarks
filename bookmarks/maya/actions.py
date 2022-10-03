@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Various common Maya actions.
 
 """
@@ -29,6 +28,9 @@ from ..external import rv
 @common.error
 @common.debug
 def set_workspace(*args, **kwargs):
+    """Action used to set the Maya workspace.
+
+    """
     # Get preference
     v = common.settings.value('maya/sync_workspace')
     # Set default value if none has been set previously
@@ -139,6 +141,9 @@ def save_scene(increment=False, type='mayaAscii'):
 @common.error
 @common.debug
 def execute(index):
+    """Action used to execute a selected file item.
+
+    """
     file_path = common.get_sequence_end_path(
         index.data(common.PathRole)
     )
@@ -298,7 +303,7 @@ def import_scene(path, reference=False):
 
     """
 
-    def get_namespaces_from_path(_path):
+    def _get_namespaces_from_path(_path):
         _basename = _path.split('/')[-1]
         _basename = _basename.split('.')[0]
 
@@ -328,7 +333,7 @@ def import_scene(path, reference=False):
     ).lower() == file_info.filePath().lower() and reference:
         raise RuntimeError('Can\'t reference itself.')
 
-    _, basename = get_namespaces_from_path(path)
+    _, basename = _get_namespaces_from_path(path)
     alphabet = base._get_available_suffixes(basename)
     if not alphabet:  # no more suffixes to assign
         return None
@@ -501,6 +506,9 @@ def capture_viewport(size=1.0):
 
 
 def push_capture(path):
+    """Action used to push a capture output to RV.
+
+    """
     # Get preference
     v = common.settings.value('maya/push_capture_to_rv')
     # Set default value if none has been set previously
@@ -514,6 +522,9 @@ def push_capture(path):
 
 
 def reveal_capture(path):
+    """Action used to reveal a capture output in the file explorer.
+
+    """
     # Get preference
     v = common.settings.value('maya/reveal_capture')
     # Set default value if none has been set previously
@@ -588,6 +599,9 @@ def publish_capture(workspace, capture_folder, scene_info, ext):
 
 
 def remove_maya_widget():
+    """Removes the maya widget instance.
+
+    """
     if isinstance(common.maya_widget, main.MayaWidget):
         common.maya_widget.remove_context_callbacks()
         common.maya_widget.close()
@@ -596,6 +610,9 @@ def remove_maya_widget():
 
 
 def remove_maya_button():
+    """Removes the maya button instance.
+
+    """
     if isinstance(common.maya_button_widget, main.MayaButtonWidget):
         common.maya_button_widget.close()
         common.maya_button_widget.deleteLater()
@@ -603,6 +620,9 @@ def remove_maya_button():
 
 
 def remove_workspace_controls():
+    """Deletes all workspace controller instances associated with the maya plugin.
+
+    """
     for k in list(mayaMixin.mixinWorkspaceControls):
         if common.product in k:
             del mayaMixin.mixinWorkspaceControls[k]
@@ -618,6 +638,9 @@ def remove_workspace_controls():
 
 
 def remove_workspace_control(workspace_control):
+    """Deletes the given workspace control instance.
+
+    """
     if cmds.workspaceControl(workspace_control, q=True, exists=True):
         cmds.deleteUI(workspace_control)
         if cmds.workspaceControlState(workspace_control, ex=True):
@@ -627,6 +650,12 @@ def remove_workspace_control(workspace_control):
 @common.error
 @QtCore.Slot()
 def apply_viewport_preset(k):
+    """Applies the given viewport preset to the currently focused viewport.
+
+    Args:
+        k (str): A viewport preset key.
+
+    """
     from . import viewport
     panel = cmds.getPanel(withFocus=True)
     if not cmds.modelPanel(panel, query=True, exists=True):
@@ -637,8 +666,11 @@ def apply_viewport_preset(k):
 
 @QtCore.Slot()
 def import_camera_preset():
-    path = common.get_rsc('maya/camera.ma')
-    if cmds.objExists('camera'):
+    """Import the boundled camera template to the current scene.
+
+    """
+    path = common.rsc('maya/camera.ma')
+    if cmds.objExists('camera:camera'):
         print('An object named "camera" already exists. Nothing was imported.')
         return
     cmds.file(path, i=True, defaultNamespace=True)
@@ -646,5 +678,8 @@ def import_camera_preset():
 
 @QtCore.Slot()
 def show_shader_tool():
+    """Shows the bundled shader utility tool.
+
+    """
     from . import shadertool
     shadertool.show()

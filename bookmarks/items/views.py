@@ -1,5 +1,6 @@
-# -*- coding: utf-8 -*-
-"""Base views used to show bookmark, asset, file and favourite items.
+"""Base views used to show :mod:`bookmark <bookmarks.items.bookmark_items>`,
+:mod:`asset <bookmarks.items.asset_items>`, and :mod:`file <bookmarks.items.file_items>`
+items.
 
 The view uses :class:`~bookmarks.items.models.ItemModel` for getting the item data,
 :class:`~bookmarks.items.delegate.rst.ItemDelegate` to paint the items.
@@ -71,12 +72,21 @@ class ListsWidget(QtWidgets.QStackedWidget):
         self.currentWidget().setFocus()
 
     def showEvent(self, event):
+        """Event handler.
+
+        """
         if self.currentWidget():
             self.currentWidget().setFocus()
 
 
 class ThumbnailsContextMenu(contextmenu.BaseContextMenu):
+    """Context menu associated with thumbnail actions.
+
+    """
     def setup(self):
+        """Creates the context menu.
+
+        """
         self.thumbnail_menu()
         self.separator()
         self.sg_thumbnail_menu()
@@ -95,6 +105,9 @@ class ProgressWidget(QtWidgets.QWidget):
         self._message = 'Loading...'
 
     def showEvent(self, event):
+        """Event handler.
+
+        """
         self.setGeometry(self.parent().geometry())
 
     @QtCore.Slot(str)
@@ -103,26 +116,30 @@ class ProgressWidget(QtWidgets.QWidget):
         self._message = text
 
     def paintEvent(self, event):
-        """Custom message painted here."""
+        """Event handler.
+
+        """
         painter = QtGui.QPainter()
         painter.begin(self)
         painter.setPen(QtCore.Qt.NoPen)
-        color = common.color(common.SeparatorColor)
+        color = common.color(common.color_separator)
         painter.setBrush(color)
         painter.drawRect(self.rect())
         painter.setOpacity(0.8)
         common.draw_aliased_text(
             painter,
-            common.font_db.primary_font(common.size(common.FontSizeMedium))[0],
+            common.font_db.primary_font(common.size(common.size_font_medium))[0],
             self.rect(),
             self._message,
             QtCore.Qt.AlignCenter,
-            common.color(common.TextColor)
+            common.color(common.color_text)
         )
         painter.end()
 
     def mousePressEvent(self, event):
-        """``ProgressWidget`` closes on mouse press events."""
+        """Event handler.
+
+        """
         if not isinstance(event, QtGui.QMouseEvent):
             return
         self.hide()
@@ -135,6 +152,9 @@ class FilterOnOverlayWidget(ProgressWidget):
     """
 
     def paintEvent(self, event):
+        """Event handler.
+
+        """
         painter = QtGui.QPainter()
         painter.begin(self)
 
@@ -144,17 +164,20 @@ class FilterOnOverlayWidget(ProgressWidget):
         painter.end()
 
     def paint_needs_refresh(self, painter):
+        """Paints the data status indicator.
+
+        """
         model = self.parent().model().sourceModel()
         if not hasattr(model, 'refresh_needed') or not model.refresh_needed():
             return
 
         painter.save()
 
-        o = common.size(common.HeightSeparator)
+        o = common.size(common.size_separator)
         rect = self.rect().adjusted(o, o, -o, -o)
         painter.setBrush(QtCore.Qt.NoBrush)
-        pen = QtGui.QPen(common.color(common.BlueColor))
-        pen.setWidth(common.size(common.HeightSeparator) * 2.0)
+        pen = QtGui.QPen(common.color(common.color_blue))
+        pen.setWidth(common.size(common.size_separator) * 2.0)
         painter.setPen(pen)
 
         painter.drawRect(rect)
@@ -162,6 +185,9 @@ class FilterOnOverlayWidget(ProgressWidget):
         painter.restore()
 
     def paint_filter_indicator(self, painter):
+        """Paints the filter indicator.
+
+        """
         model = self.parent().model()
         if model.rowCount() == model.sourceModel().rowCount():
             return
@@ -169,11 +195,11 @@ class FilterOnOverlayWidget(ProgressWidget):
         painter.save()
 
         painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.color(common.RedColor))
+        painter.setBrush(common.color(common.color_red))
         painter.setOpacity(0.8)
 
         rect = self.rect()
-        rect.setHeight(common.size(common.HeightSeparator) * 2.0)
+        rect.setHeight(common.size(common.size_separator) * 2.0)
         painter.drawRect(rect)
         rect.moveBottom(self.rect().bottom())
         painter.drawRect(rect)
@@ -181,6 +207,9 @@ class FilterOnOverlayWidget(ProgressWidget):
         painter.restore()
 
     def showEvent(self, event):
+        """Event handler.
+
+        """
         self.repaint()
 
 
@@ -302,7 +331,7 @@ class BaseItemView(QtWidgets.QListView):
         """Returns the visibility of the inline icon buttons.
 
         """
-        if self.width() < common.size(common.DefaultWidth) * 0.66:
+        if self.width() < common.size(common.size_width) * 0.66:
             return True
         return self._buttons_hidden
 
@@ -339,7 +368,7 @@ class BaseItemView(QtWidgets.QListView):
         model.modelReset.connect(model.init_sort_values)
         model.modelReset.connect(model.init_row_size)
         model.modelReset.connect(self.init_buttons_state)
-        model.modelReset.connect(self.reset_multitoggle)
+        model.modelReset.connect(self.reset_multi_toggle)
 
         self.interruptRequested.connect(model.set_interrupt_requested)
 
@@ -405,12 +434,18 @@ class BaseItemView(QtWidgets.QListView):
         self.activated.emit(index)
 
     def delay_save_selection(self):
+        """Delays saving the current item selection to the user settings file to reduce
+        the number of file writes.
+
+        """
         self.delayed_save_selection_timer.start(
             self.delayed_save_selection_timer.interval())
 
     @QtCore.Slot()
     def save_selection(self):
-        """Saves the current selection."""
+        """Saves the current selection to the user settings file.
+
+        """
         index = common.get_selected_index(self)
         if not index.isValid():
             return
@@ -429,6 +464,9 @@ class BaseItemView(QtWidgets.QListView):
 
     @QtCore.Slot()
     def delay_restore_selection(self):
+        """Delays getting the saved selection from the user settings file.
+
+        """
         self.delayed_restore_selection_timer.start(
             self.delayed_restore_selection_timer.interval())
 
@@ -497,36 +535,36 @@ class BaseItemView(QtWidgets.QListView):
         self.scrollTo(index, QtWidgets.QAbstractItemView.PositionAtCenter)
 
     def toggle_item_flag(self, index, flag, state=None, commit_now=True):
-        """Sets the index's `flag` value based on `state`.
+        """Sets the index's filter flag value based on the passed state.
 
         We're using the method to mark items archived, or favourite and save the
-        changes to the database or the local config file.
+        changes to the database and the user settings file.
 
         Args:
-            index (QModelIndex): The index containing the
-            flag (type): Description of parameter `flag`.
-            state (type): Description of parameter `state`. Defaults to None.
-            commit_now (bool): Save changes immediately to the database.
+            index (QModelIndex): Model index.
+            flag (int): A filter flag, e.g. ``MarkedAsArchived``.
+            state (bool): Pass an explicit state value. Defaults to None.
+            commit_now (bool): When `True`, commits database values immediately.
 
         Returns:
             str: The key used to find and match items.
 
         """
 
-        def save_to_db(k, mode, flag):
+        def _save_to_db(k, mode, flag):
             if not commit_now:
                 threads.queue_database_transaction(
                     server, job, root, k, mode, flag)
                 return
             database.set_flag(server, job, root, k, mode, flag)
 
-        def save_to_user_settings(k, mode, flag):
+        def _save_to_user_settings(k, mode, flag):
             if mode:
                 actions.add_favourite(index.data(common.ParentPathRole), k)
                 return
             actions.remove_favourite(index.data(common.ParentPathRole), k)
 
-        def save_active(k, mode, flag):
+        def _save_active(k, mode, flag):
             pass
 
         p = index.data(common.ParentPathRole)
@@ -540,11 +578,11 @@ class BaseItemView(QtWidgets.QListView):
             return
 
         if flag == common.MarkedAsArchived:
-            save_func = save_to_db
+            save_func = _save_to_db
         elif flag == common.MarkedAsFavourite:
-            save_func = save_to_user_settings
+            save_func = _save_to_user_settings
         elif flag == common.MarkedAsActive:
-            save_func = save_active
+            save_func = _save_active
         else:
             save_func = lambda *args: None
 
@@ -568,6 +606,9 @@ class BaseItemView(QtWidgets.QListView):
                     _set_flag(_k, mode, item, flag, commit=commit)
 
         def can_toggle_flag(k, mode, data, flag):
+            """Checks if the given flag can be toggled.
+
+            """
             seq = common.get_sequence(k)
 
             if not seq:
@@ -652,7 +693,7 @@ class BaseItemView(QtWidgets.QListView):
                     'To modify individual sequence items, remove the flag from the '
                     'sequence first and try again.'
                 ).open()
-                self.reset_multitoggle()
+                self.reset_multi_toggle()
                 return False
 
             _set_flag(k, mode, data, flag, commit=True)
@@ -664,6 +705,9 @@ class BaseItemView(QtWidgets.QListView):
         return k
 
     def key_space(self):
+        """Custom key action.
+        
+        """
         actions.preview_thumbnail()
 
     def key_down(self):
@@ -681,7 +725,7 @@ class BaseItemView(QtWidgets.QListView):
 
         if first_index == last_index:
             return
-        if not current_index.isValid():  # No selection
+        if not current_index.isValid(): # No selection
             sel.setCurrentIndex(
                 first_index,
                 QtCore.QItemSelectionModel.ClearAndSelect
@@ -716,7 +760,7 @@ class BaseItemView(QtWidgets.QListView):
         if first_index == last_index:
             return
 
-        if not current_index.isValid():  # No selection
+        if not current_index.isValid(): # No selection
             sel.setCurrentIndex(
                 last_index,
                 QtCore.QItemSelectionModel.ClearAndSelect
@@ -735,10 +779,15 @@ class BaseItemView(QtWidgets.QListView):
         )
 
     def key_tab(self):
-        """Custom `tab` key action."""
+        """Custom key action
+        
+        """
         self.description_editor_widget.show()
 
     def action_on_enter_key(self):
+        """Custom key action
+        
+        """
         index = common.get_selected_index(self)
         if not index.isValid():
             return
@@ -777,6 +826,9 @@ class BaseItemView(QtWidgets.QListView):
         return f'{count} items are hidden ({reason})'
 
     def get_hint_string(self):
+        """Returns an informative hint text.
+
+        """
         return 'No items to display'
 
     def paint_hint(self, widget, event):
@@ -784,14 +836,14 @@ class BaseItemView(QtWidgets.QListView):
 
         """
         text = self.get_hint_string()
-        self._paint_message(text, color=common.color(common.GreenColor))
+        self._paint_message(text, color=common.color(common.color_green))
 
     def paint_loading(self, widget, event):
         """Paints the hint message.
 
         """
         text = 'Loading items. Please wait...'
-        self._paint_message(text, color=common.color(common.TextColor))
+        self._paint_message(text, color=common.color(common.color_text))
 
     def paint_status_message(self, widget, event):
         """Displays a visual hint for the user to indicate if the list
@@ -799,9 +851,9 @@ class BaseItemView(QtWidgets.QListView):
 
         """
         text = self.get_status_string()
-        self._paint_message(text, color=common.color(common.RedColor))
+        self._paint_message(text, color=common.color(common.color_red))
 
-    def _paint_message(self, text, color=common.color(common.TextColor)):
+    def _paint_message(self, text, color=common.color(common.color_text)):
         """Utility method used to paint a message.
 
         """
@@ -836,12 +888,12 @@ class BaseItemView(QtWidgets.QListView):
             n += 1
 
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
-        o = common.size(common.WidthIndicator)
+        o = common.size(common.size_indicator)
 
         rect = rect.adjusted(o * 3, o, -o * 3, -o)
 
         font, metrics = common.font_db.primary_font(
-            common.size(common.FontSizeSmall))
+            common.size(common.size_font_small))
         text = metrics.elidedText(
             text,
             QtCore.Qt.ElideRight,
@@ -864,10 +916,10 @@ class BaseItemView(QtWidgets.QListView):
         painter = QtGui.QPainter()
         painter.begin(self)
 
-        pixmap = images.ImageCache.get_rsc_pixmap(
+        pixmap = images.ImageCache.rsc_pixmap(
             self._background_icon,
-            common.color(common.OpaqueColor),
-            common.size(common.HeightRow) * 3
+            common.color(common.color_opaque),
+            common.size(common.size_row_height) * 3
         )
         rect = pixmap.rect()
         rect.moveCenter(self.rect().center())
@@ -876,6 +928,9 @@ class BaseItemView(QtWidgets.QListView):
 
     @QtCore.Slot()
     def repaint_visible_rows(self):
+        """Slot used to repaint all currently visible items.
+        
+        """
         if QtWidgets.QApplication.instance().mouseButtons() != QtCore.Qt.NoButton:
             return
 
@@ -910,6 +965,12 @@ class BaseItemView(QtWidgets.QListView):
                 index, QtWidgets.QAbstractItemView.PositionAtCenter)
 
     def set_row_size(self, v):
+        """Sets the row size.
+        
+        Args:
+            v (int): The new row size
+            
+        """
         proxy = self.model()
         model = proxy.sourceModel()
         model.row_size.setHeight(int(v))
@@ -925,6 +986,7 @@ class BaseItemView(QtWidgets.QListView):
             v (any): A value to match.
             role (QtCore.Qt.ItemRole): An item data role.
             update (bool): Refreshes the model if `True` (the default).
+            limit (int): Maximum item search number.
 
         """
         proxy = self.model()
@@ -970,6 +1032,9 @@ class BaseItemView(QtWidgets.QListView):
                 return
 
     def dragEnterEvent(self, event):
+        """Event handler.
+        
+        """
         self._thumbnail_drop = (-1, False)
         self.repaint(self.rect())
         if event.source() == self:
@@ -981,10 +1046,16 @@ class BaseItemView(QtWidgets.QListView):
         event.accept()
 
     def dragLeaveEvent(self, event):
+        """Event handler.
+        
+        """
         self._thumbnail_drop = (-1, False)
         self.repaint(self.rect())
 
     def dragMoveEvent(self, event):
+        """Event handler.
+        
+        """
         self._thumbnail_drop = (-1, False)
         pos = common.cursor.pos()
         pos = self.mapFromGlobal(pos)
@@ -1014,6 +1085,9 @@ class BaseItemView(QtWidgets.QListView):
         self.repaint(self.rect())
 
     def dropEvent(self, event):
+        """Event handler.
+        
+        """
         self._thumbnail_drop = (-1, False)
 
         pos = common.cursor.pos()
@@ -1035,13 +1109,22 @@ class BaseItemView(QtWidgets.QListView):
             event.mimeData(), event.proposedAction(), index.row(), 0)
 
     def showEvent(self, event):
+        """Show event handler.
+
+        """
         self.scheduleDelayedItemsLayout()
 
     def mouseReleaseEvent(self, event):
+        """Event handler.
+        
+        """
         super().mouseReleaseEvent(event)
         self.delay_save_selection()
 
     def eventFilter(self, widget, event):
+        """Event filter handler.
+
+        """
         if widget is not self:
             return False
         if event.type() == QtCore.QEvent.Paint:
@@ -1057,11 +1140,14 @@ class BaseItemView(QtWidgets.QListView):
         return False
 
     def resizeEvent(self, event):
+        """Event handler.
+
+        """
         self.delayed_layout_timer.start(self.delayed_layout_timer.interval())
         self.resized.emit(self.viewport().geometry())
 
     def keyPressEvent(self, event):
-        """Customized key actions.
+        """Key press event handler.
 
         We're defining the default behaviour of the list-items here, including
         defining the actions needed to navigate the list using keyboard presses.
@@ -1197,7 +1283,7 @@ class BaseItemView(QtWidgets.QListView):
 
             # Adjust the scroll amount based on thw row size
             if self.model().sourceModel().row_size.height() > (
-                    common.size(common.HeightRow) * 2):
+                    common.size(common.size_row_height) * 2):
                 o = 9 if shift_modifier else 1
             else:
                 o = 9 if shift_modifier else 3
@@ -1305,10 +1391,15 @@ class InlineIconView(BaseItemView):
         self.multi_toggle_items = {}
 
     def inline_icons_count(self):
-        """The number of inline icons."""
+        """Inline buttons count.
+
+        """
         return 0
 
-    def reset_multitoggle(self):
+    def reset_multi_toggle(self):
+        """Resets the multi-toggle state.
+        
+        """
         self.multi_toggle_pos = None
         self.multi_toggle_state = None
         self.multi_toggle_idx = None
@@ -1319,7 +1410,7 @@ class InlineIconView(BaseItemView):
         """Handle mouse press & release events on an item's interactive rectangle.
 
         The clickable rectangles are defined by and stored by the item delegate. See
-        :meth:`ItemDelegate.get_clickable_rectangles`.
+        :meth:`~bookmarks.items.ItemDelegate.get_clickable_rectangles`.
 
         We're implementing filtering by reacting to clicks on item labels:
         ``shift`` modifier will add a _positive_ filter and hide all items not
@@ -1404,17 +1495,17 @@ class InlineIconView(BaseItemView):
 
         """
         if not isinstance(event, QtGui.QMouseEvent):
-            self.reset_multitoggle()
+            self.reset_multi_toggle()
             return
 
         cursor_position = self.mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)
         if not index.isValid() or not index.flags() & QtCore.Qt.ItemIsEnabled:
             super(InlineIconView, self).mousePressEvent(event)
-            self.reset_multitoggle()
+            self.reset_multi_toggle()
             return
 
-        self.reset_multitoggle()
+        self.reset_multi_toggle()
 
         rect = self.visualRect(index)
         rectangles = delegate.get_rectangles(rect, self.inline_icons_count())
@@ -1432,10 +1523,16 @@ class InlineIconView(BaseItemView):
         super(InlineIconView, self).mousePressEvent(event)
 
     def enterEvent(self, event):
+        """Event handler.
+
+        """
         QtWidgets.QApplication.instance().restoreOverrideCursor()
         super(InlineIconView, self).enterEvent(event)
 
     def leaveEvent(self, event):
+        """Event handler.
+
+        """
         app = QtWidgets.QApplication.instance()
         app.restoreOverrideCursor()
 
@@ -1449,7 +1546,7 @@ class InlineIconView(BaseItemView):
 
         """
         if not isinstance(event, QtGui.QMouseEvent):
-            self.reset_multitoggle()
+            self.reset_multi_toggle()
             return
 
         # Let's handle the clickable rectangle event first
@@ -1457,12 +1554,12 @@ class InlineIconView(BaseItemView):
 
         index = self.indexAt(event.pos())
         if not index.isValid():
-            self.reset_multitoggle()
+            self.reset_multi_toggle()
             super(InlineIconView, self).mouseReleaseEvent(event)
             return
 
         if self.multi_toggle_items:
-            self.reset_multitoggle()
+            self.reset_multi_toggle()
             super(InlineIconView, self).mouseReleaseEvent(event)
             self.model().invalidateFilter()
             return
@@ -1472,7 +1569,7 @@ class InlineIconView(BaseItemView):
         rectangles = delegate.get_rectangles(rect, self.inline_icons_count())
         cursor_position = self.mapFromGlobal(common.cursor.pos())
 
-        self.reset_multitoggle()
+        self.reset_multi_toggle()
 
         if rectangles[delegate.FavouriteRect].contains(cursor_position):
             actions.toggle_favourite()
@@ -1667,6 +1764,9 @@ class ThreadedItemView(InlineIconView):
     @common.error
     @common.debug
     def set_model(self, *args, **kwargs):
+        """The methods responsible for connecting the associated item model with the view.
+
+        """
         super().set_model(*args, **kwargs)
         self.refUpdated.connect(self.update_row)
 
@@ -1687,6 +1787,9 @@ class ThreadedItemView(InlineIconView):
     @QtCore.Slot()
     @common.debug
     def start_delayed_queue_timer(self, *args, **kwargs):
+        """Starts the delayed queue timer.
+
+        """
         self.delayed_queue_timer.start(self.delayed_queue_timer.interval())
 
     @common.status_bar_message('Updating items...')

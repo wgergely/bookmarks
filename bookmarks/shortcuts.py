@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Application-wide shortcut definitions.
 
 TODO: Create editor widget to make these customizable.

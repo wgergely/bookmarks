@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """The module defines :class:`.ImageCache`, a utility class used to store image and color data and
 all other utility methods needed to create, load and store thumbnail images.
 
@@ -13,7 +12,7 @@ The lower level methods are to load image data are :meth:`ImageCache.get_pixmap`
 Bookmarks uses OpenImageIO to generate thumbnails. See :meth:`ImageCache.oiio_make_thumbnail`.
 To load an image using OpenImageIO as a QtGui.QImage see :func:`oiio_get_qimage`.
 
-When loading resource images to use in the Gui use :meth:`.ImageCache.get_rsc_pixmap`.
+When loading resource images to use in the Gui use :meth:`.ImageCache.rsc_pixmap`.
 
 
 """
@@ -28,6 +27,7 @@ from PySide2 import QtWidgets, QtGui, QtCore
 from . import common
 from . import log
 
+#: The list of image formats QT is configured to read.
 QT_IMAGE_FORMATS = {f.data().decode('utf8')
                     for f in QtGui.QImageReader.supportedImageFormats()}
 
@@ -44,6 +44,9 @@ accepted_codecs = ('h.264', 'h264', 'mpeg-4', 'mpeg4')
 
 
 def init_imagecache():
+    """Initialises the image cache object.
+
+    """
     common.oiio_cache = OpenImageIO.ImageCache(True)
     common.oiio_cache.attribute('max_memory_MB', 4096.0)
     common.oiio_cache.attribute('max_open_files', 0)
@@ -67,7 +70,10 @@ def init_imagecache():
 
 
 def init_resources():
-    for _source, k in ((common.get_rsc(f), f) for f in
+    """Initialises the GUI image resources.
+
+    """
+    for _source, k in ((common.rsc(f), f) for f in
                        (common.GuiResource, common.ThumbnailResource,
                         common.FormatResource)):
         for _entry in os.scandir(_source):
@@ -75,6 +81,9 @@ def init_resources():
 
 
 def init_pixel_ratio():
+    """Initialises the pixel ration value.
+
+    """
     app = QtWidgets.QApplication.instance()
     if not app:
         log.error(
@@ -102,13 +111,13 @@ def get_thumbnail(server, job, root, source, size=common.thumbnail_size,
     to find a cached image file.
 
     Args:
-        server (str):        A server name.
-        job (str):           A job name.
-        root (str):          A root folder name.
-        source (str):        Full file path of source item.
-        size (int):              The size of the thumbnail image in pixels.
+        server (str): `server` path segment.
+        job (str): `job` path segment.
+        root (str): `root` path segment.
+        source (str): Full file path of source item.
+        size (int): The size of the thumbnail image in pixels.
         fallback_thumb(str): A fallback thumbnail image.
-        get_path (bool):         Returns a path instead of a QPixmap if set to `True`.
+        get_path (bool): Returns a path instead of a QPixmap if set to `True`.
 
     Returns:
         tuple:                   `(QPixmap, QColor)`, or `(None, None)`.
@@ -121,7 +130,7 @@ def get_thumbnail(server, job, root, source, size=common.thumbnail_size,
             return None
         return (None, None)
 
-    def get(server, job, root, source, proxy):
+    def _get(server, job, root, source, proxy):
         path = get_cached_thumbnail_path(
             server, job, root, source, proxy=proxy)
         with lock:
@@ -141,7 +150,7 @@ def get_thumbnail(server, job, root, source, size=common.thumbnail_size,
     # In the simplest of all cases, the source has a bespoke thumbnail saved we
     # can return outright.
 
-    thumbnail_path, pixmap, color = get(server, job, root, source, False)
+    thumbnail_path, pixmap, color = _get(server, job, root, source, False)
     if pixmap and not pixmap.isNull() and get_path:
         return thumbnail_path
     if pixmap and not pixmap.isNull():
@@ -149,7 +158,7 @@ def get_thumbnail(server, job, root, source, size=common.thumbnail_size,
 
     # If this item is an un-collapsed sequence item, the sequence
     # might have a thumbnail instead.
-    thumbnail_path, pixmap, color = get(server, job, root, source, True)
+    thumbnail_path, pixmap, color = _get(server, job, root, source, True)
     if pixmap and not pixmap.isNull() and get_path:
         return thumbnail_path
     if pixmap and not pixmap.isNull():
@@ -195,10 +204,17 @@ def get_thumbnail(server, job, root, source, size=common.thumbnail_size,
     return (None, None)
 
 
-def wait_for_lock(source):
+def wait_for_lock(source, timeout=1.0):
+    """Waits for a maximum amount of time when a lock file is present.
+
+    Args:
+        source (str): A file path.
+        timeout (float): The maximum amount of time to wait in seconds.
+
+    """
     t = 0.0
     while os.path.isfile(f'{source}.lock'):
-        if t > 1.0:
+        if t > timeout:
             break
         time.sleep(0.1)
         t += 0.1
@@ -243,7 +259,7 @@ def get_oiio_namefilters():
 
 @common.error
 @common.debug
-def load_thumbnail_from_image(server, job, root, source, image, proxy=False):
+def create_thumbnail_from_image(server, job, root, source, image, proxy=False):
     """Creates a thumbnail from a given image file and saves it as the source
     file's thumbnail image.
 
@@ -253,10 +269,10 @@ def load_thumbnail_from_image(server, job, root, source, image, proxy=False):
     thumbnail image and saved to our image cache and disk to represent ``source``.
 
     Args:
-         server (str):       The `server` segment of the file path.
-         job (str):          The `job` segment of the file path.
-         root (str):         The `root` segment of the file path.
-         source (str):       The full file path.
+         server (str): `server` path segment.
+         job (str): `job` path segment.
+         root (str): `root` path segment.
+         source (str): The full file path.
          image (str): Path to an image file to use as a thumbnail for ``source``.
          proxy (bool, optional): Specify if the source is an image sequence and if
                 the proxy path should be used to save the thumbnail instead.
@@ -289,10 +305,10 @@ def get_cached_thumbnail_path(server, job, root, source, proxy=False):
     the sequence's first item as our thumbnail source.
 
     Args:
-        server (str):       The `server` segment of the file path.
-        job (str):          The `job` segment of the file path.
-        root (str):         The `root` segment of the file path.
-        source (str):       The full file path.
+        server (str): `server` path segment.
+        job (str): `job` path segment.
+        root (str): `root` path segment.
+        source (str): The full file path.
 
     Returns:
         str:                The resolved thumbnail path.
@@ -304,7 +320,7 @@ def get_cached_thumbnail_path(server, job, root, source, proxy=False):
     if proxy or common.is_collapsed(source):
         source = common.proxy_path(source)
     name = common.get_hash(source) + '.' + common.thumbnail_format
-    return server + '/' + job + '/' + root + '/' + common.bookmark_cache_dir + '/' + name
+    return f'{server}/{job}/{root}/{common.bookmark_cache_dir}/thumbnails/{name}'
 
 
 @functools.lru_cache(maxsize=4194304)
@@ -324,24 +340,24 @@ def get_placeholder_path(file_path, fallback):
     """
     common.check_type(file_path, str)
 
-    def path(r, n):
-        return common.get_rsc(f'{r}/{n}.{common.thumbnail_format}')
+    def _path(r, n):
+        return common.rsc(f'{r}/{n}.{common.thumbnail_format}')
 
     file_info = QtCore.QFileInfo(file_path)
     suffix = file_info.suffix().lower()
 
     if suffix in common.image_resource_list[common.FormatResource]:
-        path = path(common.FormatResource, suffix)
+        path = _path(common.FormatResource, suffix)
         return os.path.normpath(path)
 
     if fallback in common.image_resource_list[common.FormatResource]:
-        path = path(common.FormatResource, fallback)
+        path = _path(common.FormatResource, fallback)
     elif fallback in common.image_resource_list[common.ThumbnailResource]:
-        path = path(common.ThumbnailResource, fallback)
+        path = _path(common.ThumbnailResource, fallback)
     elif fallback in common.image_resource_list[common.GuiResource]:
-        path = path(common.GuiResource, fallback)
+        path = _path(common.GuiResource, fallback)
     else:
-        path = path(common.GuiResource, 'placeholder')
+        path = _path(common.GuiResource, 'placeholder')
 
     return os.path.normpath(path)
 
@@ -351,9 +367,9 @@ def oiio_get_buf(source, hash=None, force=False, subimage=0):
 
 
     Args:
-        source (str):       Path to an OpenImageIO compatible image file.
-        hash (str):         Specify the hash manually, otherwise will be generated.
-        force (bool):       When `true`, forces the buffer to be re-cached.
+        source (str): Path to an OpenImageIO compatible image file.
+        hash (str): Specify the hash manually, otherwise will be generated.
+        force (bool): When `true`, forces the buffer to be re-cached.
 
     Returns:
         ImageBuf: An `ImageBuf` instance or `None` if the image cannot be read.
@@ -398,8 +414,8 @@ def oiio_get_qimage(source, buf=None, force=True):
     `RGBA8888` / `RGB888` QImage.
 
     Args:
-        source (str):                 Path to an OpenImageIO readable image.
-        buf (OpenImageIO.ImageBuf):     When buf is valid ImageBuf instance it will be used
+        source (str): Path to an OpenImageIO readable image.
+        buf (OpenImageIO.ImageBuf): When buf is valid ImageBuf instance it will be used
                                         as the source instead of `source`. Defaults to `None`.
 
     Returns:
@@ -472,7 +488,7 @@ class ImageCache(QtCore.QObject):
     Whilst the cache provides a :meth:`.value` and :meth:`setValue`, and :meth:`contains` methods,
     loading is usually done using :meth:`get_image` and :meth:`get_pixmap`.
 
-    When loading resource images to use in the Gui use :meth:`get_rsc_pixmap`.
+    When loading resource images to use in the Gui use :meth:`rsc_pixmap`.
 
     """
 
@@ -499,11 +515,11 @@ class ImageCache(QtCore.QObject):
         setting `hash`.
 
         Args:
-            source (str):       Path to an OpenImageIO compliant image file.
-            size (int):         The size of the requested image.
-            hash (str):         Use this hash key instead source to store the data.
-            force (bool):       Force reloads the image from source.
-            oiio (bool):        Use OpenImageIO to load the image data.
+            source (str): Path to an OpenImageIO compliant image file.
+            size (int): The size of the requested image.
+            hash (str): Use this hash key instead source to store the data.
+            force (bool): Force reloads the image from source.
+            oiio (bool): Use OpenImageIO to load the image data.
 
         Returns:
             QImage: The loaded and resized QImage, or `None` if loading fails.
@@ -574,11 +590,11 @@ class ImageCache(QtCore.QObject):
             anyway.
 
         Args:
-            source (str):   Path to an image file.
-            size (int):     The size of the requested image.
-            hash (str):     Use this hash key instead of a source's hash value to store the data.
-            force (bool):   Force reloads the pixmap.
-            oiio (bool):    Use OpenImageIO to load the image, instead of Qt.
+            source (str): Path to an image file.
+            size (int): The size of the requested image.
+            hash (str): Use this hash key instead of a source's hash value to store the data.
+            force (bool): Force reloads the pixmap.
+            oiio (bool): Use OpenImageIO to load the image, instead of Qt.
 
         Returns:
             QPixmap: The loaded and resized QPixmap, or `None`.
@@ -615,7 +631,7 @@ class ImageCache(QtCore.QObject):
         # We'll load a cache a QImage to use as the basis for the QPixmap. This
         # is because of how the thread affinity of QPixmaps don't permit use
         # outside the main gui thread
-        image = cls.get_image(source, size, hash=hash, force=force)
+        image = cls.get_image(source, size, hash=hash, force=force, oiio=oiio)
         if not image:
             return None
 
@@ -696,6 +712,13 @@ class ImageCache(QtCore.QObject):
 
     @classmethod
     def get_color(cls, source, force=False):
+        """Gets a cached QColor associated with the given source.
+
+        Args:
+            source (str): A file path.
+            force (bool): Force value recache.
+
+        """
         common.check_type(source, str)
 
         # Check the cache and return the previously stored value if exists
@@ -781,25 +804,29 @@ class ImageCache(QtCore.QObject):
         return image.smoothScaled(round(w), round(h))
 
     @classmethod
-    def get_rsc_pixmap(cls, name, color, size, opacity=1.0, resource=common.GuiResource,
+    def rsc_pixmap(cls, name, color, size, opacity=1.0, resource=common.GuiResource,
                        get_path=False):
         """Loads an image resource and returns it as a sized (and recolored) QPixmap.
 
         Args:
-            name (str):         Name of the resource without the extension.
-            color (QColor):     The color of the icon.
-            size (int):         The size of pixmap.
-            opacity (float):    Sets the opacity of the returned pixmap.
-            get_path (bool):    Returns the path to the image instead of a pixmap.
+            name (str): Name of the resource without the extension.
+            color (QColor or None): The color of the icon.
+            size (int or None): The size of pixmap.
+            opacity (float): Sets the opacity of the returned pixmap.
+            resource (str): Optional resource type. Default: common.GuiResource.
+            get_path (bool): Returns a path when True.
 
         Returns:
-            QPixmap: The loaded image.
+            A QPixmap of the requested resource, or a str path if ``get_path`` is True.
+            None if the resource could not be found.
 
         """
         common.check_type(name, str)
-        common.check_type(color, (QtGui.QColor, None))
+        common.check_type(color, (None, QtGui.QColor))
+        common.check_type(size, (None, int, float))
+        common.check_type(opacity, float)
 
-        source = common.get_rsc(f'{resource}/{name}.{common.thumbnail_format}')
+        source = common.rsc(f'{resource}/{name}.{common.thumbnail_format}')
 
         if get_path:
             file_info = QtCore.QFileInfo(source)
@@ -868,13 +895,14 @@ class ImageCache(QtCore.QObject):
             bool: True if successfully converted the image, False otherwise.
 
         """
-        if os.path.isfile(destination + '.lock'):
+        _lock_path = f'{destination}.lock'
+        if os.path.isfile(_lock_path):
             return
 
         log.debug(f'Converting {source}...', cls)
-        open(destination + '.lock', 'a', encoding='utf8')
+        open(_lock_path, 'a', encoding='utf8')
 
-        def get_scaled_spec(source_spec):
+        def _get_scaled_spec(source_spec):
             w = source_spec.width
             h = source_spec.height
             factor = float(size) / max(float(w), float(h))
@@ -888,7 +916,7 @@ class ImageCache(QtCore.QObject):
             s.attribute('oiio:Gamma', '0.454545')
             return s
 
-        def shuffle_channels(buf, source_spec):
+        def _shuffle_channels(buf, source_spec):
             if int(source_spec.nchannels) < 3:
                 buf = OpenImageIO.ImageBufAlgo.channels(
                     buf,
@@ -905,36 +933,36 @@ class ImageCache(QtCore.QObject):
                         buf, ('R', 'G', 'B'), ('R', 'G', 'B'))
             return buf
 
-        def resize(buf, destination_spec):
+        def _resize(buf, destination_spec):
             return OpenImageIO.ImageBufAlgo.resample(
                 buf, roi=destination_spec.roi, interpolate=True, nthreads=nthreads)
 
-        def flatten(buf, source_spec):
+        def _flatten(buf, source_spec):
             if source_spec.get_int_attribute('deep', defaultval=-1) != 1:
                 return buf
             if source_spec.deep:
                 buf = OpenImageIO.ImageBufAlgo.flatten(buf, nthreads=nthreads)
             return buf
 
-        def colorconvert(buf, source_spec):
+        def _colorconvert(buf, source_spec):
             if source_spec.get_int_attribute('oiio:Movie') == 1:
                 return buf
             colorspace = source_spec.get_string_attribute('oiio:ColorSpace')
             try:
                 if colorspace == 'linear':
-                    buf = OpenImageIO.ImageBufAlgo.colorconvert(
+                    buf = OpenImageIO.ImageBufAlgo._colorconvert(
                         buf, colorspace, 'sRGB')
             except:
                 log.error('Could not convert the color profile')
             return buf
 
-        def checker(buf, source_spec, destination_spec):
+        def _checker(buf, source_spec, destination_spec):
             if source_spec.get_int_attribute('oiio:Movie', defaultval=-1) == 1:
                 return buf
             if buf.nchannels <= 3:
                 return buf
             background_buf = OpenImageIO.ImageBuf(destination_spec)
-            OpenImageIO.ImageBufAlgo.checker(
+            OpenImageIO.ImageBufAlgo._checker(
                 background_buf,
                 12, 12, 1,
                 (0.3, 0.3, 0.3),
@@ -946,7 +974,7 @@ class ImageCache(QtCore.QObject):
         buf = oiio_get_buf(source)
         if not buf:
             common.oiio_cache.invalidate(source, force=True)
-            os.remove(destination + '.lock')
+            os.remove(_lock_path)
             return False
 
         source_spec = buf.spec()
@@ -971,7 +999,7 @@ class ImageCache(QtCore.QObject):
             if not is_gif and source_spec.get_int_attribute('oiio:subimages',
                                                             defaultval=-1) <= 2:
                 common.oiio_cache.invalidate(source, force=True)
-                os.remove(destination + '.lock')
+                os.remove(_lock_path)
                 return False
 
             # [BUG] Not all codec formats are supported by ffmpeg. There does
@@ -982,16 +1010,16 @@ class ImageCache(QtCore.QObject):
                 if not [f for f in accepted_codecs if f.lower() in codec_name.lower()]:
                     log.debug(f'Unsupported movie format: {codec_name}')
                     common.oiio_cache.invalidate(source, force=True)
-                    os.remove(destination + '.lock')
+                    os.remove(_lock_path)
                     return False
 
-        destination_spec = get_scaled_spec(source_spec)
+        destination_spec = _get_scaled_spec(source_spec)
         if size != -1:
-            buf = resize(buf, destination_spec)
-        buf = shuffle_channels(buf, source_spec)
-        buf = flatten(buf, source_spec)
-        buf = colorconvert(buf, source_spec)
-        # buf = checker(buf, source_spec, destination_spec)
+            buf = _resize(buf, destination_spec)
+        buf = _shuffle_channels(buf, source_spec)
+        buf = _flatten(buf, source_spec)
+        buf = _colorconvert(buf, source_spec)
+        # buf = _checker(buf, source_spec, destination_spec)
 
         spec = buf.spec()
         buf.set_write_format(OpenImageIO.UINT8)
@@ -1003,7 +1031,7 @@ class ImageCache(QtCore.QObject):
 
         # Create a lock file before writing
         success = buf.write(destination, dtype=OpenImageIO.UINT8)
-        os.remove(destination + '.lock')
+        os.remove(_lock_path)
 
         if not success:
             log.error(f'{buf.geterror()}\n{OpenImageIO.geterror()}')

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Slacker is a lightweight wrapper used to send messages using SlackClient,
 Slack's python API library.
 
@@ -123,22 +122,22 @@ class OverlayWidget(QtWidgets.QWidget):
 
         painter = QtGui.QPainter()
         painter.begin(self)
-        o = common.size(common.WidthMargin)
+        o = common.size(common.size_margin)
         o = 0
         rect = self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o))
 
-        painter.setBrush(common.color(common.SeparatorColor))
+        painter.setBrush(common.color(common.color_separator))
         painter.setPen(QtCore.Qt.NoPen)
 
         painter.setOpacity(0.5)
         painter.drawRoundedRect(
-            rect, common.size(common.WidthIndicator), common.size(common.WidthIndicator))
+            rect, common.size(common.size_indicator), common.size(common.size_indicator))
         painter.setOpacity(1.0)
 
         painter.setBrush(QtCore.Qt.NoBrush)
-        painter.setPen(common.color(common.TextColor))
+        painter.setPen(common.color(common.color_text))
         painter.setFont(common.font_db.primary_font(
-            common.size(common.FontSizeMedium))[0])
+            common.size(common.size_font_medium))[0])
 
         painter.drawText(
             rect,
@@ -148,11 +147,14 @@ class OverlayWidget(QtWidgets.QWidget):
         painter.end()
 
     def showEvent(self, event):
+        """Show event handler.
+
+        """
         self.setGeometry(self.parent().rect())
 
 
 class SlackClient(slack_sdk.WebClient):
-    """Customized SlackClient used by bookmarks to send and receive massages.
+    """Customized SlackClient used by bookmarks to send and receive messages.
 
     """
 
@@ -341,19 +343,22 @@ class UsersModel(QtCore.QAbstractItemModel):
     def __init__(self, token, parent=None):
         super(UsersModel, self).__init__(parent=parent)
         self.token = token
-        self.row_size = QtCore.QSize(1, common.size(common.HeightRow))
+        self.row_size = QtCore.QSize(1, common.size(common.size_row_height))
 
         self.INTERNAL_USER_DATA = common.DataDict()
 
     def init_data(self):
+        """Initializes data.
+
+        """
         self.beginResetModel()
 
         self.INTERNAL_USER_DATA = common.DataDict()
         client = get_client(self.token)
 
-        pixmap = images.ImageCache.get_rsc_pixmap(
+        pixmap = images.ImageCache.rsc_pixmap(
             'slack',
-            common.color(common.TextSecondaryColor),
+            common.color(common.color_secondary_text),
             self.row_size.height()
         )
         icon = QtGui.QIcon()
@@ -369,7 +374,7 @@ class UsersModel(QtCore.QAbstractItemModel):
                     QtCore.Qt.DecorationRole: icon,
                     QtCore.Qt.SizeHintRole: self.row_size,
                     QtCore.Qt.FontRole:
-                        common.font_db.primary_font(common.size(common.FontSizeSmall))[0],
+                        common.font_db.primary_font(common.size(common.size_font_small))[0],
                     IdRole: channel['id'],
                     ThumbnailHashRole: None,
                     ThumbnailUrlRole: None,
@@ -386,7 +391,7 @@ class UsersModel(QtCore.QAbstractItemModel):
                     QtCore.Qt.DecorationRole: icon,
                     QtCore.Qt.SizeHintRole: self.row_size,
                     QtCore.Qt.FontRole:
-                        common.font_db.primary_font(common.size(common.FontSizeSmall))[0],
+                        common.font_db.primary_font(common.size(common.size_font_small))[0],
                     IdRole: profile['id'],
                     ThumbnailHashRole: profile['profile']['avatar_hash'],
                     ThumbnailUrlRole: profile['profile']['image_32'],
@@ -557,7 +562,7 @@ class SlackWidget(QtWidgets.QDialog):
         self._connect_signals()
 
     def _create_UI(self):
-        height = common.size(common.HeightRow)
+        height = common.size(common.size_row_height)
 
         QtWidgets.QVBoxLayout(self)
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
@@ -578,14 +583,14 @@ class SlackWidget(QtWidgets.QDialog):
         self.message_widget = QtWidgets.QTextEdit(parent=self)
         self.message_widget.setStyleSheet(
             'QTextEdit {{border-radius: {}px;}}'.format(
-                common.size(common.WidthMargin) * 0.33,
+                common.size(common.size_margin) * 0.33,
             )
         )
-        self.message_widget.setMaximumHeight(common.size(common.HeightRow) * 3)
+        self.message_widget.setMaximumHeight(common.size(common.size_row_height) * 3)
         self.message_widget.setObjectName('SlackMessageBox')
 
         self.message_widget.document().setDocumentMargin(
-            common.size(common.WidthMargin) * 0.5)
+            common.size(common.size_margin) * 0.5)
         self.message_widget.setPlaceholderText(
             'Enter a message to send...')
         self.message_widget.setAcceptRichText(False)
@@ -647,6 +652,9 @@ class SlackWidget(QtWidgets.QDialog):
         self.is_initialized = True
 
     def showEvent(self, event):
+        """Show event handler.
+
+        """
         if not self.is_initialized:
             QtCore.QTimer.singleShot(100, self.initialize)
 

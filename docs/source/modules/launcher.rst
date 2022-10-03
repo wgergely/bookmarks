@@ -1,12 +1,12 @@
 launcher
 ==================
 
+
 .. automodule:: bookmarks.launcher
     :members:
 
 
 .. toctree::
-    :maxdepth: 3
+    :glob:
 
-    launcher/gallery
-    launcher/main
+    launcher/*

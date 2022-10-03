@@ -1,11 +1,12 @@
 versioncontrol
 ===================
 
+
 .. automodule:: bookmarks.versioncontrol
     :members:
 
 
 .. toctree::
+    :glob:
 
-    versioncontrol/version
-    versioncontrol/versioncontrol
+    versioncontrol/*

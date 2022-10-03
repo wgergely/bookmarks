@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Defines the main item tab buttons found on the left hand side of the top bar.
 
 """
@@ -63,19 +62,22 @@ class BaseTabButton(QtWidgets.QLabel):
         return self._label
 
     def get_width(self):
-        o = common.size(common.WidthIndicator) * 6
+        o = common.size(common.size_indicator) * 6
         _, metrics = common.font_db.primary_font(
-            common.size(common.FontSizeMedium))
+            common.size(common.size_font_medium))
         return metrics.horizontalAdvance(self.text()) + o
 
     @QtCore.Slot()
     def adjust_size(self):
         """Slot responsible for setting the size of the widget to match the text."""
         self.setMaximumWidth(self.get_width())
-        self.setMinimumWidth(common.size(common.WidthMargin) * 2)
+        self.setMinimumWidth(common.size(common.size_margin) * 2)
         self.update()
 
     def showEvent(self, event):
+        """Show event handler.
+
+        """
         self.adjust_size()
 
     def paintEvent(self, event):
@@ -97,15 +99,15 @@ class BaseTabButton(QtWidgets.QLabel):
 
         if common.current_tab() == self.tab_idx:
             color = common.color(
-                common.TextSelectedColor) if hover else common.color(common.TextColor)
+                common.color_selected_text) if hover else common.color(common.color_text)
             painter.setBrush(color)
         else:
-            color = common.color(common.TextColor) if hover else common.color(
-                common.BackgroundColor)
+            color = common.color(common.color_text) if hover else common.color(
+                common.color_background)
             painter.setBrush(color)
 
         font, metrics = common.font_db.primary_font(
-            common.size(common.FontSizeMedium))
+            common.size(common.size_font_medium))
 
         # When the width of the button is very small, we'll switch to an icon
         # representation instead of text:
@@ -115,13 +117,13 @@ class BaseTabButton(QtWidgets.QLabel):
                 hover
         ):
             # Draw icon
-            pixmap = images.ImageCache.get_rsc_pixmap(
+            pixmap = images.ImageCache.rsc_pixmap(
                 'branch_open',
-                common.color(common.TextSelectedColor),
-                common.size(common.WidthMargin)
+                common.color(common.color_selected_text),
+                common.size(common.size_margin)
             )
             _rect = QtCore.QRect(0, 0, common.size(
-                common.WidthMargin), common.size(common.WidthMargin))
+                common.size_margin), common.size(common.size_margin))
             _rect.moveCenter(self.rect().center())
             painter.drawPixmap(
                 _rect,
@@ -130,7 +132,7 @@ class BaseTabButton(QtWidgets.QLabel):
             )
         else:
             if (metrics.horizontalAdvance(self.text()) + (
-                    common.size(common.WidthMargin) * 0.5)) < self.rect().width():
+                    common.size(common.size_margin) * 0.5)) < self.rect().width():
                 # Draw label
                 width = metrics.horizontalAdvance(self.text())
                 x = (self.width() / 2.0) - (width / 2.0)
@@ -139,13 +141,13 @@ class BaseTabButton(QtWidgets.QLabel):
                 painter.drawPath(path)
             else:
                 # Draw icon
-                pixmap = images.ImageCache.get_rsc_pixmap(
+                pixmap = images.ImageCache.rsc_pixmap(
                     self.icon,
                     color,
-                    common.size(common.WidthMargin)
+                    common.size(common.size_margin)
                 )
                 _rect = QtCore.QRect(0, 0, common.size(
-                    common.WidthMargin), common.size(common.WidthMargin))
+                    common.size_margin), common.size(common.size_margin))
                 _rect.moveCenter(self.rect().center())
                 painter.drawPixmap(
                     _rect,
@@ -154,18 +156,18 @@ class BaseTabButton(QtWidgets.QLabel):
                 )
 
         # Draw indicator line below icon or text
-        rect.setHeight(common.size(common.HeightSeparator) * 2.0)
+        rect.setHeight(common.size(common.size_separator) * 2.0)
         painter.setPen(QtCore.Qt.NoPen)
         rect.setWidth(self.rect().width())
 
         if common.current_tab() == self.tab_idx:
             painter.setOpacity(0.9)
             color = common.color(
-                common.TextColor) if hover else common.color(common.RedColor)
+                common.color_text) if hover else common.color(common.color_red)
         else:
             painter.setOpacity(0.3)
             color = common.color(
-                common.TextColor) if hover else common.color(common.BlueColor)
+                common.color_text) if hover else common.color(common.color_blue)
 
         painter.setBrush(color)
         painter.drawRect(rect)
@@ -257,20 +259,20 @@ class FilesTabButton(BaseTabButton):
         painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform)
 
         rect = self.rect()
-        rect.setHeight(common.size(common.HeightSeparator) * 2.0)
+        rect.setHeight(common.size(common.size_separator) * 2.0)
 
         painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.color(common.GreenColor))
+        painter.setBrush(common.color(common.color_green))
         painter.drawRect(rect)
 
-        o = common.size(common.WidthMargin)
-        pixmap = images.ImageCache.get_rsc_pixmap('gradient2', None, o)
+        o = common.size(common.size_margin)
+        pixmap = images.ImageCache.rsc_pixmap('gradient2', None, o)
         painter.drawPixmap(self.rect(), pixmap, pixmap.rect())
 
         rect = QtCore.QRect(0, 0, o, o)
         rect.moveCenter(self.rect().center())
-        pixmap = images.ImageCache.get_rsc_pixmap(
-            'folder', common.color(common.GreenColor), o)
+        pixmap = images.ImageCache.rsc_pixmap(
+            'folder', common.color(common.color_green), o)
         painter.drawPixmap(rect, pixmap, pixmap.rect())
 
         painter.drawPixmap(rect, pixmap, pixmap.rect())

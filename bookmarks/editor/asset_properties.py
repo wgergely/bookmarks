@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """:class:`.AssetPropertyEditor` is used to create new assets and edit existing asset
 item properties.
 
@@ -23,7 +22,7 @@ from ..shotgun import shotgun
 
 
 def close():
-    """Close the :class:`AssetPropertyEditor` window.
+    """Closes the :class:`AssetPropertyEditor` editor.
 
     """
     if common.asset_property_editor is None:
@@ -32,7 +31,7 @@ def close():
         common.asset_property_editor.close()
         common.asset_property_editor.deleteLater()
     except:
-        log.error('Could not delete widget.')
+        pass
     common.asset_property_editor = None
 
 
@@ -40,10 +39,10 @@ def show(server, job, root, asset=None):
     """Show the :class:`AssetPropertyEditor` window.
 
     Args:
-        server (str): Server name.
-        job (str): Job name.
-        root (str): Root name.
-        asset (str, optional): Asset name. Defaults to `None`.
+        server (str): `server` path segment.
+        job (str): `job` path segment.
+        root (str): `root` path segment.
+        asset (str, optional): Asset name. Default: `None`.
 
     """
     close()
@@ -58,17 +57,18 @@ def show(server, job, root, asset=None):
     return common.asset_property_editor
 
 
+#: UI layout definition
 SECTIONS = {
     0: {
         'name': 'Settings',
         'icon': '',
-        'color': common.color(common.BackgroundDarkColor),
+        'color': common.color(common.color_dark_background),
         'groups': {
             0: {
                 0: {
                     'name': 'Name',
                     'key': None,
-                    'validator': base.namevalidator,
+                    'validator': base.name_validator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Enter name, e.g. \'SH0010\'',
                     'description': 'The asset\'s name, e.g. \'SH0010\'',
@@ -116,15 +116,15 @@ SECTIONS = {
                 1: {
                     'name': 'Type',
                     'key': 'shotgun_type',
-                    'validator': base.intvalidator,
-                    'widget': base_widgets.AssetTypesWidget,
+                    'validator': base.int_validator,
+                    'widget': base_widgets.SGAssetTypesWidget,
                     'placeholder': None,
                     'description': 'Select the item\'s ShotGrid type',
                 },
                 2: {
                     'name': 'ID',
                     'key': 'shotgun_id',
-                    'validator': base.intvalidator,
+                    'validator': base.int_validator,
                     'widget': ui.LineEdit,
                     'placeholder': 'ShotGrid Project ID, e.g. \'123\'',
                     'description': 'The ShotGrid ID number this item is associated '
@@ -147,13 +147,13 @@ SECTIONS = {
     2: {
         'name': 'Cut',
         'icon': 'todo',
-        'color': common.color(common.BackgroundDarkColor),
+        'color': common.color(common.color_dark_background),
         'groups': {
             0: {
                 0: {
                     'name': 'In Frame',
                     'key': 'cut_in',
-                    'validator': base.intvalidator,
+                    'validator': base.int_validator,
                     'widget': ui.LineEdit,
                     'placeholder': 'In frame, e.g. \'1150\'',
                     'description': 'The frame this asset starts at, e.g. \'1150\'.',
@@ -161,7 +161,7 @@ SECTIONS = {
                 1: {
                     'name': 'Out Frame',
                     'key': 'cut_out',
-                    'validator': base.intvalidator,
+                    'validator': base.int_validator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Out frame, e.g. \'1575\'',
                     'description': 'The frame this asset ends at, e.g. \'1575\'.',
@@ -169,7 +169,7 @@ SECTIONS = {
                 2: {
                     'name': 'Cut Duration',
                     'key': 'cut_duration',
-                    'validator': base.intvalidator,
+                    'validator': base.int_validator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Duration in frames, e.g. \'425\'',
                     'description': 'The asset\'s duration in frames, e.g. \'425\'.',
@@ -180,7 +180,7 @@ SECTIONS = {
     3: {
         'name': 'Links',
         'icon': '',
-        'color': common.color(common.BackgroundDarkColor),
+        'color': common.color(common.color_dark_background),
         'groups': {
             0: {
                 0: {
@@ -260,7 +260,10 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         return name if name else None
 
     def db_source(self):
-        """The source used to associate the saved data in the database.
+        """A file path to use as the source of database values.
+
+        Returns:
+            str: The database source file.
 
         """
         if not self.name():
@@ -275,7 +278,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         )
 
     def init_data(self):
-        """Load the current data from the database.
+        """Initializes data.
 
         """
         self.init_db_data()
@@ -308,7 +311,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
     @common.error
     @common.debug
     def save_changes(self):
-        """Save changed data to the database.
+        """Saves changes.
 
         """
         # When the asset is not set, we'll create one based on the name set
@@ -318,10 +321,15 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         self.save_changed_data_to_db()
         self.thumbnail_editor.save_image()
         self.thumbnailUpdated.emit(self.db_source())
-        self.itemUpdated.emit(self.db_source())
         return True
 
     def shotgun_properties(self):
+        """Returns the currently stored ShotGrid properties.
+
+        Returns:
+            An initialized :class:`~bookmarks.shotgun.ShotgunProperties` instance.
+
+        """
         sg_properties = shotgun.ShotgunProperties(
             self.server,
             self.job,
@@ -359,6 +367,9 @@ class AssetPropertyEditor(base.BasePropertyEditor):
     @common.error
     @QtCore.Slot()
     def link_button_clicked(self):
+        """Slot connected to the link button.
+
+        """
         if not self.shotgun_type_editor.currentText():
             ui.MessageBox('Select an entity type before continuing').open()
             return

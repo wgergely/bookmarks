@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Defines :class:`.TopBarWidget`, the main widget containing all control buttons.
 
 """
@@ -83,24 +82,24 @@ class SlackDropAreaWidget(QtWidgets.QWidget):
         painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
         painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, True)
         painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.color(common.SeparatorColor))
+        painter.setBrush(common.color(common.color_separator))
         painter.drawRoundedRect(
-            self.rect(), common.size(common.WidthIndicator),
-            common.size(common.WidthIndicator))
+            self.rect(), common.size(common.size_indicator),
+            common.size(common.size_indicator))
 
-        pixmap = images.ImageCache.get_rsc_pixmap(
-            'slack', common.color(common.GreenColor),
-            self.rect().height() - (common.size(common.WidthIndicator) * 1.5))
+        pixmap = images.ImageCache.rsc_pixmap(
+            'slack', common.color(common.color_green),
+            self.rect().height() - (common.size(common.size_indicator) * 1.5))
         rect = QtCore.QRect(0, 0, common.size(
-            common.WidthMargin), common.size(common.WidthMargin))
+            common.size_margin), common.size(common.size_margin))
         rect.moveCenter(self.rect().center())
         painter.drawPixmap(rect, pixmap, pixmap.rect())
 
-        o = common.size(common.WidthIndicator)
+        o = common.size(common.size_indicator)
         rect = self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o))
         painter.setBrush(QtCore.Qt.NoBrush)
-        pen = QtGui.QPen(common.color(common.GreenColor))
-        pen.setWidthF(common.size(common.HeightSeparator) * 2.0)
+        pen = QtGui.QPen(common.color(common.color_green))
+        pen.setWidthF(common.size(common.size_separator) * 2.0)
         painter.setPen(pen)
         painter.drawRoundedRect(rect, o, o)
         painter.end()
@@ -130,6 +129,9 @@ class SlackDropAreaWidget(QtWidgets.QWidget):
         widget.append_message(message)
 
     def showEvent(self, event):
+        """Show event handler.
+
+        """
         pos = self.parent().rect().topLeft()
         pos = self.parent().mapToGlobal(pos)
         self.move(pos)
@@ -159,8 +161,8 @@ class TopBarWidget(QtWidgets.QWidget):
         self.layout().setSpacing(0)
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
 
-        height = common.size(common.WidthMargin) + \
-                 (common.size(common.WidthIndicator) * 3)
+        height = common.size(common.size_margin) + \
+                 (common.size(common.size_indicator) * 3)
         self.setFixedHeight(height)
 
         for idx in BUTTONS:
@@ -171,7 +173,7 @@ class TopBarWidget(QtWidgets.QWidget):
                 self.layout().addWidget(self._buttons[idx], 1)
             else:
                 self.layout().addWidget(self._buttons[idx], 0)
-                self.layout().addSpacing(common.size(common.WidthIndicator))
+                self.layout().addSpacing(common.size(common.size_indicator))
 
             if idx == common.FavouriteTab:
                 self.layout().addStretch()
@@ -190,7 +192,7 @@ class TopBarWidget(QtWidgets.QWidget):
         painter.begin(self)
         painter.setPen(QtCore.Qt.NoPen)
 
-        pixmap = images.ImageCache.get_rsc_pixmap(
+        pixmap = images.ImageCache.rsc_pixmap(
             'gradient', None, self.height())
         t = QtGui.QTransform()
         t.rotate(90)

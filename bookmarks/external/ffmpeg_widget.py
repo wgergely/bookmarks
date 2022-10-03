@@ -9,37 +9,43 @@ from . import ffmpeg
 from .. import common
 from ..editor import base
 
-instance = None
-
-
 def close():
-    global instance
-    if instance is None:
+    """Closes the :class:`FFMpegWidget` editor.
+
+    """
+    if common.ffmpeg_export_widget is None:
         return
     try:
-        instance.close()
-        instance.deleteLater()
+        common.ffmpeg_export_widget.close()
+        common.ffmpeg_export_widget.deleteLater()
     except:
         pass
-    instance = None
+    common.ffmpeg_export_widget = None
 
 
 def show(source):
-    global instance
+    """Opens the :class:`FFMpegWidget` editor.
 
+    """
     close()
-    instance = FFMpegWidget(source)
-    instance.open()
-    return instance
+    common.ffmpeg_export_widget = FFMpegWidget(source)
+    common.ffmpeg_export_widget.open()
+    return common.ffmpeg_export_widget
 
 
 class PresetComboBox(QtWidgets.QComboBox):
+    """FFMpeg preset picker.
+
+    """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
         self.init_data()
 
     def init_data(self):
+        """Initializes data.
+
+        """
         self.blockSignals(True)
         for v in ffmpeg.PRESETS.values():
             self.addItem(v['name'], userData=v['preset'])
@@ -47,23 +53,30 @@ class PresetComboBox(QtWidgets.QComboBox):
 
 
 class SizeComboBox(QtWidgets.QComboBox):
+    """FFMpeg output size picker.
+
+    """
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
         self.init_data()
 
     def init_data(self):
+        """Initializes data.
+
+        """
         self.blockSignals(True)
         for v in ffmpeg.SIZE_PRESETS.values():
             self.addItem(v['name'], userData=v['value'])
         self.blockSignals(False)
 
 
+#: UI layout definition
 SECTIONS = {
     0: {
         'name': 'Convert Image Sequence to Video',
         'icon': 'convert',
-        'color': common.color(common.BackgroundDarkColor),
+        'color': common.color(common.color_dark_background),
         'groups': {
             0: {
                 0: {
@@ -118,12 +131,15 @@ class FFMpegWidget(base.BasePropertyEditor):
     @common.error
     @common.debug
     def init_data(self):
+        """Initializes data.
+
+        """
         self.load_saved_user_settings(common.SECTIONS['ffmpeg'])
 
     @common.error
     @common.debug
     def save_changes(self):
-        """Start the conversion process.
+        """Saves changes.
 
         """
         return ffmpeg.convert(
@@ -134,5 +150,10 @@ class FFMpegWidget(base.BasePropertyEditor):
         )
 
     def sizeHint(self):
-        return QtCore.QSize(common.size(common.DefaultWidth) * 0.66,
-                            common.size(common.DefaultHeight) * 0.66)
+        """Returns a size hint.
+
+        """
+        return QtCore.QSize(
+            common.size(common.size_width) * 0.66,
+            common.size(common.size_height) * 0.66
+        )

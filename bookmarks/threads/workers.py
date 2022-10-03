@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Defines :class:`bookmarks.threads.workers.BaseWorker`, the main thread worker base
 class, and various other helper functions.
 
@@ -387,8 +386,8 @@ def byte_to_pretty_string(num, suffix='B'):
     """Converts a numeric byte value to a human-readable string.
 
     Args:
-        num (int):          The number of bytes.
-        suffix (str):   A custom suffix.
+        num (int): The number of bytes.
+        suffix (str): A custom suffix.
 
     Returns:
         str:            Human readable byte value.
@@ -469,8 +468,8 @@ def get_ranges(arr, padding):
     the ranges contained in the array.
 
     Args:
-        arr(list):       An array of numbers.
-        padding(int):    The number of leading zeros before the number.
+        arr(list): An array of numbers.
+        padding(int): The number of leading zeros before the number.
 
     Returns:
         str: A string representation of the given array.
@@ -479,7 +478,7 @@ def get_ranges(arr, padding):
     arr = sorted(list(set(arr)))
     blocks = {}
     k = 0
-    for idx, n in enumerate(arr):  # blocks
+    for idx, n in enumerate(arr): # blocks
         zfill = str(n).zfill(padding)
 
         if k not in blocks:
@@ -850,7 +849,7 @@ class ThumbnailWorker(BaseWorker):
 
             # We should never get here ideally, but if we do we'll mark the item
             # with a bespoke 'failed' thumbnail
-            fpath = common.get_rsc(
+            fpath = common.rsc(
                 f'{common.GuiResource}/failed.{common.thumbnail_format}')
             hash = common.get_hash(fpath)
 

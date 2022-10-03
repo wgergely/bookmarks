@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """The editor used to capture a part of the screen to use it as an item's
 thumbnail.
 
@@ -10,34 +9,35 @@ from PySide2 import QtCore, QtWidgets, QtGui
 from ... import common
 from ... import images
 
-instance = None
-
 
 def close():
-    global instance
-    if instance is None:
+    """Closes the :class:`ScreenCapture` editor.
+
+    """
+    if common.screen_capture_widget is None:
         return
     try:
-        instance.close()
-        instance.deleteLater()
+        common.screen_capture_widget.close()
+        common.screen_capture_widget.deleteLater()
     except:
         pass
-    instance = None
+    common.screen_capture_widget = None
 
 
 def show(server=None, job=None, root=None, source=None, proxy=False):
-    global instance
+    """Opens the :class:`ScreenCapture` editor.
 
+    """
     close()
-    instance = ScreenCapture(
+    common.screen_capture_widget = ScreenCapture(
         server,
         job,
         root,
         source,
         proxy
     )
-    instance.open()
-    return instance
+    common.screen_capture_widget.open()
+    return common.screen_capture_widget
 
 
 class ScreenCapture(QtWidgets.QDialog):
@@ -142,15 +142,19 @@ class ScreenCapture(QtWidgets.QDialog):
     @common.error
     @common.debug
     def save_image(self, image):
+        """Saves the captured image to disk.
+
+        """
         if not all((self.server, self.job, self.root, self.source)):
             return
-        images.load_thumbnail_from_image(
+        images.create_thumbnail_from_image(
             self.server,
             self.job,
             self.root,
             self.source,
             image
         )
+        # Remove temp image
         QtCore.QFile(self.capture_path).remove()
 
     def fit_screen_geometry(self):
@@ -171,18 +175,21 @@ class ScreenCapture(QtWidgets.QDialog):
                 y.append(g.topLeft().y())
                 w += g.width()
                 h += g.height()
-            topleft = QtCore.QPoint(
+            top_left = QtCore.QPoint(
                 min(x),
                 min(y)
             )
             size = QtCore.QSize(w - min(x), h - min(y))
-            geo = QtCore.QRect(topleft, size)
+            geo = QtCore.QRect(top_left, size)
         except:
             pass
 
         self.setGeometry(geo)
 
     def paintEvent(self, event):
+        """Event handler.
+
+        """
         # Convert click and current mouse positions to local space.
         if not self._mouse_pos:
             mouse_pos = self.mapFromGlobal(common.cursor.pos())
@@ -213,7 +220,7 @@ class ScreenCapture(QtWidgets.QDialog):
 
         pen = QtGui.QPen(
             QtGui.QColor(255, 255, 255, 64),
-            common.size(common.HeightSeparator),
+            common.size(common.size_separator),
             QtCore.Qt.DotLine
         )
         painter.setPen(pen)
@@ -249,17 +256,24 @@ class ScreenCapture(QtWidgets.QDialog):
         painter.end()
 
     def keyPressEvent(self, event):
-        """Cancel the capture on keypress."""
+        """Key press event handler.
+
+        """
         if event.key() == QtCore.Qt.Key_Escape:
             self.reject()
 
     def mousePressEvent(self, event):
-        """Start the capture"""
+        """Event handler.
+
+        """
         if not isinstance(event, QtGui.QMouseEvent):
             return
         self._click_pos = event.globalPos()
 
     def mouseReleaseEvent(self, event):
+        """Event handler.
+
+        """
         if not isinstance(event, QtGui.QMouseEvent):
             return
 
@@ -275,7 +289,9 @@ class ScreenCapture(QtWidgets.QDialog):
             self.accept()
 
     def mouseMoveEvent(self, event):
-        """Constrain and resize the capture window."""
+        """Event handler.
+
+        """
         self.update()
 
         if not isinstance(event, QtGui.QMouseEvent):
@@ -303,7 +319,7 @@ class ScreenCapture(QtWidgets.QDialog):
             self.update()
             return
 
-        # Allowing the shifting of the rectagle with the modifier keys
+        # Allowing the shifting of the rectangle with the modifier keys
         if move_mod:
             if not self._offset_pos:
                 self.__click_pos = QtCore.QPoint(self._click_pos)
@@ -325,5 +341,8 @@ class ScreenCapture(QtWidgets.QDialog):
         self.update()
 
     def showEvent(self, event):
+        """Event handler.
+
+        """
         self.fit_screen_geometry()
         self.fade_in.start()

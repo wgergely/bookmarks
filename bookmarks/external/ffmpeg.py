@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Contains various utility methods, and :func:`.convert()`, the main method used
 to convert a source image sequence to a movie file using an external FFMPEG binary.
 
@@ -21,6 +20,9 @@ from .. import ui
 
 
 class SafeDict(dict):
+    """Utility class.
+
+    """
     def __missing__(self, key):
         return '{' + key + '}'
 
@@ -154,7 +156,7 @@ def _get_font_path():
         str: path to the font file used to label the generated files.
 
     """
-    v = common.get_rsc(f'fonts/{common.medium_font}.ttf')
+    v = common.rsc(f'fonts/{common.medium_font}.ttf')
     v = v.replace(':', '\\:').replace('\\', '\\\\').replace('\\\\:', '\\:')
     return f'\'{v}\''
 
@@ -279,7 +281,7 @@ def _get_progress_bar(startframe, endframe):
     """
     v = QtWidgets.QProgressDialog()
     common.set_stylesheet(v)
-    v.setFixedWidth(common.size(common.DefaultWidth))
+    v.setFixedWidth(common.size(common.size_width))
     v.setLabelText('FFMpeg is converting, please wait...')
     v.setMinimum(int(startframe))
     v.setMaximum(int(endframe))
@@ -299,12 +301,13 @@ def convert(
     Args:
         path (str): Path to image file to convert.
         preset (str): An ffmpeg preset.
-        server (str): A path segment.
-        job (str): A path segment.
-        root (str): A path segment.
-        asset (str): A path segment.
-        task (str): A path segment.
+        server (str): `server` path segment.
+        job (str): `job` path segment.
+        root (str): `root` path segment.
+        asset (str): `asset` path segment.
+        task (str): `task` path segment.
         size (tuple(int, int)): The output video width in pixels.
+        timecode (bool): Add an informative timecode stamp when `True`.
         output_path (str): Video output path.
 
     Returns:

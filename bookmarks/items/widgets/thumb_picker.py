@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Simple thumbnail image picker.
 
 """
@@ -11,32 +10,40 @@ instance = None
 
 
 def close():
-    global instance
-    if instance is None:
+    """Closes :class:`PickThumbnail`.
+
+    """
+    if common.pick_thumbnail_widget is None:
         return
     try:
-        instance.close()
-        instance.deleteLater()
+        common.pick_thumbnail_widget.close()
+        common.pick_thumbnail_widget.deleteLater()
     except:
         pass
-    instance = None
+    common.pick_thumbnail_widget = None
 
 
 def show(server=None, job=None, root=None, source=None):
+    """Shows :class:`PickThumbnail`.
+
+    """
     global instance
 
     close()
-    instance = PickThumbnail(
+    common.pick_thumbnail_widget = PickThumbnail(
         server,
         job,
         root,
         source
     )
-    instance.open()
-    return instance
+    common.pick_thumbnail_widget.open()
+    return common.pick_thumbnail_widget
 
 
 class PickThumbnail(QtWidgets.QFileDialog):
+    """Simple file picker dialog used to select an image file.
+
+    """
     def __init__(self, server, job, root, source, parent=None):
         super(PickThumbnail, self).__init__(parent=parent)
 
@@ -64,9 +71,12 @@ class PickThumbnail(QtWidgets.QFileDialog):
     @common.error
     @common.debug
     def save_image(self, image):
+        """Saves the picked image.
+
+        """
         if not all((self.server, self.job, self.root, self.source)):
             return
-        images.load_thumbnail_from_image(
+        images.create_thumbnail_from_image(
             self.server,
             self.job,
             self.root,

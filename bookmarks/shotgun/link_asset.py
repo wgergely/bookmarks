@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Shotgun Entity linker widgets.
 
 The widgets are used to link a ShotGrid entity with a local asset item.
@@ -79,6 +78,12 @@ class LinkAssetWidget(link.BaseLinkWidget):
             server, job, root, asset, entity_type, value_map, parent=parent)
 
     def db_source(self):
+        """A file path to use as the source of database values.
+
+        Returns:
+            str: The database source file.
+
+        """
         if not all((self.server, self.job, self.root, self.asset)):
             return None
         return '/'.join((self.server, self.job, self.root, self.asset))

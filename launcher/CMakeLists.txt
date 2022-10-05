@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 # set the project name
 project(
 	Bookmarks
-	VERSION 0.7.0
+	VERSION 0.7.1
 	DESCRIPTION "Bookmarks and binary distribution package."
 	HOMEPAGE_URL "https://github.com/wgergely/bookmarks"
 )

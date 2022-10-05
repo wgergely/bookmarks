@@ -44,7 +44,6 @@ IdRole = QtCore.Qt.UserRole + 1001
 TypeRole = QtCore.Qt.UserRole + 1002
 NameRole = QtCore.Qt.UserRole + 1003
 
-
 #: ShotGrid entity url pattern
 ENTITY_URL = '{domain}/detail/{entity_type}/{entity_id}'
 
@@ -433,14 +432,17 @@ class EntityModel(QtCore.QAbstractItemModel):
     def get_sg_icon(self):
         icon = QtGui.QIcon()
         pixmap = images.ImageCache.rsc_pixmap(
-            'sg', common.color(common.color_separator), common.size(common.size_row_height))
+            'sg', common.color(common.color_separator),
+            common.size(common.size_row_height))
         icon.addPixmap(pixmap, QtGui.QIcon.Normal)
         pixmap = images.ImageCache.rsc_pixmap(
-            'sg', common.color(common.color_selected_text), common.size(common.size_row_height))
+            'sg', common.color(common.color_selected_text),
+            common.size(common.size_row_height))
         icon.addPixmap(pixmap, QtGui.QIcon.Active)
         icon.addPixmap(pixmap, QtGui.QIcon.Selected)
         pixmap = images.ImageCache.rsc_pixmap(
-            'sg', common.color(common.color_disabled_text), common.size(common.size_row_height),
+            'sg', common.color(common.color_disabled_text),
+            common.size(common.size_row_height),
             opacity=0.66)
         icon.addPixmap(pixmap, QtGui.QIcon.Disabled)
         return icon
@@ -448,7 +450,8 @@ class EntityModel(QtCore.QAbstractItemModel):
     def get_spinner(self):
         icon = QtGui.QIcon()
         pixmap = images.ImageCache.rsc_pixmap(
-            'spinner', common.color(common.color_text), common.size(common.size_row_height))
+            'spinner', common.color(common.color_text),
+            common.size(common.size_row_height))
         icon.addPixmap(pixmap, QtGui.QIcon.Normal)
         icon.addPixmap(pixmap, QtGui.QIcon.Active)
         icon.addPixmap(pixmap, QtGui.QIcon.Selected)
@@ -593,7 +596,8 @@ class EntityComboBox(QtWidgets.QComboBox):
 
     """
 
-    def __init__(self, items, fixed_height=common.size(common.size_row_height), parent=None):
+    def __init__(self, items, fixed_height=common.size(common.size_row_height),
+                 parent=None):
         super(EntityComboBox, self).__init__(parent=parent)
         self.setView(QtWidgets.QListView())
         if not self.parent():

@@ -171,6 +171,7 @@ class TemplateComboBox(QtWidgets.QComboBox):
     """Publish template picker.
 
     """
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
@@ -247,6 +248,7 @@ class TaskComboBox(QtWidgets.QComboBox):
     """Task picker.
 
     """
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())

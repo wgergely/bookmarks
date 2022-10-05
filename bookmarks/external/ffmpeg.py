@@ -23,6 +23,7 @@ class SafeDict(dict):
     """Utility class.
 
     """
+
     def __missing__(self, key):
         return '{' + key + '}'
 
@@ -34,7 +35,6 @@ def _safe_format(s, **kwargs):
 H264HQ = 0
 H264LQ = 1
 DNxHD90 = 2
-
 
 _preset_info = ', drawtext=fontfile={FONT}:text=\'{' \
                'LABEL}%{{frame_num}}\':start_number={' \

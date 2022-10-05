@@ -21,7 +21,6 @@ database. See :mod:`bookmarks.database` for more details.
 """
 import functools
 import os
-import re
 
 from PySide2 import QtCore, QtWidgets, QtGui
 

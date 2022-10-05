@@ -14,7 +14,6 @@ from . import base
 from . import base_widgets
 from .. import common
 from .. import database
-from .. import log
 from .. import templates
 from .. import ui
 from ..shotgun import actions as sg_actions

@@ -302,4 +302,3 @@ class ImageViewer(QtWidgets.QWidget):
 
         """
         common.fit_screen_geometry(self)
-

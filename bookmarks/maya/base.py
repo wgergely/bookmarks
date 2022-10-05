@@ -645,6 +645,7 @@ class MayaProperties(object):
     """Utility class used to interface with values stored in the bookmark item's database.
 
     """
+
     def __init__(self, parent=None):
         super().__init__()
 

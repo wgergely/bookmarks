@@ -60,7 +60,7 @@ def add_section(icon, label, parent, color=None):
 
     """
     common.check_type(icon, (None, str))
-    common.check_type(label,  (None, str))
+    common.check_type(label, (None, str))
     common.check_type(parent, QtWidgets.QWidget)
     common.check_type(color, (QtGui.QColor, None))
 

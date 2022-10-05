@@ -626,7 +626,8 @@ def draw_subdir_background(text_edge, *args):
     _k = _subdir_bg_rect_key(index, option)
 
     # Calculate and cache the subdir rectangles background rectangle
-    if common.delegate_subdir_rectangles[k] and _k in common.delegate_bg_subdir_rectangles:
+    if common.delegate_subdir_rectangles[
+        k] and _k in common.delegate_bg_subdir_rectangles:
         bg_rect = common.delegate_bg_subdir_rectangles[_k]
     elif common.delegate_subdir_rectangles[
         k] and _k not in common.delegate_bg_subdir_rectangles:
@@ -721,6 +722,7 @@ def draw_gradient_background(text_edge, *args):
     )
     painter.setBrush(brush)
     painter.drawRect(rect)
+
 
 def draw_description(clickable_rectangles, left_limit, right_limit, offset, *args):
     """Helper method used to draw file items' descriptions."""
@@ -1419,7 +1421,8 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
             self.paint_count(painter, rect, cursor_position, count, 'asset')
 
     @paintmethod
-    def _paint_inline_properties(self, *args, _color=common.color(common.color_separator)):
+    def _paint_inline_properties(self, *args,
+                                 _color=common.color(common.color_separator)):
         rectangles, painter, option, index, selected, focused, active, archived, \
         favourite, hover, font, metrics, cursor_position = args
 

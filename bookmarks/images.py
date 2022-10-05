@@ -805,7 +805,7 @@ class ImageCache(QtCore.QObject):
 
     @classmethod
     def rsc_pixmap(cls, name, color, size, opacity=1.0, resource=common.GuiResource,
-                       get_path=False):
+                   get_path=False):
         """Loads an image resource and returns it as a sized (and recolored) QPixmap.
 
         Args:

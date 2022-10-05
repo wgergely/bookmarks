@@ -401,6 +401,7 @@ class RemoveNoteButton(ui.ClickableIconButton):
     """Button used to remove a note item.
 
     """
+
     def __init__(self, parent=None):
         super().__init__(
             'close',
@@ -523,6 +524,7 @@ class Separator(QtWidgets.QLabel):
     """A custom label used as an item separator.
 
     """
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         pixmap = QtGui.QPixmap(

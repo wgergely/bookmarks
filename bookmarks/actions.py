@@ -736,6 +736,7 @@ def show_add_file(
         asset = common.active('asset')
 
     args = (server, job, root, asset)
+
     if not all(args):
         return None
 

@@ -995,7 +995,6 @@ class BaseItemView(QtWidgets.QListView):
             model.reset_data(force=True, emit_active=False)
 
         # Delay the selection to let the model process events
-        QtWidgets.QApplication.instance().processEvents()
         QtCore.QTimer.singleShot(10, functools.partial(
             self.select_item, v, role=role))
 
@@ -1028,7 +1027,7 @@ class BaseItemView(QtWidgets.QListView):
                     index,
                     hint=QtWidgets.QAbstractItemView.PositionAtCenter
                 )
-                self.delay_save_selection()
+                self.save_selection()
                 return
 
     def dragEnterEvent(self, event):

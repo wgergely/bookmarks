@@ -33,7 +33,8 @@ Note:
 
 Important to note that :class:`FileItemModel` interacts with two data sets
 simultaneously: a *collapsed* sequence and a regular file data set.
-See the :mod:`~bookmarks.common.sequence` module for details on sequence definitions.
+See the :mod:`~bookmarks.common.sequence` module for details on sequence definitions, and
+:meth:~bookmarks.items.models.BaseItemModel.model_data`.
 
 """
 import functools
@@ -193,8 +194,8 @@ class ItemDrag(QtGui.QDrag):
             )
 
         # Set drag icon
-        self.setDragCursor(get('add_circle'), QtCore.Qt.CopyAction)
-        self.setDragCursor(get('file'), QtCore.Qt.MoveAction)
+        self.setDragCursor(_get('add_circle'), QtCore.Qt.CopyAction)
+        self.setDragCursor(_get('file'), QtCore.Qt.MoveAction)
         self.setDragCursor(
             _get('close', color=common.color(common.color_red)),
             QtCore.Qt.ActionMask

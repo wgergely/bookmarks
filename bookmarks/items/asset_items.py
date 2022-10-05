@@ -21,6 +21,7 @@ database. See :mod:`bookmarks.database` for more details.
 """
 import functools
 import os
+import re
 
 from PySide2 import QtCore, QtWidgets, QtGui
 
@@ -35,17 +36,17 @@ from .. import log
 from ..threads import threads
 
 
-def get_display_name(file_name):
+def get_display_name(s):
     """Manipulate the given file name to a display friendly name.
 
     Args:
-        file_name (str): Source asset item file name.
+        s (str): Source asset item file name.
 
     Returns:
         str: A modified asset item display name.
 
     """
-    return file_name
+    return s
 
 
 class AssetItemViewContextMenu(contextmenu.BaseContextMenu):

@@ -12,7 +12,6 @@ import bookmarks.test.test_main
 import bookmarks.test.test_settings
 import bookmarks.test.test_session_lock
 import bookmarks.test.test_actions
-import bookmarks.test.test_bookmarker
 
 if __name__ == '__main__':
     loader = unittest.TestLoader()
@@ -26,7 +25,6 @@ if __name__ == '__main__':
         loader.loadTestsFromTestCase(bookmarks.test.test_settings.Test),
         loader.loadTestsFromTestCase(bookmarks.test.test_actions.Test),
         loader.loadTestsFromTestCase(bookmarks.test.test_actions.TestWidgetActions),
-        loader.loadTestsFromTestCase(bookmarks.test.test_bookmarker.Test),
     )
     suite = unittest.TestSuite(cases)
     unittest.TextTestRunner(verbosity=2, failfast=True).run(suite)

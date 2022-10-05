@@ -494,11 +494,11 @@ class BookmarkDB(QtCore.QObject):
         self._is_valid = False
         self._connection = None
 
-        self._server = server
-        self._job = job
-        self._root = root
+        self.server = server
+        self.job = job
+        self.root = root
 
-        self._bookmark = '/'.join((server, job, root))
+        self._bookmark = f'{server}/{job}/{root}'
         self._bookmark_root = f'{self._bookmark}/{common.bookmark_cache_dir}'
         self._database_path = f'{self._bookmark_root}/{common.bookmark_database}'
 
@@ -568,8 +568,12 @@ class BookmarkDB(QtCore.QObject):
                 can't create the folder.
 
         """
-        _cache_dir = QtCore.QDir(self.root())
-        _thumb_dir = QtCore.QDir(f'{self.root()}/thumbnails')
+        _root_dir = QtCore.QDir(self._bookmark)
+        if not _root_dir.exists():
+            return False
+
+        _cache_dir = QtCore.QDir(self._bookmark_root)
+        _thumb_dir = QtCore.QDir(f'{self._bookmark_root}/thumbnails')
         if not _cache_dir.exists():
             if not _cache_dir.mkpath('.'):
                 log.error(f'Could not create {_cache_dir.path()}')
@@ -632,9 +636,9 @@ class BookmarkDB(QtCore.QObject):
             )
         ).format(
             id=common.get_hash(self._bookmark),
-            server=b64encode(self._server),
-            job=b64encode(self._job),
-            root=b64encode(self._root),
+            server=b64encode(self.server),
+            job=b64encode(self.job),
+            root=b64encode(self.root),
             user=b64encode(common.get_username()),
             host=b64encode(platform.node()),
             created=time.time(),
@@ -665,12 +669,6 @@ class BookmarkDB(QtCore.QObject):
                     self.connection().rollback()
                     raise
                 sleep()
-
-    def root(self):
-        """Returns the `root` path.
-
-        """
-        return self._bookmark_root
 
     def is_valid(self):
         """Returns the database's status.
@@ -712,7 +710,7 @@ class BookmarkDB(QtCore.QObject):
 
         """
         if args:
-            return self._bookmark + '/' + '/'.join(args)
+            return f'{self._bookmark}/{"/".join(args)}'
         return self._bookmark
 
     def get_row(self, source, table):

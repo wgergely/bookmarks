@@ -6,18 +6,24 @@ from PySide2 import QtWidgets, QtCore
 
 pkg_root = QtCore.QFileInfo(f'{__file__}{os.path.sep}..').absoluteFilePath()
 
-
 STRINGS = {
-    f'{pkg_root}/docs/source/conf.py': re.compile(r"release = \'([0-9]\.[0-9]\.[0-9])\'", flags=re.MULTILINE),
-    f'{pkg_root}/bookmarks/__init__.py': re.compile(r"Version-v([0-9]\.[0-9]\.[0-9])", flags=re.MULTILINE),
-    f'{pkg_root}/bookmarks/__init__.py': re.compile(r"__version__ = \'([0-9]\.[0-9]\.[0-9])\'", flags=re.MULTILINE),
-    f'{pkg_root}/README.md': re.compile(r"Version-v([0-9]\.[0-9]\.[0-9])", flags=re.MULTILINE),
-    f'{pkg_root}/bookmarks/maya/plugin.py': re.compile(r"__version__ = \'([0-9]\.[0-9]\.[0-9])\'", flags=re.MULTILINE),
-    f'{pkg_root}/installer/installer.iss': re.compile(r'#define MyAppVersion "([0-9]\.[0-9]\.[0-9])"', flags=re.MULTILINE),
-    f'{pkg_root}/launcher/CMakeLists.txt': re.compile(r'VERSION ([0-9]\.[0-9]\.[0-9])', flags=re.MULTILINE),
-    f'{pkg_root}/docs/source/guide.rst': re.compile(r'.*([0-9]\.[0-9]\.[0-9]).*', flags=re.MULTILINE),
+    f'{pkg_root}/docs/source/conf.py': re.compile(r"release = \'([0-9]\.[0-9]\.[0-9])\'",
+                                                  flags=re.MULTILINE),
+    f'{pkg_root}/bookmarks/__init__.py': re.compile(r"Version-v([0-9]\.[0-9]\.[0-9])",
+                                                    flags=re.MULTILINE),
+    f'{pkg_root}/bookmarks/__init__.py': re.compile(
+        r"__version__ = \'([0-9]\.[0-9]\.[0-9])\'", flags=re.MULTILINE),
+    f'{pkg_root}/README.md': re.compile(r"Version-v([0-9]\.[0-9]\.[0-9])",
+                                        flags=re.MULTILINE),
+    f'{pkg_root}/bookmarks/maya/plugin.py': re.compile(
+        r"__version__ = \'([0-9]\.[0-9]\.[0-9])\'", flags=re.MULTILINE),
+    f'{pkg_root}/installer/installer.iss': re.compile(
+        r'#define MyAppVersion "([0-9]\.[0-9]\.[0-9])"', flags=re.MULTILINE),
+    f'{pkg_root}/launcher/CMakeLists.txt': re.compile(r'VERSION ([0-9]\.[0-9]\.[0-9])',
+                                                      flags=re.MULTILINE),
+    f'{pkg_root}/docs/source/guide.rst': re.compile(r'.*([0-9]\.[0-9]\.[0-9]).*',
+                                                    flags=re.MULTILINE),
 }
-
 
 app = QtWidgets.QApplication()
 version, res = QtWidgets.QInputDialog.getText(None, 'Enter Version', 'New Version')
@@ -26,7 +32,6 @@ if not res:
     raise RuntimeError('Stopping...')
 if not version:
     raise RuntimeError('Must enter a valid version')
-
 
 for k, v in STRINGS.items():
     if not os.path.isfile(k):
@@ -41,4 +46,3 @@ for k, v in STRINGS.items():
 
     with open(k, 'w', encoding='utf-8') as f:
         f.write(v)
-

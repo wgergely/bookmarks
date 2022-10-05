@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>bookmarks.maya.actions - Bookmarks 0.6.0 documentation</title>
+        <title>bookmarks.maya.actions - Bookmarks 0.7.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -133,7 +133,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Bookmarks 0.6.0 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -160,7 +160,7 @@
     <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.6.0 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -310,7 +310,6 @@
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://bookmarks.gergely-wootsch.com/html/index.html">Documentation</a></li>
 </ul>
 
 </div>
@@ -1013,14 +1012,14 @@
 
 <div class="viewcode-block" id="import_camera_preset"><a class="viewcode-back" href="../../../modules/maya/actions.html#bookmarks.maya.actions.import_camera_preset">[docs]</a><span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
 <span class="k">def</span> <span class="nf">import_camera_preset</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Import the boundled camera template to the current scene.</span>
+    <span class="sd">&quot;&quot;&quot;Import the bundled camera template to the current scene.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">rsc</span><span class="p">(</span><span class="s1">&#39;maya/camera.ma&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">cmds</span><span class="o">.</span><span class="n">objExists</span><span class="p">(</span><span class="s1">&#39;camera:camera&#39;</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;An object named &quot;camera&quot; already exists. Nothing was imported.&#39;</span><span class="p">)</span>
         <span class="k">return</span>
-    <span class="n">cmds</span><span class="o">.</span><span class="n">file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">defaultNamespace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">defaultNamespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s2">&quot;mayaAscii&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="show_shader_tool"><a class="viewcode-back" href="../../../modules/maya/actions.html#bookmarks.maya.actions.show_shader_tool">[docs]</a><span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>

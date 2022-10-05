@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>bookmarks.external.ffmpeg_widget - Bookmarks 0.6.0 documentation</title>
+        <title>bookmarks.external.ffmpeg_widget - Bookmarks 0.7.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -133,7 +133,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Bookmarks 0.6.0 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -160,7 +160,7 @@
     <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.6.0 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -310,7 +310,6 @@
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://bookmarks.gergely-wootsch.com/html/index.html">Documentation</a></li>
 </ul>
 
 </div>
@@ -354,7 +353,10 @@
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ffmpeg</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">common</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">images</span>
 <span class="kn">from</span> <span class="nn">..editor</span> <span class="kn">import</span> <span class="n">base</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">log</span>
+
 
 <div class="viewcode-block" id="close"><a class="viewcode-back" href="../../../modules/external/ffmpeg_widget.html#bookmarks.external.ffmpeg_widget.close">[docs]</a><span class="k">def</span> <span class="nf">close</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Closes the :class:`FFMpegWidget` editor.</span>
@@ -384,6 +386,7 @@
     <span class="sd">&quot;&quot;&quot;FFMpeg preset picker.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setView</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QListView</span><span class="p">())</span>
@@ -403,6 +406,7 @@
     <span class="sd">&quot;&quot;&quot;FFMpeg output size picker.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setView</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QListView</span><span class="p">())</span>
@@ -489,12 +493,66 @@
         <span class="sd">&quot;&quot;&quot;Saves changes.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">ffmpeg</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">,</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">common</span><span class="o">.</span><span class="n">is_collapsed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="si">}</span><span class="s1"> is not a sequence.&#39;</span><span class="p">)</span>
+
+        <span class="n">start_path</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_sequence_start_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span>
+        <span class="n">start_seq</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_sequence</span><span class="p">(</span><span class="n">start_path</span><span class="p">)</span>
+        <span class="n">start_n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">start_seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+
+        <span class="n">end_path</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_sequence_end_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span>
+        <span class="n">end_seq</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_sequence</span><span class="p">(</span><span class="n">end_path</span><span class="p">)</span>
+        <span class="n">end_n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">end_seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+
+        <span class="n">padding</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">start_seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+
+        <span class="n">_destinations</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">pbar</span> <span class="o">=</span> <span class="n">ffmpeg</span><span class="o">.</span><span class="n">get_progress_bar</span><span class="p">(</span><span class="n">start_n</span><span class="p">,</span> <span class="n">end_n</span><span class="p">)</span>
+        <span class="n">pbar</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start_n</span><span class="p">,</span> <span class="n">end_n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+            <span class="n">n</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="n">padding</span><span class="p">)</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">start_seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="si">}{</span><span class="n">n</span><span class="si">}{</span><span class="n">start_seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">start_seq</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">file_info</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileInfo</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+            <span class="n">destination</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">file_info</span><span class="o">.</span><span class="n">path</span><span class="p">()</span><span class="si">}</span><span class="s1">/temp_</span><span class="si">{</span><span class="n">file_info</span><span class="o">.</span><span class="n">baseName</span><span class="p">()</span><span class="si">}</span><span class="s1">.jpg&#39;</span>
+            <span class="n">_destinations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
+
+            <span class="c1"># Convert to jpeg</span>
+            <span class="n">buf</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">oiio_get_buf</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">buf</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">buf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
+
+        <span class="n">pbar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="n">file_info</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileInfo</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_file</span><span class="p">)</span>
+        <span class="n">_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">file_info</span><span class="o">.</span><span class="n">path</span><span class="p">()</span><span class="si">}</span><span class="s1">/temp_</span><span class="si">{</span><span class="n">file_info</span><span class="o">.</span><span class="n">baseName</span><span class="p">()</span><span class="si">}</span><span class="s1">.jpg&#39;</span>
+
+        <span class="n">mov</span> <span class="o">=</span> <span class="n">ffmpeg</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span>
+            <span class="n">_file</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ffmpeg_preset_editor</span><span class="o">.</span><span class="n">currentData</span><span class="p">(),</span>
             <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ffmpeg_size_editor</span><span class="o">.</span><span class="n">currentData</span><span class="p">(),</span>
             <span class="n">timecode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ffmpeg_timecode_editor</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
+
+        <span class="c1"># Remove temp files</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">_destinations</span><span class="p">:</span>
+            <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">flush</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFile</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">remove</span><span class="p">():</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Failed to remove </span><span class="si">{</span><span class="n">f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">mov</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1"># Rename output video</span>
+        <span class="n">_mov</span> <span class="o">=</span> <span class="n">mov</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;temp_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">QtCore</span><span class="o">.</span><span class="n">QFile</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">mov</span><span class="p">,</span> <span class="n">_mov</span><span class="p">)</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">widget</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FileTab</span><span class="p">)</span><span class="o">.</span><span class="n">show_item</span><span class="p">(</span><span class="n">_mov</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">,</span> <span class="n">update</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
 
 <div class="viewcode-block" id="FFMpegWidget.sizeHint"><a class="viewcode-back" href="../../../modules/external/ffmpeg_widget.html#bookmarks.external.ffmpeg_widget.FFMpegWidget.sizeHint">[docs]</a>    <span class="k">def</span> <span class="nf">sizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns a size hint.</span>

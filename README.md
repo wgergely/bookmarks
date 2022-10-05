@@ -1,5 +1,6 @@
 <p align="center">
-  <img width="300" height="300" src="https://github.com/wgergely/bookmarks/blob/main/bookmarks/rsc/gui/icon.png?raw=true">
+  <img width="200" src="https://bookmarks.gergely-wootsch.com/html/_static/icon.png">
+  <img width="480" src="https://bookmarks.gergely-wootsch.com/html/_images/active_bookmark.png">
 </p>
 
 <p align="center">
@@ -10,38 +11,30 @@
 </p> 
 
 <p align="center">
-  Bookmarks is a lightweight Python asset manager designed to browse and manage content of animation, VFX and film projects.<br>
-  https://github.com/wgergely/bookmarks/releases/download/0.6.0/Bookmarks_0.6.0.exe
+  Bookmarks is a lightweight Python asset manager designed to browse and manage the content of animation, VFX and film projects.
 </p>
 
 ---
 
-### Features
 
-Bookmarks separate content as `bookmark`, `asset` and `file` items. Each
-bookmark item contains a series of asset items that in turn contain the file
-items. Bookmark and asset items can be configured independently to link with,
-for instance, `ShotGrid` entities or be set up with properties, like frame-rate,
-resolution, and custom URLs. These properties can be used to quickly configure scenes
-in host applications, e.g. Maya, and to access related external resources.
+[`User Guide`](modules/items/bookmark_items.html#module-bookmarks.items.bookmark_items)  |  [`Python Modules`](modules/items/bookmark_items.html#module-bookmarks.items.bookmark_items)  |  [`Download`](modules/items/bookmark_items.html#module-bookmarks.items.bookmark_items)
 
+---
 
+# Features
 
-The app provides simple tools to create jobs and assets using ZIP templates, templated file-names
-and options to annotate and filter existing items, and preview images using `OpenImageIO`.
+The app categorises  project content as separate [`bookmarks`](modules/items/bookmark_items.html#module-bookmarks.items.bookmark_items),
+[`assets`](modules/items/asset_items.html#module-bookmarks.items.asset_items) and [`file items`](modules/items/file_items.html#module-bookmarks.items.file_items).
+You can configure these independently to link with, for instance, ShotGrid entities or
+configure their properties like frame rate and resolution to set [`Maya scene settings`](modules/maya/plugin.html#module-bookmarks.maya.plugin).
+You can use filters to sort and hide items, preview images, convert footage sequences, or ‘publish’ files.
+See [User Guide](guide.html#user-guide) for more information.
 
-### Background
+# Background
 
-This project was developed to manage personal projects and is adapted to
-custom way of setting them up. his is to say, Bookmarks expects certain patterns to
-be respected to read files and folders correctly. I tried my best to keep things
-customizable to adapt to site specific environments.
+I developed the app to help manage personal projects and keep myself organised (I’m a digitally messy person). So, whilst it works great for me, it might not work for you. Still, I tried to make it easily customisable to help adapt to site-specific environments. See the python modules documentation for more information.
 
-<p align="center">
-  <img src="https://github.com/wgergely/bookmarks/blob/main/docs/media/bookmarks.gif?raw=True">
-</p>
-
-### Quick Start
+# Quick Start
 
 The simplest way to start Bookmarks as a standalone application is to run:
 
@@ -50,54 +43,32 @@ import bookmarks
 bookmarks.exec_()
 ```
 
-### Dependencies
+# Dependencies
 
-The following python packages are required to run Bookmarks:
-
-
-* `Python3`: Tested against 3.9.
+The release contains all Windows dependencies. For setting up a custom development environment on another platform, you’ll need the following python dependencies:
 
 
-* `PySide2`: Tested against Qt 5.15.2. [https://pypi.org/project/PySide2](https://pypi.org/project/PySide2)
+* [Python3](https://github.com/python/cpython) -  Tested against 3.9
 
 
-* `OpenImageIO`: Used to generate thumbnails for image items [https://github.com/OpenImageIO/oiio](https://github.com/OpenImageIO/oiio)
+* [PySide2](https://pypi.org/project/PySide2) - Tested against Qt 5.15.2
 
 
-* `numpy`: [https://pypi.org/project/numpy](https://pypi.org/project/numpy)
+* [OpenImageIO](https://github.com/OpenImageIO/oiio) - Tested against 2.3
 
 
-* `slack_sdk`: [https://pypi.org/project/slack_sdk](https://pypi.org/project/slack_sdk)
+* [numpy](https://pypi.org/project/numpy)
 
 
-* `psutil`: [https://pypi.org/project/psutil](https://pypi.org/project/psutil)
+* [slack_sdk](https://pypi.org/project/slack_sdk)
 
 
-* `shotgun_api3`: [https://github.com/shotgunsoftware/python-api](https://github.com/shotgunsoftware/python-api)
-
-Currently, Windows is the only supported platform (although much of the codebase should
-be platform-agnostic).
-
-**NOTE**: OpenImageIO does not currently maintain installable python packages. Building it
-manually is therefore required.
-
-### Standalone and Embedded Modes
-
-Bookmarks can be run in two modes. As a standalone application, or embedded in a
-PySide2 environment. The base-layers can be initialized with:
-
-```python
-from bookmarks import common
-common.initialize(common.EmbeddedMode) # or common.StandaloneMode
-```
-
-[`bookmarks.exec_()`](api/main.md#bookmarks.exec) is a utility method for starting Bookmarks in
-`common.StandaloneMode`, whilst `common.EmbeddedMode` is useful when
-running from inside a host DCC. Currently only the Maya plugin makes use of this mode.
-See `bookmarks.maya` and [`bookmarks.common`](api/common.md#module-bookmarks.common) for the related methods.
+* [psutil](https://pypi.org/project/psutil)
 
 
-## Python Modules Documentation
+* [shotgun_api3](https://github.com/shotgunsoftware/python-api)
 
-https://bookmarks.gergely-wootsch.com/html/api.html
+<!-- note:
 
+* Currently, Windows is the only supported platform (although much of the codebase should be platform-agnostic).
+* OpenImageIO does not currently maintain installable python packages. -->

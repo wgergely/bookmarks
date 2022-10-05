@@ -42,6 +42,7 @@ class FavouriteItemViewContextMenu(contextmenu.BaseContextMenu):
     """Context menu associated with :class:`FavouriteItemView`.
 
     """
+
     @common.error
     @common.debug
     def setup(self):

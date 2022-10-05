@@ -518,4 +518,3 @@ class Timer(QtCore.QTimer):
             common.timers[k].stop()
             common.timers[k].deleteLater()
             del common.timers[k]
-

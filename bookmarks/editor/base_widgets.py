@@ -74,6 +74,7 @@ class BaseComboBox(QtWidgets.QComboBox):
     """Base combobox used by :class:`~bookmarks.editor.base.BasePropertyEditor`.
 
     """
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
@@ -136,6 +137,7 @@ class SGProjectTypesWidget(BaseComboBox):
     """ShotGrid entity type picker.
 
     """
+
     def init_items(self):
         """Initialize items.
         
@@ -148,6 +150,7 @@ class SGAssetTypesWidget(BaseComboBox):
     """ShotGrid entity type picker.
 
     """
+
     def init_items(self):
         """Initialize items.
 

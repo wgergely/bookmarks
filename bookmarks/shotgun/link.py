@@ -203,8 +203,8 @@ class BaseLinkWidget(QtWidgets.QDialog):
         return QtCore.QSize(
             common.size(common.size_width),
             (
-                (common.size(common.size_margin) * 2) +
-                (common.size(common.size_row_height) * 2)
+                    (common.size(common.size_margin) * 2) +
+                    (common.size(common.size_row_height) * 2)
             )
         )
 
@@ -271,7 +271,7 @@ class EntityNameEditor(QtWidgets.QDialog):
         return QtCore.QSize(
             common.size(common.size_width),
             (
-                (common.size(common.size_margin) * 2) +
-                (common.size(common.size_row_height) * 2)
+                    (common.size(common.size_margin) * 2) +
+                    (common.size(common.size_row_height) * 2)
             )
         )

@@ -478,7 +478,7 @@ def get_ranges(arr, padding):
     arr = sorted(list(set(arr)))
     blocks = {}
     k = 0
-    for idx, n in enumerate(arr): # blocks
+    for idx, n in enumerate(arr):  # blocks
         zfill = str(n).zfill(padding)
 
         if k not in blocks:

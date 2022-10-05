@@ -142,9 +142,9 @@ class ToggleSequenceButton(BaseControlButton):
     def pixmap(self):
         if self.state():
             return images.ImageCache.rsc_pixmap('collapse', self._on_color,
-                                                    common.size(common.size_margin))
-        return images.ImageCache.rsc_pixmap('expand', self._off_color,
                                                 common.size(common.size_margin))
+        return images.ImageCache.rsc_pixmap('expand', self._off_color,
+                                            common.size(common.size_margin))
 
     def state(self):
         if not common.widget():
@@ -182,9 +182,9 @@ class ToggleArchivedButton(BaseControlButton):
     def pixmap(self):
         if self.state():
             return images.ImageCache.rsc_pixmap('archivedVisible', self._on_color,
-                                                    common.size(common.size_margin))
-        return images.ImageCache.rsc_pixmap('archivedHidden', self._off_color,
                                                 common.size(common.size_margin))
+        return images.ImageCache.rsc_pixmap('archivedHidden', self._off_color,
+                                            common.size(common.size_margin))
 
     def state(self):
         if not common.widget():

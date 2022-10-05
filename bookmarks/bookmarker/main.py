@@ -14,7 +14,6 @@ from . import job_editor
 from . import server_editor
 from .. import actions
 from .. import common
-from .. import log
 from .. import ui
 
 HINT = 'Activate or disable existing bookmark items, or create new ones using the ' \

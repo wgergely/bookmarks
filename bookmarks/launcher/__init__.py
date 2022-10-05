@@ -7,4 +7,10 @@ The default launcher item definition is found at
 :attr:`bookmarks.launcher.main.DEFAULT_ITEM`. The item launcher values are stored
 in the bookmark item database as an encoded json values.
 
+:mod:`~bookmarks.launcher.main` contains the editor used to add and editor launcher items
+via :mod:`bookmarks.editors.bookmark_properties`.
+
+:mod:`~bookmarks.launcher.gallery` is the viewer, used to launch saved items. It is
+accessible as a context menu in the item tabs.
+
 """

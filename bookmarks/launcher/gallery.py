@@ -1,4 +1,4 @@
-"""Main widget used to select a Launcher item.
+"""The application launcher item viewer.
 
 """
 
@@ -62,6 +62,11 @@ class LauncherGallery(ui.GalleryWidget):
             )
 
         if not isinstance(v, dict) or not v:
+            ui.MessageBox(
+                'There are no items configured yet.',
+                'Add new application launcher items in the bookmark property editor.'
+            ).exec_()
+            self.close()
             return
 
         for k in sorted(v, key=lambda _k: v[_k]['name']):

@@ -1,7 +1,7 @@
 """The base context menu implementation used across Bookmarks.
 
 All context menus derive from the :class:`BaseContextMenu`. The class contains the 
-definitions of _all_ menu options. See :meth:`BaseContextMenu.setup` for menu overrides 
+definitions of all menu options. See :meth:`BaseContextMenu.setup` for menu overrides
 and definitions. 
 
 """
@@ -970,7 +970,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         item_on_pixmap = ui.get_icon('check', color=common.color(common.color_green))
         item_off_pixmap = ui.get_icon('folder')
 
-        k = 'Select Task'
+        k = 'Select Task Folder...'
         self.menu[k] = collections.OrderedDict()
         self.menu[f'{k}:icon'] = ui.get_icon(
             'folder', color=common.color(common.color_green)
@@ -986,12 +986,6 @@ class BaseContextMenu(QtWidgets.QMenu):
         _dir = QtCore.QDir(path)
         _dir.setFilter(QtCore.QDir.Dirs | QtCore.QDir.NoDotAndDotDot)
 
-        self.menu[k][key()] = {
-            'text': 'Select no task folder',
-            'action': functools.partial(common.signals.taskFolderChanged.emit, None)
-        }
-        self.separator(self.menu[k])
-
         for name in sorted(_dir.entryList()):
             if task:
                 checked = task == name
@@ -1004,6 +998,14 @@ class BaseContextMenu(QtWidgets.QMenu):
                     common.signals.taskFolderChanged.emit, name
                 )
             }
+
+
+        self.separator(self.menu[k])
+
+        self.menu[k][key()] = {
+            'text': 'Deselect',
+            'action': functools.partial(common.signals.taskFolderChanged.emit, None)
+        }
 
     def remove_favourite_menu(self):
         """List item favourite actions.

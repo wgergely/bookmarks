@@ -7,7 +7,9 @@ from PySide2 import QtCore, QtWidgets
 
 from . import ffmpeg
 from .. import common
+from .. import images
 from ..editor import base
+from .. import log
 
 
 def close():
@@ -145,12 +147,66 @@ class FFMpegWidget(base.BasePropertyEditor):
         """Saves changes.
 
         """
-        return ffmpeg.convert(
-            self._file,
+        if not common.is_collapsed(self._file):
+            raise RuntimeError(f'{self._file} is not a sequence.')
+
+        start_path = common.get_sequence_start_path(self._file)
+        start_seq = common.get_sequence(start_path)
+        start_n = int(start_seq.group(2))
+
+        end_path = common.get_sequence_end_path(self._file)
+        end_seq = common.get_sequence(end_path)
+        end_n = int(end_seq.group(2))
+
+        padding = len(start_seq.group(2))
+
+        _destinations = []
+
+        pbar = ffmpeg.get_progress_bar(start_n, end_n)
+        pbar.open()
+
+        for n in range(start_n, end_n + 1):
+            pbar.setValue(n)
+
+            n = f'{n}'.zfill(padding)
+            source = f'{start_seq.group(1)}{n}{start_seq.group(3)}.{start_seq.group(4)}'
+            file_info = QtCore.QFileInfo(source)
+            destination = f'{file_info.path()}/temp_{file_info.baseName()}.jpg'
+            _destinations.append(destination)
+
+            # Convert to jpeg
+            buf = images.oiio_get_buf(source)
+            if not buf:
+                continue
+            buf.write(destination)
+
+        pbar.close()
+
+        file_info = QtCore.QFileInfo(self._file)
+        _file = f'{file_info.path()}/temp_{file_info.baseName()}.jpg'
+
+        mov = ffmpeg.convert(
+            _file,
             self.ffmpeg_preset_editor.currentData(),
             size=self.ffmpeg_size_editor.currentData(),
             timecode=self.ffmpeg_timecode_editor.isChecked()
         )
+
+        # Remove temp files
+        for f in _destinations:
+            images.ImageCache.flush(f)
+            if not QtCore.QFile(f).remove():
+                log.error(f'Failed to remove {f}')
+
+        if not mov:
+            return False
+
+        # Rename output video
+        _mov = mov.replace('temp_', '')
+        QtCore.QFile.rename(mov, _mov)
+        common.widget(common.FileTab).show_item(_mov, role=common.PathRole, update=True)
+        return True
+
 
     def sizeHint(self):
         """Returns a size hint.

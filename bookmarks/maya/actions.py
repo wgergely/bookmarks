@@ -666,14 +666,14 @@ def apply_viewport_preset(k):
 
 @QtCore.Slot()
 def import_camera_preset():
-    """Import the boundled camera template to the current scene.
+    """Import the bundled camera template to the current scene.
 
     """
     path = common.rsc('maya/camera.ma')
     if cmds.objExists('camera:camera'):
         print('An object named "camera" already exists. Nothing was imported.')
         return
-    cmds.file(path, i=True, defaultNamespace=True)
+    cmds.file(path, i=True, defaultNamespace=True, type="mayaAscii")
 
 
 @QtCore.Slot()

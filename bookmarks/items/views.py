@@ -997,7 +997,7 @@ class BaseItemView(QtWidgets.QListView):
             model.reset_data(force=True, emit_active=False)
 
         # Delay the selection to let the model process events
-        QtCore.QTimer.singleShot(10, functools.partial(
+        QtCore.QTimer.singleShot(100, functools.partial(
             self.select_item, v, role=role))
 
     def select_item(self, v, role=QtCore.Qt.DisplayRole):

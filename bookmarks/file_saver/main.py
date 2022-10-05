@@ -569,18 +569,18 @@ class FileSaverWidget(base.BasePropertyEditor):
                 self.prefix_editor.setText(prefix)
 
         if self._extension and self._file is None:
-            if self.extension_editor.findText(self._extension) > 0:
-                self.extension_editor.setCurrentText(self._extension)
-                self.extension_editor.setDisabled(True)
+            if self.file_saver_extension_editor.findText(self._extension) > 0:
+                self.file_saver_extension_editor.setCurrentText(self._extension)
+                self.file_saver_extension_editor.setDisabled(True)
 
-            self.task_editor.blockSignals(True)
+            self.file_saver_task_editor.blockSignals(True)
             self.update_tasks(self._extension)
-            self.task_editor.blockSignals(False)
+            self.file_saver_task_editor.blockSignals(False)
 
-            if self.task_editor.findText(self._extension.upper()) > 0:
-                self.task_editor.blockSignals(True)
-                self.task_editor.setCurrentText(self._extension.upper())
-                self.task_editor.blockSignals(False)
+            if self.file_saver_task_editor.findText(self._extension.upper()) > 0:
+                self.file_saver_task_editor.blockSignals(True)
+                self.file_saver_task_editor.setCurrentText(self._extension.upper())
+                self.file_saver_task_editor.blockSignals(False)
 
         # Description
         if self._file is not None:
@@ -622,11 +622,11 @@ class FileSaverWidget(base.BasePropertyEditor):
         config = tokens.get(self.server, self.job, self.root)
 
         if ext in config.get_extensions(tokens.CacheFormat):
-            self.task_editor.set_mode(widgets.CacheMode)
+            self.file_saver_task_editor.set_mode(widgets.CacheMode)
         elif ext in config.get_extensions(tokens.SceneFormat):
-            self.task_editor.set_mode(widgets.SceneMode)
+            self.file_saver_task_editor.set_mode(widgets.SceneMode)
         else:
-            self.task_editor.set_mode(widgets.NoMode)
+            self.file_saver_task_editor.set_mode(widgets.NoMode)
 
     def exec_(self):
         """Customized exec function.

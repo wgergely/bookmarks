@@ -2083,7 +2083,7 @@ def delete_selected_files(index):
     """
     from . import ui
     from . import log
-    mbox = ui.MessageBox(
+    mbox = ui.ErrorBox(
         'Are you sure you want to delete this file?',
         f'{index.data(QtCore.Qt.DisplayRole)} will be permanently lost.',
         buttons=[ui.YesButton, ui.NoButton]

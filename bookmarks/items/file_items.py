@@ -907,7 +907,9 @@ class FileItemView(views.ThreadedItemView):
         self.setDropIndicatorShown(True)
         self.setDragEnabled(True)
 
-        common.signals.fileAdded.connect(self.show_item)
+        common.signals.fileAdded.connect(
+            functools.partial(self.show_item, role=common.PathRole)
+        )
 
     def inline_icons_count(self):
         """Inline buttons count.
@@ -973,16 +975,20 @@ class FileItemView(views.ThreadedItemView):
         k = model.task()
 
         if not all(model.source_path()):
+            print('!')
             return
         source_path = '/'.join(model.source_path())
+        print(source_path)
 
         # We probably saved outside the asset, we won't be showing the
         # file...
         if source_path not in v:
+            print(v)
             return
 
         # Show files tab
-        actions.change_tab(common.FileTab)
+        if common.current_tab() != common.FileTab:
+            actions.change_tab(common.FileTab)
 
         # Change task folder
         task = v.replace(source_path, '').strip('/').split('/', maxsplit=1)[0]
@@ -1001,6 +1007,6 @@ class FileItemView(views.ThreadedItemView):
         # Delay the selection to let the model process events
         QtCore.QTimer.singleShot(
             300, functools.partial(
-                self.select_item, v, role=common.PathRole
+                self.select_item, v, role=role
             )
         )

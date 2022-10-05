@@ -123,6 +123,7 @@ class TemplateContextMenu(contextmenu.BaseContextMenu):
         """Reveal action menu.
 
         """
+
         def _reveal():
             actions.reveal(self.index.data(TemplatePathRole))
 
@@ -137,27 +138,22 @@ class TemplateListDelegate(ui.ListWidgetDelegate):
     """Delegate associated with :class:`TemplateListWidget`.
 
     """
+
     def __init__(self, parent=None):
-        super(TemplateListDelegate, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
     def createEditor(self, parent, option, index):
-        """Custom editor for editing the template's name."""
-        editor = ui.LineEdit(parent=parent)
-        editor.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        editor.setStyleSheet(
-            f'background-color: {common.rgb(common.color(common.color_dark_background))};')
+        """Custom editor for editing the template's name.
+
+        """
+        editor = super().createEditor(parent, option, index)
         validator = QtGui.QRegExpValidator(parent=editor)
         validator.setRegExp(QtCore.QRegExp(r'[\_\-a-zA-z0-9]+'))
         editor.setValidator(validator)
-        editor.setGeometry(option.rect)
-        editor.move(0, 0)
         return editor
 
 
 class TemplateListWidget(ui.ListWidget):
-    """Widget used to display a list of available templates.
-
-    """
     """Widget used to display a list of zip template files associated with
     the given `mode`.
 

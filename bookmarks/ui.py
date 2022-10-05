@@ -916,6 +916,42 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
         painter.drawPath(path)
 
 
+    def sizeHint(self, option, index):
+        _, metrics = common.font_db.primary_font(
+            common.size(common.size_font_small)
+        )
+
+        width = (
+            metrics.horizontalAdvance(index.data(QtCore.Qt.DisplayRole)) +
+            common.size(common.size_row_height) +
+            common.size(common.size_margin)
+        )
+        return QtCore.QSize(
+            width,
+            common.size(common.size_row_height)
+        )
+
+    def createEditor(self, parent, option, index):
+        """Custom editor for editing the template's name.
+
+        """
+        editor = LineEdit(parent=parent)
+        editor.setWindowFlags(QtCore.Qt.Widget)
+        editor.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+        editor.setStyleSheet(
+            f'background-color: {common.rgb(common.color(common.color_separator))};'
+            f'height: {option.rect.height()}px;'
+        )
+        return editor
+
+    def updateEditorGeometry(self, editor, option, index):
+        """Updates the size of the editor widget.
+
+        """
+        editor.setGeometry(option.rect)
+
+
+
 class ListWidget(QtWidgets.QListWidget):
     """A custom list widget used to display selectable item.
 
@@ -1418,12 +1454,14 @@ class GalleryWidget(QtWidgets.QDialog):
 
     def __init__(
             self, columns=5, item_height=common.size(common.size_row_height) * 2,
+            label='Pick an item',
             parent=None
     ):
         super().__init__(parent=parent)
 
         self.scroll_area = None
         self.columns = columns
+        self._label = label
         self._item_height = item_height
 
         self.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.FramelessWindowHint)
@@ -1444,7 +1482,7 @@ class GalleryWidget(QtWidgets.QDialog):
 
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(0)
-        self.layout().setAlignment(QtCore.Qt.AlignCenter)
+        self.layout().setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.setWindowFlags(
             self.windowFlags() | QtCore.Qt.WindowStaysOnTopHint
         )
@@ -1453,7 +1491,7 @@ class GalleryWidget(QtWidgets.QDialog):
             None, height=common.size(common.size_row_height), padding=None, parent=self
         )
         label = PaintedLabel(
-            'Select an item',
+            self._label,
             color=common.color(common.color_text),
             size=common.size(common.size_font_large),
             parent=self
@@ -1465,18 +1503,16 @@ class GalleryWidget(QtWidgets.QDialog):
             f'background-color: {common.rgb(common.color(common.color_separator))}'
         )
 
-        self.setMinimumWidth(
-            (common.size(common.size_indicator) * 2) +
-            (common.size(common.size_margin) * 2) +
-            (common.size(common.size_indicator) * (self.columns - 1)) +
-            self._item_height * self.columns
+        _width = (
+                (common.size(common.size_indicator) * 2) +
+                (common.size(common.size_margin) * 2) +
+                (common.size(common.size_indicator) * (self.columns - 1)) +
+                self._item_height * self.columns
         )
-        self.setMaximumWidth(
-            (common.size(common.size_indicator) * 2) +
-            (common.size(common.size_margin) * 2) +
-            (common.size(common.size_indicator) * (self.columns - 1)) +
-            self._item_height * self.columns
-        )
+
+        self.setMinimumWidth(_width)
+        self.setMaximumWidth(_width)
+
         self.setMinimumHeight(
             (common.size(common.size_indicator) * 2) +
             (common.size(common.size_margin) * 2) +
@@ -1490,7 +1526,7 @@ class GalleryWidget(QtWidgets.QDialog):
         )
 
         QtWidgets.QGridLayout(widget)
-        widget.layout().setAlignment(QtCore.Qt.AlignCenter)
+        widget.layout().setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         widget.layout().setContentsMargins(
             common.size(common.size_indicator),
             common.size(common.size_indicator),

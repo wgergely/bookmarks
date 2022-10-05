@@ -372,6 +372,11 @@ class JobItemEditor(ui.ListViewWidget):
         for name, path in self.item_generator(self.window().server()):
             item = QtGui.QStandardItem()
 
+            item.setFlags(
+                QtCore.Qt.ItemIsEnabled |
+                QtCore.Qt.ItemIsSelectable
+            )
+
             _name = (
                 name.
                 replace('_', ' ').
@@ -400,7 +405,7 @@ class JobItemEditor(ui.ListViewWidget):
             self.addItem(item)
 
         self.update_text()
-        self.progressUpdate.emit('Loading bookmarks...')
+        self.progressUpdate.emit('Loading jobs...')
 
         if selected_name:
             for idx in range(self.model().rowCount()):

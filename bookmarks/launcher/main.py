@@ -1,4 +1,4 @@
-"""Application launcher item definitions and sub-widgets.
+"""Application launcher editor.
 
 """
 import functools

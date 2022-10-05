@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="external.ffmpeg_widget" href="ffmpeg_widget.html" /><link rel="prev" title="external" href="../external.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>external.ffmpeg - Bookmarks 0.6.0 documentation</title>
+        <title>external.ffmpeg - Bookmarks 0.7.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">Bookmarks 0.6.0 documentation</div></a>
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.6.0 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -367,6 +367,9 @@ to convert a source image sequence to a movie file using an external FFMPEG bina
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.external.ffmpeg.convert" title="bookmarks.external.ffmpeg.convert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert</span></code></a>(path, preset[, server, job, root, ...])</p></td>
 <td><p>Start a convert process using ffmpeg.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.external.ffmpeg.get_progress_bar" title="bookmarks.external.ffmpeg.get_progress_bar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_progress_bar</span></code></a>(startframe, endframe)</p></td>
+<td><p>A progress bar used during the conversion process.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -404,6 +407,20 @@ to convert a source image sequence to a movie file using an external FFMPEG bina
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>RuntimeError</strong> – If the input path is not a sequence or not found.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.external.ffmpeg.get_progress_bar">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.external.ffmpeg.</span></span><span class="sig-name descname"><span class="pre">get_progress_bar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">startframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endframe</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/external/ffmpeg.html#get_progress_bar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.external.ffmpeg.get_progress_bar" title="Permalink to this definition">#</a></dt>
+<dd><p>A progress bar used during the conversion process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A widget instance.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>QProgressBar</p>
 </dd>
 </dl>
 </dd></dl>
@@ -470,6 +487,7 @@ to convert a source image sequence to a movie file using an external FFMPEG bina
 <li><a class="reference internal" href="#">external.ffmpeg</a><ul>
 <li><a class="reference internal" href="#bookmarks.external.ffmpeg.SafeDict"><code class="docutils literal notranslate"><span class="pre">SafeDict</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.external.ffmpeg.convert"><code class="docutils literal notranslate"><span class="pre">convert()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.external.ffmpeg.get_progress_bar"><code class="docutils literal notranslate"><span class="pre">get_progress_bar()</span></code></a></li>
 </ul>
 </li>
 </ul>

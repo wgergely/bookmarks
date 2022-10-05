@@ -221,9 +221,7 @@ def _output_path_from_seq(seq, ext):
     """Return preformatted output path for ffmpeg.
 
     """
-    return os.path.normpath(
-        f'{seq.group(1).rstrip(".").rstrip("_").rstrip()}.{ext}'
-    )
+    return f'{seq.group(1).rstrip(".").rstrip("_").rstrip()}.{ext}'
 
 
 def _get_framerate(server, job, root, fallback_framerate=24.0):
@@ -272,7 +270,7 @@ def _get_info_label(job, asset, task, output_path, startframe, endframe):
     return v
 
 
-def _get_progress_bar(startframe, endframe):
+def get_progress_bar(startframe, endframe):
     """A progress bar used during the conversion process.
 
     Returns:
@@ -390,7 +388,7 @@ def convert(
             stderr=subprocess.STDOUT,
             universal_newlines=True
     ) as proc:
-        pbar = _get_progress_bar(startframe, endframe)
+        pbar = get_progress_bar(startframe, endframe)
         pbar.open()
 
         lines = []

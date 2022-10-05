@@ -80,6 +80,7 @@ class SetsComboBox(QtWidgets.QComboBox):
     """Export set picker.
 
     """
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
@@ -99,6 +100,7 @@ class TypeComboBox(QtWidgets.QComboBox):
     """Export type picker.
 
     """
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
@@ -118,6 +120,7 @@ class VersionsComboBox(QtWidgets.QComboBox):
     """Version number picker.
 
     """
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())

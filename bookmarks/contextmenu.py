@@ -999,7 +999,6 @@ class BaseContextMenu(QtWidgets.QMenu):
                 )
             }
 
-
         self.separator(self.menu[k])
 
         self.menu[k][key()] = {

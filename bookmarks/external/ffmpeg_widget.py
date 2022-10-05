@@ -9,6 +9,7 @@ from . import ffmpeg
 from .. import common
 from ..editor import base
 
+
 def close():
     """Closes the :class:`FFMpegWidget` editor.
 
@@ -37,6 +38,7 @@ class PresetComboBox(QtWidgets.QComboBox):
     """FFMpeg preset picker.
 
     """
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
@@ -56,6 +58,7 @@ class SizeComboBox(QtWidgets.QComboBox):
     """FFMpeg output size picker.
 
     """
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())

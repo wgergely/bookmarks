@@ -53,7 +53,6 @@ from .. import log
 from ..threads import threads
 from ..tokens import tokens
 
-
 active_keys = {
     'server',
     'job',
@@ -61,6 +60,7 @@ active_keys = {
     'asset',
     'task',
 }
+
 
 def add_path_to_mime(mime, path):
     """Adds the given path to the mime data."""
@@ -333,6 +333,7 @@ class FileItemViewContextMenu(contextmenu.BaseContextMenu):
     """Context menu associated with :class:`FileItemView`.
 
     """
+
     @common.error
     @common.debug
     def setup(self):

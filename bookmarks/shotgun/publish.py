@@ -783,4 +783,3 @@ class PublishWidget(base.BasePropertyEditor):
         if not file_path:
             return
         self.version_cache_editor.setText(file_path)
-

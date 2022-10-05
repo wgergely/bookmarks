@@ -4,7 +4,6 @@ functionality is limited and is currently only used to signal new publishes.
 
 """
 
-import base64
 import json
 
 import requests

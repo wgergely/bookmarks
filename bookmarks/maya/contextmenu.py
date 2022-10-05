@@ -22,6 +22,7 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
     """Maya plugin context menu.
 
     """
+
     def setup(self):
         """Creates the context menu.
 
@@ -218,6 +219,7 @@ class MayaWidgetContextMenu(PluginContextMenu):
     """Context menu associated with :class:`MayaWidget`.
 
     """
+
     @common.error
     @common.debug
     def setup(self):

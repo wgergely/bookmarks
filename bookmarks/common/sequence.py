@@ -61,6 +61,7 @@ GetSequenceRegex = re.compile(
     flags=re.IGNORECASE
 )
 
+
 @functools.lru_cache(maxsize=4194304)
 def is_collapsed(s):
     """Checks the presence :attr:`SEQSTART` and :attr:`SEQEND` markers.

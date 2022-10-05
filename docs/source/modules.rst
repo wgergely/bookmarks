@@ -2,12 +2,6 @@ Python Modules
 #####################
 
 
-This is the technical documentation of the python modules.
-
-
-Introduction
-===============
-
 Bookmarks works by parsing project folders to find bookmark, asset and file items.
 Check out the :mod:`~bookmarks.items.bookmark_items`, :mod:`~bookmarks.items.asset_items`
 and :mod:`~bookmarks.items.file_items` for an overview of the item definitions.

@@ -68,7 +68,7 @@ SECTIONS = {
                 0: {
                     'name': 'Name',
                     'key': None,
-                    'validator': base.name_validator,
+                    'validator': base.job_name_validator,
                     'widget': ui.LineEdit,
                     'placeholder': 'Enter name, e.g. \'SH0010\'',
                     'description': 'The asset\'s name, e.g. \'SH0010\'',
@@ -356,13 +356,19 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         if not name:
             raise RuntimeError('Must enter a name to create asset.')
 
-        path = '/'.join((self.server, self.job, self.root))
-        editor.create(name, path)
-        path = '/'.join((self.server, self.job, self.root, name))
-        if not QtCore.QFileInfo(path).exists():
+        file_info = QtCore.QFileInfo(f'{self.server}/{self.job}/{self.root}/{name}')
+        if not file_info.dir().exists() and file_info.dir().mkpath('.'):
+            raise RuntimeError(f'Could not create {file_info.dir().path()}')
+
+        editor.create(
+            file_info.fileName(),
+            file_info.dir().absolutePath()
+        )
+
+        if not file_info.exists():
             raise RuntimeError('Failed to create asset.')
 
-        self.itemCreated.emit(path)
+        self.itemCreated.emit(file_info.absoluteFilePath())
 
     @common.error
     @QtCore.Slot()

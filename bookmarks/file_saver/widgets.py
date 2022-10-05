@@ -1,13 +1,11 @@
 """Widgets used by :class:`bookmarks.file_saver.file_saver.FileSaverWidget`.
 
 """
-import os
 
-from PySide2 import QtCore, QtWidgets, QtGui
+from PySide2 import QtCore, QtWidgets
 
 from .. import common
 from .. import database
-from .. import images
 from .. import ui
 from ..editor import base
 from ..tokens import tokens
@@ -21,22 +19,20 @@ class BookmarkItemModel(ui.AbstractListModel):
     """Bookmark item picker model.
 
     """
-    def __init__(self, parent=None):
+
+    def __init__(self, server, job, root, parent=None):
+        self.server = server
+        self.job = job
+        self.root = root
         super().__init__(parent=parent)
 
     def init_data(self):
         """Initializes data.
 
         """
-        k = common.active('root', path=True)
+        k = '/'.join((self.server, self.job, self.root))
         if not k or not QtCore.QFileInfo(k).exists():
             return
-
-        icon = ui.get_icon(
-            'bookmark',
-            size=common.size(common.size_margin) * 2,
-            color=common.color(common.color_separator)
-        )
 
         self._data[len(self._data)] = {
             QtCore.Qt.DisplayRole: self.display_name(k),
@@ -56,21 +52,35 @@ class BookmarkComboBox(QtWidgets.QComboBox):
     """Bookmark item picker.
 
     """
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
-        self.setModel(BookmarkItemModel())
+        model = BookmarkItemModel(
+            self.window().server,
+            self.window().job,
+            self.window().root,
+        )
+        self.setModel(model)
 
 
 class AssetItemModel(ui.AbstractListModel):
     """Asset item picker model.
 
     """
+
+    def __init__(self, server, job, root, asset, parent=None):
+        self.server = server
+        self.job = job
+        self.root = root
+        self.asset = asset
+        super().__init__(parent=parent)
+
     def init_data(self):
         """Initializes data.
 
         """
-        k = common.active('asset', path=True)
+        k = '/'.join((self.server, self.job, self.root, self.asset))
         if not k or not QtCore.QFileInfo(k).exists():
             return
 
@@ -100,7 +110,7 @@ class AssetItemModel(ui.AbstractListModel):
             v (str): The name of the asset item to modify.
 
         """
-        k = common.active('root', path=True)
+        k = '/'.join((self.server, self.job, self.root))
         return v.replace(k, '').strip('/').split('/', maxsplit=1)[0]
 
 
@@ -108,20 +118,35 @@ class AssetComboBox(QtWidgets.QComboBox):
     """Asset item picker.
 
     """
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
-        self.setModel(AssetItemModel())
+        model = AssetItemModel(
+            self.window().server,
+            self.window().job,
+            self.window().root,
+            self.window().asset,
+        )
+        self.setModel(model)
 
 
 class TaskComboBox(QtWidgets.QComboBox):
     """Task item picker.
 
     """
+
     def __init__(self, mode=SceneMode, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
-        self.setModel(TaskModel(mode=mode))
+        model = TaskModel(
+            self.window().server,
+            self.window().job,
+            self.window().root,
+            self.window().asset,
+            mode
+        )
+        self.setModel(model)
 
     def set_mode(self, mode):
         """Sets the mode of the task picker.
@@ -138,7 +163,12 @@ class TaskModel(ui.AbstractListModel):
     """Task item picker model.
 
     """
-    def __init__(self, mode, parent=None):
+
+    def __init__(self, server, job, root, asset, mode, parent=None):
+        self.server = server
+        self.job = job
+        self.root = root
+        self.asset = asset
         self._mode = mode
         super().__init__(parent=parent)
 
@@ -162,7 +192,7 @@ class TaskModel(ui.AbstractListModel):
         """
         self._data = {}
 
-        k = common.active('asset', path=True)
+        k = '/'.join((self.server, self.job, self.root, self.asset))
         if not k or not QtCore.QFileInfo(k).exists():
             return
 
@@ -233,11 +263,18 @@ class TemplateModel(ui.AbstractListModel):
     """Template item picker model.
 
     """
+
+    def __init__(self, server, job, root, parent=None):
+        self.server = server
+        self.job = job
+        self.root = root
+        super().__init__(parent=parent)
+
     def init_data(self):
         """Initializes data.
 
         """
-        args = common.active('root', args=True)
+        args = (self.server, self.job, self.root)
         if not all(args):
             return
 
@@ -276,23 +313,36 @@ class TemplateComboBox(QtWidgets.QComboBox):
     """Template item picker.
 
     """
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
-        self.setModel(TemplateModel())
+        model = TemplateModel(
+            self.window().server,
+            self.window().job,
+            self.window().root,
+        )
+        self.setModel(model)
 
 
 class FormatModel(ui.AbstractListModel):
     """Format item picker model.
 
     """
+
+    def __init__(self, server, job, root, parent=None):
+        self.server = server
+        self.job = job
+        self.root = root
+        super().__init__(parent=parent)
+
     def init_data(self):
         """Initializes data.
 
         """
-        server = common.active('server')
-        job = common.active('job')
-        root = common.active('root')
+        server = self.server
+        job = self.job
+        root = self.root
 
         if not all((server, job, root)):
             return
@@ -335,10 +385,16 @@ class FormatComboBox(QtWidgets.QComboBox):
     """Format item picker.
 
     """
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
-        self.setModel(FormatModel())
+        model = FormatModel(
+            self.window().server,
+            self.window().job,
+            self.window().root,
+        )
+        self.setModel(model)
 
 
 class PrefixEditor(QtWidgets.QDialog):
@@ -346,10 +402,14 @@ class PrefixEditor(QtWidgets.QDialog):
 
     """
 
-    def __init__(self, parent=None):
+    def __init__(self, server, job, root, parent=None):
         super().__init__(parent=parent)
         self.ok_button = None
         self.editor = None
+
+        self.server = server
+        self.job = job
+        self.root = root
 
         self._create_ui()
         self._connect_signals()
@@ -379,8 +439,7 @@ class PrefixEditor(QtWidgets.QDialog):
         """Initializes data.
 
         """
-        p = self.parent()
-        db = database.get_db(p.server, p.job, p.root)
+        db = database.get_db(self.server, self.job, self.root)
 
         v = db.value(
             db.source(),
@@ -405,7 +464,7 @@ class PrefixEditor(QtWidgets.QDialog):
         db = database.get_db(
             self.parent().server,
             self.parent().job,
-            self.parent().root  #
+            self.parent().root
         )
         with db.connection():
             db.setValue(

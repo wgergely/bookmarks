@@ -654,6 +654,9 @@ class FileSaverWidget(base.BasePropertyEditor):
         self.thumbnail_editor.save_image()
         self.thumbnailUpdated.emit(self.db_source())
         self._file_path = self.db_source()
+
+        log.success(f'File saved to {self._file_path} successfully')
+
         return True
 
     def create_file(self):
@@ -796,7 +799,12 @@ class FileSaverWidget(base.BasePropertyEditor):
         """Button click action.
 
         """
-        editor = widgets.PrefixEditor(parent=self)
+        editor = widgets.PrefixEditor(
+            self.server,
+            self.job,
+            self.root,
+            parent=self
+        )
         editor.open()
 
     @QtCore.Slot()

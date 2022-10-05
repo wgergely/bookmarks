@@ -347,6 +347,7 @@ SECTIONS = {
                     'placeholder': None,
                     'description': 'Edit the list of applications this bookmark '
                                    'item uses.',
+                    'button': 'Add Item',
                 },
             }
         }
@@ -551,3 +552,10 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
 
         """
         sg_actions.test_shotgun_connection(self.shotgun_properties())
+
+    @QtCore.Slot()
+    def applications_button_clicked(self):
+        """Application Launcher add action.
+
+        """
+        self.applications_editor.add_new_item()

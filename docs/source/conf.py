@@ -45,6 +45,7 @@ extensions = [
     'sphinx.ext.githubpages',
     'autodocsumm',
     'sphinx_markdown_builder',
+    'sphinx_carousel.carousel',
 ]
 
 napoleon_google_docstring = True

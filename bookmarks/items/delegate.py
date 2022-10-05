@@ -22,10 +22,13 @@ from PySide2 import QtWidgets, QtGui, QtCore
 from .. import common
 from .. import images
 
+#: Regex used to sanitize version numbers
 regex_remove_version = re.compile(
     rf'(.*)(v)([{common.SEQSTART}0-9\-{common.SEQEND}]+.*)',
     flags=re.IGNORECASE
 )
+
+#: Regex used to sanitize collapsed sequence items
 regex_remove_seq_marker = re.compile(
     rf'[{common.SEQSTART}{common.SEQEND}]*',
     flags=re.IGNORECASE
@@ -49,10 +52,17 @@ DataRect = 10
 PropertiesRect = 11
 InlineBackgroundRect = 12
 
+#: Used to paint a DCC icon if the asset name contains any of these names
 DCC_ICONS = {
-    'HOUDINI': 'hip',
-    'MAYA': 'ma',
-    'AFX': 'aep'
+    'hou': 'hip',
+    'maya': 'ma',
+    'afx': 'aep',
+    'aftereffects': 'aep',
+    'photoshop': 'psd',
+    'cinema4d': 'c4d',
+    'c4d': 'c4d',
+    'blender': 'blend',
+    'nuke': 'nk'
 }
 
 
@@ -205,7 +215,20 @@ def _get_pixmap_rect(rect_height, pixmap_width, pixmap_height):
 
 
 @functools.lru_cache(maxsize=4194304)
-def _get_file_text_segments(s, k, f):
+def get_file_text_segments(s, k, f):
+    """Caches and returns the text segments used to paint file items.
+
+    Used to mimic rich-text like coloring of individual text elements.
+
+    Args:
+        s (str): Item's display name.
+        k (str): Item's file path.
+        f (str): Item's frame role data.
+
+    Returns:
+        dict: A dict of (str, QColor) pairs.
+
+    """
     if not s:
         return {}
 
@@ -324,57 +347,94 @@ def _get_asset_subdir_bg(rectangles, metrics, text):
 
 
 @functools.lru_cache(maxsize=4194304)
-def _get_asset_text_segments(text, description):
+def get_asset_text_segments(text, label):
+    """Caches and returns the text segments used to paint asset items.
+
+    Used to mimic rich-text like coloring of individual text elements.
+
+    Args:
+        text (str): The source text.
+        label (str): Item's label string.
+
+    Returns:
+        dict: A dict of (str, QColor) pairs.
+
+    """
     if not text:
         return {}
-    description = description if description else ''
 
-    k = text + description
+    label = label if label else ''
+    k = f'{text}{label}'
+
+    # Return cached item
     if k in common.delegate_text_segments:
         return common.delegate_text_segments[k]
 
+    # Segments dictionary
     d = {}
-    s_color = common.color(common.color_blue).darker(250)
+
+    s_color = common.color(common.color_blue).darker(300)
+
+    # Process each sub-folder as a separate text segment
     v = text.split('/')
+
     for i, s in enumerate(v):
         if i == 0:
-            c = common.color(common.color_blue).darker(250)
+            c = common.color(common.color_blue).darker(300)
         else:
             c = common.color(common.color_text)
 
-        _v = s.split('/')
-        for _i, _s in enumerate(_v):
-            # In the AKA ecosystem folder names are prefixed with numbers, but we
-            # don't want to show these
-            _s = re.sub(r'^[0-9]+_', '', _s)
-            _s = _s.strip()
-            d[len(d)] = (_s, c)
-            if _i < (len(_v) - 1):
-                d[len(d)] = (' / ', s_color)
-        if i < (len(v) - 1):
-            d[len(d)] = (' |  ', s_color)
+        # Check if subdir contains sequence and shot markers
+        sequence, shot = common.get_sequence_and_shot(s)
+        for ss in [f for f in common.get_sequence_and_shot(s) if f]:
+            d[len(d)] = (ss, common.color(common.color_text))
 
-    if description:
-        d[len(d)] = (' | ', s_color)
-        d[len(d)] = (description, s_color)
+            s = s.replace(ss, '').strip('_').strip('-').strip()
+            if s:
+                d[len(d)] = ('  |  ', s_color)
+
+        # For ecosystems where folder names are prefixed with numbers
+        s = re.sub(r'^[0-9]+_', '', s)
+        s = s.strip().strip('_').strip('.')
+
+        d[len(d)] = (s, c)
+
+        # Add separator
+        if i < (len(v) - 1) or i < (len(v) - 1):
+            d[len(d)] = ('  |  ', s_color)
+
+    # Add
+    if label:
+        if '#' in label:
+            d[len(d)] = ('  |  ', s_color)
+            d[len(d)] = (label, common.color(common.color_dark_green))
+        else:
+            d[len(d)] = (':  ', s_color)
+            d[len(d)] = (label, s_color)
 
     common.delegate_text_segments[k] = d
     return common.delegate_text_segments[k]
 
 
 @functools.lru_cache(maxsize=4194304)
-def get_bookmark_text_segments(text, description):
-    """Returns a tuple of text and color information to be used to mimic
-    rich-text like coloring of individual text elements.
+def get_bookmark_text_segments(text, label):
+    """Caches and returns the text segments used to paint bookmark items.
 
-    Used by the list delegate to paint the job name and root folder.
+    Used to mimic rich-text like coloring of individual text elements.
+
+    Args:
+        text (str): The source text.
+        label (str): Item's label string.
+
+    Returns:
+        dict: A dict of (str, QColor) pairs.
 
     """
     if not text:
         return {}
-    description = description if description else ''
+    label = label if label else ''
 
-    k = text + description
+    k = text + label
     if k in common.delegate_text_segments:
         return common.delegate_text_segments[k]
 
@@ -385,11 +445,11 @@ def get_bookmark_text_segments(text, description):
     d = {}
     v = text.split('|')
 
-    s_color = common.color(common.color_blue).darker(250)
+    s_color = common.color(common.color_blue).darker(300)
 
     for i, s in enumerate(v):
         if i == 0:
-            c = common.color(common.color_blue).darker(250)
+            c = common.color(common.color_blue).darker(300)
         else:
             c = common.color(common.color_text)
 
@@ -406,9 +466,9 @@ def get_bookmark_text_segments(text, description):
         if i < (len(v) - 1):
             d[len(d)] = ('   |    ', s_color)
 
-    if description:
+    if label:
         d[len(d)] = ('   |   ', s_color)
-        d[len(d)] = (description, s_color)
+        d[len(d)] = (label, s_color)
 
     common.delegate_text_segments[k] = d
     return common.delegate_text_segments[k]
@@ -839,12 +899,12 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
                 index.data(common.DescriptionRole)
             )
         elif len(pp) == 4:
-            return _get_asset_text_segments(
+            return get_asset_text_segments(
                 index.data(QtCore.Qt.DisplayRole),
                 index.data(common.DescriptionRole)
             )
         elif len(pp) > 4:
-            return _get_file_text_segments(
+            return get_file_text_segments(
                 index.data(QtCore.Qt.DisplayRole),
                 index.data(common.PathRole),
                 tuple(index.data(common.FramesRole))
@@ -1955,7 +2015,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
             return
 
         d = index.data(QtCore.Qt.DisplayRole)
-        icon = next((DCC_ICONS[f] for f in DCC_ICONS if f in d), None)
+        icon = next((DCC_ICONS[f] for f in DCC_ICONS if f.lower() in d.lower()), None)
         if not icon:
             return
 

@@ -915,7 +915,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         t = model.data_type()
 
         ref = common.get_data_ref(p, k, t)
-        if not ref() or idx not in ref():
+        if not ref or not ref() or idx not in ref():
             return False
 
         flags = ref()[idx][common.FlagsRole]
@@ -946,10 +946,14 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
 
             if not ref():
                 return False
-            searchable = ref()[idx][common.PathRole].lower() + '\n' + \
-                         d.strip().lower() + '\n' + \
-                         f.strip().lower()
 
+            # Let's construct the string to be filtered. This will include
+            # the path, display name and label text
+            searchable = (
+                f'{ref()[idx][QtCore.Qt.DisplayRole].lower()}\n'
+                f'{ref()[idx][common.PathRole].lower()}\n'
+                f'{d.strip().lower()}\n{f.strip().lower()}'
+            )
             if not filter_includes_row(filter_text, searchable):
                 return False
             if _filter_excludes_row(filter_text, searchable):

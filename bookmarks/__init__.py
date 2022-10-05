@@ -1,47 +1,35 @@
-""".. centered:: |logo|
+""".. centered:: |logo| |image1|
 
 .. centered:: |label1| |label2| |label3| |label4|
 
 
-=====================
-Welcome to Bookmarks!
-=====================
+Bookmarks is a lightweight Python asset manager designed to browse and manage the content of animation, VFX and film projects.
 
+------------
 
-Bookmarks is a lightweight Python asset manager designed to browse and manage content
-of animation, VFX and film projects.
+.. centered:: :ref:`User Guide`  |  :ref:`Python Modules`  |  :ref:`Download`
 
-
-.. centered:: |image1|
+------------
 
 
 Features
---------
+------------
 
-Bookmarks displays project content as :mod:`bookmark<bookmarks.items.bookmark_items>`,
-:mod:`asset<bookmarks.items.asset_items>` and :mod:`file<bookmarks.items.file_items>`
-items. Each bookmark item contains a series of asset items that in turn contain the
-file items. Bookmark and asset items can be configured independently to link with,
-for instance, `ShotGrid` entities or be set up with properties, like frame-rate,
-resolution, and custom URLs. These properties can be used to quickly configure scenes
-in host applications, e.g. Maya, and to access related external resources.
 
-The app provides simple tools to create jobs and assets using ZIP templates, templated
-file-names and options to annotate and filter existing items, and preview images using
-`OpenImageIO`.
-
+The app categorises  project content as separate :mod:`bookmarks<bookmarks.items.bookmark_items>`,
+:mod:`assets<bookmarks.items.asset_items>` and :mod:`file items<bookmarks.items.file_items>`.
+You can configure these independently to link with, for instance, ShotGrid entities or
+configure their properties like frame rate and resolution to set :mod:`Maya scene settings <bookmarks.maya.plugin>`.
+You can use filters to sort and hide items, preview images, convert footage sequences, or 'publish' files.
+See :ref:`User Guide` for more information.
 
 Background
-----------
+------------
 
-This project was developed to manage my project personal projects and is adapted to my
-own custom way of setting them up. This is to say, Bookmarks expects certain patterns to
-be respected to read files and folders correctly, but I tried my best to make things
-easily customizable to adapt to site specific environments.
-
+I developed the app to help manage personal projects and keep myself organised (I'm a digitally messy person). So, whilst it works great for me, it might not work for you. Still, I tried to make it easily customisable to help adapt to site-specific environments. See the python modules documentation for more information.
 
 Quick Start
------------
+-------------
 
 The simplest way to start Bookmarks as a standalone application is to run:
 
@@ -52,7 +40,9 @@ The simplest way to start Bookmarks as a standalone application is to run:
 
 
 Dependencies
-------------
+--------------------
+
+The release contains all Windows dependencies. For setting up a custom development environment on another platform, you'll need the following python dependencies:
 
 * `Python3 <https://github.com/python/cpython>`_ -  Tested against 3.9
 * `PySide2 <https://pypi.org/project/PySide2>`_ - Tested against Qt 5.15.2
@@ -62,30 +52,31 @@ Dependencies
 * `psutil <https://pypi.org/project/psutil>`_
 * `shotgun_api3 <https://github.com/shotgunsoftware/python-api>`_
 
-Warning:
+.. note:
 
     * Currently, Windows is the only supported platform (although much of the codebase should be platform-agnostic).
     * OpenImageIO does not currently maintain installable python packages.
 
 
-.. |logo| image:: https://github.com/wgergely/bookmarks/blob/main/bookmarks/rsc/gui/icon.png?raw=true
-   :height: 300px
-   :width: 300px
+.. |logo| image:: _static/icon.png
+   :height: 200
+   :width: 200
    :alt: Bookmarks - Lightweight asset manager designed for VFX, animation, film productions
 
 .. |label1| image:: https://img.shields.io/badge/Python-3.8%2B-lightgrey
-   :height: 18px
+   :height: 18
 
 .. |label2| image:: https://img.shields.io/badge/Python-PySide2-lightgrey
-   :height: 18px
+   :height: 18
 
 .. |label3| image:: https://img.shields.io/badge/Platform-Windows-lightgrey
-   :height: 18px
+   :height: 18
 
 .. |label4| image:: https://img.shields.io/badge/Version-v0.6.0-green
-   :height: 18px
+   :height: 18
 
-.. |image1| image:: userguide/step01.png
+.. |image1| image:: ./images/active_bookmark.png
+    :width: 480
 
 
 """

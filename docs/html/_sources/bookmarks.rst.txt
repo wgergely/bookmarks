@@ -1,5 +1,0 @@
-------------
-Introduction
-------------
-
-.. automodule:: bookmarks

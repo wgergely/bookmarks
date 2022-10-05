@@ -18,8 +18,7 @@ env_key = 'BOOKMARKS_ROOT'
 product = 'bookmarks'
 
 __author__ = 'Gergely Wootsch'
-__version__ = '0.6.0'
-__version_info__ = (0, 6, 0)
+__version__ = '0.7.0'
 
 maya_useNewAPI = True
 

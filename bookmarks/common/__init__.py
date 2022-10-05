@@ -167,8 +167,8 @@ __initial_values__ = {
 from .core import *
 from .data import *
 from .env import *
-from .monitor import *
 from .font import *
+from .monitor import *
 from .sequence import *
 from .session_lock import *
 from .settings import *

@@ -35,6 +35,7 @@ class ListsWidget(QtWidgets.QStackedWidget):
     views.
 
     """
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setObjectName('BrowserStackedWidget')
@@ -83,6 +84,7 @@ class ThumbnailsContextMenu(contextmenu.BaseContextMenu):
     """Context menu associated with thumbnail actions.
 
     """
+
     def setup(self):
         """Creates the context menu.
 
@@ -725,7 +727,7 @@ class BaseItemView(QtWidgets.QListView):
 
         if first_index == last_index:
             return
-        if not current_index.isValid(): # No selection
+        if not current_index.isValid():  # No selection
             sel.setCurrentIndex(
                 first_index,
                 QtCore.QItemSelectionModel.ClearAndSelect
@@ -760,7 +762,7 @@ class BaseItemView(QtWidgets.QListView):
         if first_index == last_index:
             return
 
-        if not current_index.isValid(): # No selection
+        if not current_index.isValid():  # No selection
             sel.setCurrentIndex(
                 last_index,
                 QtCore.QItemSelectionModel.ClearAndSelect
@@ -1380,6 +1382,7 @@ class InlineIconView(BaseItemView):
     """Adds multi-toggle and clickable in-line icons to :class:`BaseItemView`.
 
     """
+
     def __init__(self, icon='bw_icon', parent=None):
         super(InlineIconView, self).__init__(icon=icon, parent=parent)
 

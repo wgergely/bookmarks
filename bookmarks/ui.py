@@ -915,16 +915,15 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
             painter.setOpacity(0.5)
         painter.drawPath(path)
 
-
     def sizeHint(self, option, index):
         _, metrics = common.font_db.primary_font(
             common.size(common.size_font_small)
         )
 
         width = (
-            metrics.horizontalAdvance(index.data(QtCore.Qt.DisplayRole)) +
-            common.size(common.size_row_height) +
-            common.size(common.size_margin)
+                metrics.horizontalAdvance(index.data(QtCore.Qt.DisplayRole)) +
+                common.size(common.size_row_height) +
+                common.size(common.size_margin)
         )
         return QtCore.QSize(
             width,
@@ -949,7 +948,6 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
 
         """
         editor.setGeometry(option.rect)
-
 
 
 class ListWidget(QtWidgets.QListWidget):

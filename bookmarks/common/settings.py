@@ -14,7 +14,6 @@ from PySide2 import QtCore
 from .. import common
 from .. import log
 
-
 #: section/key definitions
 SECTIONS = {
     'active': (

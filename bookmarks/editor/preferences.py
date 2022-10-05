@@ -9,7 +9,6 @@ from PySide2 import QtWidgets, QtCore, QtGui
 from . import base
 from .. import actions
 from .. import common
-from .. import log
 from .. import ui
 
 
@@ -42,7 +41,7 @@ class UIScaleFactorsCombobox(QtWidgets.QComboBox):
     """Editor used to pick a ui scale value.
 
     """
-    
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
@@ -76,6 +75,7 @@ class AboutLabel(QtWidgets.QLabel):
     """Label used to show informative data.
 
     """
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setAlignment(QtCore.Qt.AlignCenter)
@@ -115,6 +115,7 @@ class AboutWidget(QtWidgets.QDialog):
     """Shows informative data about Bookmarks.
 
     """
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         if not self.parent():

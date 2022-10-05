@@ -44,6 +44,7 @@ class PickThumbnail(QtWidgets.QFileDialog):
     """Simple file picker dialog used to select an image file.
 
     """
+
     def __init__(self, server, job, root, source, parent=None):
         super(PickThumbnail, self).__init__(parent=parent)
 

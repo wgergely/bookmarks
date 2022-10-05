@@ -1598,6 +1598,8 @@ class BaseContextMenu(QtWidgets.QMenu):
             'action': actions.convert_image_sequence
         }
 
+        self.separator()
+
     def import_json_menu(self):
         """JSON property import menu.
 

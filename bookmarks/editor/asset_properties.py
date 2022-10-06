@@ -266,7 +266,13 @@ class AssetPropertyEditor(base.BasePropertyEditor):
 
         """
         if not self.name():
-            return None
+            return '/'.join(
+                (
+                    self.server,
+                    self.job,
+                    self.root,
+                )
+            )
         return '/'.join(
             (
                 self.server,

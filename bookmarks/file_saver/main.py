@@ -345,7 +345,7 @@ class FileSaverWidget(base.BasePropertyEditor):
             return
 
         self.update_timer.timeout.connect(self.update_expanded_template)
-        self.update_timer.timeout.connect(self.set_thumbnail_source)
+        self.update_timer.timeout.connect(self.thumbnail_editor.update)
 
     def file_path(self):
         """File path.

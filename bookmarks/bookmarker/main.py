@@ -13,6 +13,7 @@ from . import bookmark_editor
 from . import job_editor
 from . import server_editor
 from .. import actions
+from .. import images
 from .. import common
 from .. import ui
 
@@ -67,10 +68,9 @@ class BookmarkerWidget(QtWidgets.QDialog):
         self.bookmark_add_button = None
         self.default_bookmarks_button = None
         self.prune_bookmarks_button = None
-        self.info_bar = None
 
         self.setObjectName('AddRemoveBookmarkItemsWidget')
-        self.setWindowTitle('Add/Remove Bookmarks Items')
+        self.setWindowTitle('Manage Bookmarks Items')
 
         self._create_ui()
         self._connect_signals()
@@ -84,14 +84,12 @@ class BookmarkerWidget(QtWidgets.QDialog):
         self.layout().setContentsMargins(0, 0, 0, o)
         self.layout().setSpacing(0)
 
-        h = common.size(common.size_row_height) * 0.66
+        h = common.size(common.size_row_height) * 0.8
 
         # =====================================================
 
         _o = common.size(common.size_margin)
         main_row = ui.add_row(None, height=None, parent=self)
-        main_row.setAttribute(QtCore.Qt.WA_TranslucentBackground, False)
-        main_row.setAttribute(QtCore.Qt.WA_NoSystemBackground, False)
         main_row.setObjectName('mainRow')
         main_row.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
@@ -100,6 +98,18 @@ class BookmarkerWidget(QtWidgets.QDialog):
 
         main_row.layout().setSpacing(o)
         main_row.layout().setContentsMargins(o, 0, o, 0)
+
+        # =====================================================
+
+        pixmap = images.ImageCache.rsc_pixmap(
+            'icon',
+            color=None,
+            size=common.size(common.size_row_height * 4),
+            opacity=0.8,
+        )
+        label = QtWidgets.QLabel(parent=self)
+        label.setPixmap(pixmap)
+        main_row.layout().addWidget(label)
 
         # =====================================================
 
@@ -132,7 +142,7 @@ class BookmarkerWidget(QtWidgets.QDialog):
         )
 
         label = ui.PaintedLabel(
-            'Select or add server',
+            'Servers',
             color=common.color(common.color_secondary_text)
         )
         self.server_editor = server_editor.ServerItemEditor(parent=grp)
@@ -189,7 +199,7 @@ class BookmarkerWidget(QtWidgets.QDialog):
         )
 
         label = ui.PaintedLabel(
-            'Select or add job folder',
+            'Jobs',
             color=common.color(common.color_secondary_text)
         )
 
@@ -242,7 +252,7 @@ class BookmarkerWidget(QtWidgets.QDialog):
         )
 
         label = ui.PaintedLabel(
-            'Select or add root folder',
+            'Root folders',
             color=common.color(common.color_secondary_text)
         )
 
@@ -262,26 +272,6 @@ class BookmarkerWidget(QtWidgets.QDialog):
         _row.layout().addWidget(self.bookmark_add_button)
         grp.layout().addWidget(self.bookmark_editor, 1)
 
-        # =====================================================
-
-        self.info_bar = QtWidgets.QLabel(parent=self)
-        self.info_bar.setStyleSheet(
-            'QLabel {{font-family: "{family}";font-size: {size}px;margin: {o} {o} '
-            '{o} {o};}}'.format(
-                size=common.size(common.size_font_small) * 0.2,
-                family=common.font_db.secondary_font(
-                    common.size_font_small
-                )[0].family(),
-                o=common.size(common.size_indicator)
-            )
-        )
-        self.info_bar.setWordWrap(False)
-        self.info_bar.setFixedHeight(common.size(common.size_margin) * 2)
-
-        self.layout().addWidget(self.info_bar, 1)
-
-        # =====================================================
-
         self.layout().addSpacing(o * 2)
 
         row = ui.add_row(None, height=None, parent=self)
@@ -296,11 +286,11 @@ class BookmarkerWidget(QtWidgets.QDialog):
         )
 
         self.default_bookmarks_button = ui.PaintedButton(
-            'Edit Default Bookmark Items'
+            'Show default_bookmark_items.json'
         )
         row.layout().addWidget(self.default_bookmarks_button, 0)
         self.prune_bookmarks_button = ui.PaintedButton(
-            'Prune Bookmark Items'
+            'Remove invalid'
         )
         row.layout().addWidget(self.prune_bookmarks_button, 0)
         row.layout().addWidget(self.done_button, 1)
@@ -316,10 +306,6 @@ class BookmarkerWidget(QtWidgets.QDialog):
         self.job_editor.selectionModel().selectionChanged.connect(
             self.bookmark_editor.init_data
         )
-
-        self.server_editor.progressUpdate.connect(self.set_info_message)
-        self.job_editor.progressUpdate.connect(self.set_info_message)
-        self.bookmark_editor.progressUpdate.connect(self.set_info_message)
 
         self.server_add_button.clicked.connect(self.server_editor.add)
         self.job_add_button.clicked.connect(self.job_editor.add)
@@ -371,22 +357,6 @@ class BookmarkerWidget(QtWidgets.QDialog):
         if not index.isValid():
             return None
         return index.data(QtCore.Qt.UserRole)
-
-    @QtCore.Slot(str)
-    def set_info_message(self, v):
-        """Slot used to set an informative progress message.
-
-        """
-        font, metrics = common.font_db.primary_font(
-            common.size(common.size_font_medium)
-        )
-        v = metrics.elidedText(
-            v,
-            QtCore.Qt.ElideRight,
-            self.window().rect().width() - common.size(common.size_margin) * 2
-        )
-        self.info_bar.setText(v)
-        self.info_bar.repaint()
 
     def init_data(self):
         """Initializes data.

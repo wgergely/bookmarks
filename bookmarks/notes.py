@@ -714,9 +714,9 @@ class NoteItemWidget(QtWidgets.QWidget):
         super().__init__(parent=parent)
         self.editor = None
         self.setFocusPolicy(QtCore.Qt.NoFocus)
-        self._create_UI()
+        self._create_ui()
 
-    def _create_UI(self):
+    def _create_ui(self):
         QtWidgets.QHBoxLayout(self)
         o = common.size(common.size_indicator)
         self.layout().setContentsMargins(0, 0, 0, 0)
@@ -765,12 +765,12 @@ class NoteEditor(QtWidgets.QDialog):
         self.setWindowFlags(QtCore.Qt.Widget)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
 
-        self._create_UI()
+        self._create_ui()
         self.installEventFilter(self)
 
         self.init_lock()
 
-    def _create_UI(self):
+    def _create_ui(self):
         """Creates the ui layout."""
         QtWidgets.QVBoxLayout(self)
         o = common.size(common.size_margin)

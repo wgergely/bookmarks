@@ -560,10 +560,10 @@ class SlackWidget(QtWidgets.QDialog):
 
         self.setWindowTitle('Slack Message')
 
-        self._create_UI()
+        self._create_ui()
         self._connect_signals()
 
-    def _create_UI(self):
+    def _create_ui(self):
         height = common.size(common.size_row_height)
 
         QtWidgets.QVBoxLayout(self)

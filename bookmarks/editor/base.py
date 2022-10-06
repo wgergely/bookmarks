@@ -201,10 +201,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
             source = '/'.join((self.server, self.job, self.root, self.asset))
 
         self.thumbnail_editor = base_widgets.ThumbnailEditorWidget(
-            self.server,
-            self.job,
-            self.root,
-            source=source,
             fallback_thumb=self._fallback_thumb,
             parent=self
         )
@@ -328,6 +324,15 @@ class BasePropertyEditor(QtWidgets.QDialog):
                 else:
                     row.layout().addWidget(editor, 1)
 
+            # Close editor on enter presses
+            if hasattr(editor, 'returnPressed'):
+                editor.returnPressed.connect(
+                    functools.partial(
+                        self.done,
+                        QtWidgets.QDialog.Accepted,
+                    )
+                )
+
             # Set the editor as an attribute on the widget for later
             # access
             if k is not None:
@@ -344,7 +349,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
                     k in database.TABLES[self._db_table]
             ):
                 _type = database.TABLES[self._db_table][k]['type']
-                self._connect_editor_signals(k, _type, editor)
+                self._connect_data_changed_signals(k, _type, editor)
 
             if 'validator' in v and v['validator']:
                 if hasattr(editor, 'setValidator'):
@@ -416,6 +421,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
             name,
             parent=self.section_headers_widget
         )
+        button.setFocusPolicy(QtCore.Qt.NoFocus)
 
         font, _ = common.font_db.primary_font(common.size(common.size_font_small))
         button.setStyleSheet(
@@ -464,7 +470,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
             point.y() + self.scroll_area.verticalScrollBar().value()
         )
 
-    def _connect_editor_signals(self, key, _type, editor):
+    def _connect_data_changed_signals(self, key, _type, editor):
         """Utility method for connecting an editor's change signal to `data_changed`.
 
         `data_changed` will save the changed current value internally. This data
@@ -584,19 +590,6 @@ class BasePropertyEditor(QtWidgets.QDialog):
                 editor.blockSignals(True)
                 editor.setCheckState(QtCore.Qt.CheckState(v))
                 editor.blockSignals(False)
-
-    @QtCore.Slot()
-    def set_thumbnail_source(self):
-        """Slot connected to the update timer and used to set the source value
-        of the thumbnail editor.
-
-        """
-        source = self.thumbnail_editor.source
-        _source = self.db_source()
-
-        self.thumbnail_editor.source = _source
-        if source != _source:
-            self.thumbnail_editor.update()
 
     def init_db_data(self):
         """Method will load data from the bookmark database.

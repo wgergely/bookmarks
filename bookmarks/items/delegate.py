@@ -405,11 +405,10 @@ def get_asset_text_segments(text, label):
 
     # Add
     if label:
+        d[len(d)] = ('  |  ', s_color)
         if '#' in label:
-            d[len(d)] = ('  |  ', s_color)
-            d[len(d)] = (label, common.color(common.color_dark_green))
+            d[len(d)] = (label, common.color(common.color_text))
         else:
-            d[len(d)] = (':  ', s_color)
             d[len(d)] = (label, s_color)
 
     common.delegate_text_segments[k] = d
@@ -1854,8 +1853,12 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
 
             painter.setOpacity(1.0)
             painter.setBrush(common.color(common.color_secondary_text))
-            text = 'Double-click to edit...'
-
+            text = elided_text(
+                metrics,
+                'Double-click to edit...',
+                QtCore.Qt.ElideRight,
+                description_rect.width(),
+            )
             x = description_rect.left()
             y = description_rect.center().y() + (metrics.ascent() / 2.0)
             path = get_painter_path(x, y, font, text)

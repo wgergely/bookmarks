@@ -425,4 +425,4 @@ class FavouriteItemView(file_items.FileItemView):
         """
         model = self.model().sourceModel()
         if not model.rowCount():
-            return 'No favourite items saved yet.'
+            return 'No favourites yet'

@@ -30,8 +30,6 @@ TemplatePathRole = TemplateContentsRole + 1
 
 TEMPLATES_DIR = '{root}/{product}/{mode}_templates'
 
-HINT_TEXT = 'Right-click or drag\'n\'drop to add ZIP template'
-
 
 def get_template_folder(mode):
     """Returns the path where the ZIP template files are stored, associated with
@@ -161,8 +159,9 @@ class TemplateListWidget(ui.ListWidget):
 
     def __init__(self, mode=JobTemplateMode, parent=None):
         super(TemplateListWidget, self).__init__(
-            default_message='',
-            parent=parent
+            default_message='Right-click or drag\'n\'drop to add ZIP template',
+            default_icon='folder',
+            parent=parent,
         )
         self._mode = mode
 
@@ -181,6 +180,8 @@ class TemplateListWidget(ui.ListWidget):
         self._connect_signals()
 
     def _connect_signals(self):
+        super()._connect_signals()
+
         self.model().dataChanged.connect(self.update_name)
         self.selectionModel().selectionChanged.connect(
             functools.partial(
@@ -334,6 +335,8 @@ class TemplateListWidget(ui.ListWidget):
         """Event filter handler.
 
         """
+        super().eventFilter(widget, event)
+
         if widget == self.viewport():
             if event.type() == QtCore.QEvent.DragEnter:
                 if event.mimeData().hasUrls():
@@ -407,21 +410,6 @@ class TemplateListWidget(ui.ListWidget):
             painter.setBrush(common.color(common.color_separator))
             painter.drawRoundedRect(rect, o, o)
 
-            o = common.size(common.size_indicator)
-            painter.setPen(common.color(common.color_text))
-
-            if self.count() > 0:
-                painter.end()
-                return False
-
-            painter.drawText(
-                rect,
-                QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter | QtCore.Qt.TextWordWrap,
-                HINT_TEXT,
-                boundingRect=self.rect(),
-            )
-            painter.end()
-            return True
         return False
 
     def showEvent(self, event):
@@ -564,7 +552,7 @@ class TemplatesWidget(QtWidgets.QSplitter):
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.setMaximumHeight(common.size(common.size_width) * 0.3)
 
-        self._create_UI()
+        self._create_ui()
         self._connect_signals()
 
     def mode(self):
@@ -573,13 +561,14 @@ class TemplatesWidget(QtWidgets.QSplitter):
         """
         return self._mode
 
-    def _create_UI(self):
+    def _create_ui(self):
         if not self.parent():
             common.set_stylesheet(self)
         self.template_list_widget = TemplateListWidget(self._mode, parent=self)
         self.template_contents_widget = TemplatesPreviewWidget(parent=self)
         self.addWidget(self.template_list_widget)
         self.addWidget(self.template_contents_widget)
+        self.setSizes((1, 0))
 
     def _connect_signals(self):
         model = self.template_list_widget.selectionModel()

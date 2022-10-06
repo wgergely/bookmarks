@@ -907,7 +907,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         """
         icon = ui.get_icon('add', color=common.color(common.color_green))
         self.menu[key()] = {
-            'text': 'Add/Remove Bookmark Items...',
+            'text': 'Manage Bookmark Items...',
             'icon': icon,
             'action': actions.show_bookmarker,
             'shortcut': shortcuts.get(

@@ -20,17 +20,38 @@ class BaseQuickSwitchMenu(contextmenu.BaseContextMenu):
 
     def add_switch_menu(self, idx, label):
         """Adds the items needed to quickly change bookmarks or assets."""
-        off_pixmap = images.ImageCache.rsc_pixmap(
-            'icon_bw', common.color(common.color_secondary_text),
-            common.size(common.size_margin))
-        on_pixmap = images.ImageCache.rsc_pixmap(
-            'check', common.color(common.color_green), common.size(common.size_margin))
+        active_index = common.active_index(idx)
+        if not common.model(idx).rowCount():
+            return
+
+        if common.current_tab() == common.BookmarkTab:
+            off_icon = ui.get_icon(
+                'bookmark_item',
+                color=common.color(common.color_secondary_text)
+            )
+        elif common.current_tab() == common.AssetTab:
+            off_icon = ui.get_icon(
+                'asset_item',
+                color=common.color(common.color_secondary_text)
+            )
+        elif common.current_tab() == common.FileTab:
+            off_icon = ui.get_icon(
+                'file_item',
+                color=common.color(common.color_secondary_text)
+            )
+        elif common.current_tab() == common.FavouriteTab:
+            off_icon = ui.get_icon(
+                'favourite_item',
+                color=common.color(common.color_secondary_text)
+            )
+
+        on_icon = ui.get_icon('check', color=common.color(common.color_green))
+
 
         self.menu[label] = {
             'disabled': True
         }
 
-        active_index = common.active_index(idx)
         for n in range(common.model(idx).rowCount()):
             index = common.model(idx).index(n, 0)
 
@@ -48,9 +69,14 @@ class BaseQuickSwitchMenu(contextmenu.BaseContextMenu):
                 size=common.size(common.size_margin) * 4,
                 fallback_thumb='icon_bw'
             )
-            pixmap = pixmap if pixmap else off_pixmap
-            pixmap = on_pixmap if active else pixmap
-            icon = QtGui.QIcon(pixmap)
+
+            if pixmap and not pixmap.isNull():
+                icon = QtGui.QIcon(pixmap)
+            elif active:
+                icon = on_icon
+            else:
+                icon = off_icon
+
             self.menu[name.upper()] = {
                 'icon': icon,
                 'action': functools.partial(common.widget(idx).activate, index)
@@ -74,7 +100,7 @@ class SwitchBookmarkMenu(BaseQuickSwitchMenu):
     def add_menu(self):
         self.menu['add'] = {
             'icon': ui.get_icon('add', color=common.color(common.color_green)),
-            'text': 'Add/Remove Bookmark Items...',
+            'text': 'Manage Bookmark Items...',
             'action': actions.show_bookmarker,
             'shortcut': shortcuts.string(shortcuts.MainWidgetShortcuts,
                                          shortcuts.AddItem),

@@ -451,6 +451,7 @@ class BookmarkPropertyEditor(base.BasePropertyEditor):
 
         """
         self.init_db_data()
+        self.description_editor.setFocus(QtCore.Qt.PopupFocusReason)
 
     @common.error
     @common.debug

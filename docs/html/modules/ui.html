@@ -397,10 +397,10 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.ui.ListOverlayWidget" title="bookmarks.ui.ListOverlayWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ListOverlayWidget</span></code></a>([parent])</p></td>
 <td><p>Widget used to display a status message over the list widget.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.ui.ListViewWidget" title="bookmarks.ui.ListViewWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ListViewWidget</span></code></a>([default_message, parent])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.ui.ListViewWidget" title="bookmarks.ui.ListViewWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ListViewWidget</span></code></a>([default_message, ...])</p></td>
 <td><p>A custom list widget used to display selectable item.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.ui.ListWidget" title="bookmarks.ui.ListWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ListWidget</span></code></a>([default_message, parent])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.ui.ListWidget" title="bookmarks.ui.ListWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ListWidget</span></code></a>([default_message, default_icon, ...])</p></td>
 <td><p>A custom list widget used to display selectable item.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.ui.ListWidgetDelegate" title="bookmarks.ui.ListWidgetDelegate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ListWidgetDelegate</span></code></a></p></td>
@@ -434,7 +434,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.ui.add_line_edit" title="bookmarks.ui.add_line_edit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_line_edit</span></code></a>(label[, parent])</p></td>
 <td><p>Utility method for adding a line editor.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.ui.add_row" title="bookmarks.ui.add_row"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_row</span></code></a>(label[, color, parent, padding, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.ui.add_row" title="bookmarks.ui.add_row"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_row</span></code></a>(label[, color, padding, height, ...])</p></td>
 <td><p>Utility method for creating a row widget.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.ui.get_group" title="bookmarks.ui.get_group"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_group</span></code></a>([parent, vertical, margin])</p></td>
@@ -442,6 +442,9 @@
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.ui.get_icon" title="bookmarks.ui.get_icon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_icon</span></code></a>(name[, color, size, opacity, resource])</p></td>
 <td><p>Utility method for retuning a QIcon to use in the context menu.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.ui.paint_background_icon" title="bookmarks.ui.paint_background_icon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_background_icon</span></code></a>(name, widget)</p></td>
+<td><p>Paints a decorative background icon to the middle of the given widget.</p></td>
 </tr>
 </tbody>
 </table>
@@ -796,19 +799,36 @@ image path.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.ui.ListViewWidget">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.ui.</span></span><span class="sig-name descname"><span class="pre">ListViewWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default_message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'No</span> <span class="pre">items'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/ui.html#ListViewWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.ui.ListViewWidget" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.ui.</span></span><span class="sig-name descname"><span class="pre">ListViewWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default_message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'No</span> <span class="pre">items'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_icon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'icon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/ui.html#ListViewWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.ui.ListViewWidget" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QListView</span></code></p>
 <p>A custom list widget used to display selectable item.</p>
 <p><strong>Methods:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.ui.ListViewWidget.eventFilter" title="bookmarks.ui.ListViewWidget.eventFilter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eventFilter</span></code></a>(widget, event)</p></td>
+<td><p>Event filter handler.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.ui.ListViewWidget.mouseMoveEvent" title="bookmarks.ui.ListViewWidget.mouseMoveEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mouseMoveEvent</span></code></a>(self, e)</p></td>
+<td><p></p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.ui.ListViewWidget.resizeEvent" title="bookmarks.ui.ListViewWidget.resizeEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resizeEvent</span></code></a>(self, e)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.ui.ListViewWidget.eventFilter">
+<span class="sig-name descname"><span class="pre">eventFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/ui.html#ListViewWidget.eventFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.ui.ListViewWidget.eventFilter" title="Permalink to this definition">#</a></dt>
+<dd><p>Event filter handler.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.ui.ListViewWidget.mouseMoveEvent">
+<span class="sig-name descname"><span class="pre">mouseMoveEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtGui.QMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/bookmarks/ui.html#ListViewWidget.mouseMoveEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.ui.ListViewWidget.mouseMoveEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.ui.ListViewWidget.resizeEvent">
 <span class="sig-name descname"><span class="pre">resizeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">e</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtGui.QResizeEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/bookmarks/ui.html#ListViewWidget.resizeEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.ui.ListViewWidget.resizeEvent" title="Permalink to this definition">#</a></dt>
@@ -818,7 +838,7 @@ image path.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.ui.ListWidget">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.ui.</span></span><span class="sig-name descname"><span class="pre">ListWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default_message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'No</span> <span class="pre">items'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/ui.html#ListWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.ui.ListWidget" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.ui.</span></span><span class="sig-name descname"><span class="pre">ListWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">default_message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'No</span> <span class="pre">items'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_icon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'icon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/ui.html#ListWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.ui.ListWidget" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QListWidget</span></code></p>
 <p>A custom list widget used to display selectable item.</p>
 <p><strong>Methods:</strong></p>
@@ -828,7 +848,10 @@ image path.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.ui.ListWidget.addItem" title="bookmarks.ui.ListWidget.addItem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addItem</span></code></a>(-&gt; None)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.ui.ListWidget.resizeEvent" title="bookmarks.ui.ListWidget.resizeEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resizeEvent</span></code></a>(self, e)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.ui.ListWidget.eventFilter" title="bookmarks.ui.ListWidget.eventFilter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eventFilter</span></code></a>(widget, event)</p></td>
+<td><p>Event filter handler.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.ui.ListWidget.resizeEvent" title="bookmarks.ui.ListWidget.resizeEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resizeEvent</span></code></a>(self, e)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
@@ -840,6 +863,12 @@ image path.</p>
 <dt class="sig sig-object py">
 <span class="sig-name descname"><span class="pre">addItem</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span></dt>
 <dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.ui.ListWidget.eventFilter">
+<span class="sig-name descname"><span class="pre">eventFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/ui.html#ListWidget.eventFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.ui.ListWidget.eventFilter" title="Permalink to this definition">#</a></dt>
+<dd><p>Event filter handler.</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.ui.ListWidget.resizeEvent">
@@ -1086,7 +1115,7 @@ image path.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.ui.add_row">
-<span class="sig-prename descclassname"><span class="pre">bookmarks.ui.</span></span><span class="sig-name descname"><span class="pre">add_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">common.color(common.color_secondary_text)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">common.size(common.size_margin)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">common.size(common.size_row_height)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertical</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/ui.html#add_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.ui.add_row" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">bookmarks.ui.</span></span><span class="sig-name descname"><span class="pre">add_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">common.color(common.color_secondary_text)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">padding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">common.size(common.size_margin)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">common.size(common.size_row_height)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vertical</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/ui.html#add_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.ui.add_row" title="Permalink to this definition">#</a></dt>
 <dd><p>Utility method for creating a row widget.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -1131,6 +1160,20 @@ image path.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>QtGui.QIcon</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.ui.paint_background_icon">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.ui.</span></span><span class="sig-name descname"><span class="pre">paint_background_icon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/ui.html#paint_background_icon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.ui.paint_background_icon" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints a decorative background icon to the middle of the given widget.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – The image’s name.</p></li>
+<li><p><strong>widget</strong> (<em>QWidget</em>) – The widget to paint on.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -1242,11 +1285,14 @@ image path.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#bookmarks.ui.ListViewWidget"><code class="docutils literal notranslate"><span class="pre">ListViewWidget</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.ui.ListViewWidget.eventFilter"><code class="docutils literal notranslate"><span class="pre">ListViewWidget.eventFilter()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.ui.ListViewWidget.mouseMoveEvent"><code class="docutils literal notranslate"><span class="pre">ListViewWidget.mouseMoveEvent()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.ui.ListViewWidget.resizeEvent"><code class="docutils literal notranslate"><span class="pre">ListViewWidget.resizeEvent()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#bookmarks.ui.ListWidget"><code class="docutils literal notranslate"><span class="pre">ListWidget</span></code></a><ul>
 <li><a class="reference internal" href="#bookmarks.ui.ListWidget.addItem"><code class="docutils literal notranslate"><span class="pre">ListWidget.addItem()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.ui.ListWidget.eventFilter"><code class="docutils literal notranslate"><span class="pre">ListWidget.eventFilter()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.ui.ListWidget.resizeEvent"><code class="docutils literal notranslate"><span class="pre">ListWidget.resizeEvent()</span></code></a></li>
 </ul>
 </li>
@@ -1284,6 +1330,7 @@ image path.</p>
 <li><a class="reference internal" href="#bookmarks.ui.add_row"><code class="docutils literal notranslate"><span class="pre">add_row()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.ui.get_group"><code class="docutils literal notranslate"><span class="pre">get_group()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.ui.get_icon"><code class="docutils literal notranslate"><span class="pre">get_icon()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.ui.paint_background_icon"><code class="docutils literal notranslate"><span class="pre">paint_background_icon()</span></code></a></li>
 </ul>
 </li>
 </ul>

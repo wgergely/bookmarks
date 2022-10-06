@@ -359,6 +359,7 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">job_editor</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">server_editor</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">actions</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">images</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">common</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ui</span>
 
@@ -413,10 +414,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">bookmark_add_button</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">default_bookmarks_button</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prune_bookmarks_button</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">info_bar</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s1">&#39;AddRemoveBookmarkItemsWidget&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s1">&#39;Add/Remove Bookmarks Items&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s1">&#39;Manage Bookmarks Items&#39;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_create_ui</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_connect_signals</span><span class="p">()</span>
@@ -430,14 +430,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setSpacing</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
-        <span class="n">h</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_row_height</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.66</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_row_height</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.8</span>
 
         <span class="c1"># =====================================================</span>
 
         <span class="n">_o</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_margin</span><span class="p">)</span>
         <span class="n">main_row</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">main_row</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_TranslucentBackground</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="n">main_row</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_NoSystemBackground</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">main_row</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s1">&#39;mainRow&#39;</span><span class="p">)</span>
         <span class="n">main_row</span><span class="o">.</span><span class="n">setSizePolicy</span><span class="p">(</span>
             <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">MinimumExpanding</span><span class="p">,</span>
@@ -446,6 +444,18 @@
 
         <span class="n">main_row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setSpacing</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
         <span class="n">main_row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># =====================================================</span>
+
+        <span class="n">pixmap</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">rsc_pixmap</span><span class="p">(</span>
+            <span class="s1">&#39;icon&#39;</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">size</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_row_height</span> <span class="o">*</span> <span class="mi">4</span><span class="p">),</span>
+            <span class="n">opacity</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">label</span><span class="o">.</span><span class="n">setPixmap</span><span class="p">(</span><span class="n">pixmap</span><span class="p">)</span>
+        <span class="n">main_row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
 
         <span class="c1"># =====================================================</span>
 
@@ -478,7 +488,7 @@
         <span class="p">)</span>
 
         <span class="n">label</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">PaintedLabel</span><span class="p">(</span>
-            <span class="s1">&#39;Select or add server&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Servers&#39;</span><span class="p">,</span>
             <span class="n">color</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_secondary_text</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">server_editor</span> <span class="o">=</span> <span class="n">server_editor</span><span class="o">.</span><span class="n">ServerItemEditor</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">grp</span><span class="p">)</span>
@@ -535,7 +545,7 @@
         <span class="p">)</span>
 
         <span class="n">label</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">PaintedLabel</span><span class="p">(</span>
-            <span class="s1">&#39;Select or add job folder&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Jobs&#39;</span><span class="p">,</span>
             <span class="n">color</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_secondary_text</span><span class="p">)</span>
         <span class="p">)</span>
 
@@ -588,7 +598,7 @@
         <span class="p">)</span>
 
         <span class="n">label</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">PaintedLabel</span><span class="p">(</span>
-            <span class="s1">&#39;Select or add root folder&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Root folders&#39;</span><span class="p">,</span>
             <span class="n">color</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_secondary_text</span><span class="p">)</span>
         <span class="p">)</span>
 
@@ -608,26 +618,6 @@
         <span class="n">_row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bookmark_add_button</span><span class="p">)</span>
         <span class="n">grp</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bookmark_editor</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
-        <span class="c1"># =====================================================</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">info_bar</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">info_bar</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span>
-            <span class="s1">&#39;QLabel {{font-family: &quot;</span><span class="si">{family}</span><span class="s1">&quot;;font-size: </span><span class="si">{size}</span><span class="s1">px;margin: </span><span class="si">{o}</span><span class="s1"> </span><span class="si">{o}</span><span class="s1"> &#39;</span>
-            <span class="s1">&#39;</span><span class="si">{o}</span><span class="s1"> </span><span class="si">{o}</span><span class="s1">;}}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">size</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_font_small</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.2</span><span class="p">,</span>
-                <span class="n">family</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">secondary_font</span><span class="p">(</span>
-                    <span class="n">common</span><span class="o">.</span><span class="n">size_font_small</span>
-                <span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">family</span><span class="p">(),</span>
-                <span class="n">o</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_indicator</span><span class="p">)</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">info_bar</span><span class="o">.</span><span class="n">setWordWrap</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">info_bar</span><span class="o">.</span><span class="n">setFixedHeight</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_margin</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">info_bar</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-
-        <span class="c1"># =====================================================</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addSpacing</span><span class="p">(</span><span class="n">o</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
 
         <span class="n">row</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
@@ -642,11 +632,11 @@
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">default_bookmarks_button</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">PaintedButton</span><span class="p">(</span>
-            <span class="s1">&#39;Edit Default Bookmark Items&#39;</span>
+            <span class="s1">&#39;Show default_bookmark_items.json&#39;</span>
         <span class="p">)</span>
         <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_bookmarks_button</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prune_bookmarks_button</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">PaintedButton</span><span class="p">(</span>
-            <span class="s1">&#39;Prune Bookmark Items&#39;</span>
+            <span class="s1">&#39;Remove invalid&#39;</span>
         <span class="p">)</span>
         <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prune_bookmarks_button</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">done_button</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
@@ -662,10 +652,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">job_editor</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">selectionChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">bookmark_editor</span><span class="o">.</span><span class="n">init_data</span>
         <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">server_editor</span><span class="o">.</span><span class="n">progressUpdate</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">set_info_message</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">job_editor</span><span class="o">.</span><span class="n">progressUpdate</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">set_info_message</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">bookmark_editor</span><span class="o">.</span><span class="n">progressUpdate</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">set_info_message</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">server_add_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">server_editor</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">job_add_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">job_editor</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
@@ -717,22 +703,6 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="BookmarkerWidget.set_info_message"><a class="viewcode-back" href="../../../modules/bookmarker/main.html#bookmarks.bookmarker.main.BookmarkerWidget.set_info_message">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">set_info_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Slot used to set an informative progress message.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">font</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">primary_font</span><span class="p">(</span>
-            <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_font_medium</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">elidedText</span><span class="p">(</span>
-            <span class="n">v</span><span class="p">,</span>
-            <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ElideRight</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">()</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">-</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_margin</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">info_bar</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">info_bar</span><span class="o">.</span><span class="n">repaint</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="BookmarkerWidget.init_data"><a class="viewcode-back" href="../../../modules/bookmarker/main.html#bookmarks.bookmarker.main.BookmarkerWidget.init_data">[docs]</a>    <span class="k">def</span> <span class="nf">init_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initializes data.</span>

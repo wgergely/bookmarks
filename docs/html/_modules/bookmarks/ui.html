@@ -1131,12 +1131,8 @@
             <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ElideMiddle</span><span class="p">,</span>
             <span class="n">rect</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span>
         <span class="p">)</span>
-        <span class="n">painter</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoPen</span><span class="p">)</span>
-        <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_separator</span><span class="p">))</span>
-        <span class="n">painter</span><span class="o">.</span><span class="n">setOpacity</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
-        <span class="n">painter</span><span class="o">.</span><span class="n">drawRect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">())</span>
 
-        <span class="n">painter</span><span class="o">.</span><span class="n">setOpacity</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">setOpacity</span><span class="p">(</span><span class="mf">0.66</span><span class="p">)</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoBrush</span><span class="p">)</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_secondary_text</span><span class="p">))</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span>
@@ -1170,7 +1166,7 @@
         <span class="p">)</span>
 
         <span class="n">o</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_indicator</span><span class="p">)</span>
-        <span class="n">rect</span> <span class="o">=</span> <span class="n">option</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">adjusted</span><span class="p">(</span><span class="n">o</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">o</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="n">o</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="n">o</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">rect</span> <span class="o">=</span> <span class="n">option</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">adjusted</span><span class="p">(</span><span class="n">o</span> <span class="o">*</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">o</span> <span class="o">*</span> <span class="mf">0.3</span><span class="p">,</span> <span class="o">-</span><span class="n">o</span> <span class="o">*</span> <span class="mf">0.3</span><span class="p">,</span> <span class="o">-</span><span class="n">o</span> <span class="o">*</span> <span class="mf">0.3</span><span class="p">)</span>
 
         <span class="c1"># Background</span>
         <span class="n">_o</span> <span class="o">=</span> <span class="mf">0.6</span> <span class="k">if</span> <span class="n">hover</span> <span class="k">else</span> <span class="mf">0.2</span>
@@ -1303,12 +1299,13 @@
     <span class="n">progressUpdate</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
     <span class="n">resized</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QSize</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default_message</span><span class="o">=</span><span class="s1">&#39;No items&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default_message</span><span class="o">=</span><span class="s1">&#39;No items&#39;</span><span class="p">,</span> <span class="n">default_icon</span><span class="o">=</span><span class="s1">&#39;icon&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">():</span>
             <span class="n">common</span><span class="o">.</span><span class="n">set_stylesheet</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">default_message</span> <span class="o">=</span> <span class="n">default_message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_icon</span> <span class="o">=</span> <span class="n">default_icon</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">job</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1326,6 +1323,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DefaultContextMenu</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setSelectionBehavior</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">SelectItems</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setSelectionMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">SingleSelection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setMouseTracking</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">setMouseTracking</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">setSizePolicy</span><span class="p">(</span>
             <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">MinimumExpanding</span><span class="p">,</span>
             <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">MinimumExpanding</span><span class="p">,</span>
@@ -1334,9 +1334,29 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">overlay</span> <span class="o">=</span> <span class="n">ListOverlayWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">overlay</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">installEventFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ListWidget.eventFilter"><a class="viewcode-back" href="../../modules/ui.html#bookmarks.ui.ListWidget.eventFilter">[docs]</a>    <span class="k">def</span> <span class="nf">eventFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Event filter handler.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">widget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QEvent</span><span class="o">.</span><span class="n">Paint</span><span class="p">:</span>
+            <span class="n">paint_background_icon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_icon</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
     <span class="k">def</span> <span class="nf">_connect_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resized</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">overlay</span><span class="o">.</span><span class="n">resize</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">progressUpdate</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">overlay</span><span class="o">.</span><span class="n">set_message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progressUpdate</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">showStatusTipMessage</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">itemEntered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">showStatusTipMessage</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
 
     <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QListWidgetItem</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
@@ -1394,13 +1414,15 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">progressUpdate</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
     <span class="n">resized</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QSize</span><span class="p">)</span>
+    <span class="n">itemEntered</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default_message</span><span class="o">=</span><span class="s1">&#39;No items&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default_message</span><span class="o">=</span><span class="s1">&#39;No items&#39;</span><span class="p">,</span> <span class="n">default_icon</span><span class="o">=</span><span class="s1">&#39;icon&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">():</span>
             <span class="n">common</span><span class="o">.</span><span class="n">set_stylesheet</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">default_message</span> <span class="o">=</span> <span class="n">default_message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_icon</span> <span class="o">=</span> <span class="n">default_icon</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">job</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1414,6 +1436,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setAcceptDrops</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setDragEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setSpacing</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setMouseTracking</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">setMouseTracking</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setItemDelegate</span><span class="p">(</span><span class="n">ListWidgetDelegate</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setContextMenuPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DefaultContextMenu</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setSelectionBehavior</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">SelectItems</span><span class="p">)</span>
@@ -1422,6 +1446,7 @@
             <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">MinimumExpanding</span><span class="p">,</span>
             <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">MinimumExpanding</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setHorizontalScrollBarPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarAlwaysOff</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QSortFilterProxyModel</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">setSourceModel</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItemModel</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">))</span>
@@ -1431,9 +1456,37 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">overlay</span> <span class="o">=</span> <span class="n">ListOverlayWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">overlay</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">installEventFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+<div class="viewcode-block" id="ListViewWidget.eventFilter"><a class="viewcode-back" href="../../modules/ui.html#bookmarks.ui.ListViewWidget.eventFilter">[docs]</a>    <span class="k">def</span> <span class="nf">eventFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Event filter handler.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">widget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QEvent</span><span class="o">.</span><span class="n">Paint</span><span class="p">:</span>
+            <span class="n">paint_background_icon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_icon</span><span class="p">,</span> <span class="n">widget</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
     <span class="k">def</span> <span class="nf">_connect_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resized</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">overlay</span><span class="o">.</span><span class="n">resize</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">progressUpdate</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">overlay</span><span class="o">.</span><span class="n">set_message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progressUpdate</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">showStatusTipMessage</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">itemEntered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">showStatusTipMessage</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="ListViewWidget.mouseMoveEvent"><a class="viewcode-back" href="../../modules/ui.html#bookmarks.ui.ListViewWidget.mouseMoveEvent">[docs]</a>    <span class="k">def</span> <span class="nf">mouseMoveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">mouseMoveEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">pos</span><span class="p">):</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+                <span class="k">return</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">itemEntered</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
 
     <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QStandardItem</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
@@ -1569,10 +1622,13 @@
 
 
 <div class="viewcode-block" id="add_row"><a class="viewcode-back" href="../../modules/ui.html#bookmarks.ui.add_row">[docs]</a><span class="k">def</span> <span class="nf">add_row</span><span class="p">(</span>
-        <span class="n">label</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_secondary_text</span><span class="p">),</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">label</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_secondary_text</span><span class="p">),</span>
         <span class="n">padding</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_margin</span><span class="p">),</span>
-        <span class="n">height</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_row_height</span><span class="p">),</span> <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">vertical</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">height</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_row_height</span><span class="p">),</span>
+        <span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">vertical</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Utility method for creating a row widget.</span>
 
@@ -1670,6 +1726,28 @@
     <span class="n">row</span><span class="o">.</span><span class="n">setFocusPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoFocus</span><span class="p">)</span>
     <span class="n">label</span><span class="o">.</span><span class="n">setFocusPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoFocus</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">row</span></div>
+
+
+<div class="viewcode-block" id="paint_background_icon"><a class="viewcode-back" href="../../modules/ui.html#bookmarks.ui.paint_background_icon">[docs]</a><span class="k">def</span> <span class="nf">paint_background_icon</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Paints a decorative background icon to the middle of the given widget.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (str): The image&#39;s name.</span>
+<span class="sd">        widget (QWidget): The widget to paint on.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">painter</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">()</span>
+    <span class="n">painter</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+
+    <span class="n">pixmap</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">rsc_pixmap</span><span class="p">(</span>
+        <span class="n">name</span><span class="p">,</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_opaque</span><span class="p">),</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_row_height</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span>
+    <span class="p">)</span>
+    <span class="n">rect</span> <span class="o">=</span> <span class="n">pixmap</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span>
+    <span class="n">rect</span><span class="o">.</span><span class="n">moveCenter</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">center</span><span class="p">())</span>
+    <span class="n">painter</span><span class="o">.</span><span class="n">drawPixmap</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">pixmap</span><span class="p">,</span> <span class="n">pixmap</span><span class="o">.</span><span class="n">rect</span><span class="p">())</span>
+    <span class="n">painter</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="GalleryItem"><a class="viewcode-back" href="../../modules/ui.html#bookmarks.ui.GalleryItem">[docs]</a><span class="k">class</span> <span class="nc">GalleryItem</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">):</span>

@@ -544,7 +544,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">THUMBNAIL_EDITOR_SIZE</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">THUMBNAIL_EDITOR_SIZE</span><span class="p">,</span>
             <span class="n">fallback_thumb</span><span class="o">=</span><span class="s1">&#39;placeholder&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -557,10 +557,6 @@
             <span class="n">parent</span><span class="o">=</span><span class="n">parent</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="n">server</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">job</span> <span class="o">=</span> <span class="n">job</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">source</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fallback_thumb</span> <span class="o">=</span> <span class="n">fallback_thumb</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_window_pos</span> <span class="o">=</span> <span class="kc">None</span>
@@ -612,10 +608,10 @@
             <span class="k">return</span>
 
         <span class="n">args</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">source</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">()</span><span class="o">.</span><span class="n">server</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">()</span><span class="o">.</span><span class="n">job</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">()</span><span class="o">.</span><span class="n">root</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">()</span><span class="o">.</span><span class="n">db_source</span><span class="p">()</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="ow">and</span> <span class="n">destination</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -627,7 +623,8 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">destination</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Failed to save thumbnail.&#39;</span><span class="p">)</span>
 
-        <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">flush</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span></div>
+        <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">flush</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
+        <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">flush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">()</span><span class="o">.</span><span class="n">db_source</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="ThumbnailEditorWidget.reset_image"><a class="viewcode-back" href="../../../modules/editor/base_widgets.html#bookmarks.editor.base_widgets.ThumbnailEditorWidget.reset_image">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">reset_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -680,6 +677,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">()</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_paint_proposed_thumbnail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">painter</span><span class="p">):</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">75</span><span class="p">))</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">drawRect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">())</span>
+
         <span class="n">o</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_separator</span><span class="p">)</span>
 
         <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_separator</span><span class="p">)</span>
@@ -705,25 +705,45 @@
 
         <span class="n">painter</span><span class="o">.</span><span class="n">drawImage</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">image</span><span class="o">.</span><span class="n">rect</span><span class="p">())</span>
 
+        <span class="c1"># Paint new indicator</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_font_large</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
+        <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">(</span>
+            <span class="n">size</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span>
+            <span class="n">size</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">rect</span><span class="o">.</span><span class="n">moveTopLeft</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_green</span><span class="p">))</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoPen</span><span class="p">)</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">drawRoundedRect</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">_paint_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">painter</span><span class="p">):</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoPen</span><span class="p">)</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_separator</span><span class="p">))</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">drawRect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">_paint_current_thumbnail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">painter</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">)):</span>
+        <span class="sd">&quot;&quot;&quot;Paints the current thumbnail of the given source.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">()</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">()</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">()</span><span class="o">.</span><span class="n">root</span><span class="p">)):</span>
             <span class="n">pixmap</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">rsc_pixmap</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">fallback_thumb</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">pixmap</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">get_thumbnail</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span>
+            <span class="n">pixmap</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">get_thumbnail</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">()</span><span class="o">.</span><span class="n">server</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">()</span><span class="o">.</span><span class="n">job</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">()</span><span class="o">.</span><span class="n">root</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">()</span><span class="o">.</span><span class="n">db_source</span><span class="p">(),</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">(),</span>
                 <span class="n">fallback_thumb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fallback_thumb</span>
             <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">color</span><span class="p">:</span>
+                <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+                <span class="n">painter</span><span class="o">.</span><span class="n">drawRect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">())</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pixmap</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">)</span> <span class="ow">or</span> <span class="n">pixmap</span><span class="o">.</span><span class="n">isNull</span><span class="p">():</span>
             <span class="k">return</span>

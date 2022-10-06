@@ -547,10 +547,6 @@
             <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">asset</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">thumbnail_editor</span> <span class="o">=</span> <span class="n">base_widgets</span><span class="o">.</span><span class="n">ThumbnailEditorWidget</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span>
-            <span class="n">source</span><span class="o">=</span><span class="n">source</span><span class="p">,</span>
             <span class="n">fallback_thumb</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fallback_thumb</span><span class="p">,</span>
             <span class="n">parent</span><span class="o">=</span><span class="bp">self</span>
         <span class="p">)</span>
@@ -674,6 +670,15 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">row</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
+            <span class="c1"># Close editor on enter presses</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">&#39;returnPressed&#39;</span><span class="p">):</span>
+                <span class="n">editor</span><span class="o">.</span><span class="n">returnPressed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                    <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">done</span><span class="p">,</span>
+                        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="n">Accepted</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
             <span class="c1"># Set the editor as an attribute on the widget for later</span>
             <span class="c1"># access</span>
             <span class="k">if</span> <span class="n">k</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -690,7 +695,7 @@
                     <span class="n">k</span> <span class="ow">in</span> <span class="n">database</span><span class="o">.</span><span class="n">TABLES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span><span class="p">]</span>
             <span class="p">):</span>
                 <span class="n">_type</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">TABLES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_db_table</span><span class="p">][</span><span class="n">k</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_connect_editor_signals</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">_type</span><span class="p">,</span> <span class="n">editor</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_connect_data_changed_signals</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">_type</span><span class="p">,</span> <span class="n">editor</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="s1">&#39;validator&#39;</span> <span class="ow">in</span> <span class="n">v</span> <span class="ow">and</span> <span class="n">v</span><span class="p">[</span><span class="s1">&#39;validator&#39;</span><span class="p">]:</span>
                 <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">editor</span><span class="p">,</span> <span class="s1">&#39;setValidator&#39;</span><span class="p">):</span>
@@ -762,6 +767,7 @@
             <span class="n">name</span><span class="p">,</span>
             <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">section_headers_widget</span>
         <span class="p">)</span>
+        <span class="n">button</span><span class="o">.</span><span class="n">setFocusPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoFocus</span><span class="p">)</span>
 
         <span class="n">font</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">primary_font</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_font_small</span><span class="p">))</span>
         <span class="n">button</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span>
@@ -810,7 +816,7 @@
             <span class="n">point</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">scroll_area</span><span class="o">.</span><span class="n">verticalScrollBar</span><span class="p">()</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
         <span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_connect_editor_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">_type</span><span class="p">,</span> <span class="n">editor</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_connect_data_changed_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">_type</span><span class="p">,</span> <span class="n">editor</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Utility method for connecting an editor&#39;s change signal to `data_changed`.</span>
 
 <span class="sd">        `data_changed` will save the changed current value internally. This data</span>
@@ -930,19 +936,6 @@
                 <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">editor</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">CheckState</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
                 <span class="n">editor</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="BasePropertyEditor.set_thumbnail_source"><a class="viewcode-back" href="../../../modules/editor/base.html#bookmarks.editor.base.BasePropertyEditor.set_thumbnail_source">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">set_thumbnail_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Slot connected to the update timer and used to set the source value</span>
-<span class="sd">        of the thumbnail editor.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">thumbnail_editor</span><span class="o">.</span><span class="n">source</span>
-        <span class="n">_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">db_source</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">thumbnail_editor</span><span class="o">.</span><span class="n">source</span> <span class="o">=</span> <span class="n">_source</span>
-        <span class="k">if</span> <span class="n">source</span> <span class="o">!=</span> <span class="n">_source</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">thumbnail_editor</span><span class="o">.</span><span class="n">update</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="BasePropertyEditor.init_db_data"><a class="viewcode-back" href="../../../modules/editor/base.html#bookmarks.editor.base.BasePropertyEditor.init_db_data">[docs]</a>    <span class="k">def</span> <span class="nf">init_db_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Method will load data from the bookmark database.</span>

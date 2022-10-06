@@ -376,8 +376,6 @@
 
 <span class="n">TEMPLATES_DIR</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{root}</span><span class="s1">/</span><span class="si">{product}</span><span class="s1">/</span><span class="si">{mode}</span><span class="s1">_templates&#39;</span>
 
-<span class="n">HINT_TEXT</span> <span class="o">=</span> <span class="s1">&#39;Right-click or drag</span><span class="se">\&#39;</span><span class="s1">n</span><span class="se">\&#39;</span><span class="s1">drop to add ZIP template&#39;</span>
-
 
 <div class="viewcode-block" id="get_template_folder"><a class="viewcode-back" href="../../modules/templates.html#bookmarks.templates.get_template_folder">[docs]</a><span class="k">def</span> <span class="nf">get_template_folder</span><span class="p">(</span><span class="n">mode</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns the path where the ZIP template files are stored, associated with</span>
@@ -507,8 +505,9 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">JobTemplateMode</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">TemplateListWidget</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">default_message</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
-            <span class="n">parent</span><span class="o">=</span><span class="n">parent</span>
+            <span class="n">default_message</span><span class="o">=</span><span class="s1">&#39;Right-click or drag</span><span class="se">\&#39;</span><span class="s1">n</span><span class="se">\&#39;</span><span class="s1">drop to add ZIP template&#39;</span><span class="p">,</span>
+            <span class="n">default_icon</span><span class="o">=</span><span class="s1">&#39;folder&#39;</span><span class="p">,</span>
+            <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="n">mode</span>
 
@@ -527,6 +526,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_connect_signals</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_connect_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_connect_signals</span><span class="p">()</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">dataChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">selectionChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
             <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
@@ -680,6 +681,8 @@
         <span class="sd">&quot;&quot;&quot;Event filter handler.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">eventFilter</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">widget</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">type</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QEvent</span><span class="o">.</span><span class="n">DragEnter</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">mimeData</span><span class="p">()</span><span class="o">.</span><span class="n">hasUrls</span><span class="p">():</span>
@@ -753,21 +756,6 @@
             <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_separator</span><span class="p">))</span>
             <span class="n">painter</span><span class="o">.</span><span class="n">drawRoundedRect</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
 
-            <span class="n">o</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_indicator</span><span class="p">)</span>
-            <span class="n">painter</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_text</span><span class="p">))</span>
-
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">painter</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
-                <span class="k">return</span> <span class="kc">False</span>
-
-            <span class="n">painter</span><span class="o">.</span><span class="n">drawText</span><span class="p">(</span>
-                <span class="n">rect</span><span class="p">,</span>
-                <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignVCenter</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignHCenter</span> <span class="o">|</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextWordWrap</span><span class="p">,</span>
-                <span class="n">HINT_TEXT</span><span class="p">,</span>
-                <span class="n">boundingRect</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">(),</span>
-            <span class="p">)</span>
-            <span class="n">painter</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
-            <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
 <div class="viewcode-block" id="TemplateListWidget.showEvent"><a class="viewcode-back" href="../../modules/templates.html#bookmarks.templates.TemplateListWidget.showEvent">[docs]</a>    <span class="k">def</span> <span class="nf">showEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
@@ -910,7 +898,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_TranslucentBackground</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setMaximumHeight</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_width</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.3</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_create_UI</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_ui</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_connect_signals</span><span class="p">()</span>
 
 <div class="viewcode-block" id="TemplatesWidget.mode"><a class="viewcode-back" href="../../modules/templates.html#bookmarks.templates.TemplatesWidget.mode">[docs]</a>    <span class="k">def</span> <span class="nf">mode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -919,13 +907,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span></div>
 
-    <span class="k">def</span> <span class="nf">_create_UI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_create_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">():</span>
             <span class="n">common</span><span class="o">.</span><span class="n">set_stylesheet</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">template_list_widget</span> <span class="o">=</span> <span class="n">TemplateListWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">template_contents_widget</span> <span class="o">=</span> <span class="n">TemplatesPreviewWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template_list_widget</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">template_contents_widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setSizes</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_connect_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">template_list_widget</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span>

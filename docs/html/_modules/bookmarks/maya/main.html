@@ -819,7 +819,7 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_create_UI</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_ui</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setFocusProxy</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">main_widget</span><span class="o">.</span><span class="n">stacked_widget</span><span class="p">)</span>
         <span class="n">common</span><span class="o">.</span><span class="n">main_widget</span><span class="o">.</span><span class="n">sizeHint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sizeHint</span>
 
@@ -837,7 +837,7 @@
         <span class="n">common</span><span class="o">.</span><span class="n">main_widget</span><span class="o">.</span><span class="n">initialized</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">set_workspace</span><span class="p">)</span>
         <span class="n">common</span><span class="o">.</span><span class="n">main_widget</span><span class="o">.</span><span class="n">initialized</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workspace_timer</span><span class="o">.</span><span class="n">start</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_create_UI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_create_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setSpacing</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>

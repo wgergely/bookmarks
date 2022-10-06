@@ -804,7 +804,7 @@ class BaseItemView(QtWidgets.QListView):
 
         # Model is empty
         if model.rowCount() == 0:
-            return 'No items to display'
+            return 'No items'
 
         # All items are visible, we don't have to display anything
         if proxy.rowCount() == model.rowCount():
@@ -831,7 +831,7 @@ class BaseItemView(QtWidgets.QListView):
         """Returns an informative hint text.
 
         """
-        return 'No items to display'
+        return ''
 
     def paint_hint(self, widget, event):
         """Paints the hint message.
@@ -911,22 +911,6 @@ class BaseItemView(QtWidgets.QListView):
         painter.drawPath(path)
         painter.end()
 
-    def paint_background_icon(self, widget, event):
-        """Paints a decorative background icon to help distinguish the items.
-
-        """
-        painter = QtGui.QPainter()
-        painter.begin(self)
-
-        pixmap = images.ImageCache.rsc_pixmap(
-            self._background_icon,
-            common.color(common.color_opaque),
-            common.size(common.size_row_height) * 3
-        )
-        rect = pixmap.rect()
-        rect.moveCenter(self.rect().center())
-        painter.drawPixmap(rect, pixmap, pixmap.rect())
-        painter.end()
 
     @QtCore.Slot()
     def repaint_visible_rows(self):
@@ -1129,7 +1113,7 @@ class BaseItemView(QtWidgets.QListView):
         if widget is not self:
             return False
         if event.type() == QtCore.QEvent.Paint:
-            self.paint_background_icon(widget, event)
+            ui.paint_background_icon(self._background_icon, widget)
 
             if self.model().sourceModel()._load_in_progress:
                 self.paint_loading(widget, event)
@@ -1905,3 +1889,4 @@ class ThreadedItemView(InlineIconView):
             index = self.indexAt(rect.topLeft())
             if not index.isValid():
                 break
+

@@ -245,7 +245,7 @@ class PublishWidget(base.BasePropertyEditor):
         # Setting the path and thumbnail. The path is stored in `file_editor`.
         # `self.db_source` uses this path to return its value.
         self.file_editor.set_path(file_info.filePath())
-        self.set_thumbnail_source()
+        self.thumbnail_editor.update()
         self.init_db_data()
 
         self.find_movie()

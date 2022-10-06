@@ -341,7 +341,7 @@ class AssetItemView(views.ThreadedItemView):
         """Returns an informative hint text.
 
         """
-        return 'No items. Select right-click - Add Asset to add a new asset.'
+        return 'Right-click and select \'Add Asset\' to add items'
 
     def mouseReleaseEvent(self, event):
         """Mouse release event handler.

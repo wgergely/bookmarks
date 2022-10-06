@@ -77,7 +77,7 @@ Let's set a demo project up from scratch and create a template file to be used a
 1. Add bookmark items
 *************************
 
-First, let's create a new job called **DEMO**. With the Bookmarks tab active, right-click and select 'Add/Remove bookmark items...'.
+First, let's create a new job called **DEMO**. With the Bookmarks tab active, right-click and select 'Manage bookmark items...'.
 
 
 .. carousel::

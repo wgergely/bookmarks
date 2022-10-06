@@ -229,7 +229,7 @@ class ServerItemEditor(ui.ListWidget):
 
     def __init__(self, parent=None):
         super().__init__(
-            default_message='No servers found.',
+            default_icon='server',
             parent=parent
         )
 

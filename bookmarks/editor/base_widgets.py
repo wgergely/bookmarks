@@ -198,7 +198,7 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
     """
 
     def __init__(
-            self, server, job, root, size=THUMBNAIL_EDITOR_SIZE, source=None,
+            self, size=THUMBNAIL_EDITOR_SIZE,
             fallback_thumb='placeholder', parent=None
     ):
         super().__init__(
@@ -211,10 +211,6 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
             parent=parent
         )
 
-        self.server = server
-        self.job = job
-        self.root = root
-        self.source = source
         self.fallback_thumb = fallback_thumb
 
         self._window_pos = None
@@ -266,10 +262,10 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
             return
 
         args = (
-            self.server,
-            self.job,
-            self.root,
-            self.source
+            self.window().server,
+            self.window().job,
+            self.window().root,
+            self.window().db_source()
         )
 
         if not all(args) and destination is None:
@@ -282,6 +278,7 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
             raise RuntimeError('Failed to save thumbnail.')
 
         images.ImageCache.flush(destination)
+        images.ImageCache.flush(self.window().db_source())
 
     @QtCore.Slot()
     def reset_image(self):
@@ -334,6 +331,9 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         self.window().move(pos)
 
     def _paint_proposed_thumbnail(self, painter):
+        painter.setBrush(QtGui.QColor(0, 0, 0, 75))
+        painter.drawRect(self.rect())
+
         o = common.size(common.size_separator)
 
         color = common.color(common.color_separator)
@@ -359,25 +359,45 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
 
         painter.drawImage(rect, image, image.rect())
 
+        # Paint new indicator
+        size = common.size(common.size_font_large) * 0.5
+        rect = QtCore.QRect(0, 0, size, size)
+
+        pos = QtCore.QPoint(
+            size * 0.5,
+            size * 0.5,
+        )
+        rect.moveTopLeft(pos)
+        painter.setBrush(common.color(common.color_green))
+        painter.setPen(QtCore.Qt.NoPen)
+        painter.drawRoundedRect(rect, size, size)
+
     def _paint_background(self, painter):
         painter.setPen(QtCore.Qt.NoPen)
         painter.setBrush(common.color(common.color_separator))
         painter.drawRect(self.rect())
 
     def _paint_current_thumbnail(self, painter):
-        if not all((self.server, self.job, self.root)):
+        """Paints the current thumbnail of the given source.
+
+        """
+        if not all((self.window().server, self.window().job, self.window().root)):
             pixmap = images.ImageCache.rsc_pixmap(
                 self.fallback_thumb, None, self.rect().height()
             )
         else:
-            pixmap, _ = images.get_thumbnail(
-                self.server,
-                self.job,
-                self.root,
-                self.source,
+            pixmap, color = images.get_thumbnail(
+                self.window().server,
+                self.window().job,
+                self.window().root,
+                self.window().db_source(),
                 self.rect().height(),
                 fallback_thumb=self.fallback_thumb
             )
+
+            if color:
+                painter.setBrush(color)
+                painter.drawRect(self.rect())
 
         if not isinstance(pixmap, QtGui.QPixmap) or pixmap.isNull():
             return

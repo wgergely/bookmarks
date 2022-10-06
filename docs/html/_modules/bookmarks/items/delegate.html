@@ -751,11 +751,10 @@
 
     <span class="c1"># Add</span>
     <span class="k">if</span> <span class="n">label</span><span class="p">:</span>
+        <span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;  |  &#39;</span><span class="p">,</span> <span class="n">s_color</span><span class="p">)</span>
         <span class="k">if</span> <span class="s1">&#39;#&#39;</span> <span class="ow">in</span> <span class="n">label</span><span class="p">:</span>
-            <span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;  |  &#39;</span><span class="p">,</span> <span class="n">s_color</span><span class="p">)</span>
-            <span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_dark_green</span><span class="p">))</span>
+            <span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_text</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;:  &#39;</span><span class="p">,</span> <span class="n">s_color</span><span class="p">)</span>
             <span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">s_color</span><span class="p">)</span>
 
     <span class="n">common</span><span class="o">.</span><span class="n">delegate_text_segments</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">d</span>
@@ -2200,8 +2199,12 @@
 
             <span class="n">painter</span><span class="o">.</span><span class="n">setOpacity</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
             <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_secondary_text</span><span class="p">))</span>
-            <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;Double-click to edit...&#39;</span>
-
+            <span class="n">text</span> <span class="o">=</span> <span class="n">elided_text</span><span class="p">(</span>
+                <span class="n">metrics</span><span class="p">,</span>
+                <span class="s1">&#39;Double-click to edit...&#39;</span><span class="p">,</span>
+                <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ElideRight</span><span class="p">,</span>
+                <span class="n">description_rect</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span>
+            <span class="p">)</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">description_rect</span><span class="o">.</span><span class="n">left</span><span class="p">()</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">description_rect</span><span class="o">.</span><span class="n">center</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">+</span> <span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">ascent</span><span class="p">()</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">get_painter_path</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>

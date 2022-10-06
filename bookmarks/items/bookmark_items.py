@@ -349,5 +349,4 @@ class BookmarkItemView(views.ThreadedItemView):
         """Returns an informative hint text.
 
         """
-        return 'No active bookmark items found. Right-click -> "Edit Active Bookmarks" ' \
-               'to add new ones.'
+        return 'Right-click and select \'Manage Bookmark Items\' to add items'

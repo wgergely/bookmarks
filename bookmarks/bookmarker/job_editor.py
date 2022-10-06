@@ -98,7 +98,6 @@ class AddJobWidget(base.BasePropertyEditor):
 
         self.jobs = None
         self.setWindowTitle(f'{self.server}: Add Job')
-        self.setFixedHeight(common.size(common.size_height) * 0.66)
 
         common.signals.templateExpanded.connect(self.close)
         common.signals.jobAdded.connect(self.close)
@@ -228,7 +227,7 @@ class JobItemEditor(ui.ListViewWidget):
 
     def __init__(self, parent=None):
         super().__init__(
-            default_message='No jobs found.',
+            default_icon='asset',
             parent=parent
         )
 

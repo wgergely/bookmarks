@@ -473,7 +473,7 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         )
         self.setObjectName(o)
 
-        self._create_UI()
+        self._create_ui()
         self.setFocusProxy(common.main_widget.stacked_widget)
         common.main_widget.sizeHint = self.sizeHint
 
@@ -491,7 +491,7 @@ class MayaWidget(mayaMixin.MayaQWidgetDockableMixin, QtWidgets.QWidget):
         common.main_widget.initialized.connect(actions.set_workspace)
         common.main_widget.initialized.connect(self.workspace_timer.start)
 
-    def _create_UI(self):
+    def _create_ui(self):
         QtWidgets.QHBoxLayout(self)
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(0)

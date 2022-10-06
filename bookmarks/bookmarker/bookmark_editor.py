@@ -105,7 +105,7 @@ class BookmarkItemEditor(ui.ListWidget):
 
     def __init__(self, parent=None):
         super().__init__(
-            default_message='No items found.',
+            default_icon='folder',
             parent=parent
         )
 

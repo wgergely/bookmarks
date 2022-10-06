@@ -785,12 +785,8 @@ class ListOverlayWidget(QtWidgets.QWidget):
             QtCore.Qt.ElideMiddle,
             rect.width(),
         )
-        painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.color(common.color_separator))
-        painter.setOpacity(0.5)
-        painter.drawRect(self.rect())
 
-        painter.setOpacity(1.0)
+        painter.setOpacity(0.66)
         painter.setBrush(QtCore.Qt.NoBrush)
         painter.setPen(common.color(common.color_secondary_text))
         painter.drawText(
@@ -824,7 +820,7 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
         )
 
         o = common.size(common.size_indicator)
-        rect = option.rect.adjusted(o * 0.5, o * 0.5, -o * 0.5, -o * 0.5)
+        rect = option.rect.adjusted(o * 0.3, o * 0.3, -o * 0.3, -o * 0.3)
 
         # Background
         _o = 0.6 if hover else 0.2
@@ -957,12 +953,13 @@ class ListWidget(QtWidgets.QListWidget):
     progressUpdate = QtCore.Signal(str)
     resized = QtCore.Signal(QtCore.QSize)
 
-    def __init__(self, default_message='No items', parent=None):
+    def __init__(self, default_message='No items', default_icon='icon', parent=None):
         super().__init__(parent=parent)
         if not self.parent():
             common.set_stylesheet(self)
 
         self.default_message = default_message
+        self.default_icon = default_icon
 
         self.server = None
         self.job = None
@@ -980,6 +977,9 @@ class ListWidget(QtWidgets.QListWidget):
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectItems)
         self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.setMouseTracking(True)
+        self.viewport().setMouseTracking(True)
+
         self.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding,
@@ -988,9 +988,29 @@ class ListWidget(QtWidgets.QListWidget):
         self.overlay = ListOverlayWidget(parent=self.viewport())
         self.overlay.show()
 
+        self.installEventFilter(self)
+
+    def eventFilter(self, widget, event):
+        """Event filter handler.
+
+        """
+        if widget is not self:
+            return False
+        if event.type() == QtCore.QEvent.Paint:
+            paint_background_icon(self.default_icon, widget)
+            return True
+        return False
     def _connect_signals(self):
         self.resized.connect(self.overlay.resize)
+
         self.progressUpdate.connect(self.overlay.set_message)
+        self.progressUpdate.connect(common.signals.showStatusTipMessage)
+
+        self.itemEntered.connect(
+            lambda item: common.signals.showStatusTipMessage.emit(
+                item.data(QtCore.Qt.DisplayRole)
+            )
+        )
 
     @QtCore.Slot(QtWidgets.QListWidgetItem)
     def toggle(self, item):
@@ -1048,13 +1068,15 @@ class ListViewWidget(QtWidgets.QListView):
     """
     progressUpdate = QtCore.Signal(str)
     resized = QtCore.Signal(QtCore.QSize)
+    itemEntered = QtCore.Signal(QtCore.QModelIndex)
 
-    def __init__(self, default_message='No items', parent=None):
+    def __init__(self, default_message='No items', default_icon='icon', parent=None):
         super().__init__(parent=parent)
         if not self.parent():
             common.set_stylesheet(self)
 
         self.default_message = default_message
+        self.default_icon = default_icon
 
         self.server = None
         self.job = None
@@ -1068,6 +1090,8 @@ class ListViewWidget(QtWidgets.QListView):
         self.setAcceptDrops(False)
         self.setDragEnabled(False)
         self.setSpacing(0)
+        self.setMouseTracking(True)
+        self.viewport().setMouseTracking(True)
         self.setItemDelegate(ListWidgetDelegate(parent=self))
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
         self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectItems)
@@ -1076,6 +1100,7 @@ class ListViewWidget(QtWidgets.QListView):
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding,
         )
+        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
 
         self.setModel(QtCore.QSortFilterProxyModel(parent=self))
         self.model().setSourceModel(QtGui.QStandardItemModel(parent=self))
@@ -1085,9 +1110,37 @@ class ListViewWidget(QtWidgets.QListView):
         self.overlay = ListOverlayWidget(parent=self.viewport())
         self.overlay.show()
 
+        self.installEventFilter(self)
+    def eventFilter(self, widget, event):
+        """Event filter handler.
+
+        """
+        if widget is not self:
+            return False
+        if event.type() == QtCore.QEvent.Paint:
+            paint_background_icon(self.default_icon, widget)
+            return True
+        return False
+
     def _connect_signals(self):
         self.resized.connect(self.overlay.resize)
         self.progressUpdate.connect(self.overlay.set_message)
+        self.progressUpdate.connect(common.signals.showStatusTipMessage)
+
+        self.itemEntered.connect(
+            lambda item: common.signals.showStatusTipMessage.emit(
+                item.data(QtCore.Qt.DisplayRole)
+            )
+        )
+
+    def mouseMoveEvent(self, event):
+        super().mouseMoveEvent(event)
+        pos = self.mapFromGlobal(common.cursor.pos())
+        if self.rect().contains(pos):
+            index = self.indexAt(pos)
+            if not index.isValid():
+                return
+            self.itemEntered.emit(index)
 
     @QtCore.Slot(QtGui.QStandardItem)
     def toggle(self, item):
@@ -1223,10 +1276,13 @@ def get_group(parent=None, vertical=True, margin=common.size(common.size_margin)
 
 
 def add_row(
-        label, color=common.color(common.color_secondary_text), parent=None,
+        label,
+        color=common.color(common.color_secondary_text),
         padding=common.size(common.size_margin),
-        height=common.size(common.size_row_height), cls=None,
-        vertical=False
+        height=common.size(common.size_row_height),
+        cls=None,
+        vertical=False,
+        parent=None,
 ):
     """Utility method for creating a row widget.
 
@@ -1324,6 +1380,28 @@ def add_description(
     row.setFocusPolicy(QtCore.Qt.NoFocus)
     label.setFocusPolicy(QtCore.Qt.NoFocus)
     return row
+
+
+def paint_background_icon(name, widget):
+    """Paints a decorative background icon to the middle of the given widget.
+
+    Args:
+        name (str): The image's name.
+        widget (QWidget): The widget to paint on.
+
+    """
+    painter = QtGui.QPainter()
+    painter.begin(widget)
+
+    pixmap = images.ImageCache.rsc_pixmap(
+        name,
+        common.color(common.color_opaque),
+        common.size(common.size_row_height) * 3
+    )
+    rect = pixmap.rect()
+    rect.moveCenter(widget.rect().center())
+    painter.drawPixmap(rect, pixmap, pixmap.rect())
+    painter.end()
 
 
 class GalleryItem(QtWidgets.QLabel):

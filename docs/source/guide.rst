@@ -2,16 +2,13 @@
 User Guide
 ==============
 
-
-Read time: 3 minutes. If you're looking for the python module documentation, it's here:
-:ref:`Python Modules`.
-
-
-
 What is this, and why does it exist?
 ----------------------------------------
 
-.. centered:: |active_bookmark|
+..  youtube:: oKb8KGj78Rg
+    :align: center
+    :aspect: 16:9
+
 
 Bookmarks is a simple asset manager for film, animation and VFX projects. It is free and open-source.
 

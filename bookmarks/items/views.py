@@ -1402,7 +1402,7 @@ class InlineIconView(BaseItemView):
         ``shift`` modifier will add a _positive_ filter and hide all items not
         containing the clicked rectangle's text content.
 
-        The ``alt`` and ``control`` modifiers will add a _negative filter_ and hide all
+        The ``alt`` and ``control`` modifiers will add a negative filter and hide all
         items containing the clicked rectangle's text content.
 
         """

@@ -46,6 +46,7 @@ extensions = [
     'autodocsumm',
     'sphinx_markdown_builder',
     'sphinx_carousel.carousel',
+    'sphinxcontrib.youtube'
 ]
 
 napoleon_google_docstring = True

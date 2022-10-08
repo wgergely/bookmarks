@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="items.file_items" href="file_items.html" /><link rel="prev" title="items.delegate" href="delegate.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>items.favourite_items - Bookmarks 0.7.1 documentation</title>
+        <title>items.favourite_items - Bookmarks 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">Bookmarks 0.7.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.1 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -482,9 +482,6 @@ favourite items.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.get_hint_string" title="bookmarks.items.favourite_items.FavouriteItemView.get_hint_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hint_string</span></code></a>()</p></td>
 <td><p>Returns an informative hint text.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.toggle_item_flag" title="bookmarks.items.favourite_items.FavouriteItemView.toggle_item_flag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_item_flag</span></code></a>(index, flag[, state, ...])</p></td>
-<td><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseItemView()</span></code> override.</p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -507,20 +504,7 @@ favourite items.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="bookmarks.items.favourite_items.FavouriteItemView.Delegate">
 <span class="sig-name descname"><span class="pre">Delegate</span></span><a class="headerlink" href="#bookmarks.items.favourite_items.FavouriteItemView.Delegate" title="Permalink to this definition">#</a></dt>
-<dd><p>alias of <a class="reference internal" href="delegate.html#bookmarks.items.delegate.FavouriteItemViewDelegate" title="bookmarks.items.delegate.FavouriteItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">FavouriteItemViewDelegate</span></code></a>
-<strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_background</span></code>(*args)</p></td>
-<td><p>Paints the favourite item's background.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_inline_icons</span></code>(*args)</p></td>
-<td><p>Paints the favourite item's inline icons.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
+<dd><p>alias of <a class="reference internal" href="delegate.html#bookmarks.items.delegate.FavouriteItemViewDelegate" title="bookmarks.items.delegate.FavouriteItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">FavouriteItemViewDelegate</span></code></a></p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -582,12 +566,6 @@ favourite items.</p>
 <dt class="sig sig-object py" id="bookmarks.items.favourite_items.FavouriteItemView.get_hint_string">
 <span class="sig-name descname"><span class="pre">get_hint_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/favourite_items.html#FavouriteItemView.get_hint_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.favourite_items.FavouriteItemView.get_hint_string" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns an informative hint text.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.items.favourite_items.FavouriteItemView.toggle_item_flag">
-<span class="sig-name descname"><span class="pre">toggle_item_flag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commit_now</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/favourite_items.html#FavouriteItemView.toggle_item_flag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.favourite_items.FavouriteItemView.toggle_item_flag" title="Permalink to this definition">#</a></dt>
-<dd><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">BaseItemView()</span></code> override.</p>
 </dd></dl>
 
 </dd></dl>
@@ -693,7 +671,6 @@ favourite items.</p>
 <li><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.dragMoveEvent"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView.dragMoveEvent()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.dropEvent"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView.dropEvent()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.get_hint_string"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView.get_hint_string()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.toggle_item_flag"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView.toggle_item_flag()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemViewContextMenu"><code class="docutils literal notranslate"><span class="pre">FavouriteItemViewContextMenu</span></code></a><ul>

@@ -185,7 +185,7 @@ def get_thumbnail(server, job, root, source, size=common.thumbnail_size,
                 with lock:
                     color = ImageCache.get_color(
                         thumb_path,
-                        hash=_hash
+                        hash=_hash,
                     )
                 return pixmap, color
             n -= 1
@@ -726,8 +726,6 @@ class ImageCache(QtCore.QObject):
 
         # Check the cache and return the previously stored value if exists
         if hash is None:
-            hash = common.get_hash(source)
-        else:
             hash = common.get_hash(source)
 
         if not cls.contains(hash, ColorType):

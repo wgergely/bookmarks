@@ -493,10 +493,11 @@ def draw_file_text_segments(it, font, metrics, offset, *args):
         common.size(common.size_indicator) * 3
     )
 
-    o = 0.9 if selected else 0.8
+    o = 0.95 if selected else 0.9
     o = 1.0 if hover else o
     painter.setOpacity(o)
     painter.setPen(QtCore.Qt.NoPen)
+
     for v in it:
         text, color = v
 
@@ -835,8 +836,8 @@ def draw_gradient_background(*args):
         color = QtGui.QColor(common.color(common.color_dark_background))
         color.setAlpha(240)
         gradient.setSpread(QtGui.QGradient.PadSpread)
-        gradient.setColorAt(0.1, color)
-        gradient.setColorAt(0.8, common.color(common.color_transparent))
+        gradient.setColorAt(0.0, color)
+        gradient.setColorAt(1.0, common.color(common.color_transparent))
         brush = QtGui.QBrush(gradient)
 
         common.delegate_bg_brushes[k] = (rect, brush)
@@ -1121,7 +1122,10 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
                 )
 
             x = rect.center().x() - (metrics.horizontalAdvance(text) / 2.0)
-            y = option.rect.center().y() + (metrics.ascent() / 2.0)
+            y = (
+                    rectangles[DataRect].center().y() +
+                    (metrics.ascent() * 0.5) - common.size(common.size_separator)
+            )
 
             color = color.lighter(250)
             painter.setBrush(color)
@@ -1160,7 +1164,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
             return self.paint_file_name(*args)
 
     @save_painter
-    def draw_file_description(self, left_limit, right_limit, offset, large_mode, *args):
+    def draw_file_description(self, font, metrics, left_limit, right_limit, offset, large_mode, *args):
         """Draws file items' descriptions.
 
         """
@@ -1175,30 +1179,20 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
             archived,
             favourite,
             hover,
-            font,
-            metrics,
+            _,
+            _,
             cursor_position
         ) = args
 
         if large_mode:
-            font, metrics = common.font_db.bold_font(
-                common.size(common.size_font_medium)
-            )
             _o = (common.size(common.size_indicator) * 2)
             right_limit = rectangles[DataRect].right() - _o
             left_limit = rectangles[DataRect].left() + _o
-
-            offset += _o
-
         else:
-            font, metrics = common.font_db.bold_font(
-                common.size(common.size_font_small))
-
+            right_limit -= common.size(common.size_indicator)
             left_limit += common.size(common.size_margin)
-
         if left_limit < rectangles[DataRect].left():
             left_limit = rectangles[DataRect].left()
-
 
         rect = get_description_rectangle(
             index, option.rect, self.parent().buttons_hidden())
@@ -1231,11 +1225,63 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
             rect.width()
         )
 
-        width = metrics.horizontalAdvance(text)
-        x = right_limit - width
+        # Let's paint the descriptions, and tags as labels
+        it = re.split(f'\s', text, flags=re.IGNORECASE)
+        x = right_limit
+        o = metrics.horizontalAdvance('  ')
+        y = rect.center().y()
 
-        painter.setBrush(color)
-        draw_painter_path(painter, x, rect.center().y(), font, text)
+        label_bg_color = common.color(common.color_blue)
+        label_text_color = common.color(common.color_text)
+
+        filter_text = self.parent().model().filter_text()
+        filter_text = filter_text.lower() if filter_text else ''
+        filter_texts = re.split(f'\s', filter_text, flags=re.IGNORECASE)
+        filter_texts = {f.lower().strip('"').strip('-').strip() for f in filter_texts}
+
+        for s in reversed(it):
+            width = metrics.horizontalAdvance(s)
+
+            if '#' in s:
+                width += o * 2
+
+            x -= width
+
+            if '#' in s:
+                _o = common.size(common.size_separator) * 2
+                rect = QtCore.QRect(
+                    x,
+                    y - metrics.ascent() - (_o / 2.0),
+                    width,
+                    metrics.lineSpacing() + _o
+                )
+                painter.setRenderHint(QtGui.QPainter.Antialiasing, on=True)
+
+                painter.setBrush(label_bg_color)
+
+                if s.lower() in filter_texts:
+                    painter.setBrush(common.color(common.color_green))
+                if rect.contains(cursor_position):
+                    painter.setBrush(common.color(common.color_light_background))
+
+                add_clickable_rectangle(index, option, rect, s)
+
+                painter.drawRoundedRect(rect, o * 0.5, o * 0.5)
+
+                painter.setBrush(label_text_color)
+                draw_painter_path(
+                    painter,
+                    x + o + (metrics.horizontalAdvance('#') * 0.5),
+                    y,
+                    font,
+                    s.replace('#', '')
+                )
+            else:
+                painter.setBrush(color)
+                draw_painter_path(painter, x, y, font, s)
+
+            # Space
+            x -= metrics.horizontalAdvance(' ')
 
     def _get_file_description_rect(
             self, left_limit, right_limit, offset, large_mode,
@@ -1355,9 +1401,11 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         o = 1.0 if selected or active or hover else 0.9
 
         # Background
+        painter.setOpacity(o)
         if common.settings.value('settings/paint_thumbnail_bg'):
-            painter.setOpacity(o)
-            color = color if color else common.color(common.color_separator)
+            if color:
+                painter.setOpacity(1.0)
+            color = color if color else QtGui.QColor(0, 0, 0, 50)
             painter.setBrush(color)
             painter.drawRect(rectangles[ThumbnailRect])
 
@@ -2398,7 +2446,10 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
 
                 painter.setBrush(_color)
                 x = _r.x()
-                y = _r.bottom()
+                y = (
+                    rectangles[DataRect].center().y() +
+                    (metrics.ascent() * 0.5) - common.size(common.size_separator)
+                )
                 draw_painter_path(painter, x, y, font, text)
 
             if has_separator:
@@ -2454,35 +2505,48 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
 
         large_mode = option.rect.height() >= (common.size(common.size_row_height) * 2)
 
+        it = get_text_segments(index).values()
+
         if large_mode:
             font, metrics = common.font_db.bold_font(
                 common.size(common.size_font_small) * 1.1
             )
         else:
-            font, metrics = common.font_db.medium_font(
+            font, metrics = common.font_db.bold_font(
                 common.size(common.size_font_small)
             )
-        offset = 0
+        left = draw_file_text_segments(it, font, metrics, 0, *args)
 
-        it = get_text_segments(index).values()
-        left = draw_file_text_segments(it, font, metrics, offset, *args)
-
+        # Clickable labels rectangles
         bg_rect = draw_subdir_bg_rectangles(
             left - common.size(common.size_margin), *args
         )
 
         it = get_file_detail_text_segments(index).values()
-        offset = metrics.ascent()
-
-        if not large_mode:
+        if large_mode:
             font, metrics = common.font_db.light_font(
-                common.size(common.size_font_small) * 0.92)
-        left = draw_file_text_segments(it, font, metrics, offset, *args)
+                common.size(common.size_font_small - 0.5)
+            )
+        else:
+            font, metrics = common.font_db.light_font(
+                common.size(common.size_font_small - 0.5)
+            )
+        left = draw_file_text_segments(it, font, metrics, metrics.height(), *args)
 
+        if large_mode:
+            font, metrics = common.font_db.bold_font(
+                common.size(common.size_font_small)
+            )
+        else:
+            font, metrics = common.font_db.medium_font(
+                common.size(common.size_font_small)
+            )
         self.draw_file_description(
+            font,
+            metrics,
             bg_rect.right(),
             left,
-            offset,
+            metrics.height(),
             large_mode,
             *args
         )
@@ -2565,13 +2629,13 @@ class BookmarkItemViewDelegate(ItemDelegate):
         self.paint_hover(*args)
         self.paint_thumbnail_shadow(*args)
         self.paint_name(*args)
-        self.paint_thumbnail(*args)
         self.paint_archived(*args)
         self.paint_inline_background(*args)
         self.paint_inline_icons(*args)
+        self.paint_thumbnail(*args)
+        self.paint_thumbnail_drop_indicator(*args)
         self.paint_description_editor_background(*args)
         self.paint_selection_indicator(*args)
-        self.paint_thumbnail_drop_indicator(*args)
         self.paint_slack_status(*args)
         self.paint_shotgun_status(*args)
 
@@ -2598,13 +2662,13 @@ class AssetItemViewDelegate(ItemDelegate):
         self.paint_hover(*args)
         self.paint_thumbnail_shadow(*args)
         self.paint_name(*args)
-        self.paint_thumbnail(*args)
         self.paint_archived(*args)
         self.paint_description_editor_background(*args)
         self.paint_inline_background(*args)
         self.paint_inline_icons(*args)
-        self.paint_selection_indicator(*args)
+        self.paint_thumbnail(*args)
         self.paint_thumbnail_drop_indicator(*args)
+        self.paint_selection_indicator(*args)
         self.paint_shotgun_status(*args)
         self.paint_dcc_icon(*args)
 
@@ -2639,11 +2703,11 @@ class FileItemViewDelegate(ItemDelegate):
 
         self.paint_thumbnail_shadow(*args)
 
-        self.paint_thumbnail(*args)
         self.paint_archived(*args)
         self.paint_inline_background(*args)
         self.paint_inline_icons(*args)
         self.paint_selection_indicator(*args)
+        self.paint_thumbnail(*args)
         self.paint_thumbnail_drop_indicator(*args)
         self.paint_description_editor_background(*args)
         self.paint_drag_source(*args)

@@ -30,7 +30,7 @@ Download
 
 .. admonition:: Latest Windows Release
 
-    `Bookmarks v0.7.1 <https://github.com/wgergely/bookmarks/releases/download/0.7.1/Bookmarks_0.7.1.exe>`_.
+    `Bookmarks v0.7.2 <https://github.com/wgergely/bookmarks/releases/download/0.7.2/Bookmarks_0.7.2.exe>`_.
 
 
 `You can find older releases here <https://github.com/wgergely/bookmarks/releases>`_.

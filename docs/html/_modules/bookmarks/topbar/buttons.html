@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>bookmarks.topbar.buttons - Bookmarks 0.7.1 documentation</title>
+        <title>bookmarks.topbar.buttons - Bookmarks 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -133,7 +133,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.1 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -160,7 +160,7 @@
     <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.1 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -410,11 +410,16 @@
 <div class="viewcode-block" id="BaseControlButton"><a class="viewcode-back" href="../../../modules/topbar/buttons.html#bookmarks.topbar.buttons.BaseControlButton">[docs]</a><span class="k">class</span> <span class="nc">BaseControlButton</span><span class="p">(</span><span class="n">ui</span><span class="o">.</span><span class="n">ClickableIconButton</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base-class used for control buttons on the top bar.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pixmap</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span>
-                 <span class="n">color</span><span class="o">=</span><span class="p">(</span>
-                         <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_selected_text</span><span class="p">),</span>
-                         <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_disabled_text</span><span class="p">)),</span>
-                 <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">pixmap</span><span class="p">,</span>
+            <span class="n">description</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_selected_text</span><span class="p">),</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_disabled_text</span><span class="p">)</span>
+            <span class="p">),</span>
+            <span class="n">parent</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">pixmap</span><span class="p">,</span>
             <span class="n">color</span><span class="p">,</span>
@@ -527,22 +532,21 @@
 
 <div class="viewcode-block" id="ToggleArchivedButton.pixmap"><a class="viewcode-back" href="../../../modules/topbar/buttons.html#bookmarks.topbar.buttons.ToggleArchivedButton.pixmap">[docs]</a>    <span class="k">def</span> <span class="nf">pixmap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">():</span>
-            <span class="k">return</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">rsc_pixmap</span><span class="p">(</span><span class="s1">&#39;archivedVisible&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_on_color</span><span class="p">,</span>
-                                                <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_margin</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">rsc_pixmap</span><span class="p">(</span><span class="s1">&#39;archivedHidden&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_off_color</span><span class="p">,</span>
-                                            <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_margin</span><span class="p">))</span></div>
+            <span class="k">return</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">rsc_pixmap</span><span class="p">(</span>
+                <span class="s1">&#39;archivedVisible&#39;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_on_color</span><span class="p">,</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_margin</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">rsc_pixmap</span><span class="p">(</span>
+            <span class="s1">&#39;archivedHidden&#39;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_off_color</span><span class="p">,</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_margin</span><span class="p">)</span>
+        <span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">common</span><span class="o">.</span><span class="n">widget</span><span class="p">():</span>
             <span class="k">return</span>
-        <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">filter_flag</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span><span class="p">)</span>
-
-<div class="viewcode-block" id="ToggleArchivedButton.update"><a class="viewcode-back" href="../../../modules/topbar/buttons.html#bookmarks.topbar.buttons.ToggleArchivedButton.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">ToggleArchivedButton</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">common</span><span class="o">.</span><span class="n">current_tab</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">common</span><span class="o">.</span><span class="n">FavouriteTab</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span></div></div>
+        <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">filter_flag</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ToggleInlineIcons"><a class="viewcode-back" href="../../../modules/topbar/buttons.html#bookmarks.topbar.buttons.ToggleInlineIcons">[docs]</a><span class="k">class</span> <span class="nc">ToggleInlineIcons</span><span class="p">(</span><span class="n">BaseControlButton</span><span class="p">):</span>
@@ -564,10 +568,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">common</span><span class="o">.</span><span class="n">widget</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="n">val</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">buttons_hidden</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">val</span>
-
-<div class="viewcode-block" id="ToggleInlineIcons.hideEvent"><a class="viewcode-back" href="../../../modules/topbar/buttons.html#bookmarks.topbar.buttons.ToggleInlineIcons.hideEvent">[docs]</a>    <span class="k">def</span> <span class="nf">hideEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-        <span class="n">common</span><span class="o">.</span><span class="n">sort_by_basename</span> <span class="o">=</span> <span class="kc">False</span></div></div>
+        <span class="k">return</span> <span class="n">val</span></div>
 
 
 <div class="viewcode-block" id="ToggleFavouriteButton"><a class="viewcode-back" href="../../../modules/topbar/buttons.html#bookmarks.topbar.buttons.ToggleFavouriteButton">[docs]</a><span class="k">class</span> <span class="nc">ToggleFavouriteButton</span><span class="p">(</span><span class="n">BaseControlButton</span><span class="p">):</span>

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>bookmarks.maya.plugin - Bookmarks 0.7.1 documentation</title>
+        <title>bookmarks.maya.plugin - Bookmarks 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -133,7 +133,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.1 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -160,7 +160,7 @@
     <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.1 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -360,11 +360,10 @@
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s1">&#39;Could not find the Maya modules.&#39;</span><span class="p">)</span>
 
-<span class="n">env_key</span> <span class="o">=</span> <span class="s1">&#39;BOOKMARKS_ROOT&#39;</span>
 <span class="n">product</span> <span class="o">=</span> <span class="s1">&#39;bookmarks&#39;</span>
 
 <span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Gergely Wootsch&#39;</span>
-<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.7.1&#39;</span>
+<span class="n">__version__</span> <span class="o">=</span> <span class="s1">&#39;0.7.2&#39;</span>
 
 <span class="n">maya_useNewAPI</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -391,16 +390,24 @@
         <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PATH&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">_v</span><span class="p">)</span><span class="si">}</span><span class="s1">;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
 
 
-<div class="viewcode-block" id="init_environment"><a class="viewcode-back" href="../../../modules/maya/plugin.html#bookmarks.maya.plugin.init_environment">[docs]</a><span class="k">def</span> <span class="nf">init_environment</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">add_private</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Add the dependencies to the Python environment.</span>
+<div class="viewcode-block" id="init_environment"><a class="viewcode-back" href="../../../modules/maya/plugin.html#bookmarks.maya.plugin.init_environment">[docs]</a><span class="k">def</span> <span class="nf">init_environment</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;BOOKMARKS_ROOT&#39;</span><span class="p">,</span> <span class="n">pyside</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add the dependencies required to run Bookmarks to a python environment.</span>
 
-<span class="sd">    The method requires that `env_key` is set. The key is usually set</span>
-<span class="sd">    by the Bookmark installer to point to the installation root directory.</span>
+<span class="sd">    The Bookmarks installer should set the &#39;BOOKMARKS_ROOT&#39; environment variable to</span>
+<span class="sd">    the installation directory. This is required to load the python modules into the</span>
+<span class="sd">    current environment.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        key (str): The environment variable used to find the distribution directory.</span>
+<span class="sd">            Optional, defaults to &#39;BOOKMARKS_ROOT</span>
+<span class="sd">        pyside (bool):</span>
+<span class="sd">            Adds the PySide modules bundled with Bookmarks if True.</span>
+<span class="sd">            Optional, defaults to False.</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">            EnvironmentError: When the `key` environment is not set.</span>
-<span class="sd">            RuntimeError: When the `key` environment is invalid or points to a missing</span>
-<span class="sd">            directory.</span>
+<span class="sd">            RuntimeError:</span>
+<span class="sd">                When the `key` environment is invalid or points to a missing directory.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
@@ -417,7 +424,7 @@
     <span class="n">_add_path_to_path</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s1">&#39;bin&#39;</span><span class="p">)</span>
 
     <span class="n">_add_path_to_sys</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s1">&#39;shared&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">add_private</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">pyside</span><span class="p">:</span>
         <span class="n">_add_path_to_sys</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s1">&#39;core&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
@@ -444,7 +451,7 @@
         <span class="k">return</span>
 
     <span class="n">OpenMaya</span><span class="o">.</span><span class="n">MGlobal</span><span class="o">.</span><span class="n">displayInfo</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Loading </span><span class="si">{</span><span class="n">product</span><span class="o">.</span><span class="n">title</span><span class="p">()</span><span class="si">}</span><span class="s1">...&#39;</span><span class="p">)</span>
-    <span class="n">init_environment</span><span class="p">(</span><span class="n">env_key</span><span class="p">)</span>
+    <span class="n">init_environment</span><span class="p">()</span>
 
     <span class="kn">from</span> <span class="nn">bookmarks</span> <span class="kn">import</span> <span class="n">maya</span>
     <span class="n">cmds</span><span class="o">.</span><span class="n">evalDeferred</span><span class="p">(</span><span class="n">maya</span><span class="o">.</span><span class="n">initialize</span><span class="p">)</span></div>

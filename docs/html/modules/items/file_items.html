@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="items.models" href="models.html" /><link rel="prev" title="items.favourite_items" href="favourite_items.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>items.file_items - Bookmarks 0.7.1 documentation</title>
+        <title>items.file_items - Bookmarks 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">Bookmarks 0.7.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.1 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -409,8 +409,8 @@ See the <a class="reference internal" href="../common/sequence.html#module-bookm
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.file_items.add_path_to_mime" title="bookmarks.items.file_items.add_path_to_mime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_path_to_mime</span></code></a>(mime, path)</p></td>
 <td><p>Adds the given path to the mime data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.file_items.get_path_elements" title="bookmarks.items.file_items.get_path_elements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_path_elements</span></code></a>(name, path, _source_path)</p></td>
-<td><p>Utility method used to cache and retrieve path elements.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.file_items.get_path_elements" title="bookmarks.items.file_items.get_path_elements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_path_elements</span></code></a>(name, path, source_path)</p></td>
+<td><p>Returns the path elements needed to populate the file item model data.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.file_items.get_sequence_elements" title="bookmarks.items.file_items.get_sequence_elements"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_sequence_elements</span></code></a>(filepath)</p></td>
 <td><p>cache-backed utility function to retrieve the sequence elements from the given file path.</p></td>
@@ -852,8 +852,23 @@ in the files tab.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.items.file_items.get_path_elements">
-<span class="sig-prename descclassname"><span class="pre">bookmarks.items.file_items.</span></span><span class="sig-name descname"><span class="pre">get_path_elements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_source_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/file_items.html#get_path_elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.file_items.get_path_elements" title="Permalink to this definition">#</a></dt>
-<dd><p>Utility method used to cache and retrieve path elements.</p>
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.file_items.</span></span><span class="sig-name descname"><span class="pre">get_path_elements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/file_items.html#get_path_elements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.file_items.get_path_elements" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the path elements needed to populate the file item model data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – File name.</p></li>
+<li><p><strong>path</strong> (<em>str</em>) – File path.</p></li>
+<li><p><strong>source_path</strong> (<em>str</em>) – File source path.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple of path, ext, file_root, dir, sort_by_name_role.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">

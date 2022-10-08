@@ -3,10 +3,12 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+<meta content="Bookmarks, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="actions" href="modules/actions.html" /><link rel="prev" title="User Guide" href="guide.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>Python Modules - Bookmarks 0.7.1 documentation</title>
+        <title>Python Modules - Bookmarks 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -134,7 +136,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="index.html"><div class="brand">Bookmarks 0.7.1 documentation</div></a>
+      <a href="index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +163,7 @@
     <img class="sidebar-logo only-dark" src="_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.1 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -608,19 +610,22 @@ customized by modifying the <code class="docutils literal notranslate"><span cla
 <li class="toctree-l2"><a class="reference internal" href="modules/common/font.html">common.font</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="modules/common/font.html#bookmarks.common.font.FontDatabase"><code class="docutils literal notranslate"><span class="pre">FontDatabase</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="modules/common/font.html#bookmarks.common.font.FontDatabase.add_custom_fonts"><code class="docutils literal notranslate"><span class="pre">FontDatabase.add_custom_fonts()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="modules/common/font.html#bookmarks.common.font.FontDatabase.primary_font"><code class="docutils literal notranslate"><span class="pre">FontDatabase.primary_font()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="modules/common/font.html#bookmarks.common.font.FontDatabase.secondary_font"><code class="docutils literal notranslate"><span class="pre">FontDatabase.secondary_font()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/common/font.html#bookmarks.common.font.FontDatabase.bold_font"><code class="docutils literal notranslate"><span class="pre">FontDatabase.bold_font()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/common/font.html#bookmarks.common.font.FontDatabase.light_font"><code class="docutils literal notranslate"><span class="pre">FontDatabase.light_font()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/common/font.html#bookmarks.common.font.FontDatabase.medium_font"><code class="docutils literal notranslate"><span class="pre">FontDatabase.medium_font()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="modules/common/font.html#bookmarks.common.font.init_font"><code class="docutils literal notranslate"><span class="pre">init_font()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="modules/common/monitor.html">common.monitor</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="modules/common/monitor.html#bookmarks.common.monitor.add_watch_directories"><code class="docutils literal notranslate"><span class="pre">add_watch_directories()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/common/monitor.html#bookmarks.common.monitor.clear_watch_directories"><code class="docutils literal notranslate"><span class="pre">clear_watch_directories()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/common/monitor.html#bookmarks.common.monitor.directory_changed"><code class="docutils literal notranslate"><span class="pre">directory_changed()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/common/monitor.html#bookmarks.common.monitor.init_monitor"><code class="docutils literal notranslate"><span class="pre">init_monitor()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/common/monitor.html#bookmarks.common.monitor.FileItemMonitor"><code class="docutils literal notranslate"><span class="pre">FileItemMonitor</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/common/monitor.html#bookmarks.common.monitor.FileWatcher"><code class="docutils literal notranslate"><span class="pre">FileWatcher</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/common/monitor.html#bookmarks.common.monitor.FileWatcher.add_directories"><code class="docutils literal notranslate"><span class="pre">FileWatcher.add_directories()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/common/monitor.html#bookmarks.common.monitor.FileWatcher.item_changed"><code class="docutils literal notranslate"><span class="pre">FileWatcher.item_changed()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/common/monitor.html#bookmarks.common.monitor.FileWatcher.reset"><code class="docutils literal notranslate"><span class="pre">FileWatcher.reset()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/common/monitor.html#bookmarks.common.monitor.get_watcher"><code class="docutils literal notranslate"><span class="pre">get_watcher()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="modules/common/sequence.html">common.sequence</a><ul>
@@ -669,7 +674,6 @@ customized by modifying the <code class="docutils literal notranslate"><span cla
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="modules/common/setup.html">common.setup</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="modules/common/setup.html#bookmarks.common.setup.init_environment"><code class="docutils literal notranslate"><span class="pre">init_environment()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/common/setup.html#bookmarks.common.setup.initialize"><code class="docutils literal notranslate"><span class="pre">initialize()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/common/setup.html#bookmarks.common.setup.uninitialize"><code class="docutils literal notranslate"><span class="pre">uninitialize()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/common/setup.html#bookmarks.common.setup.verify_dependencies"><code class="docutils literal notranslate"><span class="pre">verify_dependencies()</span></code></a></li>
@@ -780,6 +784,7 @@ customized by modifying the <code class="docutils literal notranslate"><span cla
 <li class="toctree-l3"><a class="reference internal" href="modules/contextmenu.html#bookmarks.contextmenu.BaseContextMenu.quit_menu"><code class="docutils literal notranslate"><span class="pre">BaseContextMenu.quit_menu()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/contextmenu.html#bookmarks.contextmenu.BaseContextMenu.refresh_menu"><code class="docutils literal notranslate"><span class="pre">BaseContextMenu.refresh_menu()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/contextmenu.html#bookmarks.contextmenu.BaseContextMenu.remove_favourite_menu"><code class="docutils literal notranslate"><span class="pre">BaseContextMenu.remove_favourite_menu()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/contextmenu.html#bookmarks.contextmenu.BaseContextMenu.resizeEvent"><code class="docutils literal notranslate"><span class="pre">BaseContextMenu.resizeEvent()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/contextmenu.html#bookmarks.contextmenu.BaseContextMenu.reveal_item_menu"><code class="docutils literal notranslate"><span class="pre">BaseContextMenu.reveal_item_menu()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/contextmenu.html#bookmarks.contextmenu.BaseContextMenu.row_size_menu"><code class="docutils literal notranslate"><span class="pre">BaseContextMenu.row_size_menu()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/contextmenu.html#bookmarks.contextmenu.BaseContextMenu.separator"><code class="docutils literal notranslate"><span class="pre">BaseContextMenu.separator()</span></code></a></li>
@@ -1157,6 +1162,7 @@ customized by modifying the <code class="docutils literal notranslate"><span cla
 <li class="toctree-l4"><a class="reference internal" href="modules/items/bookmark_items.html#bookmarks.items.bookmark_items.BookmarkItemView.SourceModel"><code class="docutils literal notranslate"><span class="pre">BookmarkItemView.SourceModel</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/bookmark_items.html#bookmarks.items.bookmark_items.BookmarkItemView.get_hint_string"><code class="docutils literal notranslate"><span class="pre">BookmarkItemView.get_hint_string()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/bookmark_items.html#bookmarks.items.bookmark_items.BookmarkItemView.inline_icons_count"><code class="docutils literal notranslate"><span class="pre">BookmarkItemView.inline_icons_count()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/items/bookmark_items.html#bookmarks.items.bookmark_items.BookmarkItemView.key_tab"><code class="docutils literal notranslate"><span class="pre">BookmarkItemView.key_tab()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/bookmark_items.html#bookmarks.items.bookmark_items.BookmarkItemView.mouseReleaseEvent"><code class="docutils literal notranslate"><span class="pre">BookmarkItemView.mouseReleaseEvent()</span></code></a></li>
 </ul>
 </li>
@@ -1179,35 +1185,32 @@ customized by modifying the <code class="docutils literal notranslate"><span cla
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.BookmarkItemViewDelegate.sizeHint"><code class="docutils literal notranslate"><span class="pre">BookmarkItemViewDelegate.sizeHint()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.FavouriteItemViewDelegate"><code class="docutils literal notranslate"><span class="pre">FavouriteItemViewDelegate</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.FavouriteItemViewDelegate.paint_background"><code class="docutils literal notranslate"><span class="pre">FavouriteItemViewDelegate.paint_background()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.FavouriteItemViewDelegate.paint_inline_icons"><code class="docutils literal notranslate"><span class="pre">FavouriteItemViewDelegate.paint_inline_icons()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.FavouriteItemViewDelegate"><code class="docutils literal notranslate"><span class="pre">FavouriteItemViewDelegate</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.FileItemViewDelegate"><code class="docutils literal notranslate"><span class="pre">FileItemViewDelegate</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.FileItemViewDelegate.paint"><code class="docutils literal notranslate"><span class="pre">FileItemViewDelegate.paint()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.FileItemViewDelegate.sizeHint"><code class="docutils literal notranslate"><span class="pre">FileItemViewDelegate.sizeHint()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate"><code class="docutils literal notranslate"><span class="pre">ItemDelegate</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.get_clickable_rectangles"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.get_clickable_rectangles()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.get_description_rect"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.get_description_rect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.draw_file_description"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.draw_file_description()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.draw_subdir_rectangles"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.draw_subdir_rectangles()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.get_paint_arguments"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.get_paint_arguments()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.get_subdir_rectangles"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.get_subdir_rectangles()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.get_rectangles"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.get_rectangles()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_active"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_active()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_archived"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_archived()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_asset_name"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_asset_name()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_background"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_background()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_bookmark_name"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_bookmark_name()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_count"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_count()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_dcc_icon"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_dcc_icon()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_default"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_default()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_deleted"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_deleted()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_description_editor_background"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_description_editor_background()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_drag_source"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_drag_source()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_file_name"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_file_name()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_hover"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_hover()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_inline_background"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_inline_background()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_inline_background_shadow"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_inline_background_shadow()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_inline_count"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_inline_count()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_inline_icons"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_inline_icons()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_name"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_name()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_selection_indicator"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_selection_indicator()</span></code></a></li>
@@ -1218,18 +1221,26 @@ customized by modifying the <code class="docutils literal notranslate"><span cla
 <li class="toctree-l4"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_thumbnail_shadow"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_thumbnail_shadow()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.draw_description"><code class="docutils literal notranslate"><span class="pre">draw_description()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.add_clickable_rectangle"><code class="docutils literal notranslate"><span class="pre">add_clickable_rectangle()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.draw_file_text_segments"><code class="docutils literal notranslate"><span class="pre">draw_file_text_segments()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.draw_gradient_background"><code class="docutils literal notranslate"><span class="pre">draw_gradient_background()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.draw_subdir_background"><code class="docutils literal notranslate"><span class="pre">draw_subdir_background()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.draw_subdirs"><code class="docutils literal notranslate"><span class="pre">draw_subdirs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.draw_painter_path"><code class="docutils literal notranslate"><span class="pre">draw_painter_path()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.draw_subdir_bg_rectangles"><code class="docutils literal notranslate"><span class="pre">draw_subdir_bg_rectangles()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.elided_text"><code class="docutils literal notranslate"><span class="pre">elided_text()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.get_asset_text_segments"><code class="docutils literal notranslate"><span class="pre">get_asset_text_segments()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.get_bookmark_text_segments"><code class="docutils literal notranslate"><span class="pre">get_bookmark_text_segments()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.get_clickable_cache_key"><code class="docutils literal notranslate"><span class="pre">get_clickable_cache_key()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.get_clickable_rectangles"><code class="docutils literal notranslate"><span class="pre">get_clickable_rectangles()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.get_description_cache_key"><code class="docutils literal notranslate"><span class="pre">get_description_cache_key()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.get_description_rectangle"><code class="docutils literal notranslate"><span class="pre">get_description_rectangle()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.get_file_detail_text_segments"><code class="docutils literal notranslate"><span class="pre">get_file_detail_text_segments()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.get_file_text_segments"><code class="docutils literal notranslate"><span class="pre">get_file_text_segments()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.get_painter_path"><code class="docutils literal notranslate"><span class="pre">get_painter_path()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.get_rectangles"><code class="docutils literal notranslate"><span class="pre">get_rectangles()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.paintmethod"><code class="docutils literal notranslate"><span class="pre">paintmethod()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.get_subdir_bg_cache_key"><code class="docutils literal notranslate"><span class="pre">get_subdir_bg_cache_key()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.get_subdir_cache_key"><code class="docutils literal notranslate"><span class="pre">get_subdir_cache_key()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.get_subdir_rectangles"><code class="docutils literal notranslate"><span class="pre">get_subdir_rectangles()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.get_text_segments"><code class="docutils literal notranslate"><span class="pre">get_text_segments()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.save_painter"><code class="docutils literal notranslate"><span class="pre">save_painter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.subdir_text_it"><code class="docutils literal notranslate"><span class="pre">subdir_text_it()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.DCC_ICONS"><code class="docutils literal notranslate"><span class="pre">DCC_ICONS</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.regex_remove_seq_marker"><code class="docutils literal notranslate"><span class="pre">regex_remove_seq_marker</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/items/delegate.html#bookmarks.items.delegate.regex_remove_version"><code class="docutils literal notranslate"><span class="pre">regex_remove_version</span></code></a></li>
@@ -1254,7 +1265,6 @@ customized by modifying the <code class="docutils literal notranslate"><span cla
 <li class="toctree-l4"><a class="reference internal" href="modules/items/favourite_items.html#bookmarks.items.favourite_items.FavouriteItemView.dragMoveEvent"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView.dragMoveEvent()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/favourite_items.html#bookmarks.items.favourite_items.FavouriteItemView.dropEvent"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView.dropEvent()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/favourite_items.html#bookmarks.items.favourite_items.FavouriteItemView.get_hint_string"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView.get_hint_string()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="modules/items/favourite_items.html#bookmarks.items.favourite_items.FavouriteItemView.toggle_item_flag"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView.toggle_item_flag()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="modules/items/favourite_items.html#bookmarks.items.favourite_items.FavouriteItemViewContextMenu"><code class="docutils literal notranslate"><span class="pre">FavouriteItemViewContextMenu</span></code></a><ul>
@@ -1380,6 +1390,7 @@ customized by modifying the <code class="docutils literal notranslate"><span cla
 </li>
 <li class="toctree-l3"><a class="reference internal" href="modules/items/models.html#bookmarks.items.models.filter_includes_row"><code class="docutils literal notranslate"><span class="pre">filter_includes_row()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/items/models.html#bookmarks.items.models.initdata"><code class="docutils literal notranslate"><span class="pre">initdata()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="modules/items/models.html#bookmarks.items.models.DEFAULT_SORT_BY_NAME_ROLE"><code class="docutils literal notranslate"><span class="pre">DEFAULT_SORT_BY_NAME_ROLE</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="modules/items/task_items.html">items.task_items</a><ul>
@@ -1419,6 +1430,7 @@ customized by modifying the <code class="docutils literal notranslate"><span cla
 </li>
 <li class="toctree-l3"><a class="reference internal" href="modules/items/task_items.html#bookmarks.items.task_items.TaskItemViewDelegate"><code class="docutils literal notranslate"><span class="pre">TaskItemViewDelegate</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/task_items.html#bookmarks.items.task_items.TaskItemViewDelegate.get_description_rect"><code class="docutils literal notranslate"><span class="pre">TaskItemViewDelegate.get_description_rect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/items/task_items.html#bookmarks.items.task_items.TaskItemViewDelegate.get_text_segments"><code class="docutils literal notranslate"><span class="pre">TaskItemViewDelegate.get_text_segments()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/task_items.html#bookmarks.items.task_items.TaskItemViewDelegate.paint"><code class="docutils literal notranslate"><span class="pre">TaskItemViewDelegate.paint()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/task_items.html#bookmarks.items.task_items.TaskItemViewDelegate.paint_background"><code class="docutils literal notranslate"><span class="pre">TaskItemViewDelegate.paint_background()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/task_items.html#bookmarks.items.task_items.TaskItemViewDelegate.paint_name"><code class="docutils literal notranslate"><span class="pre">TaskItemViewDelegate.paint_name()</span></code></a></li>
@@ -1447,6 +1459,7 @@ customized by modifying the <code class="docutils literal notranslate"><span cla
 <li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.BaseItemView.get_hint_string"><code class="docutils literal notranslate"><span class="pre">BaseItemView.get_hint_string()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.BaseItemView.get_status_string"><code class="docutils literal notranslate"><span class="pre">BaseItemView.get_status_string()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.BaseItemView.init_buttons_state"><code class="docutils literal notranslate"><span class="pre">BaseItemView.init_buttons_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.BaseItemView.init_model"><code class="docutils literal notranslate"><span class="pre">BaseItemView.init_model()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.BaseItemView.keyPressEvent"><code class="docutils literal notranslate"><span class="pre">BaseItemView.keyPressEvent()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.BaseItemView.key_down"><code class="docutils literal notranslate"><span class="pre">BaseItemView.key_down()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.BaseItemView.key_space"><code class="docutils literal notranslate"><span class="pre">BaseItemView.key_space()</span></code></a></li>
@@ -1465,7 +1478,6 @@ customized by modifying the <code class="docutils literal notranslate"><span cla
 <li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.BaseItemView.save_selection"><code class="docutils literal notranslate"><span class="pre">BaseItemView.save_selection()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.BaseItemView.select_item"><code class="docutils literal notranslate"><span class="pre">BaseItemView.select_item()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.BaseItemView.set_buttons_hidden"><code class="docutils literal notranslate"><span class="pre">BaseItemView.set_buttons_hidden()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.BaseItemView.set_model"><code class="docutils literal notranslate"><span class="pre">BaseItemView.set_model()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.BaseItemView.set_row_size"><code class="docutils literal notranslate"><span class="pre">BaseItemView.set_row_size()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.BaseItemView.showEvent"><code class="docutils literal notranslate"><span class="pre">BaseItemView.showEvent()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.BaseItemView.show_item"><code class="docutils literal notranslate"><span class="pre">BaseItemView.show_item()</span></code></a></li>
@@ -1505,11 +1517,11 @@ customized by modifying the <code class="docutils literal notranslate"><span cla
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.ThreadedItemView"><code class="docutils literal notranslate"><span class="pre">ThreadedItemView</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.ThreadedItemView.init_model"><code class="docutils literal notranslate"><span class="pre">ThreadedItemView.init_model()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.ThreadedItemView.init_threads"><code class="docutils literal notranslate"><span class="pre">ThreadedItemView.init_threads()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.ThreadedItemView.queue_visible_indexes"><code class="docutils literal notranslate"><span class="pre">ThreadedItemView.queue_visible_indexes()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.ThreadedItemView.queued_row_update"><code class="docutils literal notranslate"><span class="pre">ThreadedItemView.queued_row_update()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.ThreadedItemView.save_visible_rows"><code class="docutils literal notranslate"><span class="pre">ThreadedItemView.save_visible_rows()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.ThreadedItemView.set_model"><code class="docutils literal notranslate"><span class="pre">ThreadedItemView.set_model()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.ThreadedItemView.start_delayed_queue_timer"><code class="docutils literal notranslate"><span class="pre">ThreadedItemView.start_delayed_queue_timer()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/items/views.html#bookmarks.items.views.ThreadedItemView.update_row"><code class="docutils literal notranslate"><span class="pre">ThreadedItemView.update_row()</span></code></a></li>
 </ul>
@@ -2120,6 +2132,10 @@ customized by modifying the <code class="docutils literal notranslate"><span cla
 <li class="toctree-l4"><a class="reference internal" href="modules/shotgun/shotgun.html#bookmarks.shotgun.shotgun.ShotgunProperties.init"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.init()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/shotgun/shotgun.html#bookmarks.shotgun.shotgun.ShotgunProperties.urls"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.urls()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/shotgun/shotgun.html#bookmarks.shotgun.shotgun.ShotgunProperties.verify"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.verify()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/shotgun/shotgun.html#bookmarks.shotgun.shotgun.ShotgunProperties.asset"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.asset</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/shotgun/shotgun.html#bookmarks.shotgun.shotgun.ShotgunProperties.job"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.job</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/shotgun/shotgun.html#bookmarks.shotgun.shotgun.ShotgunProperties.root"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.root</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="modules/shotgun/shotgun.html#bookmarks.shotgun.shotgun.ShotgunProperties.server"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.server</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="modules/shotgun/shotgun.html#bookmarks.shotgun.shotgun.connection"><code class="docutils literal notranslate"><span class="pre">connection()</span></code></a></li>
@@ -2437,17 +2453,13 @@ customized by modifying the <code class="docutils literal notranslate"><span cla
 </li>
 <li class="toctree-l3"><a class="reference internal" href="modules/topbar/buttons.html#bookmarks.topbar.buttons.ToggleArchivedButton"><code class="docutils literal notranslate"><span class="pre">ToggleArchivedButton</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="modules/topbar/buttons.html#bookmarks.topbar.buttons.ToggleArchivedButton.pixmap"><code class="docutils literal notranslate"><span class="pre">ToggleArchivedButton.pixmap()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="modules/topbar/buttons.html#bookmarks.topbar.buttons.ToggleArchivedButton.update"><code class="docutils literal notranslate"><span class="pre">ToggleArchivedButton.update()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="modules/topbar/buttons.html#bookmarks.topbar.buttons.ToggleFavouriteButton"><code class="docutils literal notranslate"><span class="pre">ToggleFavouriteButton</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="modules/topbar/buttons.html#bookmarks.topbar.buttons.ToggleFavouriteButton.update"><code class="docutils literal notranslate"><span class="pre">ToggleFavouriteButton.update()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="modules/topbar/buttons.html#bookmarks.topbar.buttons.ToggleInlineIcons"><code class="docutils literal notranslate"><span class="pre">ToggleInlineIcons</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="modules/topbar/buttons.html#bookmarks.topbar.buttons.ToggleInlineIcons.hideEvent"><code class="docutils literal notranslate"><span class="pre">ToggleInlineIcons.hideEvent()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="modules/topbar/buttons.html#bookmarks.topbar.buttons.ToggleInlineIcons"><code class="docutils literal notranslate"><span class="pre">ToggleInlineIcons</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="modules/topbar/buttons.html#bookmarks.topbar.buttons.ToggleSequenceButton"><code class="docutils literal notranslate"><span class="pre">ToggleSequenceButton</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="modules/topbar/buttons.html#bookmarks.topbar.buttons.ToggleSequenceButton.pixmap"><code class="docutils literal notranslate"><span class="pre">ToggleSequenceButton.pixmap()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="modules/topbar/buttons.html#bookmarks.topbar.buttons.ToggleSequenceButton.update"><code class="docutils literal notranslate"><span class="pre">ToggleSequenceButton.update()</span></code></a></li>

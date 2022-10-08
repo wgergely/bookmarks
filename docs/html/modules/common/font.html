@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="common.monitor" href="monitor.html" /><link rel="prev" title="common.env" href="env.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>common.font - Bookmarks 0.7.1 documentation</title>
+        <title>common.font - Bookmarks 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">Bookmarks 0.7.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.1 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -350,7 +350,7 @@
 <p>The <a class="reference internal" href="#bookmarks.common.font.FontDatabase" title="bookmarks.common.font.FontDatabase"><code class="xref py py-class docutils literal notranslate"><span class="pre">FontDatabase</span></code></a> instance is saved at <code class="xref py py-attr docutils literal notranslate"><span class="pre">bookmarks.common.font_db</span></code>.
 QFont and QFontMetrics instances can be retrieved using:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">bookmarks</span> <span class="kn">import</span> <span class="n">common</span>
-<span class="n">font</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">primary_font</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_font_small</span><span class="p">))</span>
+<span class="n">font</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">bold_font</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_font_small</span><span class="p">))</span>
 </pre></div>
 </div>
 <p><strong>Classes:</strong></p>
@@ -385,10 +385,13 @@ QFont and QFontMetrics instances can be retrieved using:</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.font.FontDatabase.add_custom_fonts" title="bookmarks.common.font.FontDatabase.add_custom_fonts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_custom_fonts</span></code></a>()</p></td>
 <td><p>Load the fonts used by Bookmarks to the font database.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.font.FontDatabase.primary_font" title="bookmarks.common.font.FontDatabase.primary_font"><code class="xref py py-obj docutils literal notranslate"><span class="pre">primary_font</span></code></a>(font_size)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.font.FontDatabase.bold_font" title="bookmarks.common.font.FontDatabase.bold_font"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bold_font</span></code></a>(font_size)</p></td>
 <td><p>The primary font used by the application.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.font.FontDatabase.secondary_font" title="bookmarks.common.font.FontDatabase.secondary_font"><code class="xref py py-obj docutils literal notranslate"><span class="pre">secondary_font</span></code></a>(font_size)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.font.FontDatabase.light_font" title="bookmarks.common.font.FontDatabase.light_font"><code class="xref py py-obj docutils literal notranslate"><span class="pre">light_font</span></code></a>(font_size)</p></td>
+<td><p>The secondary font used by the application.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.font.FontDatabase.medium_font" title="bookmarks.common.font.FontDatabase.medium_font"><code class="xref py py-obj docutils literal notranslate"><span class="pre">medium_font</span></code></a>(font_size)</p></td>
 <td><p>The secondary font used by the application.</p></td>
 </tr>
 </tbody>
@@ -401,14 +404,20 @@ QFont and QFontMetrics instances can be retrieved using:</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.common.font.FontDatabase.primary_font">
-<span class="sig-name descname"><span class="pre">primary_font</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">font_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/common/font.html#FontDatabase.primary_font"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.font.FontDatabase.primary_font" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.common.font.FontDatabase.bold_font">
+<span class="sig-name descname"><span class="pre">bold_font</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">font_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/common/font.html#FontDatabase.bold_font"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.font.FontDatabase.bold_font" title="Permalink to this definition">#</a></dt>
 <dd><p>The primary font used by the application.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.common.font.FontDatabase.secondary_font">
-<span class="sig-name descname"><span class="pre">secondary_font</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">font_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/common/font.html#FontDatabase.secondary_font"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.font.FontDatabase.secondary_font" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.common.font.FontDatabase.light_font">
+<span class="sig-name descname"><span class="pre">light_font</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">font_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/common/font.html#FontDatabase.light_font"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.font.FontDatabase.light_font" title="Permalink to this definition">#</a></dt>
+<dd><p>The secondary font used by the application.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.common.font.FontDatabase.medium_font">
+<span class="sig-name descname"><span class="pre">medium_font</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">font_size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/common/font.html#FontDatabase.medium_font"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.font.FontDatabase.medium_font" title="Permalink to this definition">#</a></dt>
 <dd><p>The secondary font used by the application.</p>
 </dd></dl>
 
@@ -482,8 +491,9 @@ QFont and QFontMetrics instances can be retrieved using:</p>
 <li><a class="reference internal" href="#">common.font</a><ul>
 <li><a class="reference internal" href="#bookmarks.common.font.FontDatabase"><code class="docutils literal notranslate"><span class="pre">FontDatabase</span></code></a><ul>
 <li><a class="reference internal" href="#bookmarks.common.font.FontDatabase.add_custom_fonts"><code class="docutils literal notranslate"><span class="pre">FontDatabase.add_custom_fonts()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.common.font.FontDatabase.primary_font"><code class="docutils literal notranslate"><span class="pre">FontDatabase.primary_font()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.common.font.FontDatabase.secondary_font"><code class="docutils literal notranslate"><span class="pre">FontDatabase.secondary_font()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.font.FontDatabase.bold_font"><code class="docutils literal notranslate"><span class="pre">FontDatabase.bold_font()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.font.FontDatabase.light_font"><code class="docutils literal notranslate"><span class="pre">FontDatabase.light_font()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.font.FontDatabase.medium_font"><code class="docutils literal notranslate"><span class="pre">FontDatabase.medium_font()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#bookmarks.common.font.init_font"><code class="docutils literal notranslate"><span class="pre">init_font()</span></code></a></li>

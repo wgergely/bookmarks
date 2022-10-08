@@ -347,71 +347,84 @@
 <span></span><span class="sd">&quot;&quot;&quot;QFileSystemWatchers used to monitor for file and directory changes.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">functools</span>
 
 <span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtCore</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">common</span>
 
-<span class="c1">#: The file system watcher type</span>
-<span class="n">FileItemMonitor</span> <span class="o">=</span> <span class="mi">0</span>
 
-
-<div class="viewcode-block" id="init_monitor"><a class="viewcode-back" href="../../../modules/common/monitor.html#bookmarks.common.monitor.init_monitor">[docs]</a><span class="k">def</span> <span class="nf">init_monitor</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Initialize the file monitor instances.</span>
-<span class="sd">    </span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">common</span><span class="o">.</span><span class="n">monitors</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">FileItemMonitor</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileSystemWatcher</span><span class="p">(),</span>
-    <span class="p">}</span>
-    <span class="n">common</span><span class="o">.</span><span class="n">monitors</span><span class="p">[</span><span class="n">FileItemMonitor</span><span class="p">]</span><span class="o">.</span><span class="n">directoryChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-        <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">directory_changed</span><span class="p">,</span> <span class="n">FileItemMonitor</span><span class="p">))</span></div>
-
-
-<div class="viewcode-block" id="add_watch_directories"><a class="viewcode-back" href="../../../modules/common/monitor.html#bookmarks.common.monitor.add_watch_directories">[docs]</a><span class="k">def</span> <span class="nf">add_watch_directories</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">paths</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Adds the given list of directories to the file system watcher.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        key (int): The file system watcher type, e.g. ``FileItemMonitor``</span>
-<span class="sd">        paths (list): The list of directories to add to the file system watcher.</span>
-<span class="sd">        </span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">FileItemMonitor</span><span class="p">,):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid monitor value.&#39;</span><span class="p">)</span>
-
-    <span class="n">directories</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">monitors</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">directories</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">path</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">directories</span><span class="p">:</span>
-            <span class="n">common</span><span class="o">.</span><span class="n">monitors</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">addPath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="clear_watch_directories"><a class="viewcode-back" href="../../../modules/common/monitor.html#bookmarks.common.monitor.clear_watch_directories">[docs]</a><span class="k">def</span> <span class="nf">clear_watch_directories</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Remove all watch directories from the given file system watcher.</span>
-
-<span class="sd">    Args:</span>
-
+<div class="viewcode-block" id="get_watcher"><a class="viewcode-back" href="../../../modules/common/monitor.html#bookmarks.common.monitor.get_watcher">[docs]</a><span class="k">def</span> <span class="nf">get_watcher</span><span class="p">(</span><span class="n">tab_idx</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns a FileWatcher instance.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="n">FileItemMonitor</span><span class="p">,):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid monitor value.&#39;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">monitors</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">directories</span><span class="p">():</span>
-        <span class="n">common</span><span class="o">.</span><span class="n">monitors</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">removePath</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="n">tab_idx</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">watchers</span><span class="p">:</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">watchers</span><span class="p">[</span><span class="n">tab_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">FileWatcher</span><span class="p">(</span><span class="n">tab_idx</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">watchers</span><span class="p">[</span><span class="n">tab_idx</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="directory_changed"><a class="viewcode-back" href="../../../modules/common/monitor.html#bookmarks.common.monitor.directory_changed">[docs]</a><span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">directory_changed</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Slot connected to the file system watcher&#39;s directoryChanged signal.</span>
+<div class="viewcode-block" id="FileWatcher"><a class="viewcode-back" href="../../../modules/common/monitor.html#bookmarks.common.monitor.FileWatcher">[docs]</a><span class="k">class</span> <span class="nc">FileWatcher</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QFileSystemWatcher</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tab_idx</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        idx (int): The file system watcher type, e.g. ``FileItemMonitor``.</span>
-<span class="sd">        path (str): The path of the directory just changed.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tab_idx</span> <span class="o">=</span> <span class="n">tab_idx</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="n">FileItemMonitor</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="s1">&#39;task&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
-            <span class="n">model</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">source_model</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FileTab</span><span class="p">)</span>
-            <span class="n">model</span><span class="o">.</span><span class="n">set_refresh_needed</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">common</span><span class="o">.</span><span class="n">widget</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FileTab</span><span class="p">)</span><span class="o">.</span><span class="n">filter_indicator_widget</span><span class="o">.</span><span class="n">repaint</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Timer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">setSingleShot</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">changed_items</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connect_signals</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_connect_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_changed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">directoryChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queue_changed_item</span><span class="p">)</span>
+
+    <span class="n">QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">queue_changed_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">changed_items</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">changed_items</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">interval</span><span class="p">())</span>
+
+<div class="viewcode-block" id="FileWatcher.add_directories"><a class="viewcode-back" href="../../../modules/common/monitor.html#bookmarks.common.monitor.FileWatcher.add_directories">[docs]</a>    <span class="k">def</span> <span class="nf">add_directories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paths</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Adds the given list of directories to the file system watcher.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            paths (list): The list of directories to add to the file system watcher.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">directories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directories</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">directories</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">addPath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FileWatcher.reset"><a class="viewcode-back" href="../../../modules/common/monitor.html#bookmarks.common.monitor.FileWatcher.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remove all watch directories.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">directories</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">removePath</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">files</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">removePath</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FileWatcher.item_changed"><a class="viewcode-back" href="../../../modules/common/monitor.html#bookmarks.common.monitor.FileWatcher.item_changed">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">item_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Slot used to update the model status.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tab_idx</span> <span class="o">==</span> <span class="n">common</span><span class="o">.</span><span class="n">FileTab</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_file_item_updated</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_file_item_updated</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="s1">&#39;task&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">changed_items</span><span class="o">.</span><span class="n">copy</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">source_model</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FileTab</span><span class="p">)</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">set_refresh_needed</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">widget</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FileTab</span><span class="p">)</span><span class="o">.</span><span class="n">filter_indicator_widget</span><span class="o">.</span><span class="n">repaint</span><span class="p">()</span>
+                <span class="k">break</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">changed_items</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span></div>
 </pre></div>
         </article>
       </div>

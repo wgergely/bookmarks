@@ -180,8 +180,6 @@ class BookmarkItemModel(models.ItemModel):
             if filepath in common.favourites and exists:
                 flags = flags | common.MarkedAsFavourite
 
-            text = f'{job}  |  {root}'
-
             parent_path_role = (server, job, root)
 
             idx = len(data)
@@ -193,15 +191,22 @@ class BookmarkItemModel(models.ItemModel):
                 if entry.name == file_info.baseName():
                     break
 
+            sort_by_name_role = models.DEFAULT_SORT_BY_NAME_ROLE.copy()
+            for i, n in enumerate(parent_path_role):
+                if i >= 8:
+                    break
+                sort_by_name_role[i] = n.lower()
+
             data[idx] = common.DataDict({
-                QtCore.Qt.DisplayRole: text,
-                QtCore.Qt.EditRole: text,
+                QtCore.Qt.DisplayRole: root,
+                QtCore.Qt.EditRole: root,
                 common.PathRole: filepath,
                 QtCore.Qt.ToolTipRole: filepath,
                 QtCore.Qt.SizeHintRole: self.row_size,
                 #
                 common.QueueRole: self.queues,
                 common.DataTypeRole: t,
+                common.ItemTabRole: common.BookmarkTab,
                 #
                 common.FlagsRole: flags,
                 common.ParentPathRole: parent_path_role,
@@ -219,10 +224,10 @@ class BookmarkItemModel(models.ItemModel):
                 #
                 common.TypeRole: common.FileItem,
                 #
-                common.SortByNameRole: text.lower(),
+                common.SortByNameRole: sort_by_name_role,
                 common.SortByLastModifiedRole: file_info.lastModified().toMSecsSinceEpoch(),
                 common.SortBySizeRole: file_info.size(),
-                common.SortByTypeRole: text,
+                common.SortByTypeRole: sort_by_name_role,
                 #
                 common.IdRole: idx,
                 #
@@ -314,8 +319,6 @@ class BookmarkItemView(views.ThreadedItemView):
         if not isinstance(event, QtGui.QMouseEvent):
             return
 
-        super().mouseReleaseEvent(event)
-
         cursor_position = self.mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)
 
@@ -324,9 +327,7 @@ class BookmarkItemView(views.ThreadedItemView):
         if not index.data(common.ParentPathRole):
             return
 
-        rect = self.visualRect(index)
-        rectangles = delegate.get_rectangles(
-            rect, self.inline_icons_count())
+        rectangles = self.itemDelegate().get_rectangles(index)
 
         server, job, root = index.data(common.ParentPathRole)[0:3]
         if rectangles[delegate.AddAssetRect].contains(cursor_position):
@@ -336,6 +337,8 @@ class BookmarkItemView(views.ThreadedItemView):
         if rectangles[delegate.PropertiesRect].contains(cursor_position):
             actions.edit_bookmark(server=server, job=job, root=root)
             return
+
+        super().mouseReleaseEvent(event)
 
     def inline_icons_count(self):
         """Inline buttons count.

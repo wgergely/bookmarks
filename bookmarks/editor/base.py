@@ -423,7 +423,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         )
         button.setFocusPolicy(QtCore.Qt.NoFocus)
 
-        font, _ = common.font_db.primary_font(common.size(common.size_font_small))
+        font, _ = common.font_db.bold_font(common.size(common.size_font_small))
         button.setStyleSheet(
             'outline: none;'
             'border: none;'

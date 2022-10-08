@@ -67,7 +67,7 @@ def get_item_info(ref):
 
     s = ref()[common.FileDetailsRole]
     s = s if isinstance(s, str) else ''
-    s = '   |   '.join(s.split(';')) if s else '-'
+    s = '   ｜   '.join(s.split(';')) if s else '-'
     info.append((common.color(common.color_text), s if s else '-'))
 
     if not ref or not ref():
@@ -101,6 +101,8 @@ class Viewer(QtWidgets.QGraphicsView):
         self._track = True
         self._pos = None
 
+        self.setFocusPolicy(QtCore.Qt.NoFocus)
+
         self.item = QtWidgets.QGraphicsPixmapItem()
         self.item.setTransformationMode(QtCore.Qt.SmoothTransformation)
         self.item.setShapeMode(QtWidgets.QGraphicsPixmapItem.MaskShape)
@@ -132,7 +134,7 @@ class Viewer(QtWidgets.QGraphicsView):
         o = common.size(common.size_margin)
         rect = self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o))
 
-        font, metrics = common.font_db.primary_font(
+        font, metrics = common.font_db.bold_font(
             common.size(common.size_font_medium)
         )
         rect.setHeight(metrics.height())
@@ -193,6 +195,8 @@ class ImageViewer(QtWidgets.QWidget):
 
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
+        self.setFocusPolicy(QtCore.Qt.NoFocus)
 
         self.setWindowFlags(
             QtCore.Qt.Window |

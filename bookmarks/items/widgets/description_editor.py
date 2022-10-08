@@ -73,11 +73,11 @@ class DescriptionEditorWidget(ui.LineEdit):
             self.hide()
             return
 
-        rect = self.parent().visualRect(index)
-        rectangles = delegate.get_rectangles(
-            rect, self.parent().inline_icons_count())
-        description_rect = self.parent().itemDelegate(
-        ).get_description_rect(rectangles, index)
+        rectangles = self.parent().itemDelegate().get_rectangles(index)
+
+        _rect = self.parent().visualRect(index)
+        description_rect = delegate.get_description_rectangle(
+            index, _rect, self.parent().buttons_hidden())
 
         # Won't be showing the editor if there's no appropriate description area
         # provided by the delegate (e.g. the bookmark items don't have this)

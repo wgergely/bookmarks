@@ -133,7 +133,7 @@ class DropWidget(QtWidgets.QWidget):
 
         common.draw_aliased_text(
             painter,
-            common.font_db.primary_font(common.size(common.size_font_large))[0],
+            common.font_db.bold_font(common.size(common.size_font_large))[0],
             rect,
             v,
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,

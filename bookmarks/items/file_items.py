@@ -83,9 +83,16 @@ def add_path_to_mime(mime, path):
 
 
 @functools.lru_cache(maxsize=1048576)
-def get_path_elements(name, path, _source_path):
-    """Utility method used to cache and retrieve path elements.
+def get_path_elements(name, path, source_path):
+    """Returns the path elements needed to populate the file item model data.
 
+    Args:
+        name (str): File name.
+        path (str): File path.
+        source_path (str): File source path.
+
+    Returns:
+        tuple: Tuple of path, ext, file_root, dir, sort_by_name_role.
     """
     path = path.replace('\\', '/')
 
@@ -94,19 +101,20 @@ def get_path_elements(name, path, _source_path):
     # Getting the file's relative root folder
     # This data is used to display the clickable sub-folders relative
     # to the current task folder
-    file_root = path[:path.rfind('/')][len(_source_path) + 1:]
+    file_root = path[:path.rfind('/')][len(source_path) + 1:]
 
     sort_by_name_role = models.DEFAULT_SORT_BY_NAME_ROLE.copy()
+
     _dir = None
     if file_root:
         # Save the file's parent folder for the file system watcher
-        _dir = _source_path + '/' + file_root
+        _dir = source_path + '/' + file_root
         # To sort by folders correctly, we populate a fixed length
         # list with the sub-folders and file names. Sorting is case-insensitive.
         _file_root = file_root.lower().split('/')
         for idx in range(len(_file_root)):
-            sort_by_name_role[idx] = _file_root[idx]
-            if idx == 6:
+            sort_by_name_role[idx + 4] = _file_root[idx].lower()
+            if idx + 4 == 6:
                 break
     sort_by_name_role[7] = name.lower()
 
@@ -160,7 +168,7 @@ class DropIndicatorWidget(QtWidgets.QWidget):
         painter.setOpacity(1.0)
         common.draw_aliased_text(
             painter,
-            common.font_db.primary_font(common.size(common.size_font_medium))[0],
+            common.font_db.bold_font(common.size(common.size_font_medium))[0],
             self.rect(),
             'Drop to add bookmark',
             QtCore.Qt.AlignCenter,
@@ -256,7 +264,7 @@ class DragPixmapFactory(QtWidgets.QWidget):
         self._pixmap = pixmap
         self._text = text
 
-        _, metrics = common.font_db.primary_font(
+        _, metrics = common.font_db.bold_font(
             common.size(common.size_font_medium)
         )
         self._text_width = metrics.horizontalAdvance(text)
@@ -320,7 +328,7 @@ class DragPixmapFactory(QtWidgets.QWidget):
         )
         common.draw_aliased_text(
             painter,
-            common.font_db.primary_font(common.size(common.size_font_medium))[0],
+            common.font_db.bold_font(common.size(common.size_font_medium))[0],
             rect,
             self._text,
             QtCore.Qt.AlignCenter,
@@ -439,11 +447,11 @@ class FileItemModel(models.ItemModel):
         if not p or not all(p) or not k or t is None:
             return
 
-        data = common.get_data(p, k, t)
-        if not data:
-            return
-
-        data.refresh_needed = v
+        for t in (common.FileItem, common.SequenceItem):
+            data = common.get_data(p, k, t)
+            if not data:
+                continue
+            data.refresh_needed = v
 
     @common.status_bar_message('Loading Files...')
     @models.initdata
@@ -526,6 +534,9 @@ class FileItemModel(models.ItemModel):
             )
             _dirs.append(_dir)
 
+            for idx, _p in enumerate(p + (k,)):
+                sort_by_name_role[idx] = _p
+
             # We'll check against the current file extension against the allowed
             # extensions. If the task folder is not defined in the token config,
             # we'll allow all extensions
@@ -569,6 +580,7 @@ class FileItemModel(models.ItemModel):
                     #
                     common.QueueRole: self.queues,
                     common.DataTypeRole: common.FileItem,
+                    common.ItemTabRole: common.FileTab,
                     #
                     common.EntryRole: [entry, ],
                     common.FlagsRole: flags,
@@ -625,6 +637,7 @@ class FileItemModel(models.ItemModel):
                             QtCore.Qt.ToolTipRole: sequence_name,
                             #
                             common.QueueRole: self.queues,
+                            common.ItemTabRole: common.FileTab,
                             #
                             common.EntryRole: [],
                             common.FlagsRole: flags,
@@ -698,8 +711,9 @@ class FileItemModel(models.ItemModel):
             data[idx][common.IdRole] = idx
             data[idx][common.DataTypeRole] = common.SequenceItem
 
-        common.clear_watch_directories(common.FileItemMonitor)
-        common.add_watch_directories(common.FileItemMonitor, list(set(_dirs)))
+        watcher = common.get_watcher(common.FileTab)
+        watcher.reset()
+        watcher.add_directories(list(set(_dirs)))
         self.set_refresh_needed(False)
 
     def disable_filter(self):
@@ -833,10 +847,7 @@ class FileItemModel(models.ItemModel):
         file.
 
         """
-        if common.active('task') is None:
-            return None
-
-        v = [common.active(k) for k in active_keys]
+        v = [common.active(k) for k in ('server', 'job', 'root', 'asset', 'task')]
         if not all(v):
             return None
 
@@ -917,7 +928,7 @@ class FileItemView(views.ThreadedItemView):
         """
         if self.buttons_hidden():
             return 0
-        return 3
+        return 4
 
     def action_on_enter_key(self):
         """Custom key action.

@@ -2,6 +2,7 @@
   "documentation_url": "https://bookmarks.gergely-wootsch.com/html/index.html",
   "github_url": "https://github.com/wgergely/bookmarks",
   "env_key": "BOOKMARKS_ROOT",
+  "product": "bookmarks",
   "bookmark_cache_dir": ".bookmark",
   "bookmark_database": "bookmark.db",
   "favorite_file_ext": "bfav",
@@ -25,6 +26,7 @@
   ],
   "bold_font": "bmRobotoBold",
   "medium_font": "bmRobotoMedium",
+  "light_font": "bmRobotoRegular",
   "size_font_small": 11.0,
   "size_font_medium": 12.0,
   "size_font_large": 16.0,
@@ -91,9 +93,21 @@
     180
   ],
   "color_blue": [
-    107,
-    135,
-    185,
+    88,
+    138,
+    180,
+    255
+  ],
+  "color_dark_blue": [
+    31,
+    39,
+    46,
+    255
+  ],
+  "color_red": [
+    219,
+    114,
+    114,
     255
   ],
   "color_red2": [
@@ -102,10 +116,10 @@
     50,
     180
   ],
-  "color_red": [
-    219,
-    114,
-    114,
+  "color_green": [
+    90,
+    200,
+    155,
     255
   ],
   "color_light_green": [
@@ -113,12 +127,6 @@
     150,
     100,
     180
-  ],
-  "color_green": [
-    90,
-    200,
-    155,
-    255
   ],
   "color_dark_green": [
     110,
@@ -132,7 +140,7 @@
     0,
     30
   ],
-  "Transparent": [
+  "color_transparent": [
     0,
     0,
     0,

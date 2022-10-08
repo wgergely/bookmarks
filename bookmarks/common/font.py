@@ -6,7 +6,7 @@ QFont and QFontMetrics instances can be retrieved using:
 .. code-block:: python
 
     from bookmarks import common
-    font, metrics = common.font_db.primary_font(common.size(common.size_font_small))
+    font, metrics = common.font_db.bold_font(common.size(common.size_font_small))
 
 """
 import os
@@ -18,6 +18,7 @@ from .. import common
 font_primaryRole = 0
 font_secondaryRole = 1
 MetricsRole = 2
+font_terciaryRole = 3
 
 
 class FontDatabase(QtGui.QFontDatabase):
@@ -55,7 +56,7 @@ class FontDatabase(QtGui.QFontDatabase):
                 raise RuntimeError(
                     'Failed to add required font to the application')
 
-    def primary_font(self, font_size):
+    def bold_font(self, font_size):
         """The primary font used by the application.
 
         """
@@ -72,7 +73,7 @@ class FontDatabase(QtGui.QFontDatabase):
         common.font_cache[font_primaryRole][font_size] = (font, metrics)
         return common.font_cache[font_primaryRole][font_size]
 
-    def secondary_font(self, font_size):
+    def medium_font(self, font_size):
         """The secondary font used by the application.
 
         """
@@ -89,6 +90,23 @@ class FontDatabase(QtGui.QFontDatabase):
         common.font_cache[font_secondaryRole][font_size] = (font, metrics)
         return common.font_cache[font_secondaryRole][font_size]
 
+    def light_font(self, font_size):
+        """The secondary font used by the application.
+
+        """
+        if font_size in common.font_cache[font_terciaryRole]:
+            return common.font_cache[font_terciaryRole][font_size]
+
+        font = self.font(common.medium_font, 'Medium', font_size)
+        if font.family() != common.medium_font:
+            raise RuntimeError(
+                'Failed to add required font to the application')
+
+        font.setPixelSize(font_size)
+        metrics = QtGui.QFontMetrics(font)
+        common.font_cache[font_terciaryRole][font_size] = (font, metrics)
+        return common.font_cache[font_terciaryRole][font_size]
+
 
 def init_font():
     """Initializes the font cache and database.
@@ -97,6 +115,7 @@ def init_font():
     common.font_cache = {
         font_primaryRole: {},
         font_secondaryRole: {},
+        font_terciaryRole: {},
         MetricsRole: {},
     }
     common.font_db = FontDatabase()

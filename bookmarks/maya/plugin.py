@@ -14,7 +14,6 @@ try:
 except ImportError:
     raise ImportError('Could not find the Maya modules.')
 
-env_key = 'BOOKMARKS_ROOT'
 product = 'bookmarks'
 
 __author__ = 'Gergely Wootsch'
@@ -45,16 +44,24 @@ def _add_path_to_path(v, p):
         os.environ['PATH'] = f'{os.path.normpath(_v)};{os.environ["PATH"].strip(";")}'
 
 
-def init_environment(key, add_private=False):
-    """Add the dependencies to the Python environment.
+def init_environment(key='BOOKMARKS_ROOT', pyside=False):
+    """Add the dependencies required to run Bookmarks to a python environment.
 
-    The method requires that `env_key` is set. The key is usually set
-    by the Bookmark installer to point to the installation root directory.
+    The Bookmarks installer should set the 'BOOKMARKS_ROOT' environment variable to
+    the installation directory. This is required to load the python modules into the
+    current environment.
+
+    Args:
+        key (str): The environment variable used to find the distribution directory.
+            Optional, defaults to 'BOOKMARKS_ROOT
+        pyside (bool):
+            Adds the PySide modules bundled with Bookmarks if True.
+            Optional, defaults to False.
 
     Raises:
             EnvironmentError: When the `key` environment is not set.
-            RuntimeError: When the `key` environment is invalid or points to a missing
-            directory.
+            RuntimeError:
+                When the `key` environment is invalid or points to a missing directory.
 
     """
     if key not in os.environ:
@@ -71,7 +78,7 @@ def init_environment(key, add_private=False):
     _add_path_to_path(v, 'bin')
 
     _add_path_to_sys(v, 'shared')
-    if add_private:
+    if pyside:
         _add_path_to_sys(v, 'core')
     if v not in sys.path:
         sys.path.append(v)
@@ -98,7 +105,7 @@ def initializePlugin(name):
         return
 
     OpenMaya.MGlobal.displayInfo(f'Loading {product.title()}...')
-    init_environment(env_key)
+    init_environment()
 
     from bookmarks import maya
     cmds.evalDeferred(maya.initialize)

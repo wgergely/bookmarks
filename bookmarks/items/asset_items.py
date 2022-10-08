@@ -167,14 +167,15 @@ class AssetItemModel(models.ItemModel):
 
             # Beautify the name
             name = get_display_name(filename)
+            parent_path_role = p + (filename,)
 
             sort_by_name_role = models.DEFAULT_SORT_BY_NAME_ROLE.copy()
-            for i, n in enumerate(name.split(u'/')):
+            for i, n in enumerate(p):
                 if i >= 8:
                     break
                 sort_by_name_role[i] = n.lower()
+            sort_by_name_role[3] = filename.lower()
 
-            parent_path_role = p + (filename,)
 
             idx = len(data)
             if idx >= common.max_list_items:
@@ -193,6 +194,7 @@ class AssetItemModel(models.ItemModel):
                 #
                 common.QueueRole: self.queues,
                 common.DataTypeRole: t,
+                common.ItemTabRole: common.AssetTab,
                 #
                 common.EntryRole: [entry, ],
                 common.FlagsRole: flags,
@@ -360,8 +362,7 @@ class AssetItemView(views.ThreadedItemView):
         if index.flags() & common.MarkedAsArchived:
             return
 
-        rect = self.visualRect(index)
-        rectangles = delegate.get_rectangles(rect, self.inline_icons_count())
+        rectangles = self.itemDelegate().get_rectangles(index)
 
         if rectangles[delegate.AddAssetRect].contains(cursor_position):
             actions.show_add_file(asset=index.data(common.ParentPathRole)[-1])

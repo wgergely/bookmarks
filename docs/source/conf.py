@@ -84,7 +84,6 @@ html_theme_options = {
         "color-brand-primary": "rgba(90, 200, 155, 1)",
         "color-brand-content": "rgba(90, 200, 155, 1)",
         "color-api-name": "rgba(255, 255, 255, 0.9)",
-
     },
     "navigation_with_keys": True,
 }

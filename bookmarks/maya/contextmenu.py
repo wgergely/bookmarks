@@ -188,7 +188,7 @@ class PluginContextMenu(contextmenu.BaseContextMenu):
         for n in (1.0, 0.5, 0.25, 1.5, 2.0):
             w, h = _size(n)
             self.menu[k][f'capture{n}'] = {
-                'text': f'Capture  |  @{n}  |  {w}x{h}px',
+                'text': f'Capture  ｜  @{n}  |  {w}x{h}px',
                 'action': functools.partial(actions.capture_viewport, size=n),
                 'icon': ui.get_icon('capture_thumbnail'),
             }

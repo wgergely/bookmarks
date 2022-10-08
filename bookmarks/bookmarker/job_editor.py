@@ -381,7 +381,7 @@ class JobItemEditor(ui.ListViewWidget):
                 replace('_', ' ').
                 replace('  ', ' ').
                 strip().
-                replace('/', '  |  ').
+                replace('/', '  ｜  ').
                 strip().upper()
             )
 

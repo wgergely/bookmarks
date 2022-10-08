@@ -136,7 +136,7 @@ class OverlayWidget(QtWidgets.QWidget):
 
         painter.setBrush(QtCore.Qt.NoBrush)
         painter.setPen(common.color(common.color_text))
-        painter.setFont(common.font_db.primary_font(
+        painter.setFont(common.font_db.bold_font(
             common.size(common.size_font_medium))[0])
 
         painter.drawText(
@@ -374,7 +374,7 @@ class UsersModel(QtCore.QAbstractItemModel):
                     QtCore.Qt.DecorationRole: icon,
                     QtCore.Qt.SizeHintRole: self.row_size,
                     QtCore.Qt.FontRole:
-                        common.font_db.primary_font(common.size(common.size_font_small))[
+                        common.font_db.bold_font(common.size(common.size_font_small))[
                             0],
                     IdRole: channel['id'],
                     ThumbnailHashRole: None,
@@ -392,7 +392,7 @@ class UsersModel(QtCore.QAbstractItemModel):
                     QtCore.Qt.DecorationRole: icon,
                     QtCore.Qt.SizeHintRole: self.row_size,
                     QtCore.Qt.FontRole:
-                        common.font_db.primary_font(common.size(common.size_font_small))[
+                        common.font_db.bold_font(common.size(common.size_font_small))[
                             0],
                     IdRole: profile['id'],
                     ThumbnailHashRole: profile['profile']['avatar_hash'],

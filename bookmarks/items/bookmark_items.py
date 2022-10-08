@@ -353,3 +353,9 @@ class BookmarkItemView(views.ThreadedItemView):
 
         """
         return 'Right-click and select \'Manage Bookmark Items\' to add items'
+
+    def key_tab(self):
+        """Custom key action
+
+        """
+        return

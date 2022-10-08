@@ -374,16 +374,18 @@ QLabel:disabled {{
 
 QMenu {{
 	font-size: {size_font_medium}px;
-  background-color: {color_dark_background};
+    background-color: {color_dark_background};
 	menu-scrollable: 1;
+	border-radius: {menu_border_radius}px;
+	border: 2px solid {color_background};
 	icon-size: {size_margin2}px;
 }}
 QMenu::separator {{
 	height: {size_separator}px;
 	margin-top: {size_indicator}px;
 	margin-bottom: {size_indicator}px;
-  background-color: {color_opaque};
-  color: transparent;
+    background-color: {color_opaque};
+    color: transparent;
 	min-width: 1000px;
 }}
 QMenu::item {{

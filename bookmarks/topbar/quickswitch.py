@@ -25,22 +25,22 @@ class BaseQuickSwitchMenu(contextmenu.BaseContextMenu):
             return
 
         if common.current_tab() == common.BookmarkTab:
-            off_icon = ui.get_icon(
+            item_icon = ui.get_icon(
                 'bookmark_item',
                 color=common.color(common.color_secondary_text)
             )
         elif common.current_tab() == common.AssetTab:
-            off_icon = ui.get_icon(
+            item_icon = ui.get_icon(
                 'asset_item',
                 color=common.color(common.color_secondary_text)
             )
         elif common.current_tab() == common.FileTab:
-            off_icon = ui.get_icon(
+            item_icon = ui.get_icon(
                 'file_item',
                 color=common.color(common.color_secondary_text)
             )
         elif common.current_tab() == common.FavouriteTab:
-            off_icon = ui.get_icon(
+            item_icon = ui.get_icon(
                 'favourite_item',
                 color=common.color(common.color_secondary_text)
             )
@@ -52,14 +52,13 @@ class BaseQuickSwitchMenu(contextmenu.BaseContextMenu):
             'disabled': True
         }
 
-        for n in range(common.model(idx).rowCount()):
-            index = common.model(idx).index(n, 0)
+        active = False
+        model = common.model(idx)
+        for n in range(model.rowCount()):
+            index = QtCore.QPersistentModelIndex(model.index(n, 0))
+            path = index.data(common.PathRole)
 
-            name = index.data(QtCore.Qt.DisplayRole)
-            active = False
-            if active_index.isValid():
-                n = active_index.data(QtCore.Qt.DisplayRole)
-                active = n.lower() == name.lower()
+            active = active_index.isValid() and active_index.data(common.PathRole) == path
 
             pixmap, _ = images.get_thumbnail(
                 index.data(common.ParentPathRole)[0],
@@ -69,15 +68,19 @@ class BaseQuickSwitchMenu(contextmenu.BaseContextMenu):
                 size=common.size(common.size_margin) * 4,
                 fallback_thumb='icon_bw'
             )
-
             if pixmap and not pixmap.isNull():
                 icon = QtGui.QIcon(pixmap)
-            elif active:
-                icon = on_icon
             else:
-                icon = off_icon
+                icon = item_icon
+            if active:
+                icon = on_icon
 
-            self.menu[name.upper()] = {
+            if index.data(common.AssetCountRole):
+                text = f'{path}   |   {index.data(common.AssetCountRole)} items'
+            else:
+                text = path
+            self.menu[contextmenu.key()] = {
+                'text': text,
                 'icon': icon,
                 'action': functools.partial(common.widget(idx).activate, index)
             }
@@ -94,7 +97,7 @@ class SwitchBookmarkMenu(BaseQuickSwitchMenu):
         self.separator()
         self.add_switch_menu(
             common.BookmarkTab,
-            'Switch active bookmark'
+            'Change bookmark'
         )
 
     def add_menu(self):

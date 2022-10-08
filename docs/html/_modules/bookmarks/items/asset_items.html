@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>bookmarks.items.asset_items - Bookmarks 0.7.1 documentation</title>
+        <title>bookmarks.items.asset_items - Bookmarks 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -133,7 +133,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.1 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -160,7 +160,7 @@
     <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.1 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -352,10 +352,11 @@
 <span class="sd">    server, job, root, asset = common.active(&#39;asset&#39;, args=True)</span>
 <span class="sd">    asset = f&#39;{server}/{job}/{root}/{asset}&#39;</span>
 
-<span class="sd">Bookmarks considers any folder in the root of a bookmark item to be an asset. Note that</span>
-<span class="sd">we don&#39;t have any notion of asset types (like how some pipelines make a distinction</span>
+
+<span class="sd">The app considers folders found in the root of a bookmark item assets.</span>
+<span class="sd">We don&#39;t have any notion of asset types (like how some pipelines make a distinction</span>
 <span class="sd">between shots and assets), nor do we understand nested assets by default (like a</span>
-<span class="sd">``SEQ010/SH010 `` structure).</span>
+<span class="sd">``SEQ010/SH010`` structure).</span>
 
 <span class="sd">Asset data is queried by :class:`AssetItemModel`, and displayed by</span>
 <span class="sd">:class:`AssetItemView`. Any custom logic of how assets are queried should be</span>
@@ -513,14 +514,15 @@
 
             <span class="c1"># Beautify the name</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">get_display_name</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="n">parent_path_role</span> <span class="o">=</span> <span class="n">p</span> <span class="o">+</span> <span class="p">(</span><span class="n">filename</span><span class="p">,)</span>
 
             <span class="n">sort_by_name_role</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DEFAULT_SORT_BY_NAME_ROLE</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">u</span><span class="s1">&#39;/&#39;</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
                 <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">8</span><span class="p">:</span>
                     <span class="k">break</span>
                 <span class="n">sort_by_name_role</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="n">sort_by_name_role</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
-            <span class="n">parent_path_role</span> <span class="o">=</span> <span class="n">p</span> <span class="o">+</span> <span class="p">(</span><span class="n">filename</span><span class="p">,)</span>
 
             <span class="n">idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="n">common</span><span class="o">.</span><span class="n">max_list_items</span><span class="p">:</span>
@@ -539,6 +541,7 @@
                 <span class="c1">#</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">QueueRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">queues</span><span class="p">,</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">DataTypeRole</span><span class="p">:</span> <span class="n">t</span><span class="p">,</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">ItemTabRole</span><span class="p">:</span> <span class="n">common</span><span class="o">.</span><span class="n">AssetTab</span><span class="p">,</span>
                 <span class="c1">#</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">EntryRole</span><span class="p">:</span> <span class="p">[</span><span class="n">entry</span><span class="p">,</span> <span class="p">],</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">:</span> <span class="n">flags</span><span class="p">,</span>
@@ -706,14 +709,13 @@
         <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">flags</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="n">rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visualRect</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-        <span class="n">rectangles</span> <span class="o">=</span> <span class="n">delegate</span><span class="o">.</span><span class="n">get_rectangles</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inline_icons_count</span><span class="p">())</span>
-
-        <span class="k">if</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">delegate</span><span class="o">.</span><span class="n">AddAssetRect</span><span class="p">]</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">):</span>
+        <span class="n">rectangles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">itemDelegate</span><span class="p">()</span><span class="o">.</span><span class="n">get_rectangles</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">archived</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span>
+        <span class="k">if</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">delegate</span><span class="o">.</span><span class="n">AddAssetRect</span><span class="p">]</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">archived</span><span class="p">:</span>
             <span class="n">actions</span><span class="o">.</span><span class="n">show_add_file</span><span class="p">(</span><span class="n">asset</span><span class="o">=</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
             <span class="k">return</span>
 
-        <span class="k">if</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">delegate</span><span class="o">.</span><span class="n">PropertiesRect</span><span class="p">]</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">delegate</span><span class="o">.</span><span class="n">PropertiesRect</span><span class="p">]</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">archived</span><span class="p">:</span>
             <span class="n">actions</span><span class="o">.</span><span class="n">edit_asset</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
             <span class="k">return</span></div>
 

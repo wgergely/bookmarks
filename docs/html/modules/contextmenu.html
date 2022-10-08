@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="database" href="database.html" /><link rel="prev" title="common.ui" href="common/ui.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>contextmenu - Bookmarks 0.7.1 documentation</title>
+        <title>contextmenu - Bookmarks 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">Bookmarks 0.7.1 documentation</div></a>
+      <a href="../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.1 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -497,58 +497,61 @@ constructor takes a QModelIndex, stored in <code class="xref py py-attr docutils
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.remove_favourite_menu" title="bookmarks.contextmenu.BaseContextMenu.remove_favourite_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_favourite_menu</span></code></a>()</p></td>
 <td><p>List item favourite actions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.reveal_item_menu" title="bookmarks.contextmenu.BaseContextMenu.reveal_item_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reveal_item_menu</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.resizeEvent" title="bookmarks.contextmenu.BaseContextMenu.resizeEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resizeEvent</span></code></a>(self, event)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.reveal_item_menu" title="bookmarks.contextmenu.BaseContextMenu.reveal_item_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reveal_item_menu</span></code></a>()</p></td>
 <td><p>List item file reveal options.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.row_size_menu" title="bookmarks.contextmenu.BaseContextMenu.row_size_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">row_size_menu</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.row_size_menu" title="bookmarks.contextmenu.BaseContextMenu.row_size_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">row_size_menu</span></code></a>()</p></td>
 <td><p>List item row size actions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.separator" title="bookmarks.contextmenu.BaseContextMenu.separator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">separator</span></code></a>([menu])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.separator" title="bookmarks.contextmenu.BaseContextMenu.separator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">separator</span></code></a>([menu])</p></td>
 <td><p>Adds a menu separator item.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.setup" title="bookmarks.contextmenu.BaseContextMenu.setup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.setup" title="bookmarks.contextmenu.BaseContextMenu.setup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code></a>()</p></td>
 <td><p>Creates the context menu.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.sg_link_asset_menu" title="bookmarks.contextmenu.BaseContextMenu.sg_link_asset_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sg_link_asset_menu</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.sg_link_asset_menu" title="bookmarks.contextmenu.BaseContextMenu.sg_link_asset_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sg_link_asset_menu</span></code></a>()</p></td>
 <td><p>ShotGrid asset linker menu actions.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.sg_link_assets_menu" title="bookmarks.contextmenu.BaseContextMenu.sg_link_assets_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sg_link_assets_menu</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.sg_link_assets_menu" title="bookmarks.contextmenu.BaseContextMenu.sg_link_assets_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sg_link_assets_menu</span></code></a>()</p></td>
 <td><p>ShotGrid batch asset linker menu actions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.sg_link_bookmark_menu" title="bookmarks.contextmenu.BaseContextMenu.sg_link_bookmark_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sg_link_bookmark_menu</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.sg_link_bookmark_menu" title="bookmarks.contextmenu.BaseContextMenu.sg_link_bookmark_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sg_link_bookmark_menu</span></code></a>()</p></td>
 <td><p>ShotGrid bookmark item menu actions.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.sg_publish_menu" title="bookmarks.contextmenu.BaseContextMenu.sg_publish_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sg_publish_menu</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.sg_publish_menu" title="bookmarks.contextmenu.BaseContextMenu.sg_publish_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sg_publish_menu</span></code></a>()</p></td>
 <td><p>ShotGrid publish menu actions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.sg_rv_menu" title="bookmarks.contextmenu.BaseContextMenu.sg_rv_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sg_rv_menu</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.sg_rv_menu" title="bookmarks.contextmenu.BaseContextMenu.sg_rv_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sg_rv_menu</span></code></a>()</p></td>
 <td><p>ShotGrid RV menu actions.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.sg_thumbnail_menu" title="bookmarks.contextmenu.BaseContextMenu.sg_thumbnail_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sg_thumbnail_menu</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.sg_thumbnail_menu" title="bookmarks.contextmenu.BaseContextMenu.sg_thumbnail_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sg_thumbnail_menu</span></code></a>()</p></td>
 <td><p>ShotGrid thumbnail image menu actions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.sg_url_menu" title="bookmarks.contextmenu.BaseContextMenu.sg_url_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sg_url_menu</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.sg_url_menu" title="bookmarks.contextmenu.BaseContextMenu.sg_url_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sg_url_menu</span></code></a>()</p></td>
 <td><p>ShotGrid URL menu actions.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.showEvent" title="bookmarks.contextmenu.BaseContextMenu.showEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showEvent</span></code></a>(event)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.showEvent" title="bookmarks.contextmenu.BaseContextMenu.showEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showEvent</span></code></a>(event)</p></td>
 <td><p>Show event handler.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.show_add_asset_menu" title="bookmarks.contextmenu.BaseContextMenu.show_add_asset_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_add_asset_menu</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.show_add_asset_menu" title="bookmarks.contextmenu.BaseContextMenu.show_add_asset_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_add_asset_menu</span></code></a>()</p></td>
 <td><p>Add asset menu actions.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.sort_menu" title="bookmarks.contextmenu.BaseContextMenu.sort_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_menu</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.sort_menu" title="bookmarks.contextmenu.BaseContextMenu.sort_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_menu</span></code></a>()</p></td>
 <td><p>List item sorting options.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.task_folder_toggle_menu" title="bookmarks.contextmenu.BaseContextMenu.task_folder_toggle_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">task_folder_toggle_menu</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.task_folder_toggle_menu" title="bookmarks.contextmenu.BaseContextMenu.task_folder_toggle_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">task_folder_toggle_menu</span></code></a>()</p></td>
 <td><p>File item task folder picker menu.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.thumbnail_menu" title="bookmarks.contextmenu.BaseContextMenu.thumbnail_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thumbnail_menu</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.thumbnail_menu" title="bookmarks.contextmenu.BaseContextMenu.thumbnail_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thumbnail_menu</span></code></a>()</p></td>
 <td><p>Thumbnail image specific actions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.toggle_item_flags_menu" title="bookmarks.contextmenu.BaseContextMenu.toggle_item_flags_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_item_flags_menu</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.toggle_item_flags_menu" title="bookmarks.contextmenu.BaseContextMenu.toggle_item_flags_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_item_flags_menu</span></code></a>()</p></td>
 <td><p>List item filter flag toggle actions.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.window_menu" title="bookmarks.contextmenu.BaseContextMenu.window_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">window_menu</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.window_menu" title="bookmarks.contextmenu.BaseContextMenu.window_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">window_menu</span></code></a>()</p></td>
 <td><p>General application window specific actions.</p></td>
 </tr>
 </tbody>
@@ -727,6 +730,11 @@ constructor takes a QModelIndex, stored in <code class="xref py py-attr docutils
 <span class="sig-name descname"><span class="pre">remove_favourite_menu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/contextmenu.html#BaseContextMenu.remove_favourite_menu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.contextmenu.BaseContextMenu.remove_favourite_menu" title="Permalink to this definition">#</a></dt>
 <dd><p>List item favourite actions.</p>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.contextmenu.BaseContextMenu.resizeEvent">
+<span class="sig-name descname"><span class="pre">resizeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtGui.QResizeEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/bookmarks/contextmenu.html#BaseContextMenu.resizeEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.contextmenu.BaseContextMenu.resizeEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.contextmenu.BaseContextMenu.reveal_item_menu">
@@ -949,6 +957,7 @@ with a correct width, and hence we’ll calculate width manually here.</p>
 <li><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.quit_menu"><code class="docutils literal notranslate"><span class="pre">BaseContextMenu.quit_menu()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.refresh_menu"><code class="docutils literal notranslate"><span class="pre">BaseContextMenu.refresh_menu()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.remove_favourite_menu"><code class="docutils literal notranslate"><span class="pre">BaseContextMenu.remove_favourite_menu()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.resizeEvent"><code class="docutils literal notranslate"><span class="pre">BaseContextMenu.resizeEvent()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.reveal_item_menu"><code class="docutils literal notranslate"><span class="pre">BaseContextMenu.reveal_item_menu()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.row_size_menu"><code class="docutils literal notranslate"><span class="pre">BaseContextMenu.row_size_menu()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.contextmenu.BaseContextMenu.separator"><code class="docutils literal notranslate"><span class="pre">BaseContextMenu.separator()</span></code></a></li>

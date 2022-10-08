@@ -419,11 +419,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
             <span class="k">return</span>
 
-        <span class="n">rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">visualRect</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-        <span class="n">rectangles</span> <span class="o">=</span> <span class="n">delegate</span><span class="o">.</span><span class="n">get_rectangles</span><span class="p">(</span>
-            <span class="n">rect</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">inline_icons_count</span><span class="p">())</span>
-        <span class="n">description_rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">itemDelegate</span><span class="p">(</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">get_description_rect</span><span class="p">(</span><span class="n">rectangles</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+        <span class="n">rectangles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">itemDelegate</span><span class="p">()</span><span class="o">.</span><span class="n">get_rectangles</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="n">_rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">visualRect</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">description_rect</span> <span class="o">=</span> <span class="n">delegate</span><span class="o">.</span><span class="n">get_description_rectangle</span><span class="p">(</span>
+            <span class="n">index</span><span class="p">,</span> <span class="n">_rect</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">buttons_hidden</span><span class="p">())</span>
 
         <span class="c1"># Won&#39;t be showing the editor if there&#39;s no appropriate description area</span>
         <span class="c1"># provided by the delegate (e.g. the bookmark items don&#39;t have this)</span>

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>bookmarks.images - Bookmarks 0.7.1 documentation</title>
+        <title>bookmarks.images - Bookmarks 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -133,7 +133,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">Bookmarks 0.7.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -160,7 +160,7 @@
     <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.1 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -529,7 +529,10 @@
                 <span class="k">return</span> <span class="n">thumb_path</span>
             <span class="k">if</span> <span class="n">pixmap</span><span class="p">:</span>
                 <span class="k">with</span> <span class="n">lock</span><span class="p">:</span>
-                    <span class="n">color</span> <span class="o">=</span> <span class="n">ImageCache</span><span class="o">.</span><span class="n">get_color</span><span class="p">(</span><span class="n">thumb_path</span><span class="p">)</span>
+                    <span class="n">color</span> <span class="o">=</span> <span class="n">ImageCache</span><span class="o">.</span><span class="n">get_color</span><span class="p">(</span>
+                        <span class="n">thumb_path</span><span class="p">,</span>
+                        <span class="nb">hash</span><span class="o">=</span><span class="n">_hash</span><span class="p">,</span>
+                    <span class="p">)</span>
                 <span class="k">return</span> <span class="n">pixmap</span><span class="p">,</span> <span class="n">color</span>
             <span class="n">n</span> <span class="o">-=</span> <span class="mi">1</span>
 
@@ -791,7 +794,6 @@
                 <span class="n">buf</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">))</span>
 
     <span class="n">np_arr</span> <span class="o">=</span> <span class="n">buf</span><span class="o">.</span><span class="n">get_pixels</span><span class="p">(</span><span class="n">OpenImageIO</span><span class="o">.</span><span class="n">UINT8</span><span class="p">)</span>
-    <span class="c1"># np_arr = (np_arr / (1.0 / 255.0)).astype(np.uint8)</span>
 
     <span class="k">if</span> <span class="n">np_arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">_format</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QImage</span><span class="o">.</span><span class="n">Format_Grayscale8</span>
@@ -1057,25 +1059,27 @@
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;`cache_type` is invalid.&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ImageCache.get_color"><a class="viewcode-back" href="../../modules/images.html#bookmarks.images.ImageCache.get_color">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_color</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_color</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="nb">hash</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Gets a cached QColor associated with the given source.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            source (str): A file path.</span>
 <span class="sd">            force (bool): Force value recache.</span>
+<span class="sd">            hash (str): Hash value override.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
         <span class="c1"># Check the cache and return the previously stored value if exists</span>
-        <span class="n">_hash</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_hash</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hash</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">hash</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_hash</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">_hash</span><span class="p">,</span> <span class="n">ColorType</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">make_color</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">cls</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">_hash</span><span class="p">,</span> <span class="n">ColorType</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">_hash</span><span class="p">,</span> <span class="n">ColorType</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">cls</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">_hash</span><span class="p">,</span> <span class="n">ColorType</span><span class="p">)</span> <span class="ow">and</span> <span class="n">force</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">make_color</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="nb">hash</span><span class="p">,</span> <span class="n">ColorType</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">make_color</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">hash</span><span class="o">=</span><span class="nb">hash</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">cls</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="nb">hash</span><span class="p">,</span> <span class="n">ColorType</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="nb">hash</span><span class="p">,</span> <span class="n">ColorType</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">cls</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="nb">hash</span><span class="p">,</span> <span class="n">ColorType</span><span class="p">)</span> <span class="ow">and</span> <span class="n">force</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">make_color</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">hash</span><span class="o">=</span><span class="nb">hash</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="ImageCache.make_color"><a class="viewcode-back" href="../../modules/images.html#bookmarks.images.ImageCache.make_color">[docs]</a>    <span class="nd">@classmethod</span>
@@ -1151,8 +1155,8 @@
 
 <div class="viewcode-block" id="ImageCache.rsc_pixmap"><a class="viewcode-back" href="../../modules/images.html#bookmarks.images.ImageCache.rsc_pixmap">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">rsc_pixmap</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">resource</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">GuiResource</span><span class="p">,</span>
-                   <span class="n">get_path</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Loads an image resource and returns it as a sized (and recolored) QPixmap.</span>
+                   <span class="n">get_path</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">oiio</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Loads an image resource and returns it as a resized (and recolored) QPixmap.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            name (str): Name of the resource without the extension.</span>
@@ -1169,7 +1173,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
         <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">))</span>
-        <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span>
         <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">opacity</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
 
         <span class="n">source</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">rsc</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">resource</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">thumbnail_format</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -1178,15 +1182,14 @@
             <span class="n">file_info</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileInfo</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">file_info</span><span class="o">.</span><span class="n">absoluteFilePath</span><span class="p">()</span>
 
+        <span class="n">size</span> <span class="o">=</span> <span class="n">size</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
         <span class="n">_color</span> <span class="o">=</span> <span class="n">color</span><span class="o">.</span><span class="n">name</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;null&#39;</span>
         <span class="n">k</span> <span class="o">=</span> <span class="s1">&#39;rsc:&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">size</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">_color</span>
 
         <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">image_resource_data</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">image_resource_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
 
-        <span class="n">image</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QImage</span><span class="p">()</span>
-        <span class="n">image</span><span class="o">.</span><span class="n">setDevicePixelRatio</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">pixel_ratio</span><span class="p">)</span>
-        <span class="n">image</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">oiio</span><span class="o">=</span><span class="n">oiio</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">isNull</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">()</span>
 
@@ -1200,9 +1203,6 @@
             <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QBrush</span><span class="p">(</span><span class="n">color</span><span class="p">))</span>
             <span class="n">painter</span><span class="o">.</span><span class="n">drawRect</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">rect</span><span class="p">())</span>
             <span class="n">painter</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
-
-        <span class="n">image</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">resize_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">size</span> <span class="o">*</span> <span class="n">common</span><span class="o">.</span><span class="n">pixel_ratio</span><span class="p">)</span>
-        <span class="n">image</span><span class="o">.</span><span class="n">setDevicePixelRatio</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">pixel_ratio</span><span class="p">)</span>
 
         <span class="c1"># Setting transparency</span>
         <span class="k">if</span> <span class="n">opacity</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>

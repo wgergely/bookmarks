@@ -904,7 +904,7 @@ class NoteEditor(QtWidgets.QDialog):
         if event.type() == QtCore.QEvent.Paint:
             painter = QtGui.QPainter()
             painter.begin(self)
-            font = common.font_db.secondary_font(
+            font = common.font_db.medium_font(
                 common.size(common.size_font_medium)
             )[0]
             painter.setFont(font)

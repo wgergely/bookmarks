@@ -191,13 +191,6 @@ class ToggleArchivedButton(BaseControlButton):
             return
         return common.widget().model().filter_flag(common.MarkedAsArchived)
 
-    def update(self):
-        super(ToggleArchivedButton, self).update()
-        if common.current_tab() < common.FavouriteTab:
-            self.show()
-        else:
-            self.hide()
-
 
 class ToggleInlineIcons(BaseControlButton):
     def __init__(self, parent=None):
@@ -219,9 +212,6 @@ class ToggleInlineIcons(BaseControlButton):
             return False
         val = common.widget().buttons_hidden()
         return val
-
-    def hideEvent(self, event):
-        common.sort_by_basename = False
 
 
 class ToggleFavouriteButton(BaseControlButton):

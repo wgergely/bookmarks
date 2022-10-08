@@ -78,8 +78,6 @@ def initialize(mode):
         from .. import main
         main.init()
 
-    common.init_monitor()
-
     # Start non-model linked worker threads
     _threads = []
     from ..threads import threads
@@ -184,38 +182,6 @@ def _add_path_to_path(v, p):
 
     if _v.lower() not in os.environ['PATH'].lower():
         os.environ['PATH'] = f'{os.path.normpath(_v)};{os.environ["PATH"].strip(";")}'
-
-
-def init_environment(key, add_private=False):
-    """Add the dependencies to the Python environment.
-
-    The method requires that `env_key` is set. The key is usually set
-    by the Bookmark installer to point to the installation root directory.
-
-    Raises:
-            EnvironmentError: When the `key` environment is not set.
-            RuntimeError: When the `key` environment is invalid or points to a missing
-                            directory.
-
-    """
-    if key not in os.environ:
-        raise EnvironmentError(
-            f'"{key}" environment variable is not set.'
-        )
-    v = os.environ[key]
-    if not os.path.isdir(v):
-        raise RuntimeError(
-            f'"{v}" is not a valid folder. Is "{key}" environment variable set?'
-        )
-
-    _add_path_to_path(v, '.')
-    _add_path_to_path(v, 'bin')
-
-    _add_path_to_sys(v, 'shared')
-    if add_private:
-        _add_path_to_sys(v, 'core')
-    if v not in sys.path:
-        sys.path.append(v)
 
 
 def verify_dependencies():

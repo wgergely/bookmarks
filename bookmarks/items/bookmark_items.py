@@ -328,13 +328,13 @@ class BookmarkItemView(views.ThreadedItemView):
             return
 
         rectangles = self.itemDelegate().get_rectangles(index)
-
+        archived = index.data(common.FlagsRole) & common.MarkedAsArchived
         server, job, root = index.data(common.ParentPathRole)[0:3]
-        if rectangles[delegate.AddAssetRect].contains(cursor_position):
+        if rectangles[delegate.AddAssetRect].contains(cursor_position) and not archived:
             actions.show_add_asset(server=server, job=job, root=root)
             return
 
-        if rectangles[delegate.PropertiesRect].contains(cursor_position):
+        if rectangles[delegate.PropertiesRect].contains(cursor_position) and not archived:
             actions.edit_bookmark(server=server, job=job, root=root)
             return
 

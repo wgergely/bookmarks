@@ -343,7 +343,7 @@ class MainWidget(QtWidgets.QWidget):
         painter.drawRect(rect)
 
     def _paint_loading(self, painter):
-        font, metrics = common.font_db.primary_font(
+        font, metrics = common.font_db.bold_font(
             common.size(common.size_font_medium))
         rect = QtCore.QRect(self.rect())
         align = QtCore.Qt.AlignCenter

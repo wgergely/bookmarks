@@ -483,7 +483,7 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
                 icon = folder_icon
 
             item = QtWidgets.QListWidgetItem(parent=self)
-            item.setData(QtCore.Qt.FontRole, common.font_db.secondary_font(
+            item.setData(QtCore.Qt.FontRole, common.font_db.medium_font(
                 common.size(common.size_font_small))[0])
             item.setData(QtCore.Qt.DisplayRole, f)
             item.setData(QtCore.Qt.SizeHintRole, size)
@@ -508,7 +508,7 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
             painter.setPen(QtCore.Qt.NoPen)
 
             painter.setFont(
-                common.font_db.secondary_font(common.size(common.size_font_small))[0])
+                common.font_db.medium_font(common.size(common.size_font_small))[0])
             painter.drawRect(self.rect())
             o = common.size(common.size_font_medium)
             rect = self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o))

@@ -61,13 +61,13 @@ class TaskItemViewDelegate(delegate.ItemDelegate):
         """
         return QtCore.QRect()
 
-    def _get_text_segments(self, *args, **kwargs):
+    def get_text_segments(self, *args, **kwargs):
         """Get text segments.
         
         """
         return []
 
-    @delegate.paintmethod
+    @delegate.save_painter
     def paint_background(self, *args):
         """Paints the background.
         
@@ -113,7 +113,7 @@ class TaskItemViewDelegate(delegate.ItemDelegate):
             painter.setBrush(color)
             painter.drawRect(rect)
 
-    @delegate.paintmethod
+    @delegate.save_painter
     def paint_name(self, *args):
         """Paints the name and the number of files available for the given
         task item.
@@ -137,7 +137,7 @@ class TaskItemViewDelegate(delegate.ItemDelegate):
         color = common.color(common.color_selected_text) if active else color
         color = common.color(common.color_selected_text) if selected else color
 
-        font = common.font_db.primary_font(
+        font = common.font_db.bold_font(
             common.size(common.size_font_medium)
         )[0]
 
@@ -189,15 +189,15 @@ class TaskItemViewDelegate(delegate.ItemDelegate):
 
             width = common.draw_aliased_text(
                 painter,
-                common.font_db.secondary_font(common.size(common.size_font_small))[0],
+                common.font_db.medium_font(common.size(common.size_font_small))[0],
                 rect,
-                '    |    ', align, common.color(common.color_separator)
+                '    ｜    ', align, common.color(common.color_separator)
             )
             rect.setLeft(rect.left() + width)
 
             width = common.draw_aliased_text(
                 painter,
-                common.font_db.primary_font(
+                common.font_db.bold_font(
                     common.size(common.size_font_medium)
                 )[0],
                 rect,
@@ -285,6 +285,7 @@ class TaskItemModel(models.ItemModel):
                     #
                     common.QueueRole: self.queues,
                     common.DataTypeRole: common.FileItem,
+                    common.ItemTabRole: common.TaskTab,
                     #
                     common.EntryRole: [entry, ],
                     common.FlagsRole: flags,

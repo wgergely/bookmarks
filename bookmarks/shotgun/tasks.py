@@ -353,11 +353,11 @@ class TaskModel(QtCore.QAbstractItemModel):
             return common.color(common.color_disabled_text)
 
         if role == QtCore.Qt.FontRole and column == 0:
-            font, _ = common.font_db.primary_font(
+            font, _ = common.font_db.bold_font(
                 common.size(common.size_font_medium))
             return font
         if role == QtCore.Qt.FontRole and column > 0:
-            font, _ = common.font_db.secondary_font(
+            font, _ = common.font_db.medium_font(
                 common.size(common.size_font_small))
             return font
 

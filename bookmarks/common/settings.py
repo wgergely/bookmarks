@@ -50,7 +50,6 @@ SECTIONS = {
         'filters/collapsed',
         'filters/text',
         'filters/text_history',
-        'filters/sort_by_basename',
         'filters/sort_by',
         'filters/sort_order',
         'filters/row_heights',

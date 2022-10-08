@@ -115,10 +115,12 @@ def check_type(value, _type):
         return
 
     if isinstance(_type, tuple):
-        if not any([isinstance(value, type(f) if f is None else f) for f in _type]):
+        _type = [type(f) if f is None else f for f in _type]
+        _types = [isinstance(value, type(f) if f is None else f) for f in _type]
+        if not any(_types):
             _types = '" or "'.join([f.__name__ for f in _type])
             raise TypeError(
-                f'Invalid type. Expected "{_types}", got "{type(value).__name__}"'
+                f'Invalid type. Expected "{_types}", got "{type(value).__name__}" >>\n{value}'
             )
     else:
         _type = type(_type) if _type is None else _type

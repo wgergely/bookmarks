@@ -1557,10 +1557,13 @@ class InlineIconView(BaseItemView):
         shift_modifier = modifiers & QtCore.Qt.ShiftModifier
         control_modifier = modifiers & QtCore.Qt.ControlModifier
 
-        # Let's handle the clickable rectangle event first
-        self.clickable_rectangle_event(event)
-
         index = self.indexAt(event.pos())
+        archived = index.data(common.FlagsRole) & common.MarkedAsArchived
+
+        # Let's handle the clickable rectangle event first
+        if not archived:
+            self.clickable_rectangle_event(event)
+
         if not index.isValid():
             self.reset_multi_toggle()
             super(InlineIconView, self).mouseReleaseEvent(event)
@@ -1577,8 +1580,7 @@ class InlineIconView(BaseItemView):
         cursor_position = self.mapFromGlobal(common.cursor.pos())
 
         self.reset_multi_toggle()
-
-        if rectangles[delegate.FavouriteRect].contains(cursor_position):
+        if rectangles[delegate.FavouriteRect].contains(cursor_position) and not archived:
             actions.toggle_favourite()
             if not self.model().filter_flag(common.MarkedAsFavourite):
                 self.model().invalidateFilter()
@@ -1588,7 +1590,7 @@ class InlineIconView(BaseItemView):
             if not self.model().filter_flag(common.MarkedAsArchived):
                 self.model().invalidateFilter()
 
-        if rectangles[delegate.RevealRect].contains(cursor_position):
+        if rectangles[delegate.RevealRect].contains(cursor_position) and not archived:
             # Reveal the job folder if any of the modifiers are pressed
             if any((alt_modifier, shift_modifier, control_modifier)):
                 pp = index.data(common.ParentPathRole)
@@ -1597,7 +1599,7 @@ class InlineIconView(BaseItemView):
             else:
                 actions.reveal(index)
 
-        if rectangles[delegate.TodoRect].contains(cursor_position):
+        if rectangles[delegate.TodoRect].contains(cursor_position) and not archived:
             actions.show_todos()
 
         super(InlineIconView, self).mouseReleaseEvent(event)

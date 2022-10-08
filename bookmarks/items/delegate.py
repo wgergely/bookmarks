@@ -1407,6 +1407,8 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
                 painter.setOpacity(1.0)
             color = color if color else QtGui.QColor(0, 0, 0, 50)
             painter.setBrush(color)
+            if archived:
+                painter.setOpacity(0.1)
             painter.drawRect(rectangles[ThumbnailRect])
 
         if not pixmap:
@@ -1418,6 +1420,8 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
             rectangles[ThumbnailRect].height(), pixmap.width(), pixmap.height()
         )
         _rect.moveCenter(rectangles[ThumbnailRect].center())
+        if archived:
+            painter.setOpacity(0.1)
         painter.drawPixmap(_rect, pixmap, pixmap.rect())
 
     @save_painter

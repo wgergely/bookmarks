@@ -33,7 +33,7 @@ Download
     `Bookmarks v0.7.1 <https://github.com/wgergely/bookmarks/releases/download/0.7.1/Bookmarks_0.7.1.exe>`_.
 
 
-`All releases <https://github.com/wgergely/bookmarks/releases>`_:
+`You can find older releases here <https://github.com/wgergely/bookmarks/releases>`_.
 
 
 I have an issue or question
@@ -129,7 +129,7 @@ Add bookmark items
 
         Right-click and select 'Manage bookmark items...' on the Bookmark tab button or window.
 
-|
+
 .. carousel::
     :data-bs-keyboard: true
     :data-bs-wrap: true

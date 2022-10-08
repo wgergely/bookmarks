@@ -1,3 +1,8 @@
+.. meta::
+    :description: Bookmarks: A free and open-source asset manager for film, animation and VFX projects.
+    :keywords: Bookmarks, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO
+
+
 ==============
 User Guide
 ==============
@@ -5,16 +10,14 @@ User Guide
 What is this, and why does it exist?
 ----------------------------------------
 
-..  youtube:: oKb8KGj78Rg
-    :align: center
-    :aspect: 16:9
+
+😊️ Bookmarks is a free and open-source asset manager for film, animation and VFX projects.
 
 
-Bookmarks is a simple asset manager for film, animation and VFX projects. It is free and open-source.
+😵  It can be your local hub for accessing assets and files and connecting them with external resources, such as ShotGrid entities and URLs, or a place for notes and comments.
 
-It can be a local hub for accessing assets and files and connecting them with external resources, such as ShotGrid entities and URLs, or a place for notes and comments.
 
-It helps me (the author) create jobs and assets and keep scene files named neat and consistent!
+🥳  It helps me create my jobs, shot and asset folders and keep scene files named neat and consistent.
 
 
 .. |active_bookmark| image:: images/active_bookmark.png
@@ -24,57 +27,93 @@ It helps me (the author) create jobs and assets and keep scene files named neat 
 Download
 -------------------------
 
-Download and install the latest release from `github <https://github.com/wgergely/bookmarks/releases>`_:
 
 .. admonition:: Latest Windows Release
 
     `Bookmarks v0.7.1 <https://github.com/wgergely/bookmarks/releases/download/0.7.1/Bookmarks_0.7.1.exe>`_.
 
 
+`All releases <https://github.com/wgergely/bookmarks/releases>`_:
+
 
 I have an issue or question
 ----------------------------------------------
 
-The best place to report bugs, errors, and feature requests is on github.
-
 `Github Issue Tracker <https://github.com/wgergely/bookmarks/issues>`_
 
-Contact the author:
+
+Contact
+---------
 
 `E-mail <mailto:%22Gergely%20Wootsch%22%3chello@gergely-wootsch.com%3e?subject=%5BBookmarks%5D>`_
-
-`Twitter <https://twitter.com/wgergely>`_
 
 
 How does it work?
 -------------------------
 
-The app breaks down projects into separate **bookmark** items. These are simply folders inside a job, like the 'scenes' or 'asset' folders, where production content usually resides.
+Bookmarks reads the content of projects from bookmark, and asset folders. Bookmark items are folders inside a job folder, like a 'scenes' or 'assets' folder, or any other folder where production content resides.
 
-Bookmark items are comprised of 'server', 'job' and 'root' parts, for example:
 
-    ``//server/jobs/project_0010/path/to/shots_folder`` is a bookmark item, where **//server/jobs** is the server, **project_0010** is the job and **path/to/shots_folder** is the root folder.
+    .. figure:: images/structure.png
+        :width: 400
 
-The app will use the bookmark items to look for assets and the assets to look for files. These items are shown in their own separate tabs:
+    Bookmark items comprise of server, job and root folders.
+    For example: ``//server/jobs/project_0010/path/to/shots_folder`` is a bookmark item, where **//server/jobs** is the server, **project_0010** is the job and **path/to/shots_folder** is the root folder.
 
+    Assets reside in bookmark items and files are read from 'task' folders found inside an asset.
+
+
+    This is how Bookmarks sees a project:
+
+    .. figure:: images/tree.png
+        :width: 280
+
+
+.. note::
+
+    File thumbnails and saved properties are stored in the ``.bookmark`` cache folder.
+
+
+
+.. |structure| image:: images/structure.png
+    :width: 480
+.. |tree| image:: images/tree.png
+    :width: 280
+
+
+
+Here are the main tabs used by the app to display these items:
 
 .. centered:: |window_tabs|
 
-
 .. |window_tabs| image:: images/window_tabs.png
+
+.. note::
+
+    Per the explanation above, the files are only shown if there's a task folder selected.
+    To pick a task folder use the Files tab's dropdown menu or right-click and select
+    'Select Task Folder...'.
+
+
 
 
 How do I use it?
 --------------------
 
+Here's an awful video of me mumbling, and trying hard to show you how to set it up and
+create name template files.
 
-Let's set a demo project up from scratch and create a template file to be used as a naming reference for an After Effects scene file.
+..  youtube:: oKb8KGj78Rg
+    :align: center
+    :aspect: 16:9
 
 
-1. Add bookmark items
-*************************
+Step-by-step guide
+++++++++++++++++++
 
-First, let's create a new job called **DEMO**. With the Bookmarks tab active, right-click and select 'Manage bookmark items...'.
+
+Add bookmark items
+******************
 
 
 .. carousel::
@@ -83,10 +122,21 @@ First, let's create a new job called **DEMO**. With the Bookmarks tab active, ri
     :data-bs-touch: true
     :data-bs-pause: hover
     :data-bs-interval: false
-    :show_controls:
-    :no_fade:
+        
 
-    .. image:: images/bookmark_add.png
+    .. figure:: images/bookmark_add.png
+        :width: 480
+
+        Right-click and select 'Manage bookmark items...' on the Bookmark tab button or window.
+
+|
+.. carousel::
+    :data-bs-keyboard: true
+    :data-bs-wrap: true
+    :data-bs-touch: true
+    :data-bs-pause: hover
+    :data-bs-interval: false
+
     .. image:: images/job_add.png
 
 

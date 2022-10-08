@@ -183,7 +183,10 @@ def get_thumbnail(server, job, root, source, size=common.thumbnail_size,
                 return thumb_path
             if pixmap:
                 with lock:
-                    color = ImageCache.get_color(thumb_path)
+                    color = ImageCache.get_color(
+                        thumb_path,
+                        hash=_hash
+                    )
                 return pixmap, color
             n -= 1
 
@@ -711,25 +714,29 @@ class ImageCache(QtCore.QObject):
         raise TypeError('`cache_type` is invalid.')
 
     @classmethod
-    def get_color(cls, source, force=False):
+    def get_color(cls, source, hash=None, force=False):
         """Gets a cached QColor associated with the given source.
 
         Args:
             source (str): A file path.
             force (bool): Force value recache.
+            hash (str): Hash value override.
 
         """
         common.check_type(source, str)
 
         # Check the cache and return the previously stored value if exists
-        _hash = common.get_hash(source)
+        if hash is None:
+            hash = common.get_hash(source)
+        else:
+            hash = common.get_hash(source)
 
-        if not cls.contains(_hash, ColorType):
-            return cls.make_color(source)
-        elif cls.contains(_hash, ColorType) and not force:
-            return cls.value(_hash, ColorType)
-        elif cls.contains(_hash, ColorType) and force:
-            return cls.make_color(source)
+        if not cls.contains(hash, ColorType):
+            return cls.make_color(source, hash=hash)
+        elif cls.contains(hash, ColorType) and not force:
+            return cls.value(hash, ColorType)
+        elif cls.contains(hash, ColorType) and force:
+            return cls.make_color(source, hash=hash)
         return None
 
     @classmethod

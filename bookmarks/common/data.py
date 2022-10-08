@@ -31,14 +31,7 @@ def sort_data(ref, sort_by, sort_order):
         """Returns the sort key of the given item.
 
         """
-        # If sort_by_basename is `True` we'll use the base file name for sorting
         v = ref().__getitem__(_idx)
-        if (
-                common.sort_by_basename and
-                sort_by == common.SortByNameRole and
-                isinstance(v[sort_by], list)
-        ):
-            return v[sort_by][-1]
         return v[sort_by]
 
     sorted_idxs = sorted(

@@ -440,7 +440,7 @@ def get_bookmark_description(bookmark_row_data):
         str:    The description of the bookmark.
 
     """
-    sep = '  |  '
+    sep = '  •  '
     try:
         v = {}
         for k in ('description', 'width', 'height', 'framerate', 'prefix'):
@@ -450,7 +450,7 @@ def get_bookmark_description(bookmark_row_data):
 
         description = f'{v["description"]}{sep}' if v['description'] else ''
         width = v['width'] if (v['width'] and v['height']) else ''
-        height = f'x{v["height"]}px' if (v['width'] and v['height']) else ''
+        height = f'*{v["height"]}' if (v['width'] and v['height']) else ''
         framerate = f'{sep}{v["framerate"]}fps' if v['framerate'] else ''
         prefix = f'{sep}{v["prefix"]}' if v['prefix'] else ''
 
@@ -508,17 +508,18 @@ def update_shotgun_configured(pp, b, a, ref):
         return
     b_conf = (b['shotgun_domain'], b['shotgun_scriptname'], b['shotgun_api_key'])
     b_item_conf = (b['shotgun_id'], b['shotgun_name'], b['shotgun_type'])
-    if pp == 3:
+    if len(pp) == 3:
         if all(b_conf + b_item_conf):
             ref()[common.ShotgunLinkedRole] = True
-            return
-    if pp == 4:
+            return True
+    if len(pp) == 4:
         a_item_conf = (a['shotgun_id'], a['shotgun_name'], a['shotgun_type'])
         if all(b_conf + b_item_conf + a_item_conf):
             ref()[common.ShotgunLinkedRole] = True
-            return
+            return True
 
     ref()[common.ShotgunLinkedRole] = False
+    return False
 
 
 class InfoWorker(BaseWorker):
@@ -761,7 +762,8 @@ class ThumbnailWorker(BaseWorker):
                 not ref() or
                 self.interrupt or
                 ref()[common.ThumbnailLoaded] or
-                ref()[common.FlagsRole] & common.MarkedAsArchived
+                ref()[common.FlagsRole] & common.MarkedAsArchived or
+                ref()[common.ItemTabRole] != common.FileTab
         ) else True
 
     @process

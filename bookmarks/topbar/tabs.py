@@ -63,7 +63,7 @@ class BaseTabButton(QtWidgets.QLabel):
 
     def get_width(self):
         o = common.size(common.size_indicator) * 6
-        _, metrics = common.font_db.primary_font(
+        _, metrics = common.font_db.bold_font(
             common.size(common.size_font_medium))
         return metrics.horizontalAdvance(self.text()) + o
 
@@ -106,7 +106,7 @@ class BaseTabButton(QtWidgets.QLabel):
                 common.color_background)
             painter.setBrush(color)
 
-        font, metrics = common.font_db.primary_font(
+        font, metrics = common.font_db.bold_font(
             common.size(common.size_font_medium))
 
         # When the width of the button is very small, we'll switch to an icon
@@ -137,8 +137,7 @@ class BaseTabButton(QtWidgets.QLabel):
                 width = metrics.horizontalAdvance(self.text())
                 x = (self.width() / 2.0) - (width / 2.0)
                 y = self.rect().center().y() + (metrics.ascent() * 0.5)
-                path = delegate.get_painter_path(x, y, font, self.text())
-                painter.drawPath(path)
+                delegate.draw_painter_path(painter, x, y, font, self.text())
             else:
                 # Draw icon
                 pixmap = images.ImageCache.rsc_pixmap(

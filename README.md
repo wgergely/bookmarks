@@ -11,7 +11,7 @@
 </p> 
 
 <p align="center">
-  Bookmarks is a lightweight Python asset manager designed to browse and manage the content of animation, VFX and film projects.
+  ☺  Bookmarks is a free and open-source Python asset manager designed to browse and manage the content of animation, VFX and film projects.
 </p>
 
 ---

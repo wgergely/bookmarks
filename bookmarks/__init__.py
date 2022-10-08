@@ -124,11 +124,6 @@ def info():
     sg_ver = importlib.import_module('shotgun_api3').__version__
     slack_ver = importlib.import_module('slack_sdk.version').__version__
 
-    from . import common
-    if common.env_key not in os.environ:
-        env = f'{common.env_key} is not set!'
-    else:
-        env = f'{common.env_key}={os.environ[common.env_key]}'
     return '\n'.join(
         (
             __copyright__,
@@ -141,7 +136,6 @@ def info():
             f'OpenImageIO {oiio_ver}',
             f'ShotGrid API {sg_ver}',
             f'Slack SDK {slack_ver}',
-            f'{env}'
         )
     )
 

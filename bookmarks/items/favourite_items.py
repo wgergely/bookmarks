@@ -86,7 +86,6 @@ class FavouriteItemModel(file_items.FileItemModel):
         self.reset_timer.timeout.connect(
             functools.partial(self.reset_data, force=True)
         )
-        common.signals.favouritesChanged.connect(self.queued_model_reset)
 
     @QtCore.Slot()
     def queued_model_reset(self):
@@ -114,15 +113,13 @@ class FavouriteItemModel(file_items.FileItemModel):
             if self._interrupt_requested:
                 break
 
+            sort_by_type_role = 0
             if len(source_paths) == 3:
-                p = source_paths[0:3]
+                sort_by_type_role = 0
             elif len(source_paths) == 4:
-                p = source_paths[0:4]
-
-            if len(source_paths) <= 4:
-                k = 'default'
-            else:
-                k = source_paths[4]
+                sort_by_type_role = 1
+            elif len(source_paths) > 4:
+                sort_by_type_role = 2
 
             _source_path = '/'.join(source_paths)
             filename = entry.name
@@ -131,6 +128,10 @@ class FavouriteItemModel(file_items.FileItemModel):
                 entry.path,
                 _source_path
             )
+
+            for idx, _p in enumerate(source_paths):
+                sort_by_name_role[idx] = _p
+
             flags = models.DEFAULT_ITEM_FLAGS
             seq, sequence_path = file_items.get_sequence_elements(filepath)
 
@@ -140,10 +141,6 @@ class FavouriteItemModel(file_items.FileItemModel):
                 flags = flags | common.MarkedAsFavourite
 
             parent_path_role = source_paths
-
-            if '.' not in filename:
-                for idx in range(6):
-                    sort_by_name_role[idx] = 'zzzz'
 
             # Let's limit the maximum number of items we load
             idx = len(data)
@@ -158,6 +155,7 @@ class FavouriteItemModel(file_items.FileItemModel):
                 #
                 common.QueueRole: self.queues,
                 common.DataTypeRole: t,
+                common.ItemTabRole: common.FavouriteTab,
                 #
                 common.EntryRole: [entry, ],
                 common.FlagsRole: flags,
@@ -178,7 +176,7 @@ class FavouriteItemModel(file_items.FileItemModel):
                 common.SortByNameRole: sort_by_name_role,
                 common.SortByLastModifiedRole: 0,
                 common.SortBySizeRole: 0,
-                common.SortByTypeRole: ext,
+                common.SortByTypeRole: sort_by_type_role,
                 #
                 common.IdRole: idx,  # non-mutable
                 #
@@ -207,6 +205,7 @@ class FavouriteItemModel(file_items.FileItemModel):
                         QtCore.Qt.SizeHintRole: self.row_size,
                         #
                         common.QueueRole: self.queues,
+                        common.ItemTabRole: common.FavouriteTab,
                         #
                         common.EntryRole: [],
                         common.FlagsRole: flags,
@@ -227,7 +226,7 @@ class FavouriteItemModel(file_items.FileItemModel):
                         common.SortByNameRole: sort_by_name_role,
                         common.SortByLastModifiedRole: 0,
                         common.SortBySizeRole: 0,  # Initializing with null-size,
-                        common.SortByTypeRole: ext,
+                        common.SortByTypeRole: sort_by_type_role,
                         #
                         common.IdRole: 0,
                         #
@@ -293,8 +292,6 @@ class FavouriteItemModel(file_items.FileItemModel):
         corresponding to the saved favourites.
 
         """
-        entries = []
-
         for k in common.favourites:
             file_info = QtCore.QFileInfo(k)
             _path = file_info.path()
@@ -306,14 +303,11 @@ class FavouriteItemModel(file_items.FileItemModel):
             for entry in os.scandir(_path):
                 path = entry.path.replace('\\', '/')
                 if path == k:
-                    entries.append((entry, source_paths))
+                    yield entry, source_paths
                     continue
                 _k = common.proxy_path(path)
                 if k == _k:
-                    entries.append((entry, source_paths))
-
-        for args in entries:
-            yield args
+                    yield entry, source_paths
 
     def task(self):
         """The model's associated task.
@@ -343,20 +337,6 @@ class FavouriteItemView(file_items.FileItemView):
         super().__init__(
             icon=icon,
             parent=parent
-        )
-
-    def toggle_item_flag(self, index, flag, state=None, commit_now=True):
-        """:meth:`~bookmarks.items.view.BaseItemView` override.
-
-        """
-        if flag != common.MarkedAsFavourite:
-            return
-
-        super().toggle_item_flag(
-            index,
-            flag,
-            state=False,
-            commit_now=commit_now
         )
 
     def dragEnterEvent(self, event):

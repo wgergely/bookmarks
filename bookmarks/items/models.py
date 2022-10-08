@@ -42,6 +42,8 @@ DEFAULT_ITEM_FLAGS = (
         QtCore.Qt.ItemIsEnabled |
         QtCore.Qt.ItemIsSelectable
 )
+
+#: A default container used to sort items by name
 DEFAULT_SORT_BY_NAME_ROLE = [str()] * 8
 
 
@@ -202,9 +204,6 @@ class ItemModel(QtCore.QAbstractListModel):
         self.modelAboutToBeReset.connect(common.signals.updateTopBarButtons)
         self.modelReset.connect(common.signals.updateTopBarButtons)
 
-        self.init_sort_values()
-        self.init_row_size()
-
     def item_generator(self):
         """A generator method used by :func:`init_data` to yield the items the model
         should load.
@@ -339,13 +338,11 @@ class ItemModel(QtCore.QAbstractListModel):
 
         """
         val = self.get_filter_setting('filters/row_heights')
-
         h = self.default_row_size().height()
         val = h if val is None else val
         val = h if val < h else val
         val = int(common.thumbnail_size) if val >= int(
             common.thumbnail_size) else val
-
         self.row_size.setHeight(int(val))
 
     def sort_by(self):

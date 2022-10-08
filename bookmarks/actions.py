@@ -527,7 +527,6 @@ def toggle_inline_icons():
     widget = common.widget()
     state = not widget.buttons_hidden()
 
-    common.sort_by_basename = state
     widget.set_buttons_hidden(state)
 
     widget.model().sourceModel().sort_data()
@@ -634,7 +633,6 @@ def increase_row_size():
         return
 
     widget.set_row_size(v)
-    widget.reset_row_layout()
 
 
 @common.error
@@ -653,7 +651,6 @@ def decrease_row_size():
         v = model.default_row_size().height()
 
     widget.set_row_size(v)
-    widget.reset_row_layout()
 
 
 @common.error
@@ -670,7 +667,7 @@ def reset_row_size():
     v = model.default_row_size().height()
 
     widget.set_row_size(v)
-    widget.reset_row_layout()
+
 
 
 @common.error
@@ -1325,8 +1322,8 @@ def reveal(item):
 
     """
     if isinstance(
-            item, (QtCore.QModelIndex, QtCore.QPersistentModelIndex,
-                   QtWidgets.QListWidgetItem)
+            item,
+            (QtCore.QModelIndex, QtCore.QPersistentModelIndex, QtWidgets.QListWidgetItem)
     ):
         path = item.data(common.PathRole)
     elif isinstance(item, str):

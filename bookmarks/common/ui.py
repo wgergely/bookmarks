@@ -178,9 +178,9 @@ def init_stylesheet():
 
     try:
         from .. import images
-        primary = common.font_db.primary_font(
+        primary = common.font_db.bold_font(
             size(common.size_font_medium))[0].family()
-        secondary = common.font_db.secondary_font(
+        secondary = common.font_db.medium_font(
             size(common.size_font_small)
         )[0].family()
 
@@ -293,8 +293,7 @@ def draw_aliased_text(painter, font, rect, text, align, color, elide=None):
     painter.setPen(QtCore.Qt.NoPen)
 
     from ..items import delegate
-    path = delegate.get_painter_path(x, y, font, text)
-    painter.drawPath(path)
+    delegate.draw_painter_path(painter, x, y, font, text)
 
     painter.restore()
     return width

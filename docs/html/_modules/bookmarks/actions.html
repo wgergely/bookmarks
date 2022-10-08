@@ -873,7 +873,6 @@
     <span class="n">widget</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span>
     <span class="n">state</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">widget</span><span class="o">.</span><span class="n">buttons_hidden</span><span class="p">()</span>
 
-    <span class="n">common</span><span class="o">.</span><span class="n">sort_by_basename</span> <span class="o">=</span> <span class="n">state</span>
     <span class="n">widget</span><span class="o">.</span><span class="n">set_buttons_hidden</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
     <span class="n">widget</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">sort_data</span><span class="p">()</span></div>
@@ -979,8 +978,7 @@
     <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;=</span> <span class="n">common</span><span class="o">.</span><span class="n">thumbnail_size</span><span class="p">:</span>
         <span class="k">return</span>
 
-    <span class="n">widget</span><span class="o">.</span><span class="n">set_row_size</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-    <span class="n">widget</span><span class="o">.</span><span class="n">reset_row_layout</span><span class="p">()</span></div>
+    <span class="n">widget</span><span class="o">.</span><span class="n">set_row_size</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="decrease_row_size"><a class="viewcode-back" href="../../modules/actions.html#bookmarks.actions.decrease_row_size">[docs]</a><span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
@@ -998,8 +996,7 @@
     <span class="k">if</span> <span class="n">v</span> <span class="o">&lt;=</span> <span class="n">model</span><span class="o">.</span><span class="n">default_row_size</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">():</span>
         <span class="n">v</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">default_row_size</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
 
-    <span class="n">widget</span><span class="o">.</span><span class="n">set_row_size</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-    <span class="n">widget</span><span class="o">.</span><span class="n">reset_row_layout</span><span class="p">()</span></div>
+    <span class="n">widget</span><span class="o">.</span><span class="n">set_row_size</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="reset_row_size"><a class="viewcode-back" href="../../modules/actions.html#bookmarks.actions.reset_row_size">[docs]</a><span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
@@ -1015,8 +1012,8 @@
 
     <span class="n">v</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">default_row_size</span><span class="p">()</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
 
-    <span class="n">widget</span><span class="o">.</span><span class="n">set_row_size</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-    <span class="n">widget</span><span class="o">.</span><span class="n">reset_row_layout</span><span class="p">()</span></div>
+    <span class="n">widget</span><span class="o">.</span><span class="n">set_row_size</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="show_bookmarker"><a class="viewcode-back" href="../../modules/actions.html#bookmarks.actions.show_bookmarker">[docs]</a><span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
@@ -1671,8 +1668,8 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span>
-            <span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPersistentModelIndex</span><span class="p">,</span>
-                   <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QListWidgetItem</span><span class="p">)</span>
+            <span class="n">item</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPersistentModelIndex</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QListWidgetItem</span><span class="p">)</span>
     <span class="p">):</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>

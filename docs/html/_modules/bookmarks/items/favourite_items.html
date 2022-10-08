@@ -432,7 +432,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">reset_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
             <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reset_data</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="p">)</span>
-        <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">favouritesChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queued_model_reset</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FavouriteItemModel.queued_model_reset"><a class="viewcode-back" href="../../../modules/items/favourite_items.html#bookmarks.items.favourite_items.FavouriteItemModel.queued_model_reset">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">queued_model_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -460,15 +459,13 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interrupt_requested</span><span class="p">:</span>
                 <span class="k">break</span>
 
+            <span class="n">sort_by_type_role</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">source_paths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="n">p</span> <span class="o">=</span> <span class="n">source_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>
+                <span class="n">sort_by_type_role</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">source_paths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-                <span class="n">p</span> <span class="o">=</span> <span class="n">source_paths</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
-
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">source_paths</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">4</span><span class="p">:</span>
-                <span class="n">k</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">k</span> <span class="o">=</span> <span class="n">source_paths</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+                <span class="n">sort_by_type_role</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">source_paths</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="n">sort_by_type_role</span> <span class="o">=</span> <span class="mi">2</span>
 
             <span class="n">_source_path</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">source_paths</span><span class="p">)</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span>
@@ -477,6 +474,10 @@
                 <span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
                 <span class="n">_source_path</span>
             <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">_p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">source_paths</span><span class="p">):</span>
+                <span class="n">sort_by_name_role</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">_p</span>
+
             <span class="n">flags</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DEFAULT_ITEM_FLAGS</span>
             <span class="n">seq</span><span class="p">,</span> <span class="n">sequence_path</span> <span class="o">=</span> <span class="n">file_items</span><span class="o">.</span><span class="n">get_sequence_elements</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
 
@@ -486,10 +487,6 @@
                 <span class="n">flags</span> <span class="o">=</span> <span class="n">flags</span> <span class="o">|</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsFavourite</span>
 
             <span class="n">parent_path_role</span> <span class="o">=</span> <span class="n">source_paths</span>
-
-            <span class="k">if</span> <span class="s1">&#39;.&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">filename</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">):</span>
-                    <span class="n">sort_by_name_role</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;zzzz&#39;</span>
 
             <span class="c1"># Let&#39;s limit the maximum number of items we load</span>
             <span class="n">idx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -504,6 +501,7 @@
                 <span class="c1">#</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">QueueRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">queues</span><span class="p">,</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">DataTypeRole</span><span class="p">:</span> <span class="n">t</span><span class="p">,</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">ItemTabRole</span><span class="p">:</span> <span class="n">common</span><span class="o">.</span><span class="n">FavouriteTab</span><span class="p">,</span>
                 <span class="c1">#</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">EntryRole</span><span class="p">:</span> <span class="p">[</span><span class="n">entry</span><span class="p">,</span> <span class="p">],</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">:</span> <span class="n">flags</span><span class="p">,</span>
@@ -524,7 +522,7 @@
                 <span class="n">common</span><span class="o">.</span><span class="n">SortByNameRole</span><span class="p">:</span> <span class="n">sort_by_name_role</span><span class="p">,</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">SortByLastModifiedRole</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">SortBySizeRole</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">SortByTypeRole</span><span class="p">:</span> <span class="n">ext</span><span class="p">,</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">SortByTypeRole</span><span class="p">:</span> <span class="n">sort_by_type_role</span><span class="p">,</span>
                 <span class="c1">#</span>
                 <span class="n">common</span><span class="o">.</span><span class="n">IdRole</span><span class="p">:</span> <span class="n">idx</span><span class="p">,</span>  <span class="c1"># non-mutable</span>
                 <span class="c1">#</span>
@@ -553,6 +551,7 @@
                         <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_size</span><span class="p">,</span>
                         <span class="c1">#</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">QueueRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">queues</span><span class="p">,</span>
+                        <span class="n">common</span><span class="o">.</span><span class="n">ItemTabRole</span><span class="p">:</span> <span class="n">common</span><span class="o">.</span><span class="n">FavouriteTab</span><span class="p">,</span>
                         <span class="c1">#</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">EntryRole</span><span class="p">:</span> <span class="p">[],</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">:</span> <span class="n">flags</span><span class="p">,</span>
@@ -573,7 +572,7 @@
                         <span class="n">common</span><span class="o">.</span><span class="n">SortByNameRole</span><span class="p">:</span> <span class="n">sort_by_name_role</span><span class="p">,</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">SortByLastModifiedRole</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">SortBySizeRole</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Initializing with null-size,</span>
-                        <span class="n">common</span><span class="o">.</span><span class="n">SortByTypeRole</span><span class="p">:</span> <span class="n">ext</span><span class="p">,</span>
+                        <span class="n">common</span><span class="o">.</span><span class="n">SortByTypeRole</span><span class="p">:</span> <span class="n">sort_by_type_role</span><span class="p">,</span>
                         <span class="c1">#</span>
                         <span class="n">common</span><span class="o">.</span><span class="n">IdRole</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
                         <span class="c1">#</span>
@@ -639,8 +638,6 @@
 <span class="sd">        corresponding to the saved favourites.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
-
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">:</span>
             <span class="n">file_info</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileInfo</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
             <span class="n">_path</span> <span class="o">=</span> <span class="n">file_info</span><span class="o">.</span><span class="n">path</span><span class="p">()</span>
@@ -652,14 +649,11 @@
             <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="n">_path</span><span class="p">):</span>
                 <span class="n">path</span> <span class="o">=</span> <span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">path</span> <span class="o">==</span> <span class="n">k</span><span class="p">:</span>
-                    <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">entry</span><span class="p">,</span> <span class="n">source_paths</span><span class="p">))</span>
+                    <span class="k">yield</span> <span class="n">entry</span><span class="p">,</span> <span class="n">source_paths</span>
                     <span class="k">continue</span>
                 <span class="n">_k</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">proxy_path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="n">_k</span><span class="p">:</span>
-                    <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">entry</span><span class="p">,</span> <span class="n">source_paths</span><span class="p">))</span>
-
-        <span class="k">for</span> <span class="n">args</span> <span class="ow">in</span> <span class="n">entries</span><span class="p">:</span>
-            <span class="k">yield</span> <span class="n">args</span></div>
+                    <span class="k">yield</span> <span class="n">entry</span><span class="p">,</span> <span class="n">source_paths</span></div>
 
 <div class="viewcode-block" id="FavouriteItemModel.task"><a class="viewcode-back" href="../../../modules/items/favourite_items.html#bookmarks.items.favourite_items.FavouriteItemModel.task">[docs]</a>    <span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;The model&#39;s associated task.</span>
@@ -690,20 +684,6 @@
             <span class="n">icon</span><span class="o">=</span><span class="n">icon</span><span class="p">,</span>
             <span class="n">parent</span><span class="o">=</span><span class="n">parent</span>
         <span class="p">)</span>
-
-<div class="viewcode-block" id="FavouriteItemView.toggle_item_flag"><a class="viewcode-back" href="../../../modules/items/favourite_items.html#bookmarks.items.favourite_items.FavouriteItemView.toggle_item_flag">[docs]</a>    <span class="k">def</span> <span class="nf">toggle_item_flag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">flag</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">commit_now</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;:meth:`~bookmarks.items.view.BaseItemView` override.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">flag</span> <span class="o">!=</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsFavourite</span><span class="p">:</span>
-            <span class="k">return</span>
-
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">toggle_item_flag</span><span class="p">(</span>
-            <span class="n">index</span><span class="p">,</span>
-            <span class="n">flag</span><span class="p">,</span>
-            <span class="n">state</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">commit_now</span><span class="o">=</span><span class="n">commit_now</span>
-        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="FavouriteItemView.dragEnterEvent"><a class="viewcode-back" href="../../../modules/items/favourite_items.html#bookmarks.items.favourite_items.FavouriteItemView.dragEnterEvent">[docs]</a>    <span class="k">def</span> <span class="nf">dragEnterEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler.</span>

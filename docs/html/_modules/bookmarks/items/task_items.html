@@ -407,13 +407,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">()</span></div>
 
-    <span class="k">def</span> <span class="nf">_get_text_segments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="TaskItemViewDelegate.get_text_segments"><a class="viewcode-back" href="../../../modules/items/task_items.html#bookmarks.items.task_items.TaskItemViewDelegate.get_text_segments">[docs]</a>    <span class="k">def</span> <span class="nf">get_text_segments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get text segments.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="p">[]</span></div>
 
-<div class="viewcode-block" id="TaskItemViewDelegate.paint_background"><a class="viewcode-back" href="../../../modules/items/task_items.html#bookmarks.items.task_items.TaskItemViewDelegate.paint_background">[docs]</a>    <span class="nd">@delegate</span><span class="o">.</span><span class="n">paintmethod</span>
+<div class="viewcode-block" id="TaskItemViewDelegate.paint_background"><a class="viewcode-back" href="../../../modules/items/task_items.html#bookmarks.items.task_items.TaskItemViewDelegate.paint_background">[docs]</a>    <span class="nd">@delegate</span><span class="o">.</span><span class="n">save_painter</span>
     <span class="k">def</span> <span class="nf">paint_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Paints the background.</span>
 <span class="sd">        </span>
@@ -459,7 +459,7 @@
             <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
             <span class="n">painter</span><span class="o">.</span><span class="n">drawRect</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="TaskItemViewDelegate.paint_name"><a class="viewcode-back" href="../../../modules/items/task_items.html#bookmarks.items.task_items.TaskItemViewDelegate.paint_name">[docs]</a>    <span class="nd">@delegate</span><span class="o">.</span><span class="n">paintmethod</span>
+<div class="viewcode-block" id="TaskItemViewDelegate.paint_name"><a class="viewcode-back" href="../../../modules/items/task_items.html#bookmarks.items.task_items.TaskItemViewDelegate.paint_name">[docs]</a>    <span class="nd">@delegate</span><span class="o">.</span><span class="n">save_painter</span>
     <span class="k">def</span> <span class="nf">paint_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Paints the name and the number of files available for the given</span>
 <span class="sd">        task item.</span>
@@ -483,7 +483,7 @@
         <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_selected_text</span><span class="p">)</span> <span class="k">if</span> <span class="n">active</span> <span class="k">else</span> <span class="n">color</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_selected_text</span><span class="p">)</span> <span class="k">if</span> <span class="n">selected</span> <span class="k">else</span> <span class="n">color</span>
 
-        <span class="n">font</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">primary_font</span><span class="p">(</span>
+        <span class="n">font</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">bold_font</span><span class="p">(</span>
             <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_font_medium</span><span class="p">)</span>
         <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -535,15 +535,15 @@
 
             <span class="n">width</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">draw_aliased_text</span><span class="p">(</span>
                 <span class="n">painter</span><span class="p">,</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">secondary_font</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_font_small</span><span class="p">))[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">medium_font</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_font_small</span><span class="p">))[</span><span class="mi">0</span><span class="p">],</span>
                 <span class="n">rect</span><span class="p">,</span>
-                <span class="s1">&#39;    |    &#39;</span><span class="p">,</span> <span class="n">align</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_separator</span><span class="p">)</span>
+                <span class="s1">&#39;    ｜    &#39;</span><span class="p">,</span> <span class="n">align</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_separator</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="n">rect</span><span class="o">.</span><span class="n">setLeft</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">left</span><span class="p">()</span> <span class="o">+</span> <span class="n">width</span><span class="p">)</span>
 
             <span class="n">width</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">draw_aliased_text</span><span class="p">(</span>
                 <span class="n">painter</span><span class="p">,</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">primary_font</span><span class="p">(</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">bold_font</span><span class="p">(</span>
                     <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_font_medium</span><span class="p">)</span>
                 <span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
                 <span class="n">rect</span><span class="p">,</span>
@@ -631,6 +631,7 @@
                     <span class="c1">#</span>
                     <span class="n">common</span><span class="o">.</span><span class="n">QueueRole</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">queues</span><span class="p">,</span>
                     <span class="n">common</span><span class="o">.</span><span class="n">DataTypeRole</span><span class="p">:</span> <span class="n">common</span><span class="o">.</span><span class="n">FileItem</span><span class="p">,</span>
+                    <span class="n">common</span><span class="o">.</span><span class="n">ItemTabRole</span><span class="p">:</span> <span class="n">common</span><span class="o">.</span><span class="n">TaskTab</span><span class="p">,</span>
                     <span class="c1">#</span>
                     <span class="n">common</span><span class="o">.</span><span class="n">EntryRole</span><span class="p">:</span> <span class="p">[</span><span class="n">entry</span><span class="p">,</span> <span class="p">],</span>
                     <span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">:</span> <span class="n">flags</span><span class="p">,</span>

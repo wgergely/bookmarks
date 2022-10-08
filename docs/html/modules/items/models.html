@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="items.task_items" href="task_items.html" /><link rel="prev" title="items.file_items" href="file_items.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>items.models - Bookmarks 0.7.1 documentation</title>
+        <title>items.models - Bookmarks 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">Bookmarks 0.7.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.1 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -388,6 +388,16 @@ is implemented separately to run directly over the source data.</p>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.models.initdata" title="bookmarks.items.models.initdata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initdata</span></code></a>(func)</p></td>
 <td><p>The decorator is responsible validating the current active paths, and emitting the <code class="docutils literal notranslate"><span class="pre">beginResetModel</span></code>, <code class="docutils literal notranslate"><span class="pre">endResetModel</span></code> and <a class="reference internal" href="#bookmarks.items.models.ItemModel.coreDataLoaded" title="bookmarks.items.models.ItemModel.coreDataLoaded"><code class="xref py py-attr docutils literal notranslate"><span class="pre">ItemModel.coreDataLoaded</span></code></a> signals.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Data:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.models.DEFAULT_SORT_BY_NAME_ROLE" title="bookmarks.items.models.DEFAULT_SORT_BY_NAME_ROLE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEFAULT_SORT_BY_NAME_ROLE</span></code></a></p></td>
+<td><p>A default container used to sort items by name</p></td>
 </tr>
 </tbody>
 </table>
@@ -1093,6 +1103,12 @@ the <code class="docutils literal notranslate"><span class="pre">beginResetModel
 signals.</p>
 </dd></dl>
 
+<dl class="py data">
+<dt class="sig sig-object py" id="bookmarks.items.models.DEFAULT_SORT_BY_NAME_ROLE">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.models.</span></span><span class="sig-name descname"><span class="pre">DEFAULT_SORT_BY_NAME_ROLE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['',</span> <span class="pre">'',</span> <span class="pre">'',</span> <span class="pre">'',</span> <span class="pre">'',</span> <span class="pre">'',</span> <span class="pre">'',</span> <span class="pre">'']</span></em><a class="headerlink" href="#bookmarks.items.models.DEFAULT_SORT_BY_NAME_ROLE" title="Permalink to this definition">#</a></dt>
+<dd><p>A default container used to sort items by name</p>
+</dd></dl>
+
 </section>
 
         </article>
@@ -1222,6 +1238,7 @@ signals.</p>
 </li>
 <li><a class="reference internal" href="#bookmarks.items.models.filter_includes_row"><code class="docutils literal notranslate"><span class="pre">filter_includes_row()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.models.initdata"><code class="docutils literal notranslate"><span class="pre">initdata()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.DEFAULT_SORT_BY_NAME_ROLE"><code class="docutils literal notranslate"><span class="pre">DEFAULT_SORT_BY_NAME_ROLE</span></code></a></li>
 </ul>
 </li>
 </ul>

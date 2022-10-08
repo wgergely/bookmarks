@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="common.signals" href="signals.html" /><link rel="prev" title="common.settings" href="settings.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>common.setup - Bookmarks 0.7.1 documentation</title>
+        <title>common.setup - Bookmarks 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">Bookmarks 0.7.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.1 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -352,38 +352,18 @@
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.setup.init_environment" title="bookmarks.common.setup.init_environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_environment</span></code></a>(key[, add_private])</p></td>
-<td><p>Add the dependencies to the Python environment.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.setup.initialize" title="bookmarks.common.setup.initialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code></a>(mode)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.setup.initialize" title="bookmarks.common.setup.initialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code></a>(mode)</p></td>
 <td><p>Initialize the components required to run Bookmarks.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.setup.uninitialize" title="bookmarks.common.setup.uninitialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uninitialize</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.setup.uninitialize" title="bookmarks.common.setup.uninitialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">uninitialize</span></code></a>()</p></td>
 <td><p>Un-initialize all app components.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.setup.verify_dependencies" title="bookmarks.common.setup.verify_dependencies"><code class="xref py py-obj docutils literal notranslate"><span class="pre">verify_dependencies</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.setup.verify_dependencies" title="bookmarks.common.setup.verify_dependencies"><code class="xref py py-obj docutils literal notranslate"><span class="pre">verify_dependencies</span></code></a>()</p></td>
 <td><p>Checks the presence of all required python modules.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<dl class="py function">
-<dt class="sig sig-object py" id="bookmarks.common.setup.init_environment">
-<span class="sig-prename descclassname"><span class="pre">bookmarks.common.setup.</span></span><span class="sig-name descname"><span class="pre">init_environment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_private</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/common/setup.html#init_environment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.setup.init_environment" title="Permalink to this definition">#</a></dt>
-<dd><p>Add the dependencies to the Python environment.</p>
-<p>The method requires that <cite>env_key</cite> is set. The key is usually set
-by the Bookmark installer to point to the installation root directory.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>EnvironmentError</strong> – When the <cite>key</cite> environment is not set.</p></li>
-<li><p><strong>RuntimeError</strong> – When the <cite>key</cite> environment is invalid or points to a missing
-    directory.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.common.setup.initialize">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.common.setup.</span></span><span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/common/setup.html#initialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.setup.initialize" title="Permalink to this definition">#</a></dt>
@@ -473,7 +453,6 @@ or <code class="docutils literal notranslate"><span class="pre">common.EmbeddedM
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">common.setup</a><ul>
-<li><a class="reference internal" href="#bookmarks.common.setup.init_environment"><code class="docutils literal notranslate"><span class="pre">init_environment()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.common.setup.initialize"><code class="docutils literal notranslate"><span class="pre">initialize()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.common.setup.uninitialize"><code class="docutils literal notranslate"><span class="pre">uninitialize()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.common.setup.verify_dependencies"><code class="docutils literal notranslate"><span class="pre">verify_dependencies()</span></code></a></li>

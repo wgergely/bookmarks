@@ -409,7 +409,7 @@
 
     <span class="k">def</span> <span class="nf">get_width</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">o</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_indicator</span><span class="p">)</span> <span class="o">*</span> <span class="mi">6</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">primary_font</span><span class="p">(</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">bold_font</span><span class="p">(</span>
             <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_font_medium</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">metrics</span><span class="o">.</span><span class="n">horizontalAdvance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">())</span> <span class="o">+</span> <span class="n">o</span>
 
@@ -452,7 +452,7 @@
                 <span class="n">common</span><span class="o">.</span><span class="n">color_background</span><span class="p">)</span>
             <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
 
-        <span class="n">font</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">primary_font</span><span class="p">(</span>
+        <span class="n">font</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">bold_font</span><span class="p">(</span>
             <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_font_medium</span><span class="p">))</span>
 
         <span class="c1"># When the width of the button is very small, we&#39;ll switch to an icon</span>
@@ -483,8 +483,7 @@
                 <span class="n">width</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">horizontalAdvance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">width</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">center</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">+</span> <span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">ascent</span><span class="p">()</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span>
-                <span class="n">path</span> <span class="o">=</span> <span class="n">delegate</span><span class="o">.</span><span class="n">get_painter_path</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
-                <span class="n">painter</span><span class="o">.</span><span class="n">drawPath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+                <span class="n">delegate</span><span class="o">.</span><span class="n">draw_painter_path</span><span class="p">(</span><span class="n">painter</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Draw icon</span>
                 <span class="n">pixmap</span> <span class="o">=</span> <span class="n">images</span><span class="o">.</span><span class="n">ImageCache</span><span class="o">.</span><span class="n">rsc_pixmap</span><span class="p">(</span>

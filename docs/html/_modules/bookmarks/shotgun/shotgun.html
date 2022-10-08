@@ -527,7 +527,7 @@
 
     <span class="n">k</span> <span class="o">=</span> <span class="n">_get_thread_key</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span> <span class="n">script</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">SG_CONNECTIONS</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">SG_CONNECTIONS</span> <span class="ow">and</span> <span class="n">SG_CONNECTIONS</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">SG_CONNECTIONS</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
 
     <span class="k">try</span><span class="p">:</span>
@@ -553,7 +553,6 @@
         <span class="n">SG_CONNECTIONS</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">SG_CONNECTIONS</span><span class="p">:</span>
             <span class="k">del</span> <span class="n">SG_CONNECTIONS</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;ShotGrid connection error.&#39;</span><span class="p">)</span>
         <span class="k">raise</span></div>
 
 
@@ -606,24 +605,36 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">server</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;`Server` path segment.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="s1">&#39;server&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">job</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;`Job` path segment.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="s1">&#39;job&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;`Root` path segment.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="s1">&#39;root&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">asset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;`Asset` path segment.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="s1">&#39;asset&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_asset</span>
@@ -662,6 +673,16 @@
 
 <div class="viewcode-block" id="ShotgunProperties.verify"><a class="viewcode-back" href="../../../modules/shotgun/shotgun.html#bookmarks.shotgun.shotgun.ShotgunProperties.verify">[docs]</a>    <span class="k">def</span> <span class="nf">verify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bookmark</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">asset</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Checks the validity of the current configuration.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            connection (bool, optional): Verifies the connection information if True.</span>
+<span class="sd">            bookmark (bool, optional):</span>
+<span class="sd">                Checks only the bookmark item&#39;s configuration if True.</span>
+<span class="sd">            asset (bool, optional):</span>
+<span class="sd">                Checks only the asset item&#39;s configuration if True.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bools: True if the configuration is valid, False otherwise.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Verify connection</span>

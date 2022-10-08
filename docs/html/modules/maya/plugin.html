@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="maya.shadertool" href="shadertool.html" /><link rel="prev" title="maya.main" href="main.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>maya.plugin - Bookmarks 0.7.1 documentation</title>
+        <title>maya.plugin - Bookmarks 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">Bookmarks 0.7.1 documentation</div></a>
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.1 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -354,8 +354,8 @@ necessary dependencies.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.plugin.init_environment" title="bookmarks.maya.plugin.init_environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_environment</span></code></a>(key[, add_private])</p></td>
-<td><p>Add the dependencies to the Python environment.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.plugin.init_environment" title="bookmarks.maya.plugin.init_environment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_environment</span></code></a>([key, pyside])</p></td>
+<td><p>Add the dependencies required to run Bookmarks to a python environment.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.maya.plugin.initializePlugin" title="bookmarks.maya.plugin.initializePlugin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initializePlugin</span></code></a>(name)</p></td>
 <td><p>Initializes the plugin.</p></td>
@@ -371,16 +371,24 @@ necessary dependencies.</p>
 </div>
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.maya.plugin.init_environment">
-<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.plugin.</span></span><span class="sig-name descname"><span class="pre">init_environment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_private</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/maya/plugin.html#init_environment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.plugin.init_environment" title="Permalink to this definition">#</a></dt>
-<dd><p>Add the dependencies to the Python environment.</p>
-<p>The method requires that <cite>env_key</cite> is set. The key is usually set
-by the Bookmark installer to point to the installation root directory.</p>
+<span class="sig-prename descclassname"><span class="pre">bookmarks.maya.plugin.</span></span><span class="sig-name descname"><span class="pre">init_environment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'BOOKMARKS_ROOT'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pyside</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/maya/plugin.html#init_environment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.plugin.init_environment" title="Permalink to this definition">#</a></dt>
+<dd><p>Add the dependencies required to run Bookmarks to a python environment.</p>
+<p>The Bookmarks installer should set the ‘BOOKMARKS_ROOT’ environment variable to
+the installation directory. This is required to load the python modules into the
+current environment.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – The environment variable used to find the distribution directory.
+Optional, defaults to ‘BOOKMARKS_ROOT</p></li>
+<li><p><strong>pyside</strong> (<em>bool</em>) – Adds the PySide modules bundled with Bookmarks if True.
+Optional, defaults to False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
 <li><p><strong>EnvironmentError</strong> – When the <cite>key</cite> environment is not set.</p></li>
-<li><p><strong>RuntimeError</strong> – When the <cite>key</cite> environment is invalid or points to a missing</p></li>
-<li><p><strong>directory.</strong> – </p></li>
+<li><p><strong>RuntimeError</strong> – When the <cite>key</cite> environment is invalid or points to a missing directory.</p></li>
 </ul>
 </dd>
 </dl>

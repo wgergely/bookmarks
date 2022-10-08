@@ -424,8 +424,6 @@
         <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">main</span>
         <span class="n">main</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
 
-    <span class="n">common</span><span class="o">.</span><span class="n">init_monitor</span><span class="p">()</span>
-
     <span class="c1"># Start non-model linked worker threads</span>
     <span class="n">_threads</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="kn">from</span> <span class="nn">..threads</span> <span class="kn">import</span> <span class="n">threads</span>
@@ -530,38 +528,6 @@
 
     <span class="k">if</span> <span class="n">_v</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PATH&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
         <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;PATH&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">_v</span><span class="p">)</span><span class="si">}</span><span class="s1">;</span><span class="si">{</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PATH&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;;&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
-
-
-<div class="viewcode-block" id="init_environment"><a class="viewcode-back" href="../../../modules/common/setup.html#bookmarks.common.setup.init_environment">[docs]</a><span class="k">def</span> <span class="nf">init_environment</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">add_private</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Add the dependencies to the Python environment.</span>
-
-<span class="sd">    The method requires that `env_key` is set. The key is usually set</span>
-<span class="sd">    by the Bookmark installer to point to the installation root directory.</span>
-
-<span class="sd">    Raises:</span>
-<span class="sd">            EnvironmentError: When the `key` environment is not set.</span>
-<span class="sd">            RuntimeError: When the `key` environment is invalid or points to a missing</span>
-<span class="sd">                            directory.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">EnvironmentError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&quot; environment variable is not set.&#39;</span>
-        <span class="p">)</span>
-    <span class="n">v</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;&quot;</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&quot; is not a valid folder. Is &quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">&quot; environment variable set?&#39;</span>
-        <span class="p">)</span>
-
-    <span class="n">_add_path_to_path</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span>
-    <span class="n">_add_path_to_path</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s1">&#39;bin&#39;</span><span class="p">)</span>
-
-    <span class="n">_add_path_to_sys</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s1">&#39;shared&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">add_private</span><span class="p">:</span>
-        <span class="n">_add_path_to_sys</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="s1">&#39;core&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="verify_dependencies"><a class="viewcode-back" href="../../../modules/common/setup.html#bookmarks.common.setup.verify_dependencies">[docs]</a><span class="k">def</span> <span class="nf">verify_dependencies</span><span class="p">():</span>

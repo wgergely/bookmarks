@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="items" href="items.html" /><link rel="prev" title="file_saver.widgets" href="file_saver/widgets.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>images - Bookmarks 0.7.1 documentation</title>
+        <title>images - Bookmarks 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">Bookmarks 0.7.1 documentation</div></a>
+      <a href="../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.1 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -444,7 +444,7 @@ loading is usually done using <a class="reference internal" href="#bookmarks.ima
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.images.ImageCache.flush" title="bookmarks.images.ImageCache.flush"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flush</span></code></a>(source)</p></td>
 <td><p>Flushes all values associated with a given source from the image cache.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.images.ImageCache.get_color" title="bookmarks.images.ImageCache.get_color"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_color</span></code></a>(source[, force])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.images.ImageCache.get_color" title="bookmarks.images.ImageCache.get_color"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_color</span></code></a>(source[, hash, force])</p></td>
 <td><p>Gets a cached QColor associated with the given source.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.images.ImageCache.get_image" title="bookmarks.images.ImageCache.get_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_image</span></code></a>(source, size[, hash, force, oiio])</p></td>
@@ -463,7 +463,7 @@ loading is usually done using <a class="reference internal" href="#bookmarks.ima
 <td><p>Returns a scaled copy of the image that fits in size.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.images.ImageCache.rsc_pixmap" title="bookmarks.images.ImageCache.rsc_pixmap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rsc_pixmap</span></code></a>(name, color, size[, opacity, ...])</p></td>
-<td><p>Loads an image resource and returns it as a sized (and recolored) QPixmap.</p></td>
+<td><p>Loads an image resource and returns it as a resized (and recolored) QPixmap.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.images.ImageCache.setValue" title="bookmarks.images.ImageCache.setValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setValue</span></code></a>(hash, value, cache_type[, size])</p></td>
 <td><p>Sets a value in the ImageCache using <cite>hash</cite> and the <cite>cache_type</cite>.</p></td>
@@ -488,13 +488,14 @@ loading is usually done using <a class="reference internal" href="#bookmarks.ima
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.images.ImageCache.get_color">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#ImageCache.get_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.ImageCache.get_color" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hash</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#ImageCache.get_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.ImageCache.get_color" title="Permalink to this definition">#</a></dt>
 <dd><p>Gets a cached QColor associated with the given source.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source</strong> (<em>str</em>) – A file path.</p></li>
 <li><p><strong>force</strong> (<em>bool</em>) – Force value recache.</p></li>
+<li><p><strong>hash</strong> (<em>str</em>) – Hash value override.</p></li>
 </ul>
 </dd>
 </dl>
@@ -627,8 +628,8 @@ anyway.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.images.ImageCache.rsc_pixmap">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rsc_pixmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">common.GuiResource</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#ImageCache.rsc_pixmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.ImageCache.rsc_pixmap" title="Permalink to this definition">#</a></dt>
-<dd><p>Loads an image resource and returns it as a sized (and recolored) QPixmap.</p>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rsc_pixmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">common.GuiResource</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oiio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#ImageCache.rsc_pixmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.ImageCache.rsc_pixmap" title="Permalink to this definition">#</a></dt>
+<dd><p>Loads an image resource and returns it as a resized (and recolored) QPixmap.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

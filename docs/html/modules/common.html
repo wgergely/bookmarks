@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="common.core" href="common/core.html" /><link rel="prev" title="bookmarker.server_editor" href="bookmarker/server_editor.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>common - Bookmarks 0.7.1 documentation</title>
+        <title>common - Bookmarks 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">Bookmarks 0.7.1 documentation</div></a>
+      <a href="../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.1 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -431,19 +431,22 @@ See <a class="reference internal" href="maya.html#module-bookmarks.maya" title="
 <li class="toctree-l1"><a class="reference internal" href="common/font.html">common.font</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="common/font.html#bookmarks.common.font.FontDatabase"><code class="docutils literal notranslate"><span class="pre">FontDatabase</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="common/font.html#bookmarks.common.font.FontDatabase.add_custom_fonts"><code class="docutils literal notranslate"><span class="pre">FontDatabase.add_custom_fonts()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="common/font.html#bookmarks.common.font.FontDatabase.primary_font"><code class="docutils literal notranslate"><span class="pre">FontDatabase.primary_font()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="common/font.html#bookmarks.common.font.FontDatabase.secondary_font"><code class="docutils literal notranslate"><span class="pre">FontDatabase.secondary_font()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="common/font.html#bookmarks.common.font.FontDatabase.bold_font"><code class="docutils literal notranslate"><span class="pre">FontDatabase.bold_font()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="common/font.html#bookmarks.common.font.FontDatabase.light_font"><code class="docutils literal notranslate"><span class="pre">FontDatabase.light_font()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="common/font.html#bookmarks.common.font.FontDatabase.medium_font"><code class="docutils literal notranslate"><span class="pre">FontDatabase.medium_font()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="common/font.html#bookmarks.common.font.init_font"><code class="docutils literal notranslate"><span class="pre">init_font()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="common/monitor.html">common.monitor</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="common/monitor.html#bookmarks.common.monitor.add_watch_directories"><code class="docutils literal notranslate"><span class="pre">add_watch_directories()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="common/monitor.html#bookmarks.common.monitor.clear_watch_directories"><code class="docutils literal notranslate"><span class="pre">clear_watch_directories()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="common/monitor.html#bookmarks.common.monitor.directory_changed"><code class="docutils literal notranslate"><span class="pre">directory_changed()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="common/monitor.html#bookmarks.common.monitor.init_monitor"><code class="docutils literal notranslate"><span class="pre">init_monitor()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="common/monitor.html#bookmarks.common.monitor.FileItemMonitor"><code class="docutils literal notranslate"><span class="pre">FileItemMonitor</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="common/monitor.html#bookmarks.common.monitor.FileWatcher"><code class="docutils literal notranslate"><span class="pre">FileWatcher</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="common/monitor.html#bookmarks.common.monitor.FileWatcher.add_directories"><code class="docutils literal notranslate"><span class="pre">FileWatcher.add_directories()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="common/monitor.html#bookmarks.common.monitor.FileWatcher.item_changed"><code class="docutils literal notranslate"><span class="pre">FileWatcher.item_changed()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="common/monitor.html#bookmarks.common.monitor.FileWatcher.reset"><code class="docutils literal notranslate"><span class="pre">FileWatcher.reset()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="common/monitor.html#bookmarks.common.monitor.get_watcher"><code class="docutils literal notranslate"><span class="pre">get_watcher()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="common/sequence.html">common.sequence</a><ul>
@@ -492,7 +495,6 @@ See <a class="reference internal" href="maya.html#module-bookmarks.maya" title="
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="common/setup.html">common.setup</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="common/setup.html#bookmarks.common.setup.init_environment"><code class="docutils literal notranslate"><span class="pre">init_environment()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="common/setup.html#bookmarks.common.setup.initialize"><code class="docutils literal notranslate"><span class="pre">initialize()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="common/setup.html#bookmarks.common.setup.uninitialize"><code class="docutils literal notranslate"><span class="pre">uninitialize()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="common/setup.html#bookmarks.common.setup.verify_dependencies"><code class="docutils literal notranslate"><span class="pre">verify_dependencies()</span></code></a></li>

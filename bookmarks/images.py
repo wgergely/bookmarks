@@ -448,7 +448,6 @@ def oiio_get_qimage(source, buf=None, force=True):
                 buf, ('R', 'G', 'B'), ('R', 'G', 'B'))
 
     np_arr = buf.get_pixels(OpenImageIO.UINT8)
-    # np_arr = (np_arr / (1.0 / 255.0)).astype(np.uint8)
 
     if np_arr.shape[2] == 1:
         _format = QtGui.QImage.Format_Grayscale8
@@ -812,8 +811,8 @@ class ImageCache(QtCore.QObject):
 
     @classmethod
     def rsc_pixmap(cls, name, color, size, opacity=1.0, resource=common.GuiResource,
-                   get_path=False):
-        """Loads an image resource and returns it as a sized (and recolored) QPixmap.
+                   get_path=False, oiio=False):
+        """Loads an image resource and returns it as a resized (and recolored) QPixmap.
 
         Args:
             name (str): Name of the resource without the extension.
@@ -830,7 +829,7 @@ class ImageCache(QtCore.QObject):
         """
         common.check_type(name, str)
         common.check_type(color, (None, QtGui.QColor))
-        common.check_type(size, (None, int, float))
+        common.check_type(size, (None, float, int))
         common.check_type(opacity, float)
 
         source = common.rsc(f'{resource}/{name}.{common.thumbnail_format}')
@@ -839,15 +838,14 @@ class ImageCache(QtCore.QObject):
             file_info = QtCore.QFileInfo(source)
             return file_info.absoluteFilePath()
 
+        size = size if isinstance(size, (float, int)) else -1
         _color = color.name() if isinstance(color, QtGui.QColor) else 'null'
         k = 'rsc:' + name + ':' + str(int(size)) + ':' + _color
 
         if k in common.image_resource_data:
             return common.image_resource_data[k]
 
-        image = QtGui.QImage()
-        image.setDevicePixelRatio(common.pixel_ratio)
-        image.load(source)
+        image = cls.get_image(source, size, oiio=oiio)
         if image.isNull():
             return QtGui.QPixmap()
 
@@ -861,9 +859,6 @@ class ImageCache(QtCore.QObject):
             painter.setBrush(QtGui.QBrush(color))
             painter.drawRect(image.rect())
             painter.end()
-
-        image = cls.resize_image(image, size * common.pixel_ratio)
-        image.setDevicePixelRatio(common.pixel_ratio)
 
         # Setting transparency
         if opacity < 1.0:

@@ -26,6 +26,22 @@ def key():
     """Utility method used to generate a hexadecimal uuid string."""
     return uuid.uuid1().hex
 
+def resize_event_override(cls, event):
+    path = QtGui.QPainterPath()
+    # the rectangle must be translated and adjusted by 1 pixel in order to
+    # correctly map the rounded shape
+    rect = QtCore.QRectF(cls.rect()).adjusted(0.5, 0.5, -1.5, -1.5)
+    o = int(common.size(common.size_margin) * 0.5)
+    path.addRoundedRect(
+        rect,
+        o,
+        o
+    )
+    # QRegion is bitmap based, so the returned QPolygonF (which uses float
+    # values must be transformed to an integer based QPolygon
+    region = QtGui.QRegion(path.toFillPolygon(QtGui.QTransform()).toPolygon())
+    cls.setMask(region)
+
 
 def show_event_override(cls, event):
     """Private utility method for manually calculating the width of
@@ -147,6 +163,9 @@ class BaseContextMenu(QtWidgets.QMenu):
                 submenu.showEvent = functools.partial(
                     show_event_override, submenu
                 )
+                submenu.resizeEvent = functools.partial(
+                    resize_event_override, submenu
+                )
 
                 if f'{k}:icon' in menu and show_icons:
                     submenu.setIcon(menu[f'{k}:icon'])
@@ -224,6 +243,9 @@ class BaseContextMenu(QtWidgets.QMenu):
                     action.setVisible(v['visible'])
                 else:
                     action.setVisible(True)
+
+    def resizeEvent(self, event):
+        resize_event_override(self, event)
 
     def showEvent(self, event):
         """Show event handler.

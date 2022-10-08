@@ -326,7 +326,7 @@ class MessageBox(QtWidgets.QDialog):
             painter.begin(self)
             painter.setRenderHint(QtGui.QPainter.Antialiasing)
 
-            pen = QtGui.QPen(QtGui.QColor(self.secondary_color).darker(250))
+            pen = QtGui.QPen(QtGui.QColor(self.secondary_color).darkerdarker(250))
             pen.setWidthF(common.size(common.size_separator))
             painter.setPen(pen)
 
@@ -631,8 +631,8 @@ class ClickableIconButton(QtWidgets.QLabel):
         self._size = size
         self._state = state
 
-        self._on_color = colors[0]
-        self._off_color = colors[1]
+        self._on_color = QtGui.QColor(colors[0])
+        self._off_color = QtGui.QColor(colors[1])
 
         self.setStatusTip(description)
         self.setToolTip(description)

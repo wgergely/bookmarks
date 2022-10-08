@@ -400,12 +400,13 @@ class BaseContextMenu(QtWidgets.QMenu):
         """List item file reveal options.
 
         """
-        if not self.index.isValid():
-            return
+        if not self.index.isValid() or not self.index.data(common.PathRole):
+            model = common.source_model(common.current_tab())
+            p = '/'.join(model.source_path())
+        else:
+            p = self.index.data(common.PathRole)
 
-        path = common.get_sequence_start_path(
-            self.index.data(common.PathRole)
-        )
+        path = common.get_sequence_start_path(p)
 
         self.menu[key()] = {
             'text': 'Show Item in File Manager',

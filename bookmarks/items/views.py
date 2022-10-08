@@ -130,7 +130,7 @@ class ProgressWidget(QtWidgets.QWidget):
         painter.setOpacity(0.8)
         common.draw_aliased_text(
             painter,
-            common.font_db.primary_font(common.size(common.size_font_medium))[0],
+            common.font_db.bold_font(common.size(common.size_font_medium))[0],
             self.rect(),
             self._message,
             QtCore.Qt.AlignCenter,
@@ -301,8 +301,8 @@ class BaseItemView(QtWidgets.QListView):
         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
 
-        self.set_model(self.SourceModel(parent=self))
         self.setItemDelegate(self.Delegate(parent=self))
+        self.init_model()
 
         self.resized.connect(self.filter_indicator_widget.setGeometry)
         self.resized.connect(self.progress_indicator_widget.setGeometry)
@@ -310,8 +310,6 @@ class BaseItemView(QtWidgets.QListView):
 
         self.delayed_save_selection_timer.timeout.connect(self.save_selection)
         self.delayed_restore_selection_timer.timeout.connect(self.restore_selection)
-
-        self.init_buttons_state()
 
     @common.error
     @common.debug
@@ -323,11 +321,6 @@ class BaseItemView(QtWidgets.QListView):
         v = model.get_filter_setting('filters/buttons')
         v = False if not v else v
         self._buttons_hidden = v
-
-        common.sort_by_basename = (
-            True if v else
-            (False if common.sort_by_basename is None else common.sort_by_basename)
-        )
 
     def buttons_hidden(self):
         """Returns the visibility of the inline icon buttons.
@@ -346,7 +339,7 @@ class BaseItemView(QtWidgets.QListView):
 
     @common.error
     @common.debug
-    def set_model(self, model):
+    def init_model(self):
         """Add a model to the view.
 
         The ItemModel subclasses are wrapped in a QSortFilterProxyModel. All
@@ -354,10 +347,8 @@ class BaseItemView(QtWidgets.QListView):
         and the view to communicate are made here.
 
         """
-        common.check_type(model, models.ItemModel)
-
+        model = self.SourceModel(parent=self)
         proxy = models.FilterProxyModel(parent=self)
-
         proxy.setSourceModel(model)
         self.setModel(proxy)
 
@@ -366,11 +357,14 @@ class BaseItemView(QtWidgets.QListView):
         model.init_row_size()
         proxy.init_filter_values()
 
-        model.modelReset.connect(proxy.init_filter_values)
         model.modelReset.connect(model.init_sort_values)
+        model.modelReset.connect(proxy.init_filter_values)
         model.modelReset.connect(model.init_row_size)
         model.modelReset.connect(self.init_buttons_state)
         model.modelReset.connect(self.reset_multi_toggle)
+        model.modelReset.connect(
+            lambda: self.delayed_layout_timer.start(self.delayed_layout_timer.interval())
+        )
 
         self.interruptRequested.connect(model.set_interrupt_requested)
 
@@ -710,6 +704,7 @@ class BaseItemView(QtWidgets.QListView):
         """Custom key action.
         
         """
+        self.description_editor_widget.hide()
         actions.preview_thumbnail()
 
     def key_down(self):
@@ -719,6 +714,7 @@ class BaseItemView(QtWidgets.QListView):
         item in the list, we'll jump to the beginning, and vice-versa.
 
         """
+        self.description_editor_widget.hide()
         sel = self.selectionModel()
         current_index = sel.currentIndex()
         first_index = self.model().index(0, 0)
@@ -754,6 +750,7 @@ class BaseItemView(QtWidgets.QListView):
         item in the list, we'll jump to the beginning, and vice-versa.
 
         """
+        self.description_editor_widget.hide()
         sel = self.selectionModel()
         current_index = sel.currentIndex()
         first_index = self.model().index(0, 0)
@@ -894,7 +891,7 @@ class BaseItemView(QtWidgets.QListView):
 
         rect = rect.adjusted(o * 3, o, -o * 3, -o)
 
-        font, metrics = common.font_db.primary_font(
+        font, metrics = common.font_db.bold_font(
             common.size(common.size_font_small))
         text = metrics.elidedText(
             text,
@@ -907,8 +904,7 @@ class BaseItemView(QtWidgets.QListView):
 
         painter.setPen(QtCore.Qt.NoPen)
         painter.setBrush(color)
-        path = delegate.get_painter_path(x, y, font, text)
-        painter.drawPath(path)
+        delegate.draw_painter_path(painter, x, y, font, text)
         painter.end()
 
 
@@ -938,9 +934,9 @@ class BaseItemView(QtWidgets.QListView):
         row = index.row() if index.isValid() else -1
 
         # Update the layout
-        self.scheduleDelayedItemsLayout()
+        # self.scheduleDelayedItemsLayout()
         self.save_visible_rows()
-        self.repaint_visible_rows()
+        # self.repaint_visible_rows()
 
         # Restore the selection
         if row >= 0:
@@ -959,8 +955,20 @@ class BaseItemView(QtWidgets.QListView):
         """
         proxy = self.model()
         model = proxy.sourceModel()
+
+        if model.row_size.height() == v:
+            return
+
         model.row_size.setHeight(int(v))
         model.set_filter_setting('filters/row_heights', int(v))
+
+        # Notify the delegate of the new row size
+        for idx in range(proxy.rowCount()):
+            index = proxy.index(idx, 0)
+            self.itemDelegate().sizeHintChanged.emit(index)
+            break
+
+        self.reset_row_layout()
 
     @common.error
     @common.debug
@@ -1299,8 +1307,7 @@ class BaseItemView(QtWidgets.QListView):
         if not self.ContextMenu:
             return
 
-        rect = self.visualRect(index)
-        rectangles = delegate.get_rectangles(rect, self.inline_icons_count())
+        rectangles = self.itemDelegate().get_rectangles(index)
         if index.isValid() and rectangles[delegate.ThumbnailRect].contains(event.pos()):
             widget = self.ThumbnailContextMenu(index, parent=self)
         else:
@@ -1342,12 +1349,19 @@ class BaseItemView(QtWidgets.QListView):
         if index.flags() & common.MarkedAsArchived:
             return
 
-        rect = self.visualRect(index)
-        rectangles = delegate.get_rectangles(rect, self.inline_icons_count())
-        description_rectangle = self.itemDelegate().get_description_rect(rectangles,
-                                                                         index)
+        rectangles = self.itemDelegate().get_rectangles(index)
 
-        if description_rectangle.contains(cursor_position):
+        _rect = self.visualRect(index)
+        rect = delegate.get_description_rectangle(index, _rect, self.buttons_hidden())
+
+        if rect and rect.contains(cursor_position):
+            if len(index.data(common.ParentPathRole)) == 3:
+                actions.edit_bookmark(
+                    server=index.data(common.ParentPathRole)[0],
+                    job=index.data(common.ParentPathRole)[1],
+                    root=index.data(common.ParentPathRole)[2],
+                )
+                return
             self.description_editor_widget.show()
             return
 
@@ -1406,10 +1420,6 @@ class InlineIconView(BaseItemView):
         items containing the clicked rectangle's text content.
 
         """
-        # Disable when buttons are hidden
-        if self.buttons_hidden():
-            return
-
         cursor_position = self.mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)
 
@@ -1425,50 +1435,58 @@ class InlineIconView(BaseItemView):
         control_modifier = modifiers & QtCore.Qt.ControlModifier
 
         # Get clickable rectangles from the delegate
-        clickable_rectangles = self.itemDelegate().get_clickable_rectangles(index)
+        rect = self.visualRect(index)
+        clickable_rectangles = delegate.get_clickable_rectangles(index, rect)
         if not clickable_rectangles:
             return
 
         cursor_position = self.mapFromGlobal(common.cursor.pos())
 
-        for idx, item in enumerate(clickable_rectangles):
-            if idx == 0:
-                continue  # First rectangle is always the description editor
+        for item in clickable_rectangles:
+            if not item:
+                continue
 
             rect, text = item
+            if not text:
+                continue
+
             text = text.lower()
 
-            if rect.contains(cursor_position):
-                filter_text = self.model().filter_text()
-                filter_text = filter_text.lower() if filter_text else ''
+            if not rect.contains(cursor_position):
+                continue
 
-                if shift_modifier:
-                    # Shift modifier will add a "positive" filter and hide all items
-                    # that does not contain the given text.
-                    folder_filter = f'"{text}"'
+            filter_text = self.model().filter_text()
+            filter_text = filter_text.lower() if filter_text else ''
 
-                    if folder_filter in filter_text:
-                        filter_text = filter_text.replace(folder_filter, '')
-                    else:
-                        filter_text = f'{filter_text} {folder_filter}'
+            if shift_modifier:
+                # Shift modifier will add a "positive" filter and hide all items
+                # that does not contain the given text.
+                folder_filter = f'"{text}"'
 
-                    self.model().set_filter_text(filter_text)
-                    self.repaint(self.rect())
-                elif alt_modifier or control_modifier:
-                    # The alt or control modifiers will add a "negative filter"
-                    # and hide the selected sub-folder from the view
-                    folder_filter = f'--"{text}"'
-                    _folder_filter = f'"{text}"'
+                if folder_filter in filter_text:
+                    filter_text = filter_text.replace(folder_filter, '')
+                else:
+                    filter_text = f'{filter_text} {folder_filter}'
 
-                    if filter_text:
-                        if _folder_filter in filter_text:
-                            filter_text = filter_text.replace(_folder_filter, '')
-                        if folder_filter not in filter_text:
-                            folder_filter = f'{filter_text} {folder_filter}'
+                self.model().set_filter_text(filter_text)
+                self.repaint(self.rect())
+                return
 
-                    self.model().set_filter_text(folder_filter)
-                    self.repaint(self.rect())
-                    return
+            if alt_modifier or control_modifier:
+                # The alt or control modifiers will add a "negative filter"
+                # and hide the selected sub-folder from the view
+                folder_filter = f'--"{text}"'
+                _folder_filter = f'"{text}"'
+
+                if filter_text:
+                    if _folder_filter in filter_text:
+                        filter_text = filter_text.replace(_folder_filter, '')
+                    if folder_filter not in filter_text:
+                        folder_filter = f'{filter_text} {folder_filter}'
+
+                self.model().set_filter_text(folder_filter)
+                self.repaint(self.rect())
+                return
 
     def mousePressEvent(self, event):
         """The `InlineIconView`'s mousePressEvent initiates multi-row
@@ -1493,8 +1511,7 @@ class InlineIconView(BaseItemView):
 
         self.reset_multi_toggle()
 
-        rect = self.visualRect(index)
-        rectangles = delegate.get_rectangles(rect, self.inline_icons_count())
+        rectangles = self.itemDelegate().get_rectangles(index)
 
         if rectangles[delegate.FavouriteRect].contains(cursor_position):
             self.multi_toggle_pos = QtCore.QPoint(0, cursor_position.y())
@@ -1535,6 +1552,11 @@ class InlineIconView(BaseItemView):
             self.reset_multi_toggle()
             return
 
+        modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
+        alt_modifier = modifiers & QtCore.Qt.AltModifier
+        shift_modifier = modifiers & QtCore.Qt.ShiftModifier
+        control_modifier = modifiers & QtCore.Qt.ControlModifier
+
         # Let's handle the clickable rectangle event first
         self.clickable_rectangle_event(event)
 
@@ -1551,8 +1573,7 @@ class InlineIconView(BaseItemView):
             return
 
         # Responding the click-events based on the position:
-        rect = self.visualRect(index)
-        rectangles = delegate.get_rectangles(rect, self.inline_icons_count())
+        rectangles = self.itemDelegate().get_rectangles(index)
         cursor_position = self.mapFromGlobal(common.cursor.pos())
 
         self.reset_multi_toggle()
@@ -1568,7 +1589,13 @@ class InlineIconView(BaseItemView):
                 self.model().invalidateFilter()
 
         if rectangles[delegate.RevealRect].contains(cursor_position):
-            actions.reveal(index)
+            # Reveal the job folder if any of the modifiers are pressed
+            if any((alt_modifier, shift_modifier, control_modifier)):
+                pp = index.data(common.ParentPathRole)
+                s = f'{pp[0]}/{pp[1]}'
+                actions.reveal(s)
+            else:
+                actions.reveal(index)
 
         if rectangles[delegate.TodoRect].contains(cursor_position):
             actions.show_todos()
@@ -1587,6 +1614,8 @@ class InlineIconView(BaseItemView):
             return
 
         cursor_position = self.mapFromGlobal(common.cursor.pos())
+        if not common.cursor:
+            return
         app = QtWidgets.QApplication.instance()
         if not app:
             return
@@ -1605,8 +1634,7 @@ class InlineIconView(BaseItemView):
 
         # Status messages
         if self.multi_toggle_pos is None:
-            rectangles = delegate.get_rectangles(
-                self.visualRect(index), self.inline_icons_count())
+            rectangles = self.itemDelegate().get_rectangles(index)
 
             if event.buttons() == QtCore.Qt.NoButton:
                 if rectangles[delegate.PropertiesRect].contains(cursor_position):
@@ -1651,8 +1679,10 @@ class InlineIconView(BaseItemView):
                 app.restoreOverrideCursor()
                 return
 
-            rect = self.itemDelegate().get_description_rect(rectangles, index)
-            if rect.contains(cursor_position):
+            rect = delegate.get_description_rectangle(
+                index, self.visualRect(index), self.buttons_hidden())
+
+            if rect and rect.contains(cursor_position):
                 self.update(index)
                 if app.overrideCursor():
                     app.changeOverrideCursor(
@@ -1749,11 +1779,11 @@ class ThreadedItemView(InlineIconView):
 
     @common.error
     @common.debug
-    def set_model(self, *args, **kwargs):
+    def init_model(self, *args, **kwargs):
         """The methods responsible for connecting the associated item model with the view.
 
         """
-        super().set_model(*args, **kwargs)
+        super().init_model(*args, **kwargs)
         self.refUpdated.connect(self.update_row)
 
         self.delayed_queue_timer.timeout.connect(self.save_visible_rows)
@@ -1870,8 +1900,6 @@ class ThreadedItemView(InlineIconView):
         index = self.indexAt(r.topLeft())
         if not index.isValid():
             return
-
-        model = index.model()
 
         rect = self.visualRect(index)
         i = 0

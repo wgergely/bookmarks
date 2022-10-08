@@ -180,11 +180,11 @@ class MessageBox(QtWidgets.QDialog):
     def _create_ui(self):
         stylesheet = MESSAGE_BOX_STYLESHEET.format(
             SIZE=common.size(common.size_font_large),
-            FAMILY=common.font_db.primary_font(
+            FAMILY=common.font_db.bold_font(
                 common.size(common.size_font_medium)
             )[0].family(),
             TEXT=common.rgb(self.secondary_color.darker(255)),
-            TRANSPARENT=common.rgb(common.color(common.Transparent)),
+            TRANSPARENT=common.rgb(common.color(common.color_transparent)),
         )
         self.setStyleSheet(stylesheet)
 
@@ -415,7 +415,7 @@ class Label(QtWidgets.QLabel):
                 'color: {}; font-size: {}px; font-family: "{}"'.format(
                     common.rgb(self._color),
                     common.size(common.size_font_small),
-                    common.font_db.secondary_font(
+                    common.font_db.medium_font(
                         common.size(common.size_font_medium)
                     )[0].family()
                 )
@@ -425,7 +425,7 @@ class Label(QtWidgets.QLabel):
                 'color: {}; font-size: {}px; font-family: "{}"'.format(
                     common.rgb(self.color),
                     common.size(common.size_font_small),
-                    common.font_db.secondary_font(
+                    common.font_db.medium_font(
                         common.size(common.size_font_medium)
                     )[0].family()
                 )
@@ -522,7 +522,7 @@ class PaintedButton(QtWidgets.QPushButton):
 
         common.draw_aliased_text(
             painter,
-            common.font_db.primary_font(common.size(common.size_font_medium))[0],
+            common.font_db.bold_font(common.size(common.size_font_medium))[0],
             rect,
             self.text(),
             QtCore.Qt.AlignCenter,
@@ -547,7 +547,7 @@ class PaintedLabel(QtWidgets.QLabel):
         self.update_size()
 
     def update_size(self):
-        font, metrics = common.font_db.primary_font(self._size)
+        font, metrics = common.font_db.bold_font(self._size)
         self.setFixedHeight(metrics.height())
         self.setFixedWidth(
             metrics.horizontalAdvance(self._text) +
@@ -577,7 +577,7 @@ class PaintedLabel(QtWidgets.QLabel):
         rect.setLeft(rect.left() + common.size(common.size_indicator))
         common.draw_aliased_text(
             painter,
-            common.font_db.primary_font(self._size)[0],
+            common.font_db.bold_font(self._size)[0],
             self.rect(),
             self.text(),
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
@@ -884,7 +884,7 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
             rect.setWidth(o * 2)
 
         # Label
-        font, metrics = common.font_db.primary_font(
+        font, metrics = common.font_db.bold_font(
             common.size(common.size_font_small)
         )
 
@@ -912,7 +912,7 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
         painter.drawPath(path)
 
     def sizeHint(self, option, index):
-        _, metrics = common.font_db.primary_font(
+        _, metrics = common.font_db.bold_font(
             common.size(common.size_font_small)
         )
 
@@ -1027,7 +1027,7 @@ class ListWidget(QtWidgets.QListWidget):
         if isinstance(label, QtWidgets.QListWidgetItem):
             return super().addItem(label)
 
-        _, metrics = common.font_db.primary_font(
+        _, metrics = common.font_db.bold_font(
             common.size(common.size_font_small)
         )
         width = metrics.horizontalAdvance(
@@ -1160,7 +1160,7 @@ class ListViewWidget(QtWidgets.QListView):
             self.model().sourceModel().appendRow(v)
             return
 
-        _, metrics = common.font_db.primary_font(
+        _, metrics = common.font_db.bold_font(
             common.size(common.size_font_small)
         )
         width = metrics.horizontalAdvance(v) + common.size(
@@ -1495,7 +1495,7 @@ class GalleryItem(QtWidgets.QLabel):
         rect = self.rect()
         rect.moveTopLeft(rect.topLeft() + QtCore.QPoint(1, 1))
 
-        font, _ = common.font_db.primary_font(common.size(common.size_font_medium))
+        font, _ = common.font_db.bold_font(common.size(common.size_font_medium))
 
         common.draw_aliased_text(
             painter,

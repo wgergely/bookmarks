@@ -42,7 +42,7 @@ class StatusBarWidget(QtWidgets.QStatusBar):
         painter = QtGui.QPainter()
         painter.begin(self)
 
-        font, _ = common.font_db.secondary_font(common.size(common.size_font_small))
+        font, _ = common.font_db.medium_font(common.size(common.size_font_small))
         common.draw_aliased_text(
             painter,
             font,

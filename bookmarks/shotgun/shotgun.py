@@ -181,7 +181,7 @@ def get_sg(domain, script, key):
 
     k = _get_thread_key(domain, script, key)
 
-    if k in SG_CONNECTIONS:
+    if k in SG_CONNECTIONS and SG_CONNECTIONS[k]:
         return SG_CONNECTIONS[k]
 
     try:
@@ -207,7 +207,6 @@ def get_sg(domain, script, key):
         SG_CONNECTIONS[k] = None
         if key in SG_CONNECTIONS:
             del SG_CONNECTIONS[k]
-        log.error('ShotGrid connection error.')
         raise
 
 
@@ -260,24 +259,36 @@ class ShotgunProperties(object):
 
     @property
     def server(self):
+        """`Server` path segment.
+
+        """
         if self.active:
             return common.active('server')
         return self._server
 
     @property
     def job(self):
+        """`Job` path segment.
+
+        """
         if self.active:
             return common.active('job')
         return self._job
 
     @property
     def root(self):
+        """`Root` path segment.
+
+        """
         if self.active:
             return common.active('root')
         return self._root
 
     @property
     def asset(self):
+        """`Asset` path segment.
+
+        """
         if self.active:
             return common.active('asset')
         return self._asset
@@ -316,6 +327,16 @@ class ShotgunProperties(object):
 
     def verify(self, connection=False, bookmark=False, asset=False):
         """Checks the validity of the current configuration.
+
+        Args:
+            connection (bool, optional): Verifies the connection information if True.
+            bookmark (bool, optional):
+                Checks only the bookmark item's configuration if True.
+            asset (bool, optional):
+                Checks only the asset item's configuration if True.
+
+        Returns:
+            bools: True if the configuration is valid, False otherwise.
 
         """
         # Verify connection

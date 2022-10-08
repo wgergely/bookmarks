@@ -222,7 +222,8 @@ def init_stylesheet():
             ),
             close=images.ImageCache.rsc_pixmap(
                 'close', None, None, get_path=True
-            )
+            ),
+            menu_border_radius=int(size(common.size_margin) * 0.5)
         )
     except KeyError as err:
         from . import log

@@ -280,7 +280,7 @@ def get_bookmark_text_segments(text, label):
 
             d[len(d)] = (s, s_color)
             if __i != len(v) - 1:
-                d[len(d)] = ('   •   ', s_color)
+                d[len(d)] = (', ', s_color)
 
     common.delegate_text_segments[k] = d
     return common.delegate_text_segments[k]
@@ -777,7 +777,7 @@ def draw_subdir_bg_rectangles(text_edge, *args):
 
 
 @save_painter
-def draw_gradient_background(text_edge, *args):
+def draw_gradient_background(*args):
     """Helper method used to draw file items' gradient background.
 
     Args:
@@ -799,6 +799,8 @@ def draw_gradient_background(text_edge, *args):
         metrics,
         cursor_position
     ) = args
+
+    text_edge = rectangles[DataRect].right()
 
     k = get_subdir_bg_cache_key(index, option.rect)
 
@@ -830,9 +832,11 @@ def draw_gradient_background(text_edge, *args):
                 0
             )
         )
+        color = QtGui.QColor(common.color(common.color_dark_background))
+        color.setAlpha(240)
         gradient.setSpread(QtGui.QGradient.PadSpread)
-        gradient.setColorAt(0, common.color(common.color_dark_background))
-        gradient.setColorAt(1.0, common.color(common.color_transparent))
+        gradient.setColorAt(0.1, color)
+        gradient.setColorAt(0.8, common.color(common.color_transparent))
         brush = QtGui.QBrush(gradient)
 
         common.delegate_bg_brushes[k] = (rect, brush)
@@ -861,7 +865,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
 
     def paint(self, painter, option, index):
         """Paint function.
-        
+
         """
         raise NotImplementedError('Abstract method must be implemented by subclass.')
 
@@ -1127,7 +1131,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
     @save_painter
     def paint_name(self, *args):
         """Paints the name of the item.
-        
+
         """
         (
             rectangles,
@@ -1260,7 +1264,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
     @save_painter
     def paint_description_editor_background(self, *args, **kwargs):
         """Paints the background of the item.
-        
+
         """
         (
             rectangles,
@@ -1371,7 +1375,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
     @save_painter
     def paint_thumbnail_drop_indicator(self, *args):
         """Paints a drop indicator used when dropping thumbnail onto the item.
-        
+
         """
         (
             rectangles,
@@ -1433,6 +1437,58 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
             painter.drawPixmap(irect, pixmap, pixmap.rect())
 
     @save_painter
+    def paint_active(self, *args):
+        """Paints the background for all list items."""
+        (
+            rectangles,
+            painter,
+            option,
+            index,
+            selected,
+            focused,
+            active,
+            archived,
+            favourite,
+            hover,
+            font,
+            metrics,
+            cursor_position
+        ) = args
+
+        if index.flags() == QtCore.Qt.NoItemFlags | common.MarkedAsArchived:
+            return
+
+        # Active indicator
+        if not active:
+            return
+
+        rect = QtCore.QRect(rectangles[BackgroundRect])
+        if index.row() == (self.parent().model().rowCount() - 1):
+            rect.setHeight(rect.height() + common.size(common.size_separator))
+
+        rect.setLeft(
+            option.rect.left() +
+            common.size(common.size_indicator) + option.rect.height()
+        )
+        painter.setOpacity(0.5)
+        painter.setBrush(common.color(common.color_green))
+        painter.drawRoundedRect(
+            rect, common.size(common.size_indicator),
+            common.size(common.size_indicator)
+        )
+        painter.setOpacity(0.5)
+        pen = QtGui.QPen(common.color(common.color_green))
+        pen.setWidth(common.size(common.size_separator) * 2)
+        painter.setPen(pen)
+        painter.setBrush(QtCore.Qt.NoBrush)
+        o = common.size(common.size_separator)
+        rect = rect.adjusted(o, o, -(o * 1.5), -(o * 1.5))
+        painter.drawRoundedRect(
+            rect, common.size(common.size_indicator),
+            common.size(common.size_indicator)
+        )
+
+    @save_painter
     def paint_background(self, *args):
         """Paints the background for all list items."""
         (
@@ -1451,7 +1507,6 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
             cursor_position
         ) = args
 
-
         if index.flags() == QtCore.Qt.NoItemFlags | common.MarkedAsArchived:
             return
 
@@ -1466,39 +1521,46 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         painter.setOpacity(0.7)
         painter.drawRect(rect)
 
-        # Active indicator
-        if active:
-            rect.setLeft(
-                option.rect.left() +
-                common.size(common.size_indicator) + option.rect.height()
-            )
-            painter.setOpacity(0.5)
-            painter.setBrush(common.color(common.color_green))
-            painter.drawRoundedRect(
-                rect, common.size(common.size_indicator),
-                common.size(common.size_indicator)
-            )
-            painter.setOpacity(0.5)
-            pen = QtGui.QPen(common.color(common.color_green))
-            pen.setWidth(common.size(common.size_separator) * 2)
-            painter.setPen(pen)
-            painter.setBrush(QtCore.Qt.NoBrush)
-            o = common.size(common.size_separator)
-            rect = rect.adjusted(o, o, -(o * 1.5), -(o * 1.5))
-            painter.drawRoundedRect(
-                rect, common.size(common.size_indicator),
-                common.size(common.size_indicator)
-            )
+    @save_painter
+    def paint_hover(self, *args):
+        """Paints the background for all list items."""
+        (
+            rectangles,
+            painter,
+            option,
+            index,
+            selected,
+            focused,
+            active,
+            archived,
+            favourite,
+            hover,
+            font,
+            metrics,
+            cursor_position
+        ) = args
 
-        # Hover indicator
-        if hover:
-            painter.setBrush(HOVER_COLOR)
-            painter.drawRect(rect)
+        if not hover:
+            return
+        if index.flags() == QtCore.Qt.NoItemFlags | common.MarkedAsArchived:
+            return
+
+        rect = QtCore.QRect(rectangles[BackgroundRect])
+        if index.row() == (self.parent().model().rowCount() - 1):
+            rect.setHeight(rect.height() + common.size(common.size_separator))
+
+        color = common.color(common.color_light_background)
+        color = color if selected else common.color(common.color_background)
+        painter.setBrush(color)
+
+        painter.setOpacity(0.7)
+        painter.setBrush(HOVER_COLOR)
+        painter.drawRect(rect)
 
     @save_painter
     def paint_inline_background(self, *args):
         """Paints the item's inline buttons background.
-        
+
         """
         (
             rectangles,
@@ -1804,7 +1866,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
 
     def paint_inline_count(self, painter, rect, cursor_position, count, icon):
         """Paints an item count.
-        
+
         """
         painter.setRenderHint(QtGui.QPainter.Antialiasing, on=True)
 
@@ -1871,7 +1933,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
     @save_painter
     def paint_thumbnail_shadow(self, *args):
         """Paints the item's thumbnail shadow.
-        
+
         """
         (
             rectangles,
@@ -1960,7 +2022,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
     @save_painter
     def paint_shotgun_status(self, *args):
         """Paints the item's ShotGrid configuration status.
-        
+
         """
         (
             rectangles,
@@ -2011,7 +2073,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
     @save_painter
     def paint_slack_status(self, *args):
         """Paints the item's Slack configuration status.
-        
+
         """
         (
             rectangles,
@@ -2116,7 +2178,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
     @save_painter
     def paint_deleted(self, *args, **kwargs):
         """Paints a deleted item.
-        
+
         """
         (
             rectangles,
@@ -2405,8 +2467,6 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         it = get_text_segments(index).values()
         left = draw_file_text_segments(it, font, metrics, offset, *args)
 
-        draw_gradient_background(left - common.size(common.size_margin), *args)
-
         bg_rect = draw_subdir_bg_rectangles(
             left - common.size(common.size_margin), *args
         )
@@ -2500,6 +2560,9 @@ class BookmarkItemViewDelegate(ItemDelegate):
 
         self.paint_background(*args)
         self.paint_default(*args)
+        draw_gradient_background(*args)
+        self.paint_active(*args)
+        self.paint_hover(*args)
         self.paint_thumbnail_shadow(*args)
         self.paint_name(*args)
         self.paint_thumbnail(*args)
@@ -2530,6 +2593,9 @@ class AssetItemViewDelegate(ItemDelegate):
             return
         args = self.get_paint_arguments(painter, option, index)
         self.paint_background(*args)
+        draw_gradient_background(*args)
+        self.paint_active(*args)
+        self.paint_hover(*args)
         self.paint_thumbnail_shadow(*args)
         self.paint_name(*args)
         self.paint_thumbnail(*args)
@@ -2566,6 +2632,9 @@ class FileItemViewDelegate(ItemDelegate):
         p_role = index.data(common.ParentPathRole)
         if p_role:
             self.paint_background(*args)
+            draw_gradient_background(*args)
+            self.paint_active(*args)
+            self.paint_hover(*args)
             self.paint_name(*args)
 
         self.paint_thumbnail_shadow(*args)

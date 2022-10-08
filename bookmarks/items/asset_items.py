@@ -363,12 +363,12 @@ class AssetItemView(views.ThreadedItemView):
             return
 
         rectangles = self.itemDelegate().get_rectangles(index)
-
-        if rectangles[delegate.AddAssetRect].contains(cursor_position):
+        archived = index.data(common.FlagsRole) & common.MarkedAsArchived
+        if rectangles[delegate.AddAssetRect].contains(cursor_position) and not archived:
             actions.show_add_file(asset=index.data(common.ParentPathRole)[-1])
             return
 
-        if rectangles[delegate.PropertiesRect].contains(cursor_position):
+        if rectangles[delegate.PropertiesRect].contains(cursor_position) and not archived:
             actions.edit_asset(index.data(common.ParentPathRole)[-1])
             return
 

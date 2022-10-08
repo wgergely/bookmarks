@@ -6,10 +6,11 @@ and ``asset`` components.
     server, job, root, asset = common.active('asset', args=True)
     asset = f'{server}/{job}/{root}/{asset}'
 
-Bookmarks considers any folder in the root of a bookmark item to be an asset. Note that
-we don't have any notion of asset types (like how some pipelines make a distinction
+
+The app considers folders found in the root of a bookmark item assets.
+We don't have any notion of asset types (like how some pipelines make a distinction
 between shots and assets), nor do we understand nested assets by default (like a
-``SEQ010/SH010 `` structure).
+``SEQ010/SH010`` structure).
 
 Asset data is queried by :class:`AssetItemModel`, and displayed by
 :class:`AssetItemView`. Any custom logic of how assets are queried should be

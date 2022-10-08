@@ -64,11 +64,16 @@ class FilterHistoryMenu(contextmenu.BaseContextMenu):
 class BaseControlButton(ui.ClickableIconButton):
     """Base-class used for control buttons on the top bar."""
 
-    def __init__(self, pixmap, description,
-                 color=(
-                         common.color(common.color_selected_text),
-                         common.color(common.color_disabled_text)),
-                 parent=None):
+    def __init__(
+            self,
+            pixmap,
+            description,
+            color=(
+                common.color(common.color_selected_text),
+                common.color(common.color_disabled_text)
+            ),
+            parent=None
+    ):
         super().__init__(
             pixmap,
             color,
@@ -181,10 +186,16 @@ class ToggleArchivedButton(BaseControlButton):
 
     def pixmap(self):
         if self.state():
-            return images.ImageCache.rsc_pixmap('archivedVisible', self._on_color,
-                                                common.size(common.size_margin))
-        return images.ImageCache.rsc_pixmap('archivedHidden', self._off_color,
-                                            common.size(common.size_margin))
+            return images.ImageCache.rsc_pixmap(
+                'archivedVisible',
+                self._on_color,
+                common.size(common.size_margin)
+            )
+        return images.ImageCache.rsc_pixmap(
+            'archivedHidden',
+            self._off_color,
+            common.size(common.size_margin)
+        )
 
     def state(self):
         if not common.widget():

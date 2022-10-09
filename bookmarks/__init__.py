@@ -7,7 +7,7 @@ Bookmarks is a lightweight Python asset manager designed to browse and manage th
 
 ------------
 
-.. centered:: :ref:`User Guide`  |  :ref:`Python Modules`  |  :ref:`Download`
+.. centered:: :ref:`User Guide`  |  :ref:`Python Modules`  |  :ref:`Get Bookmarks`
 
 ------------
 

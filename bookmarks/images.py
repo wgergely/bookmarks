@@ -618,6 +618,8 @@ class ImageCache(QtCore.QObject):
 
         if size == -1:
             buf = oiio_get_buf(source)
+            if not buf:
+                return None
             spec = buf.spec()
             size = max((spec.width, spec.height))
 

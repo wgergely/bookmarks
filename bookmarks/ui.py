@@ -326,7 +326,7 @@ class MessageBox(QtWidgets.QDialog):
             painter.begin(self)
             painter.setRenderHint(QtGui.QPainter.Antialiasing)
 
-            pen = QtGui.QPen(QtGui.QColor(self.secondary_color).darkerdarker(250))
+            pen = QtGui.QPen(QtGui.QColor(self.secondary_color).darker(250))
             pen.setWidthF(common.size(common.size_separator))
             painter.setPen(pen)
 

@@ -253,11 +253,26 @@ class AssetItemModel(models.ItemModel):
             return
             yield
 
+        # Get folders from the root of the bookmark item
         for entry in it:
+            if self._interrupt_requested:
+                return
             if entry.name.startswith('.'):
                 continue
             if not entry.is_dir():
                 continue
+
+            # Check if the asset has links to sub-folders
+            links = common.get_links(entry.path, section='links/asset')
+            for link in links:
+                v = f'{path}/{entry.name}/{link}'
+                _entry = common.get_entry_from_path(v)
+                if not entry:
+                    continue
+                yield _entry
+            if links:
+                continue
+
             yield entry
 
         # Studio Aka Pipe entries

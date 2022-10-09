@@ -89,7 +89,7 @@ class BookmarkerWidget(QtWidgets.QDialog):
         # =====================================================
 
         _o = common.size(common.size_margin)
-        main_row = ui.add_row(None, height=None, parent=self)
+        main_row = ui.add_row(None, height=None, parent=self, cls=QtWidgets.QSplitter)
         main_row.setObjectName('mainRow')
         main_row.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,

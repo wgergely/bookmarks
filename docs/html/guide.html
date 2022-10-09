@@ -11,8 +11,7 @@
         <title>User Guide - Bookmarks 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
-    <link rel="stylesheet" type="text/css" href="_static/bootstrap-carousel.min.css" />
-    <link rel="stylesheet" type="text/css" href="_static/carousel-custom.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
@@ -350,176 +349,239 @@
         <article role="main">
           <section id="user-guide">
 <h1>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this heading">#</a></h1>
-<section id="what-is-this-and-why-does-it-exist">
-<h2>What is this, and why does it exist?<a class="headerlink" href="#what-is-this-and-why-does-it-exist" title="Permalink to this heading">#</a></h2>
-<p>😊️ Bookmarks is a free and open-source asset manager for film, animation and VFX projects.</p>
-<p>😵  It can be your local hub for accessing assets and files and connecting them with external resources, such as ShotGrid entities and URLs, or a place for notes and comments.</p>
-<p>🥳  It helps me create my jobs, shot and asset folders and keep scene files named neat and consistent.</p>
-</section>
-<section id="download">
-<h2>Download<a class="headerlink" href="#download" title="Permalink to this heading">#</a></h2>
-<div class="admonition-latest-windows-release admonition">
-<p class="admonition-title">Latest Windows Release</p>
-<p><a class="reference external" href="https://github.com/wgergely/bookmarks/releases/download/0.7.2/Bookmarks_0.7.2.exe">Bookmarks v0.7.2</a>.</p>
+<p>😊️ Bookmarks is a free and open-source desktop asset manager for film, animation and VFX projects.</p>
+<p>🥳  It can be used to create new shot and asset folders and configure them with simple settings. You can filter items using labels, tags and flags.</p>
+<p>😊  Bookmarks can be your friend in linking external resources with local files (like ShotGrid entities, or other online resources).</p>
+<p>☹  Features are limited, and perhaps a little clunky. But hey, this is is a personal tool. So, whilst it might not be useful for <em>you</em>, I see value in sharing it, since it made my life easier in the past. <a class="reference external" href="mailto:%22Gergely%20Wootsch%22%3chello&#37;&#52;&#48;gergely-wootsch&#46;com%3e?subject=%5BBookmarks%5D">I would love to hear what you think!<span>&#46;</span></a></p>
+<section id="get-bookmarks">
+<h2>Get Bookmarks<a class="headerlink" href="#get-bookmarks" title="Permalink to this heading">#</a></h2>
+<p>The project is hosted on <a class="reference external" href="https://github.com/wgergely/bookmarks">Github</a>.</p>
+<div class="admonition-download-the-latest-windows-release-bookmarks-v0-7-2-https-github-com-wgergely-bookmarks-releases-download-0-7-2-bookmarks-0-7-2-exe admonition">
+<p class="admonition-title">Download the latest Windows release: <a class="reference external" href="https://github.com/wgergely/bookmarks/releases/download/0.7.2/Bookmarks_0.7.2.exe">Bookmarks v0.7.2</a></p>
+<p>☹ Currently, Bookmarks only supports Windows.</p>
 </div>
-<p><a class="reference external" href="https://github.com/wgergely/bookmarks/releases">You can find older releases here</a>.</p>
 </section>
-<section id="i-have-an-issue-or-question">
-<h2>I have an issue or question<a class="headerlink" href="#i-have-an-issue-or-question" title="Permalink to this heading">#</a></h2>
-<p><a class="reference external" href="https://github.com/wgergely/bookmarks/issues">Github Issue Tracker</a></p>
-</section>
-<section id="contact">
-<h2>Contact<a class="headerlink" href="#contact" title="Permalink to this heading">#</a></h2>
-<p><a class="reference external" href="mailto:%22Gergely%20Wootsch%22%3chello&#37;&#52;&#48;gergely-wootsch&#46;com%3e?subject=%5BBookmarks%5D">E-mail</a></p>
-</section>
-<section id="how-does-it-work">
-<h2>How does it work?<a class="headerlink" href="#how-does-it-work" title="Permalink to this heading">#</a></h2>
-<p>Bookmarks reads the content of projects from bookmark, and asset folders. Bookmark items are folders inside a job folder, like a ‘scenes’ or ‘assets’ folder, or any other folder where production content resides.</p>
-<blockquote>
-<div><figure class="align-default">
-<a class="reference internal image-reference" href="_images/structure.png"><img alt="_images/structure.png" src="_images/structure.png" style="width: 400px;" /></a>
-</figure>
-<p>Bookmark items comprise of server, job and root folders.
-For example: <code class="docutils literal notranslate"><span class="pre">//server/jobs/project_0010/path/to/shots_folder</span></code> is a bookmark item, where <strong>//server/jobs</strong> is the server, <strong>project_0010</strong> is the job and <strong>path/to/shots_folder</strong> is the root folder.</p>
-<p>Assets reside in bookmark items and files are read from ‘task’ folders found inside an asset.</p>
-<p>This is how Bookmarks sees a project:</p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this heading">#</a></h2>
+<hr class="docutils" />
+<div class="video_wrapper align-center" style="text-align: center">
+<iframe allowfullscreen="true" src="https://www.youtube.com/embed/oKb8KGj78Rg" style="border: 0; height: 345px; width: 560px">
+</iframe></div><hr class="docutils" />
+<section id="what-is-a-bookmark-item">
+<h3>What is a bookmark item?<a class="headerlink" href="#what-is-a-bookmark-item" title="Permalink to this heading">#</a></h3>
+<div class="sd-card sd-sphinx-override sd-mb-3 sd-shadow-sm sd-text-center docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+File path components:</div>
+<a class="reference internal image-reference" href="_images/structure.png"><img alt="_images/structure.png" src="_images/structure.png" style="width: 420px;" /></a>
+</div>
+</div>
+<p><a class="reference external" href=".">Bookmarks</a> reads files from <a class="reference internal" href="modules/items/bookmark_items.html#module-bookmarks.items.bookmark_items" title="bookmarks.items.bookmark_items"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmark</span></code></a>, <a class="reference internal" href="modules/items/asset_items.html#module-bookmarks.items.asset_items" title="bookmarks.items.asset_items"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asset</span></code></a> and <a class="reference internal" href="modules/items/file_items.html#module-bookmarks.items.file_items" title="bookmarks.items.file_items"><code class="xref py py-mod docutils literal notranslate"><span class="pre">task</span></code></a> folders.</p>
+<p><code class="docutils literal notranslate"><span class="pre">//server/jobs/project_0010/path/to/shots_folder</span></code> is a bookmark item, where <code class="docutils literal notranslate"><span class="pre">//server/jobs</span></code> is a server, <code class="docutils literal notranslate"><span class="pre">project_0010</span></code> is a job and <code class="docutils literal notranslate"><span class="pre">path/to/shots_folder</span></code> is a root folder. Together they make up the bookmark item.</p>
+<p>Any folder can be used a bookmark item but they usually correspond to folders where digital content is kept, like the usual <em>scenes</em>, <em>assets</em> or <em>dailies</em> folders.</p>
+<div class="sd-card sd-sphinx-override sd-mb-3 sd-shadow-sm sd-text-center docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+This is how the app sees projects:</div>
 <figure class="align-default">
 <a class="reference internal image-reference" href="_images/tree.png"><img alt="_images/tree.png" src="_images/tree.png" style="width: 280px;" /></a>
 </figure>
-</div></blockquote>
+<p class="sd-card-text">Thumbnails and the database used to keep item properties are stored in the <code class="docutils literal notranslate"><span class="pre">.bookmark</span></code> folder.</p>
+</div>
+</div>
+</section>
+<section id="how-do-you-add-bookmark-items">
+<h3>How do you  add bookmark items?<a class="headerlink" href="#how-do-you-add-bookmark-items" title="Permalink to this heading">#</a></h3>
+<p>There are two ways to add bookmark items, by hand, or by editing the <code class="docutils literal notranslate"><span class="pre">default_bookmark_items.json</span></code>. The latter is useful for deploying the app per-project with bookmark items already set up correctly. The step-by-step guide below will show you how to add them by hand.</p>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
+<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-1 sd-row-cols-lg-1 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Step 1: Open the editor</div>
+<figure class="align-default">
+<a class="reference internal image-reference" href="_images/bookmark_add.png"><img alt="_images/bookmark_add.png" src="_images/bookmark_add.png" style="width: 480px;" /></a>
+</figure>
+<p class="sd-card-text">With the bookmark item tab selected, Right-click and select ‘Manage bookmark items…’ or press <code class="docutils literal notranslate"><span class="pre">Ctrl+N</span></code>.</p>
+</div>
+</div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Step 2: Add server, job and root folders</div>
+<figure class="align-default">
+<a class="reference internal image-reference" href="_images/job_add.png"><img alt="_images/job_add.png" src="_images/job_add.png" style="width: 480px;" /></a>
+</figure>
+<p class="sd-card-text">Use the editor to pick a server, select or create a job and the root folders to use as bookmark items. Double-click root folders to add or remove from your current bookmark items.</p>
+</div>
+</div>
+</div>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
+<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-1 sd-row-cols-lg-1 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+1. Add server</div>
+<p class="sd-card-text">Click the green icon on the left-hand side. A server is usually a network location, but local folders work too. Make sure the folder exists before adding it.</p>
+</div>
+</div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+2. Select or create a job</div>
+<p class="sd-card-text">If the server already contains folders (jobs), select one here. Otherwise, click the green add icon in the middle column to create a new job.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p class="sd-card-text">You can add your own job folder templates by dragging them onto the template picker. They should be zip files containing a folder structure.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+3. Select or pick new root folders</div>
+<p class="sd-card-text">Select a job. If you used the default job template to create one, it comes with pre-defined root-folders (e.g. the <code class="docutils literal notranslate"><span class="pre">data/asset</span></code>, <code class="docutils literal notranslate"><span class="pre">data/shot</span></code> folders). If you used a custom template, you might need to pick a new root folder by clicking the green add icon on the right-hand side.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p class="sd-card-text">Any folder with a <code class="docutils literal notranslate"><span class="pre">.bookmark</span></code> folder inside them will be read as a root folder. If the folder doesn’t show up, you might have to change the folder parsing depth in the preferences.</p>
+</div>
+</div>
+</div>
+</div>
+<p>Done! Close the editor when finished.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="how-do-you-add-new-shots-and-assets">
+<h3>How do you add new shots and assets?<a class="headerlink" href="#how-do-you-add-new-shots-and-assets" title="Permalink to this heading">#</a></h3>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
+<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-1 sd-row-cols-lg-1 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Step 1: Activate a bookmark item</div>
+<figure class="align-default">
+<a class="reference internal image-reference" href="_images/active_bookmark.png"><img alt="_images/active_bookmark.png" src="_images/active_bookmark.png" style="width: 480px;" /></a>
+</figure>
+<p class="sd-card-text">Double-click any of the bookmark items you have just added. This will activate it and show its contents.</p>
+</div>
+</div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Step 2: Open the editor</div>
+<figure class="align-default">
+<a class="reference internal image-reference" href="_images/asset_add.png"><img alt="_images/asset_add.png" src="_images/asset_add.png" style="width: 480px;" /></a>
+</figure>
+<p class="sd-card-text">With the <em>Assets</em> tab selected, Right-click and select ‘Add Asset…’ or press <code class="docutils literal notranslate"><span class="pre">Ctrl+N</span></code>.</p>
+</div>
+</div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Step 3: Create a new asset</div>
+<p class="sd-card-text">Select an asset template, and enter a name.</p>
+<p class="sd-card-text">You can create sequences and shots by using a ‘SEQ###’ and ‘SH####’ prefix, e.g. SEQ010_SH0010.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>File thumbnails and saved properties are stored in the <code class="docutils literal notranslate"><span class="pre">.bookmark</span></code> cache folder.</p>
+<p class="sd-card-text">Unfortunately, the app doesn’t support these folders, like ‘SEQ010/SH0010’. Support for this is possible by modifying the code and should be pretty straightforward to do so.</p>
 </div>
-<p>Here are the main tabs used by the app to display these items:</p>
-<p class="centered">
-<strong><img alt="window_tabs" src="_images/window_tabs.png" /></strong></p><div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Per the explanation above, the files are only shown if there’s a task folder selected.
-To pick a task folder use the Files tab’s dropdown menu or right-click and select
-‘Select Task Folder…’.</p>
+</div>
+</div>
+</div>
+</div>
 </div>
 </section>
-<section id="how-do-i-use-it">
-<h2>How do I use it?<a class="headerlink" href="#how-do-i-use-it" title="Permalink to this heading">#</a></h2>
-<p>Here’s an awful video of me mumbling, and trying hard to show you how to set it up and
-create name template files.</p>
-<div class="video_wrapper align-center" style="text-align: center">
-<iframe allowfullscreen="true" src="https://www.youtube.com/embed/oKb8KGj78Rg" style="border: 0; height: 345px; width: 560px">
-</iframe></div><section id="step-by-step-guide">
-<h3>Step-by-step guide<a class="headerlink" href="#step-by-step-guide" title="Permalink to this heading">#</a></h3>
-<section id="add-bookmark-items">
-<h4>Add bookmark items<a class="headerlink" href="#add-bookmark-items" title="Permalink to this heading">#</a></h4>
-<div class="scbs-carousel scbs-slide" data-bs-interval="false" data-bs-keyboard="true" data-bs-pause="hover" data-bs-touch="true" data-bs-wrap="true" id="carousel-0">
-<div class="scbs-carousel-inner">
-<div class="scbs-carousel-item scbs-active">
-<a class="scbs-d-block scbs-w-100 reference internal image-reference" href="_images/bookmark_add.png"><img alt="_images/bookmark_add.png" class="scbs-d-block scbs-w-100" src="_images/bookmark_add.png" style="width: 480px;" /></a>
-<div class="scbs-carousel-caption scbs-d-none scbs-d-md-block">
-<h5>Right-click and select 'Manage bookmark items...' on the Bookmark tab button or window.</h5>
-</div>
-</div>
-</div>
-</div>
-<div class="scbs-carousel scbs-slide" data-bs-interval="false" data-bs-keyboard="true" data-bs-pause="hover" data-bs-touch="true" data-bs-wrap="true" id="carousel-1">
-<div class="scbs-carousel-inner">
-<div class="scbs-carousel-item scbs-active">
-<img alt="_images/job_add.png" class="scbs-d-block scbs-w-100" src="_images/job_add.png" />
-</div>
-</div>
-</div>
-<section id="add-a-server">
-<h5>1.1. Add a server<a class="headerlink" href="#add-a-server" title="Permalink to this heading">#</a></h5>
-<p>Click the green add icon to add a new server. A server is usually a network location, but we can add <strong>C:/jobs</strong> - make sure the folder exists!</p>
-</section>
-<section id="add-a-job">
-<h5>1.2. Add a job<a class="headerlink" href="#add-a-job" title="Permalink to this heading">#</a></h5>
-<p>Select <strong>C:/jobs</strong> and create a new job by clicking the green plus icon in the middle section. Name it <strong>DEMO</strong> and select the ‘Job’ template and click ‘Add Job’.</p>
+<section id="how-do-you-add-template-files">
+<h3>How do you add template files?<a class="headerlink" href="#how-do-you-add-template-files" title="Permalink to this heading">#</a></h3>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
+<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-1 sd-row-cols-lg-1 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Step 1: Activate an asset item</div>
+<figure class="align-default">
+<a class="reference internal image-reference" href="_images/asset_item.png"><img alt="_images/asset_item.png" src="_images/asset_item.png" style="width: 480px;" /></a>
+</figure>
+<p class="sd-card-text">Double-click an asset items you just created. This will activate it, but won’t show files until a task folder is selected.</p>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
-<p>You can add custom templates by dragging a zip file containing your job template onto the item selector.</p>
-</div>
-</section>
-<section id="add-bookmark-item">
-<h5>1.3. Add bookmark item<a class="headerlink" href="#add-bookmark-item" title="Permalink to this heading">#</a></h5>
-<p>You should see a list of root folders appear in the right column. Add them by double-clicking.
-Close the editor.</p>
-</section>
-</section>
-<section id="add-asset">
-<h4>2. Add asset<a class="headerlink" href="#add-asset" title="Permalink to this heading">#</a></h4>
-<p>Next, let’s make a new asset called <strong>DEMO_ASSET</strong>. Double-click ‘data/asset’ in the main app window to ‘activate’ it. This will show
-the Assets tab and the bookmark item’s contents. Right-click on the window and select ‘Add Asset…’.</p>
-<div class="scbs-carousel scbs-slide" data-bs-interval="false" data-bs-keyboard="true" data-bs-pause="hover" data-bs-touch="true" data-bs-wrap="true" id="carousel-2">
-<div class="scbs-carousel-inner">
-<div class="scbs-carousel-item scbs-active">
-<img alt="_images/active_bookmark.png" class="scbs-d-block scbs-w-100" src="_images/active_bookmark.png" />
-</div>
-<div class="scbs-carousel-item">
-<img alt="_images/asset_add.png" class="scbs-d-block scbs-w-100" src="_images/asset_add.png" />
+<p class="sd-card-text">You can change the current task folder by clicking the file tab button, or right-click and select ‘Change task folder’</p>
 </div>
 </div>
-<button class="scbs-carousel-control-prev" data-bs-slide="prev" data-bs-target="#carousel-2" type="button">
-<span aria-hidden="true" class="scbs-carousel-control-prev-icon"></span>
-<span class="scbs-visually-hidden">Previous</span>
-</button>
-<button class="scbs-carousel-control-next" data-bs-slide="next" data-bs-target="#carousel-2" type="button">
-<span aria-hidden="true" class="scbs-carousel-control-next-icon"></span>
-<span class="scbs-visually-hidden">Next</span>
-</button>
 </div>
-<p>Enter the name, select the ‘Asset’ template and click ‘Add asset’.
-Select <strong>DEMO_ASSET</strong> and press enter (or double-click it). This will reveal the file contents of the asset.</p>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Step 2: Open the editor</div>
+<figure class="align-default">
+<a class="reference internal image-reference" href="_images/file_add.png"><img alt="_images/file_add.png" src="_images/file_add.png" style="width: 480px;" /></a>
+</figure>
+<p class="sd-card-text">With the <em>File</em> tab selected, Right-click and select ‘Add File…’ or press <code class="docutils literal notranslate"><span class="pre">Ctrl+N</span></code>. This will reveal the file saver.</p>
+</div>
+</div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Step 3: Change template options</div>
+<figure class="align-default">
+<a class="reference internal image-reference" href="_images/file_saver.png"><img alt="_images/file_saver.png" src="_images/file_saver.png" style="width: 480px;" /></a>
+</figure>
+<p class="sd-card-text">Assuming you’d like to make a name template for an After Effects comp file, set the ‘Task’ to ‘comp’ and the ‘Format’ to ‘aep’. Pick a name template.</p>
+<p class="sd-card-text">We didn’t set the project prefix, so click the ‘Edit’ button and set it to something of you choosing (the prefix is a short name of the job). Hit <em>Save</em> to create an empty template file to be used for naming reference.</p>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
-<p>You can create sequences and shots in the exact same manner using ‘SEQ###’ and ‘SH####’ naming, e.g. SEQ010_SH0010. Unfortunately, the app doesn’t support nesting asset folders like ‘SEQ010/SH0010’.</p>
+<p class="sd-card-text">I tend to copy the template file’s path (there’s a Copy context menu or press CTRL+C) to later paste it when saving a file from After Effects. This lets me skip having to navigate folders.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 </section>
-<section id="add-a-template-file">
-<h4>3. Add a template file<a class="headerlink" href="#add-a-template-file" title="Permalink to this heading">#</a></h4>
-<div class="scbs-carousel scbs-slide" data-bs-interval="false" data-bs-keyboard="true" data-bs-pause="hover" data-bs-touch="true" data-bs-wrap="true" id="carousel-3">
-<div class="scbs-carousel-inner">
-<div class="scbs-carousel-item scbs-active">
-<img alt="_images/asset_item.png" class="scbs-d-block scbs-w-100" src="_images/asset_item.png" />
-</div>
-<div class="scbs-carousel-item">
-<img alt="_images/file_add.png" class="scbs-d-block scbs-w-100" src="_images/file_add.png" />
-</div>
-<div class="scbs-carousel-item">
-<img alt="_images/file_saver.png" class="scbs-d-block scbs-w-100" src="_images/file_saver.png" />
+<section id="how-do-you-configure-bookmark-items">
+<h3>How do you configure bookmark items?<a class="headerlink" href="#how-do-you-configure-bookmark-items" title="Permalink to this heading">#</a></h3>
+<div class="sd-card sd-sphinx-override sd-mb-3 sd-shadow-sm sd-text-center docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Bookmark property editor</div>
+<figure class="align-default">
+<a class="reference internal image-reference" href="_images/bookmark_properties2.png"><img alt="_images/bookmark_properties2.png" src="_images/bookmark_properties2.png" style="width: 440px;" /></a>
+</figure>
 </div>
 </div>
-<button class="scbs-carousel-control-prev" data-bs-slide="prev" data-bs-target="#carousel-3" type="button">
-<span aria-hidden="true" class="scbs-carousel-control-prev-icon"></span>
-<span class="scbs-visually-hidden">Previous</span>
-</button>
-<button class="scbs-carousel-control-next" data-bs-slide="next" data-bs-target="#carousel-3" type="button">
-<span aria-hidden="true" class="scbs-carousel-control-next-icon"></span>
-<span class="scbs-visually-hidden">Next</span>
-</button>
-</div>
-<p>Right-click again and select ‘Add File…’. This will reveal a file saver. Set Template to ‘Asset Scene Task’, the ‘Task’ to ‘comp’ and the ‘Format’ to ‘aep’.</p>
-<p>We omitted to set the project prefix up earlier, so click the Project Prefix ‘Edit’ button and set it to ‘DP’ for Demo Project. That’s all. Hit ‘Save’ to create an empty template file that can be used for naming reference.</p>
-<div class="admonition hint">
-<p class="admonition-title">Hint</p>
-<p>I tend to copy the template file’s path (there’s a Copy context menu or press CTRL+C) to later paste it when saving a file from After Effects. This lets me skip having to navigate folders.</p>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Reading files</p>
-<p>There’s a little gotcha: we read file items from the assets’ subfolders (or <em>task folders</em>), not from the asset folder directly.
-Pick the current <em>task folder</em> by clicking the ‘Files’ tab button or right-clicking the window and selecting ‘Select Task Folder…’. This will list all files and folders inside that task folder.</p>
-</div>
-</section>
-</section>
-</section>
-<section id="configuring-bookmark-and-asset-items">
-<h2>Configuring bookmark and asset items<a class="headerlink" href="#configuring-bookmark-and-asset-items" title="Permalink to this heading">#</a></h2>
-<p>You can edit basic properties, like external URLs, frame rate, file-filter rules, width, and height attributes. Click the settings icon or press CTRL+E to open an item’s properties editor.</p>
+<p>To edit basic properties, like external URLs, frame rate, file-filter rules, width, and height attributes, select a bookmark item and click the settings icon, or hit <code class="docutils literal notranslate"><span class="pre">Ctrl+E</span></code>.</p>
 <p>The properties will help create footage ‘publishes’, convert image sequences, and, using the Maya plugin, set the Maya workspace and scene settings. Linking URLs and ShotGrid entities with local files can be beneficial when the project has a lot of external resources to keep track of.</p>
+<p>There are also filter options to associate task folders with file formats. And more!</p>
 </section>
-<section id="filters">
-<h2>Filters<a class="headerlink" href="#filters" title="Permalink to this heading">#</a></h2>
-<p>You can sort and filter the item using the buttons on the top bar and the options in the context menus. The label-like item names are clickable: use the ‘shift’ and ‘alt’ keyboard modifiers when clicking them to toggle filters.</p>
+</section>
+<section id="report-issues">
+<h2>Report issues<a class="headerlink" href="#report-issues" title="Permalink to this heading">#</a></h2>
+<p>For questions, feature requests, bugs use the <a class="reference external" href="https://github.com/wgergely/bookmarks/issues">Github Issue Tracker</a></p>
+</section>
+<section id="about-the-author">
+<h2>About the author<a class="headerlink" href="#about-the-author" title="Permalink to this heading">#</a></h2>
+<p>I’m an animator/3D generalist with a passion for beautiful images and the tools used to create them. You can contact me via <a class="reference external" href="https://twitter.com/wgergely">Twitter</a>, or send me and <a class="reference external" href="mailto:%22Gergely%20Wootsch%22%3chello&#37;&#52;&#48;gergely-wootsch&#46;com%3e?subject=%5BBookmarks%5D">email</a>.</p>
 </section>
 </section>
 
@@ -581,27 +643,17 @@ Pick the current <em>task folder</em> by clicking the ‘Files’ tab button or 
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">User Guide</a><ul>
-<li><a class="reference internal" href="#what-is-this-and-why-does-it-exist">What is this, and why does it exist?</a></li>
-<li><a class="reference internal" href="#download">Download</a></li>
-<li><a class="reference internal" href="#i-have-an-issue-or-question">I have an issue or question</a></li>
-<li><a class="reference internal" href="#contact">Contact</a></li>
-<li><a class="reference internal" href="#how-does-it-work">How does it work?</a></li>
-<li><a class="reference internal" href="#how-do-i-use-it">How do I use it?</a><ul>
-<li><a class="reference internal" href="#step-by-step-guide">Step-by-step guide</a><ul>
-<li><a class="reference internal" href="#add-bookmark-items">Add bookmark items</a><ul>
-<li><a class="reference internal" href="#add-a-server">1.1. Add a server</a></li>
-<li><a class="reference internal" href="#add-a-job">1.2. Add a job</a></li>
-<li><a class="reference internal" href="#add-bookmark-item">1.3. Add bookmark item</a></li>
+<li><a class="reference internal" href="#get-bookmarks">Get Bookmarks</a></li>
+<li><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li><a class="reference internal" href="#what-is-a-bookmark-item">What is a bookmark item?</a></li>
+<li><a class="reference internal" href="#how-do-you-add-bookmark-items">How do you  add bookmark items?</a></li>
+<li><a class="reference internal" href="#how-do-you-add-new-shots-and-assets">How do you add new shots and assets?</a></li>
+<li><a class="reference internal" href="#how-do-you-add-template-files">How do you add template files?</a></li>
+<li><a class="reference internal" href="#how-do-you-configure-bookmark-items">How do you configure bookmark items?</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#add-asset">2. Add asset</a></li>
-<li><a class="reference internal" href="#add-a-template-file">3. Add a template file</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#configuring-bookmark-and-asset-items">Configuring bookmark and asset items</a></li>
-<li><a class="reference internal" href="#filters">Filters</a></li>
+<li><a class="reference internal" href="#report-issues">Report issues</a></li>
+<li><a class="reference internal" href="#about-the-author">About the author</a></li>
 </ul>
 </li>
 </ul>
@@ -620,6 +672,6 @@ Pick the current <em>task folder</em> by clicking the ‘Files’ tab button or 
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/scripts/furo.js"></script>
-    <script src="_static/bootstrap-carousel.min.js"></script>
+    <script src="_static/design-tabs.js"></script>
     </body>
 </html>

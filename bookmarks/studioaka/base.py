@@ -40,7 +40,7 @@ def get_seq_shot(path):
     return seq, shot
 
 
-def get_dir_entry_from_path(path):
+def get_entry_from_path(path):
     """Get a scandir entry from a path
 
     Args:
@@ -140,7 +140,7 @@ def item_generator(path):
                         project=project,
                         asset=asset
                     )
-                    asset_entry = get_dir_entry_from_path(_path)
+                    asset_entry = get_entry_from_path(_path)
                     if asset_entry:
                         yield asset_entry
 
@@ -167,7 +167,7 @@ def item_generator(path):
                             sequence=entry.name,
                             shot=shot_entry.name
                         )
-                        _shot_entry = get_dir_entry_from_path(_path)
+                        _shot_entry = get_entry_from_path(_path)
                         if _shot_entry:
                             yield _shot_entry
 

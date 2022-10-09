@@ -268,10 +268,10 @@ class BookmarkItemEditor(ui.ListWidget):
         max_recursion = common.settings.value('settings/job_scan_depth')
         max_recursion = 3 if not max_recursion else max_recursion
 
-        for name, path in self.item_generator(
-                self.window().job_path(),
-                max_recursion=max_recursion
-        ):
+        it = self.item_generator(self.window().job_path(), max_recursion=max_recursion)
+        items = sorted(set({f for f in it}))
+
+        for name, path in items:
             self.progressUpdate.emit(f'Parsing {path}...')
 
             item = QtWidgets.QListWidgetItem()
@@ -316,6 +316,13 @@ class BookmarkItemEditor(ui.ListWidget):
         if self._interrupt_requested:
             return
 
+        # Return items stored in the link file
+        if recursion == 0:
+            for v in common.get_links(path, section='links/root'):
+                if self._interrupt_requested:
+                    return
+                yield v, f'{path}/{v}'
+
         recursion += 1
         if recursion > max_recursion:
             return
@@ -344,6 +351,8 @@ class BookmarkItemEditor(ui.ListWidget):
                     recursion=recursion,
                     max_recursion=max_recursion
             ):
+                if self._interrupt_requested:
+                    return
                 yield _name, _path
 
     def keyPressEvent(self, event):

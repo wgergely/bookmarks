@@ -410,26 +410,62 @@ def get_sequence_and_shot(s):
     return seq, shot
 
 
-def get_dir_entry_from_path(path):
-    """Get a scandir entry from a path
+def get_entry_from_path(path, is_dir=True):
+    """Returns a scandir entry of the given file path.
 
     Args:
-        path (str): Path to  directory
+        path (str): Path to directory.
+        is_dir (bool): Is the path a directory or a file.
 
     Returns:
-         scandir.DirEntry: A scandir entry item, or None if not found.
+         scandir.DirEntry: A scandir entry, or None if not found.
 
     """
     file_info = QtCore.QFileInfo(path)
     if not file_info.exists():
         return None
-    _path = file_info.dir().path()
-    for entry in os.scandir(_path):
-        if not entry.is_dir():
+    
+    for entry in os.scandir(file_info.dir().path()):
+        if is_dir and not entry.is_dir():
             continue
         if entry.name == file_info.fileName():
             return entry
     return None
+
+
+def get_links(path, section='links/assets'):
+    """Returns a list of file links defined in a ``.links`` file.
+
+    Args:
+        path (str): Path to a folder.
+        section (str):
+            The settings section to look for links in.
+            Optional. Defaults to 'links/assets'.
+
+    Returns:
+        list: A list of relative file paths.
+
+    """
+    l = f'{path}/{common.link_file}'
+    if not QtCore.QFileInfo(l).exists():
+        print(l)
+        return []
+
+    s = QtCore.QSettings(l, QtCore.QSettings.IniFormat)
+    v = s.value(section)
+    if not v:
+        return []
+
+    try:
+        # Check validity of the list before returning anything
+        links = []
+        for _v in v:
+            file_info = QtCore.QFileInfo(f'{path}/{_v}')
+            if file_info.exists():
+                links.append(_v.replace('\\', '/'))
+        return sorted(links)
+    except:
+        return []
 
 
 class DataDict(dict):

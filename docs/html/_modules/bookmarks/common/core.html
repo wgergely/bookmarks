@@ -8,6 +8,7 @@
         <title>bookmarks.common.core - Bookmarks 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
@@ -756,26 +757,62 @@
     <span class="k">return</span> <span class="n">seq</span><span class="p">,</span> <span class="n">shot</span></div>
 
 
-<div class="viewcode-block" id="get_dir_entry_from_path"><a class="viewcode-back" href="../../../modules/common/core.html#bookmarks.common.core.get_dir_entry_from_path">[docs]</a><span class="k">def</span> <span class="nf">get_dir_entry_from_path</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get a scandir entry from a path</span>
+<div class="viewcode-block" id="get_entry_from_path"><a class="viewcode-back" href="../../../modules/common/core.html#bookmarks.common.core.get_entry_from_path">[docs]</a><span class="k">def</span> <span class="nf">get_entry_from_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">is_dir</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns a scandir entry of the given file path.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        path (str): Path to  directory</span>
+<span class="sd">        path (str): Path to directory.</span>
+<span class="sd">        is_dir (bool): Is the path a directory or a file.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">         scandir.DirEntry: A scandir entry item, or None if not found.</span>
+<span class="sd">         scandir.DirEntry: A scandir entry, or None if not found.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">file_info</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileInfo</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">file_info</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="k">return</span> <span class="kc">None</span>
-    <span class="n">_path</span> <span class="o">=</span> <span class="n">file_info</span><span class="o">.</span><span class="n">dir</span><span class="p">()</span><span class="o">.</span><span class="n">path</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="n">_path</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">entry</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
+    
+    <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="n">file_info</span><span class="o">.</span><span class="n">dir</span><span class="p">()</span><span class="o">.</span><span class="n">path</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">is_dir</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">entry</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
             <span class="k">continue</span>
         <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">file_info</span><span class="o">.</span><span class="n">fileName</span><span class="p">():</span>
             <span class="k">return</span> <span class="n">entry</span>
     <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="get_links"><a class="viewcode-back" href="../../../modules/common/core.html#bookmarks.common.core.get_links">[docs]</a><span class="k">def</span> <span class="nf">get_links</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="s1">&#39;links/assets&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns a list of file links defined in a ``.links`` file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path (str): Path to a folder.</span>
+<span class="sd">        section (str):</span>
+<span class="sd">            The settings section to look for links in.</span>
+<span class="sd">            Optional. Defaults to &#39;links/assets&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: A list of relative file paths.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">link_file</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileInfo</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSettings</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSettings</span><span class="o">.</span><span class="n">IniFormat</span><span class="p">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Check validity of the list before returning anything</span>
+        <span class="n">links</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_v</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+            <span class="n">file_info</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileInfo</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">_v</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">file_info</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">links</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_v</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">links</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span></div>
 
 
 <div class="viewcode-block" id="DataDict"><a class="viewcode-back" href="../../../modules/common/core.html#bookmarks.common.core.DataDict">[docs]</a><span class="k">class</span> <span class="nc">DataDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
@@ -908,5 +945,6 @@
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
+    <script src="../../../_static/design-tabs.js"></script>
     </body>
 </html>

@@ -5,9 +5,10 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>bookmarks.bookmarker.bookmark_editor - Bookmarks 0.7.1 documentation</title>
+        <title>bookmarks.bookmarker.bookmark_editor - Bookmarks 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
@@ -133,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.1 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -160,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.1 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -614,10 +615,10 @@
         <span class="n">max_recursion</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="s1">&#39;settings/job_scan_depth&#39;</span><span class="p">)</span>
         <span class="n">max_recursion</span> <span class="o">=</span> <span class="mi">3</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">max_recursion</span> <span class="k">else</span> <span class="n">max_recursion</span>
 
-        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_generator</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">()</span><span class="o">.</span><span class="n">job_path</span><span class="p">(),</span>
-                <span class="n">max_recursion</span><span class="o">=</span><span class="n">max_recursion</span>
-        <span class="p">):</span>
+        <span class="n">it</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_generator</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">()</span><span class="o">.</span><span class="n">job_path</span><span class="p">(),</span> <span class="n">max_recursion</span><span class="o">=</span><span class="n">max_recursion</span><span class="p">)</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">({</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">it</span><span class="p">}))</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">progressUpdate</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Parsing </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">...&#39;</span><span class="p">)</span>
 
             <span class="n">item</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QListWidgetItem</span><span class="p">()</span>
@@ -662,6 +663,13 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interrupt_requested</span><span class="p">:</span>
             <span class="k">return</span>
 
+        <span class="c1"># Return items stored in the link file</span>
+        <span class="k">if</span> <span class="n">recursion</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">get_links</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="s1">&#39;links/root&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interrupt_requested</span><span class="p">:</span>
+                    <span class="k">return</span>
+                <span class="k">yield</span> <span class="n">v</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s1">&#39;</span>
+
         <span class="n">recursion</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="n">recursion</span> <span class="o">&gt;</span> <span class="n">max_recursion</span><span class="p">:</span>
             <span class="k">return</span>
@@ -690,6 +698,8 @@
                     <span class="n">recursion</span><span class="o">=</span><span class="n">recursion</span><span class="p">,</span>
                     <span class="n">max_recursion</span><span class="o">=</span><span class="n">max_recursion</span>
             <span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interrupt_requested</span><span class="p">:</span>
+                    <span class="k">return</span>
                 <span class="k">yield</span> <span class="n">_name</span><span class="p">,</span> <span class="n">_path</span></div>
 
 <div class="viewcode-block" id="BookmarkItemEditor.keyPressEvent"><a class="viewcode-back" href="../../../modules/bookmarker/bookmark_editor.html#bookmarks.bookmarker.bookmark_editor.BookmarkItemEditor.keyPressEvent">[docs]</a>    <span class="k">def</span> <span class="nf">keyPressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
@@ -739,5 +749,6 @@
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
+    <script src="../../../_static/design-tabs.js"></script>
     </body>
 </html>

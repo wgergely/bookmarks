@@ -548,7 +548,9 @@ def get_subdir_bg_cache_key(index, rect):
         str: The cache key.
 
     """
-    return f'{index.data(common.PathRole)}_subdirbg_{rect.size()}'
+    p = index.data(common.PathRole)
+    d = index.data(common.DescriptionRole)
+    return f'{p}:{d}:[{rect.x()},{rect.y()},{rect.width()},{rect.height()}]'
 
 
 def get_clickable_cache_key(index, rect):
@@ -562,7 +564,10 @@ def get_clickable_cache_key(index, rect):
         str: The cache key.
 
     """
-    return f'{index.data(common.PathRole)}_clickable_{rect.size()}'
+    p = index.data(common.PathRole)
+    f = index.data(common.FileDetailsRole)
+    d = index.data(common.DescriptionRole)
+    return f'{p}{f}{d}[{rect.x()},{rect.y()},{rect.width()},{rect.height()}]'
 
 
 def get_description_cache_key(index, rect, button):

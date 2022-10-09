@@ -17,7 +17,7 @@
 ---
 
 
-[`User Guide`](https://bookmarks.gergely-wootsch.com/html/guide.html#user-guide)  |  [`Python Modules`](https://bookmarks.gergely-wootsch.com/html/modules.html#python-modules)  |  [`Download`](https://bookmarks.gergely-wootsch.com/html/guide.html#download)
+[`User Guide`](https://bookmarks.gergely-wootsch.com/html/guide.html#user-guide)  |  [`Python Modules`](https://bookmarks.gergely-wootsch.com/html/modules.html#python-modules)  |  [`Get Bookmarks`](https://bookmarks.gergely-wootsch.com/html/guide.html#get-bookmarks)
 
 ---
 

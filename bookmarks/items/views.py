@@ -1558,6 +1558,9 @@ class InlineIconView(BaseItemView):
         control_modifier = modifiers & QtCore.Qt.ControlModifier
 
         index = self.indexAt(event.pos())
+
+        if not index.isValid() or not index.data(common.FlagsRole):
+            return
         archived = index.data(common.FlagsRole) & common.MarkedAsArchived
 
         # Let's handle the clickable rectangle event first

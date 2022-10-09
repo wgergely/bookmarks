@@ -9,10 +9,12 @@
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#
+
 import os
 import sys
 
+print('\n\n#####################################################################\n\n')
+# To make the documentation we have to import bookmarks and initialize Maya
 from bookmarks import common
 common.initialize(common.StandaloneMode)
 
@@ -21,6 +23,8 @@ try:
     standalone.initialize(name='python')
 except:
     pass
+print('\n\n#####################################################################\n\n')
+
 
 # -- Project information -----------------------------------------------------
 
@@ -45,7 +49,7 @@ extensions = [
     'sphinx.ext.githubpages',
     'autodocsumm',
     'sphinx_markdown_builder',
-    'sphinx_carousel.carousel',
+    'sphinx_design',
     'sphinxcontrib.youtube'
 ]
 

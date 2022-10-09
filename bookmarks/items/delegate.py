@@ -338,11 +338,18 @@ def get_asset_text_segments(text, label):
 
         # Add separator
         if i < (len(v) - 1) or i < (len(v) - 1):
-            d[len(d)] = ('  |  ', s_color)
+            if i == 0:
+                d[len(d)] = ('  |  ', s_color)
+            else:
+                d[len(d)] = ('  /  ', s_color)
 
     # Add
     if label:
-        d[len(d)] = ('    |    ', s_color)
+        if len(v) == 1:
+            d[len(d)] = ('  |  ', s_color)
+        else:
+            d[len(d)] = ('  •  ', s_color)
+
         if '#' in label:
             d[len(d)] = (label, common.color(common.color_text))
         else:
@@ -2408,8 +2415,8 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         painter.setPen(QtCore.Qt.NoPen)
 
         filter_text = self.parent().model().filter_text()
+        overlay_rect_left_edge = None
 
-        has_separator = False
         for segment in text_segments.values():
             text, _color = segment
 
@@ -2441,9 +2448,10 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
                     _color = common.color(common.color_green)
             _color = common.color(common.color_disabled_text) if archived else _color
 
-            # Separator
+            # Skip painting separator characters but mark the center of the rectangle
+            # for alter use
             if '|' in text:
-                has_separator = True
+                overlay_rect_left_edge = _r.x() + (metrics.width(text) / 2.0)
             else:
                 # Let's save the rectangle as a clickable rect
                 add_clickable_rectangle(index, option, _r, _text)
@@ -2456,26 +2464,16 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
                 )
                 draw_painter_path(painter, x, y, font, text)
 
-            if has_separator:
-                o = common.size(common.size_indicator) * 3
-                __r = QtCore.QRect(_r)
-                __r.setHeight(r.height())
-                __r.moveCenter(_r.center())
-                __r.moveLeft(__r.left() + o)
-
-                if __r.right() > r.right():
-                    __r.setRight(r.right())
-                if __r.left() > __r.right():
-                    __r.setLeft(__r.right())
-
-                painter.save()
-                painter.setOpacity(0.2)
-                painter.setBrush(common.color(common.color_dark_blue))
-                painter.setPen(QtCore.Qt.NoPen)
-                painter.drawRect(__r)
-                painter.restore()
-
             _offset += width
+
+        if overlay_rect_left_edge:
+            __r = QtCore.QRect(r)
+            __r.setLeft(overlay_rect_left_edge)
+
+            painter.setOpacity(0.2)
+            painter.setBrush(common.color(common.color_dark_blue))
+            painter.setPen(QtCore.Qt.NoPen)
+            painter.drawRect(__r)
 
         rectangles[DataRect] = data_rect
 

@@ -8,6 +8,7 @@
         <title>bookmarks.items.delegate - Bookmarks 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
@@ -684,11 +685,18 @@
 
         <span class="c1"># Add separator</span>
         <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;  |  &#39;</span><span class="p">,</span> <span class="n">s_color</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;  |  &#39;</span><span class="p">,</span> <span class="n">s_color</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;  /  &#39;</span><span class="p">,</span> <span class="n">s_color</span><span class="p">)</span>
 
     <span class="c1"># Add</span>
     <span class="k">if</span> <span class="n">label</span><span class="p">:</span>
-        <span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;    |    &#39;</span><span class="p">,</span> <span class="n">s_color</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;  |  &#39;</span><span class="p">,</span> <span class="n">s_color</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;  •  &#39;</span><span class="p">,</span> <span class="n">s_color</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="s1">&#39;#&#39;</span> <span class="ow">in</span> <span class="n">label</span><span class="p">:</span>
             <span class="n">d</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_text</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
@@ -894,7 +902,9 @@
 <span class="sd">        str: The cache key.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">)</span><span class="si">}</span><span class="s1">_subdirbg_</span><span class="si">{</span><span class="n">rect</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span></div>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s1">:</span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s1">:[</span><span class="si">{</span><span class="n">rect</span><span class="o">.</span><span class="n">x</span><span class="p">()</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">rect</span><span class="o">.</span><span class="n">y</span><span class="p">()</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">rect</span><span class="o">.</span><span class="n">width</span><span class="p">()</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">rect</span><span class="o">.</span><span class="n">height</span><span class="p">()</span><span class="si">}</span><span class="s1">]&#39;</span></div>
 
 
 <div class="viewcode-block" id="get_clickable_cache_key"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.get_clickable_cache_key">[docs]</a><span class="k">def</span> <span class="nf">get_clickable_cache_key</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">rect</span><span class="p">):</span>
@@ -908,7 +918,10 @@
 <span class="sd">        str: The cache key.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">)</span><span class="si">}</span><span class="s1">_clickable_</span><span class="si">{</span><span class="n">rect</span><span class="o">.</span><span class="n">size</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span></div>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">)</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FileDetailsRole</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">p</span><span class="si">}{</span><span class="n">f</span><span class="si">}{</span><span class="n">d</span><span class="si">}</span><span class="s1">[</span><span class="si">{</span><span class="n">rect</span><span class="o">.</span><span class="n">x</span><span class="p">()</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">rect</span><span class="o">.</span><span class="n">y</span><span class="p">()</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">rect</span><span class="o">.</span><span class="n">width</span><span class="p">()</span><span class="si">}</span><span class="s1">,</span><span class="si">{</span><span class="n">rect</span><span class="o">.</span><span class="n">height</span><span class="p">()</span><span class="si">}</span><span class="s1">]&#39;</span></div>
 
 
 <div class="viewcode-block" id="get_description_cache_key"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.get_description_cache_key">[docs]</a><span class="k">def</span> <span class="nf">get_description_cache_key</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">rect</span><span class="p">,</span> <span class="n">button</span><span class="p">):</span>
@@ -2754,8 +2767,8 @@
         <span class="n">painter</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoPen</span><span class="p">)</span>
 
         <span class="n">filter_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">filter_text</span><span class="p">()</span>
+        <span class="n">overlay_rect_left_edge</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="n">has_separator</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">segment</span> <span class="ow">in</span> <span class="n">text_segments</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">text</span><span class="p">,</span> <span class="n">_color</span> <span class="o">=</span> <span class="n">segment</span>
 
@@ -2787,9 +2800,10 @@
                     <span class="n">_color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_green</span><span class="p">)</span>
             <span class="n">_color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_disabled_text</span><span class="p">)</span> <span class="k">if</span> <span class="n">archived</span> <span class="k">else</span> <span class="n">_color</span>
 
-            <span class="c1"># Separator</span>
+            <span class="c1"># Skip painting separator characters but mark the center of the rectangle</span>
+            <span class="c1"># for alter use</span>
             <span class="k">if</span> <span class="s1">&#39;|&#39;</span> <span class="ow">in</span> <span class="n">text</span><span class="p">:</span>
-                <span class="n">has_separator</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">overlay_rect_left_edge</span> <span class="o">=</span> <span class="n">_r</span><span class="o">.</span><span class="n">x</span><span class="p">()</span> <span class="o">+</span> <span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">width</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Let&#39;s save the rectangle as a clickable rect</span>
                 <span class="n">add_clickable_rectangle</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">_r</span><span class="p">,</span> <span class="n">_text</span><span class="p">)</span>
@@ -2802,26 +2816,16 @@
                 <span class="p">)</span>
                 <span class="n">draw_painter_path</span><span class="p">(</span><span class="n">painter</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="n">has_separator</span><span class="p">:</span>
-                <span class="n">o</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_indicator</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span>
-                <span class="n">__r</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">_r</span><span class="p">)</span>
-                <span class="n">__r</span><span class="o">.</span><span class="n">setHeight</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
-                <span class="n">__r</span><span class="o">.</span><span class="n">moveCenter</span><span class="p">(</span><span class="n">_r</span><span class="o">.</span><span class="n">center</span><span class="p">())</span>
-                <span class="n">__r</span><span class="o">.</span><span class="n">moveLeft</span><span class="p">(</span><span class="n">__r</span><span class="o">.</span><span class="n">left</span><span class="p">()</span> <span class="o">+</span> <span class="n">o</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="n">__r</span><span class="o">.</span><span class="n">right</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">r</span><span class="o">.</span><span class="n">right</span><span class="p">():</span>
-                    <span class="n">__r</span><span class="o">.</span><span class="n">setRight</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">right</span><span class="p">())</span>
-                <span class="k">if</span> <span class="n">__r</span><span class="o">.</span><span class="n">left</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">__r</span><span class="o">.</span><span class="n">right</span><span class="p">():</span>
-                    <span class="n">__r</span><span class="o">.</span><span class="n">setLeft</span><span class="p">(</span><span class="n">__r</span><span class="o">.</span><span class="n">right</span><span class="p">())</span>
-
-                <span class="n">painter</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-                <span class="n">painter</span><span class="o">.</span><span class="n">setOpacity</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
-                <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_dark_blue</span><span class="p">))</span>
-                <span class="n">painter</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoPen</span><span class="p">)</span>
-                <span class="n">painter</span><span class="o">.</span><span class="n">drawRect</span><span class="p">(</span><span class="n">__r</span><span class="p">)</span>
-                <span class="n">painter</span><span class="o">.</span><span class="n">restore</span><span class="p">()</span>
-
             <span class="n">_offset</span> <span class="o">+=</span> <span class="n">width</span>
+
+        <span class="k">if</span> <span class="n">overlay_rect_left_edge</span><span class="p">:</span>
+            <span class="n">__r</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+            <span class="n">__r</span><span class="o">.</span><span class="n">setLeft</span><span class="p">(</span><span class="n">overlay_rect_left_edge</span><span class="p">)</span>
+
+            <span class="n">painter</span><span class="o">.</span><span class="n">setOpacity</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
+            <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_dark_blue</span><span class="p">))</span>
+            <span class="n">painter</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoPen</span><span class="p">)</span>
+            <span class="n">painter</span><span class="o">.</span><span class="n">drawRect</span><span class="p">(</span><span class="n">__r</span><span class="p">)</span>
 
         <span class="n">rectangles</span><span class="p">[</span><span class="n">DataRect</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_rect</span></div>
 
@@ -3116,5 +3120,6 @@
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
+    <script src="../../../_static/design-tabs.js"></script>
     </body>
 </html>

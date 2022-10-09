@@ -7,72 +7,69 @@
 User Guide
 ==============
 
-What is this, and why does it exist?
-----------------------------------------
+
+😊️ Bookmarks is a free and open-source desktop asset manager for film, animation and VFX projects.
 
 
-😊️ Bookmarks is a free and open-source asset manager for film, animation and VFX projects.
+🥳  It can be used to create new shot and asset folders and configure them with simple settings. You can filter items using labels, tags and flags.
 
 
-😵  It can be your local hub for accessing assets and files and connecting them with external resources, such as ShotGrid entities and URLs, or a place for notes and comments.
+😊  Bookmarks can be your friend in linking external resources with local files (like ShotGrid entities, or other online resources).
 
 
-🥳  It helps me create my jobs, shot and asset folders and keep scene files named neat and consistent.
+☹  Features are limited, and perhaps a little clunky. But hey, this is is a personal tool. So, whilst it might not be useful for *you*, I see value in sharing it, since it made my life easier in the past. `I would love to hear what you think!. <mailto:%22Gergely%20Wootsch%22%3chello@gergely-wootsch.com%3e?subject=%5BBookmarks%5D>`_
 
 
-.. |active_bookmark| image:: images/active_bookmark.png
+Get Bookmarks
+------------
+
+The project is hosted on `Github <https://github.com/wgergely/bookmarks>`_.
+
+.. admonition:: Download the latest Windows release: `Bookmarks v0.7.2 <https://github.com/wgergely/bookmarks/releases/download/0.7.2/Bookmarks_0.7.2.exe>`_
+
+    ☹ Currently, Bookmarks only supports Windows.
 
 
 
-Download
--------------------------
+
+Introduction
+------------
+
+----
 
 
-.. admonition:: Latest Windows Release
+..  youtube:: oKb8KGj78Rg
+    :align: center
+    :aspect: 16:9
 
-    `Bookmarks v0.7.2 <https://github.com/wgergely/bookmarks/releases/download/0.7.2/Bookmarks_0.7.2.exe>`_.
-
-
-`You can find older releases here <https://github.com/wgergely/bookmarks/releases>`_.
-
-
-I have an issue or question
-----------------------------------------------
-
-`Github Issue Tracker <https://github.com/wgergely/bookmarks/issues>`_
+----
 
 
-Contact
----------
 
-`E-mail <mailto:%22Gergely%20Wootsch%22%3chello@gergely-wootsch.com%3e?subject=%5BBookmarks%5D>`_
+What is a bookmark item?
+*************************
 
+.. card:: File path components:
+    :class-card: sd-text-center
 
-How does it work?
--------------------------
+    .. image:: images/structure.png
+        :width: 420
 
-Bookmarks reads the content of projects from bookmark, and asset folders. Bookmark items are folders inside a job folder, like a 'scenes' or 'assets' folder, or any other folder where production content resides.
+`Bookmarks <.>`_ reads files from :mod:`bookmark <bookmarks.items.bookmark_items>`, :mod:`asset <bookmarks.items.asset_items>` and :mod:`task <bookmarks.items.file_items>` folders.
 
-
-    .. figure:: images/structure.png
-        :width: 400
-
-    Bookmark items comprise of server, job and root folders.
-    For example: ``//server/jobs/project_0010/path/to/shots_folder`` is a bookmark item, where **//server/jobs** is the server, **project_0010** is the job and **path/to/shots_folder** is the root folder.
-
-    Assets reside in bookmark items and files are read from 'task' folders found inside an asset.
+``//server/jobs/project_0010/path/to/shots_folder`` is a bookmark item, where ``//server/jobs`` is a server, ``project_0010`` is a job and ``path/to/shots_folder`` is a root folder. Together they make up the bookmark item.
 
 
-    This is how Bookmarks sees a project:
+
+Any folder can be used a bookmark item but they usually correspond to folders where digital content is kept, like the usual *scenes*, *assets* or *dailies* folders.
+
+.. card:: This is how the app sees projects:
+    :class-card: sd-text-center
 
     .. figure:: images/tree.png
         :width: 280
 
-
-.. note::
-
-    File thumbnails and saved properties are stored in the ``.bookmark`` cache folder.
-
+    Thumbnails and the database used to keep item properties are stored in the ``.bookmark`` folder.
 
 
 .. |structure| image:: images/structure.png
@@ -81,157 +78,161 @@ Bookmarks reads the content of projects from bookmark, and asset folders. Bookma
     :width: 280
 
 
+How do you  add bookmark items?
+********************************
 
-Here are the main tabs used by the app to display these items:
-
-.. centered:: |window_tabs|
-
-.. |window_tabs| image:: images/window_tabs.png
-
-.. note::
-
-    Per the explanation above, the files are only shown if there's a task folder selected.
-    To pick a task folder use the Files tab's dropdown menu or right-click and select
-    'Select Task Folder...'.
+There are two ways to add bookmark items, by hand, or by editing the ``default_bookmark_items.json``. The latter is useful for deploying the app per-project with bookmark items already set up correctly. The step-by-step guide below will show you how to add them by hand.
 
 
+.. grid:: 1
+    :gutter: 3
 
+    .. grid-item-card:: Step 1: Open the editor
 
-How do I use it?
---------------------
+        .. figure:: images/bookmark_add.png
+            :width: 480
 
-Here's an awful video of me mumbling, and trying hard to show you how to set it up and
-create name template files.
-
-..  youtube:: oKb8KGj78Rg
-    :align: center
-    :aspect: 16:9
-
-
-Step-by-step guide
-++++++++++++++++++
-
-
-Add bookmark items
-******************
-
-
-.. carousel::
-    :data-bs-keyboard: true
-    :data-bs-wrap: true
-    :data-bs-touch: true
-    :data-bs-pause: hover
-    :data-bs-interval: false
-        
-
-    .. figure:: images/bookmark_add.png
-        :width: 480
-
-        Right-click and select 'Manage bookmark items...' on the Bookmark tab button or window.
-
-
-.. carousel::
-    :data-bs-keyboard: true
-    :data-bs-wrap: true
-    :data-bs-touch: true
-    :data-bs-pause: hover
-    :data-bs-interval: false
-
-    .. image:: images/job_add.png
-
-
-1.1. Add a server
-####################
-
-Click the green add icon to add a new server. A server is usually a network location, but we can add **C:/jobs** - make sure the folder exists!
-
-1.2. Add a job
-#################
-
-Select **C:/jobs** and create a new job by clicking the green plus icon in the middle section. Name it **DEMO** and select the 'Job' template and click 'Add Job'.
-
-.. hint::
-
-	You can add custom templates by dragging a zip file containing your job template onto the item selector.
-
-1.3. Add bookmark item
-######################
-
-You should see a list of root folders appear in the right column. Add them by double-clicking.
-Close the editor.
-
-
-2. Add asset
-*****************
-
-Next, let's make a new asset called **DEMO_ASSET**. Double-click 'data/asset' in the main app window to 'activate' it. This will show
-the Assets tab and the bookmark item's contents. Right-click on the window and select 'Add Asset...'.
-
-.. carousel::
-    :data-bs-keyboard: true
-    :data-bs-wrap: true
-    :data-bs-touch: true
-    :data-bs-pause: hover
-    :data-bs-interval: false
-    :show_controls:
-    :no_fade:
-
-    .. image:: images/active_bookmark.png
-    .. image:: images/asset_add.png
-
-
-Enter the name, select the 'Asset' template and click 'Add asset'.
-Select **DEMO_ASSET** and press enter (or double-click it). This will reveal the file contents of the asset.
-
-
-.. hint::
-
-	You can create sequences and shots in the exact same manner using 'SEQ###' and 'SH####' naming, e.g. SEQ010_SH0010. Unfortunately, the app doesn't support nesting asset folders like 'SEQ010/SH0010'.
-
-
-3. Add a template file
-************************
-
-
-.. carousel::
-    :data-bs-keyboard: true
-    :data-bs-wrap: true
-    :data-bs-touch: true
-    :data-bs-pause: hover
-    :data-bs-interval: false
-    :show_controls:
-    :no_fade:
-
-    .. image:: images/asset_item.png
-    .. image:: images/file_add.png
-    .. image:: images/file_saver.png
+        With the bookmark item tab selected, Right-click and select 'Manage bookmark items...' or press ``Ctrl+N``.
 
 
 
-Right-click again and select 'Add File...'. This will reveal a file saver. Set Template to 'Asset Scene Task', the 'Task' to 'comp' and the 'Format' to 'aep'.
+    .. grid-item-card:: Step 2: Add server, job and root folders
 
-We omitted to set the project prefix up earlier, so click the Project Prefix 'Edit' button and set it to 'DP' for Demo Project. That's all. Hit 'Save' to create an empty template file that can be used for naming reference.
+        .. figure:: images/job_add.png
+            :width: 480
 
-
-.. hint::
-
-    I tend to copy the template file's path (there's a Copy context menu or press CTRL+C) to later paste it when saving a file from After Effects. This lets me skip having to navigate folders.
-
-.. note:: Reading files
-
-    There's a little gotcha: we read file items from the assets' subfolders (or *task folders*), not from the asset folder directly.
-    Pick the current *task folder* by clicking the 'Files' tab button or right-clicking the window and selecting 'Select Task Folder...'. This will list all files and folders inside that task folder.
+        Use the editor to pick a server, select or create a job and the root folders to use as bookmark items. Double-click root folders to add or remove from your current bookmark items.
 
 
-Configuring bookmark and asset items
---------------------------------------------
+    .. grid:: 1
+        :gutter: 3
 
-You can edit basic properties, like external URLs, frame rate, file-filter rules, width, and height attributes. Click the settings icon or press CTRL+E to open an item's properties editor.
+        .. grid-item-card:: 1. Add server
+
+            Click the green icon on the left-hand side. A server is usually a network location, but local folders work too. Make sure the folder exists before adding it.
+
+        .. grid-item-card:: 2. Select or create a job
+
+            If the server already contains folders (jobs), select one here. Otherwise, click the green add icon in the middle column to create a new job.
+
+            .. hint::
+
+                You can add your own job folder templates by dragging them onto the template picker. They should be zip files containing a folder structure.
+
+
+        .. grid-item-card:: 3. Select or pick new root folders
+
+            Select a job. If you used the default job template to create one, it comes with pre-defined root-folders (e.g. the ``data/asset``, ``data/shot`` folders). If you used a custom template, you might need to pick a new root folder by clicking the green add icon on the right-hand side.
+
+            .. hint::
+
+                Any folder with a ``.bookmark`` folder inside them will be read as a root folder. If the folder doesn't show up, you might have to change the folder parsing depth in the preferences.
+
+        Done! Close the editor when finished.
+
+
+How do you add new shots and assets?
+***************************************
+
+.. grid:: 1
+    :gutter: 3
+
+    .. grid-item-card:: Step 1: Activate a bookmark item
+
+        .. figure:: images/active_bookmark.png
+            :width: 480
+
+        Double-click any of the bookmark items you have just added. This will activate it and show its contents.
+
+
+    .. grid-item-card:: Step 2: Open the editor
+
+        .. figure:: images/asset_add.png
+            :width: 480
+
+        With the *Assets* tab selected, Right-click and select 'Add Asset...' or press ``Ctrl+N``.
+
+
+
+    .. grid-item-card:: Step 3: Create a new asset
+
+        Select an asset template, and enter a name.
+
+        You can create sequences and shots by using a 'SEQ###' and 'SH####' prefix, e.g. SEQ010_SH0010.
+
+        .. note::
+
+            Unfortunately, the app doesn't support these folders, like 'SEQ010/SH0010'. Support for this is possible by modifying the code and should be pretty straightforward to do so.
+
+
+How do you add template files?
+***************************************
+
+.. grid:: 1
+    :gutter: 3
+
+    .. grid-item-card:: Step 1: Activate an asset item
+
+        .. figure:: images/asset_item.png
+            :width: 480
+
+        Double-click an asset items you just created. This will activate it, but won't show files until a task folder is selected.
+
+        .. hint::
+
+            You can change the current task folder by clicking the file tab button, or right-click and select 'Change task folder'
+
+    .. grid-item-card:: Step 2: Open the editor
+
+        .. figure:: images/file_add.png
+            :width: 480
+
+        With the *File* tab selected, Right-click and select 'Add File...' or press ``Ctrl+N``. This will reveal the file saver.
+
+    .. grid-item-card:: Step 3: Change template options
+
+        .. figure:: images/file_saver.png
+            :width: 480
+
+        Assuming you'd like to make a name template for an After Effects comp file, set the 'Task' to 'comp' and the 'Format' to 'aep'. Pick a name template.
+
+        We didn't set the project prefix, so click the 'Edit' button and set it to something of you choosing (the prefix is a short name of the job). Hit *Save* to create an empty template file to be used for naming reference.
+
+
+        .. hint::
+
+            I tend to copy the template file's path (there's a Copy context menu or press CTRL+C) to later paste it when saving a file from After Effects. This lets me skip having to navigate folders.
+
+
+How do you configure bookmark items?
+************************************************
+
+.. card:: Bookmark property editor
+    :class-card: sd-text-center
+
+    .. figure:: images/bookmark_properties2.png
+        :width: 440
+
+To edit basic properties, like external URLs, frame rate, file-filter rules, width, and height attributes, select a bookmark item and click the settings icon, or hit ``Ctrl+E``.
 
 The properties will help create footage 'publishes', convert image sequences, and, using the Maya plugin, set the Maya workspace and scene settings. Linking URLs and ShotGrid entities with local files can be beneficial when the project has a lot of external resources to keep track of.
 
+There are also filter options to associate task folders with file formats. And more!
 
-Filters
---------------------
 
-You can sort and filter the item using the buttons on the top bar and the options in the context menus. The label-like item names are clickable: use the 'shift' and 'alt' keyboard modifiers when clicking them to toggle filters.
+Report issues
+----------------
+
+For questions, feature requests, bugs use the `Github Issue Tracker <https://github.com/wgergely/bookmarks/issues>`_
+
+
+About the author
+------------------
+
+I'm an animator/3D generalist with a passion for beautiful images and the tools used to create them. You can contact me via `Twitter <https://twitter.com/wgergely>`_, or send me and `email <mailto:%22Gergely%20Wootsch%22%3chello@gergely-wootsch.com%3e?subject=%5BBookmarks%5D>`_.
+
+
+
+.. |icon| image:: _static/icon.png
+    :class: no-scaled-link
+    :width: 14px

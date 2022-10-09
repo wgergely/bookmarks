@@ -8,6 +8,7 @@
         <title>bookmarks.items.asset_items - Bookmarks 0.7.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
     
@@ -599,11 +600,26 @@
             <span class="k">return</span>
             <span class="k">yield</span>
 
+        <span class="c1"># Get folders from the root of the bookmark item</span>
         <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">it</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interrupt_requested</span><span class="p">:</span>
+                <span class="k">return</span>
             <span class="k">if</span> <span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">entry</span><span class="o">.</span><span class="n">is_dir</span><span class="p">():</span>
                 <span class="k">continue</span>
+
+            <span class="c1"># Check if the asset has links to sub-folders</span>
+            <span class="n">links</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_links</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="s1">&#39;links/asset&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">links</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">link</span><span class="si">}</span><span class="s1">&#39;</span>
+                <span class="n">_entry</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_entry_from_path</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">entry</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">yield</span> <span class="n">_entry</span>
+            <span class="k">if</span> <span class="n">links</span><span class="p">:</span>
+                <span class="k">continue</span>
+
             <span class="k">yield</span> <span class="n">entry</span>
 
         <span class="c1"># Studio Aka Pipe entries</span>
@@ -710,7 +726,14 @@
             <span class="k">return</span>
 
         <span class="n">rectangles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">itemDelegate</span><span class="p">()</span><span class="o">.</span><span class="n">get_rectangles</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">):</span>
+            <span class="k">return</span>
         <span class="n">archived</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">):</span>
+            <span class="k">return</span>
+
         <span class="k">if</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">delegate</span><span class="o">.</span><span class="n">AddAssetRect</span><span class="p">]</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">archived</span><span class="p">:</span>
             <span class="n">actions</span><span class="o">.</span><span class="n">show_add_file</span><span class="p">(</span><span class="n">asset</span><span class="o">=</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
             <span class="k">return</span>
@@ -771,5 +794,6 @@
     <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
+    <script src="../../../_static/design-tabs.js"></script>
     </body>
 </html>

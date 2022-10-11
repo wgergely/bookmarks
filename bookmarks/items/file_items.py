@@ -986,15 +986,12 @@ class FileItemView(views.ThreadedItemView):
         k = model.task()
 
         if not all(model.source_path()):
-            print('!')
             return
         source_path = '/'.join(model.source_path())
-        print(source_path)
 
         # We probably saved outside the asset, we won't be showing the
         # file...
         if source_path not in v:
-            print(v)
             return
 
         # Show files tab

@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>bookmarks.versioncontrol.versioncontrol - Bookmarks 0.7.2 documentation</title>
+        <title>bookmarks.versioncontrol.versioncontrol - Bookmarks 0.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -508,7 +508,7 @@
     <span class="c1"># We&#39;re good and there&#39;s not need to update</span>
     <span class="k">if</span> <span class="n">current_version</span> <span class="o">&gt;=</span> <span class="n">latest_version</span><span class="p">:</span>
         <span class="n">ui</span><span class="o">.</span><span class="n">OkBox</span><span class="p">(</span>
-            <span class="s1">&#39;You</span><span class="se">\&#39;</span><span class="s1">re running the latest version of </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">product</span><span class="p">),</span>
+            <span class="sa">f</span><span class="s1">&#39;You</span><span class="se">\&#39;</span><span class="s1">re running the latest version (</span><span class="si">{</span><span class="n">latest_version</span><span class="si">}</span><span class="s1">)&#39;</span>
         <span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
         <span class="k">return</span>
 

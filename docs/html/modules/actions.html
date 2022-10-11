@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="bookmarker" href="bookmarker.html" /><link rel="prev" title="Python Modules" href="../modules.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>actions - Bookmarks 0.7.2 documentation</title>
+        <title>actions - Bookmarks 0.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -135,7 +135,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
+      <a href="../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -162,7 +162,7 @@
     <img class="sidebar-logo only-dark" src="../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -347,9 +347,9 @@
         <article role="main">
           <section id="module-bookmarks.actions">
 <span id="actions"></span><h1>actions<a class="headerlink" href="#module-bookmarks.actions" title="Permalink to this heading">#</a></h1>
-<p>A series of high-level functions.</p>
-<p>These functions are usually triggered by the user, either by ui interaction or
-via keyboard shortcuts. Some of these</p>
+<p>User actions module.</p>
+<p>These actions are usually triggered by the user via keyboard shortcuts or by
+interactions with the UI.</p>
 <p><strong>Functions:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
@@ -441,187 +441,190 @@ via keyboard shortcuts. Some of these</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.extract_zip_template" title="bookmarks.actions.extract_zip_template"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extract_zip_template</span></code></a>(source, destination, name)</p></td>
 <td><p>Expands the selected source zip archive to <cite>destination</cite> as <cite>name</cite>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.generate_thumbnails_changed" title="bookmarks.actions.generate_thumbnails_changed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_thumbnails_changed</span></code></a>(state)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.filter_flag_changed" title="bookmarks.actions.filter_flag_changed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_flag_changed</span></code></a>(flag, parent_paths, source)</p></td>
+<td><p>Slot used to keep item filter flag values updated across all datasets.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.generate_thumbnails_changed" title="bookmarks.actions.generate_thumbnails_changed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_thumbnails_changed</span></code></a>(state)</p></td>
 <td><p>Slot called when the thumbnail generating preference has changed.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.hide_sg_connecting_message" title="bookmarks.actions.hide_sg_connecting_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hide_sg_connecting_message</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.hide_sg_connecting_message" title="bookmarks.actions.hide_sg_connecting_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hide_sg_connecting_message</span></code></a>()</p></td>
 <td><p>Hides a ShotGrid connection progress message.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.import_asset_properties_from_json" title="bookmarks.actions.import_asset_properties_from_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">import_asset_properties_from_json</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.import_asset_properties_from_json" title="bookmarks.actions.import_asset_properties_from_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">import_asset_properties_from_json</span></code></a>()</p></td>
 <td><p>Import and apply asset properties from a JSON file.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.import_favourites" title="bookmarks.actions.import_favourites"><code class="xref py py-obj docutils literal notranslate"><span class="pre">import_favourites</span></code></a>(*args[, source])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.import_favourites" title="bookmarks.actions.import_favourites"><code class="xref py py-obj docutils literal notranslate"><span class="pre">import_favourites</span></code></a>(*args[, source])</p></td>
 <td><p>Import a previously exported favourites file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.increase_row_size" title="bookmarks.actions.increase_row_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">increase_row_size</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.increase_row_size" title="bookmarks.actions.increase_row_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">increase_row_size</span></code></a>()</p></td>
 <td><p>Increases the row size of the current tab view.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.must_be_initialized" title="bookmarks.actions.must_be_initialized"><code class="xref py py-obj docutils literal notranslate"><span class="pre">must_be_initialized</span></code></a>(func)</p></td>
-<td><p>A utility decorator function.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.must_be_initialized" title="bookmarks.actions.must_be_initialized"><code class="xref py py-obj docutils literal notranslate"><span class="pre">must_be_initialized</span></code></a>(func)</p></td>
+<td><p>Decorator function sure functions only run when <code class="xref py py-attr docutils literal notranslate"><span class="pre">common.main_widget</span></code> exists and initialized.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.next_tab" title="bookmarks.actions.next_tab"><code class="xref py py-obj docutils literal notranslate"><span class="pre">next_tab</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.next_tab" title="bookmarks.actions.next_tab"><code class="xref py py-obj docutils literal notranslate"><span class="pre">next_tab</span></code></a>()</p></td>
 <td><p>Shows the next available item tab.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.paste_asset_properties" title="bookmarks.actions.paste_asset_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paste_asset_properties</span></code></a>(index)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.paste_asset_properties" title="bookmarks.actions.paste_asset_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paste_asset_properties</span></code></a>(index)</p></td>
 <td><p>Paste asset properties from clipboard to the selected item.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.paste_bookmark_properties" title="bookmarks.actions.paste_bookmark_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paste_bookmark_properties</span></code></a>(index)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.paste_bookmark_properties" title="bookmarks.actions.paste_bookmark_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paste_bookmark_properties</span></code></a>(index)</p></td>
 <td><p>Paste bookmark properties from clipboard to the selected item.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.paste_properties" title="bookmarks.actions.paste_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paste_properties</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.paste_properties" title="bookmarks.actions.paste_properties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paste_properties</span></code></a>()</p></td>
 <td><p>Paste previously copied item properties to the selected item.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.pick_launcher_item" title="bookmarks.actions.pick_launcher_item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pick_launcher_item</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.pick_launcher_item" title="bookmarks.actions.pick_launcher_item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pick_launcher_item</span></code></a>()</p></td>
 <td><p>Slot called when a launcher item was clicked.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.pick_template" title="bookmarks.actions.pick_template"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pick_template</span></code></a>(mode)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.pick_template" title="bookmarks.actions.pick_template"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pick_template</span></code></a>(mode)</p></td>
 <td><p>Prompts the user to pick a new <cite>*.zip</cite> file containing a template directory structure.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.pick_thumbnail_from_file" title="bookmarks.actions.pick_thumbnail_from_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pick_thumbnail_from_file</span></code></a>(index)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.pick_thumbnail_from_file" title="bookmarks.actions.pick_thumbnail_from_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pick_thumbnail_from_file</span></code></a>(index)</p></td>
 <td><p>Picks a thumbnail for the given index.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.pick_thumbnail_from_library" title="bookmarks.actions.pick_thumbnail_from_library"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pick_thumbnail_from_library</span></code></a>(index)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.pick_thumbnail_from_library" title="bookmarks.actions.pick_thumbnail_from_library"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pick_thumbnail_from_library</span></code></a>(index)</p></td>
 <td><p>Picks a thumbnail for the given index.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.preview_image" title="bookmarks.actions.preview_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">preview_image</span></code></a>(index)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.preview_image" title="bookmarks.actions.preview_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">preview_image</span></code></a>(index)</p></td>
 <td><p>Shows a preview of the given image.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.preview_thumbnail" title="bookmarks.actions.preview_thumbnail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">preview_thumbnail</span></code></a>(index)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.preview_thumbnail" title="bookmarks.actions.preview_thumbnail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">preview_thumbnail</span></code></a>(index)</p></td>
 <td><p>Displays a preview of the currently selected item.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.previous_tab" title="bookmarks.actions.previous_tab"><code class="xref py py-obj docutils literal notranslate"><span class="pre">previous_tab</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.previous_tab" title="bookmarks.actions.previous_tab"><code class="xref py py-obj docutils literal notranslate"><span class="pre">previous_tab</span></code></a>()</p></td>
 <td><p>Shows the previous item tab.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.prune_bookmarks" title="bookmarks.actions.prune_bookmarks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune_bookmarks</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.prune_bookmarks" title="bookmarks.actions.prune_bookmarks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prune_bookmarks</span></code></a>()</p></td>
 <td><p>Removes invalid bookmark items from the current set.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.refresh" title="bookmarks.actions.refresh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">refresh</span></code></a>([idx])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.refresh" title="bookmarks.actions.refresh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">refresh</span></code></a>([idx])</p></td>
 <td><p>Refresh the model of an item view.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.remove_bookmark" title="bookmarks.actions.remove_bookmark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_bookmark</span></code></a>(server, job, root)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.remove_bookmark" title="bookmarks.actions.remove_bookmark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_bookmark</span></code></a>(server, job, root)</p></td>
 <td><p>Remove the given bookmark from the user settings file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.remove_favourite" title="bookmarks.actions.remove_favourite"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_favourite</span></code></a>(source_paths, source)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.remove_favourite" title="bookmarks.actions.remove_favourite"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_favourite</span></code></a>(source_paths, source)</p></td>
 <td><p>Remove a saved favourite item.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.remove_server" title="bookmarks.actions.remove_server"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_server</span></code></a>(v)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.remove_server" title="bookmarks.actions.remove_server"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_server</span></code></a>(v)</p></td>
 <td><p>Remove a server item from the list of user specified servers.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.remove_thumbnail" title="bookmarks.actions.remove_thumbnail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_thumbnail</span></code></a>(index)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.remove_thumbnail" title="bookmarks.actions.remove_thumbnail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_thumbnail</span></code></a>(index)</p></td>
 <td><p>Deletes a thumbnail file and the cached entries associated with it.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.remove_zip_template" title="bookmarks.actions.remove_zip_template"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_zip_template</span></code></a>(source[, prompt])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.remove_zip_template" title="bookmarks.actions.remove_zip_template"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_zip_template</span></code></a>(source[, prompt])</p></td>
 <td><p>Deletes a zip template file from the disk.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.reset_row_size" title="bookmarks.actions.reset_row_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_row_size</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.reset_row_size" title="bookmarks.actions.reset_row_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_row_size</span></code></a>()</p></td>
 <td><p>Reset the current tab view row size to its default value.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.reveal" title="bookmarks.actions.reveal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reveal</span></code></a>(item)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.reveal" title="bookmarks.actions.reveal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reveal</span></code></a>(item)</p></td>
 <td><p>Reveals an item in the file explorer.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.reveal_default_bookmarks_json" title="bookmarks.actions.reveal_default_bookmarks_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reveal_default_bookmarks_json</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.reveal_default_bookmarks_json" title="bookmarks.actions.reveal_default_bookmarks_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reveal_default_bookmarks_json</span></code></a>()</p></td>
 <td><p>Reveals <code class="xref py py-attr docutils literal notranslate"><span class="pre">common.default_bookmarks_template</span></code> in the file explorer.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.reveal_selected" title="bookmarks.actions.reveal_selected"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reveal_selected</span></code></a>(index)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.reveal_selected" title="bookmarks.actions.reveal_selected"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reveal_selected</span></code></a>(index)</p></td>
 <td><p>Reveal the currently selected item in the file explorer.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.reveal_url" title="bookmarks.actions.reveal_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reveal_url</span></code></a>(index)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.reveal_url" title="bookmarks.actions.reveal_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reveal_url</span></code></a>(index)</p></td>
 <td><p>Opens the given item's primary ULR.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.selection" title="bookmarks.actions.selection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">selection</span></code></a>(func)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.selection" title="bookmarks.actions.selection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">selection</span></code></a>(func)</p></td>
 <td><p>Decorator function to ensure <cite>QModelIndexes</cite> passed to worker threads are in a valid state.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.set_active" title="bookmarks.actions.set_active"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_active</span></code></a>(k, v)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.set_active" title="bookmarks.actions.set_active"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_active</span></code></a>(k, v)</p></td>
 <td><p>Sets the given path as the active path segment for the given key.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.set_task_folder" title="bookmarks.actions.set_task_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_task_folder</span></code></a>(v)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.set_task_folder" title="bookmarks.actions.set_task_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_task_folder</span></code></a>(v)</p></td>
 <td><p>Sets the active task folder.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.show_add_asset" title="bookmarks.actions.show_add_asset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_add_asset</span></code></a>([server, job, root])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.show_add_asset" title="bookmarks.actions.show_add_asset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_add_asset</span></code></a>([server, job, root])</p></td>
 <td><p>Shows <a class="reference internal" href="editor/asset_properties.html#bookmarks.editor.asset_properties.AssetPropertyEditor" title="bookmarks.editor.asset_properties.AssetPropertyEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssetPropertyEditor</span></code></a> to create a new asset item.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.show_add_file" title="bookmarks.actions.show_add_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_add_file</span></code></a>([asset, extension, file, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.show_add_file" title="bookmarks.actions.show_add_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_add_file</span></code></a>([asset, extension, file, ...])</p></td>
 <td><p>Shows <code class="xref py py-class docutils literal notranslate"><span class="pre">FileSaverWidget</span></code> to add a new empty template path file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.show_asset" title="bookmarks.actions.show_asset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_asset</span></code></a>(path)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.show_asset" title="bookmarks.actions.show_asset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_asset</span></code></a>(path)</p></td>
 <td><p>Slot used to reveal an asset item in the asset tab.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.show_bookmarker" title="bookmarks.actions.show_bookmarker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_bookmarker</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.show_bookmarker" title="bookmarks.actions.show_bookmarker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_bookmarker</span></code></a>()</p></td>
 <td><p>Shows <a class="reference internal" href="bookmarker/main.html#bookmarks.bookmarker.main.BookmarkerWidget" title="bookmarks.bookmarker.main.BookmarkerWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">BookmarkerWidget</span></code></a>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.show_preferences" title="bookmarks.actions.show_preferences"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_preferences</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.show_preferences" title="bookmarks.actions.show_preferences"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_preferences</span></code></a>()</p></td>
 <td><p>Shows the <a class="reference internal" href="editor/preferences.html#bookmarks.editor.preferences.PreferenceEditor" title="bookmarks.editor.preferences.PreferenceEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">PreferenceEditor</span></code></a> editor widget.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.show_publish_widget" title="bookmarks.actions.show_publish_widget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_publish_widget</span></code></a>(index)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.show_publish_widget" title="bookmarks.actions.show_publish_widget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_publish_widget</span></code></a>(index)</p></td>
 <td><p>Shows the <code class="xref py py-class docutils literal notranslate"><span class="pre">PublishWidget</span></code> editor.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.show_sg_connecting_message" title="bookmarks.actions.show_sg_connecting_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_sg_connecting_message</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.show_sg_connecting_message" title="bookmarks.actions.show_sg_connecting_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_sg_connecting_message</span></code></a>()</p></td>
 <td><p>Shows a ShotGrid connection progress message.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.show_sg_error_message" title="bookmarks.actions.show_sg_error_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_sg_error_message</span></code></a>(v)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.show_sg_error_message" title="bookmarks.actions.show_sg_error_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_sg_error_message</span></code></a>(v)</p></td>
 <td><p>Shows a ShotGrid error message.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.show_slack" title="bookmarks.actions.show_slack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_slack</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.show_slack" title="bookmarks.actions.show_slack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_slack</span></code></a>()</p></td>
 <td><p>Opens the Slack widget used to send messages using SlackAPI.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.show_todos" title="bookmarks.actions.show_todos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_todos</span></code></a>(index)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.show_todos" title="bookmarks.actions.show_todos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_todos</span></code></a>(index)</p></td>
 <td><p>Shows the <a class="reference internal" href="notes.html#bookmarks.notes.NoteEditor" title="bookmarks.notes.NoteEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">NoteEditor</span></code></a> editor.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.suggest_prefix" title="bookmarks.actions.suggest_prefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">suggest_prefix</span></code></a>(job)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.suggest_prefix" title="bookmarks.actions.suggest_prefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">suggest_prefix</span></code></a>(job)</p></td>
 <td><p>Suggests a prefix for the given job.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.test_slack_token" title="bookmarks.actions.test_slack_token"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_slack_token</span></code></a>(token)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.test_slack_token" title="bookmarks.actions.test_slack_token"><code class="xref py py-obj docutils literal notranslate"><span class="pre">test_slack_token</span></code></a>(token)</p></td>
 <td><p>Tests the given slack api token.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_active_item" title="bookmarks.actions.toggle_active_item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_active_item</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_active_item" title="bookmarks.actions.toggle_active_item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_active_item</span></code></a>()</p></td>
 <td><p>Toggles the <code class="docutils literal notranslate"><span class="pre">MarkedAsActive</span></code> item filter of the current tab model.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_active_mode" title="bookmarks.actions.toggle_active_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_active_mode</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_active_mode" title="bookmarks.actions.toggle_active_mode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_active_mode</span></code></a>()</p></td>
 <td><p>Toggle the active path mode.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_archived" title="bookmarks.actions.toggle_archived"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_archived</span></code></a>(index)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_archived" title="bookmarks.actions.toggle_archived"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_archived</span></code></a>(index)</p></td>
 <td><p>Toggles the <code class="docutils literal notranslate"><span class="pre">MarkedAsArchived</span></code> flag of the given item.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_archived_items" title="bookmarks.actions.toggle_archived_items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_archived_items</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_archived_items" title="bookmarks.actions.toggle_archived_items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_archived_items</span></code></a>()</p></td>
 <td><p>Toggles the <code class="docutils literal notranslate"><span class="pre">MarkedAsArchived</span></code> item filter of the current tab model.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_debug" title="bookmarks.actions.toggle_debug"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_debug</span></code></a>(state)</p></td>
-<td><p>Toggles debugging.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_debug" title="bookmarks.actions.toggle_debug"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_debug</span></code></a>(state)</p></td>
+<td><p>Toggles debugging staten on or off.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_favourite" title="bookmarks.actions.toggle_favourite"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_favourite</span></code></a>(index)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_favourite" title="bookmarks.actions.toggle_favourite"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_favourite</span></code></a>(index)</p></td>
 <td><p>Toggles the <code class="docutils literal notranslate"><span class="pre">MarkedAsFavourite</span></code> flag of the given item.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_favourite_items" title="bookmarks.actions.toggle_favourite_items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_favourite_items</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_favourite_items" title="bookmarks.actions.toggle_favourite_items"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_favourite_items</span></code></a>()</p></td>
 <td><p>Toggles the <code class="docutils literal notranslate"><span class="pre">MarkedAsFavourite</span></code> item filter of the current tab model.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_filter_editor" title="bookmarks.actions.toggle_filter_editor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_filter_editor</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_filter_editor" title="bookmarks.actions.toggle_filter_editor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_filter_editor</span></code></a>()</p></td>
 <td><p>Toggles the search filter editor view of the current item view.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_flag" title="bookmarks.actions.toggle_flag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_flag</span></code></a>(flag, v)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_flag" title="bookmarks.actions.toggle_flag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_flag</span></code></a>(flag, v)</p></td>
 <td><p>Toggle an item filter flag in the current item tab.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_full_screen" title="bookmarks.actions.toggle_full_screen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_full_screen</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_full_screen" title="bookmarks.actions.toggle_full_screen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_full_screen</span></code></a>()</p></td>
 <td><p>Toggle <a class="reference internal" href="standalone.html#bookmarks.standalone.BookmarksAppWindow" title="bookmarks.standalone.BookmarksAppWindow"><code class="xref py py-class docutils literal notranslate"><span class="pre">BookmarksAppWindow</span></code></a> full-screen view.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_inline_icons" title="bookmarks.actions.toggle_inline_icons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_inline_icons</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_inline_icons" title="bookmarks.actions.toggle_inline_icons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_inline_icons</span></code></a>()</p></td>
 <td><p>Toggles the inline icon visibility of the current tab view.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_maximized" title="bookmarks.actions.toggle_maximized"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_maximized</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_maximized" title="bookmarks.actions.toggle_maximized"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_maximized</span></code></a>()</p></td>
 <td><p>Toggle <a class="reference internal" href="standalone.html#bookmarks.standalone.BookmarksAppWindow" title="bookmarks.standalone.BookmarksAppWindow"><code class="xref py py-class docutils literal notranslate"><span class="pre">BookmarksAppWindow</span></code></a> maximized view.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_minimized" title="bookmarks.actions.toggle_minimized"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_minimized</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_minimized" title="bookmarks.actions.toggle_minimized"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_minimized</span></code></a>()</p></td>
 <td><p>Toggle <a class="reference internal" href="standalone.html#bookmarks.standalone.BookmarksAppWindow" title="bookmarks.standalone.BookmarksAppWindow"><code class="xref py py-class docutils literal notranslate"><span class="pre">BookmarksAppWindow</span></code></a> minimized view.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_sequence" title="bookmarks.actions.toggle_sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_sequence</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_sequence" title="bookmarks.actions.toggle_sequence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_sequence</span></code></a>()</p></td>
 <td><p>Toggles the data type of the file item model.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_sort_order" title="bookmarks.actions.toggle_sort_order"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_sort_order</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_sort_order" title="bookmarks.actions.toggle_sort_order"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_sort_order</span></code></a>()</p></td>
 <td><p>Change the sorting order of the current item view model.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_stays_always_on_top" title="bookmarks.actions.toggle_stays_always_on_top"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_stays_always_on_top</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_stays_always_on_top" title="bookmarks.actions.toggle_stays_always_on_top"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_stays_always_on_top</span></code></a>()</p></td>
 <td><p>Toggle <a class="reference internal" href="standalone.html#bookmarks.standalone.BookmarksAppWindow" title="bookmarks.standalone.BookmarksAppWindow"><code class="xref py py-class docutils literal notranslate"><span class="pre">BookmarksAppWindow</span></code></a> stacking value.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_task_view" title="bookmarks.actions.toggle_task_view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_task_view</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.toggle_task_view" title="bookmarks.actions.toggle_task_view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_task_view</span></code></a>()</p></td>
 <td><p>Shows or hides the visibility of the :class:~bookmarks.items.task_items.TaskItemView`` widget.</p></td>
 </tr>
 </tbody>
@@ -941,6 +944,25 @@ arbitrary name of a job or an asset item to be created.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.filter_flag_changed">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">filter_flag_changed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9999</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#filter_flag_changed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.filter_flag_changed" title="Permalink to this definition">#</a></dt>
+<dd><p>Slot used to keep item filter flag values updated across all datasets.</p>
+<p>For instance, the favourite item model might set flag values that we want to
+keep updated in other models too.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flag</strong> (<em>int</em>) – A filter flag.</p></li>
+<li><p><strong>parent_paths</strong> (<em>list</em>) – The parent paths that make up the source file.</p></li>
+<li><p><strong>source</strong> (<em>str</em>) – The source file path.</p></li>
+<li><p><strong>state</strong> (<em>bool</em>) – The favourite state flat value.</p></li>
+<li><p><strong>limit</strong> (<em>int</em>) – The maximum number of items to check.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.actions.generate_thumbnails_changed">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">generate_thumbnails_changed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#generate_thumbnails_changed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.generate_thumbnails_changed" title="Permalink to this definition">#</a></dt>
 <dd><p>Slot called when the thumbnail generating preference has changed.</p>
@@ -983,9 +1005,8 @@ arbitrary name of a job or an asset item to be created.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.actions.must_be_initialized">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">must_be_initialized</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#must_be_initialized"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.must_be_initialized" title="Permalink to this definition">#</a></dt>
-<dd><p>A utility decorator function.</p>
-<p>It makes sure decorated functions only run when <code class="xref py py-attr docutils literal notranslate"><span class="pre">common.main_widget</span></code> exists and
-initialized.</p>
+<dd><p>Decorator function sure functions only run when <code class="xref py py-attr docutils literal notranslate"><span class="pre">common.main_widget</span></code>
+exists and initialized.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1395,7 +1416,8 @@ path file.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.actions.toggle_debug">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">toggle_debug</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#toggle_debug"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.toggle_debug" title="Permalink to this definition">#</a></dt>
-<dd><p>Toggles debugging.</p>
+<dd><p>Toggles debugging staten on or off.</p>
+<p>When on, the app will print debugging information to the console.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> (<em>QtCore.Qt.CheckState</em>) – Debugging state.</p>
@@ -1578,6 +1600,7 @@ path file.</p>
 <li><a class="reference internal" href="#bookmarks.actions.execute_detached"><code class="docutils literal notranslate"><span class="pre">execute_detached()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.actions.export_favourites"><code class="docutils literal notranslate"><span class="pre">export_favourites()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.actions.extract_zip_template"><code class="docutils literal notranslate"><span class="pre">extract_zip_template()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.filter_flag_changed"><code class="docutils literal notranslate"><span class="pre">filter_flag_changed()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.actions.generate_thumbnails_changed"><code class="docutils literal notranslate"><span class="pre">generate_thumbnails_changed()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.actions.hide_sg_connecting_message"><code class="docutils literal notranslate"><span class="pre">hide_sg_connecting_message()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.actions.import_asset_properties_from_json"><code class="docutils literal notranslate"><span class="pre">import_asset_properties_from_json()</span></code></a></li>

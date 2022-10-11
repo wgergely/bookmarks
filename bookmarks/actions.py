@@ -181,12 +181,15 @@ def add_favourite(source_paths, source):
         source (str): The item to save as a favourite item.
 
     """
+    if not source_paths or not source:
+        return
+
     common.check_type(source_paths, (tuple, list))
     common.check_type(source, str)
 
     common.favourites[source] = source_paths
     common.settings.set_favourites(common.favourites)
-    common.settings.favouriteAdded.emit(source_paths, source)
+    common.signals.favouriteAdded.emit(source_paths, source)
 
 def remove_favourite(source_paths, source):
     """Remove a saved favourite item.
@@ -196,6 +199,9 @@ def remove_favourite(source_paths, source):
         source (str): The item to save as a favourite item.
 
     """
+    if not source_paths or not source:
+        return
+
     common.check_type(source_paths, (tuple, list))
     common.check_type(source, str)
 
@@ -204,7 +210,54 @@ def remove_favourite(source_paths, source):
 
     del common.favourites[source]
     common.settings.set_favourites(common.favourites)
-    common.settings.favouriteRemoved.emit(source_paths, source)
+    common.signals.favouriteRemoved.emit(source_paths, source)
+
+
+@QtCore.Slot(tuple)
+@QtCore.Slot(str)
+@QtCore.Slot(bool)
+def filter_flag_changed(flag, parent_paths, source, state=None, limit=9999):
+    """Slot used to keep item filter flag values updated across all datasets.
+
+    For instance, the favourite item model might set flag values that we want to
+    keep updated in other models too.
+
+    Args:
+        flag (int): A filter flag.
+        parent_paths (list): The parent paths that make up the source file.
+        source (str): The source file path.
+        state (bool): The favourite state flat value.
+        limit (int): The maximum number of items to check.
+
+    """
+    if len(parent_paths) == 3:
+        tab_idx = common.BookmarkTab
+    elif len(parent_paths) == 4:
+        tab_idx = common.AssetTab
+    elif len(parent_paths) > 4:
+        tab_idx = common.FileTab
+    else:
+        return
+
+    model = common.source_model(idx=tab_idx)
+
+    p = model.source_path()
+    k = model.task()
+
+    # Make sure data is up-to-date in all data sets.
+    for t in (common.FileItem, common.SequenceItem, ):
+        data = common.get_data(p, k, t)
+
+        for n, item in enumerate(data.values()):
+            # Bail if the data set is large
+            if n > limit:
+                break
+
+            if item[common.PathRole] == source:
+                if state and not item[common.FlagsRole] & flag:
+                    item[common.FlagsRole] |= flag
+                if not state and (item[common.FlagsRole] & flag):
+                    item[common.FlagsRole] &= ~flag
 
 
 @common.error

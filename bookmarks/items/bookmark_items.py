@@ -312,37 +312,15 @@ class BookmarkItemView(views.ThreadedItemView):
             parent=parent
         )
 
-    def mouseReleaseEvent(self, event):
-        """Event handler.
-
-        """
-        if not isinstance(event, QtGui.QMouseEvent):
-            return
-
-        cursor_position = self.mapFromGlobal(common.cursor.pos())
-        index = self.indexAt(cursor_position)
-
-        if not index.isValid():
-            return
-        if not index.data(common.ParentPathRole):
-            return
-
-        rectangles = self.itemDelegate().get_rectangles(index)
-
-        if not index.isValid() or not index.data(common.FlagsRole):
-            return
-        archived = index.data(common.FlagsRole) & common.MarkedAsArchived
-
+    def add_item_action(self, index):
+        """Action to execute when the add item icon is clicked."""
         server, job, root = index.data(common.ParentPathRole)[0:3]
-        if rectangles[delegate.AddAssetRect].contains(cursor_position) and not archived:
-            actions.show_add_asset(server=server, job=job, root=root)
-            return
+        actions.show_add_asset(server=server, job=job, root=root)
 
-        if rectangles[delegate.PropertiesRect].contains(cursor_position) and not archived:
-            actions.edit_bookmark(server=server, job=job, root=root)
-            return
-
-        super().mouseReleaseEvent(event)
+    def edit_item_action(self, index):
+        """Action to execute when the edit item icon is clicked."""
+        server, job, root = index.data(common.ParentPathRole)[0:3]
+        actions.edit_bookmark(server=server, job=job, root=root)
 
     def inline_icons_count(self):
         """Inline buttons count.

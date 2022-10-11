@@ -47,12 +47,18 @@ class CoreSignals(QtCore.QObject):
     jobAdded = QtCore.Signal(str)
 
     #: Signal emitted when a bookmark item was added
+    bookmarksChanged = QtCore.Signal()
+    #: Signal emitted when a bookmark item was added
     bookmarkAdded = QtCore.Signal(str, str, str)
     #: Signal emitted when a bookmark item was removed
     bookmarkRemoved = QtCore.Signal(str, str, str)
 
     #: Signal emitted when saved favourite items have changed
     favouritesChanged = QtCore.Signal()
+    #: Signal emitted when a favourite item was added
+    favouriteAdded = QtCore.Signal(tuple, str)
+    #: Signal emitted when a favourite item was removed
+    favouriteRemoved = QtCore.Signal(tuple, str)
 
     #: Signal emitted when an asset was added
     assetAdded = QtCore.Signal(str)

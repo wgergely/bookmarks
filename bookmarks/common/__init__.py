@@ -33,7 +33,7 @@ See :mod:`bookmarks.maya` and :mod:`bookmarks.common` for the related methods.
 
 """
 debug_on = False
-typecheck_on = True
+typecheck_on = False
 init_mode = None
 active_mode = None
 signals = None

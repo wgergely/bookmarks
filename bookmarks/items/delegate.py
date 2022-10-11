@@ -1414,7 +1414,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
 
         # Background
         painter.setOpacity(o)
-        if common.settings.value('settings/paint_thumbnail_bg'):
+        if not common.settings.value('settings/paint_thumbnail_bg'):
             if color:
                 painter.setOpacity(1.0)
             color = color if color else QtGui.QColor(0, 0, 0, 50)

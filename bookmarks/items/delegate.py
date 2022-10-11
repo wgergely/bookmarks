@@ -43,7 +43,7 @@ IndicatorRect = 1
 ThumbnailRect = 2
 AssetNameRect = 3
 AssetDescriptionRect = 4
-AddAssetRect = 5
+AddItemRect = 5
 TodoRect = 6
 RevealRect = 7
 ArchiveRect = 8
@@ -953,7 +953,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
                 RevealRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
                 TodoRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
                 FavouriteRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
-                AddAssetRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
+                AddItemRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
                 PropertiesRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
                 InlineBackgroundRect: inline_background_rect if count else null_rect,
                 DataRect: data_rect
@@ -966,7 +966,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
                 ArchiveRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
                 RevealRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
                 TodoRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
-                AddAssetRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
+                AddItemRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
                 PropertiesRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
                 FavouriteRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
                 InlineBackgroundRect: inline_background_rect if count else null_rect,
@@ -1875,7 +1875,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
             cursor_position
         ) = args
 
-        rect = rectangles[AddAssetRect]
+        rect = rectangles[AddItemRect]
         if not rect or archived:
             return
 

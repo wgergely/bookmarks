@@ -571,6 +571,12 @@ class BaseItemView(QtWidgets.QListView):
         # Ignore default items
         if flag == common.MarkedAsArchived and index.data(
                 common.FlagsRole) & common.MarkedAsDefault:
+            ui.MessageBox('Default bookmark items cannot be archived.').open()
+            return
+        # Ignore active items
+        if flag == common.MarkedAsArchived and index.data(
+                common.FlagsRole) & common.MarkedAsActive:
+            ui.MessageBox('This item is currently active and cannot be archived.').open()
             return
 
         if flag == common.MarkedAsArchived:
@@ -584,12 +590,27 @@ class BaseItemView(QtWidgets.QListView):
 
         def _set_flag(k, mode, data, flag, commit=False):
             """Sets a single flag value based on the given mode."""
+            # Set the item flag data
             if mode:
                 data[common.FlagsRole] = data[common.FlagsRole] | flag
             else:
                 data[common.FlagsRole] = data[common.FlagsRole] & ~flag
+
+            # Save the flag value to the data container
             if commit:
                 save_func(k, mode, flag)
+
+            # Notify the flag value change
+            if flag == common.MarkedAsArchived and mode:
+                common.signals.itemArchived.emit(
+                    data[common.ParentPathRole],
+                    data[common.PathRole],
+                )
+            if flag == common.MarkedAsArchived and not mode:
+                common.signals.itemUnarchived.emit(
+                    data[common.ParentPathRole],
+                    data[common.PathRole],
+                )
 
         def _set_flags(DATA, k, mode, flag, commit=False, proxy=False):
             """Sets flags for multiple items."""
@@ -623,6 +644,10 @@ class BaseItemView(QtWidgets.QListView):
                     'flags',
                     database.AssetTable
                 )
+
+                # Active items can't be archived
+                if flags & common.MarkedAsActive:
+                    return False
 
                 if not flags:
                     return True
@@ -1384,9 +1409,11 @@ class InlineIconView(BaseItemView):
     def __init__(self, icon='bw_icon', parent=None):
         super(InlineIconView, self).__init__(icon=icon, parent=parent)
 
+        self._clicked_rect = QtCore.QRect()
+
         self.multi_toggle_pos = None
         self.multi_toggle_state = None
-        self.multi_toggle_idx = None
+        self.multi_toggle_flag = None
         self.multi_toggle_item = None
         self.multi_toggle_items = {}
 
@@ -1402,7 +1429,7 @@ class InlineIconView(BaseItemView):
         """
         self.multi_toggle_pos = None
         self.multi_toggle_state = None
-        self.multi_toggle_idx = None
+        self.multi_toggle_flag = None
         self.multi_toggle_item = None
         self.multi_toggle_items = {}
 
@@ -1493,7 +1520,7 @@ class InlineIconView(BaseItemView):
         flag toggling.
 
         This event is responsible for setting ``multi_toggle_pos``, the start
-        position of the toggle, ``multi_toggle_state`` & ``multi_toggle_idx``
+        position of the toggle, ``multi_toggle_state`` & ``multi_toggle_flag``
         the modes of the toggle, based on the state of the state and location of
         the clicked item.
 
@@ -1504,24 +1531,38 @@ class InlineIconView(BaseItemView):
 
         cursor_position = self.mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)
+
         if not index.isValid() or not index.flags() & QtCore.Qt.ItemIsEnabled:
             super(InlineIconView, self).mousePressEvent(event)
+            self._clicked_rect = QtCore.QRect()
             self.reset_multi_toggle()
             return
 
         self.reset_multi_toggle()
 
         rectangles = self.itemDelegate().get_rectangles(index)
+        
+        self._clicked_rect = next(
+            (rectangles[f] for f in (
+                delegate.AddItemRect,
+                delegate.TodoRect,
+                delegate.RevealRect,
+                delegate.PropertiesRect,
+                delegate.ArchiveRect,
+                delegate.FavouriteRect,
+            ) if rectangles[f].contains(cursor_position)),
+            QtCore.QRect()
+        )
 
         if rectangles[delegate.FavouriteRect].contains(cursor_position):
             self.multi_toggle_pos = QtCore.QPoint(0, cursor_position.y())
             self.multi_toggle_state = not index.flags() & common.MarkedAsFavourite
-            self.multi_toggle_idx = delegate.FavouriteRect
+            self.multi_toggle_flag = delegate.FavouriteRect
 
         if rectangles[delegate.ArchiveRect].contains(cursor_position):
             self.multi_toggle_pos = cursor_position
             self.multi_toggle_state = not index.flags() & common.MarkedAsArchived
-            self.multi_toggle_idx = delegate.ArchiveRect
+            self.multi_toggle_flag = delegate.ArchiveRect
 
         super(InlineIconView, self).mousePressEvent(event)
 
@@ -1583,17 +1624,23 @@ class InlineIconView(BaseItemView):
         cursor_position = self.mapFromGlobal(common.cursor.pos())
 
         self.reset_multi_toggle()
-        if rectangles[delegate.FavouriteRect].contains(cursor_position) and not archived:
+
+        def _check_rect(f):
+            r = rectangles[f]
+            p = cursor_position
+            return r.contains(p) and r == self._clicked_rect
+
+        if _check_rect(delegate.FavouriteRect) and not archived:
             actions.toggle_favourite()
             if not self.model().filter_flag(common.MarkedAsFavourite):
                 self.model().invalidateFilter()
 
-        if rectangles[delegate.ArchiveRect].contains(cursor_position):
+        if _check_rect(delegate.ArchiveRect):
             actions.toggle_archived()
             if not self.model().filter_flag(common.MarkedAsArchived):
                 self.model().invalidateFilter()
 
-        if rectangles[delegate.RevealRect].contains(cursor_position) and not archived:
+        if _check_rect(delegate.RevealRect) and not archived:
             # Reveal the job folder if any of the modifiers are pressed
             if any((alt_modifier, shift_modifier, control_modifier)):
                 pp = index.data(common.ParentPathRole)
@@ -1602,10 +1649,26 @@ class InlineIconView(BaseItemView):
             else:
                 actions.reveal(index)
 
-        if rectangles[delegate.TodoRect].contains(cursor_position) and not archived:
+        if _check_rect(delegate.TodoRect) and not archived:
             actions.show_todos()
 
+        if _check_rect(delegate.AddItemRect) and not archived:
+            self.add_item_action(index)
+
+        if _check_rect(delegate.PropertiesRect) and not archived:
+            self.edit_item_action(index)
+
+        self._clicked_rect = QtCore.QRect()
+        
         super(InlineIconView, self).mouseReleaseEvent(event)
+
+    def add_item_action(self, index):
+        """Action to execute when the add item icon is clicked."""
+        return
+
+    def edit_item_action(self, index):
+        """Action to execute when the edit item icon is clicked."""
+        return
 
     def mouseMoveEvent(self, event):
         """``InlineIconView``'s mouse move event is responsible for
@@ -1618,9 +1681,10 @@ class InlineIconView(BaseItemView):
         if self.verticalScrollBar().isSliderDown():
             return
 
-        cursor_position = self.mapFromGlobal(common.cursor.pos())
         if not common.cursor:
             return
+        cursor_position = self.mapFromGlobal(common.cursor.pos())
+
         app = QtWidgets.QApplication.instance()
         if not app:
             return
@@ -1637,16 +1701,17 @@ class InlineIconView(BaseItemView):
         if alt_modifier or shift_modifier or control_modifier:
             self.update(index)
 
+        rectangles = self.itemDelegate().get_rectangles(index)
+
         # Status messages
         if self.multi_toggle_pos is None:
-            rectangles = self.itemDelegate().get_rectangles(index)
 
             if event.buttons() == QtCore.Qt.NoButton:
                 if rectangles[delegate.PropertiesRect].contains(cursor_position):
                     common.signals.showStatusTipMessage.emit(
                         'Edit item properties...')
                     self.update(index)
-                elif rectangles[delegate.AddAssetRect].contains(cursor_position):
+                elif rectangles[delegate.AddItemRect].contains(cursor_position):
                     common.signals.showStatusTipMessage.emit(
                         'Add New Item...')
                     self.update(index)
@@ -1716,7 +1781,8 @@ class InlineIconView(BaseItemView):
         archived = index.flags() & common.MarkedAsArchived
 
         if idx not in self.multi_toggle_items:
-            if self.multi_toggle_idx == delegate.FavouriteRect:
+
+            if self.multi_toggle_flag == delegate.FavouriteRect:
                 self.multi_toggle_items[idx] = favourite
                 self.toggle_item_flag(
                     index,
@@ -1724,8 +1790,9 @@ class InlineIconView(BaseItemView):
                     state=self.multi_toggle_state,
                     commit_now=False,
                 )
+                return
 
-            if self.multi_toggle_idx == delegate.ArchiveRect:
+            if self.multi_toggle_flag == delegate.ArchiveRect:
                 self.multi_toggle_items[idx] = archived
                 self.toggle_item_flag(
                     index,
@@ -1733,7 +1800,7 @@ class InlineIconView(BaseItemView):
                     state=self.multi_toggle_state,
                     commit_now=False,
                 )
-            return
+                return
 
         if index == initial_index:
             return

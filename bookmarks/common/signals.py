@@ -1,6 +1,8 @@
 """Common signals used across Bookmarks.
 
 """
+import functools
+
 from PySide2 import QtCore
 
 from .. import common
@@ -84,6 +86,11 @@ class CoreSignals(QtCore.QObject):
     #: Signal emitted then the task view visibility changes
     taskViewToggled = QtCore.Signal()
 
+    #: Signal called when an item was archived
+    itemArchived = QtCore.Signal(tuple, str)
+    #: Signal called when an item was unarchived
+    itemUnarchived = QtCore.Signal(tuple, str)
+
     #: Signal when saved templates change
     templatesChanged = QtCore.Signal()
     #: Signal emitted after a template is expanded
@@ -148,3 +155,34 @@ class CoreSignals(QtCore.QObject):
 
         self.sgConnectionFailed.connect(actions.hide_sg_connecting_message)
         self.sgConnectionFailed.connect(actions.show_sg_error_message)
+
+        # Item flag signals
+        self.favouriteAdded.connect(
+            functools.partial(
+                actions.filter_flag_changed,
+                common.MarkedAsFavourite,
+                state=True
+            )
+        )
+        self.favouriteRemoved.connect(
+            functools.partial(
+                actions.filter_flag_changed,
+                common.MarkedAsFavourite,
+                state=False
+            )
+        )
+
+        self.itemArchived.connect(
+            functools.partial(
+                actions.filter_flag_changed,
+                common.MarkedAsArchived,
+                state=True
+            )
+        )
+        self.itemUnarchived.connect(
+            functools.partial(
+                actions.filter_flag_changed,
+                common.MarkedAsArchived,
+                state=False
+            )
+        )

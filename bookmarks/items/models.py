@@ -35,6 +35,7 @@ from PySide2 import QtWidgets, QtCore
 from .. import common
 from .. import images
 from .. import log
+from .. import actions
 
 MAX_HISTORY = 20
 DEFAULT_ITEM_FLAGS = (
@@ -482,6 +483,8 @@ class ItemModel(QtCore.QAbstractListModel):
         self.updateIndex.emit(index)
         self.activeChanged.emit(index)
 
+        common.signals.favouritesChanged.emit()
+
     def unset_active(self):
         """Remove the model's :meth:`.active_index`.
 
@@ -497,6 +500,8 @@ class ItemModel(QtCore.QAbstractListModel):
 
         index = self.index(idx, 0)
         self.updateIndex.emit(index)
+
+        common.signals.favouritesChanged.emit()
 
     def save_active(self):
         """Saves the model's active item to the user preferences.

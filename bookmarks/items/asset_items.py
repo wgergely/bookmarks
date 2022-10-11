@@ -361,39 +361,13 @@ class AssetItemView(views.ThreadedItemView):
         """
         return 'Right-click and select \'Add Asset\' to add items'
 
-    def mouseReleaseEvent(self, event):
-        """Mouse release event handler.
+    def add_item_action(self, index):
+        """Action to execute when the add item icon is clicked."""
+        actions.show_add_file(asset=index.data(common.ParentPathRole)[-1])
 
-        """
-        if not isinstance(event, QtGui.QMouseEvent):
-            return
-
-        super().mouseReleaseEvent(event)
-
-        cursor_position = self.mapFromGlobal(common.cursor.pos())
-        index = self.indexAt(cursor_position)
-
-        if not index.isValid():
-            return
-        if index.flags() & common.MarkedAsArchived:
-            return
-
-        rectangles = self.itemDelegate().get_rectangles(index)
-
-        if not index.isValid() or not index.data(common.FlagsRole):
-            return
-        archived = index.data(common.FlagsRole) & common.MarkedAsArchived
-
-        if not index.isValid() or not index.data(common.FlagsRole):
-            return
-
-        if rectangles[delegate.AddAssetRect].contains(cursor_position) and not archived:
-            actions.show_add_file(asset=index.data(common.ParentPathRole)[-1])
-            return
-
-        if rectangles[delegate.PropertiesRect].contains(cursor_position) and not archived:
-            actions.edit_asset(index.data(common.ParentPathRole)[-1])
-            return
+    def edit_item_action(self, index):
+        """Action to execute when the edit item icon is clicked."""
+        actions.edit_asset(index.data(common.ParentPathRole)[-1])
 
     def showEvent(self, event):
         """Show event handler.

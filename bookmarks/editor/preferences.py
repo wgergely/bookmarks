@@ -9,6 +9,7 @@ from PySide2 import QtWidgets, QtCore, QtGui
 from . import base
 from .. import actions
 from .. import common
+from .. import images
 from .. import ui
 
 
@@ -70,77 +71,77 @@ class UIScaleFactorsCombobox(QtWidgets.QComboBox):
         self.setCurrentText('100%')
         self.blockSignals(False)
 
-
-class AboutLabel(QtWidgets.QLabel):
-    """Label used to show informative data.
-
-    """
-
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-        self.setAlignment(QtCore.Qt.AlignCenter)
-
-        bg = common.rgb(common.color(common.color_dark_background))
-        bd = common.size(common.size_separator)
-        bc = common.rgb(common.color(common.color_separator))
-        r = common.size(common.size_margin) * 0.5
-        c = common.rgb(common.color(common.color_disabled_text))
-
-        self.setStyleSheet(
-            f'background-color:{bg};'
-            f'border: {bd}px solid {bc};'
-            f'border-radius:{r}px;'
-            f'color:{c};'
-            f'padding: {r}px {r}px {r}px {r}px;'
-        )
-
-        self.init_data()
-
-    def init_data(self):
-        """Initializes data.
-
-        """
-        mod = importlib.import_module(__name__.split('.', maxsplit=1)[0])
-        self.setText(mod.info())
-
-    def mouseReleaseEvent(self, event):
-        """Mouse release event handler.
-
-        """
-        mod = importlib.import_module(__name__.split('.', maxsplit=1)[0])
-        QtGui.QDesktopServices.openUrl(mod.__website__)
-
-
-class AboutWidget(QtWidgets.QDialog):
-    """Shows informative data about Bookmarks.
-
-    """
-
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-        if not self.parent():
-            common.set_stylesheet(self)
-
-        self.label = None
-        self.ok_button = None
-
-        self._create_ui()
-        self._connect_signals()
-
-    def _create_ui(self):
-        QtWidgets.QVBoxLayout(self)
-        o = common.size(common.size_margin)
-        self.layout().setContentsMargins(o, o, o, o)
-        self.layout().setSpacing(o)
-
-        self.label = AboutLabel(parent=self)
-        self.ok_button = ui.PaintedButton('Close', parent=self)
-
-        self.layout().addWidget(self.label, 1)
-        self.layout().addWidget(self.ok_button, 0)
-
-    def _connect_signals(self):
-        self.ok_button.clicked.connect(self.close)
+#
+# class AboutLabel(QtWidgets.QLabel):
+#     """Label used to show informative data.
+#
+#     """
+#
+#     def __init__(self, parent=None):
+#         super().__init__(parent=parent)
+#         self.setAlignment(QtCore.Qt.AlignCenter)
+#
+#         bg = common.rgb(common.color(common.color_dark_background))
+#         bd = common.size(common.size_separator)
+#         bc = common.rgb(common.color(common.color_separator))
+#         r = common.size(common.size_margin) * 0.5
+#         c = common.rgb(common.color(common.color_disabled_text))
+#
+#         self.setStyleSheet(
+#             f'background-color:{bg};'
+#             f'border: {bd}px solid {bc};'
+#             f'border-radius:{r}px;'
+#             f'color:{c};'
+#             f'padding: {r}px {r}px {r}px {r}px;'
+#         )
+#
+#         self.init_data()
+#
+#     def init_data(self):
+#         """Initializes data.
+#
+#         """
+#         mod = importlib.import_module(__name__.split('.', maxsplit=1)[0]).info()
+#         self.setText(mod.info())
+#
+#     def mouseReleaseEvent(self, event):
+#         """Mouse release event handler.
+#
+#         """
+#         mod = importlib.import_module(__name__.split('.', maxsplit=1)[0])
+#         QtGui.QDesktopServices.openUrl(mod.__website__)
+#
+#
+# class AboutWidget(QtWidgets.QDialog):
+#     """Shows informative data about Bookmarks.
+#
+#     """
+#
+#     def __init__(self, parent=None):
+#         super().__init__(parent=parent)
+#         if not self.parent():
+#             common.set_stylesheet(self)
+#
+#         self.label = None
+#         self.ok_button = None
+#
+#         self._create_ui()
+#         self._connect_signals()
+#
+#     def _create_ui(self):
+#         QtWidgets.QVBoxLayout(self)
+#         o = common.size(common.size_margin)
+#         self.layout().setContentsMargins(o, o, o, o)
+#         self.layout().setSpacing(o)
+#
+#         self.label = AboutLabel(parent=self)
+#         self.ok_button = ui.PaintedButton('Close', parent=self)
+#
+#         self.layout().addWidget(self.label, 1)
+#         self.layout().addWidget(self.ok_button, 0)
+#
+#     def _connect_signals(self):
+#         self.ok_button.clicked.connect(self.close)
 
 
 #: UI layout definition
@@ -167,62 +168,59 @@ SECTIONS = {
                     'key': 'settings/show_menu_icons',
                     'validator': None,
                     'widget': functools.partial(
-                        QtWidgets.QCheckBox, 'Hide Menu Icons'
+                        QtWidgets.QCheckBox, 'Enable'
                     ),
                     'placeholder': 'Check to icons',
                     'description': 'Check to icons',
                 },
                 2: {
-                    'name': 'Show Thumbnail Background',
+                    'name': 'Hide Thumbnail Backgrounds',
                     'key': 'settings/paint_thumbnail_bg',
                     'validator': None,
                     'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
-                    'placeholder': 'Check to show show thumbnail background color',
-                    'description': 'Check to show show thumbnail background color'
+                    'placeholder': 'Check to hide thumbnail background colors',
+                    'description': 'Check to hide thumbnail background colors'
                 },
                 3: {
-                    'name': 'Image Thumbnails',
+                    'name': 'Disable Image Thumbnails',
                     'key': 'settings/disable_oiio',
                     'validator': None,
                     'widget': functools.partial(
-                        QtWidgets.QCheckBox, 'Don\'t Generate Thumbnails'
+                        QtWidgets.QCheckBox, 'Disable'
                     ),
                     'placeholder': 'Check to disable generating thumbnails from '
-                                   'image files',
+                                   'image files using OpenImageIO',
                     'description': 'Check to disable generating thumbnails from '
-                                   'image files',
+                                   'image files using OpenImageIO',
                 },
             },
-        },
-    },
-    1: {
-        'name': 'Bookmark Editor',
-        'icon': 'bookmark_item',
-        'color': None,
-        'groups': {
-            0: {
+            1: {
                 0: {
-                    'name': 'Use Client/Project folders',
+                    'name': 'Jobs have clients',
                     'key': 'settings/jobs_have_clients',
                     'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox,
-                                                'Use Client/Project'),
+                    'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
                     'placeholder': '',
-                    'description': 'In case your job folder uses a client/project like'
-                                   'structure, tick this box. Leave it un-ticked if the'
+                    'description': 'In case your job folder uses a client/project like '
+                                   'structure, tick this box. Leave it un-ticked if the '
                                    'project folders are nested directly in the server'
                                    'folder.',
+                    'help': 'Enable if jobs have separate <span style="color:white">client/project</span> folders. By '
+                            'default, Bookmarks assumes jobs are kept directly in the '
+                            'root of the server folder but you can override this here.'
                 },
                 1: {
-                    'name': 'Maximum search depth',
+                    'name': 'Bookmark item search depth',
                     'key': 'settings/job_scan_depth',
                     'validator': base.int_validator,
                     'widget': ui.LineEdit,
                     'placeholder': '3',
-                    'description': 'Set the maximum folder depth to parse.\nParsing large'
-                                   'project folders will take a long time. This setting'
-                                   'will limit the number of sub-directories the editor'
+                    'description': 'Set the maximum folder depth to parse. Parsing large '
+                                   'project folders will take a long time. This setting '
+                                   'will limit the number of sub-directories the editor '
                                    'parses when looking for bookmark items.',
+                    'help': 'This setting will limit the number of sub-directories the '
+                            'editor will look into when looking for bookmark items.',
                 },
             },
         },
@@ -314,32 +312,61 @@ SECTIONS = {
         'groups': {
             0: {
                 0: {
-                    'name': 'Documentation',
+                    'name': 'Help',
                     'key': None,
                     'validator': None,
                     'widget': None,
                     'placeholder': '',
-                    'description': 'Check for new versions.',
-                    'button': 'GitHub',
-                    'button2': 'Documentation',
+                    'description': 'Show the online documentation',
+                    'button': 'Open Documentation',
                 },
                 1: {
-                    'name': 'Info',
+                    'name': 'Latest Version',
+                    'key': 'app_version',
+                    'validator': None,
+                    'widget': None,
+                    'placeholder': '',
+                    'description': 'Check online for new versions.',
+                    'button': 'Check for Updates',
+                },
+            },
+            1: {
+                0: {
+                    'name': 'Current Versions',
                     'key': None,
                     'validator': None,
                     'widget': None,
                     'placeholder': '',
-                    'description': 'Check for new versions.',
-                    'button': 'Check for Updates',
-                    'button2': 'Build Info',
+                    'description': '',
+                    'help': importlib.import_module(__name__.split('.', maxsplit=1)[0]).info(),
                 },
-                2: {
-                    'name': 'Debug',
+            },
+            2: {
+                0: {
+                    'name': 'Debugging',
                     'key': None,
                     'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Enable Debug'),
+                    'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
                     'placeholder': '',
-                    'description': 'Enable Debug Messages.',
+                    'description': 'Enable debug messages.',
+                },
+                1: {
+                    'name': '',
+                    'key': 'reset_image_cache',
+                    'validator': None,
+                    'widget': None,
+                    'placeholder': '',
+                    'description': '',
+                    'button': 'Reset Image Cache'
+                },
+                2: {
+                    'name': '',
+                    'key': 'reset_databases',
+                    'validator': None,
+                    'widget': None,
+                    'placeholder': '',
+                    'description': '',
+                    'button': 'Reset Database Connections'
                 },
             },
         },
@@ -363,11 +390,12 @@ class PreferenceEditor(base.BasePropertyEditor):
             parent=parent
         )
 
-        self.debug_editor.stateChanged.connect(actions.toggle_debug)
         self.settings_disable_oiio_editor.stateChanged.connect(
             actions.generate_thumbnails_changed
         )
         self.setWindowTitle('Preferences')
+
+        self.debugging_editor.stateChanged.connect(actions.toggle_debug)
 
     @common.error
     @common.debug
@@ -399,37 +427,33 @@ class PreferenceEditor(base.BasePropertyEditor):
     @common.error
     @common.debug
     @QtCore.Slot()
-    def info_button_clicked(self, *args, **kwargs):
+    def help_button_clicked(self, *args, **kwargs):
         """Info button click action.
 
         """
+        QtGui.QDesktopServices.openUrl(common.documentation_url)
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def app_version_button_clicked(self, *args, **kwargs):
+        """Info button click action.
+
+        """
+        ui.MessageBox('Checking version...').open()
         from ..versioncontrol import versioncontrol
         versioncontrol.check()
 
     @common.error
     @common.debug
     @QtCore.Slot()
-    def info_button2_clicked(self, *args, **kwargs):
-        """Info button 2 click action.
-
-        """
-        w = AboutWidget(parent=self)
-        w.open()
+    def reset_image_cache_button_clicked(self, *args, **kwargs):
+        from .. import images
+        images.init_image_cache()
 
     @common.error
     @common.debug
     @QtCore.Slot()
-    def documentation_button_clicked(self, *args, **kwargs):
-        """Documentation button click action.
-
-        """
-        QtGui.QDesktopServices.openUrl(common.github_url)
-
-    @common.error
-    @common.debug
-    @QtCore.Slot()
-    def documentation_button2_clicked(self, *args, **kwargs):
-        """Info button 2 click action.
-
-        """
-        QtGui.QDesktopServices.openUrl(common.documentation_url)
+    def reset_databases_button_clicked(self, *args, **kwargs):
+        from .. import database
+        database.remove_all_connections()

@@ -519,6 +519,54 @@ class DataDict(dict):
         self._data_type = v
 
 
+import sys
+
+
+# Custom objects know their class.
+# Function objects seem to know way too much, including modules.
+# Exclude modules as well.
+
+
+def byte_to_pretty_string(num, suffix='B'):
+    """Converts a numeric byte value to a human-readable string.
+
+    Args:
+        num (int): The number of bytes.
+        suffix (str): A custom suffix.
+
+    Returns:
+        str:            Human readable byte value.
+
+    """
+    for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
+        if abs(num) < 1024.0:
+            return u"%3.1f%s%s" % (num, unit, suffix)
+        num /= 1024.0
+    return u"%.1f%s%s" % (num, 'Yi', suffix)
+
+
+def get_py_obj_size(obj):
+    """Sum size of object & members.
+
+    """
+    from gc import get_referents
+    from types import ModuleType, FunctionType
+
+    exclude = (type, ModuleType, FunctionType)
+    seen_ids = set()
+    size = 0
+    objects = [obj]
+    while objects:
+        need_referents = []
+        for obj in objects:
+            if not isinstance(obj, exclude) and id(obj) not in seen_ids:
+                seen_ids.add(id(obj))
+                size += sys.getsizeof(obj)
+                need_referents.append(obj)
+        objects = get_referents(*need_referents)
+    return size
+
+
 class Timer(QtCore.QTimer):
     """A custom QTimer class used across the app.
 

@@ -42,9 +42,15 @@ ColorType = ResourcePixmapType + 1
 
 accepted_codecs = ('h.264', 'h264', 'mpeg-4', 'mpeg4')
 
+def get_cache_size():
+    v = common.get_py_obj_size(common.oiio_cache)
+    v += common.get_py_obj_size(common.image_resource_data)
+    v += common.get_py_obj_size(common.image_cache)
+    return v
 
-def init_imagecache():
-    """Initialises the image cache object.
+
+def init_image_cache():
+    """Initialises the OpenImageIO and our own internal image cache.
 
     """
     common.oiio_cache = OpenImageIO.ImageCache(True)

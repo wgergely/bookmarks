@@ -371,6 +371,7 @@ class UserSettings(QtCore.QSettings):
         common.check_type(v, dict)
         common.servers = v.copy()
         self.setValue('user/servers', v)
+        common.signals.serversChanged.emit()
 
     def set_bookmarks(self, v):
         """Set and save the given bookmark item values.
@@ -382,6 +383,7 @@ class UserSettings(QtCore.QSettings):
         common.check_type(v, dict)
         common.bookmarks = v
         self.setValue('user/bookmarks', v)
+        common.signals.bookmarksChanged.emit()
 
     def set_favourites(self, v):
         """Set and save the given favourite item values.
@@ -393,6 +395,7 @@ class UserSettings(QtCore.QSettings):
         common.check_type(v, dict)
         common.favourites = v
         self.setValue('user/favourites', v)
+        common.signals.favouritesChanged.emit()
 
     def value(self, key, default=None):
         """Get a value from the user settings file.

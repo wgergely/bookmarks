@@ -4,7 +4,7 @@
 import functools
 import os
 
-from PySide2 import QtCore
+from PySide2 import QtCore, QtWidgets
 
 from . import delegate
 from . import file_items
@@ -79,22 +79,6 @@ class FavouriteItemModel(file_items.FileItemModel):
     def __init__(self, *args, **kwargs):
         super(FavouriteItemModel, self).__init__(*args, **kwargs)
 
-        self.reset_timer = common.Timer(parent=self)
-        self.reset_timer.setInterval(10)
-        self.reset_timer.setSingleShot(True)
-
-        self.reset_timer.timeout.connect(
-            functools.partial(self.reset_data, force=True)
-        )
-
-    @QtCore.Slot()
-    def queued_model_reset(self):
-        """Starts/reset the timer responsible for reloading the list of
-        favourite items.
-
-        """
-        self.reset_timer.start(self.reset_timer.interval())
-
     @common.error
     @common.status_bar_message('Loading My Files...')
     @models.initdata
@@ -108,6 +92,15 @@ class FavouriteItemModel(file_items.FileItemModel):
         data = common.get_data(__p, __k, t)
 
         sequence_data = common.DataDict()
+
+        active_paths = {
+            common.active('server', path=True),
+            common.active('job', path=True),
+            common.active('root', path=True),
+            common.active('asset', path=True),
+            common.active('task', path=True),
+            common.active('file', path=True),
+        }
 
         for entry, source_paths in self.item_generator():
             if self._interrupt_requested:
@@ -136,9 +129,12 @@ class FavouriteItemModel(file_items.FileItemModel):
             seq, sequence_path = file_items.get_sequence_elements(filepath)
 
             if (seq and (
-                    sequence_path in common.favourites or filepath in common.favourites)) or (
-                    filepath in common.favourites):
-                flags = flags | common.MarkedAsFavourite
+                    sequence_path in common.favourites or filepath in common.favourites)
+            ) or (filepath in common.favourites):
+                flags |= common.MarkedAsFavourite
+
+            if filepath in active_paths:
+                flags |= common.MarkedAsActive
 
             parent_path_role = source_paths
 
@@ -338,6 +334,37 @@ class FavouriteItemView(file_items.FileItemView):
             icon=icon,
             parent=parent
         )
+
+        self.reset_timer = common.Timer(parent=self)
+        self.reset_timer.setInterval(50)
+        self.reset_timer.setSingleShot(True)
+
+        self.reset_timer.timeout.connect(self.execute_queued_reset)
+
+        common.signals.favouritesChanged.connect(self.queue_model_reset)
+
+    @QtCore.Slot()
+    def execute_queued_reset(self):
+        """Make sure to only reset the model when the mouse is no longer pressed.
+
+        """
+        if QtWidgets.QApplication.instance().mouseButtons() != QtCore.Qt.NoButton:
+            self.queue_model_reset()
+            return
+        if self.multi_toggle_items:
+            self.queue_model_reset()
+            return
+        model = self.model().sourceModel()
+        model.reset_data(force=True)
+
+    @QtCore.Slot()
+    def queue_model_reset(self):
+        """Starts/reset the timer responsible for reloading the list of
+        favourite items.
+
+        """
+        self.reset_timer.start(self.reset_timer.interval())
+
 
     def dragEnterEvent(self, event):
         """Event handler.

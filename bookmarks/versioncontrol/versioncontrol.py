@@ -161,7 +161,7 @@ def check():
     # We're good and there's not need to update
     if current_version >= latest_version:
         ui.OkBox(
-            'You\'re running the latest version of {}'.format(common.product),
+            f'You\'re running the latest version ({latest_version})'
         ).open()
         return
 

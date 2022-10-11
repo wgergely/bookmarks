@@ -60,7 +60,7 @@ def initialize(mode):
     _init_dpi()
 
     from .. import images
-    images.init_imagecache()
+    images.init_image_cache()
     images.init_resources()
 
     from .. import standalone
@@ -119,6 +119,7 @@ def uninitialize():
 
     common.Timer.delete_timers()
 
+    # This should reset all the object caches to their initial values
     for k, v in common.__initial_values__.items():
         setattr(common, k, v)
 

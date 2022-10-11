@@ -1,8 +1,7 @@
-"""A series of high-level functions.
+"""User actions module.
 
-These functions are usually triggered by the user, either by ui interaction or
-via keyboard shortcuts. Some of these
-
+These actions are usually triggered by the user via keyboard shortcuts or by
+interactions with the UI.
 
 """
 import functools
@@ -20,10 +19,8 @@ from . import images
 
 
 def must_be_initialized(func):
-    """A utility decorator function.
-    
-    It makes sure decorated functions only run when :attr:`common.main_widget` exists and
-    initialized. 
+    """Decorator function sure functions only run when :attr:`common.main_widget`
+    exists and initialized.
 
     """
 
@@ -40,7 +37,9 @@ def must_be_initialized(func):
 
 
 def toggle_debug(state):
-    """Toggles debugging.
+    """Toggles debugging staten on or off.
+
+    When on, the app will print debugging information to the console.
 
     Args:
         state (QtCore.Qt.CheckState): Debugging state.
@@ -86,7 +85,6 @@ def add_server(v):
 
     common.servers[v] = v
     common.settings.set_servers(common.servers)
-    common.signals.serversChanged.emit()
     common.signals.serverAdded.emit(v)
 
 
@@ -113,7 +111,6 @@ def remove_server(v):
         del common.servers[v]
 
     common.settings.set_servers(common.servers)
-    common.signals.serversChanged.emit()
     common.signals.serverRemoved.emit(v)
 
 
@@ -189,8 +186,7 @@ def add_favourite(source_paths, source):
 
     common.favourites[source] = source_paths
     common.settings.set_favourites(common.favourites)
-    common.signals.favouritesChanged.emit()
-
+    common.settings.favouriteAdded.emit(source_paths, source)
 
 def remove_favourite(source_paths, source):
     """Remove a saved favourite item.
@@ -208,7 +204,7 @@ def remove_favourite(source_paths, source):
 
     del common.favourites[source]
     common.settings.set_favourites(common.favourites)
-    common.signals.favouritesChanged.emit()
+    common.settings.favouriteRemoved.emit(source_paths, source)
 
 
 @common.error

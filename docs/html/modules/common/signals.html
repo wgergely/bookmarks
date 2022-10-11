@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="common.ui" href="ui.html" /><link rel="prev" title="common.setup" href="setup.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>common.signals - Bookmarks 0.7.2 documentation</title>
+        <title>common.signals - Bookmarks 0.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -135,7 +135,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -162,7 +162,7 @@
     <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -395,103 +395,118 @@
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.bookmarkRemoved" title="bookmarks.common.signals.CoreSignals.bookmarkRemoved"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bookmarkRemoved</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal emitted when a bookmark item was removed</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.clearStatusBarMessage" title="bookmarks.common.signals.CoreSignals.clearStatusBarMessage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clearStatusBarMessage</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.bookmarksChanged" title="bookmarks.common.signals.CoreSignals.bookmarksChanged"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bookmarksChanged</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Signal emitted when a bookmark item was added</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.clearStatusBarMessage" title="bookmarks.common.signals.CoreSignals.clearStatusBarMessage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clearStatusBarMessage</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Clear a status bar message</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.databaseValueUpdated" title="bookmarks.common.signals.CoreSignals.databaseValueUpdated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">databaseValueUpdated</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.databaseValueUpdated" title="bookmarks.common.signals.CoreSignals.databaseValueUpdated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">databaseValueUpdated</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signals a value update in the bookmark database</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.favouritesChanged" title="bookmarks.common.signals.CoreSignals.favouritesChanged"><code class="xref py py-obj docutils literal notranslate"><span class="pre">favouritesChanged</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.favouriteAdded" title="bookmarks.common.signals.CoreSignals.favouriteAdded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">favouriteAdded</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Signal emitted when a favourite item was added</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.favouriteRemoved" title="bookmarks.common.signals.CoreSignals.favouriteRemoved"><code class="xref py py-obj docutils literal notranslate"><span class="pre">favouriteRemoved</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Signal emitted when a favourite item was removed</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.favouritesChanged" title="bookmarks.common.signals.CoreSignals.favouritesChanged"><code class="xref py py-obj docutils literal notranslate"><span class="pre">favouritesChanged</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal emitted when saved favourite items have changed</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.fileActivated" title="bookmarks.common.signals.CoreSignals.fileActivated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fileActivated</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.fileActivated" title="bookmarks.common.signals.CoreSignals.fileActivated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fileActivated</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal emitted when a file item is activated by the user</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.fileAdded" title="bookmarks.common.signals.CoreSignals.fileAdded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fileAdded</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.fileAdded" title="bookmarks.common.signals.CoreSignals.fileAdded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fileAdded</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal emitted when a file was added</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.generateThumbnailsChanged" title="bookmarks.common.signals.CoreSignals.generateThumbnailsChanged"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generateThumbnailsChanged</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.generateThumbnailsChanged" title="bookmarks.common.signals.CoreSignals.generateThumbnailsChanged"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generateThumbnailsChanged</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal called when thumbnail generating is enabled or disabled</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.jobAdded" title="bookmarks.common.signals.CoreSignals.jobAdded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jobAdded</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.itemArchived" title="bookmarks.common.signals.CoreSignals.itemArchived"><code class="xref py py-obj docutils literal notranslate"><span class="pre">itemArchived</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Signal called when an item was archived</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.itemUnarchived" title="bookmarks.common.signals.CoreSignals.itemUnarchived"><code class="xref py py-obj docutils literal notranslate"><span class="pre">itemUnarchived</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Signal called when an item was unarchived</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.jobAdded" title="bookmarks.common.signals.CoreSignals.jobAdded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">jobAdded</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal emitted when a job was added</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.paintThumbnailBGChanged" title="bookmarks.common.signals.CoreSignals.paintThumbnailBGChanged"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paintThumbnailBGChanged</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.paintThumbnailBGChanged" title="bookmarks.common.signals.CoreSignals.paintThumbnailBGChanged"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paintThumbnailBGChanged</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal called when thumbnail color background is enabled or disabled</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.serverAdded" title="bookmarks.common.signals.CoreSignals.serverAdded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serverAdded</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.serverAdded" title="bookmarks.common.signals.CoreSignals.serverAdded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serverAdded</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal emitted when a server was added</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.serverRemoved" title="bookmarks.common.signals.CoreSignals.serverRemoved"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serverRemoved</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.serverRemoved" title="bookmarks.common.signals.CoreSignals.serverRemoved"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serverRemoved</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal emitted when a server is removed</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.serversChanged" title="bookmarks.common.signals.CoreSignals.serversChanged"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serversChanged</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.serversChanged" title="bookmarks.common.signals.CoreSignals.serversChanged"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serversChanged</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal emitted when saved server values have changed</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.sgAssetsLinked" title="bookmarks.common.signals.CoreSignals.sgAssetsLinked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sgAssetsLinked</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.sgAssetsLinked" title="bookmarks.common.signals.CoreSignals.sgAssetsLinked"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sgAssetsLinked</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal a ShotGrid entity linkage change</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.sgConnectionAttemptStarted" title="bookmarks.common.signals.CoreSignals.sgConnectionAttemptStarted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sgConnectionAttemptStarted</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.sgConnectionAttemptStarted" title="bookmarks.common.signals.CoreSignals.sgConnectionAttemptStarted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sgConnectionAttemptStarted</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal a ShotGrid connection attempt</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.sgConnectionClosed" title="bookmarks.common.signals.CoreSignals.sgConnectionClosed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sgConnectionClosed</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.sgConnectionClosed" title="bookmarks.common.signals.CoreSignals.sgConnectionClosed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sgConnectionClosed</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal a ShotGrid connection closure</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.sgConnectionFailed" title="bookmarks.common.signals.CoreSignals.sgConnectionFailed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sgConnectionFailed</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.sgConnectionFailed" title="bookmarks.common.signals.CoreSignals.sgConnectionFailed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sgConnectionFailed</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal a ShotGrid connection failure</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.sgConnectionSuccessful" title="bookmarks.common.signals.CoreSignals.sgConnectionSuccessful"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sgConnectionSuccessful</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.sgConnectionSuccessful" title="bookmarks.common.signals.CoreSignals.sgConnectionSuccessful"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sgConnectionSuccessful</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal a ShotGrid connection success</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.sgEntityDataReady" title="bookmarks.common.signals.CoreSignals.sgEntityDataReady"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sgEntityDataReady</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.sgEntityDataReady" title="bookmarks.common.signals.CoreSignals.sgEntityDataReady"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sgEntityDataReady</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal a ShotGrid entity data load</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.sgEntitySelected" title="bookmarks.common.signals.CoreSignals.sgEntitySelected"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sgEntitySelected</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.sgEntitySelected" title="bookmarks.common.signals.CoreSignals.sgEntitySelected"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sgEntitySelected</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal a ShotGrid entity selection</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.showStatusBarMessage" title="bookmarks.common.signals.CoreSignals.showStatusBarMessage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showStatusBarMessage</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.showStatusBarMessage" title="bookmarks.common.signals.CoreSignals.showStatusBarMessage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showStatusBarMessage</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Show a status bar message</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.showStatusTipMessage" title="bookmarks.common.signals.CoreSignals.showStatusTipMessage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showStatusTipMessage</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.showStatusTipMessage" title="bookmarks.common.signals.CoreSignals.showStatusTipMessage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showStatusTipMessage</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Show a status tip message</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.tabChanged" title="bookmarks.common.signals.CoreSignals.tabChanged"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tabChanged</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.tabChanged" title="bookmarks.common.signals.CoreSignals.tabChanged"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tabChanged</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal emitted when the item tab changes</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.taskFolderChanged" title="bookmarks.common.signals.CoreSignals.taskFolderChanged"><code class="xref py py-obj docutils literal notranslate"><span class="pre">taskFolderChanged</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.taskFolderChanged" title="bookmarks.common.signals.CoreSignals.taskFolderChanged"><code class="xref py py-obj docutils literal notranslate"><span class="pre">taskFolderChanged</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal emitted when a task folder is changed by the user</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.taskViewToggled" title="bookmarks.common.signals.CoreSignals.taskViewToggled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">taskViewToggled</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.taskViewToggled" title="bookmarks.common.signals.CoreSignals.taskViewToggled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">taskViewToggled</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal emitted then the task view visibility changes</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.templateExpanded" title="bookmarks.common.signals.CoreSignals.templateExpanded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">templateExpanded</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.templateExpanded" title="bookmarks.common.signals.CoreSignals.templateExpanded"><code class="xref py py-obj docutils literal notranslate"><span class="pre">templateExpanded</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal emitted after a template is expanded</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.templatesChanged" title="bookmarks.common.signals.CoreSignals.templatesChanged"><code class="xref py py-obj docutils literal notranslate"><span class="pre">templatesChanged</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.templatesChanged" title="bookmarks.common.signals.CoreSignals.templatesChanged"><code class="xref py py-obj docutils literal notranslate"><span class="pre">templatesChanged</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal when saved templates change</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.threadItemsQueued" title="bookmarks.common.signals.CoreSignals.threadItemsQueued"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threadItemsQueued</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.threadItemsQueued" title="bookmarks.common.signals.CoreSignals.threadItemsQueued"><code class="xref py py-obj docutils literal notranslate"><span class="pre">threadItemsQueued</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signals an item is ready to be processed by a thread</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.thumbnailUpdated" title="bookmarks.common.signals.CoreSignals.thumbnailUpdated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thumbnailUpdated</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.thumbnailUpdated" title="bookmarks.common.signals.CoreSignals.thumbnailUpdated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">thumbnailUpdated</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal a thumbnail update</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.toggleArchivedButton" title="bookmarks.common.signals.CoreSignals.toggleArchivedButton"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggleArchivedButton</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.toggleArchivedButton" title="bookmarks.common.signals.CoreSignals.toggleArchivedButton"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggleArchivedButton</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signals a filter button state change</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.toggleFavouritesButton" title="bookmarks.common.signals.CoreSignals.toggleFavouritesButton"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggleFavouritesButton</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.toggleFavouritesButton" title="bookmarks.common.signals.CoreSignals.toggleFavouritesButton"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggleFavouritesButton</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signals a filter button state change</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.toggleFilterButton" title="bookmarks.common.signals.CoreSignals.toggleFilterButton"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggleFilterButton</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.toggleFilterButton" title="bookmarks.common.signals.CoreSignals.toggleFilterButton"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggleFilterButton</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signals a filter button state change</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.toggleInlineIcons" title="bookmarks.common.signals.CoreSignals.toggleInlineIcons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggleInlineIcons</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.toggleInlineIcons" title="bookmarks.common.signals.CoreSignals.toggleInlineIcons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggleInlineIcons</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signals a filter button state change</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.toggleSequenceButton" title="bookmarks.common.signals.CoreSignals.toggleSequenceButton"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggleSequenceButton</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.toggleSequenceButton" title="bookmarks.common.signals.CoreSignals.toggleSequenceButton"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggleSequenceButton</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signals a filter button state change</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.updateTopBarButtons" title="bookmarks.common.signals.CoreSignals.updateTopBarButtons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">updateTopBarButtons</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.updateTopBarButtons" title="bookmarks.common.signals.CoreSignals.updateTopBarButtons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">updateTopBarButtons</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Update top bar widget buttons</p></td>
 </tr>
 </tbody>
@@ -534,6 +549,12 @@
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.common.signals.CoreSignals.bookmarksChanged">
+<span class="sig-name descname"><span class="pre">bookmarksChanged</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bookmarks.common.signals.CoreSignals.bookmarksChanged" title="Permalink to this definition">#</a></dt>
+<dd><p>Signal emitted when a bookmark item was added</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="bookmarks.common.signals.CoreSignals.clearStatusBarMessage">
 <span class="sig-name descname"><span class="pre">clearStatusBarMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bookmarks.common.signals.CoreSignals.clearStatusBarMessage" title="Permalink to this definition">#</a></dt>
 <dd><p>Clear a status bar message</p>
@@ -543,6 +564,18 @@
 <dt class="sig sig-object py" id="bookmarks.common.signals.CoreSignals.databaseValueUpdated">
 <span class="sig-name descname"><span class="pre">databaseValueUpdated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bookmarks.common.signals.CoreSignals.databaseValueUpdated" title="Permalink to this definition">#</a></dt>
 <dd><p>Signals a value update in the bookmark database</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.common.signals.CoreSignals.favouriteAdded">
+<span class="sig-name descname"><span class="pre">favouriteAdded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bookmarks.common.signals.CoreSignals.favouriteAdded" title="Permalink to this definition">#</a></dt>
+<dd><p>Signal emitted when a favourite item was added</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.common.signals.CoreSignals.favouriteRemoved">
+<span class="sig-name descname"><span class="pre">favouriteRemoved</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bookmarks.common.signals.CoreSignals.favouriteRemoved" title="Permalink to this definition">#</a></dt>
+<dd><p>Signal emitted when a favourite item was removed</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -567,6 +600,18 @@
 <dt class="sig sig-object py" id="bookmarks.common.signals.CoreSignals.generateThumbnailsChanged">
 <span class="sig-name descname"><span class="pre">generateThumbnailsChanged</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bookmarks.common.signals.CoreSignals.generateThumbnailsChanged" title="Permalink to this definition">#</a></dt>
 <dd><p>Signal called when thumbnail generating is enabled or disabled</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.common.signals.CoreSignals.itemArchived">
+<span class="sig-name descname"><span class="pre">itemArchived</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bookmarks.common.signals.CoreSignals.itemArchived" title="Permalink to this definition">#</a></dt>
+<dd><p>Signal called when an item was archived</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.common.signals.CoreSignals.itemUnarchived">
+<span class="sig-name descname"><span class="pre">itemUnarchived</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bookmarks.common.signals.CoreSignals.itemUnarchived" title="Permalink to this definition">#</a></dt>
+<dd><p>Signal called when an item was unarchived</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -806,12 +851,17 @@
 <li><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.bookmarkActivated"><code class="docutils literal notranslate"><span class="pre">CoreSignals.bookmarkActivated</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.bookmarkAdded"><code class="docutils literal notranslate"><span class="pre">CoreSignals.bookmarkAdded</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.bookmarkRemoved"><code class="docutils literal notranslate"><span class="pre">CoreSignals.bookmarkRemoved</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.bookmarksChanged"><code class="docutils literal notranslate"><span class="pre">CoreSignals.bookmarksChanged</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.clearStatusBarMessage"><code class="docutils literal notranslate"><span class="pre">CoreSignals.clearStatusBarMessage</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.databaseValueUpdated"><code class="docutils literal notranslate"><span class="pre">CoreSignals.databaseValueUpdated</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.favouriteAdded"><code class="docutils literal notranslate"><span class="pre">CoreSignals.favouriteAdded</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.favouriteRemoved"><code class="docutils literal notranslate"><span class="pre">CoreSignals.favouriteRemoved</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.favouritesChanged"><code class="docutils literal notranslate"><span class="pre">CoreSignals.favouritesChanged</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.fileActivated"><code class="docutils literal notranslate"><span class="pre">CoreSignals.fileActivated</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.fileAdded"><code class="docutils literal notranslate"><span class="pre">CoreSignals.fileAdded</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.generateThumbnailsChanged"><code class="docutils literal notranslate"><span class="pre">CoreSignals.generateThumbnailsChanged</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.itemArchived"><code class="docutils literal notranslate"><span class="pre">CoreSignals.itemArchived</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.itemUnarchived"><code class="docutils literal notranslate"><span class="pre">CoreSignals.itemUnarchived</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.jobAdded"><code class="docutils literal notranslate"><span class="pre">CoreSignals.jobAdded</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.paintThumbnailBGChanged"><code class="docutils literal notranslate"><span class="pre">CoreSignals.paintThumbnailBGChanged</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.common.signals.CoreSignals.serverAdded"><code class="docutils literal notranslate"><span class="pre">CoreSignals.serverAdded</span></code></a></li>

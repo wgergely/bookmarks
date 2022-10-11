@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="items" href="items.html" /><link rel="prev" title="file_saver.widgets" href="file_saver/widgets.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>images - Bookmarks 0.7.2 documentation</title>
+        <title>images - Bookmarks 0.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -135,7 +135,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
+      <a href="../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -162,7 +162,7 @@
     <img class="sidebar-logo only-dark" src="../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -390,8 +390,8 @@ To load an image using OpenImageIO as a QtGui.QImage see <a class="reference int
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.images.get_thumbnail" title="bookmarks.images.get_thumbnail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_thumbnail</span></code></a>(server, job, root, source[, ...])</p></td>
 <td><p>Get the thumbnail of a list item.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.images.init_imagecache" title="bookmarks.images.init_imagecache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_imagecache</span></code></a>()</p></td>
-<td><p>Initialises the image cache object.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.images.init_image_cache" title="bookmarks.images.init_image_cache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_image_cache</span></code></a>()</p></td>
+<td><p>Initialises the OpenImageIO and our own internal image cache.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.images.init_pixel_ratio" title="bookmarks.images.init_pixel_ratio"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_pixel_ratio</span></code></a>()</p></td>
 <td><p>Initialises the pixel ration value.</p></td>
@@ -788,9 +788,9 @@ str:                 Path to the thumbnail file when <cite>get_path=True</cite>.
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="bookmarks.images.init_imagecache">
-<span class="sig-prename descclassname"><span class="pre">bookmarks.images.</span></span><span class="sig-name descname"><span class="pre">init_imagecache</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#init_imagecache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.init_imagecache" title="Permalink to this definition">#</a></dt>
-<dd><p>Initialises the image cache object.</p>
+<dt class="sig sig-object py" id="bookmarks.images.init_image_cache">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.images.</span></span><span class="sig-name descname"><span class="pre">init_image_cache</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#init_image_cache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.init_image_cache" title="Permalink to this definition">#</a></dt>
+<dd><p>Initialises the OpenImageIO and our own internal image cache.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -948,7 +948,7 @@ as the source instead of <cite>source</cite>. Defaults to <cite>None</cite>.</p>
 <li><a class="reference internal" href="#bookmarks.images.get_oiio_namefilters"><code class="docutils literal notranslate"><span class="pre">get_oiio_namefilters()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.images.get_placeholder_path"><code class="docutils literal notranslate"><span class="pre">get_placeholder_path()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.images.get_thumbnail"><code class="docutils literal notranslate"><span class="pre">get_thumbnail()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.init_imagecache"><code class="docutils literal notranslate"><span class="pre">init_imagecache()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.images.init_image_cache"><code class="docutils literal notranslate"><span class="pre">init_image_cache()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.images.init_pixel_ratio"><code class="docutils literal notranslate"><span class="pre">init_pixel_ratio()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.images.init_resources"><code class="docutils literal notranslate"><span class="pre">init_resources()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.images.oiio_get_buf"><code class="docutils literal notranslate"><span class="pre">oiio_get_buf()</span></code></a></li>

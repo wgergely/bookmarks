@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>bookmarks.common.signals - Bookmarks 0.7.2 documentation</title>
+        <title>bookmarks.common.signals - Bookmarks 0.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -348,6 +348,8 @@
 <span></span><span class="sd">&quot;&quot;&quot;Common signals used across Bookmarks.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+
 <span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtCore</span>
 
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">common</span>
@@ -394,12 +396,18 @@
     <span class="n">jobAdded</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
 
     <span class="c1">#: Signal emitted when a bookmark item was added</span>
+    <span class="n">bookmarksChanged</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
+    <span class="c1">#: Signal emitted when a bookmark item was added</span>
     <span class="n">bookmarkAdded</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
     <span class="c1">#: Signal emitted when a bookmark item was removed</span>
     <span class="n">bookmarkRemoved</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
     <span class="c1">#: Signal emitted when saved favourite items have changed</span>
     <span class="n">favouritesChanged</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
+    <span class="c1">#: Signal emitted when a favourite item was added</span>
+    <span class="n">favouriteAdded</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="c1">#: Signal emitted when a favourite item was removed</span>
+    <span class="n">favouriteRemoved</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
     <span class="c1">#: Signal emitted when an asset was added</span>
     <span class="n">assetAdded</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
@@ -424,6 +432,11 @@
     <span class="n">tabChanged</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
     <span class="c1">#: Signal emitted then the task view visibility changes</span>
     <span class="n">taskViewToggled</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
+
+    <span class="c1">#: Signal called when an item was archived</span>
+    <span class="n">itemArchived</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="c1">#: Signal called when an item was unarchived</span>
+    <span class="n">itemUnarchived</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
     <span class="c1">#: Signal when saved templates change</span>
     <span class="n">templatesChanged</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
@@ -488,7 +501,38 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sgConnectionClosed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">hide_sg_connecting_message</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">sgConnectionFailed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">hide_sg_connecting_message</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sgConnectionFailed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">show_sg_error_message</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sgConnectionFailed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">show_sg_error_message</span><span class="p">)</span>
+
+        <span class="c1"># Item flag signals</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">favouriteAdded</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+                <span class="n">actions</span><span class="o">.</span><span class="n">filter_flag_changed</span><span class="p">,</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsFavourite</span><span class="p">,</span>
+                <span class="n">state</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">favouriteRemoved</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+                <span class="n">actions</span><span class="o">.</span><span class="n">filter_flag_changed</span><span class="p">,</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsFavourite</span><span class="p">,</span>
+                <span class="n">state</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">itemArchived</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+                <span class="n">actions</span><span class="o">.</span><span class="n">filter_flag_changed</span><span class="p">,</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span><span class="p">,</span>
+                <span class="n">state</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">itemUnarchived</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
+                <span class="n">actions</span><span class="o">.</span><span class="n">filter_flag_changed</span><span class="p">,</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span><span class="p">,</span>
+                <span class="n">state</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+        <span class="p">)</span></div>
 </pre></div>
         </article>
       </div>

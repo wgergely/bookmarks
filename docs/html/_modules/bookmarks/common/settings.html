@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>bookmarks.common.settings - Bookmarks 0.7.2 documentation</title>
+        <title>bookmarks.common.settings - Bookmarks 0.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -717,7 +717,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
         <span class="n">common</span><span class="o">.</span><span class="n">servers</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="s1">&#39;user/servers&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="s1">&#39;user/servers&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">serversChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="UserSettings.set_bookmarks"><a class="viewcode-back" href="../../../modules/common/settings.html#bookmarks.common.settings.UserSettings.set_bookmarks">[docs]</a>    <span class="k">def</span> <span class="nf">set_bookmarks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set and save the given bookmark item values.</span>
@@ -728,7 +729,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
         <span class="n">common</span><span class="o">.</span><span class="n">bookmarks</span> <span class="o">=</span> <span class="n">v</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="s1">&#39;user/bookmarks&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="s1">&#39;user/bookmarks&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">bookmarksChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="UserSettings.set_favourites"><a class="viewcode-back" href="../../../modules/common/settings.html#bookmarks.common.settings.UserSettings.set_favourites">[docs]</a>    <span class="k">def</span> <span class="nf">set_favourites</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set and save the given favourite item values.</span>
@@ -739,7 +741,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
         <span class="n">common</span><span class="o">.</span><span class="n">favourites</span> <span class="o">=</span> <span class="n">v</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="s1">&#39;user/favourites&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="s1">&#39;user/favourites&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+        <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">favouritesChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="UserSettings.value"><a class="viewcode-back" href="../../../modules/common/settings.html#bookmarks.common.settings.UserSettings.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get a value from the user settings file.</span>

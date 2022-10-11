@@ -382,24 +382,6 @@ class BaseWorker(QtCore.QObject):
         return True
 
 
-def byte_to_pretty_string(num, suffix='B'):
-    """Converts a numeric byte value to a human-readable string.
-
-    Args:
-        num (int): The number of bytes.
-        suffix (str): A custom suffix.
-
-    Returns:
-        str:            Human readable byte value.
-
-    """
-    for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
-        if abs(num) < 1024.0:
-            return u"%3.1f%s%s" % (num, unit, suffix)
-        num /= 1024.0
-    return u"%.1f%s%s" % (num, 'Yi', suffix)
-
-
 def count_todos(asset_row_data):
     """Get the number of TODO items."""
     v = asset_row_data['notes']
@@ -697,7 +679,7 @@ class InfoWorker(BaseWorker):
                 mtime.toString('yyyy') + ' ' + \
                 mtime.toString('hh') + ':' + \
                 mtime.toString('mm') + ';' + \
-                byte_to_pretty_string(size)
+                common.byte_to_pretty_string(size)
 
         # Setting the path names
         if not self.is_valid(ref):
@@ -737,7 +719,7 @@ class InfoWorker(BaseWorker):
             mtime.toString('yyyy') + ' ' + \
             mtime.toString('hh') + ':' + \
             mtime.toString('mm') + ';' + \
-            byte_to_pretty_string(size)
+            common.byte_to_pretty_string(size)
 
         if not self.is_valid(ref):
             return False

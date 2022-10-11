@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>bookmarks.threads.workers - Bookmarks 0.7.2 documentation</title>
+        <title>bookmarks.threads.workers - Bookmarks 0.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -729,24 +729,6 @@
         <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<div class="viewcode-block" id="byte_to_pretty_string"><a class="viewcode-back" href="../../../modules/threads/workers.html#bookmarks.threads.workers.byte_to_pretty_string">[docs]</a><span class="k">def</span> <span class="nf">byte_to_pretty_string</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;B&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Converts a numeric byte value to a human-readable string.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        num (int): The number of bytes.</span>
-<span class="sd">        suffix (str): A custom suffix.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        str:            Human readable byte value.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;K&#39;</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span><span class="p">,</span> <span class="s1">&#39;E&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1024.0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="sa">u</span><span class="s2">&quot;</span><span class="si">%3.1f%s%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span>
-        <span class="n">num</span> <span class="o">/=</span> <span class="mf">1024.0</span>
-    <span class="k">return</span> <span class="sa">u</span><span class="s2">&quot;</span><span class="si">%.1f%s%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="s1">&#39;Yi&#39;</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span></div>
-
-
 <div class="viewcode-block" id="count_todos"><a class="viewcode-back" href="../../../modules/threads/workers.html#bookmarks.threads.workers.count_todos">[docs]</a><span class="k">def</span> <span class="nf">count_todos</span><span class="p">(</span><span class="n">asset_row_data</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Get the number of TODO items.&quot;&quot;&quot;</span>
     <span class="n">v</span> <span class="o">=</span> <span class="n">asset_row_data</span><span class="p">[</span><span class="s1">&#39;notes&#39;</span><span class="p">]</span>
@@ -1044,7 +1026,7 @@
                 <span class="n">mtime</span><span class="o">.</span><span class="n">toString</span><span class="p">(</span><span class="s1">&#39;yyyy&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> \
                 <span class="n">mtime</span><span class="o">.</span><span class="n">toString</span><span class="p">(</span><span class="s1">&#39;hh&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> \
                 <span class="n">mtime</span><span class="o">.</span><span class="n">toString</span><span class="p">(</span><span class="s1">&#39;mm&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;;&#39;</span> <span class="o">+</span> \
-                <span class="n">byte_to_pretty_string</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+                <span class="n">common</span><span class="o">.</span><span class="n">byte_to_pretty_string</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
 
         <span class="c1"># Setting the path names</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="n">ref</span><span class="p">):</span>
@@ -1084,7 +1066,7 @@
             <span class="n">mtime</span><span class="o">.</span><span class="n">toString</span><span class="p">(</span><span class="s1">&#39;yyyy&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> \
             <span class="n">mtime</span><span class="o">.</span><span class="n">toString</span><span class="p">(</span><span class="s1">&#39;hh&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> \
             <span class="n">mtime</span><span class="o">.</span><span class="n">toString</span><span class="p">(</span><span class="s1">&#39;mm&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;;&#39;</span> <span class="o">+</span> \
-            <span class="n">byte_to_pretty_string</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">byte_to_pretty_string</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="n">ref</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="tokens" href="../tokens.html" /><link rel="prev" title="threads.threads" href="threads.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>threads.workers - Bookmarks 0.7.2 documentation</title>
+        <title>threads.workers - Bookmarks 0.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -135,7 +135,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -162,7 +162,7 @@
     <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -375,31 +375,28 @@ class, and various other helper functions.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.workers.byte_to_pretty_string" title="bookmarks.threads.workers.byte_to_pretty_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">byte_to_pretty_string</span></code></a>(num[, suffix])</p></td>
-<td><p>Converts a numeric byte value to a human-readable string.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.threads.workers.count_assets" title="bookmarks.threads.workers.count_assets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_assets</span></code></a>(path, ASSET_IDENTIFIER)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.workers.count_assets" title="bookmarks.threads.workers.count_assets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_assets</span></code></a>(path, ASSET_IDENTIFIER)</p></td>
 <td><p>Get the number of asset items.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.workers.count_todos" title="bookmarks.threads.workers.count_todos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_todos</span></code></a>(asset_row_data)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.threads.workers.count_todos" title="bookmarks.threads.workers.count_todos"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_todos</span></code></a>(asset_row_data)</p></td>
 <td><p>Get the number of TODO items.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.threads.workers.get_bookmark_description" title="bookmarks.threads.workers.get_bookmark_description"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bookmark_description</span></code></a>(bookmark_row_data)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.workers.get_bookmark_description" title="bookmarks.threads.workers.get_bookmark_description"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bookmark_description</span></code></a>(bookmark_row_data)</p></td>
 <td><p>Utility method for constructing a short description for a bookmark item.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.workers.get_ranges" title="bookmarks.threads.workers.get_ranges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ranges</span></code></a>(arr, padding)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.threads.workers.get_ranges" title="bookmarks.threads.workers.get_ranges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_ranges</span></code></a>(arr, padding)</p></td>
 <td><p>Given an array of numbers the method will return a string representation of the ranges contained in the array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.threads.workers.process" title="bookmarks.threads.workers.process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process</span></code></a>(func)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.workers.process" title="bookmarks.threads.workers.process"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process</span></code></a>(func)</p></td>
 <td><p>Decorator for worker <cite>process_data</cite> slots.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.workers.update_shotgun_configured" title="bookmarks.threads.workers.update_shotgun_configured"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_shotgun_configured</span></code></a>(pp, b, a, ref)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.threads.workers.update_shotgun_configured" title="bookmarks.threads.workers.update_shotgun_configured"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_shotgun_configured</span></code></a>(pp, b, a, ref)</p></td>
 <td><p>Slot called when a shotgun integration value was updated.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.threads.workers.update_slack_configured" title="bookmarks.threads.workers.update_slack_configured"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_slack_configured</span></code></a>(source_paths, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.workers.update_slack_configured" title="bookmarks.threads.workers.update_slack_configured"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_slack_configured</span></code></a>(source_paths, ...)</p></td>
 <td><p>Slot called when a slack integration value was updated.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.workers.verify_thread_affinity" title="bookmarks.threads.workers.verify_thread_affinity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">verify_thread_affinity</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.threads.workers.verify_thread_affinity" title="bookmarks.threads.workers.verify_thread_affinity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">verify_thread_affinity</span></code></a>()</p></td>
 <td><p>Prohibits running methods from the main gui thread.</p></td>
 </tr>
 </tbody>
@@ -611,26 +608,6 @@ for details.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="bookmarks.threads.workers.byte_to_pretty_string">
-<span class="sig-prename descclassname"><span class="pre">bookmarks.threads.workers.</span></span><span class="sig-name descname"><span class="pre">byte_to_pretty_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'B'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/threads/workers.html#byte_to_pretty_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.threads.workers.byte_to_pretty_string" title="Permalink to this definition">#</a></dt>
-<dd><p>Converts a numeric byte value to a human-readable string.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>num</strong> (<em>int</em>) – The number of bytes.</p></li>
-<li><p><strong>suffix</strong> (<em>str</em>) – A custom suffix.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Human readable byte value.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.threads.workers.count_assets">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.threads.workers.</span></span><span class="sig-name descname"><span class="pre">count_assets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ASSET_IDENTIFIER</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/threads/workers.html#count_assets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.threads.workers.count_assets" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the number of asset items.</p>
@@ -793,7 +770,6 @@ and emits the <cite>refUpdated</cite> signal if the data has been correctly load
 </ul>
 </li>
 <li><a class="reference internal" href="#bookmarks.threads.workers.TransactionsWorker"><code class="docutils literal notranslate"><span class="pre">TransactionsWorker</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.byte_to_pretty_string"><code class="docutils literal notranslate"><span class="pre">byte_to_pretty_string()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.threads.workers.count_assets"><code class="docutils literal notranslate"><span class="pre">count_assets()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.threads.workers.count_todos"><code class="docutils literal notranslate"><span class="pre">count_todos()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.threads.workers.get_bookmark_description"><code class="docutils literal notranslate"><span class="pre">get_bookmark_description()</span></code></a></li>

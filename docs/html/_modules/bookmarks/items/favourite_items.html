@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>bookmarks.items.favourite_items - Bookmarks 0.7.2 documentation</title>
+        <title>bookmarks.items.favourite_items - Bookmarks 0.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -351,7 +351,7 @@
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">delegate</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">file_items</span>
@@ -426,22 +426,6 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">FavouriteItemModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset_timer</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset_timer</span><span class="o">.</span><span class="n">setSingleShot</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-            <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reset_data</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="p">)</span>
-
-<div class="viewcode-block" id="FavouriteItemModel.queued_model_reset"><a class="viewcode-back" href="../../../modules/items/favourite_items.html#bookmarks.items.favourite_items.FavouriteItemModel.queued_model_reset">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">queued_model_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Starts/reset the timer responsible for reloading the list of</span>
-<span class="sd">        favourite items.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset_timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reset_timer</span><span class="o">.</span><span class="n">interval</span><span class="p">())</span></div>
-
     <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">status_bar_message</span><span class="p">(</span><span class="s1">&#39;Loading My Files...&#39;</span><span class="p">)</span>
     <span class="nd">@models</span><span class="o">.</span><span class="n">initdata</span>
@@ -455,6 +439,15 @@
         <span class="n">data</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">__p</span><span class="p">,</span> <span class="n">__k</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
 
         <span class="n">sequence_data</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">DataDict</span><span class="p">()</span>
+
+        <span class="n">active_paths</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="s1">&#39;server&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="s1">&#39;job&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="s1">&#39;root&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="s1">&#39;asset&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="s1">&#39;task&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="s1">&#39;file&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+        <span class="p">}</span>
 
         <span class="k">for</span> <span class="n">entry</span><span class="p">,</span> <span class="n">source_paths</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_generator</span><span class="p">():</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interrupt_requested</span><span class="p">:</span>
@@ -483,9 +476,12 @@
             <span class="n">seq</span><span class="p">,</span> <span class="n">sequence_path</span> <span class="o">=</span> <span class="n">file_items</span><span class="o">.</span><span class="n">get_sequence_elements</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="n">seq</span> <span class="ow">and</span> <span class="p">(</span>
-                    <span class="n">sequence_path</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span> <span class="ow">or</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span>
-                    <span class="n">filepath</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">):</span>
-                <span class="n">flags</span> <span class="o">=</span> <span class="n">flags</span> <span class="o">|</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsFavourite</span>
+                    <span class="n">sequence_path</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span> <span class="ow">or</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">)</span>
+            <span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">filepath</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">):</span>
+                <span class="n">flags</span> <span class="o">|=</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsFavourite</span>
+
+            <span class="k">if</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="n">active_paths</span><span class="p">:</span>
+                <span class="n">flags</span> <span class="o">|=</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsActive</span>
 
             <span class="n">parent_path_role</span> <span class="o">=</span> <span class="n">source_paths</span>
 
@@ -685,6 +681,37 @@
             <span class="n">icon</span><span class="o">=</span><span class="n">icon</span><span class="p">,</span>
             <span class="n">parent</span><span class="o">=</span><span class="n">parent</span>
         <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_timer</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_timer</span><span class="o">.</span><span class="n">setSingleShot</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">execute_queued_reset</span><span class="p">)</span>
+
+        <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">favouritesChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queue_model_reset</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FavouriteItemView.execute_queued_reset"><a class="viewcode-back" href="../../../modules/items/favourite_items.html#bookmarks.items.favourite_items.FavouriteItemView.execute_queued_reset">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">execute_queued_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Make sure to only reset the model when the mouse is no longer pressed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">mouseButtons</span><span class="p">()</span> <span class="o">!=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoButton</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">queue_model_reset</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multi_toggle_items</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">queue_model_reset</span><span class="p">()</span>
+            <span class="k">return</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">reset_data</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="FavouriteItemView.queue_model_reset"><a class="viewcode-back" href="../../../modules/items/favourite_items.html#bookmarks.items.favourite_items.FavouriteItemView.queue_model_reset">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">queue_model_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Starts/reset the timer responsible for reloading the list of</span>
+<span class="sd">        favourite items.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset_timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reset_timer</span><span class="o">.</span><span class="n">interval</span><span class="p">())</span></div>
+
 
 <div class="viewcode-block" id="FavouriteItemView.dragEnterEvent"><a class="viewcode-back" href="../../../modules/items/favourite_items.html#bookmarks.items.favourite_items.FavouriteItemView.dragEnterEvent">[docs]</a>    <span class="k">def</span> <span class="nf">dragEnterEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler.</span>

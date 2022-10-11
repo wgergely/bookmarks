@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>bookmarks.actions - Bookmarks 0.7.2 documentation</title>
+        <title>bookmarks.actions - Bookmarks 0.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -345,11 +345,10 @@
         </div>
         <article role="main">
           <h1>Source code for bookmarks.actions</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;A series of high-level functions.</span>
+<span></span><span class="sd">&quot;&quot;&quot;User actions module.</span>
 
-<span class="sd">These functions are usually triggered by the user, either by ui interaction or</span>
-<span class="sd">via keyboard shortcuts. Some of these</span>
-
+<span class="sd">These actions are usually triggered by the user via keyboard shortcuts or by</span>
+<span class="sd">interactions with the UI.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">functools</span>
@@ -367,10 +366,8 @@
 
 
 <div class="viewcode-block" id="must_be_initialized"><a class="viewcode-back" href="../../modules/actions.html#bookmarks.actions.must_be_initialized">[docs]</a><span class="k">def</span> <span class="nf">must_be_initialized</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A utility decorator function.</span>
-<span class="sd">    </span>
-<span class="sd">    It makes sure decorated functions only run when :attr:`common.main_widget` exists and</span>
-<span class="sd">    initialized. </span>
+    <span class="sd">&quot;&quot;&quot;Decorator function sure functions only run when :attr:`common.main_widget`</span>
+<span class="sd">    exists and initialized.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -387,7 +384,9 @@
 
 
 <div class="viewcode-block" id="toggle_debug"><a class="viewcode-back" href="../../modules/actions.html#bookmarks.actions.toggle_debug">[docs]</a><span class="k">def</span> <span class="nf">toggle_debug</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Toggles debugging.</span>
+    <span class="sd">&quot;&quot;&quot;Toggles debugging staten on or off.</span>
+
+<span class="sd">    When on, the app will print debugging information to the console.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        state (QtCore.Qt.CheckState): Debugging state.</span>
@@ -433,7 +432,6 @@
 
     <span class="n">common</span><span class="o">.</span><span class="n">servers</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
     <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">set_servers</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">servers</span><span class="p">)</span>
-    <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">serversChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
     <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">serverAdded</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
 
 
@@ -460,7 +458,6 @@
         <span class="k">del</span> <span class="n">common</span><span class="o">.</span><span class="n">servers</span><span class="p">[</span><span class="n">v</span><span class="p">]</span>
 
     <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">set_servers</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">servers</span><span class="p">)</span>
-    <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">serversChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
     <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">serverRemoved</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
 
 
@@ -531,13 +528,15 @@
 <span class="sd">        source (str): The item to save as a favourite item.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">source_paths</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">source</span><span class="p">:</span>
+        <span class="k">return</span>
+
     <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">source_paths</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span>
     <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
     <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">[</span><span class="n">source</span><span class="p">]</span> <span class="o">=</span> <span class="n">source_paths</span>
     <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">set_favourites</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">)</span>
-    <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">favouritesChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span></div>
-
+    <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">favouriteAdded</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">source_paths</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="remove_favourite"><a class="viewcode-back" href="../../modules/actions.html#bookmarks.actions.remove_favourite">[docs]</a><span class="k">def</span> <span class="nf">remove_favourite</span><span class="p">(</span><span class="n">source_paths</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Remove a saved favourite item.</span>
@@ -547,6 +546,9 @@
 <span class="sd">        source (str): The item to save as a favourite item.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">source_paths</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">source</span><span class="p">:</span>
+        <span class="k">return</span>
+
     <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">source_paths</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span>
     <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
@@ -555,7 +557,54 @@
 
     <span class="k">del</span> <span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">[</span><span class="n">source</span><span class="p">]</span>
     <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">set_favourites</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">favourites</span><span class="p">)</span>
-    <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">favouritesChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span></div>
+    <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">favouriteRemoved</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">source_paths</span><span class="p">,</span> <span class="n">source</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="filter_flag_changed"><a class="viewcode-back" href="../../modules/actions.html#bookmarks.actions.filter_flag_changed">[docs]</a><span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
+<span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">filter_flag_changed</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">parent_paths</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">9999</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Slot used to keep item filter flag values updated across all datasets.</span>
+
+<span class="sd">    For instance, the favourite item model might set flag values that we want to</span>
+<span class="sd">    keep updated in other models too.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        flag (int): A filter flag.</span>
+<span class="sd">        parent_paths (list): The parent paths that make up the source file.</span>
+<span class="sd">        source (str): The source file path.</span>
+<span class="sd">        state (bool): The favourite state flat value.</span>
+<span class="sd">        limit (int): The maximum number of items to check.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parent_paths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">tab_idx</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">BookmarkTab</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">parent_paths</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">tab_idx</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">AssetTab</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">parent_paths</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">tab_idx</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">FileTab</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">source_model</span><span class="p">(</span><span class="n">idx</span><span class="o">=</span><span class="n">tab_idx</span><span class="p">)</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">source_path</span><span class="p">()</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">task</span><span class="p">()</span>
+
+    <span class="c1"># Make sure data is up-to-date in all data sets.</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FileItem</span><span class="p">,</span> <span class="n">common</span><span class="o">.</span><span class="n">SequenceItem</span><span class="p">,</span> <span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="c1"># Bail if the data set is large</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="n">limit</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">]</span> <span class="o">==</span> <span class="n">source</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">state</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">item</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">flag</span><span class="p">:</span>
+                    <span class="n">item</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">]</span> <span class="o">|=</span> <span class="n">flag</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">state</span> <span class="ow">and</span> <span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">flag</span><span class="p">):</span>
+                    <span class="n">item</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">]</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">flag</span></div>
 
 
 <div class="viewcode-block" id="clear_favourites"><a class="viewcode-back" href="../../modules/actions.html#bookmarks.actions.clear_favourites">[docs]</a><span class="nd">@common</span><span class="o">.</span><span class="n">error</span>

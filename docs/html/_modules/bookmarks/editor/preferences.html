@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>bookmarks.editor.preferences - Bookmarks 0.7.2 documentation</title>
+        <title>bookmarks.editor.preferences - Bookmarks 0.7.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -356,6 +356,7 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">base</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">actions</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">common</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">images</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ui</span>
 
 
@@ -418,78 +419,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">blockSignals</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="AboutLabel"><a class="viewcode-back" href="../../../modules/editor/preferences.html#bookmarks.editor.preferences.AboutLabel">[docs]</a><span class="k">class</span> <span class="nc">AboutLabel</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLabel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Label used to show informative data.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">)</span>
-
-        <span class="n">bg</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">rgb</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_dark_background</span><span class="p">))</span>
-        <span class="n">bd</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_separator</span><span class="p">)</span>
-        <span class="n">bc</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">rgb</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_separator</span><span class="p">))</span>
-        <span class="n">r</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_margin</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
-        <span class="n">c</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">rgb</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_disabled_text</span><span class="p">))</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;background-color:</span><span class="si">{</span><span class="n">bg</span><span class="si">}</span><span class="s1">;&#39;</span>
-            <span class="sa">f</span><span class="s1">&#39;border: </span><span class="si">{</span><span class="n">bd</span><span class="si">}</span><span class="s1">px solid </span><span class="si">{</span><span class="n">bc</span><span class="si">}</span><span class="s1">;&#39;</span>
-            <span class="sa">f</span><span class="s1">&#39;border-radius:</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s1">px;&#39;</span>
-            <span class="sa">f</span><span class="s1">&#39;color:</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s1">;&#39;</span>
-            <span class="sa">f</span><span class="s1">&#39;padding: </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s1">px </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s1">px </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s1">px </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s1">px;&#39;</span>
-        <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">init_data</span><span class="p">()</span>
-
-<div class="viewcode-block" id="AboutLabel.init_data"><a class="viewcode-back" href="../../../modules/editor/preferences.html#bookmarks.editor.preferences.AboutLabel.init_data">[docs]</a>    <span class="k">def</span> <span class="nf">init_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initializes data.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">mod</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">info</span><span class="p">())</span></div>
-
-<div class="viewcode-block" id="AboutLabel.mouseReleaseEvent"><a class="viewcode-back" href="../../../modules/editor/preferences.html#bookmarks.editor.preferences.AboutLabel.mouseReleaseEvent">[docs]</a>    <span class="k">def</span> <span class="nf">mouseReleaseEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Mouse release event handler.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">mod</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">QtGui</span><span class="o">.</span><span class="n">QDesktopServices</span><span class="o">.</span><span class="n">openUrl</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">__website__</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="AboutWidget"><a class="viewcode-back" href="../../../modules/editor/preferences.html#bookmarks.editor.preferences.AboutWidget">[docs]</a><span class="k">class</span> <span class="nc">AboutWidget</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Shows informative data about Bookmarks.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">():</span>
-            <span class="n">common</span><span class="o">.</span><span class="n">set_stylesheet</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ok_button</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_create_ui</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_connect_signals</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">_create_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QVBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">o</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_margin</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setContentsMargins</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">setSpacing</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">AboutLabel</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ok_button</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">PaintedButton</span><span class="p">(</span><span class="s1">&#39;Close&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ok_button</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_connect_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ok_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">)</span></div>
-
-
 <span class="c1">#: UI layout definition</span>
 <span class="n">SECTIONS</span> <span class="o">=</span> <span class="p">{</span>
     <span class="mi">0</span><span class="p">:</span> <span class="p">{</span>
@@ -514,62 +443,59 @@
                     <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;settings/show_menu_icons&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;validator&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="s1">&#39;widget&#39;</span><span class="p">:</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
-                        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">,</span> <span class="s1">&#39;Hide Menu Icons&#39;</span>
+                        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">,</span> <span class="s1">&#39;Enable&#39;</span>
                     <span class="p">),</span>
                     <span class="s1">&#39;placeholder&#39;</span><span class="p">:</span> <span class="s1">&#39;Check to icons&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Check to icons&#39;</span><span class="p">,</span>
                 <span class="p">},</span>
                 <span class="mi">2</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Show Thumbnail Background&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Hide Thumbnail Backgrounds&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;settings/paint_thumbnail_bg&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;validator&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="s1">&#39;widget&#39;</span><span class="p">:</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">,</span> <span class="s1">&#39;Enable&#39;</span><span class="p">),</span>
-                    <span class="s1">&#39;placeholder&#39;</span><span class="p">:</span> <span class="s1">&#39;Check to show show thumbnail background color&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Check to show show thumbnail background color&#39;</span>
+                    <span class="s1">&#39;placeholder&#39;</span><span class="p">:</span> <span class="s1">&#39;Check to hide thumbnail background colors&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Check to hide thumbnail background colors&#39;</span>
                 <span class="p">},</span>
                 <span class="mi">3</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Image Thumbnails&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Disable Image Thumbnails&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;settings/disable_oiio&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;validator&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="s1">&#39;widget&#39;</span><span class="p">:</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span>
-                        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">,</span> <span class="s1">&#39;Don</span><span class="se">\&#39;</span><span class="s1">t Generate Thumbnails&#39;</span>
+                        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">,</span> <span class="s1">&#39;Disable&#39;</span>
                     <span class="p">),</span>
                     <span class="s1">&#39;placeholder&#39;</span><span class="p">:</span> <span class="s1">&#39;Check to disable generating thumbnails from &#39;</span>
-                                   <span class="s1">&#39;image files&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;image files using OpenImageIO&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Check to disable generating thumbnails from &#39;</span>
-                                   <span class="s1">&#39;image files&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;image files using OpenImageIO&#39;</span><span class="p">,</span>
                 <span class="p">},</span>
             <span class="p">},</span>
-        <span class="p">},</span>
-    <span class="p">},</span>
-    <span class="mi">1</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Bookmark Editor&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;icon&#39;</span><span class="p">:</span> <span class="s1">&#39;bookmark_item&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="s1">&#39;groups&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="mi">0</span><span class="p">:</span> <span class="p">{</span>
+            <span class="mi">1</span><span class="p">:</span> <span class="p">{</span>
                 <span class="mi">0</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Use Client/Project folders&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Jobs have clients&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;settings/jobs_have_clients&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;validator&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="s1">&#39;widget&#39;</span><span class="p">:</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">,</span>
-                                                <span class="s1">&#39;Use Client/Project&#39;</span><span class="p">),</span>
+                    <span class="s1">&#39;widget&#39;</span><span class="p">:</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">,</span> <span class="s1">&#39;Enable&#39;</span><span class="p">),</span>
                     <span class="s1">&#39;placeholder&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;In case your job folder uses a client/project like&#39;</span>
-                                   <span class="s1">&#39;structure, tick this box. Leave it un-ticked if the&#39;</span>
+                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;In case your job folder uses a client/project like &#39;</span>
+                                   <span class="s1">&#39;structure, tick this box. Leave it un-ticked if the &#39;</span>
                                    <span class="s1">&#39;project folders are nested directly in the server&#39;</span>
                                    <span class="s1">&#39;folder.&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;help&#39;</span><span class="p">:</span> <span class="s1">&#39;Enable if jobs have separate &lt;span style=&quot;color:white&quot;&gt;client/project&lt;/span&gt; folders. By &#39;</span>
+                            <span class="s1">&#39;default, Bookmarks assumes jobs are kept directly in the &#39;</span>
+                            <span class="s1">&#39;root of the server folder but you can override this here.&#39;</span>
                 <span class="p">},</span>
                 <span class="mi">1</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Maximum search depth&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Bookmark item search depth&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;settings/job_scan_depth&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;validator&#39;</span><span class="p">:</span> <span class="n">base</span><span class="o">.</span><span class="n">int_validator</span><span class="p">,</span>
                     <span class="s1">&#39;widget&#39;</span><span class="p">:</span> <span class="n">ui</span><span class="o">.</span><span class="n">LineEdit</span><span class="p">,</span>
                     <span class="s1">&#39;placeholder&#39;</span><span class="p">:</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Set the maximum folder depth to parse.</span><span class="se">\n</span><span class="s1">Parsing large&#39;</span>
-                                   <span class="s1">&#39;project folders will take a long time. This setting&#39;</span>
-                                   <span class="s1">&#39;will limit the number of sub-directories the editor&#39;</span>
+                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Set the maximum folder depth to parse. Parsing large &#39;</span>
+                                   <span class="s1">&#39;project folders will take a long time. This setting &#39;</span>
+                                   <span class="s1">&#39;will limit the number of sub-directories the editor &#39;</span>
                                    <span class="s1">&#39;parses when looking for bookmark items.&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;help&#39;</span><span class="p">:</span> <span class="s1">&#39;This setting will limit the number of sub-directories the &#39;</span>
+                            <span class="s1">&#39;editor will look into when looking for bookmark items.&#39;</span><span class="p">,</span>
                 <span class="p">},</span>
             <span class="p">},</span>
         <span class="p">},</span>
@@ -661,32 +587,61 @@
         <span class="s1">&#39;groups&#39;</span><span class="p">:</span> <span class="p">{</span>
             <span class="mi">0</span><span class="p">:</span> <span class="p">{</span>
                 <span class="mi">0</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Documentation&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Help&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="s1">&#39;validator&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="s1">&#39;widget&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="s1">&#39;placeholder&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Check for new versions.&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;button&#39;</span><span class="p">:</span> <span class="s1">&#39;GitHub&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;button2&#39;</span><span class="p">:</span> <span class="s1">&#39;Documentation&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Show the online documentation&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;button&#39;</span><span class="p">:</span> <span class="s1">&#39;Open Documentation&#39;</span><span class="p">,</span>
                 <span class="p">},</span>
                 <span class="mi">1</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Info&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Latest Version&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;app_version&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;validator&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="s1">&#39;widget&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="s1">&#39;placeholder&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Check online for new versions.&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;button&#39;</span><span class="p">:</span> <span class="s1">&#39;Check for Updates&#39;</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">},</span>
+            <span class="mi">1</span><span class="p">:</span> <span class="p">{</span>
+                <span class="mi">0</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Current Versions&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="s1">&#39;validator&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="s1">&#39;widget&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="s1">&#39;placeholder&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Check for new versions.&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;button&#39;</span><span class="p">:</span> <span class="s1">&#39;Check for Updates&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;button2&#39;</span><span class="p">:</span> <span class="s1">&#39;Build Info&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;help&#39;</span><span class="p">:</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="vm">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">info</span><span class="p">(),</span>
                 <span class="p">},</span>
-                <span class="mi">2</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Debug&#39;</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="mi">2</span><span class="p">:</span> <span class="p">{</span>
+                <span class="mi">0</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;Debugging&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="s1">&#39;validator&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="s1">&#39;widget&#39;</span><span class="p">:</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">,</span> <span class="s1">&#39;Enable Debug&#39;</span><span class="p">),</span>
+                    <span class="s1">&#39;widget&#39;</span><span class="p">:</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">,</span> <span class="s1">&#39;Enable&#39;</span><span class="p">),</span>
                     <span class="s1">&#39;placeholder&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Enable Debug Messages.&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Enable debug messages.&#39;</span><span class="p">,</span>
+                <span class="p">},</span>
+                <span class="mi">1</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;reset_image_cache&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;validator&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="s1">&#39;widget&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="s1">&#39;placeholder&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;button&#39;</span><span class="p">:</span> <span class="s1">&#39;Reset Image Cache&#39;</span>
+                <span class="p">},</span>
+                <span class="mi">2</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;reset_databases&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;validator&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="s1">&#39;widget&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="s1">&#39;placeholder&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;button&#39;</span><span class="p">:</span> <span class="s1">&#39;Reset Database Connections&#39;</span>
                 <span class="p">},</span>
             <span class="p">},</span>
         <span class="p">},</span>
@@ -710,11 +665,12 @@
             <span class="n">parent</span><span class="o">=</span><span class="n">parent</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">debug_editor</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">toggle_debug</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">settings_disable_oiio_editor</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
             <span class="n">actions</span><span class="o">.</span><span class="n">generate_thumbnails_changed</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s1">&#39;Preferences&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">debugging_editor</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">actions</span><span class="o">.</span><span class="n">toggle_debug</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PreferenceEditor.init_data"><a class="viewcode-back" href="../../../modules/editor/preferences.html#bookmarks.editor.preferences.PreferenceEditor.init_data">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
@@ -743,43 +699,39 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="PreferenceEditor.info_button_clicked"><a class="viewcode-back" href="../../../modules/editor/preferences.html#bookmarks.editor.preferences.PreferenceEditor.info_button_clicked">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
+<div class="viewcode-block" id="PreferenceEditor.help_button_clicked"><a class="viewcode-back" href="../../../modules/editor/preferences.html#bookmarks.editor.preferences.PreferenceEditor.help_button_clicked">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">info_button_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">help_button_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Info button click action.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">QtGui</span><span class="o">.</span><span class="n">QDesktopServices</span><span class="o">.</span><span class="n">openUrl</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">documentation_url</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PreferenceEditor.app_version_button_clicked"><a class="viewcode-back" href="../../../modules/editor/preferences.html#bookmarks.editor.preferences.PreferenceEditor.app_version_button_clicked">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
+    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">app_version_button_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Info button click action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ui</span><span class="o">.</span><span class="n">MessageBox</span><span class="p">(</span><span class="s1">&#39;Checking version...&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
         <span class="kn">from</span> <span class="nn">..versioncontrol</span> <span class="kn">import</span> <span class="n">versioncontrol</span>
         <span class="n">versioncontrol</span><span class="o">.</span><span class="n">check</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="PreferenceEditor.info_button2_clicked"><a class="viewcode-back" href="../../../modules/editor/preferences.html#bookmarks.editor.preferences.PreferenceEditor.info_button2_clicked">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
+    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">info_button2_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Info button 2 click action.</span>
+    <span class="k">def</span> <span class="nf">reset_image_cache_button_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">images</span>
+        <span class="n">images</span><span class="o">.</span><span class="n">init_image_cache</span><span class="p">()</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">w</span> <span class="o">=</span> <span class="n">AboutWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="n">w</span><span class="o">.</span><span class="n">open</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="PreferenceEditor.documentation_button_clicked"><a class="viewcode-back" href="../../../modules/editor/preferences.html#bookmarks.editor.preferences.PreferenceEditor.documentation_button_clicked">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
+    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">documentation_button_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Documentation button click action.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">QtGui</span><span class="o">.</span><span class="n">QDesktopServices</span><span class="o">.</span><span class="n">openUrl</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">github_url</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="PreferenceEditor.documentation_button2_clicked"><a class="viewcode-back" href="../../../modules/editor/preferences.html#bookmarks.editor.preferences.PreferenceEditor.documentation_button2_clicked">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
-    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
-    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">documentation_button2_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Info button 2 click action.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">QtGui</span><span class="o">.</span><span class="n">QDesktopServices</span><span class="o">.</span><span class="n">openUrl</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">documentation_url</span><span class="p">)</span></div></div>
+    <span class="k">def</span> <span class="nf">reset_databases_button_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">database</span>
+        <span class="n">database</span><span class="o">.</span><span class="n">remove_all_connections</span><span class="p">()</span></div>
 </pre></div>
         </article>
       </div>

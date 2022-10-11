@@ -448,7 +448,6 @@ def get_links(path, section='links/assets'):
     """
     l = f'{path}/{common.link_file}'
     if not QtCore.QFileInfo(l).exists():
-        print(l)
         return []
 
     s = QtCore.QSettings(l, QtCore.QSettings.IniFormat)

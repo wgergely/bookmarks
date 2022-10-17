@@ -1079,7 +1079,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         font, metrics = common.font_db.bold_font(common.size(common.size_font_medium))
         painter.setFont(font)
 
-        cursor_position = self.parent().mapFromGlobal(common.cursor.pos())
+        cursor_position = self.parent().viewport().mapFromGlobal(common.cursor.pos())
 
         args = (
             rectangles,

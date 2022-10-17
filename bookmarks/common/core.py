@@ -6,7 +6,6 @@ import functools
 import hashlib
 import os
 import re
-import sys
 import time
 import uuid
 
@@ -75,6 +74,7 @@ SortBySizeRole = QtCore.Qt.ItemDataRole(next(n))
 SortByTypeRole = QtCore.Qt.ItemDataRole(next(n))
 ShotgunLinkedRole = QtCore.Qt.ItemDataRole(next(n))
 SlackLinkedRole = QtCore.Qt.ItemDataRole(next(n))
+AssetProgressRole = QtCore.Qt.ItemDataRole(next(n))
 
 DEFAULT_SORT_VALUES = {
     SortByNameRole: 'Name',

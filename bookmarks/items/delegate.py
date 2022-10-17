@@ -887,7 +887,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         if not description_rect:
             return None
 
-        editor = ui.LineEdit(parent=parent.parent())
+        editor = ui.LineEdit(parent=parent)
         editor.setPlaceholderText('Enter an item description...')
         return editor
 

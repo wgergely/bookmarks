@@ -20,6 +20,7 @@ Asset items have their own bespoke list of attributes, stored in the bookmark it
 database. See :mod:`bookmarks.database` for more details.
 
 """
+import copy
 import functools
 import os
 
@@ -120,6 +121,30 @@ class AssetItemModel(models.ItemModel):
             if role == QtCore.Qt.DisplayRole:
                 return progress.STAGES[column - 1]['name']
 
+    def data(self, index, role=QtCore.Qt.DisplayRole):
+        if not index.isValid():
+            return None
+        if index.column() == 0:
+            return super().data(index, role=role)
+
+        if role == QtCore.Qt.DisplayRole or role == QtCore.Qt.EditRole:
+            p = self.source_path()
+            k = self.task()
+            t = common.FileItem
+            data = common.get_data(p, k, t)
+            v = data[index.row()][common.AssetProgressRole]
+            if not v:
+                return None
+            return v[index.column() - 1]['value']
+
+    def flags(self, index):
+        if index.column() == 0:
+            return super().flags(index)
+        return (
+            QtCore.Qt.ItemIsEnabled |
+            QtCore.Qt.ItemIsSelectable |
+            QtCore.Qt.ItemIsEditable
+        )
     @common.status_bar_message('Loading assets...')
     @models.initdata
     @common.error
@@ -232,6 +257,8 @@ class AssetItemModel(models.ItemModel):
                 common.IdRole: idx,
                 #
                 common.ShotgunLinkedRole: False,
+                #
+                common.AssetProgressRole: copy.deepcopy(progress.STAGES),
             })
 
         # Explicitly emit `activeChanged` to notify other dependent models
@@ -359,7 +386,6 @@ class AssetItemView(views.ThreadedItemView):
     def get_source_model(self):
         return AssetItemModel(parent=self)
 
-
     def init_model(self, *args, **kwargs):
         super().init_model(*args, **kwargs)
         self.init_progress_columns()
@@ -371,7 +397,9 @@ class AssetItemView(views.ThreadedItemView):
         self.resized.connect(self.adapt_horizontal_header)
 
         self.horizontalHeader().setHidden(False)
-        self.horizontalHeader().setMinimumSectionSize(progress.CELL_WIDTH)
+        self.horizontalHeader().setMinimumSectionSize(
+            common.size(common.size_section))
+
         for idx in range(self.model().columnCount()):
             if idx == 0:
                 self.horizontalHeader().setSectionResizeMode(
@@ -381,8 +409,7 @@ class AssetItemView(views.ThreadedItemView):
                 self.horizontalHeader().setSectionResizeMode(
                     idx, QtWidgets.QHeaderView.Fixed
                 )
-
-
+                self.setItemDelegateForColumn(idx, progress.ProgressDelegate(parent=self))
 
     @QtCore.Slot()
     def adapt_horizontal_header(self, *args, **kwargs):
@@ -433,3 +460,14 @@ class AssetItemView(views.ThreadedItemView):
             self.selectionModel().setCurrentIndex(
                 index, QtCore.QItemSelectionModel.ClearAndSelect)
         return super().showEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        cursor_position = self.viewport().mapFromGlobal(common.cursor.pos())
+        index = self.indexAt(cursor_position)
+        if not index.isValid():
+            return super().mouseReleaseEvent(event)
+
+        if index.column() == 0:
+            return super().mouseReleaseEvent(event)
+
+        self.edit(index)

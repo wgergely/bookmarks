@@ -1,13 +1,9 @@
-import copy
-import functools
-import os
-
 from PySide2 import QtWidgets, QtCore, QtGui
 
 from . import common
-# from akapipe.core import db, database, signals
-
-
+from . import images
+from . import ui
+from .items import delegate
 
 n = (f for f in range(9999))
 DesignStage = next(n)
@@ -32,29 +28,29 @@ PriorityState = next(n)
 #: The selectable progress states
 STATES = {
     OmittedState: {
-        'name': 'Omitted',
-        'icon': 'icons8-line-24',
-        'color': (0, 0, 0, 0),
+        'name': 'Skip',
+        'icon': 'progress-dot-24',
+        'color': common.color(common.color_opaque),
     },
     InProgressState: {
-        'name': 'In Progress',
-        'icon': 'icons8-hourglass-24',
-        'color': (253, 166, 1, 255),
+        'name': 'In\nProgress',
+        'icon': 'progress-hourglass-24',
+        'color': common.color(common.color_yellow),
     },
     PendingState: {
         'name': 'Pending',
-        'icon': 'icons8-task-planning-24',
-        'color': (15, 74, 130, 255),
+        'icon': 'progress-task-planning-24',
+        'color': common.color(common.color_background),
     },
     CompletedState: {
-        'name': 'Completed',
-        'icon': 'icons8-task-completed-24',
-        'color': (85, 198, 170, 255),
+        'name': 'Done',
+        'icon': 'progress-task-completed-24',
+        'color': common.color(common.color_green),
     },
     PriorityState: {
         'name': 'Priority',
-        'icon': 'icons8-task-important-24',
-        'color': (214, 28, 42, 255),
+        'icon': 'progress-task-important-24',
+        'color': common.color(common.color_dark_red),
     },
 }
 
@@ -125,115 +121,90 @@ STAGES = {
     },
 }
 
-CELL_WIDTH = 64
-CELL_HEIGHT = 32
 
-
-#
-# class ProgressModel(QtCore.QAbstractTableModel):
-#     def __init__(self, table):
-#         super().__init__()
-#
-#     def index(self, row, column, parent=QtCore.QModelIndex()):
-#         return self.createIndex(row, column, parent=QtCore.QModelIndex())
-#
-#     def rowCount(self, parent=QtCore.QModelIndex()):
-#         return len(db.cache[self.table])
-#
-#     def columnCount(self, parent=QtCore.QModelIndex()):
-#         return len(STAGES[self.table])
-#
-#     def flags(self, index, parent=QtCore.QModelIndex()):
-#         return (
-#                 QtCore.Qt.ItemIsEnabled |
-#                 QtCore.Qt.ItemIsSelectable |
-#                 QtCore.Qt.ItemIsEditable
-#         )
-#
-#     def headerData(self, column, orientation, role=QtCore.Qt.DisplayRole):
-#         if role == QtCore.Qt.DisplayRole and orientation == QtCore.Qt.Horizontal:
-#             return STAGES[self.table][column]['name']
-#         if role == QtCore.Qt.TextAlignmentRole:
-#             return QtCore.Qt.AlignCenter
-#         if role == QtCore.Qt.SizeHintRole and orientation == QtCore.Qt.Horizontal:
-#             return QtCore.QSize(CELL_WIDTH, CELL_HEIGHT)
-#         if role == QtCore.Qt.SizeHintRole and orientation == QtCore.Qt.Vertical:
-#             return QtCore.QSize(CELL_HEIGHT, CELL_HEIGHT * 2)
-#
-#     def data(self, index, role=QtCore.Qt.DisplayRole, parent=QtCore.QModelIndex()):
-#         if role == QtCore.Qt.DisplayRole:
-#             return self.internal_data[index.row()][index.column()]['value']
-#         if role == QtCore.Qt.SizeHintRole:
-#             return QtCore.QSize(CELL_WIDTH, CELL_HEIGHT)
-#
-#     def setData(self, index, value, role=QtCore.Qt.DisplayRole):
-#         columns = db.tables[self.table]['columns']
-#         column = next(
-#             v['column'] for v in columns.values() if v['role'] == db.ProgressRole
-#         )
-#         idx = next(
-#             f for f in columns if columns[f]['role'] == db.IdRole
-#         )
-#         self.internal_data[index.row()][index.column()]['value'] = value
-#         database.set_value(
-#             self.table,
-#             column,
-#             db.cache[self.table][index.row()][idx],
-#             self.internal_data[index.row()]
-#         )
-#         idx = next(
-#             f for f in columns if columns[f]['role'] == db.ProgressRole
-#         )
-#         db.cache[self.table][index.row()][idx] = self.internal_data[index.row()]
-#         return True
-
-
-# @functools.lru_cache(maxsize=128)
-# def get_icon(name):
-#     s = os.path.normpath(__file__ + f'/../../rsc/gui/{name}.png')
-#     pixmap = QtGui.QPixmap(s)
-#     return QtGui.QIcon(pixmap)
-
-#
 class ProgressDelegate(QtWidgets.QItemDelegate):
     def __init__(self, parent=None):
         super().__init__(parent)
 
     def paint(self, painter, option, index):
-        painter.save()
+        model = index.model().sourceModel()
+        p = model.source_path()
+        k = model.task()
+        t = common.FileItem
+        data = common.get_data(p, k, t)
+        data = data[index.row()][common.AssetProgressRole][index.column() - 1]
 
-        row, column, data = self.get_row_column_data(index)
+        right_edge = self.draw_background(painter, option, data)
+        self.draw_text(painter, option, data, right_edge)
 
-        color = QtGui.QColor(*STATES[data['value']]['color'])
+    @delegate.save_painter
+    def draw_background(self, painter, option, data):
+        selected = option.state & QtWidgets.QStyle.State_Selected
+        hover = option.state & QtWidgets.QStyle.State_MouseOver
+        rect = QtCore.QRect(option.rect)
+        rect.setBottom(rect.bottom() - common.size(common.size_separator))
+
+        # Draw background
+        color = STATES[data['value']]['color']
         painter.setBrush(color)
         painter.setPen(QtCore.Qt.NoPen)
-        painter.drawRect(option.rect)
+        if hover:
+            painter.setOpacity(1.0)
+        else:
+            painter.setOpacity(0.85)
+        painter.drawRect(rect)
 
-        icon = STATES[data['value']]['icon']
-        icon = get_icon(icon)
-        rect = QtCore.QRect(option.rect)
+        if selected:
+            _color = common.color(common.color_light_background)
+            painter.setBrush(_color)
+            painter.setOpacity(0.15)
+            painter.drawRect(rect)
+
         rect.setWidth(rect.height())
         center = rect.center()
-        rect.setSize(QtCore.QSize(18, 18))
+
+        r = common.size(common.size_margin)
+        rect.setSize(QtCore.QSize(r, r))
         rect.moveCenter(center)
-        rect.moveLeft(option.rect.left() + 6)
+        rect.moveLeft(option.rect.left() + common.size(common.size_indicator) * 2)
+
+        if data['value'] == OmittedState:
+            if hover:
+                painter.setOpacity(1.0)
+            else:
+                painter.setOpacity(0.1)
+        else:
+            painter.setOpacity(0.5)
+
+        pixmap = images.ImageCache.rsc_pixmap(
+            STATES[data['value']]['icon'],
+            color=None,
+            size=r
+        )
+
+        painter.drawPixmap(rect, pixmap, pixmap.rect())
+        return rect.right()
+
+    @delegate.save_painter
+    def draw_text(self, painter, option, data, right_edge):
+        hover = option.state & QtWidgets.QStyle.State_MouseOver
+
         text = STATES[data['value']]['name']
-        if data['value'] == OmittedState:
-            painter.setOpacity(0.3)
-        icon.paint(painter, rect)
 
-        painter.restore()
-
-        painter.save()
         if data['value'] == OmittedState:
+            text = f'Edit\n{data["name"]}' if hover else ''
             painter.setOpacity(0.25)
         painter.setPen(QtGui.QPen(QtGui.QColor(255, 255, 255, 255)))
         _rect = QtCore.QRect(option.rect)
-        _rect.setLeft(rect.right() + 6)
+
+        _o = common.size(common.size_indicator) * 2
+        _rect.setLeft(right_edge + _o)
+
+        font, metrics = common.font_db.light_font(common.size(common.size_font_small))
+        painter.setFont(font)
         painter.drawText(
             _rect, QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft, text
         )
-        painter.restore()
 
     def createEditor(self, parent, option, index):
         editor = QtWidgets.QComboBox(parent=parent)
@@ -242,18 +213,60 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
             f'selection-background-color:rgba(180,180,180,255);'
             f'margin:0px;'
             f'padding:0px;'
+            f'min-width:{common.size(common.size_width) * 0.33}px;'
             f'height:{option.rect.height()}px;'
         )
         editor.currentIndexChanged.connect(
             lambda _: self.commitData.emit(editor)
         )
+        editor.currentIndexChanged.connect(
+            lambda _: self.closeEditor.emit(editor)
+        )
+        QtCore.QTimer.singleShot(100, editor.showPopup)
         return editor
 
     def setEditorData(self, editor, index):
-        pass
+        model = index.model().sourceModel()
+        p = model.source_path()
+        k = model.task()
+        t = common.FileItem
+        data = common.get_data(p, k, t)
+        data = data[index.row()][common.AssetProgressRole][index.column() - 1]
+
+        for state in sorted(data['states']):
+            editor.addItem(
+                STATES[state]['name'],
+                userData=state
+            )
+            icon = STATES[state]['icon']
+
+            editor.setItemIcon(
+                editor.count() - 1,
+                ui.get_icon(icon),
+            )
+            editor.setItemData(
+                editor.count() - 1,
+                STATES[state]['color'],
+                role=QtCore.Qt.BackgroundRole
+            )
+            editor.setItemData(
+                editor.count() - 1,
+                QtCore.QSize(200, 36),
+                role=QtCore.Qt.SizeHintRole
+            )
+        editor.setCurrentText(
+            STATES[data['value']]['name']
+        )
 
     def setModelData(self, editor, model, index):
-        pass
+        model = index.model().sourceModel()
+        p = model.source_path()
+        k = model.task()
+        t = common.FileItem
+        data = common.get_data(p, k, t)
+        data = data[index.row()][common.AssetProgressRole][index.column() - 1]
+
+        data['value'] = editor.currentData()
 
     def updateEditorGeometry(self, editor, option, index):
         super().updateEditorGeometry(editor, option, index)

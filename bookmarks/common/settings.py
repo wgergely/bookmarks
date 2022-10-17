@@ -55,6 +55,7 @@ SECTIONS = {
         'filters/row_heights',
         'filters/selection_file',
         'filters/selection_sequence',
+        'filters/progress',
     ),
     'selection': (
         'selection/current_tab',

@@ -26,19 +26,21 @@ def key():
     """Utility method used to generate a hexadecimal uuid string."""
     return uuid.uuid1().hex
 
+
 def resize_event_override(cls, event):
+    """Private utility method used to implement rounded corners.
+
+    """
     path = QtGui.QPainterPath()
-    # the rectangle must be translated and adjusted by 1 pixel in order to
-    # correctly map the rounded shape
+
+    # the rectangle must be translated and adjusted by 1 pixel in order to correctly
+    # map the rounded shape
     rect = QtCore.QRectF(cls.rect()).adjusted(0.5, 0.5, -1.5, -1.5)
     o = int(common.size(common.size_margin) * 0.5)
-    path.addRoundedRect(
-        rect,
-        o,
-        o
-    )
-    # QRegion is bitmap based, so the returned QPolygonF (which uses float
-    # values must be transformed to an integer based QPolygon
+    path.addRoundedRect(rect, o, o)
+
+    # QRegion is bitmap based, so the returned QPolygonF (which uses float values must
+    # be transformed to an integer based QPolygon
     region = QtGui.QRegion(path.toFillPolygon(QtGui.QTransform()).toPolygon())
     cls.setMask(region)
 
@@ -637,6 +639,21 @@ class BaseContextMenu(QtWidgets.QMenu):
             ),
         }
         return
+
+    def asset_progress_menu(self):
+        on_icon = ui.get_icon('check', color=common.color(common.color_green))
+        off_icon = ui.get_icon('showbuttons')
+        icon = on_icon if self.parent().progress_hidden() else off_icon
+
+        self.separator()
+
+        self.menu[key()] = {
+            'text': 'Hide Progress Tracker',
+            'icon': icon,
+            'action': actions.toggle_progress_columns,
+        }
+
+        self.separator()
 
     def list_filter_menu(self):
         """List item filter actions.

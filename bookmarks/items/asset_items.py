@@ -141,10 +141,11 @@ class AssetItemModel(models.ItemModel):
         if index.column() == 0:
             return super().flags(index)
         return (
-            QtCore.Qt.ItemIsEnabled |
-            QtCore.Qt.ItemIsSelectable |
-            QtCore.Qt.ItemIsEditable
+                QtCore.Qt.ItemIsEnabled |
+                QtCore.Qt.ItemIsSelectable |
+                QtCore.Qt.ItemIsEditable
         )
+
     @common.status_bar_message('Loading assets...')
     @models.initdata
     @common.error
@@ -417,8 +418,9 @@ class AssetItemView(views.ThreadedItemView):
         the window size is small.
 
         """
-        min_width = common.size(common.size_width) * 1.2
+        min_width = common.size(common.size_width) * 1.66
         hidden = self.width() < min_width
+        self.horizontalHeader().setHidden(hidden)
         for n in range(self.model().columnCount()):
             if n == 0:
                 continue
@@ -429,7 +431,7 @@ class AssetItemView(views.ThreadedItemView):
         """Inline buttons count.
 
         """
-        if self.width() < common.size(common.size_width) * 0.5:
+        if self.columnWidth(0) < common.size(common.size_width) * 0.66:
             return 0
         if self.buttons_hidden():
             return 0

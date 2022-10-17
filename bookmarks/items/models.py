@@ -635,7 +635,7 @@ class ItemModel(QtCore.QAbstractTableModel):
 
     def columnCount(self, parent=QtCore.QModelIndex()):
         """Number of columns the model has."""
-        return 2
+        return 1
 
     def rowCount(self, parent=QtCore.QModelIndex()):
         """The model's row count.
@@ -647,25 +647,26 @@ class ItemModel(QtCore.QAbstractTableModel):
         if not all((p, k)) or t is None:
             return 0
         return common.data_count(p, k, t)
-
-    def index(self, row, column, parent=QtCore.QModelIndex()):
-        """Index of the given row and column.
-
-        """
-        p = self.source_path()
-        k = self.task()
-        t = self.data_type()
-
-        if not p or not all(p) or not k or t is None:
-            return QtCore.QModelIndex()
-
-        data = common.get_data(p, k, t)
-
-        if row not in data:
-            return QtCore.QModelIndex()
-
-        ptr = weakref.ref(data[row])
-        return self.createIndex(row, 0, ptr=ptr)
+    #
+    # def index(self, row, column, parent=QtCore.QModelIndex()):
+    #     """Index of the given row and column.
+    #
+    #     """
+    #     if column == 0:
+    #         p = self.source_path()
+    #         k = self.task()
+    #         t = self.data_type()
+    #
+    #         if not p or not all(p) or not k or t is None:
+    #             return QtCore.QModelIndex()
+    #
+    #         data = common.get_data(p, k, t)
+    #
+    #         if row not in data:
+    #             return QtCore.QModelIndex()
+    #
+    #         ptr = weakref.ref(data[row])
+    #         return self.createIndex(row, column, ptr=ptr)
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
         """Returns and item data associated with the given index.
@@ -673,8 +674,8 @@ class ItemModel(QtCore.QAbstractTableModel):
         """
         if not index.isValid():
             return None
+        data = self.model_data()
         if index.column() == 0:
-            data = self.model_data()
             if index.row() not in data:
                 return None
             if role in data[index.row()]:
@@ -691,7 +692,6 @@ class ItemModel(QtCore.QAbstractTableModel):
         if orientation == QtCore.Qt.Vertical:
             if role == QtCore.Qt.SizeHintRole:
                 v = QtCore.QSize(common.size(common.size_margin), self.row_size.height())
-                print(v)
                 return v
         return None
 

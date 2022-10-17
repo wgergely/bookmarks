@@ -1,4 +1,5 @@
-"""The widget used set and edit search filters.
+"""The widget used set the text search filter of
+:class:`~bookmarks.items.models.FilterProxyModel`.
 
 """
 from PySide2 import QtWidgets, QtGui, QtCore
@@ -7,14 +8,14 @@ from ... import common
 from ... import ui
 
 
-class FilterEditor(QtWidgets.QDialog):
+class TextFilterEditor(QtWidgets.QDialog):
     """Editor widget used to set a list model's persistent text filter.
 
     """
     finished = QtCore.Signal(str)
 
     def __init__(self, parent=None):
-        super(FilterEditor, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
         self.editor = None
         self.ok_button = None

@@ -72,6 +72,8 @@ class AssetItemViewContextMenu(contextmenu.BaseContextMenu):
         self.sg_url_menu()
         self.import_json_menu()
         self.separator()
+        self.asset_progress_menu()
+        self.separator()
         self.bookmark_url_menu()
         self.asset_url_menu()
         self.reveal_item_menu()
@@ -375,6 +377,8 @@ class AssetItemView(views.ThreadedItemView):
             parent=parent
         )
 
+        self._progress_hidden = False
+
         common.signals.assetAdded.connect(
             functools.partial(
                 self.show_item,
@@ -389,7 +393,12 @@ class AssetItemView(views.ThreadedItemView):
 
     def init_model(self, *args, **kwargs):
         super().init_model(*args, **kwargs)
+
+        model = self.model().sourceModel()
+        model.modelReset.connect(self.init_progress_hidden)
+
         self.init_progress_columns()
+        self.init_progress_hidden()
 
     def init_progress_columns(self):
         """Tweaks the horizontal header.
@@ -419,7 +428,10 @@ class AssetItemView(views.ThreadedItemView):
 
         """
         min_width = common.size(common.size_width) * 1.66
-        hidden = self.width() < min_width
+
+        hidden = self.progress_hidden()
+        hidden = True if self.width() < min_width else hidden
+
         self.horizontalHeader().setHidden(hidden)
         for n in range(self.model().columnCount()):
             if n == 0:
@@ -473,3 +485,27 @@ class AssetItemView(views.ThreadedItemView):
             return super().mouseReleaseEvent(event)
 
         self.edit(index)
+
+    @common.error
+    @common.debug
+    def init_progress_hidden(self):
+        """Restore the previous state of the inline icon buttons.
+
+        """
+        model = self.model().sourceModel()
+        v = model.get_filter_setting('filters/progress')
+        v = False if not v else v
+        self._progress_hidden = v
+
+        self.adapt_horizontal_header()
+
+    def progress_hidden(self):
+        return self._progress_hidden
+
+    def set_progress_hidden(self, val):
+        """Sets the visibility of the progress tracker columns.
+
+        """
+        self.model().sourceModel().set_filter_setting('filters/progress', val)
+        self._progress_hidden = val
+        self.adapt_horizontal_header()

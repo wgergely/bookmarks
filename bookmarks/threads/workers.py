@@ -249,7 +249,7 @@ class BaseWorker(QtCore.QObject):
             for idx in ref():
                 if not ref():
                     raise RuntimeError('Data changed during update.')
-                # Impose a limit on how many items we'll querry
+                # Impose a limit on how many items we'll query
                 n += 1
                 if n > 99999:
                     return
@@ -583,6 +583,9 @@ class InfoWorker(BaseWorker):
         if len(pp) > 3:
             if asset_row_data:
                 ref()[common.DescriptionRole] = asset_row_data['description']
+        # Asset Progress Data
+        if len(pp) == 4 and asset_row_data['progress']:
+            ref()[common.AssetProgressRole] = asset_row_data['progress']
         # ShotGrid status
         if len(pp) <= 4:
             update_shotgun_configured(pp, bookmark_row_data, asset_row_data, ref)

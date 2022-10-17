@@ -1,6 +1,9 @@
+import copy
+
 from PySide2 import QtWidgets, QtCore, QtGui
 
 from . import common
+from . import database
 from . import images
 from . import ui
 from .items import delegate
@@ -8,15 +11,13 @@ from .items import delegate
 n = (f for f in range(9999))
 DesignStage = next(n)
 LayoutStage = next(n)
+ModelStage = next(n)
+RigStage = next(n)
 AnimationStage = next(n)
 RenderStage = next(n)
 FXStage = next(n)
 CompStage = next(n)
 GradeStage = next(n)
-
-n = (f for f in range(9999))
-ModelStage = next(n)
-RigStage = next(n)
 
 n = (f for f in range(9999))
 OmittedState = next(n)
@@ -128,14 +129,34 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
 
     def paint(self, painter, option, index):
         model = index.model().sourceModel()
+
         p = model.source_path()
         k = model.task()
         t = common.FileItem
-        data = common.get_data(p, k, t)
-        data = data[index.row()][common.AssetProgressRole][index.column() - 1]
+
+        _data = common.get_data(p, k, t)
+        data = _data[index.row()][common.AssetProgressRole][index.column() - 1]
 
         right_edge = self.draw_background(painter, option, data)
         self.draw_text(painter, option, data, right_edge)
+        self.draw_shadow(painter, option, index)
+
+    @delegate.save_painter
+    def draw_shadow(self, painter, option, index):
+        if index.column() != 1:
+            return
+
+        rect = QtCore.QRect(option.rect)
+        o = common.size(common.size_margin) * 3.0
+        rect.setWidth(o)
+
+        painter.setOpacity(0.5)
+        pixmap = images.ImageCache.rsc_pixmap(
+            'gradient', None, rect.height()
+        )
+        painter.drawPixmap(rect, pixmap, pixmap.rect())
+        rect.setWidth(o * 0.5)
+        painter.drawPixmap(rect, pixmap, pixmap.rect())
 
     @delegate.save_painter
     def draw_background(self, painter, option, data):
@@ -264,9 +285,22 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
         k = model.task()
         t = common.FileItem
         data = common.get_data(p, k, t)
-        data = data[index.row()][common.AssetProgressRole][index.column() - 1]
 
-        data['value'] = editor.currentData()
+        # We don't have to modify the internal data directly because
+        # the db.setValue call will trigger an item refresh
+        progress_data = copy.deepcopy(data[index.row()][common.AssetProgressRole])
+        progress_data[index.column() - 1]['value'] = editor.currentData()
+
+        # Write current data to the database
+        pp = data[index.row()][common.ParentPathRole]
+        db = database.get_db(*pp[0:3])
+        with db.connection():
+            db.setValue(
+                data[index.row()][common.PathRole],
+                'progress',
+                progress_data,
+                table=database.AssetTable
+            )
 
     def updateEditorGeometry(self, editor, option, index):
         super().updateEditorGeometry(editor, option, index)

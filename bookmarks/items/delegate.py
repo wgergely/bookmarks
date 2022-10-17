@@ -1412,6 +1412,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         rect = QtCore.QRect(rectangles[DataRect])
 
         o = common.size(common.size_indicator) * 0.5
+        painter.setOpacity(0.9)
         painter.drawRoundedRect(rect, o, o)
 
     @save_painter
@@ -2709,7 +2710,6 @@ class BookmarkItemViewDelegate(ItemDelegate):
 
         editor.setText(v)
 
-
     def setModelData(self, editor, model, index):
         text = f'{index.data(common.DescriptionRole)}'
         if text.lower() == editor.text().lower():
@@ -2739,7 +2739,6 @@ class BookmarkItemViewDelegate(ItemDelegate):
         data[idx][common.DescriptionRole] = editor.text()
         data[idx][common.DescriptionRole] = workers.get_bookmark_description(
             bookmark_row_data)
-
 
     def paint(self, painter, option, index):
         """Paints a :class:`bookmarks.items.bookmark_items.BookmarkItemView`

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="items.task_items" href="task_items.html" /><link rel="prev" title="items.file_items" href="file_items.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>items.models - Bookmarks 0.7.3 documentation</title>
+        <title>items.models - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -135,7 +135,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -162,7 +162,7 @@
     <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -229,7 +229,6 @@
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">items.models</a></li>
 <li class="toctree-l3"><a class="reference internal" href="task_items.html">items.task_items</a></li>
 <li class="toctree-l3"><a class="reference internal" href="views.html">items.views</a></li>
-<li class="toctree-l3"><a class="reference internal" href="widgets/description_editor.html">items.widgets.description_editor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="widgets/filter_editor.html">items.widgets.filter_editor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="widgets/image_viewer.html">items.widgets.image_viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="widgets/thumb_capture.html">items.widgets.thumb_capture</a></li>
@@ -257,6 +256,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../notes.html">notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../progress.html">progress</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../publish.html">publish</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../shortcuts.html">shortcuts</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../shotgun.html">shotgun</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -597,7 +597,7 @@ remain hidden when they’re not meant to be visible.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.items.models.ItemModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.models.</span></span><span class="sig-name descname"><span class="pre">ItemModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/models.html#ItemModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.models.ItemModel" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QAbstractListModel</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QAbstractTableModel</span></code></p>
 <p>The base model used for interacting with all bookmark, asset and file items.</p>
 <p>Data is stored in the datacache module that can be fetched using the model’s
 <cite>source_path</cite>, <cite>task</cite> and <cite>data_type</cite>.</p>
@@ -734,8 +734,8 @@ repaint is requested.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.models.ItemModel.get_filter_setting" title="bookmarks.items.models.ItemModel.get_filter_setting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_filter_setting</span></code></a>(key)</p></td>
 <td><p>Get a filter value stored in the user settings file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.models.ItemModel.index" title="bookmarks.items.models.ItemModel.index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a>(row, column[, parent])</p></td>
-<td><p>Index of the given row and column.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.models.ItemModel.headerData" title="bookmarks.items.models.ItemModel.headerData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">headerData</span></code></a>(self, section, orientation[, role])</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.models.ItemModel.init_data" title="bookmarks.items.models.ItemModel.init_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_data</span></code></a>()</p></td>
 <td><p>The main method used by the model to fetch and store item information from the file system.</p></td>
@@ -899,10 +899,9 @@ in a dictionary object inside the user settings file.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.items.models.ItemModel.index">
-<span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">QtCore.QModelIndex()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/models.html#ItemModel.index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.models.ItemModel.index" title="Permalink to this definition">#</a></dt>
-<dd><p>Index of the given row and column.</p>
-</dd></dl>
+<dt class="sig sig-object py" id="bookmarks.items.models.ItemModel.headerData">
+<span class="sig-name descname"><span class="pre">headerData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.Qt.Orientation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PySide2.QtCore.Qt.ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../_modules/bookmarks/items/models.html#ItemModel.headerData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.models.ItemModel.headerData" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.items.models.ItemModel.init_data">
@@ -1210,7 +1209,7 @@ signals.</p>
 <li><a class="reference internal" href="#bookmarks.items.models.ItemModel.filter_setting_dict_key"><code class="docutils literal notranslate"><span class="pre">ItemModel.filter_setting_dict_key()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.models.ItemModel.flags"><code class="docutils literal notranslate"><span class="pre">ItemModel.flags()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.models.ItemModel.get_filter_setting"><code class="docutils literal notranslate"><span class="pre">ItemModel.get_filter_setting()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.index"><code class="docutils literal notranslate"><span class="pre">ItemModel.index()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.headerData"><code class="docutils literal notranslate"><span class="pre">ItemModel.headerData()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.models.ItemModel.init_data"><code class="docutils literal notranslate"><span class="pre">ItemModel.init_data()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.models.ItemModel.init_row_size"><code class="docutils literal notranslate"><span class="pre">ItemModel.init_row_size()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.models.ItemModel.init_sort_values"><code class="docutils literal notranslate"><span class="pre">ItemModel.init_sort_values()</span></code></a></li>

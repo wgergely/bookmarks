@@ -33,7 +33,7 @@ copyright = '2022, Gergely Wootsch'
 author = 'Gergely Wootsch'
 
 # The full version, including alpha/beta/rc tags
-release = '0.7.3'
+release = '0.7.4'
 
 # -- General configuration ---------------------------------------------------
 

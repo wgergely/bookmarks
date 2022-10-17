@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="database" href="database.html" /><link rel="prev" title="common.ui" href="common/ui.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>contextmenu - Bookmarks 0.7.3 documentation</title>
+        <title>contextmenu - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -135,7 +135,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
+      <a href="../index.html"><div class="brand">Bookmarks 0.7.4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -162,7 +162,7 @@
     <img class="sidebar-logo only-dark" src="../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -229,7 +229,6 @@
 <li class="toctree-l3"><a class="reference internal" href="items/models.html">items.models</a></li>
 <li class="toctree-l3"><a class="reference internal" href="items/task_items.html">items.task_items</a></li>
 <li class="toctree-l3"><a class="reference internal" href="items/views.html">items.views</a></li>
-<li class="toctree-l3"><a class="reference internal" href="items/widgets/description_editor.html">items.widgets.description_editor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="items/widgets/filter_editor.html">items.widgets.filter_editor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="items/widgets/image_viewer.html">items.widgets.image_viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="items/widgets/thumb_capture.html">items.widgets.thumb_capture</a></li>
@@ -257,6 +256,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="notes.html">notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="progress.html">progress</a></li>
 <li class="toctree-l2"><a class="reference internal" href="publish.html">publish</a></li>
 <li class="toctree-l2"><a class="reference internal" href="shortcuts.html">shortcuts</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="shotgun.html">shotgun</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -368,7 +368,10 @@ and definitions.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.key" title="bookmarks.contextmenu.key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key</span></code></a>()</p></td>
 <td><p>Utility method used to generate a hexadecimal uuid string.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.show_event_override" title="bookmarks.contextmenu.show_event_override"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_event_override</span></code></a>(cls, event)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.contextmenu.resize_event_override" title="bookmarks.contextmenu.resize_event_override"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resize_event_override</span></code></a>(cls, event)</p></td>
+<td><p>Private utility method used to implement rounded corners.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.contextmenu.show_event_override" title="bookmarks.contextmenu.show_event_override"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_event_override</span></code></a>(cls, event)</p></td>
 <td><p>Private utility method for manually calculating the width of :class:.`BaseContextMenu`.</p></td>
 </tr>
 </tbody>
@@ -859,6 +862,12 @@ constructor takes a QModelIndex, stored in <code class="xref py py-attr docutils
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.contextmenu.resize_event_override">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.contextmenu.</span></span><span class="sig-name descname"><span class="pre">resize_event_override</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/contextmenu.html#resize_event_override"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.contextmenu.resize_event_override" title="Permalink to this definition">#</a></dt>
+<dd><p>Private utility method used to implement rounded corners.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.contextmenu.show_event_override">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.contextmenu.</span></span><span class="sig-name descname"><span class="pre">show_event_override</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/contextmenu.html#show_event_override"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.contextmenu.show_event_override" title="Permalink to this definition">#</a></dt>
 <dd><p>Private utility method for manually calculating the width of
@@ -980,6 +989,7 @@ with a correct width, and hence we’ll calculate width manually here.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#bookmarks.contextmenu.key"><code class="docutils literal notranslate"><span class="pre">key()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.contextmenu.resize_event_override"><code class="docutils literal notranslate"><span class="pre">resize_event_override()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.contextmenu.show_event_override"><code class="docutils literal notranslate"><span class="pre">show_event_override()</span></code></a></li>
 </ul>
 </li>

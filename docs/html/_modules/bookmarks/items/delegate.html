@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>bookmarks.items.delegate - Bookmarks 0.7.3 documentation</title>
+        <title>bookmarks.items.delegate - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -228,7 +228,6 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/items/models.html">items.models</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/items/task_items.html">items.task_items</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/items/views.html">items.views</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/description_editor.html">items.widgets.description_editor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/filter_editor.html">items.widgets.filter_editor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/image_viewer.html">items.widgets.image_viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/thumb_capture.html">items.widgets.thumb_capture</a></li>
@@ -256,6 +255,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/notes.html">notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/progress.html">progress</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/publish.html">publish</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/shortcuts.html">shortcuts</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/shotgun.html">shotgun</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -367,7 +367,9 @@
 <span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
 
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">common</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">database</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">images</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ui</span>
 
 <span class="c1">#: Regex used to sanitize version numbers</span>
 <span class="n">regex_remove_version</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
@@ -482,7 +484,7 @@
 <span class="sd">        text (str): The text to render.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">k</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="n">font</span><span class="o">.</span><span class="n">family</span><span class="p">(),</span><span class="n">font</span><span class="o">.</span><span class="n">pixelSize</span><span class="p">()</span><span class="si">}</span><span class="s1">]</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="n">font</span><span class="o">.</span><span class="n">family</span><span class="p">(),</span> <span class="n">font</span><span class="o">.</span><span class="n">pixelSize</span><span class="p">()</span><span class="si">}</span><span class="s1">]</span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s1">&#39;</span>
 
     <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">delegate_paths</span><span class="p">:</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainterPath</span><span class="p">()</span>
@@ -1223,8 +1225,58 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_min</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max</span> <span class="o">=</span> <span class="mi">0</span>
 
+<div class="viewcode-block" id="ItemDelegate.createEditor"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.createEditor">[docs]</a>    <span class="k">def</span> <span class="nf">createEditor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FileInfoLoaded</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">description_rect</span> <span class="o">=</span> <span class="n">get_description_rectangle</span><span class="p">(</span>
+            <span class="n">index</span><span class="p">,</span> <span class="n">option</span><span class="o">.</span><span class="n">rect</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">buttons_hidden</span><span class="p">())</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">description_rect</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">editor</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">LineEdit</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span><span class="s1">&#39;Enter an item description...&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">editor</span></div>
+
+<div class="viewcode-block" id="ItemDelegate.updateEditorGeometry"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.updateEditorGeometry">[docs]</a>    <span class="k">def</span> <span class="nf">updateEditorGeometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="n">rectangles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_rectangles</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;height: </span><span class="si">{</span><span class="n">rectangles</span><span class="p">[</span><span class="n">DataRect</span><span class="p">]</span><span class="o">.</span><span class="n">height</span><span class="p">()</span><span class="si">}</span><span class="s1">px;&#39;</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">rectangles</span><span class="p">[</span><span class="n">DataRect</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="ItemDelegate.setEditorData"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.setEditorData">[docs]</a>    <span class="k">def</span> <span class="nf">setEditorData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span> <span class="k">if</span> <span class="n">v</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">selectAll</span><span class="p">()</span>
+        <span class="n">editor</span><span class="o">.</span><span class="n">setFocus</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ItemDelegate.setModelData"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.setModelData">[docs]</a>    <span class="k">def</span> <span class="nf">setModelData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">editor</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="k">return</span>
+        <span class="n">source_path</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">source_path</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">common</span><span class="o">.</span><span class="n">is_collapsed</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">proxy_path</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">p</span>
+
+        <span class="c1"># Set the database value</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get_db</span><span class="p">(</span><span class="o">*</span><span class="n">source_path</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+        <span class="k">with</span> <span class="n">db</span><span class="o">.</span><span class="n">connection</span><span class="p">():</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="n">editor</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+
+        <span class="c1"># Set value to cached data</span>
+        <span class="n">source_index</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">mapToSource</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">source_index</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">model_data</span><span class="p">()</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">source_index</span><span class="o">.</span><span class="n">row</span><span class="p">()</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">]</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">text</span><span class="p">()</span></div>
+
 <div class="viewcode-block" id="ItemDelegate.paint"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint">[docs]</a>    <span class="k">def</span> <span class="nf">paint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Paint function.</span>
+        <span class="sd">&quot;&quot;&quot;Paints an item.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Abstract method must be implemented by subclass.&#39;</span><span class="p">)</span></div>
@@ -1296,12 +1348,16 @@
                 <span class="n">BackgroundRect</span><span class="p">:</span> <span class="n">background_rect</span><span class="p">,</span>
                 <span class="n">IndicatorRect</span><span class="p">:</span> <span class="n">indicator_rect</span><span class="p">,</span>
                 <span class="n">ThumbnailRect</span><span class="p">:</span> <span class="n">thumbnail_rect</span><span class="p">,</span>
-                <span class="n">ArchiveRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span><span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
+                <span class="n">ArchiveRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span>
+                    <span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
                 <span class="n">RevealRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span><span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
                 <span class="n">TodoRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span><span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
-                <span class="n">FavouriteRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span><span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
-                <span class="n">AddItemRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span><span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
-                <span class="n">PropertiesRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span><span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
+                <span class="n">FavouriteRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span>
+                    <span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
+                <span class="n">AddItemRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span>
+                    <span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
+                <span class="n">PropertiesRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span>
+                    <span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
                 <span class="n">InlineBackgroundRect</span><span class="p">:</span> <span class="n">inline_background_rect</span> <span class="k">if</span> <span class="n">count</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
                 <span class="n">DataRect</span><span class="p">:</span> <span class="n">data_rect</span>
             <span class="p">}</span>
@@ -1310,12 +1366,16 @@
                 <span class="n">BackgroundRect</span><span class="p">:</span> <span class="n">background_rect</span><span class="p">,</span>
                 <span class="n">IndicatorRect</span><span class="p">:</span> <span class="n">indicator_rect</span><span class="p">,</span>
                 <span class="n">ThumbnailRect</span><span class="p">:</span> <span class="n">thumbnail_rect</span><span class="p">,</span>
-                <span class="n">ArchiveRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span><span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
+                <span class="n">ArchiveRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span>
+                    <span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
                 <span class="n">RevealRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span><span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
                 <span class="n">TodoRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span><span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
-                <span class="n">AddItemRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span><span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
-                <span class="n">PropertiesRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span><span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
-                <span class="n">FavouriteRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span><span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
+                <span class="n">AddItemRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span>
+                    <span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
+                <span class="n">PropertiesRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span>
+                    <span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
+                <span class="n">FavouriteRect</span><span class="p">:</span> <span class="n">inline_icon_rects</span><span class="p">[</span><span class="nb">next</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="nb">next</span><span class="p">(</span>
+                    <span class="n">_n</span><span class="p">)</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
                 <span class="n">InlineBackgroundRect</span><span class="p">:</span> <span class="n">inline_background_rect</span> <span class="k">if</span> <span class="n">count</span> <span class="k">else</span> <span class="n">null_rect</span><span class="p">,</span>
                 <span class="n">DataRect</span><span class="p">:</span> <span class="n">data_rect</span>
             <span class="p">}</span>
@@ -1366,7 +1426,7 @@
         <span class="n">font</span><span class="p">,</span> <span class="n">metrics</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">font_db</span><span class="o">.</span><span class="n">bold_font</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_font_medium</span><span class="p">))</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
 
-        <span class="n">cursor_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
+        <span class="n">cursor_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
 
         <span class="n">args</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">rectangles</span><span class="p">,</span>
@@ -1518,12 +1578,14 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">paint_bookmark_name</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">paint_asset_name</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_indicator</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">paint_asset_name</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span>
+                                         <span class="n">offset</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_indicator</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">pp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">paint_file_name</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ItemDelegate.draw_file_description"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.draw_file_description">[docs]</a>    <span class="nd">@save_painter</span>
-    <span class="k">def</span> <span class="nf">draw_file_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">left_limit</span><span class="p">,</span> <span class="n">right_limit</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">large_mode</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">draw_file_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">left_limit</span><span class="p">,</span> <span class="n">right_limit</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span>
+                              <span class="n">large_mode</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Draws file items&#39; descriptions.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1689,7 +1751,7 @@
 
         <span class="k">if</span> <span class="n">index</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">():</span>
             <span class="k">return</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">description_editor_widget</span><span class="o">.</span><span class="n">isVisible</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">state</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">EditingState</span><span class="p">:</span>
             <span class="k">return</span>
 
         <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_dark_background</span><span class="p">))</span>
@@ -1697,6 +1759,7 @@
         <span class="n">rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="n">rectangles</span><span class="p">[</span><span class="n">DataRect</span><span class="p">])</span>
 
         <span class="n">o</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_indicator</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
+        <span class="n">painter</span><span class="o">.</span><span class="n">setOpacity</span><span class="p">(</span><span class="mf">0.9</span><span class="p">)</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">drawRoundedRect</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">o</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ItemDelegate.paint_thumbnail"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_thumbnail">[docs]</a>    <span class="nd">@save_painter</span>
@@ -2652,7 +2715,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">paint_asset_name</span><span class="p">(</span>
             <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="p">(</span><span class="n">bg_rect</span><span class="o">.</span><span class="n">right</span><span class="p">()</span> <span class="o">-</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">DataRect</span><span class="p">]</span><span class="o">.</span><span class="n">left</span><span class="p">()))</span></div>
 
-
 <div class="viewcode-block" id="ItemDelegate.paint_asset_name"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.ItemDelegate.paint_asset_name">[docs]</a>    <span class="nd">@save_painter</span>
     <span class="k">def</span> <span class="nf">paint_asset_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Paints name of the ``AssetWidget``&#39;s items.&quot;&quot;&quot;</span>
@@ -2741,7 +2803,8 @@
 
         <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_dark_green</span><span class="p">)</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">color</span> <span class="k">if</span> <span class="n">active</span> <span class="k">else</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_blue</span><span class="p">)</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_green</span><span class="p">)</span><span class="o">.</span><span class="n">darker</span><span class="p">(</span><span class="mi">150</span><span class="p">)</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">)</span> <span class="k">else</span> <span class="n">color</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_green</span><span class="p">)</span><span class="o">.</span><span class="n">darker</span><span class="p">(</span><span class="mi">150</span><span class="p">)</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span>
+            <span class="n">cursor_position</span><span class="p">)</span> <span class="k">else</span> <span class="n">color</span>
         <span class="n">color</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_separator</span><span class="p">)</span> <span class="k">if</span> <span class="n">archived</span> <span class="k">else</span> <span class="n">color</span>
 
         <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">):</span>
@@ -2811,8 +2874,8 @@
                 <span class="n">painter</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">_color</span><span class="p">)</span>
                 <span class="n">x</span> <span class="o">=</span> <span class="n">_r</span><span class="o">.</span><span class="n">x</span><span class="p">()</span>
                 <span class="n">y</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="n">rectangles</span><span class="p">[</span><span class="n">DataRect</span><span class="p">]</span><span class="o">.</span><span class="n">center</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">+</span>
-                    <span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">ascent</span><span class="p">()</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_separator</span><span class="p">)</span>
+                        <span class="n">rectangles</span><span class="p">[</span><span class="n">DataRect</span><span class="p">]</span><span class="o">.</span><span class="n">center</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">+</span>
+                        <span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">ascent</span><span class="p">()</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-</span> <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_separator</span><span class="p">)</span>
                 <span class="p">)</span>
                 <span class="n">draw_painter_path</span><span class="p">(</span><span class="n">painter</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
 
@@ -2969,29 +3032,84 @@
 
 
 <div class="viewcode-block" id="BookmarkItemViewDelegate"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.BookmarkItemViewDelegate">[docs]</a><span class="k">class</span> <span class="nc">BookmarkItemViewDelegate</span><span class="p">(</span><span class="n">ItemDelegate</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The delegate used to paint the bookmark items.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;The delegate used to render</span>
+<span class="sd">    :class:`bookmarks.items.bookmark_items.BookmarkItemView` items.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#: The item&#39;s default thumbnail image</span>
     <span class="n">fallback_thumb</span> <span class="o">=</span> <span class="s1">&#39;bookmark_item&#39;</span>
 
-<div class="viewcode-block" id="BookmarkItemViewDelegate.paint"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.BookmarkItemViewDelegate.paint">[docs]</a>    <span class="k">def</span> <span class="nf">paint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Defines how the ``BookmarkItemView`` should be painted.&quot;&quot;&quot;</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_paint_arguments</span><span class="p">(</span><span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+<div class="viewcode-block" id="BookmarkItemViewDelegate.setEditorData"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.BookmarkItemViewDelegate.setEditorData">[docs]</a>    <span class="k">def</span> <span class="nf">setEditorData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="n">source_path</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">source_path</span><span class="p">:</span>
+            <span class="k">return</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_default</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="n">draw_gradient_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_active</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_hover</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_thumbnail_shadow</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_name</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_archived</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_inline_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_inline_icons</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_thumbnail</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_thumbnail_drop_indicator</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_description_editor_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_selection_indicator</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_slack_status</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_shotgun_status</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">common</span><span class="o">.</span><span class="n">is_collapsed</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">proxy_path</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">p</span>
+
+        <span class="c1"># Get the database value</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get_db</span><span class="p">(</span><span class="o">*</span><span class="n">source_path</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+        <span class="k">with</span> <span class="n">db</span><span class="o">.</span><span class="n">connection</span><span class="p">():</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="n">database</span><span class="o">.</span><span class="n">BookmarkTable</span><span class="p">)</span>
+
+        <span class="n">editor</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BookmarkItemViewDelegate.setModelData"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.BookmarkItemViewDelegate.setModelData">[docs]</a>    <span class="k">def</span> <span class="nf">setModelData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">editor</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+        <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">editor</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="k">return</span>
+        <span class="n">source_path</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">source_path</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">p</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">common</span><span class="o">.</span><span class="n">is_collapsed</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">proxy_path</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">p</span>
+
+        <span class="c1"># Set the database value</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get_db</span><span class="p">(</span><span class="o">*</span><span class="n">source_path</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+        <span class="k">with</span> <span class="n">db</span><span class="o">.</span><span class="n">connection</span><span class="p">():</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="n">editor</span><span class="o">.</span><span class="n">text</span><span class="p">(),</span> <span class="n">table</span><span class="o">=</span><span class="n">database</span><span class="o">.</span><span class="n">BookmarkTable</span><span class="p">)</span>
+            <span class="n">bookmark_row_data</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_row</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">source</span><span class="p">(),</span> <span class="n">database</span><span class="o">.</span><span class="n">BookmarkTable</span><span class="p">)</span>
+
+        <span class="c1"># Set value to cached data</span>
+        <span class="n">source_index</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">mapToSource</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">source_index</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">model_data</span><span class="p">()</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">source_index</span><span class="o">.</span><span class="n">row</span><span class="p">()</span>
+
+        <span class="kn">from</span> <span class="nn">..threads</span> <span class="kn">import</span> <span class="n">workers</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">]</span> <span class="o">=</span> <span class="n">editor</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="n">common</span><span class="o">.</span><span class="n">DescriptionRole</span><span class="p">]</span> <span class="o">=</span> <span class="n">workers</span><span class="o">.</span><span class="n">get_bookmark_description</span><span class="p">(</span>
+            <span class="n">bookmark_row_data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BookmarkItemViewDelegate.paint"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.BookmarkItemViewDelegate.paint">[docs]</a>    <span class="k">def</span> <span class="nf">paint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Paints a :class:`bookmarks.items.bookmark_items.BookmarkItemView`</span>
+<span class="sd">        item.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_paint_arguments</span><span class="p">(</span><span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_default</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">draw_gradient_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_active</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_hover</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_thumbnail_shadow</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_name</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_archived</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_inline_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_inline_icons</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_thumbnail</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_thumbnail_drop_indicator</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_description_editor_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_selection_indicator</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_slack_status</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_shotgun_status</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="BookmarkItemViewDelegate.sizeHint"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.BookmarkItemViewDelegate.sizeHint">[docs]</a>    <span class="k">def</span> <span class="nf">sizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the item&#39;s size hint.</span>
@@ -3001,30 +3119,37 @@
 
 
 <div class="viewcode-block" id="AssetItemViewDelegate"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.AssetItemViewDelegate">[docs]</a><span class="k">class</span> <span class="nc">AssetItemViewDelegate</span><span class="p">(</span><span class="n">ItemDelegate</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Delegate used by the ``AssetItemView`` to display the collected assets.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;The delegate used to render</span>
+<span class="sd">    :class:`bookmarks.items.asset_items.AssetItemView` items.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#: The item&#39;s default thumbnail image</span>
     <span class="n">fallback_thumb</span> <span class="o">=</span> <span class="s1">&#39;asset_item&#39;</span>
 
 <div class="viewcode-block" id="AssetItemViewDelegate.paint"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.AssetItemViewDelegate.paint">[docs]</a>    <span class="k">def</span> <span class="nf">paint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Defines how the ``AssetItemView``&#39;s&#39; items should be painted.&quot;&quot;&quot;</span>
-        <span class="c1"># The index might still be populated...</span>
-        <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_paint_arguments</span><span class="p">(</span><span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="n">draw_gradient_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_active</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_hover</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_thumbnail_shadow</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_name</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_archived</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_description_editor_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_inline_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_inline_icons</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_thumbnail</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_thumbnail_drop_indicator</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_selection_indicator</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_shotgun_status</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_dcc_icon</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
+        <span class="sd">&quot;&quot;&quot;Paints a :class:`bookmarks.items.asset_items.AssetItemView`</span>
+<span class="sd">        item.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span>  <span class="c1"># The index might still be populated...</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_paint_arguments</span><span class="p">(</span><span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">draw_gradient_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_active</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_hover</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_thumbnail_shadow</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_name</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_archived</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_description_editor_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_inline_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_inline_icons</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_thumbnail</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_thumbnail_drop_indicator</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_selection_indicator</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_shotgun_status</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_dcc_icon</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="AssetItemViewDelegate.sizeHint"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.AssetItemViewDelegate.sizeHint">[docs]</a>    <span class="k">def</span> <span class="nf">sizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the item&#39;s size hint.</span>
@@ -3034,38 +3159,44 @@
 
 
 <div class="viewcode-block" id="FileItemViewDelegate"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.FileItemViewDelegate">[docs]</a><span class="k">class</span> <span class="nc">FileItemViewDelegate</span><span class="p">(</span><span class="n">ItemDelegate</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;QAbstractItemDelegate associated with ``FileItemView``.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;The delegate used to render</span>
+<span class="sd">    :class:`bookmarks.items.file_items.FileItemView` items.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#: The item&#39;s default thumbnail image</span>
     <span class="n">fallback_thumb</span> <span class="o">=</span> <span class="s1">&#39;file_item&#39;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">FileItemViewDelegate</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FileItemViewDelegate.paint"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.FileItemViewDelegate.paint">[docs]</a>    <span class="k">def</span> <span class="nf">paint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Defines how the ``FileItemView``&#39;s&#39; items should be painted.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Paints a :class:`bookmarks.items.file_items.FileItemView`</span>
+<span class="sd">        item.</span>
 
-        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_paint_arguments</span><span class="p">(</span><span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_paint_arguments</span><span class="p">(</span><span class="n">painter</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">):</span>
+                <span class="k">return</span>
+            <span class="n">p_role</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">p_role</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">paint_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+                <span class="n">draw_gradient_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">paint_active</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">paint_hover</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">paint_name</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">):</span>
-            <span class="k">return</span>
-        <span class="n">p_role</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">p_role</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">paint_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-            <span class="n">draw_gradient_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">paint_active</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">paint_hover</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">paint_name</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_thumbnail_shadow</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_thumbnail_shadow</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_archived</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_inline_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_inline_icons</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_selection_indicator</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_thumbnail</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_thumbnail_drop_indicator</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_description_editor_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_drag_source</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">paint_deleted</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_archived</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_inline_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_inline_icons</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_selection_indicator</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_thumbnail</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_thumbnail_drop_indicator</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_description_editor_background</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_drag_source</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">paint_deleted</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FileItemViewDelegate.sizeHint"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.FileItemViewDelegate.sizeHint">[docs]</a>    <span class="k">def</span> <span class="nf">sizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the item&#39;s size hint.</span>
@@ -3075,7 +3206,8 @@
 
 
 <div class="viewcode-block" id="FavouriteItemViewDelegate"><a class="viewcode-back" href="../../../modules/items/delegate.html#bookmarks.items.delegate.FavouriteItemViewDelegate">[docs]</a><span class="k">class</span> <span class="nc">FavouriteItemViewDelegate</span><span class="p">(</span><span class="n">FileItemViewDelegate</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Delegate used to paint favourite items.</span>
+    <span class="sd">&quot;&quot;&quot;The delegate used to render</span>
+<span class="sd">    :class:`bookmarks.items.favourite_items.FavouriteItemView` items.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">fallback_thumb</span> <span class="o">=</span> <span class="s1">&#39;favourite_item&#39;</span></div>

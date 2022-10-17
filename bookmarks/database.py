@@ -113,8 +113,12 @@ TABLES = {
         'url2': {
             'sql': 'TEXT',
             'type': str
-
         },
+        'progress': {
+            'sql': 'TEXT',
+            'type': dict
+        }
+
     },
     InfoTable: {
         IdColumn: {
@@ -388,6 +392,23 @@ def b64decode(v):
     return base64.b64decode(v).decode('utf-8')
 
 
+def int_key(x):
+    """Makes certain we convert int keys back to int values.
+
+    """
+
+    def _int(v):
+        try:
+            return int(v)
+        except:
+            return v
+
+    if isinstance(x, dict):
+        return {_int(k): v for k, v in x.items()}
+
+    return x
+
+
 def sleep():
     """Utility script used to sleep for a certain amount of time.
 
@@ -446,6 +467,7 @@ def load_json(value):
         b64decode(value.encode('utf-8')),
         parse_int=int,
         parse_float=float,
+        object_hook=int_key
     )
 
 
@@ -462,6 +484,7 @@ def convert_return_values(table, key, value):
         try:
             value = load_json(value)
         except Exception as e:
+            print(e)
             value = None
     elif _type is str:
         try:

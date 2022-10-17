@@ -647,26 +647,6 @@ class ItemModel(QtCore.QAbstractTableModel):
         if not all((p, k)) or t is None:
             return 0
         return common.data_count(p, k, t)
-    #
-    # def index(self, row, column, parent=QtCore.QModelIndex()):
-    #     """Index of the given row and column.
-    #
-    #     """
-    #     if column == 0:
-    #         p = self.source_path()
-    #         k = self.task()
-    #         t = self.data_type()
-    #
-    #         if not p or not all(p) or not k or t is None:
-    #             return QtCore.QModelIndex()
-    #
-    #         data = common.get_data(p, k, t)
-    #
-    #         if row not in data:
-    #             return QtCore.QModelIndex()
-    #
-    #         ptr = weakref.ref(data[row])
-    #         return self.createIndex(row, column, ptr=ptr)
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
         """Returns and item data associated with the given index.

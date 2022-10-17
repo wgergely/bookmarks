@@ -380,7 +380,7 @@ class ErrorBox(MessageBox):
     """Informative message box used for notifying the user of an error.
 
     """
-    primary_color = common.color(common.color_red2)
+    primary_color = common.color(common.color_dark_red)
     secondary_color = common.color(common.color_red)
     icon = 'close'
 

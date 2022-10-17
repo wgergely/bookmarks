@@ -1,3 +1,14 @@
+"""Task progress tracker for asset items.
+
+This module provides the basic definitions needed to implement task status tracking.
+The progress data is stored in the asset table under the 'progress' column.
+
+:attr:`STATES` defines the user selectable progress states.
+:attr:`STAGES` define the production steps we're able to set states for. Each asset item
+has their own STAGES data stored in the bookmark database, editable by user interactions
+via the :class:`ProgressDelegate`.
+
+"""
 import copy
 
 from PySide2 import QtWidgets, QtCore, QtGui
@@ -124,10 +135,17 @@ STAGES = {
 
 
 class ProgressDelegate(QtWidgets.QItemDelegate):
+    """The delegate used to display task progress information.
+
+    """
     def __init__(self, parent=None):
         super().__init__(parent)
 
     def paint(self, painter, option, index):
+        """Paints the extra columns of
+        :class:`~bookmarks.items.asset_items.AssetItemView`.
+
+        """
         model = index.model().sourceModel()
 
         p = model.source_path()
@@ -137,12 +155,12 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
         _data = common.get_data(p, k, t)
         data = _data[index.row()][common.AssetProgressRole][index.column() - 1]
 
-        right_edge = self.draw_background(painter, option, data)
-        self.draw_text(painter, option, data, right_edge)
-        self.draw_shadow(painter, option, index)
+        right_edge = self._draw_background(painter, option, data)
+        self._draw_text(painter, option, data, right_edge)
+        self._draw_shadow(painter, option, index)
 
     @delegate.save_painter
-    def draw_shadow(self, painter, option, index):
+    def _draw_shadow(self, painter, option, index):
         if index.column() != 1:
             return
 
@@ -159,7 +177,7 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
         painter.drawPixmap(rect, pixmap, pixmap.rect())
 
     @delegate.save_painter
-    def draw_background(self, painter, option, data):
+    def _draw_background(self, painter, option, data):
         selected = option.state & QtWidgets.QStyle.State_Selected
         hover = option.state & QtWidgets.QStyle.State_MouseOver
         rect = QtCore.QRect(option.rect)
@@ -207,7 +225,7 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
         return rect.right()
 
     @delegate.save_painter
-    def draw_text(self, painter, option, data, right_edge):
+    def _draw_text(self, painter, option, data, right_edge):
         hover = option.state & QtWidgets.QStyle.State_MouseOver
 
         text = STATES[data['value']]['name']
@@ -228,6 +246,9 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
         )
 
     def createEditor(self, parent, option, index):
+        """Creates a combobox editor used to change a state value.
+
+        """
         editor = QtWidgets.QComboBox(parent=parent)
         editor.setStyleSheet(
             f'border-radius:0px;'
@@ -247,6 +268,9 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
         return editor
 
     def setEditorData(self, editor, index):
+        """Loads the state values from the current index into the editor.
+
+        """
         model = index.model().sourceModel()
         p = model.source_path()
         k = model.task()
@@ -280,6 +304,9 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
         )
 
     def setModelData(self, editor, model, index):
+        """Saves the current state value to the bookmark database.
+
+        """
         model = index.model().sourceModel()
         p = model.source_path()
         k = model.task()
@@ -303,5 +330,8 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
             )
 
     def updateEditorGeometry(self, editor, option, index):
+        """Resizes the editor.
+
+        """
         super().updateEditorGeometry(editor, option, index)
         editor.setGeometry(option.rect)

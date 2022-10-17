@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="items.bookmark_items" href="bookmark_items.html" /><link rel="prev" title="items" href="../items.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>items.asset_items - Bookmarks 0.7.3 documentation</title>
+        <title>items.asset_items - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -135,7 +135,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -162,7 +162,7 @@
     <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -229,7 +229,6 @@
 <li class="toctree-l3"><a class="reference internal" href="models.html">items.models</a></li>
 <li class="toctree-l3"><a class="reference internal" href="task_items.html">items.task_items</a></li>
 <li class="toctree-l3"><a class="reference internal" href="views.html">items.views</a></li>
-<li class="toctree-l3"><a class="reference internal" href="widgets/description_editor.html">items.widgets.description_editor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="widgets/filter_editor.html">items.widgets.filter_editor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="widgets/image_viewer.html">items.widgets.image_viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="widgets/thumb_capture.html">items.widgets.thumb_capture</a></li>
@@ -257,6 +256,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../notes.html">notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../progress.html">progress</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../publish.html">publish</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../shortcuts.html">shortcuts</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../shotgun.html">shotgun</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -398,6 +398,12 @@ Used in conjunction with <a class="reference internal" href="#bookmarks.items.as
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel.columnCount" title="bookmarks.items.asset_items.AssetItemModel.columnCount"><code class="xref py py-obj docutils literal notranslate"><span class="pre">columnCount</span></code></a>(index)</p></td>
+<td><p>Number of columns the model has.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel.data" title="bookmarks.items.asset_items.AssetItemModel.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a>(index[, role])</p></td>
+<td><p>Returns and item data associated with the given index.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel.data_type" title="bookmarks.items.asset_items.AssetItemModel.data_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_type</span></code></a>()</p></td>
 <td><p>Model data type.</p></td>
 </tr>
@@ -406,6 +412,12 @@ Used in conjunction with <a class="reference internal" href="#bookmarks.items.as
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel.filter_setting_dict_key" title="bookmarks.items.asset_items.AssetItemModel.filter_setting_dict_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_setting_dict_key</span></code></a>()</p></td>
 <td><p>The custom dictionary key used to save filter settings to the user settings file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel.flags" title="bookmarks.items.asset_items.AssetItemModel.flags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flags</span></code></a>(index)</p></td>
+<td><p>Returns the item's flags.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel.headerData" title="bookmarks.items.asset_items.AssetItemModel.headerData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">headerData</span></code></a>(self, section, orientation[, role])</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel.init_data" title="bookmarks.items.asset_items.AssetItemModel.init_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_data</span></code></a>(**kwargs)</p></td>
 <td><p>Function wrapper.</p></td>
@@ -422,6 +434,18 @@ Used in conjunction with <a class="reference internal" href="#bookmarks.items.as
 </tbody>
 </table>
 </div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.asset_items.AssetItemModel.columnCount">
+<span class="sig-name descname"><span class="pre">columnCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/asset_items.html#AssetItemModel.columnCount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.asset_items.AssetItemModel.columnCount" title="Permalink to this definition">#</a></dt>
+<dd><p>Number of columns the model has.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.asset_items.AssetItemModel.data">
+<span class="sig-name descname"><span class="pre">data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">QtCore.Qt.DisplayRole</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/asset_items.html#AssetItemModel.data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.asset_items.AssetItemModel.data" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns and item data associated with the given index.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.items.asset_items.AssetItemModel.data_type">
 <span class="sig-name descname"><span class="pre">data_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/asset_items.html#AssetItemModel.data_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.asset_items.AssetItemModel.data_type" title="Permalink to this definition">#</a></dt>
@@ -440,6 +464,17 @@ Used in conjunction with <a class="reference internal" href="#bookmarks.items.as
 <dd><p>The custom dictionary key used to save filter settings to the user settings
 file.</p>
 </dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.asset_items.AssetItemModel.flags">
+<span class="sig-name descname"><span class="pre">flags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/asset_items.html#AssetItemModel.flags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.asset_items.AssetItemModel.flags" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the item’s flags.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.asset_items.AssetItemModel.headerData">
+<span class="sig-name descname"><span class="pre">headerData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.Qt.Orientation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PySide2.QtCore.Qt.ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../_modules/bookmarks/items/asset_items.html#AssetItemModel.headerData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.asset_items.AssetItemModel.headerData" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.items.asset_items.AssetItemModel.init_data">
@@ -495,9 +530,6 @@ file.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.Delegate" title="bookmarks.items.asset_items.AssetItemView.Delegate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Delegate</span></code></a></p></td>
 <td><p>alias of <a class="reference internal" href="delegate.html#bookmarks.items.delegate.AssetItemViewDelegate" title="bookmarks.items.delegate.AssetItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssetItemViewDelegate</span></code></a></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.SourceModel" title="bookmarks.items.asset_items.AssetItemView.SourceModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SourceModel</span></code></a></p></td>
-<td><p>alias of <a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel" title="bookmarks.items.asset_items.AssetItemModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssetItemModel</span></code></a></p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -505,19 +537,40 @@ file.</p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.add_item_action" title="bookmarks.items.asset_items.AssetItemView.add_item_action"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_item_action</span></code></a>(index)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.adapt_horizontal_header" title="bookmarks.items.asset_items.AssetItemView.adapt_horizontal_header"><code class="xref py py-obj docutils literal notranslate"><span class="pre">adapt_horizontal_header</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Slot connected to the resized signal is used to hide the progress columns when the window size is small.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.add_item_action" title="bookmarks.items.asset_items.AssetItemView.add_item_action"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_item_action</span></code></a>(index)</p></td>
 <td><p>Action to execute when the add item icon is clicked.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.edit_item_action" title="bookmarks.items.asset_items.AssetItemView.edit_item_action"><code class="xref py py-obj docutils literal notranslate"><span class="pre">edit_item_action</span></code></a>(index)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.edit_item_action" title="bookmarks.items.asset_items.AssetItemView.edit_item_action"><code class="xref py py-obj docutils literal notranslate"><span class="pre">edit_item_action</span></code></a>(index)</p></td>
 <td><p>Action to execute when the edit item icon is clicked.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.get_hint_string" title="bookmarks.items.asset_items.AssetItemView.get_hint_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hint_string</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.get_hint_string" title="bookmarks.items.asset_items.AssetItemView.get_hint_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hint_string</span></code></a>()</p></td>
 <td><p>Returns an informative hint text.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.inline_icons_count" title="bookmarks.items.asset_items.AssetItemView.inline_icons_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inline_icons_count</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.get_source_model" title="bookmarks.items.asset_items.AssetItemView.get_source_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_source_model</span></code></a>()</p></td>
+<td><p>Returns the model class associated with this view.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.init_model" title="bookmarks.items.asset_items.AssetItemView.init_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_model</span></code></a>(*args, **kwargs)</p></td>
+<td><p>The methods responsible for connecting the associated item model with the view.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.init_progress_columns" title="bookmarks.items.asset_items.AssetItemView.init_progress_columns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_progress_columns</span></code></a>()</p></td>
+<td><p>Tweaks the horizontal header.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.init_progress_hidden" title="bookmarks.items.asset_items.AssetItemView.init_progress_hidden"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_progress_hidden</span></code></a>()</p></td>
+<td><p>Restore the previous state of the inline icon buttons.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.inline_icons_count" title="bookmarks.items.asset_items.AssetItemView.inline_icons_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inline_icons_count</span></code></a>()</p></td>
 <td><p>Inline buttons count.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.showEvent" title="bookmarks.items.asset_items.AssetItemView.showEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showEvent</span></code></a>(event)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.mouseReleaseEvent" title="bookmarks.items.asset_items.AssetItemView.mouseReleaseEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mouseReleaseEvent</span></code></a>(event)</p></td>
+<td><p>Concludes <cite>InlineIconView</cite>'s multi-item toggle operation, and resets the associated variables.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.set_progress_hidden" title="bookmarks.items.asset_items.AssetItemView.set_progress_hidden"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_progress_hidden</span></code></a>(val)</p></td>
+<td><p>Sets the visibility of the progress tracker columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.showEvent" title="bookmarks.items.asset_items.AssetItemView.showEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showEvent</span></code></a>(event)</p></td>
 <td><p>Show event handler.</p></td>
 </tr>
 </tbody>
@@ -548,7 +601,7 @@ file.</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint</span></code>(painter, option, index)</p></td>
-<td><p>Defines how the <code class="docutils literal notranslate"><span class="pre">AssetItemView</span></code>'s' items should be painted.</p></td>
+<td><p>Paints a <a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView" title="bookmarks.items.asset_items.AssetItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.asset_items.AssetItemView</span></code></a> item.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sizeHint</span></code>(option, index)</p></td>
 <td><p>Returns the item's size hint.</p></td>
@@ -556,40 +609,23 @@ file.</p>
 </tbody>
 </table>
 </div>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="bookmarks.items.asset_items.AssetItemView.SourceModel">
-<span class="sig-name descname"><span class="pre">SourceModel</span></span><a class="headerlink" href="#bookmarks.items.asset_items.AssetItemView.SourceModel" title="Permalink to this definition">#</a></dt>
-<dd><p>alias of <a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel" title="bookmarks.items.asset_items.AssetItemModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssetItemModel</span></code></a>
-<strong>Methods:</strong></p>
+<p><strong>Attributes:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_type</span></code>()</p></td>
-<td><p>Model data type.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">default_row_size</span></code>()</p></td>
-<td><p>Returns the default item size.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_setting_dict_key</span></code>()</p></td>
-<td><p>The custom dictionary key used to save filter settings to the user settings file.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_data</span></code>(**kwargs)</p></td>
-<td><p>Function wrapper.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">item_generator</span></code>(path)</p></td>
-<td><p>Yields the asset items to be processed by <code class="xref py py-meth docutils literal notranslate"><span class="pre">init_data()</span></code>.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_active</span></code>()</p></td>
-<td><p>Saves the active item.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">source_path</span></code>()</p></td>
-<td><p>The model's parent folder path.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fallback_thumb</span></code></p></td>
+<td><p>The item's default thumbnail image</p></td>
 </tr>
 </tbody>
 </table>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.asset_items.AssetItemView.adapt_horizontal_header">
+<span class="sig-name descname"><span class="pre">adapt_horizontal_header</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/asset_items.html#AssetItemView.adapt_horizontal_header"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.asset_items.AssetItemView.adapt_horizontal_header" title="Permalink to this definition">#</a></dt>
+<dd><p>Slot connected to the resized signal is used to hide the progress columns when
+the window size is small.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -611,9 +647,49 @@ file.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.asset_items.AssetItemView.get_source_model">
+<span class="sig-name descname"><span class="pre">get_source_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/asset_items.html#AssetItemView.get_source_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.asset_items.AssetItemView.get_source_model" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the model class associated with this view.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.asset_items.AssetItemView.init_model">
+<span class="sig-name descname"><span class="pre">init_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/asset_items.html#AssetItemView.init_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.asset_items.AssetItemView.init_model" title="Permalink to this definition">#</a></dt>
+<dd><p>The methods responsible for connecting the associated item model with the view.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.asset_items.AssetItemView.init_progress_columns">
+<span class="sig-name descname"><span class="pre">init_progress_columns</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/asset_items.html#AssetItemView.init_progress_columns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.asset_items.AssetItemView.init_progress_columns" title="Permalink to this definition">#</a></dt>
+<dd><p>Tweaks the horizontal header.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.asset_items.AssetItemView.init_progress_hidden">
+<span class="sig-name descname"><span class="pre">init_progress_hidden</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/asset_items.html#AssetItemView.init_progress_hidden"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.asset_items.AssetItemView.init_progress_hidden" title="Permalink to this definition">#</a></dt>
+<dd><p>Restore the previous state of the inline icon buttons.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.items.asset_items.AssetItemView.inline_icons_count">
 <span class="sig-name descname"><span class="pre">inline_icons_count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/asset_items.html#AssetItemView.inline_icons_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.asset_items.AssetItemView.inline_icons_count" title="Permalink to this definition">#</a></dt>
 <dd><p>Inline buttons count.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.asset_items.AssetItemView.mouseReleaseEvent">
+<span class="sig-name descname"><span class="pre">mouseReleaseEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/asset_items.html#AssetItemView.mouseReleaseEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.asset_items.AssetItemView.mouseReleaseEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Concludes <cite>InlineIconView</cite>’s multi-item toggle operation, and
+resets the associated variables.</p>
+<p>The inline icon buttons are also triggered here. We’re using the
+delegate’s <code class="docutils literal notranslate"><span class="pre">get_rectangles</span></code> function to determine which icon was
+clicked.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.asset_items.AssetItemView.set_progress_hidden">
+<span class="sig-name descname"><span class="pre">set_progress_hidden</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/asset_items.html#AssetItemView.set_progress_hidden"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.asset_items.AssetItemView.set_progress_hidden" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets the visibility of the progress tracker columns.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -725,9 +801,13 @@ file.</p>
             <ul>
 <li><a class="reference internal" href="#">items.asset_items</a><ul>
 <li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel"><code class="docutils literal notranslate"><span class="pre">AssetItemModel</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel.columnCount"><code class="docutils literal notranslate"><span class="pre">AssetItemModel.columnCount()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel.data"><code class="docutils literal notranslate"><span class="pre">AssetItemModel.data()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel.data_type"><code class="docutils literal notranslate"><span class="pre">AssetItemModel.data_type()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel.default_row_size"><code class="docutils literal notranslate"><span class="pre">AssetItemModel.default_row_size()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel.filter_setting_dict_key"><code class="docutils literal notranslate"><span class="pre">AssetItemModel.filter_setting_dict_key()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel.flags"><code class="docutils literal notranslate"><span class="pre">AssetItemModel.flags()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel.headerData"><code class="docutils literal notranslate"><span class="pre">AssetItemModel.headerData()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel.init_data"><code class="docutils literal notranslate"><span class="pre">AssetItemModel.init_data()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel.item_generator"><code class="docutils literal notranslate"><span class="pre">AssetItemModel.item_generator()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemModel.save_active"><code class="docutils literal notranslate"><span class="pre">AssetItemModel.save_active()</span></code></a></li>
@@ -737,11 +817,17 @@ file.</p>
 <li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView"><code class="docutils literal notranslate"><span class="pre">AssetItemView</span></code></a><ul>
 <li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.ContextMenu"><code class="docutils literal notranslate"><span class="pre">AssetItemView.ContextMenu</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.Delegate"><code class="docutils literal notranslate"><span class="pre">AssetItemView.Delegate</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.SourceModel"><code class="docutils literal notranslate"><span class="pre">AssetItemView.SourceModel</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.adapt_horizontal_header"><code class="docutils literal notranslate"><span class="pre">AssetItemView.adapt_horizontal_header()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.add_item_action"><code class="docutils literal notranslate"><span class="pre">AssetItemView.add_item_action()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.edit_item_action"><code class="docutils literal notranslate"><span class="pre">AssetItemView.edit_item_action()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.get_hint_string"><code class="docutils literal notranslate"><span class="pre">AssetItemView.get_hint_string()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.get_source_model"><code class="docutils literal notranslate"><span class="pre">AssetItemView.get_source_model()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.init_model"><code class="docutils literal notranslate"><span class="pre">AssetItemView.init_model()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.init_progress_columns"><code class="docutils literal notranslate"><span class="pre">AssetItemView.init_progress_columns()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.init_progress_hidden"><code class="docutils literal notranslate"><span class="pre">AssetItemView.init_progress_hidden()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.inline_icons_count"><code class="docutils literal notranslate"><span class="pre">AssetItemView.inline_icons_count()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.mouseReleaseEvent"><code class="docutils literal notranslate"><span class="pre">AssetItemView.mouseReleaseEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.set_progress_hidden"><code class="docutils literal notranslate"><span class="pre">AssetItemView.set_progress_hidden()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.asset_items.AssetItemView.showEvent"><code class="docutils literal notranslate"><span class="pre">AssetItemView.showEvent()</span></code></a></li>
 </ul>
 </li>

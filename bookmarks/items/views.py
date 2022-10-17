@@ -214,19 +214,22 @@ class FilterOnOverlayWidget(ProgressWidget):
 
 
 class BaseItemView(QtWidgets.QTableView):
-    """The base view of all subsequent bookmark, asset and files item views.
+    """The base view of all subsequent item views.
 
     """
+    #: Emitted when the user shift+right-clicks on the view. Use this to show DCC
+    #: specific context menus.
     customContextMenuRequested = QtCore.Signal(
         QtCore.QModelIndex, QtCore.QObject)
+    #: Called when the user requests model data load by pressing the ESC key.
     interruptRequested = QtCore.Signal()
 
+    #: Signals window size change
     resized = QtCore.Signal(QtCore.QRect)
-    SourceModel = NotImplementedError
 
+    ThumbnailContextMenu = ThumbnailsContextMenu
     Delegate = NotImplementedError
     ContextMenu = NotImplementedError
-    ThumbnailContextMenu = ThumbnailsContextMenu
 
     def __init__(self, icon='icon_bw', parent=None):
         super().__init__(parent=parent)
@@ -301,7 +304,7 @@ class BaseItemView(QtWidgets.QTableView):
         self.installEventFilter(self)
 
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
-        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
+        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
 
         self.setItemDelegate(self.Delegate(parent=self))
@@ -313,6 +316,12 @@ class BaseItemView(QtWidgets.QTableView):
 
         self.delayed_save_selection_timer.timeout.connect(self.save_selection)
         self.delayed_restore_selection_timer.timeout.connect(self.restore_selection)
+
+    def get_source_model(self):
+        """Returns the model class associated with this view.
+
+        """
+        raise NotImplementedError('Abstract method must be implemented by subclass.')
 
     @common.error
     @common.debug
@@ -350,7 +359,7 @@ class BaseItemView(QtWidgets.QTableView):
         and the view to communicate are made here.
 
         """
-        model = self.SourceModel(parent=self)
+        model = self.get_source_model()
         proxy = models.FilterProxyModel(parent=self)
         proxy.setSourceModel(model)
         self.setModel(proxy)
@@ -1086,7 +1095,7 @@ class BaseItemView(QtWidgets.QTableView):
         """
         self._thumbnail_drop = (-1, False)
         pos = common.cursor.pos()
-        pos = self.mapFromGlobal(pos)
+        pos = self.viewport().mapFromGlobal(pos)
 
         index = self.indexAt(pos)
         row = index.row()
@@ -1119,7 +1128,7 @@ class BaseItemView(QtWidgets.QTableView):
         self._thumbnail_drop = (-1, False)
 
         pos = common.cursor.pos()
-        pos = self.mapFromGlobal(pos)
+        pos = self.viewport().mapFromGlobal(pos)
 
         index = self.indexAt(pos)
         if not index.isValid():
@@ -1365,7 +1374,7 @@ class BaseItemView(QtWidgets.QTableView):
         if not isinstance(event, QtGui.QMouseEvent):
             return
 
-        cursor_position = self.mapFromGlobal(common.cursor.pos())
+        cursor_position = self.viewport().mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)
         if not index.isValid():
             self.selectionModel().setCurrentIndex(
@@ -1385,7 +1394,7 @@ class BaseItemView(QtWidgets.QTableView):
         if not isinstance(event, QtGui.QMouseEvent):
             return
 
-        cursor_position = self.mapFromGlobal(common.cursor.pos())
+        cursor_position = self.viewport().mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)
         if not index.isValid():
             return
@@ -1461,7 +1470,7 @@ class InlineIconView(BaseItemView):
         items containing the clicked rectangle's text content.
 
         """
-        cursor_position = self.mapFromGlobal(common.cursor.pos())
+        cursor_position = self.viewport().mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)
 
         if not index.isValid():
@@ -1483,7 +1492,7 @@ class InlineIconView(BaseItemView):
         if not clickable_rectangles:
             return
 
-        cursor_position = self.mapFromGlobal(common.cursor.pos())
+        cursor_position = self.viewport().mapFromGlobal(common.cursor.pos())
 
         for item in clickable_rectangles:
             if not item:
@@ -1545,7 +1554,7 @@ class InlineIconView(BaseItemView):
             self.reset_multi_toggle()
             return
 
-        cursor_position = self.mapFromGlobal(common.cursor.pos())
+        cursor_position = self.viewport().mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)
 
         if index.column() == 0:
@@ -1642,7 +1651,7 @@ class InlineIconView(BaseItemView):
 
             # Responding the click-events based on the position:
             rectangles = self.itemDelegate().get_rectangles(index)
-            cursor_position = self.mapFromGlobal(common.cursor.pos())
+            cursor_position = self.viewport().mapFromGlobal(common.cursor.pos())
 
             self.reset_multi_toggle()
 
@@ -1708,7 +1717,7 @@ class InlineIconView(BaseItemView):
 
         if not common.cursor:
             return
-        cursor_position = self.mapFromGlobal(common.cursor.pos())
+        cursor_position = self.viewport().mapFromGlobal(common.cursor.pos())
 
         index = self.indexAt(cursor_position)
         if not index.isValid():

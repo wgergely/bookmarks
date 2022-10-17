@@ -300,11 +300,13 @@ class BookmarkItemView(views.ThreadedItemView):
     See :class:`BookmarkItemModel`.
 
     """
-    SourceModel = BookmarkItemModel
     Delegate = delegate.BookmarkItemViewDelegate
     ContextMenu = BookmarkItemViewContextMenu
 
     queues = (threads.BookmarkInfo, threads.BookmarkThumbnail)
+
+    def get_source_model(self):
+        return BookmarkItemModel(parent=self)
 
     def __init__(self, parent=None):
         super().__init__(

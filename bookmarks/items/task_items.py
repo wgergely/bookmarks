@@ -399,7 +399,6 @@ class TaskItemView(views.ThreadedItemView):
     """The view responsible for displaying the available data-keys.
 
     """
-    SourceModel = TaskItemModel
     Delegate = TaskItemViewDelegate
     ContextMenu = TaskItemContextMenu
 
@@ -416,6 +415,9 @@ class TaskItemView(views.ThreadedItemView):
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
 
         self.clicked.connect(self.item_clicked)
+
+    def get_source_model(self):
+        return TaskItemModel(parent=self)
 
     @QtCore.Slot(QtCore.QModelIndex)
     def item_clicked(self, index):

@@ -325,7 +325,7 @@ class BaseItemView(QtWidgets.QTableView):
 
     @common.error
     @common.debug
-    def init_buttons_state(self):
+    def init_buttons_hidden(self):
         """Restore the previous state of the inline icon buttons.
 
         """
@@ -364,7 +364,7 @@ class BaseItemView(QtWidgets.QTableView):
         proxy.setSourceModel(model)
         self.setModel(proxy)
 
-        self.init_buttons_state()
+        self.init_buttons_hidden()
         model.init_sort_values()
         model.init_row_size()
         self.verticalHeader().setDefaultSectionSize(int(model.row_size.height()))
@@ -373,7 +373,7 @@ class BaseItemView(QtWidgets.QTableView):
         model.modelReset.connect(model.init_sort_values)
         model.modelReset.connect(proxy.init_filter_values)
         model.modelReset.connect(model.init_row_size)
-        model.modelReset.connect(self.init_buttons_state)
+        model.modelReset.connect(self.init_buttons_hidden)
         model.modelReset.connect(self.reset_multi_toggle)
         model.modelReset.connect(
             lambda: self.delayed_layout_timer.start(self.delayed_layout_timer.interval())

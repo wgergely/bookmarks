@@ -246,6 +246,11 @@ class BaseItemView(QtWidgets.QTableView):
         self.viewport().setAcceptDrops(True)
         self.setDragDropMode(QtWidgets.QAbstractItemView.DropOnly)
 
+        self.setEditTriggers(
+            QtWidgets.QAbstractItemView.DoubleClicked |
+            QtWidgets.QAbstractItemView.EditKeyPressed
+        )
+
         self.delayed_layout_timer = common.Timer(parent=self)
         self.delayed_layout_timer.setObjectName('DelayedLayoutTimer')
         self.delayed_layout_timer.setSingleShot(True)
@@ -809,10 +814,14 @@ class BaseItemView(QtWidgets.QTableView):
         if index.column() == 0:
             self.edit(index)
 
-    def action_on_enter_key(self):
+    def key_enter(self):
         """Custom key action
         
         """
+        if self.state() == QtWidgets.QAbstractItemView.EditingState:
+            self.key_down()
+            self.key_up()
+            return
         index = common.get_selected_index(self)
         if not index.isValid():
             return
@@ -1181,30 +1190,36 @@ class BaseItemView(QtWidgets.QTableView):
             self.timer.start()
 
             if event.key() == QtCore.Qt.Key_Escape:
+                if self.state() == QtWidgets.QAbstractItemView.EditingState:
+                    self.key_down()
+                    self.key_up()
+                    return
+
                 self.interruptRequested.emit()
+
+                if self.selectionModel().hasSelection():
+                    self.selectionModel().setCurrentIndex(
+                        QtCore.QModelIndex(), QtCore.QItemSelectionModel.ClearAndSelect
+                    )
                 return
             if event.key() == QtCore.Qt.Key_Space:
                 self.key_space()
                 self.delay_save_selection()
                 return
-            if event.key() == QtCore.Qt.Key_Escape:
-                self.selectionModel().setCurrentIndex(
-                    QtCore.QModelIndex(), QtCore.QItemSelectionModel.ClearAndSelect)
-                return
-            elif event.key() == QtCore.Qt.Key_Down:
+            if event.key() == QtCore.Qt.Key_Down:
                 self.key_down()
                 self.delay_save_selection()
                 return
-            elif event.key() == QtCore.Qt.Key_Up:
+            if event.key() == QtCore.Qt.Key_Up:
                 self.key_up()
                 self.delay_save_selection()
                 return
-            elif (event.key() == QtCore.Qt.Key_Return) or (
+            if (event.key() == QtCore.Qt.Key_Return) or (
                     event.key() == QtCore.Qt.Key_Enter):
-                self.action_on_enter_key()
+                self.key_enter()
                 self.delay_save_selection()
                 return
-            elif event.key() == QtCore.Qt.Key_Tab:
+            if event.key() == QtCore.Qt.Key_Tab:
                 if not self.state() == QtWidgets.QAbstractItemView.EditingState:
                     self.key_tab()
                     self.delay_save_selection()
@@ -1214,7 +1229,7 @@ class BaseItemView(QtWidgets.QTableView):
                     self.key_tab()
                     self.delay_save_selection()
                     return
-            elif event.key() == QtCore.Qt.Key_Backtab:
+            if event.key() == QtCore.Qt.Key_Backtab:
                 if not self.state() == QtWidgets.QAbstractItemView.EditingState:
                     self.key_tab()
                     self.delay_save_selection()
@@ -1224,19 +1239,19 @@ class BaseItemView(QtWidgets.QTableView):
                     self.key_tab()
                     self.delay_save_selection()
                     return
-            elif event.key() == QtCore.Qt.Key_PageDown:
+            if event.key() == QtCore.Qt.Key_PageDown:
                 super().keyPressEvent(event)
                 self.delay_save_selection()
                 return
-            elif event.key() == QtCore.Qt.Key_PageUp:
+            if event.key() == QtCore.Qt.Key_PageUp:
                 super().keyPressEvent(event)
                 self.delay_save_selection()
                 return
-            elif event.key() == QtCore.Qt.Key_Home:
+            if event.key() == QtCore.Qt.Key_Home:
                 super().keyPressEvent(event)
                 self.delay_save_selection()
                 return
-            elif event.key() == QtCore.Qt.Key_End:
+            if event.key() == QtCore.Qt.Key_End:
                 super().keyPressEvent(event)
                 self.delay_save_selection()
                 return

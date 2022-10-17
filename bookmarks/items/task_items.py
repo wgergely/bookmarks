@@ -434,7 +434,7 @@ class TaskItemView(views.ThreadedItemView):
             )
         )
 
-    def action_on_enter_key(self):
+    def key_enter(self):
         """Custom key action.
 
         """

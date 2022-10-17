@@ -19,13 +19,11 @@ from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import delegate
 from . import models
-from .widgets import description_editor
 from .widgets import filter_editor
 from .. import actions
 from .. import common
 from .. import contextmenu
 from .. import database
-from .. import images
 from .. import ui
 from ..threads import threads
 
@@ -215,7 +213,7 @@ class FilterOnOverlayWidget(ProgressWidget):
         self.repaint()
 
 
-class BaseItemView(QtWidgets.QListView):
+class BaseItemView(QtWidgets.QTableView):
     """The base view of all subsequent bookmark, asset and files item views.
 
     """
@@ -238,6 +236,11 @@ class BaseItemView(QtWidgets.QListView):
             'proxy_rows': []
         }
 
+        self.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
+        self.verticalHeader().setHidden(True)
+        self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
+        self.horizontalHeader().setHidden(True)
+
         self.setDragDropOverwriteMode(False)
         self.setDropIndicatorShown(True)
         self.viewport().setAcceptDrops(True)
@@ -259,12 +262,8 @@ class BaseItemView(QtWidgets.QListView):
         self.progress_indicator_widget.setHidden(True)
 
         self.filter_indicator_widget = FilterOnOverlayWidget(parent=self)
-        self.filter_editor = filter_editor.FilterEditor(parent=self)
+        self.filter_editor = filter_editor.TextFilterEditor(parent=self)
         self.filter_editor.setHidden(True)
-
-        self.description_editor_widget = description_editor.DescriptionEditorWidget(
-            parent=self)
-        self.description_editor_widget.setHidden(True)
 
         # Keyboard search timer and placeholder string.
         self.timer = common.Timer(parent=self)
@@ -281,9 +280,10 @@ class BaseItemView(QtWidgets.QListView):
         self.delayed_restore_selection_timer.setInterval(10)
         self.delayed_restore_selection_timer.setSingleShot(True)
 
-        self.setResizeMode(QtWidgets.QListView.Adjust)
         self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
-        self.setUniformItemSizes(True)
+        self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+
+        self.setShowGrid(False)
 
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
@@ -292,8 +292,6 @@ class BaseItemView(QtWidgets.QListView):
         self.setMouseTracking(True)
 
         self.setWordWrap(False)
-        self.setLayoutMode(QtWidgets.QListView.Batched)
-        self.setBatchSize(100)
 
         self.installEventFilter(self)
 
@@ -355,6 +353,7 @@ class BaseItemView(QtWidgets.QListView):
         self.init_buttons_state()
         model.init_sort_values()
         model.init_row_size()
+        self.verticalHeader().setDefaultSectionSize(int(model.row_size.height()))
         proxy.init_filter_values()
 
         model.modelReset.connect(model.init_sort_values)
@@ -369,6 +368,7 @@ class BaseItemView(QtWidgets.QListView):
         self.interruptRequested.connect(model.set_interrupt_requested)
 
         self.filter_editor.finished.connect(proxy.set_filter_text)
+
 
         model.modelReset.connect(self.delay_restore_selection)
         proxy.invalidated.connect(self.delay_restore_selection)
@@ -729,7 +729,6 @@ class BaseItemView(QtWidgets.QListView):
         """Custom key action.
         
         """
-        self.description_editor_widget.hide()
         actions.preview_thumbnail()
 
     def key_down(self):
@@ -739,7 +738,6 @@ class BaseItemView(QtWidgets.QListView):
         item in the list, we'll jump to the beginning, and vice-versa.
 
         """
-        self.description_editor_widget.hide()
         sel = self.selectionModel()
         current_index = sel.currentIndex()
         first_index = self.model().index(0, 0)
@@ -775,7 +773,6 @@ class BaseItemView(QtWidgets.QListView):
         item in the list, we'll jump to the beginning, and vice-versa.
 
         """
-        self.description_editor_widget.hide()
         sel = self.selectionModel()
         current_index = sel.currentIndex()
         first_index = self.model().index(0, 0)
@@ -806,7 +803,11 @@ class BaseItemView(QtWidgets.QListView):
         """Custom key action
         
         """
-        self.description_editor_widget.show()
+        if not self.selectionModel().hasSelection():
+            return
+        index = next(f for f in self.selectionModel().selectedIndexes())
+        if index.column() == 0:
+            self.edit(index)
 
     def action_on_enter_key(self):
         """Custom key action
@@ -959,9 +960,7 @@ class BaseItemView(QtWidgets.QListView):
         row = index.row() if index.isValid() else -1
 
         # Update the layout
-        # self.scheduleDelayedItemsLayout()
         self.save_visible_rows()
-        # self.repaint_visible_rows()
 
         # Restore the selection
         if row >= 0:
@@ -986,6 +985,8 @@ class BaseItemView(QtWidgets.QListView):
 
         model.row_size.setHeight(int(v))
         model.set_filter_setting('filters/row_heights', int(v))
+
+        self.verticalHeader().setDefaultSectionSize(int(v))
 
         # Notify the delegate of the new row size
         for idx in range(proxy.rowCount()):
@@ -1204,7 +1205,7 @@ class BaseItemView(QtWidgets.QListView):
                 self.delay_save_selection()
                 return
             elif event.key() == QtCore.Qt.Key_Tab:
-                if not self.description_editor_widget.isVisible():
+                if not self.state() == QtWidgets.QAbstractItemView.EditingState:
                     self.key_tab()
                     self.delay_save_selection()
                     return
@@ -1214,7 +1215,7 @@ class BaseItemView(QtWidgets.QListView):
                     self.delay_save_selection()
                     return
             elif event.key() == QtCore.Qt.Key_Backtab:
-                if not self.description_editor_widget.isVisible():
+                if not self.state() == QtWidgets.QAbstractItemView.EditingState:
                     self.key_tab()
                     self.delay_save_selection()
                     return
@@ -1343,7 +1344,9 @@ class BaseItemView(QtWidgets.QListView):
         widget.exec_()
 
     def mousePressEvent(self, event):
-        """Deselecting item when the index is invalid."""
+        """Deselect the current index when clicked on an empty space.
+
+        """
         if not isinstance(event, QtGui.QMouseEvent):
             return
 
@@ -1374,31 +1377,27 @@ class BaseItemView(QtWidgets.QListView):
         if index.flags() & common.MarkedAsArchived:
             return
 
-        rectangles = self.itemDelegate().get_rectangles(index)
+        if index.column() == 0:
+            rectangles = self.itemDelegate().get_rectangles(index)
 
-        _rect = self.visualRect(index)
-        rect = delegate.get_description_rectangle(index, _rect, self.buttons_hidden())
+            _rect = self.visualRect(index)
+            rect = delegate.get_description_rectangle(index, _rect, self.buttons_hidden())
 
-        if rect and rect.contains(cursor_position):
-            if len(index.data(common.ParentPathRole)) == 3:
-                actions.edit_bookmark(
-                    server=index.data(common.ParentPathRole)[0],
-                    job=index.data(common.ParentPathRole)[1],
-                    root=index.data(common.ParentPathRole)[2],
-                )
+            if rect and rect.contains(cursor_position):
+                self.edit(index)
                 return
-            self.description_editor_widget.show()
-            return
 
-        if rectangles[delegate.ThumbnailRect].contains(cursor_position):
-            actions.pick_thumbnail_from_file()
-            return
-
-        if rectangles[delegate.DataRect].contains(cursor_position):
-            index = common.get_selected_index(self)
-            if not index.isValid():
+            if rectangles[delegate.ThumbnailRect].contains(cursor_position):
+                actions.pick_thumbnail_from_file()
                 return
-            self.activate(index)
+
+            if rectangles[delegate.DataRect].contains(cursor_position):
+                index = common.get_selected_index(self)
+                if not index.isValid():
+                    return
+                self.activate(index)
+        else:
+            super().mouseDoubleClickEvent(event)
 
 
 class InlineIconView(BaseItemView):
@@ -1453,6 +1452,8 @@ class InlineIconView(BaseItemView):
         if not index.isValid():
             return
         if not index.flags() & QtCore.Qt.ItemIsEnabled:
+            return
+        if not index.column() == 0:
             return
 
         # Get pressed keyboard modifiers
@@ -1532,37 +1533,38 @@ class InlineIconView(BaseItemView):
         cursor_position = self.mapFromGlobal(common.cursor.pos())
         index = self.indexAt(cursor_position)
 
-        if not index.isValid() or not index.flags() & QtCore.Qt.ItemIsEnabled:
-            super(InlineIconView, self).mousePressEvent(event)
-            self._clicked_rect = QtCore.QRect()
+        if index.column() == 0:
+            if not index.isValid() or not index.flags() & QtCore.Qt.ItemIsEnabled:
+                super(InlineIconView, self).mousePressEvent(event)
+                self._clicked_rect = QtCore.QRect()
+                self.reset_multi_toggle()
+                return
+
             self.reset_multi_toggle()
-            return
 
-        self.reset_multi_toggle()
+            rectangles = self.itemDelegate().get_rectangles(index)
 
-        rectangles = self.itemDelegate().get_rectangles(index)
-        
-        self._clicked_rect = next(
-            (rectangles[f] for f in (
-                delegate.AddItemRect,
-                delegate.TodoRect,
-                delegate.RevealRect,
-                delegate.PropertiesRect,
-                delegate.ArchiveRect,
-                delegate.FavouriteRect,
-            ) if rectangles[f].contains(cursor_position)),
-            QtCore.QRect()
-        )
+            self._clicked_rect = next(
+                (rectangles[f] for f in (
+                    delegate.AddItemRect,
+                    delegate.TodoRect,
+                    delegate.RevealRect,
+                    delegate.PropertiesRect,
+                    delegate.ArchiveRect,
+                    delegate.FavouriteRect,
+                ) if rectangles[f].contains(cursor_position)),
+                QtCore.QRect()
+            )
 
-        if rectangles[delegate.FavouriteRect].contains(cursor_position):
-            self.multi_toggle_pos = QtCore.QPoint(0, cursor_position.y())
-            self.multi_toggle_state = not index.flags() & common.MarkedAsFavourite
-            self.multi_toggle_flag = delegate.FavouriteRect
+            if rectangles[delegate.FavouriteRect].contains(cursor_position):
+                self.multi_toggle_pos = QtCore.QPoint(0, cursor_position.y())
+                self.multi_toggle_state = not index.flags() & common.MarkedAsFavourite
+                self.multi_toggle_flag = delegate.FavouriteRect
 
-        if rectangles[delegate.ArchiveRect].contains(cursor_position):
-            self.multi_toggle_pos = cursor_position
-            self.multi_toggle_state = not index.flags() & common.MarkedAsArchived
-            self.multi_toggle_flag = delegate.ArchiveRect
+            if rectangles[delegate.ArchiveRect].contains(cursor_position):
+                self.multi_toggle_pos = cursor_position
+                self.multi_toggle_state = not index.flags() & common.MarkedAsArchived
+                self.multi_toggle_flag = delegate.ArchiveRect
 
         super(InlineIconView, self).mousePressEvent(event)
 
@@ -1600,65 +1602,69 @@ class InlineIconView(BaseItemView):
 
         index = self.indexAt(event.pos())
 
-        if not index.isValid() or not index.data(common.FlagsRole):
-            return
-        archived = index.data(common.FlagsRole) & common.MarkedAsArchived
-
-        # Let's handle the clickable rectangle event first
-        if not archived:
-            self.clickable_rectangle_event(event)
-
         if not index.isValid():
-            self.reset_multi_toggle()
-            super(InlineIconView, self).mouseReleaseEvent(event)
             return
 
-        if self.multi_toggle_items:
+        if index.column() == 0:
+            if not index.data(common.FlagsRole):
+                return
+            archived = index.data(common.FlagsRole) & common.MarkedAsArchived
+
+            # Let's handle the clickable rectangle event first
+            if not archived:
+                self.clickable_rectangle_event(event)
+
+            if not index.isValid():
+                self.reset_multi_toggle()
+                super(InlineIconView, self).mouseReleaseEvent(event)
+                return
+
+            if self.multi_toggle_items:
+                self.reset_multi_toggle()
+                super(InlineIconView, self).mouseReleaseEvent(event)
+                self.model().invalidateFilter()
+                return
+
+            # Responding the click-events based on the position:
+            rectangles = self.itemDelegate().get_rectangles(index)
+            cursor_position = self.mapFromGlobal(common.cursor.pos())
+
             self.reset_multi_toggle()
-            super(InlineIconView, self).mouseReleaseEvent(event)
-            self.model().invalidateFilter()
-            return
 
-        # Responding the click-events based on the position:
-        rectangles = self.itemDelegate().get_rectangles(index)
-        cursor_position = self.mapFromGlobal(common.cursor.pos())
+            def _check_rect(f):
+                r = rectangles[f]
+                p = cursor_position
+                return r.contains(p) and r == self._clicked_rect
 
-        self.reset_multi_toggle()
+            if _check_rect(delegate.FavouriteRect) and not archived:
+                actions.toggle_favourite()
+                if not self.model().filter_flag(common.MarkedAsFavourite):
+                    self.model().invalidateFilter()
 
-        def _check_rect(f):
-            r = rectangles[f]
-            p = cursor_position
-            return r.contains(p) and r == self._clicked_rect
+            if _check_rect(delegate.ArchiveRect):
+                actions.toggle_archived()
+                if not self.model().filter_flag(common.MarkedAsArchived):
+                    self.model().invalidateFilter()
 
-        if _check_rect(delegate.FavouriteRect) and not archived:
-            actions.toggle_favourite()
-            if not self.model().filter_flag(common.MarkedAsFavourite):
-                self.model().invalidateFilter()
+            if _check_rect(delegate.RevealRect) and not archived:
+                # Reveal the job folder if any of the modifiers are pressed
+                if any((alt_modifier, shift_modifier, control_modifier)):
+                    pp = index.data(common.ParentPathRole)
+                    s = f'{pp[0]}/{pp[1]}'
+                    actions.reveal(s)
+                else:
+                    actions.reveal(index)
 
-        if _check_rect(delegate.ArchiveRect):
-            actions.toggle_archived()
-            if not self.model().filter_flag(common.MarkedAsArchived):
-                self.model().invalidateFilter()
+            if _check_rect(delegate.TodoRect) and not archived:
+                actions.show_todos()
 
-        if _check_rect(delegate.RevealRect) and not archived:
-            # Reveal the job folder if any of the modifiers are pressed
-            if any((alt_modifier, shift_modifier, control_modifier)):
-                pp = index.data(common.ParentPathRole)
-                s = f'{pp[0]}/{pp[1]}'
-                actions.reveal(s)
-            else:
-                actions.reveal(index)
+            if _check_rect(delegate.AddItemRect) and not archived:
+                self.add_item_action(index)
 
-        if _check_rect(delegate.TodoRect) and not archived:
-            actions.show_todos()
+            if _check_rect(delegate.PropertiesRect) and not archived:
+                self.edit_item_action(index)
 
-        if _check_rect(delegate.AddItemRect) and not archived:
-            self.add_item_action(index)
-
-        if _check_rect(delegate.PropertiesRect) and not archived:
-            self.edit_item_action(index)
-
-        self._clicked_rect = QtCore.QRect()
+            self._clicked_rect = QtCore.QRect()
         
         super(InlineIconView, self).mouseReleaseEvent(event)
 
@@ -1681,15 +1687,20 @@ class InlineIconView(BaseItemView):
         if self.verticalScrollBar().isSliderDown():
             return
 
+        app = QtWidgets.QApplication.instance()
+        if not app:
+            return
+
         if not common.cursor:
             return
         cursor_position = self.mapFromGlobal(common.cursor.pos())
 
-        app = QtWidgets.QApplication.instance()
-        if not app:
-            return
         index = self.indexAt(cursor_position)
         if not index.isValid():
+            app.restoreOverrideCursor()
+            return
+
+        if not index.column() == 0:
             app.restoreOverrideCursor()
             return
 

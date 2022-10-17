@@ -36,6 +36,7 @@
   "size_bookmark_row_height": 52.0,
   "size_asset_row_height": 64.0,
   "size_separator": 1.0,
+  "size_section": 86.0,
   "size_margin": 18.0,
   "size_indicator": 4.0,
   "size_width": 640.0,
@@ -112,7 +113,7 @@
     114,
     255
   ],
-  "color_red2": [
+  "color_dark_red": [
     190,
     50,
     50,
@@ -135,6 +136,12 @@
     190,
     160,
     255
+  ],
+  "color_yellow": [
+    253,
+    166,
+    1,
+    200
   ],
   "color_opaque": [
     0,

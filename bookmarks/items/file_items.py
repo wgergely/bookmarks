@@ -930,7 +930,7 @@ class FileItemView(views.ThreadedItemView):
             return 0
         return 4
 
-    def action_on_enter_key(self):
+    def key_enter(self):
         """Custom key action.
 
         """

@@ -887,7 +887,8 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         if not description_rect:
             return None
 
-        editor = ui.LineEdit(parent=parent)
+        editor = ui.LineEdit(parent=parent.parent())
+        editor.setPlaceholderText('Enter an item description...')
         return editor
 
     def updateEditorGeometry(self, editor, option, index):
@@ -2689,6 +2690,56 @@ class BookmarkItemViewDelegate(ItemDelegate):
     """
     #: The item's default thumbnail image
     fallback_thumb = 'bookmark_item'
+
+    def setEditorData(self, editor, index):
+        source_path = index.data(common.ParentPathRole)
+        if not source_path:
+            return
+
+        p = index.data(common.PathRole)
+        if common.is_collapsed(p):
+            k = common.proxy_path(index)
+        else:
+            k = p
+
+        # Get the database value
+        db = database.get_db(*source_path[0:3])
+        with db.connection():
+            v = db.value(k, 'description', database.BookmarkTable)
+
+        editor.setText(v)
+
+
+    def setModelData(self, editor, model, index):
+        text = f'{index.data(common.DescriptionRole)}'
+        if text.lower() == editor.text().lower():
+            return
+        source_path = index.data(common.ParentPathRole)
+        if not source_path:
+            return
+
+        p = index.data(common.PathRole)
+        if common.is_collapsed(p):
+            k = common.proxy_path(index)
+        else:
+            k = p
+
+        # Set the database value
+        db = database.get_db(*source_path[0:3])
+        with db.connection():
+            db.setValue(k, 'description', editor.text(), table=database.BookmarkTable)
+            bookmark_row_data = db.get_row(db.source(), database.BookmarkTable)
+
+        # Set value to cached data
+        source_index = index.model().mapToSource(index)
+        data = source_index.model().model_data()
+        idx = source_index.row()
+
+        from ..threads import workers
+        data[idx][common.DescriptionRole] = editor.text()
+        data[idx][common.DescriptionRole] = workers.get_bookmark_description(
+            bookmark_row_data)
+
 
     def paint(self, painter, option, index):
         """Paints a :class:`bookmarks.items.bookmark_items.BookmarkItemView`

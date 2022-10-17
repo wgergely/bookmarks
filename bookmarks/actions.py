@@ -583,6 +583,18 @@ def toggle_inline_icons():
 
 @common.error
 @common.debug
+@must_be_initialized
+def toggle_progress_columns():
+    """Toggles the visibility of the progress tracker columns.
+
+    """
+    widget = common.widget(common.AssetTab)
+    state = not widget.progress_hidden()
+    widget.set_progress_hidden(state)
+
+
+@common.error
+@common.debug
 @QtCore.Slot(QtCore.Qt.CheckState)
 @must_be_initialized
 def generate_thumbnails_changed(state):

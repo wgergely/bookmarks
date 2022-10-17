@@ -323,7 +323,6 @@ class FavouriteItemView(file_items.FileItemView):
     """The widget responsible for showing all the items marked as favourites.
     
     """
-    SourceModel = FavouriteItemModel
     Delegate = delegate.FavouriteItemViewDelegate
     ContextMenu = FavouriteItemViewContextMenu
 
@@ -342,6 +341,9 @@ class FavouriteItemView(file_items.FileItemView):
         self.reset_timer.timeout.connect(self.execute_queued_reset)
 
         common.signals.favouritesChanged.connect(self.queue_model_reset)
+
+    def get_source_model(self):
+        return FavouriteItemModel(parent=self)
 
     @QtCore.Slot()
     def execute_queued_reset(self):

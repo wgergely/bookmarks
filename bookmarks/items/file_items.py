@@ -898,7 +898,6 @@ class FileItemView(views.ThreadedItemView):
     """The view used to display :class:`FileItemModel` items.
 
     """
-    SourceModel = FileItemModel
     Delegate = delegate.FileItemViewDelegate
     ContextMenu = FileItemViewContextMenu
 
@@ -921,6 +920,9 @@ class FileItemView(views.ThreadedItemView):
         common.signals.fileAdded.connect(
             functools.partial(self.show_item, role=common.PathRole)
         )
+
+    def get_source_model(self):
+        return FileItemModel(parent=self)
 
     def inline_icons_count(self):
         """Inline buttons count.

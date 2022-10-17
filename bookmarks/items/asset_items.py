@@ -23,7 +23,7 @@ database. See :mod:`bookmarks.database` for more details.
 import functools
 import os
 
-from PySide2 import QtCore, QtWidgets, QtGui
+from PySide2 import QtCore, QtWidgets
 
 from . import delegate
 from . import models
@@ -33,6 +33,7 @@ from .. import common
 from .. import contextmenu
 from .. import database
 from .. import log
+from .. import progress
 from ..threads import threads
 
 
@@ -108,6 +109,17 @@ class AssetItemModel(models.ItemModel):
             lambda: self.blockSignals(False))
         common.signals.sgAssetsLinked.connect(self.sort_data)
 
+    def columnCount(self, index):
+        return 1 + len(progress.STAGES)
+
+    def headerData(self, column, orientation, role=QtCore.Qt.DisplayRole):
+        if orientation == QtCore.Qt.Vertical:
+            return super().headerData(column, orientation, role=role)
+
+        if orientation == QtCore.Qt.Horizontal and column > 0:
+            if role == QtCore.Qt.DisplayRole:
+                return progress.STAGES[column - 1]['name']
+
     @common.status_bar_message('Loading assets...')
     @models.initdata
     @common.error
@@ -176,7 +188,6 @@ class AssetItemModel(models.ItemModel):
                     break
                 sort_by_name_role[i] = n.lower()
             sort_by_name_role[3] = filename.lower()
-
 
             idx = len(data)
             if idx >= common.max_list_items:
@@ -325,7 +336,6 @@ class AssetItemView(views.ThreadedItemView):
     """The view used to display :class:`.AssetItemModel` item.
 
     """
-    SourceModel = AssetItemModel
     Delegate = delegate.AssetItemViewDelegate
     ContextMenu = AssetItemViewContextMenu
 
@@ -336,6 +346,7 @@ class AssetItemView(views.ThreadedItemView):
             icon='asset',
             parent=parent
         )
+
         common.signals.assetAdded.connect(
             functools.partial(
                 self.show_item,
@@ -344,6 +355,48 @@ class AssetItemView(views.ThreadedItemView):
         )
         common.signals.assetAdded.connect(self.start_delayed_queue_timer)
         common.signals.sgAssetsLinked.connect(self.start_delayed_queue_timer)
+
+    def get_source_model(self):
+        return AssetItemModel(parent=self)
+
+
+    def init_model(self, *args, **kwargs):
+        super().init_model(*args, **kwargs)
+        self.init_progress_columns()
+
+    def init_progress_columns(self):
+        """Tweaks the horizontal header.
+
+        """
+        self.resized.connect(self.adapt_horizontal_header)
+
+        self.horizontalHeader().setHidden(False)
+        self.horizontalHeader().setMinimumSectionSize(progress.CELL_WIDTH)
+        for idx in range(self.model().columnCount()):
+            if idx == 0:
+                self.horizontalHeader().setSectionResizeMode(
+                    idx, QtWidgets.QHeaderView.Stretch
+                )
+            else:
+                self.horizontalHeader().setSectionResizeMode(
+                    idx, QtWidgets.QHeaderView.Fixed
+                )
+
+
+
+    @QtCore.Slot()
+    def adapt_horizontal_header(self, *args, **kwargs):
+        """Slot connected to the resized signal is used to hide the progress columns when
+        the window size is small.
+
+        """
+        min_width = common.size(common.size_width) * 1.2
+        hidden = self.width() < min_width
+        for n in range(self.model().columnCount()):
+            if n == 0:
+                continue
+            self.horizontalHeader().setSectionHidden(n, hidden)
+        self.horizontalHeader().resizeSections()
 
     def inline_icons_count(self):
         """Inline buttons count.

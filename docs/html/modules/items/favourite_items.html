@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="items.file_items" href="file_items.html" /><link rel="prev" title="items.delegate" href="delegate.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>items.favourite_items - Bookmarks 0.7.3 documentation</title>
+        <title>items.favourite_items - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -135,7 +135,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -162,7 +162,7 @@
     <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -229,7 +229,6 @@
 <li class="toctree-l3"><a class="reference internal" href="models.html">items.models</a></li>
 <li class="toctree-l3"><a class="reference internal" href="task_items.html">items.task_items</a></li>
 <li class="toctree-l3"><a class="reference internal" href="views.html">items.views</a></li>
-<li class="toctree-l3"><a class="reference internal" href="widgets/description_editor.html">items.widgets.description_editor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="widgets/filter_editor.html">items.widgets.filter_editor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="widgets/image_viewer.html">items.widgets.image_viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="widgets/thumb_capture.html">items.widgets.thumb_capture</a></li>
@@ -257,6 +256,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../notes.html">notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../progress.html">progress</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../publish.html">publish</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../shortcuts.html">shortcuts</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../shotgun.html">shotgun</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -448,9 +448,6 @@ corresponding to the saved favourites.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.Delegate" title="bookmarks.items.favourite_items.FavouriteItemView.Delegate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Delegate</span></code></a></p></td>
 <td><p>alias of <a class="reference internal" href="delegate.html#bookmarks.items.delegate.FavouriteItemViewDelegate" title="bookmarks.items.delegate.FavouriteItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">FavouriteItemViewDelegate</span></code></a></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.SourceModel" title="bookmarks.items.favourite_items.FavouriteItemView.SourceModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SourceModel</span></code></a></p></td>
-<td><p>alias of <a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemModel" title="bookmarks.items.favourite_items.FavouriteItemModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">FavouriteItemModel</span></code></a></p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -476,7 +473,10 @@ corresponding to the saved favourites.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.get_hint_string" title="bookmarks.items.favourite_items.FavouriteItemView.get_hint_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hint_string</span></code></a>()</p></td>
 <td><p>Returns an informative hint text.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.queue_model_reset" title="bookmarks.items.favourite_items.FavouriteItemView.queue_model_reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">queue_model_reset</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.get_source_model" title="bookmarks.items.favourite_items.FavouriteItemView.get_source_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_source_model</span></code></a>()</p></td>
+<td><p>Returns the model class associated with this view.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.queue_model_reset" title="bookmarks.items.favourite_items.FavouriteItemView.queue_model_reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">queue_model_reset</span></code></a>()</p></td>
 <td><p>Starts/reset the timer responsible for reloading the list of favourite items.</p></td>
 </tr>
 </tbody>
@@ -501,31 +501,13 @@ corresponding to the saved favourites.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="bookmarks.items.favourite_items.FavouriteItemView.Delegate">
 <span class="sig-name descname"><span class="pre">Delegate</span></span><a class="headerlink" href="#bookmarks.items.favourite_items.FavouriteItemView.Delegate" title="Permalink to this definition">#</a></dt>
-<dd><p>alias of <a class="reference internal" href="delegate.html#bookmarks.items.delegate.FavouriteItemViewDelegate" title="bookmarks.items.delegate.FavouriteItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">FavouriteItemViewDelegate</span></code></a></p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="bookmarks.items.favourite_items.FavouriteItemView.SourceModel">
-<span class="sig-name descname"><span class="pre">SourceModel</span></span><a class="headerlink" href="#bookmarks.items.favourite_items.FavouriteItemView.SourceModel" title="Permalink to this definition">#</a></dt>
-<dd><p>alias of <a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemModel" title="bookmarks.items.favourite_items.FavouriteItemModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">FavouriteItemModel</span></code></a>
-<strong>Methods:</strong></p>
+<dd><p>alias of <a class="reference internal" href="delegate.html#bookmarks.items.delegate.FavouriteItemViewDelegate" title="bookmarks.items.delegate.FavouriteItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">FavouriteItemViewDelegate</span></code></a>
+<strong>Attributes:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_setting_dict_key</span></code>()</p></td>
-<td><p>The custom dictionary key used to save filter settings to the user settings file.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_data</span></code>(**kwargs)</p></td>
-<td><p>Function wrapper.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">item_generator</span></code>()</p></td>
-<td><p>We're using the saved keys to find and return the DirEntries corresponding to the saved favourites.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">source_path</span></code>()</p></td>
-<td><p>The model's parent folder path segments.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">task</span></code>()</p></td>
-<td><p>The model's associated task.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fallback_thumb</span></code></p></td>
+<td><p>The item's default thumbnail image</p></td>
 </tr>
 </tbody>
 </table>
@@ -566,6 +548,12 @@ corresponding to the saved favourites.</p>
 <dt class="sig sig-object py" id="bookmarks.items.favourite_items.FavouriteItemView.get_hint_string">
 <span class="sig-name descname"><span class="pre">get_hint_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/favourite_items.html#FavouriteItemView.get_hint_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.favourite_items.FavouriteItemView.get_hint_string" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns an informative hint text.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.favourite_items.FavouriteItemView.get_source_model">
+<span class="sig-name descname"><span class="pre">get_source_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/favourite_items.html#FavouriteItemView.get_source_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.favourite_items.FavouriteItemView.get_source_model" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the model class associated with this view.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -671,13 +659,13 @@ favourite items.</p>
 <li><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView</span></code></a><ul>
 <li><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.ContextMenu"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView.ContextMenu</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.Delegate"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView.Delegate</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.SourceModel"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView.SourceModel</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.dragEnterEvent"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView.dragEnterEvent()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.dragLeaveEvent"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView.dragLeaveEvent()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.dragMoveEvent"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView.dragMoveEvent()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.dropEvent"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView.dropEvent()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.execute_queued_reset"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView.execute_queued_reset()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.get_hint_string"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView.get_hint_string()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.get_source_model"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView.get_source_model()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.favourite_items.FavouriteItemView.queue_model_reset"><code class="docutils literal notranslate"><span class="pre">FavouriteItemView.queue_model_reset()</span></code></a></li>
 </ul>
 </li>

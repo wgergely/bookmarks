@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="items.widgets.image_viewer" href="image_viewer.html" /><link rel="prev" title="items.widgets.description_editor" href="description_editor.html" />
+<link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="items.widgets.image_viewer" href="image_viewer.html" /><link rel="prev" title="items.views" href="../views.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>items.widgets.filter_editor - Bookmarks 0.7.3 documentation</title>
+        <title>items.widgets.filter_editor - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -135,7 +135,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -162,7 +162,7 @@
     <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -229,7 +229,6 @@
 <li class="toctree-l3"><a class="reference internal" href="../models.html">items.models</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../task_items.html">items.task_items</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../views.html">items.views</a></li>
-<li class="toctree-l3"><a class="reference internal" href="description_editor.html">items.widgets.description_editor</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">items.widgets.filter_editor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="image_viewer.html">items.widgets.image_viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="thumb_capture.html">items.widgets.thumb_capture</a></li>
@@ -257,6 +256,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../notes.html">notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../progress.html">progress</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../publish.html">publish</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../shortcuts.html">shortcuts</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../shotgun.html">shotgun</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -347,89 +347,90 @@
         <article role="main">
           <section id="module-bookmarks.items.widgets.filter_editor">
 <span id="items-widgets-filter-editor"></span><h1>items.widgets.filter_editor<a class="headerlink" href="#module-bookmarks.items.widgets.filter_editor" title="Permalink to this heading">#</a></h1>
-<p>The widget used set and edit search filters.</p>
+<p>The widget used set the text search filter of
+<a class="reference internal" href="../models.html#bookmarks.items.models.FilterProxyModel" title="bookmarks.items.models.FilterProxyModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterProxyModel</span></code></a>.</p>
 <p><strong>Classes:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.FilterEditor" title="bookmarks.items.widgets.filter_editor.FilterEditor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FilterEditor</span></code></a>([parent])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor" title="bookmarks.items.widgets.filter_editor.TextFilterEditor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TextFilterEditor</span></code></a>([parent])</p></td>
 <td><p>Editor widget used to set a list model's persistent text filter.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <dl class="py class">
-<dt class="sig sig-object py" id="bookmarks.items.widgets.filter_editor.FilterEditor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.widgets.filter_editor.</span></span><span class="sig-name descname"><span class="pre">FilterEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/filter_editor.html#FilterEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.filter_editor.FilterEditor" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.items.widgets.filter_editor.TextFilterEditor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.widgets.filter_editor.</span></span><span class="sig-name descname"><span class="pre">TextFilterEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/filter_editor.html#TextFilterEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
 <p>Editor widget used to set a list model’s persistent text filter.</p>
 <p><strong>Methods:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.FilterEditor.action" title="bookmarks.items.widgets.filter_editor.FilterEditor.action"><code class="xref py py-obj docutils literal notranslate"><span class="pre">action</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.action" title="bookmarks.items.widgets.filter_editor.TextFilterEditor.action"><code class="xref py py-obj docutils literal notranslate"><span class="pre">action</span></code></a>()</p></td>
 <td><p>Edit action.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.FilterEditor.adjust_size" title="bookmarks.items.widgets.filter_editor.FilterEditor.adjust_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">adjust_size</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.adjust_size" title="bookmarks.items.widgets.filter_editor.TextFilterEditor.adjust_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">adjust_size</span></code></a>()</p></td>
 <td><p>Adjusts the editor's size.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.FilterEditor.init_text" title="bookmarks.items.widgets.filter_editor.FilterEditor.init_text"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_text</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.init_text" title="bookmarks.items.widgets.filter_editor.TextFilterEditor.init_text"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_text</span></code></a>()</p></td>
 <td><p>Sets the current filter text to the editor.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.FilterEditor.paintEvent" title="bookmarks.items.widgets.filter_editor.FilterEditor.paintEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paintEvent</span></code></a>(event)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.paintEvent" title="bookmarks.items.widgets.filter_editor.TextFilterEditor.paintEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paintEvent</span></code></a>(event)</p></td>
 <td><p>Event handler.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.FilterEditor.set_completer" title="bookmarks.items.widgets.filter_editor.FilterEditor.set_completer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_completer</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.set_completer" title="bookmarks.items.widgets.filter_editor.TextFilterEditor.set_completer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_completer</span></code></a>()</p></td>
 <td><p>Sets the editor's completer.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.FilterEditor.showEvent" title="bookmarks.items.widgets.filter_editor.FilterEditor.showEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showEvent</span></code></a>(event)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.showEvent" title="bookmarks.items.widgets.filter_editor.TextFilterEditor.showEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showEvent</span></code></a>(event)</p></td>
 <td><p>Event handler.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.FilterEditor.show_history" title="bookmarks.items.widgets.filter_editor.FilterEditor.show_history"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_history</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.show_history" title="bookmarks.items.widgets.filter_editor.TextFilterEditor.show_history"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_history</span></code></a>()</p></td>
 <td><p>Shows the editor's completer.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.items.widgets.filter_editor.FilterEditor.action">
-<span class="sig-name descname"><span class="pre">action</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/filter_editor.html#FilterEditor.action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.filter_editor.FilterEditor.action" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.items.widgets.filter_editor.TextFilterEditor.action">
+<span class="sig-name descname"><span class="pre">action</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/filter_editor.html#TextFilterEditor.action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.action" title="Permalink to this definition">#</a></dt>
 <dd><p>Edit action.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.items.widgets.filter_editor.FilterEditor.adjust_size">
-<span class="sig-name descname"><span class="pre">adjust_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/filter_editor.html#FilterEditor.adjust_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.filter_editor.FilterEditor.adjust_size" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.items.widgets.filter_editor.TextFilterEditor.adjust_size">
+<span class="sig-name descname"><span class="pre">adjust_size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/filter_editor.html#TextFilterEditor.adjust_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.adjust_size" title="Permalink to this definition">#</a></dt>
 <dd><p>Adjusts the editor’s size.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.items.widgets.filter_editor.FilterEditor.init_text">
-<span class="sig-name descname"><span class="pre">init_text</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/filter_editor.html#FilterEditor.init_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.filter_editor.FilterEditor.init_text" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.items.widgets.filter_editor.TextFilterEditor.init_text">
+<span class="sig-name descname"><span class="pre">init_text</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/filter_editor.html#TextFilterEditor.init_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.init_text" title="Permalink to this definition">#</a></dt>
 <dd><p>Sets the current filter text to the editor.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.items.widgets.filter_editor.FilterEditor.paintEvent">
-<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/filter_editor.html#FilterEditor.paintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.filter_editor.FilterEditor.paintEvent" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.items.widgets.filter_editor.TextFilterEditor.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/filter_editor.html#TextFilterEditor.paintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.paintEvent" title="Permalink to this definition">#</a></dt>
 <dd><p>Event handler.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.items.widgets.filter_editor.FilterEditor.set_completer">
-<span class="sig-name descname"><span class="pre">set_completer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/filter_editor.html#FilterEditor.set_completer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.filter_editor.FilterEditor.set_completer" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.items.widgets.filter_editor.TextFilterEditor.set_completer">
+<span class="sig-name descname"><span class="pre">set_completer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/filter_editor.html#TextFilterEditor.set_completer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.set_completer" title="Permalink to this definition">#</a></dt>
 <dd><p>Sets the editor’s completer.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.items.widgets.filter_editor.FilterEditor.showEvent">
-<span class="sig-name descname"><span class="pre">showEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/filter_editor.html#FilterEditor.showEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.filter_editor.FilterEditor.showEvent" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.items.widgets.filter_editor.TextFilterEditor.showEvent">
+<span class="sig-name descname"><span class="pre">showEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/filter_editor.html#TextFilterEditor.showEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.showEvent" title="Permalink to this definition">#</a></dt>
 <dd><p>Event handler.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.items.widgets.filter_editor.FilterEditor.show_history">
-<span class="sig-name descname"><span class="pre">show_history</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/filter_editor.html#FilterEditor.show_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.filter_editor.FilterEditor.show_history" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.items.widgets.filter_editor.TextFilterEditor.show_history">
+<span class="sig-name descname"><span class="pre">show_history</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/filter_editor.html#TextFilterEditor.show_history"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.show_history" title="Permalink to this definition">#</a></dt>
 <dd><p>Shows the editor’s completer.</p>
 </dd></dl>
 
@@ -451,14 +452,14 @@
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="description_editor.html">
+          <a class="prev-page" href="../views.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">items.widgets.description_editor</div>
+                <div class="title">items.views</div>
                 
               </div>
             </a>
@@ -495,14 +496,14 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">items.widgets.filter_editor</a><ul>
-<li><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.FilterEditor"><code class="docutils literal notranslate"><span class="pre">FilterEditor</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.FilterEditor.action"><code class="docutils literal notranslate"><span class="pre">FilterEditor.action()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.FilterEditor.adjust_size"><code class="docutils literal notranslate"><span class="pre">FilterEditor.adjust_size()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.FilterEditor.init_text"><code class="docutils literal notranslate"><span class="pre">FilterEditor.init_text()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.FilterEditor.paintEvent"><code class="docutils literal notranslate"><span class="pre">FilterEditor.paintEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.FilterEditor.set_completer"><code class="docutils literal notranslate"><span class="pre">FilterEditor.set_completer()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.FilterEditor.showEvent"><code class="docutils literal notranslate"><span class="pre">FilterEditor.showEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.FilterEditor.show_history"><code class="docutils literal notranslate"><span class="pre">FilterEditor.show_history()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor"><code class="docutils literal notranslate"><span class="pre">TextFilterEditor</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.action"><code class="docutils literal notranslate"><span class="pre">TextFilterEditor.action()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.adjust_size"><code class="docutils literal notranslate"><span class="pre">TextFilterEditor.adjust_size()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.init_text"><code class="docutils literal notranslate"><span class="pre">TextFilterEditor.init_text()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.paintEvent"><code class="docutils literal notranslate"><span class="pre">TextFilterEditor.paintEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.set_completer"><code class="docutils literal notranslate"><span class="pre">TextFilterEditor.set_completer()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.showEvent"><code class="docutils literal notranslate"><span class="pre">TextFilterEditor.showEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.widgets.filter_editor.TextFilterEditor.show_history"><code class="docutils literal notranslate"><span class="pre">TextFilterEditor.show_history()</span></code></a></li>
 </ul>
 </li>
 </ul>

@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="items.models" href="models.html" /><link rel="prev" title="items.favourite_items" href="favourite_items.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>items.file_items - Bookmarks 0.7.3 documentation</title>
+        <title>items.file_items - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -135,7 +135,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -162,7 +162,7 @@
     <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -229,7 +229,6 @@
 <li class="toctree-l3"><a class="reference internal" href="models.html">items.models</a></li>
 <li class="toctree-l3"><a class="reference internal" href="task_items.html">items.task_items</a></li>
 <li class="toctree-l3"><a class="reference internal" href="views.html">items.views</a></li>
-<li class="toctree-l3"><a class="reference internal" href="widgets/description_editor.html">items.widgets.description_editor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="widgets/filter_editor.html">items.widgets.filter_editor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="widgets/image_viewer.html">items.widgets.image_viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="widgets/thumb_capture.html">items.widgets.thumb_capture</a></li>
@@ -257,6 +256,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../notes.html">notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../progress.html">progress</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../publish.html">publish</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../shortcuts.html">shortcuts</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../shotgun.html">shotgun</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -669,9 +669,6 @@ type is <code class="docutils literal notranslate"><span class="pre">common.File
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.Delegate" title="bookmarks.items.file_items.FileItemView.Delegate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Delegate</span></code></a></p></td>
 <td><p>alias of <a class="reference internal" href="delegate.html#bookmarks.items.delegate.FileItemViewDelegate" title="bookmarks.items.delegate.FileItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileItemViewDelegate</span></code></a></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.SourceModel" title="bookmarks.items.file_items.FileItemView.SourceModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SourceModel</span></code></a></p></td>
-<td><p>alias of <a class="reference internal" href="#bookmarks.items.file_items.FileItemModel" title="bookmarks.items.file_items.FileItemModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileItemModel</span></code></a></p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -679,19 +676,22 @@ type is <code class="docutils literal notranslate"><span class="pre">common.File
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.action_on_enter_key" title="bookmarks.items.file_items.FileItemView.action_on_enter_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">action_on_enter_key</span></code></a>()</p></td>
-<td><p>Custom key action.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.get_hint_string" title="bookmarks.items.file_items.FileItemView.get_hint_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hint_string</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.get_hint_string" title="bookmarks.items.file_items.FileItemView.get_hint_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hint_string</span></code></a>()</p></td>
 <td><p>Returns an informative hint text.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.get_source_model" title="bookmarks.items.file_items.FileItemView.get_source_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_source_model</span></code></a>()</p></td>
+<td><p>Returns the model class associated with this view.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.inline_icons_count" title="bookmarks.items.file_items.FileItemView.inline_icons_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inline_icons_count</span></code></a>()</p></td>
 <td><p>Inline buttons count.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.show_item" title="bookmarks.items.file_items.FileItemView.show_item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_item</span></code></a>(v[, role, update, limit])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.key_enter" title="bookmarks.items.file_items.FileItemView.key_enter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key_enter</span></code></a>()</p></td>
+<td><p>Custom key action.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.show_item" title="bookmarks.items.file_items.FileItemView.show_item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_item</span></code></a>(v[, role, update, limit])</p></td>
 <td><p>This slot is called by the <cite>itemAdded</cite> signal.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.startDrag" title="bookmarks.items.file_items.FileItemView.startDrag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">startDrag</span></code></a>(supported_actions)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.startDrag" title="bookmarks.items.file_items.FileItemView.startDrag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">startDrag</span></code></a>(supported_actions)</p></td>
 <td><p>Drag action start.</p></td>
 </tr>
 </tbody>
@@ -722,7 +722,7 @@ type is <code class="docutils literal notranslate"><span class="pre">common.File
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint</span></code>(painter, option, index)</p></td>
-<td><p>Defines how the <code class="docutils literal notranslate"><span class="pre">FileItemView</span></code>'s' items should be painted.</p></td>
+<td><p>Paints a <a class="reference internal" href="#bookmarks.items.file_items.FileItemView" title="bookmarks.items.file_items.FileItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.file_items.FileItemView</span></code></a> item.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sizeHint</span></code>(option, index)</p></td>
 <td><p>Returns the item's size hint.</p></td>
@@ -730,61 +730,16 @@ type is <code class="docutils literal notranslate"><span class="pre">common.File
 </tbody>
 </table>
 </div>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="bookmarks.items.file_items.FileItemView.SourceModel">
-<span class="sig-name descname"><span class="pre">SourceModel</span></span><a class="headerlink" href="#bookmarks.items.file_items.FileItemView.SourceModel" title="Permalink to this definition">#</a></dt>
-<dd><p>alias of <a class="reference internal" href="#bookmarks.items.file_items.FileItemModel" title="bookmarks.items.file_items.FileItemModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileItemModel</span></code></a>
-<strong>Methods:</strong></p>
+<p><strong>Attributes:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_type</span></code>()</p></td>
-<td><p>Data type refers to the internal data set exposed to the model.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">disable_filter</span></code>()</p></td>
-<td><p>Overrides the token config and disables file filters.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_setting_dict_key</span></code>()</p></td>
-<td><p>The custom dictionary key used to save filter settings to the user settings file.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_data</span></code>(**kwargs)</p></td>
-<td><p>Function wrapper.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">item_generator</span></code>(path)</p></td>
-<td><p>Recursive iterator for retrieving files from all task sub-folders.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mimeData</span></code>(indexes)</p></td>
-<td><p>The data necessary for supporting drag and drop operations are constructed here.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">refresh_needed</span></code>()</p></td>
-<td><p>Returns the refresh states of the current model data set.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_active</span></code>()</p></td>
-<td><p>Saves the current active item.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_data_type</span></code>(val)</p></td>
-<td><p>Set the model's data type.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_refresh_needed</span></code>(v)</p></td>
-<td><p>Sets the refresh status of the current model data set.</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">source_path</span></code>()</p></td>
-<td><p>The model's parent folder path segments.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">task</span></code>()</p></td>
-<td><p>The model's associated task.</p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fallback_thumb</span></code></p></td>
+<td><p>The item's default thumbnail image</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.items.file_items.FileItemView.action_on_enter_key">
-<span class="sig-name descname"><span class="pre">action_on_enter_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/file_items.html#FileItemView.action_on_enter_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.file_items.FileItemView.action_on_enter_key" title="Permalink to this definition">#</a></dt>
-<dd><p>Custom key action.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -794,9 +749,21 @@ type is <code class="docutils literal notranslate"><span class="pre">common.File
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.file_items.FileItemView.get_source_model">
+<span class="sig-name descname"><span class="pre">get_source_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/file_items.html#FileItemView.get_source_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.file_items.FileItemView.get_source_model" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the model class associated with this view.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.items.file_items.FileItemView.inline_icons_count">
 <span class="sig-name descname"><span class="pre">inline_icons_count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/file_items.html#FileItemView.inline_icons_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.file_items.FileItemView.inline_icons_count" title="Permalink to this definition">#</a></dt>
 <dd><p>Inline buttons count.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.file_items.FileItemView.key_enter">
+<span class="sig-name descname"><span class="pre">key_enter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/file_items.html#FileItemView.key_enter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.file_items.FileItemView.key_enter" title="Permalink to this definition">#</a></dt>
+<dd><p>Custom key action.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -975,10 +942,10 @@ path.</p>
 <li><a class="reference internal" href="#bookmarks.items.file_items.FileItemView"><code class="docutils literal notranslate"><span class="pre">FileItemView</span></code></a><ul>
 <li><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.ContextMenu"><code class="docutils literal notranslate"><span class="pre">FileItemView.ContextMenu</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.Delegate"><code class="docutils literal notranslate"><span class="pre">FileItemView.Delegate</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.SourceModel"><code class="docutils literal notranslate"><span class="pre">FileItemView.SourceModel</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.action_on_enter_key"><code class="docutils literal notranslate"><span class="pre">FileItemView.action_on_enter_key()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.get_hint_string"><code class="docutils literal notranslate"><span class="pre">FileItemView.get_hint_string()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.get_source_model"><code class="docutils literal notranslate"><span class="pre">FileItemView.get_source_model()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.inline_icons_count"><code class="docutils literal notranslate"><span class="pre">FileItemView.inline_icons_count()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.key_enter"><code class="docutils literal notranslate"><span class="pre">FileItemView.key_enter()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.show_item"><code class="docutils literal notranslate"><span class="pre">FileItemView.show_item()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.startDrag"><code class="docutils literal notranslate"><span class="pre">FileItemView.startDrag()</span></code></a></li>
 </ul>

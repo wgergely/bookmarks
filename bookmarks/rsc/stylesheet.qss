@@ -1,184 +1,184 @@
 QWidget {{
-	font-family: "{font_primary}";
-	font-size: {size_font_medium}px;
-	background-color: {color_background};
-	color: {color_text};
-	border-width: 0;
-	border: none;
-	margin: 0;
-	padding: 0;
-	outline: 0;
-	selection-color: white;
-	selection-background-color: rgba(250,250,255,50);
-	border: {size_separator}px solid transparent;
+    font-family: "{font_primary}";
+    font-size: {size_font_medium}px;
+    background-color: {color_background};
+    color: {color_text};
+    border-width: 0;
+    border: none;
+    margin: 0;
+    padding: 0;
+    outline: 0;
+    selection-color: white;
+    selection-background-color: rgba(250,250,255,50);
+    border: {size_separator}px solid transparent;
 }}
 
 QWidget:disabled {{
-	color: {color_disabled_text};
+    color: {color_disabled_text};
 }}
 QWidget:focus {{
-	border: {size_separator}px solid {color_blue};
+    border: {size_separator}px solid {color_blue};
 }}
 
 
 QStackedWidget {{
-	background-color: {color_separator};
+    background-color: {color_separator};
 }}
 
 
 QGroupBox {{
-	font-family: "{font_secondary}";
-	font-size: {size_font_small}px;
-	border: {size_separator}px solid {color_opaque};
-	border-radius: {size_indicator1}px;
-	background-color: {color_opaque};
+    font-family: "{font_secondary}";
+    font-size: {size_font_small}px;
+    border: {size_separator}px solid {color_opaque};
+    border-radius: {size_indicator1}px;
+    background-color: {color_opaque};
 
 }}
 QGroupBox::!title {{
-	color: {color_disabled_text};
+    color: {color_disabled_text};
     subcontrol-origin: padding;
     subcontrol-position: top middle;
 }}
 
 QStatusBar {{
-	font-size: {size_font_small}px;
-	color: {color_text};
-	background-color: {color_separator};
-	padding: {size_indicator1}px;
-	margin: {size_indicator1}px;
+    font-size: {size_font_small}px;
+    color: {color_text};
+    background-color: {color_separator};
+    padding: {size_indicator1}px;
+    margin: {size_indicator1}px;
 }}
 QStatusBar::item {{
-	text-align: center;
-	padding: {size_indicator1}px;
-	margin: {size_indicator1}px;
-	border: none;
+    text-align: center;
+    padding: {size_indicator1}px;
+    margin: {size_indicator1}px;
+    border: none;
 }}
 
 
 QCheckBox {{
-	height: {size_font_large}px;
-	border-radius: {size_indicator1}px;
-	background-color: {color_dark_background};
-	margin: 0;
-	padding: {size_indicator}px;
-	color: {color_secondary_text};
+    height: {size_font_large}px;
+    border-radius: {size_indicator1}px;
+    background-color: {color_dark_background};
+    margin: 0;
+    padding: {size_indicator}px;
+    color: {color_secondary_text};
 }}
 QCheckBox::indicator {{
-	height: {size_font_small}px;
-	width: {size_font_small}px;
-	border-radius: {size_indicator1}px;
+    height: {size_font_small}px;
+    width: {size_font_small}px;
+    border-radius: {size_indicator1}px;
 }}
 QCheckBox::indicator:unchecked {{
-	/* image: url({close}); */
-	background-color: {color_separator};
+    /* image: url({close}); */
+    background-color: {color_separator};
 }}
 QCheckBox::indicator:checked  {{
-	/* image: url({check}); */
-	background-color: {color_green};
+    /* image: url({check}); */
+    background-color: {color_green};
 }}
 QCheckBox:checked  {{
-	color: {color_selected_text};
+    color: {color_selected_text};
 }}
 
 
 QRadioButton {{
-	color: {color_secondary_text};
-	background-color: transparent;
-	margin: 0;
-	padding: {size_indicator1}px;
+    color: {color_secondary_text};
+    background-color: transparent;
+    margin: 0;
+    padding: {size_indicator1}px;
 }}
 QRadioButton:disabled {{
-	color: {color_disabled_text};
-	background-color: {color_dark_background};
+    color: {color_disabled_text};
+    background-color: {color_dark_background};
 }}
 QRadioButton::indicator {{
-	height: {size_font_medium}px;
-	width: {size_font_medium}px;
-	border: none;
-	border-radius: {size_separator}px;
+    height: {size_font_medium}px;
+    width: {size_font_medium}px;
+    border: none;
+    border-radius: {size_separator}px;
 }}
 QRadioButton::indicator:unchecked {{
-	background-color: {color_dark_background};
+    background-color: {color_dark_background};
 }}
 QRadioButton::indicator:checked  {{
-	background-color: {color_secondary_text};
+    background-color: {color_secondary_text};
 }}
 
 
 QPushButton {{
-	color: {color_text};
-	text-align: center;
-	padding-left: {size_font_medium}px;
-	padding-right: {size_font_medium}px;
-	height: {size_row_height2}px;
-	background-color: {color_dark_background};
-	border-radius: {size_indicator}px;
-	border: {size_separator}px solid {color_opaque};
+    color: {color_text};
+    text-align: center;
+    padding-left: {size_font_medium}px;
+    padding-right: {size_font_medium}px;
+    height: {size_row_height2}px;
+    background-color: {color_dark_background};
+    border-radius: {size_indicator}px;
+    border: {size_separator}px solid {color_opaque};
 }}
 QPushButton:disabled {{
-	color: {color_secondary_text};
-	background-color: {color_dark_background};
-	border: {size_separator}px solid {color_dark_background};
+    color: {color_secondary_text};
+    background-color: {color_dark_background};
+    border: {size_separator}px solid {color_dark_background};
 }}
 QPushButton:hover {{
-	color: {color_selected_text};
-	background-color: {color_light_background};
-	border: {size_separator}px solid {color_light_background};
+    color: {color_selected_text};
+    background-color: {color_light_background};
+    border: {size_separator}px solid {color_light_background};
 }}
 QPushButton:pressed {{
-	color: {color_selected_text};
-	background-color: {color_dark_background};
-	border: {size_separator}px solid {color_dark_background};
+    color: {color_selected_text};
+    background-color: {color_dark_background};
+    border: {size_separator}px solid {color_dark_background};
 }}
 
 
 QComboBox {{
-	color: {color_text};
-	text-align: left;
-	padding-left: {size_font_medium}px;
-	padding-right: {size_font_medium}px;
-	border-style: solid;
-	border: {size_separator}px solid {color_opaque};
-	background-color: {color_dark_background};
-	height: {size_row_height2}px;
-	border-radius: {size_indicator1}px;
-	border: {size_separator}px solid {color_opaque};
+    color: {color_text};
+    text-align: left;
+    padding-left: {size_font_medium}px;
+    padding-right: {size_font_medium}px;
+    border-style: solid;
+    border: {size_separator}px solid {color_opaque};
+    background-color: {color_dark_background};
+    height: {size_row_height2}px;
+    border-radius: {size_indicator1}px;
+    border: {size_separator}px solid {color_opaque};
 }}
 QComboBox:hover {{
     color: {color_selected_text};
 }}
 QComboBox:disabled {{
-	color: {color_disabled_text};
-	background-color: {color_dark_background};
+    color: {color_disabled_text};
+    background-color: {color_dark_background};
 }}
 QComboBox:on {{
-	color: {color_disabled_text};
-	background-color: {color_separator};
+    color: {color_disabled_text};
+    background-color: {color_separator};
     border-bottom-left-radius: 0px;
     border-bottom-right-radius: 0px;
 }}
 QComboBox::drop-down {{
-	width: 0;
-	height: 0;
-	padding: 0;
-	margin: {size_separator}px;
-	border-width: 0;
-	border-style: none;
-	border-radius: 0px;
+    width: 0;
+    height: 0;
+    padding: 0;
+    margin: {size_separator}px;
+    border-width: 0;
+    border-style: none;
+    border-radius: 0px;
 }}
 QComboBox QListView {{
-	border-radius: 0px;
+    border-radius: 0px;
 }}
 QComboBox QListView::item {{
-	color: {color_text};
-	height: {size_row_height2}px;
-	min-height: {size_row_height2}px;
-	background-color: {color_dark_background};
-	padding-left: {size_indicator}px;
+    color: {color_text};
+    height: {size_row_height2}px;
+    min-height: {size_row_height2}px;
+    background-color: {color_dark_background};
+    padding-left: {size_indicator}px;
 }}
 QComboBox QListView::item:hover {{
-	color: {color_selected_text};
-	background-color: {color_light_background};
+    color: {color_selected_text};
+    background-color: {color_light_background};
 }}
 
 
@@ -189,30 +189,30 @@ QLineEdit:disabled,
 QTextEdit,
 QTextEdit:disabled {{
     background-color: {color_opaque};
-	height: {size_row_height2}px;
-	max-height: {size_row_height2}px;
-	min-height: {size_row_height2}px;
+    height: {size_row_height2}px;
+    max-height: {size_row_height2}px;
+    min-height: {size_row_height2}px;
     border: {size_separator}px solid transparent;
-	border-radius: {size_indicator1}px;
-	margin: 0;
-	padding-left: {size_indicator}px;
-	padding-right: {size_indicator}px;
+    border-radius: {size_indicator1}px;
+    margin: 0;
+    padding-left: {size_indicator}px;
+    padding-right: {size_indicator}px;
 }}
 QTextEdit:disabled,
 QLineEdit:disabled {{
-	color: {color_disabled_text};
-	background-color: {color_dark_background};
+    color: {color_disabled_text};
+    background-color: {color_dark_background};
 }}
 
 QScrollBar {{
-	background: {color_separator};
-	width: {size_indicator2}px;
-	height: {size_indicator2}px;
+    background: {color_separator};
+    width: {size_indicator2}px;
+    height: {size_indicator2}px;
 }}
 QScrollBar::handle {{
-	background: {color_dark_background};
-	border: none;
-	min-height: {size_margin3}px;
+    background: {color_dark_background};
+    border: none;
+    min-height: {size_margin3}px;
 }}
 QScrollBar::add-page,
 QScrollBar::add-line,
@@ -220,7 +220,7 @@ QScrollBar::sub-page,
 QScrollBar::up-arrow,
 QScrollBar::down-arrow,
 QScrollBar::sub-line {{
-	background: {color_separator};
+    background: {color_separator};
 }}
 
 
@@ -228,8 +228,8 @@ QTableWidget,
 QTableView,
 QListWidget,
 QListView {{
-	border-radius: {size_indicator1}px;
-	background: {color_dark_background};
+    border-radius: {size_indicator1}px;
+    background: {color_dark_background};
 }}
 QTableWidget::item,
 QTableView::item,
@@ -250,81 +250,87 @@ QTableWidget::item:selected,
 QTableView::item:selected,
 QListWidget::item:selected,
 QListView::item:selected {{
-	background: {color_light_background};
+    background: {color_light_background};
 }}
 QTableWidget::item:selected:hover,
 QTableView::item:selected:hover,
 QListWidget::item:selected:hover,
 QListView::item:selected:hover {{
-	background: {color_light_background};
+    background: {color_light_background};
 }}
 QTableWidget::item:disabled,
 QTableView::item:disabled,
 QListWidget::item:disabled,
 QListView::item:disabled {{
   color: {color_disabled_text};
-	background: transparent;
+    background: transparent;
 }}
 QTableWidget::indicator,
 QListWidget::indicator,
 QListView::indicator {{
-	width: {size_font_medium}px;
-	height: {size_font_medium}px;
-	border-radius: {size_indicator1}px;
-	background-color: {color_dark_background};
-	margin-left: {size_indicator1}px;
-	margin-right: {size_indicator1}px;
-	subcontrol-position: center;
+    width: {size_font_medium}px;
+    height: {size_font_medium}px;
+    border-radius: {size_indicator1}px;
+    background-color: {color_dark_background};
+    margin-left: {size_indicator1}px;
+    margin-right: {size_indicator1}px;
+    subcontrol-position: center;
 }}
 QTableWidget::indicator:checked,
 QListWidget::indicator:checked,
 QListView::indicator:checked {{
-	background: {color_green};
+    background: {color_green};
 }}
 
 TableWidget {{
-	background: transparent;
-	background-color: transparent;
-	selection-background-color: transparent;
+    background: transparent;
+    background-color: transparent;
+    selection-background-color: transparent;
 }}
 TableWidget::item:selected,
 TableWidget::item:hover,
 TableWidget::item:disabled,
 TableWidget::item {{
-		padding: {size_indicator}px;
-		background-color: transparent;
-		background: transparent;
+        padding: {size_indicator}px;
+        background-color: transparent;
+        background: transparent;
 }}
 
 QHeaderView {{
-    font-family: "{font_secondary}";
-	border: none;
-	background-color: rgba(0,0,10,30);
+    font-family: "{font_primary}";
+    border: none;
+    background-color: rgba(0,0,10,30);
     border-top-left-radius: {size_indicator}px;
     border-top-right-radius: {size_indicator}px;
     border-bottom: 1px solid rgba(0,0,0,50);
 }}
 QHeaderView::section {{
-	font-family: "{font_secondary}";
-	font-size: {size_font_small}px;
-	background-color: transparent;
-	alignment: center;
-	text-align: center;
-	color: rgba(170,170,175,255);
+    font-family: "{font_primary}";
+    font-size: {size_font_small}px;
+    background-color: transparent;
+    alignment: center;
+    text-align: center;
+    color: rgba(170,170,175,255);
     border: none;
-	border-right: 1px solid rgba(0,0,0,50);
+    border-right: 1px solid rgba(0,0,0,50);
+}}
+QHeaderView::down-arrow {{
+  image: none;
+}}
+QHeaderView::up-arrow {{
+  image: none;
 }}
 
 
 QTreeWidget,
 QTreeView {{
-	font-size: {size_font_medium}px;
-	background-color: {color_dark_background};
-	border: none;
+    font-size: {size_font_medium}px;
+    background-color: {color_dark_background};
+    border: none;
 }}
 QTreeWidget::item,
 QTreeView::item {{
-	border: none;
+    border: none;
 }}
 QTreeWidget::item:hover,
 QTreeView::item:hover {{
@@ -336,13 +342,13 @@ QTreeView::item:focus {{
 }}
 QTreeWidget::item:selected,
 QTreeView::item:selected {{
-	background: {color_light_background};
+    background: {color_light_background};
 }}
 QTreeWidget:branch
 QTreeView:branch {{
-	background-color: {color_dark_background};
-	border: none;
-	border-image: none;
+    background-color: {color_dark_background};
+    border: none;
+    border-image: none;
 }}
 QTreeWidget::branch:focus,
 QTreeView::branch:focus {{
@@ -350,7 +356,7 @@ QTreeView::branch:focus {{
 }}
 QTreeWidget:branch:selected,
 QTreeView:branch:selected {{
-	background: {color_light_background};
+    background: {color_light_background};
 }}
 QTreeWidget:branch:!open:has-children,
 QTreeView:branch:!open:has-children {{
@@ -364,51 +370,51 @@ QTreeView:branch:open:has-children:has-siblings {{
 }}
 
 QLabel {{
-	font-size: {size_font_medium}px;
-	background-color: transparent;
+    font-size: {size_font_medium}px;
+    background-color: transparent;
 }}
 QLabel:disabled {{
-	background-color: transparent;
-	color: {color_disabled_text};
+    background-color: transparent;
+    color: {color_disabled_text};
 }}
 
 QMenu {{
-	font-size: {size_font_medium}px;
+    font-size: {size_font_medium}px;
     background-color: {color_dark_background};
-	menu-scrollable: 1;
-	border-radius: {menu_border_radius}px;
-	border: 2px solid {color_background};
-	icon-size: {size_margin2}px;
+    menu-scrollable: 1;
+    border-radius: {menu_border_radius}px;
+    border: 2px solid {color_background};
+    icon-size: {size_margin2}px;
 }}
 QMenu::separator {{
-	height: {size_separator}px;
-	margin-top: {size_indicator}px;
-	margin-bottom: {size_indicator}px;
+    height: {size_separator}px;
+    margin-top: {size_indicator}px;
+    margin-bottom: {size_indicator}px;
     background-color: {color_opaque};
     color: transparent;
-	min-width: 1000px;
+    min-width: 1000px;
 }}
 QMenu::item {{
-	height: {size_margin2}px;
-	margin: 0px;
-	padding-right: {size_margin}px;
-	padding-left: {size_margin}px;
+    height: {size_margin2}px;
+    margin: 0px;
+    padding-right: {size_margin}px;
+    padding-left: {size_margin}px;
 }}
 QMenu::icon {{
-	padding: {size_margin}px;
+    padding: {size_margin}px;
 }}
 
 QMenu::item:selected {{
-	color: {color_selected_text};
+    color: {color_selected_text};
   background-color: {color_light_background};
 }}
 QMenu::item:disabled {{
-	color: {color_disabled_text};
+    color: {color_disabled_text};
   background-color: {color_opaque};
 }}
 QMenu::right-arrow {{
   margin: 0;
-	padding-right: {size_margin}px;
+    padding-right: {size_margin}px;
   image: url({branch_closed});
   height: {size_margin}px;
   width: {size_margin}px;
@@ -421,27 +427,27 @@ QMenu::shortcut {{
 }}
 
 QToolTip {{
-	opacity: 200;
-	font-family: "{font_secondary}";
-	font-size: {size_font_small}px;
+    opacity: 200;
+    font-family: "{font_secondary}";
+    font-size: {size_font_small}px;
   background-color: {color_dark_background};
-	padding: {size_indicator1}px;
-	color: {color_secondary_text};
-	border: {size_separator}px solid {color_separator};
+    padding: {size_indicator1}px;
+    color: {color_secondary_text};
+    border: {size_separator}px solid {color_separator};
 }}
 
 QProgressBar, QProgressDialog {{
-	border: {size_separator}px solid {color_separator};
-	border-radius: {size_indicator1}px;
-	background-color: {color_dark_background};
-	text-align: center;
+    border: {size_separator}px solid {color_separator};
+    border-radius: {size_indicator1}px;
+    background-color: {color_dark_background};
+    text-align: center;
 }}
 
 QProgressBar::chunk,
 QProgressDialog::chunk {{
     background-color: {color_green};
     width: {size_indicator}px;
-		margin: 0;
+        margin: 0;
 }}
 
 QTableView {{
@@ -477,54 +483,54 @@ QTabBar::tab:selected, QTabBar::tab:hover {{
 
 CheckBoxButton,
 DragIndicatorButton {{
-	font-size: {size_font_medium}px;
-	background-color: {color_text};
-	margin: 0 0 0 0;
-	padding: 0 0 0 0;
+    font-size: {size_font_medium}px;
+    background-color: {color_text};
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
 }}
 CheckBoxButton:disabled,
 DragIndicatorButton:disabled {{
-	background-color: transparent;
+    background-color: transparent;
 }}
 
 NoteContainerWidget,
 NoteItemWidget,
 NoteTextEditor {{
-	color: {color_dark_background};
-	selection: {color_blue};
-	selection-background-color: {color_blue};
-	background-color: transparent;
-	border-radius: {size_indicator1}px;
-	border: {size_separator}px solid transparent;
+    color: {color_dark_background};
+    selection: {color_blue};
+    selection-background-color: {color_blue};
+    background-color: transparent;
+    border-radius: {size_indicator1}px;
+    border: {size_separator}px solid transparent;
 }}
 NoteContainerWidget:disabled,
 NoteItemWidget:disabled,
 NoteTextEditor:disabled {{
-	color: {color_green};
+    color: {color_green};
 }}
 NoteItemWidget:focus {{
-	border: {size_separator}px solid transparent;
+    border: {size_separator}px solid transparent;
 }}
 
 NoteEditor QScrollBar {{
-	background: transparent;
-	border: none;
-	border-radius: 0;
-	width:{size_indicator1}px;
-	height: {size_indicator1}px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    width:{size_indicator1}px;
+    height: {size_indicator1}px;
 }}
 NoteEditor QScrollBar:vertical,
 NoteEditor QScrollBar:horizontal {{
-	background: {color_text};
-	border: none;
+    background: {color_text};
+    border: none;
 }}
 NoteEditor QScrollBar::handle {{
-	background: {color_secondary_text};
-	border: none;
-	border-radius: {size_indicator1}px;
-	border: none;
-	max-height: 250;
-	min-height: {size_margin}px;
+    background: {color_secondary_text};
+    border: none;
+    border-radius: {size_indicator1}px;
+    border: none;
+    max-height: 250;
+    min-height: {size_margin}px;
 }}
 
 NoteEditor QScrollBar::add-page,
@@ -533,14 +539,14 @@ NoteEditor QScrollBar::add-line,
 NoteEditor QScrollBar::up-arrow,
 NoteEditor QScrollBar::down-arrow,
 NoteEditor QScrollBar::sub-line {{
-	background: {color_text};
-	border: none;
-	border-radius: 0;
+    background: {color_text};
+    border: none;
+    border-radius: 0;
 }}
 
 .ListWidget {{
-	border-radius: {size_indicator1}px;
-	border: {size_separator}px solid {color_dark_background};
+    border-radius: {size_indicator1}px;
+    border: {size_separator}px solid {color_dark_background};
 }}
 
 BasePropertyEditor,
@@ -548,16 +554,16 @@ BasePropertyEditor > QWidget,
 BasePropertyEditor > QScrollArea,
 BasePropertyEditor > QScrollArea > QWidget,
 BasePropertyEditor > QScrollArea > QWidget > QWidget {{
-	background: {color_background};
-	background-color: {color_background};
+    background: {color_background};
+    background-color: {color_background};
 }}
 
 MayaWidget,
 MainWidget  {{
-	background-color: {color_separator};
+    background-color: {color_separator};
 }}
 QWidget#mainRow {{
-	background-color: {color_dark_background};
+    background-color: {color_dark_background};
 }}
 
 

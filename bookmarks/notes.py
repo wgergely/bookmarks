@@ -383,8 +383,6 @@ class NoteTextEditor(QtWidgets.QTextBrowser):
 
     def open_url(self, url):
         """We're handling the clicking of anchors here manually."""
-        print(url)
-
         if not url.isValid():
             return
         file_info = QtCore.QFileInfo(url.url())

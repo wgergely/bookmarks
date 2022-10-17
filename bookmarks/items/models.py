@@ -35,12 +35,12 @@ from PySide2 import QtWidgets, QtCore
 from .. import common
 from .. import images
 from .. import log
-from .. import actions
 
 MAX_HISTORY = 20
 DEFAULT_ITEM_FLAGS = (
         QtCore.Qt.ItemNeverHasChildren |
         QtCore.Qt.ItemIsEnabled |
+        QtCore.Qt.ItemIsEditable |
         QtCore.Qt.ItemIsSelectable
 )
 
@@ -144,7 +144,7 @@ def _filter_excludes_row(filter_text, searchable):
     return False
 
 
-class ItemModel(QtCore.QAbstractListModel):
+class ItemModel(QtCore.QAbstractTableModel):
     """The base model used for interacting with all bookmark, asset and file items.
 
     Data is stored in the datacache module that can be fetched using the model's
@@ -635,7 +635,7 @@ class ItemModel(QtCore.QAbstractListModel):
 
     def columnCount(self, parent=QtCore.QModelIndex()):
         """Number of columns the model has."""
-        return 1
+        return 2
 
     def rowCount(self, parent=QtCore.QModelIndex()):
         """The model's row count.
@@ -673,11 +673,27 @@ class ItemModel(QtCore.QAbstractListModel):
         """
         if not index.isValid():
             return None
-        data = self.model_data()
-        if index.row() not in data:
-            return None
-        if role in data[index.row()]:
-            return data[index.row()][role]
+        if index.column() == 0:
+            data = self.model_data()
+            if index.row() not in data:
+                return None
+            if role in data[index.row()]:
+                return data[index.row()][role]
+
+        # Return the column 0 flags for all columns
+        if role == common.FlagsRole:
+            if role in data[index.row()]:
+                return data[index.row()][role]
+
+        return None
+
+    def headerData(self, idx, orientation, role=QtCore.Qt.DisplayRole):
+        if orientation == QtCore.Qt.Vertical:
+            if role == QtCore.Qt.SizeHintRole:
+                v = QtCore.QSize(common.size(common.size_margin), self.row_size.height())
+                print(v)
+                return v
+        return None
 
     def flags(self, index):
         """Returns the item's flags.

@@ -20,7 +20,9 @@ import re
 from PySide2 import QtWidgets, QtGui, QtCore
 
 from .. import common
+from .. import database
 from .. import images
+from .. import ui
 
 #: Regex used to sanitize version numbers
 regex_remove_version = re.compile(
@@ -135,7 +137,7 @@ def draw_painter_path(painter, x, y, font, text):
         text (str): The text to render.
 
     """
-    k = f'[{font.family(),font.pixelSize()}]{text}'
+    k = f'[{font.family(), font.pixelSize()}]{text}'
 
     if k not in common.delegate_paths:
         path = QtGui.QPainterPath()
@@ -876,8 +878,57 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         self._min = 0
         self._max = 0
 
+    def createEditor(self, parent, option, index):
+        if not index.data(common.FileInfoLoaded):
+            return None
+
+        description_rect = get_description_rectangle(
+            index, option.rect, self.parent().buttons_hidden())
+        if not description_rect:
+            return None
+
+        editor = ui.LineEdit(parent=parent)
+        return editor
+
+    def updateEditorGeometry(self, editor, option, index):
+        rectangles = self.get_rectangles(index)
+        editor.setStyleSheet(f'height: {rectangles[DataRect].height()}px;')
+        editor.setGeometry(rectangles[DataRect])
+
+    def setEditorData(self, editor, index):
+        v = index.data(common.DescriptionRole)
+        v = v if v else ''
+        editor.setText(v)
+        editor.selectAll()
+        editor.setFocus()
+
+    def setModelData(self, editor, model, index):
+        text = f'{index.data(common.DescriptionRole)}'
+        if text.lower() == editor.text().lower():
+            return
+        source_path = index.data(common.ParentPathRole)
+        if not source_path:
+            return
+
+        p = index.data(common.PathRole)
+        if common.is_collapsed(p):
+            k = common.proxy_path(index)
+        else:
+            k = p
+
+        # Set the database value
+        db = database.get_db(*source_path[0:3])
+        with db.connection():
+            db.setValue(k, 'description', editor.text())
+
+        # Set value to cached data
+        source_index = index.model().mapToSource(index)
+        data = source_index.model().model_data()
+        idx = source_index.row()
+        data[idx][common.DescriptionRole] = editor.text()
+
     def paint(self, painter, option, index):
-        """Paint function.
+        """Paints an item.
 
         """
         raise NotImplementedError('Abstract method must be implemented by subclass.')
@@ -949,12 +1000,16 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
                 BackgroundRect: background_rect,
                 IndicatorRect: indicator_rect,
                 ThumbnailRect: thumbnail_rect,
-                ArchiveRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
+                ArchiveRect: inline_icon_rects[next(n)] if count > next(
+                    _n) else null_rect,
                 RevealRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
                 TodoRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
-                FavouriteRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
-                AddItemRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
-                PropertiesRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
+                FavouriteRect: inline_icon_rects[next(n)] if count > next(
+                    _n) else null_rect,
+                AddItemRect: inline_icon_rects[next(n)] if count > next(
+                    _n) else null_rect,
+                PropertiesRect: inline_icon_rects[next(n)] if count > next(
+                    _n) else null_rect,
                 InlineBackgroundRect: inline_background_rect if count else null_rect,
                 DataRect: data_rect
             }
@@ -963,12 +1018,16 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
                 BackgroundRect: background_rect,
                 IndicatorRect: indicator_rect,
                 ThumbnailRect: thumbnail_rect,
-                ArchiveRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
+                ArchiveRect: inline_icon_rects[next(n)] if count > next(
+                    _n) else null_rect,
                 RevealRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
                 TodoRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
-                AddItemRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
-                PropertiesRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
-                FavouriteRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
+                AddItemRect: inline_icon_rects[next(n)] if count > next(
+                    _n) else null_rect,
+                PropertiesRect: inline_icon_rects[next(n)] if count > next(
+                    _n) else null_rect,
+                FavouriteRect: inline_icon_rects[next(n)] if count > next(
+                    _n) else null_rect,
                 InlineBackgroundRect: inline_background_rect if count else null_rect,
                 DataRect: data_rect
             }
@@ -1171,12 +1230,14 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         if len(pp) == 3:
             return self.paint_bookmark_name(*args)
         elif len(pp) == 4:
-            return self.paint_asset_name(*args, offset=common.size(common.size_indicator) * 2)
+            return self.paint_asset_name(*args,
+                                         offset=common.size(common.size_indicator) * 2)
         elif len(pp) > 4:
             return self.paint_file_name(*args)
 
     @save_painter
-    def draw_file_description(self, font, metrics, left_limit, right_limit, offset, large_mode, *args):
+    def draw_file_description(self, font, metrics, left_limit, right_limit, offset,
+                              large_mode, *args):
         """Draws file items' descriptions.
 
         """
@@ -1342,7 +1403,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
 
         if index != self.parent().selectionModel().currentIndex():
             return
-        if not self.parent().description_editor_widget.isVisible():
+        if not self.parent().state() == QtWidgets.QAbstractItemView.EditingState:
             return
 
         painter.setBrush(common.color(common.color_dark_background))
@@ -2305,7 +2366,6 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         self.paint_asset_name(
             *args, offset=(bg_rect.right() - rectangles[DataRect].left()))
 
-
     @save_painter
     def paint_asset_name(self, *args, offset=0):
         """Paints name of the ``AssetWidget``'s items."""
@@ -2394,7 +2454,8 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
 
         color = common.color(common.color_dark_green)
         color = color if active else common.color(common.color_blue)
-        color = common.color(common.color_green).darker(150) if r.contains(cursor_position) else color
+        color = common.color(common.color_green).darker(150) if r.contains(
+            cursor_position) else color
         color = common.color(common.color_separator) if archived else color
 
         if r.contains(cursor_position):
@@ -2464,8 +2525,8 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
                 painter.setBrush(_color)
                 x = _r.x()
                 y = (
-                    rectangles[DataRect].center().y() +
-                    (metrics.ascent() * 0.5) - common.size(common.size_separator)
+                        rectangles[DataRect].center().y() +
+                        (metrics.ascent() * 0.5) - common.size(common.size_separator)
                 )
                 draw_painter_path(painter, x, y, font, text)
 
@@ -2622,29 +2683,36 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
 
 
 class BookmarkItemViewDelegate(ItemDelegate):
-    """The delegate used to paint the bookmark items."""
+    """The delegate used to render
+    :class:`bookmarks.items.bookmark_items.BookmarkItemView` items.
+
+    """
+    #: The item's default thumbnail image
     fallback_thumb = 'bookmark_item'
 
     def paint(self, painter, option, index):
-        """Defines how the ``BookmarkItemView`` should be painted."""
-        args = self.get_paint_arguments(painter, option, index)
+        """Paints a :class:`bookmarks.items.bookmark_items.BookmarkItemView`
+        item.
 
-        self.paint_background(*args)
-        self.paint_default(*args)
-        draw_gradient_background(*args)
-        self.paint_active(*args)
-        self.paint_hover(*args)
-        self.paint_thumbnail_shadow(*args)
-        self.paint_name(*args)
-        self.paint_archived(*args)
-        self.paint_inline_background(*args)
-        self.paint_inline_icons(*args)
-        self.paint_thumbnail(*args)
-        self.paint_thumbnail_drop_indicator(*args)
-        self.paint_description_editor_background(*args)
-        self.paint_selection_indicator(*args)
-        self.paint_slack_status(*args)
-        self.paint_shotgun_status(*args)
+        """
+        if index.column() == 0:
+            args = self.get_paint_arguments(painter, option, index)
+            self.paint_background(*args)
+            self.paint_default(*args)
+            draw_gradient_background(*args)
+            self.paint_active(*args)
+            self.paint_hover(*args)
+            self.paint_thumbnail_shadow(*args)
+            self.paint_name(*args)
+            self.paint_archived(*args)
+            self.paint_inline_background(*args)
+            self.paint_inline_icons(*args)
+            self.paint_thumbnail(*args)
+            self.paint_thumbnail_drop_indicator(*args)
+            self.paint_description_editor_background(*args)
+            self.paint_selection_indicator(*args)
+            self.paint_slack_status(*args)
+            self.paint_shotgun_status(*args)
 
     def sizeHint(self, option, index):
         """Returns the item's size hint.
@@ -2654,30 +2722,37 @@ class BookmarkItemViewDelegate(ItemDelegate):
 
 
 class AssetItemViewDelegate(ItemDelegate):
-    """Delegate used by the ``AssetItemView`` to display the collected assets."""
+    """The delegate used to render
+    :class:`bookmarks.items.asset_items.AssetItemView` items.
+
+    """
+    #: The item's default thumbnail image
     fallback_thumb = 'asset_item'
 
     def paint(self, painter, option, index):
-        """Defines how the ``AssetItemView``'s' items should be painted."""
-        # The index might still be populated...
-        if index.data(QtCore.Qt.DisplayRole) is None:
-            return
-        args = self.get_paint_arguments(painter, option, index)
-        self.paint_background(*args)
-        draw_gradient_background(*args)
-        self.paint_active(*args)
-        self.paint_hover(*args)
-        self.paint_thumbnail_shadow(*args)
-        self.paint_name(*args)
-        self.paint_archived(*args)
-        self.paint_description_editor_background(*args)
-        self.paint_inline_background(*args)
-        self.paint_inline_icons(*args)
-        self.paint_thumbnail(*args)
-        self.paint_thumbnail_drop_indicator(*args)
-        self.paint_selection_indicator(*args)
-        self.paint_shotgun_status(*args)
-        self.paint_dcc_icon(*args)
+        """Paints a :class:`bookmarks.items.asset_items.AssetItemView`
+        item.
+
+        """
+        if index.column() == 0:
+            if index.data(QtCore.Qt.DisplayRole) is None:
+                return  # The index might still be populated...
+            args = self.get_paint_arguments(painter, option, index)
+            self.paint_background(*args)
+            draw_gradient_background(*args)
+            self.paint_active(*args)
+            self.paint_hover(*args)
+            self.paint_thumbnail_shadow(*args)
+            self.paint_name(*args)
+            self.paint_archived(*args)
+            self.paint_description_editor_background(*args)
+            self.paint_inline_background(*args)
+            self.paint_inline_icons(*args)
+            self.paint_thumbnail(*args)
+            self.paint_thumbnail_drop_indicator(*args)
+            self.paint_selection_indicator(*args)
+            self.paint_shotgun_status(*args)
+            self.paint_dcc_icon(*args)
 
     def sizeHint(self, option, index):
         """Returns the item's size hint.
@@ -2687,38 +2762,44 @@ class AssetItemViewDelegate(ItemDelegate):
 
 
 class FileItemViewDelegate(ItemDelegate):
-    """QAbstractItemDelegate associated with ``FileItemView``."""
+    """The delegate used to render
+    :class:`bookmarks.items.file_items.FileItemView` items.
+
+    """
+    #: The item's default thumbnail image
     fallback_thumb = 'file_item'
 
     def __init__(self, parent=None):
         super(FileItemViewDelegate, self).__init__(parent=parent)
 
     def paint(self, painter, option, index):
-        """Defines how the ``FileItemView``'s' items should be painted."""
+        """Paints a :class:`bookmarks.items.file_items.FileItemView`
+        item.
 
-        args = self.get_paint_arguments(painter, option, index)
+        """
+        if index.column() == 0:
+            args = self.get_paint_arguments(painter, option, index)
+            if not index.data(QtCore.Qt.DisplayRole):
+                return
+            p_role = index.data(common.ParentPathRole)
+            if p_role:
+                self.paint_background(*args)
+                draw_gradient_background(*args)
+                self.paint_active(*args)
+                self.paint_hover(*args)
+                self.paint_name(*args)
 
-        if not index.data(QtCore.Qt.DisplayRole):
-            return
-        p_role = index.data(common.ParentPathRole)
-        if p_role:
-            self.paint_background(*args)
-            draw_gradient_background(*args)
-            self.paint_active(*args)
-            self.paint_hover(*args)
-            self.paint_name(*args)
+            self.paint_thumbnail_shadow(*args)
 
-        self.paint_thumbnail_shadow(*args)
-
-        self.paint_archived(*args)
-        self.paint_inline_background(*args)
-        self.paint_inline_icons(*args)
-        self.paint_selection_indicator(*args)
-        self.paint_thumbnail(*args)
-        self.paint_thumbnail_drop_indicator(*args)
-        self.paint_description_editor_background(*args)
-        self.paint_drag_source(*args)
-        self.paint_deleted(*args)
+            self.paint_archived(*args)
+            self.paint_inline_background(*args)
+            self.paint_inline_icons(*args)
+            self.paint_selection_indicator(*args)
+            self.paint_thumbnail(*args)
+            self.paint_thumbnail_drop_indicator(*args)
+            self.paint_description_editor_background(*args)
+            self.paint_drag_source(*args)
+            self.paint_deleted(*args)
 
     def sizeHint(self, option, index):
         """Returns the item's size hint.
@@ -2728,7 +2809,8 @@ class FileItemViewDelegate(ItemDelegate):
 
 
 class FavouriteItemViewDelegate(FileItemViewDelegate):
-    """Delegate used to paint favourite items.
+    """The delegate used to render
+    :class:`bookmarks.items.favourite_items.FavouriteItemView` items.
 
     """
     fallback_thumb = 'favourite_item'

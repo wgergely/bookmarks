@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>bookmarks.items.models - Bookmarks 0.7.3 documentation</title>
+        <title>bookmarks.items.models - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -228,7 +228,6 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/items/models.html">items.models</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/items/task_items.html">items.task_items</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/items/views.html">items.views</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/description_editor.html">items.widgets.description_editor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/filter_editor.html">items.widgets.filter_editor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/image_viewer.html">items.widgets.image_viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/thumb_capture.html">items.widgets.thumb_capture</a></li>
@@ -256,6 +255,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/notes.html">notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/progress.html">progress</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/publish.html">publish</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/shortcuts.html">shortcuts</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/shotgun.html">shotgun</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -382,12 +382,12 @@
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">common</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">images</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">log</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">actions</span>
 
 <span class="n">MAX_HISTORY</span> <span class="o">=</span> <span class="mi">20</span>
 <span class="n">DEFAULT_ITEM_FLAGS</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemNeverHasChildren</span> <span class="o">|</span>
         <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span> <span class="o">|</span>
+        <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEditable</span> <span class="o">|</span>
         <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span>
 <span class="p">)</span>
 
@@ -491,7 +491,7 @@
     <span class="k">return</span> <span class="kc">False</span>
 
 
-<div class="viewcode-block" id="ItemModel"><a class="viewcode-back" href="../../../modules/items/models.html#bookmarks.items.models.ItemModel">[docs]</a><span class="k">class</span> <span class="nc">ItemModel</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QAbstractListModel</span><span class="p">):</span>
+<div class="viewcode-block" id="ItemModel"><a class="viewcode-back" href="../../../modules/items/models.html#bookmarks.items.models.ItemModel">[docs]</a><span class="k">class</span> <span class="nc">ItemModel</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QAbstractTableModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The base model used for interacting with all bookmark, asset and file items.</span>
 
 <span class="sd">    Data is stored in the datacache module that can be fetched using the model&#39;s</span>
@@ -995,25 +995,6 @@
             <span class="k">return</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">data_count</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ItemModel.index"><a class="viewcode-back" href="../../../modules/items/models.html#bookmarks.items.models.ItemModel.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">()):</span>
-        <span class="sd">&quot;&quot;&quot;Index of the given row and column.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_path</span><span class="p">()</span>
-        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="p">()</span>
-        <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_type</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">k</span> <span class="ow">or</span> <span class="n">t</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">()</span>
-
-        <span class="n">data</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">row</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">()</span>
-
-        <span class="n">ptr</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">row</span><span class="p">])</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">createIndex</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">ptr</span><span class="o">=</span><span class="n">ptr</span><span class="p">)</span></div>
-
 <div class="viewcode-block" id="ItemModel.data"><a class="viewcode-back" href="../../../modules/items/models.html#bookmarks.items.models.ItemModel.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns and item data associated with the given index.</span>
 
@@ -1021,10 +1002,25 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_data</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="n">role</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()]:</span>
-            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()][</span><span class="n">role</span><span class="p">]</span></div>
+        <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">role</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()]:</span>
+                <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()][</span><span class="n">role</span><span class="p">]</span>
+
+        <span class="c1"># Return the column 0 flags for all columns</span>
+        <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">role</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()]:</span>
+                <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()][</span><span class="n">role</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="ItemModel.headerData"><a class="viewcode-back" href="../../../modules/items/models.html#bookmarks.items.models.ItemModel.headerData">[docs]</a>    <span class="k">def</span> <span class="nf">headerData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">orientation</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">orientation</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Vertical</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">role</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSize</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_margin</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_size</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+                <span class="k">return</span> <span class="n">v</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="ItemModel.flags"><a class="viewcode-back" href="../../../modules/items/models.html#bookmarks.items.models.ItemModel.flags">[docs]</a>    <span class="k">def</span> <span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the item&#39;s flags.</span>

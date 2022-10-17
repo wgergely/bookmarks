@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>bookmarks.items.views - Bookmarks 0.7.3 documentation</title>
+        <title>bookmarks.items.views - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.3 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.3 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -228,7 +228,6 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/items/models.html">items.models</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/items/task_items.html">items.task_items</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/items/views.html">items.views</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/description_editor.html">items.widgets.description_editor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/filter_editor.html">items.widgets.filter_editor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/image_viewer.html">items.widgets.image_viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/thumb_capture.html">items.widgets.thumb_capture</a></li>
@@ -256,6 +255,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/notes.html">notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/progress.html">progress</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/publish.html">publish</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../modules/shortcuts.html">shortcuts</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/shotgun.html">shotgun</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -366,13 +366,11 @@
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">delegate</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">models</span>
-<span class="kn">from</span> <span class="nn">.widgets</span> <span class="kn">import</span> <span class="n">description_editor</span>
 <span class="kn">from</span> <span class="nn">.widgets</span> <span class="kn">import</span> <span class="n">filter_editor</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">actions</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">common</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">contextmenu</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">database</span>
-<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">images</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ui</span>
 <span class="kn">from</span> <span class="nn">..threads</span> <span class="kn">import</span> <span class="n">threads</span>
 
@@ -562,20 +560,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">repaint</span><span class="p">()</span></div></div>
 
 
-<div class="viewcode-block" id="BaseItemView"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.BaseItemView">[docs]</a><span class="k">class</span> <span class="nc">BaseItemView</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QListView</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The base view of all subsequent bookmark, asset and files item views.</span>
+<div class="viewcode-block" id="BaseItemView"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.BaseItemView">[docs]</a><span class="k">class</span> <span class="nc">BaseItemView</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QTableView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The base view of all subsequent item views.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#: Emitted when the user shift+right-clicks on the view. Use this to show DCC</span>
+    <span class="c1">#: specific context menus.</span>
     <span class="n">customContextMenuRequested</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span>
         <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QObject</span><span class="p">)</span>
+    <span class="c1">#: Called when the user requests model data load by pressing the ESC key.</span>
     <span class="n">interruptRequested</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
 
+    <span class="c1">#: Signals window size change</span>
     <span class="n">resized</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">)</span>
-    <span class="n">SourceModel</span> <span class="o">=</span> <span class="ne">NotImplementedError</span>
 
+    <span class="n">ThumbnailContextMenu</span> <span class="o">=</span> <span class="n">ThumbnailsContextMenu</span>
     <span class="n">Delegate</span> <span class="o">=</span> <span class="ne">NotImplementedError</span>
     <span class="n">ContextMenu</span> <span class="o">=</span> <span class="ne">NotImplementedError</span>
-    <span class="n">ThumbnailContextMenu</span> <span class="o">=</span> <span class="n">ThumbnailsContextMenu</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="o">=</span><span class="s1">&#39;icon_bw&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
@@ -585,10 +586,20 @@
             <span class="s1">&#39;proxy_rows&#39;</span><span class="p">:</span> <span class="p">[]</span>
         <span class="p">}</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">verticalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">setSectionResizeMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHeaderView</span><span class="o">.</span><span class="n">Fixed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verticalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">setSectionResizeMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHeaderView</span><span class="o">.</span><span class="n">Stretch</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">setDragDropOverwriteMode</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setDropIndicatorShown</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">setAcceptDrops</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setDragDropMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">DropOnly</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setEditTriggers</span><span class="p">(</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">DoubleClicked</span> <span class="o">|</span>
+            <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">EditKeyPressed</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s1">&#39;DelayedLayoutTimer&#39;</span><span class="p">)</span>
@@ -606,12 +617,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">progress_indicator_widget</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">filter_indicator_widget</span> <span class="o">=</span> <span class="n">FilterOnOverlayWidget</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">filter_editor</span> <span class="o">=</span> <span class="n">filter_editor</span><span class="o">.</span><span class="n">FilterEditor</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filter_editor</span> <span class="o">=</span> <span class="n">filter_editor</span><span class="o">.</span><span class="n">TextFilterEditor</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filter_editor</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">description_editor_widget</span> <span class="o">=</span> <span class="n">description_editor</span><span class="o">.</span><span class="n">DescriptionEditorWidget</span><span class="p">(</span>
-            <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">description_editor_widget</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># Keyboard search timer and placeholder string.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
@@ -628,9 +635,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_restore_selection_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_restore_selection_timer</span><span class="o">.</span><span class="n">setSingleShot</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">setResizeMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QListView</span><span class="o">.</span><span class="n">Adjust</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setSelectionMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">SingleSelection</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setUniformItemSizes</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setSelectionBehavior</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">SelectRows</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setShowGrid</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_NoSystemBackground</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_TranslucentBackground</span><span class="p">)</span>
@@ -639,13 +647,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">setMouseTracking</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setWordWrap</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setLayoutMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QListView</span><span class="o">.</span><span class="n">Batched</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setBatchSize</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">installEventFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setFocusPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StrongFocus</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setHorizontalScrollBarPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarAlwaysOff</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setHorizontalScrollBarPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarAsNeeded</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setVerticalScrollBarPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarAsNeeded</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setItemDelegate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Delegate</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">))</span>
@@ -658,9 +664,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_save_selection_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_selection</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_restore_selection_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">restore_selection</span><span class="p">)</span>
 
-<div class="viewcode-block" id="BaseItemView.init_buttons_state"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.BaseItemView.init_buttons_state">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
+<div class="viewcode-block" id="BaseItemView.get_source_model"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.BaseItemView.get_source_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_source_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the model class associated with this view.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Abstract method must be implemented by subclass.&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BaseItemView.init_buttons_hidden"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.BaseItemView.init_buttons_hidden">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
-    <span class="k">def</span> <span class="nf">init_buttons_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">init_buttons_hidden</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Restore the previous state of the inline icon buttons.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -694,20 +706,21 @@
 <span class="sd">        and the view to communicate are made here.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SourceModel</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_source_model</span><span class="p">()</span>
         <span class="n">proxy</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">FilterProxyModel</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">proxy</span><span class="o">.</span><span class="n">setSourceModel</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setModel</span><span class="p">(</span><span class="n">proxy</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">init_buttons_state</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_buttons_hidden</span><span class="p">()</span>
         <span class="n">model</span><span class="o">.</span><span class="n">init_sort_values</span><span class="p">()</span>
         <span class="n">model</span><span class="o">.</span><span class="n">init_row_size</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verticalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">setDefaultSectionSize</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">row_size</span><span class="o">.</span><span class="n">height</span><span class="p">()))</span>
         <span class="n">proxy</span><span class="o">.</span><span class="n">init_filter_values</span><span class="p">()</span>
 
         <span class="n">model</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">init_sort_values</span><span class="p">)</span>
         <span class="n">model</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">init_filter_values</span><span class="p">)</span>
         <span class="n">model</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">init_row_size</span><span class="p">)</span>
-        <span class="n">model</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">init_buttons_state</span><span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">init_buttons_hidden</span><span class="p">)</span>
         <span class="n">model</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reset_multi_toggle</span><span class="p">)</span>
         <span class="n">model</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
             <span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span><span class="o">.</span><span class="n">interval</span><span class="p">())</span>
@@ -716,6 +729,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">interruptRequested</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">set_interrupt_requested</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">filter_editor</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">set_filter_text</span><span class="p">)</span>
+
 
         <span class="n">model</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delay_restore_selection</span><span class="p">)</span>
         <span class="n">proxy</span><span class="o">.</span><span class="n">invalidated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delay_restore_selection</span><span class="p">)</span>
@@ -1076,7 +1090,6 @@
         <span class="sd">&quot;&quot;&quot;Custom key action.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">description_editor_widget</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
         <span class="n">actions</span><span class="o">.</span><span class="n">preview_thumbnail</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="BaseItemView.key_down"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.BaseItemView.key_down">[docs]</a>    <span class="k">def</span> <span class="nf">key_down</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1086,7 +1099,6 @@
 <span class="sd">        item in the list, we&#39;ll jump to the beginning, and vice-versa.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">description_editor_widget</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
         <span class="n">sel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span>
         <span class="n">current_index</span> <span class="o">=</span> <span class="n">sel</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
         <span class="n">first_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -1122,7 +1134,6 @@
 <span class="sd">        item in the list, we&#39;ll jump to the beginning, and vice-versa.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">description_editor_widget</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
         <span class="n">sel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span>
         <span class="n">current_index</span> <span class="o">=</span> <span class="n">sel</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
         <span class="n">first_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -1153,12 +1164,20 @@
         <span class="sd">&quot;&quot;&quot;Custom key action</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">description_editor_widget</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">hasSelection</span><span class="p">():</span>
+            <span class="k">return</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">selectedIndexes</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">edit</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BaseItemView.action_on_enter_key"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.BaseItemView.action_on_enter_key">[docs]</a>    <span class="k">def</span> <span class="nf">action_on_enter_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseItemView.key_enter"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.BaseItemView.key_enter">[docs]</a>    <span class="k">def</span> <span class="nf">key_enter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Custom key action</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">EditingState</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">key_down</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">key_up</span><span class="p">()</span>
+            <span class="k">return</span>
         <span class="n">index</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_selected_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
             <span class="k">return</span>
@@ -1306,9 +1325,7 @@
         <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()</span> <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
 
         <span class="c1"># Update the layout</span>
-        <span class="c1"># self.scheduleDelayedItemsLayout()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">save_visible_rows</span><span class="p">()</span>
-        <span class="c1"># self.repaint_visible_rows()</span>
 
         <span class="c1"># Restore the selection</span>
         <span class="k">if</span> <span class="n">row</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
@@ -1333,6 +1350,8 @@
 
         <span class="n">model</span><span class="o">.</span><span class="n">row_size</span><span class="o">.</span><span class="n">setHeight</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
         <span class="n">model</span><span class="o">.</span><span class="n">set_filter_setting</span><span class="p">(</span><span class="s1">&#39;filters/row_heights&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">verticalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">setDefaultSectionSize</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
 
         <span class="c1"># Notify the delegate of the new row size</span>
         <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()):</span>
@@ -1423,7 +1442,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_thumbnail_drop</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span>
-        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
 
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
         <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()</span>
@@ -1456,7 +1475,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_thumbnail_drop</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
         <span class="n">pos</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span>
-        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
 
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
@@ -1527,31 +1546,37 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 
             <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Escape</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">EditingState</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">key_down</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">key_up</span><span class="p">()</span>
+                    <span class="k">return</span>
+
                 <span class="bp">self</span><span class="o">.</span><span class="n">interruptRequested</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">hasSelection</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span>
+                        <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">(),</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QItemSelectionModel</span><span class="o">.</span><span class="n">ClearAndSelect</span>
+                    <span class="p">)</span>
                 <span class="k">return</span>
             <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Space</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">key_space</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">delay_save_selection</span><span class="p">()</span>
                 <span class="k">return</span>
-            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Escape</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span>
-                    <span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">(),</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QItemSelectionModel</span><span class="o">.</span><span class="n">ClearAndSelect</span><span class="p">)</span>
-                <span class="k">return</span>
-            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Down</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Down</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">key_down</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">delay_save_selection</span><span class="p">()</span>
                 <span class="k">return</span>
-            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Up</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Up</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">key_up</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">delay_save_selection</span><span class="p">()</span>
                 <span class="k">return</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Return</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Return</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
                     <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Enter</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">action_on_enter_key</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">key_enter</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">delay_save_selection</span><span class="p">()</span>
                 <span class="k">return</span>
-            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Tab</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">description_editor_widget</span><span class="o">.</span><span class="n">isVisible</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Tab</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">EditingState</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">key_tab</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">delay_save_selection</span><span class="p">()</span>
                     <span class="k">return</span>
@@ -1560,8 +1585,8 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">key_tab</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">delay_save_selection</span><span class="p">()</span>
                     <span class="k">return</span>
-            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Backtab</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">description_editor_widget</span><span class="o">.</span><span class="n">isVisible</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Backtab</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">EditingState</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">key_tab</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">delay_save_selection</span><span class="p">()</span>
                     <span class="k">return</span>
@@ -1570,19 +1595,19 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">key_tab</span><span class="p">()</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">delay_save_selection</span><span class="p">()</span>
                     <span class="k">return</span>
-            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_PageDown</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_PageDown</span><span class="p">:</span>
                 <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">keyPressEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">delay_save_selection</span><span class="p">()</span>
                 <span class="k">return</span>
-            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_PageUp</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_PageUp</span><span class="p">:</span>
                 <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">keyPressEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">delay_save_selection</span><span class="p">()</span>
                 <span class="k">return</span>
-            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Home</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_Home</span><span class="p">:</span>
                 <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">keyPressEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">delay_save_selection</span><span class="p">()</span>
                 <span class="k">return</span>
-            <span class="k">elif</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_End</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">key</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Key_End</span><span class="p">:</span>
                 <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">keyPressEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">delay_save_selection</span><span class="p">()</span>
                 <span class="k">return</span>
@@ -1668,6 +1693,9 @@
 <div class="viewcode-block" id="BaseItemView.contextMenuEvent"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.BaseItemView.contextMenuEvent">[docs]</a>    <span class="k">def</span> <span class="nf">contextMenuEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Custom context menu event.&quot;&quot;&quot;</span>
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span> <span class="ow">and</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span>
+
         <span class="n">shift_modifier</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">modifiers</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ShiftModifier</span>
         <span class="n">alt_modifier</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">modifiers</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AltModifier</span>
         <span class="n">control_modifier</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">modifiers</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ControlModifier</span>
@@ -1690,11 +1718,13 @@
         <span class="n">widget</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="BaseItemView.mousePressEvent"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.BaseItemView.mousePressEvent">[docs]</a>    <span class="k">def</span> <span class="nf">mousePressEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Deselecting item when the index is invalid.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Deselect the current index when clicked on an empty space.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMouseEvent</span><span class="p">):</span>
             <span class="k">return</span>
 
-        <span class="n">cursor_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
+        <span class="n">cursor_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">selectionModel</span><span class="p">()</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span>
@@ -1714,38 +1744,34 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMouseEvent</span><span class="p">):</span>
             <span class="k">return</span>
 
-        <span class="n">cursor_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
+        <span class="n">cursor_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">flags</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="n">rectangles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">itemDelegate</span><span class="p">()</span><span class="o">.</span><span class="n">get_rectangles</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">rectangles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">itemDelegate</span><span class="p">()</span><span class="o">.</span><span class="n">get_rectangles</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
-        <span class="n">_rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visualRect</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-        <span class="n">rect</span> <span class="o">=</span> <span class="n">delegate</span><span class="o">.</span><span class="n">get_description_rectangle</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">_rect</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">buttons_hidden</span><span class="p">())</span>
+            <span class="n">_rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">visualRect</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">rect</span> <span class="o">=</span> <span class="n">delegate</span><span class="o">.</span><span class="n">get_description_rectangle</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">_rect</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">buttons_hidden</span><span class="p">())</span>
 
-        <span class="k">if</span> <span class="n">rect</span> <span class="ow">and</span> <span class="n">rect</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">))</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="n">actions</span><span class="o">.</span><span class="n">edit_bookmark</span><span class="p">(</span>
-                    <span class="n">server</span><span class="o">=</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
-                    <span class="n">job</span><span class="o">=</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span>
-                    <span class="n">root</span><span class="o">=</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">)[</span><span class="mi">2</span><span class="p">],</span>
-                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">rect</span> <span class="ow">and</span> <span class="n">rect</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">edit</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
                 <span class="k">return</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">description_editor_widget</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-            <span class="k">return</span>
 
-        <span class="k">if</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">delegate</span><span class="o">.</span><span class="n">ThumbnailRect</span><span class="p">]</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">):</span>
-            <span class="n">actions</span><span class="o">.</span><span class="n">pick_thumbnail_from_file</span><span class="p">()</span>
-            <span class="k">return</span>
-
-        <span class="k">if</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">delegate</span><span class="o">.</span><span class="n">DataRect</span><span class="p">]</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">):</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_selected_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">delegate</span><span class="o">.</span><span class="n">ThumbnailRect</span><span class="p">]</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">):</span>
+                <span class="n">actions</span><span class="o">.</span><span class="n">pick_thumbnail_from_file</span><span class="p">()</span>
                 <span class="k">return</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">activate</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div></div>
+
+            <span class="k">if</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">delegate</span><span class="o">.</span><span class="n">DataRect</span><span class="p">]</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">):</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_selected_index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+                    <span class="k">return</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">activate</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">mouseDoubleClickEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="InlineIconView"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.InlineIconView">[docs]</a><span class="k">class</span> <span class="nc">InlineIconView</span><span class="p">(</span><span class="n">BaseItemView</span><span class="p">):</span>
@@ -1794,12 +1820,14 @@
 <span class="sd">        items containing the clicked rectangle&#39;s text content.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">cursor_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
+        <span class="n">cursor_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">flags</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span>
 
         <span class="c1"># Get pressed keyboard modifiers</span>
@@ -1814,7 +1842,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">clickable_rectangles</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="n">cursor_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
+        <span class="n">cursor_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
 
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">clickable_rectangles</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="p">:</span>
@@ -1876,40 +1904,41 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">reset_multi_toggle</span><span class="p">()</span>
             <span class="k">return</span>
 
-        <span class="n">cursor_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
+        <span class="n">cursor_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">flags</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span><span class="p">:</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">InlineIconView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">mousePressEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_clicked_rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">flags</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span><span class="p">:</span>
+                <span class="nb">super</span><span class="p">(</span><span class="n">InlineIconView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">mousePressEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_clicked_rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reset_multi_toggle</span><span class="p">()</span>
+                <span class="k">return</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">reset_multi_toggle</span><span class="p">()</span>
-            <span class="k">return</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset_multi_toggle</span><span class="p">()</span>
+            <span class="n">rectangles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">itemDelegate</span><span class="p">()</span><span class="o">.</span><span class="n">get_rectangles</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
-        <span class="n">rectangles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">itemDelegate</span><span class="p">()</span><span class="o">.</span><span class="n">get_rectangles</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-        
-        <span class="bp">self</span><span class="o">.</span><span class="n">_clicked_rect</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">rectangles</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="p">(</span>
-                <span class="n">delegate</span><span class="o">.</span><span class="n">AddItemRect</span><span class="p">,</span>
-                <span class="n">delegate</span><span class="o">.</span><span class="n">TodoRect</span><span class="p">,</span>
-                <span class="n">delegate</span><span class="o">.</span><span class="n">RevealRect</span><span class="p">,</span>
-                <span class="n">delegate</span><span class="o">.</span><span class="n">PropertiesRect</span><span class="p">,</span>
-                <span class="n">delegate</span><span class="o">.</span><span class="n">ArchiveRect</span><span class="p">,</span>
-                <span class="n">delegate</span><span class="o">.</span><span class="n">FavouriteRect</span><span class="p">,</span>
-            <span class="p">)</span> <span class="k">if</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">f</span><span class="p">]</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">)),</span>
-            <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">()</span>
-        <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_clicked_rect</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">rectangles</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="p">(</span>
+                    <span class="n">delegate</span><span class="o">.</span><span class="n">AddItemRect</span><span class="p">,</span>
+                    <span class="n">delegate</span><span class="o">.</span><span class="n">TodoRect</span><span class="p">,</span>
+                    <span class="n">delegate</span><span class="o">.</span><span class="n">RevealRect</span><span class="p">,</span>
+                    <span class="n">delegate</span><span class="o">.</span><span class="n">PropertiesRect</span><span class="p">,</span>
+                    <span class="n">delegate</span><span class="o">.</span><span class="n">ArchiveRect</span><span class="p">,</span>
+                    <span class="n">delegate</span><span class="o">.</span><span class="n">FavouriteRect</span><span class="p">,</span>
+                <span class="p">)</span> <span class="k">if</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">f</span><span class="p">]</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">)),</span>
+                <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">()</span>
+            <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">delegate</span><span class="o">.</span><span class="n">FavouriteRect</span><span class="p">]</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">multi_toggle_pos</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">cursor_position</span><span class="o">.</span><span class="n">y</span><span class="p">())</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">multi_toggle_state</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">flags</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsFavourite</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">multi_toggle_flag</span> <span class="o">=</span> <span class="n">delegate</span><span class="o">.</span><span class="n">FavouriteRect</span>
+            <span class="k">if</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">delegate</span><span class="o">.</span><span class="n">FavouriteRect</span><span class="p">]</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">multi_toggle_pos</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPoint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">cursor_position</span><span class="o">.</span><span class="n">y</span><span class="p">())</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">multi_toggle_state</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">flags</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsFavourite</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">multi_toggle_flag</span> <span class="o">=</span> <span class="n">delegate</span><span class="o">.</span><span class="n">FavouriteRect</span>
 
-        <span class="k">if</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">delegate</span><span class="o">.</span><span class="n">ArchiveRect</span><span class="p">]</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">multi_toggle_pos</span> <span class="o">=</span> <span class="n">cursor_position</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">multi_toggle_state</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">flags</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">multi_toggle_flag</span> <span class="o">=</span> <span class="n">delegate</span><span class="o">.</span><span class="n">ArchiveRect</span>
+            <span class="k">if</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">delegate</span><span class="o">.</span><span class="n">ArchiveRect</span><span class="p">]</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">multi_toggle_pos</span> <span class="o">=</span> <span class="n">cursor_position</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">multi_toggle_state</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">flags</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">multi_toggle_flag</span> <span class="o">=</span> <span class="n">delegate</span><span class="o">.</span><span class="n">ArchiveRect</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">InlineIconView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">mousePressEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span></div>
 
@@ -1947,65 +1976,69 @@
 
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">):</span>
-            <span class="k">return</span>
-        <span class="n">archived</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span>
-
-        <span class="c1"># Let&#39;s handle the clickable rectangle event first</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">archived</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">clickable_rectangle_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">reset_multi_toggle</span><span class="p">()</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">InlineIconView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">mouseReleaseEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
             <span class="k">return</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multi_toggle_items</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">):</span>
+                <span class="k">return</span>
+            <span class="n">archived</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span>
+
+            <span class="c1"># Let&#39;s handle the clickable rectangle event first</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">archived</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">clickable_rectangle_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reset_multi_toggle</span><span class="p">()</span>
+                <span class="nb">super</span><span class="p">(</span><span class="n">InlineIconView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">mouseReleaseEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+                <span class="k">return</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multi_toggle_items</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reset_multi_toggle</span><span class="p">()</span>
+                <span class="nb">super</span><span class="p">(</span><span class="n">InlineIconView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">mouseReleaseEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">invalidateFilter</span><span class="p">()</span>
+                <span class="k">return</span>
+
+            <span class="c1"># Responding the click-events based on the position:</span>
+            <span class="n">rectangles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">itemDelegate</span><span class="p">()</span><span class="o">.</span><span class="n">get_rectangles</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">cursor_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">reset_multi_toggle</span><span class="p">()</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">InlineIconView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">mouseReleaseEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">invalidateFilter</span><span class="p">()</span>
-            <span class="k">return</span>
 
-        <span class="c1"># Responding the click-events based on the position:</span>
-        <span class="n">rectangles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">itemDelegate</span><span class="p">()</span><span class="o">.</span><span class="n">get_rectangles</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-        <span class="n">cursor_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
+            <span class="k">def</span> <span class="nf">_check_rect</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">f</span><span class="p">]</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">cursor_position</span>
+                <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="ow">and</span> <span class="n">r</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clicked_rect</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset_multi_toggle</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">_check_rect</span><span class="p">(</span><span class="n">delegate</span><span class="o">.</span><span class="n">FavouriteRect</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">archived</span><span class="p">:</span>
+                <span class="n">actions</span><span class="o">.</span><span class="n">toggle_favourite</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">filter_flag</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">MarkedAsFavourite</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">invalidateFilter</span><span class="p">()</span>
 
-        <span class="k">def</span> <span class="nf">_check_rect</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
-            <span class="n">r</span> <span class="o">=</span> <span class="n">rectangles</span><span class="p">[</span><span class="n">f</span><span class="p">]</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">cursor_position</span>
-            <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="ow">and</span> <span class="n">r</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clicked_rect</span>
+            <span class="k">if</span> <span class="n">_check_rect</span><span class="p">(</span><span class="n">delegate</span><span class="o">.</span><span class="n">ArchiveRect</span><span class="p">):</span>
+                <span class="n">actions</span><span class="o">.</span><span class="n">toggle_archived</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">filter_flag</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">invalidateFilter</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">_check_rect</span><span class="p">(</span><span class="n">delegate</span><span class="o">.</span><span class="n">FavouriteRect</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">archived</span><span class="p">:</span>
-            <span class="n">actions</span><span class="o">.</span><span class="n">toggle_favourite</span><span class="p">()</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">filter_flag</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">MarkedAsFavourite</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">invalidateFilter</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">_check_rect</span><span class="p">(</span><span class="n">delegate</span><span class="o">.</span><span class="n">RevealRect</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">archived</span><span class="p">:</span>
+                <span class="c1"># Reveal the job folder if any of the modifiers are pressed</span>
+                <span class="k">if</span> <span class="nb">any</span><span class="p">((</span><span class="n">alt_modifier</span><span class="p">,</span> <span class="n">shift_modifier</span><span class="p">,</span> <span class="n">control_modifier</span><span class="p">)):</span>
+                    <span class="n">pp</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">)</span>
+                    <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">pp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">pp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span>
+                    <span class="n">actions</span><span class="o">.</span><span class="n">reveal</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">actions</span><span class="o">.</span><span class="n">reveal</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">_check_rect</span><span class="p">(</span><span class="n">delegate</span><span class="o">.</span><span class="n">ArchiveRect</span><span class="p">):</span>
-            <span class="n">actions</span><span class="o">.</span><span class="n">toggle_archived</span><span class="p">()</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">filter_flag</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">invalidateFilter</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">_check_rect</span><span class="p">(</span><span class="n">delegate</span><span class="o">.</span><span class="n">TodoRect</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">archived</span><span class="p">:</span>
+                <span class="n">actions</span><span class="o">.</span><span class="n">show_todos</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="n">_check_rect</span><span class="p">(</span><span class="n">delegate</span><span class="o">.</span><span class="n">RevealRect</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">archived</span><span class="p">:</span>
-            <span class="c1"># Reveal the job folder if any of the modifiers are pressed</span>
-            <span class="k">if</span> <span class="nb">any</span><span class="p">((</span><span class="n">alt_modifier</span><span class="p">,</span> <span class="n">shift_modifier</span><span class="p">,</span> <span class="n">control_modifier</span><span class="p">)):</span>
-                <span class="n">pp</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">)</span>
-                <span class="n">s</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">pp</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">pp</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span>
-                <span class="n">actions</span><span class="o">.</span><span class="n">reveal</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">actions</span><span class="o">.</span><span class="n">reveal</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">_check_rect</span><span class="p">(</span><span class="n">delegate</span><span class="o">.</span><span class="n">AddItemRect</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">archived</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_item_action</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">_check_rect</span><span class="p">(</span><span class="n">delegate</span><span class="o">.</span><span class="n">TodoRect</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">archived</span><span class="p">:</span>
-            <span class="n">actions</span><span class="o">.</span><span class="n">show_todos</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">_check_rect</span><span class="p">(</span><span class="n">delegate</span><span class="o">.</span><span class="n">PropertiesRect</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">archived</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">edit_item_action</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">_check_rect</span><span class="p">(</span><span class="n">delegate</span><span class="o">.</span><span class="n">AddItemRect</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">archived</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">add_item_action</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">_check_rect</span><span class="p">(</span><span class="n">delegate</span><span class="o">.</span><span class="n">PropertiesRect</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">archived</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">edit_item_action</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_clicked_rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_clicked_rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">()</span>
         
         <span class="nb">super</span><span class="p">(</span><span class="n">InlineIconView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">mouseReleaseEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span></div>
 
@@ -2028,15 +2061,20 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verticalScrollBar</span><span class="p">()</span><span class="o">.</span><span class="n">isSliderDown</span><span class="p">():</span>
             <span class="k">return</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="p">:</span>
-            <span class="k">return</span>
-        <span class="n">cursor_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
-
         <span class="n">app</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">app</span><span class="p">:</span>
             <span class="k">return</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">cursor_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">mapFromGlobal</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">cursor</span><span class="o">.</span><span class="n">pos</span><span class="p">())</span>
+
         <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indexAt</span><span class="p">(</span><span class="n">cursor_position</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="n">app</span><span class="o">.</span><span class="n">restoreOverrideCursor</span><span class="p">()</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">app</span><span class="o">.</span><span class="n">restoreOverrideCursor</span><span class="p">()</span>
             <span class="k">return</span>
 

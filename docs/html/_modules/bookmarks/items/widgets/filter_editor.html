@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../../genindex.html" /><link rel="search" title="Search" href="../../../../search.html" />
 
     <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
-        <title>bookmarks.items.widgets.filter_editor - Bookmarks 0.7.2 documentation</title>
+        <title>bookmarks.items.widgets.filter_editor - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
@@ -134,7 +134,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">Bookmarks 0.7.2 documentation</div></a>
+      <a href="../../../../index.html"><div class="brand">Bookmarks 0.7.4 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -161,7 +161,7 @@
     <img class="sidebar-logo only-dark" src="../../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.2 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.4 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
@@ -228,7 +228,6 @@
 <li class="toctree-l3"><a class="reference internal" href="../../../../modules/items/models.html">items.models</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../modules/items/task_items.html">items.task_items</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../modules/items/views.html">items.views</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../modules/items/widgets/description_editor.html">items.widgets.description_editor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../modules/items/widgets/filter_editor.html">items.widgets.filter_editor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../modules/items/widgets/image_viewer.html">items.widgets.image_viewer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../../modules/items/widgets/thumb_capture.html">items.widgets.thumb_capture</a></li>
@@ -256,6 +255,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../modules/notes.html">notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../modules/progress.html">progress</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../modules/publish.html">publish</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../modules/shortcuts.html">shortcuts</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../modules/shotgun.html">shotgun</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -345,7 +345,8 @@
         </div>
         <article role="main">
           <h1>Source code for bookmarks.items.widgets.filter_editor</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;The widget used set and edit search filters.</span>
+<span></span><span class="sd">&quot;&quot;&quot;The widget used set the text search filter of</span>
+<span class="sd">:class:`~bookmarks.items.models.FilterProxyModel`.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
@@ -354,14 +355,14 @@
 <span class="kn">from</span> <span class="nn">...</span> <span class="kn">import</span> <span class="n">ui</span>
 
 
-<div class="viewcode-block" id="FilterEditor"><a class="viewcode-back" href="../../../../modules/items/widgets/filter_editor.html#bookmarks.items.widgets.filter_editor.FilterEditor">[docs]</a><span class="k">class</span> <span class="nc">FilterEditor</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">):</span>
+<div class="viewcode-block" id="TextFilterEditor"><a class="viewcode-back" href="../../../../modules/items/widgets/filter_editor.html#bookmarks.items.widgets.filter_editor.TextFilterEditor">[docs]</a><span class="k">class</span> <span class="nc">TextFilterEditor</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Editor widget used to set a list model&#39;s persistent text filter.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">finished</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">FilterEditor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">editor</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ok_button</span> <span class="o">=</span> <span class="kc">None</span>
@@ -411,7 +412,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">returnPressed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ok_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">action</span><span class="p">)</span>
 
-<div class="viewcode-block" id="FilterEditor.set_completer"><a class="viewcode-back" href="../../../../modules/items/widgets/filter_editor.html#bookmarks.items.widgets.filter_editor.FilterEditor.set_completer">[docs]</a>    <span class="k">def</span> <span class="nf">set_completer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TextFilterEditor.set_completer"><a class="viewcode-back" href="../../../../modules/items/widgets/filter_editor.html#bookmarks.items.widgets.filter_editor.TextFilterEditor.set_completer">[docs]</a>    <span class="k">def</span> <span class="nf">set_completer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets the editor&#39;s completer.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -431,14 +432,14 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">history_button</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_history</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="FilterEditor.show_history"><a class="viewcode-back" href="../../../../modules/items/widgets/filter_editor.html#bookmarks.items.widgets.filter_editor.FilterEditor.show_history">[docs]</a>    <span class="k">def</span> <span class="nf">show_history</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TextFilterEditor.show_history"><a class="viewcode-back" href="../../../../modules/items/widgets/filter_editor.html#bookmarks.items.widgets.filter_editor.TextFilterEditor.show_history">[docs]</a>    <span class="k">def</span> <span class="nf">show_history</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Shows the editor&#39;s completer.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">completer</span><span class="p">()</span><span class="o">.</span><span class="n">setCompletionPrefix</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">completer</span><span class="p">()</span><span class="o">.</span><span class="n">complete</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="FilterEditor.init_text"><a class="viewcode-back" href="../../../../modules/items/widgets/filter_editor.html#bookmarks.items.widgets.filter_editor.FilterEditor.init_text">[docs]</a>    <span class="k">def</span> <span class="nf">init_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TextFilterEditor.init_text"><a class="viewcode-back" href="../../../../modules/items/widgets/filter_editor.html#bookmarks.items.widgets.filter_editor.TextFilterEditor.init_text">[docs]</a>    <span class="k">def</span> <span class="nf">init_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets the current filter text to the editor.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -448,7 +449,7 @@
         <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span> <span class="k">if</span> <span class="n">text</span> <span class="o">==</span> <span class="s1">&#39;/&#39;</span> <span class="k">else</span> <span class="n">text</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="FilterEditor.action"><a class="viewcode-back" href="../../../../modules/items/widgets/filter_editor.html#bookmarks.items.widgets.filter_editor.FilterEditor.action">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+<div class="viewcode-block" id="TextFilterEditor.action"><a class="viewcode-back" href="../../../../modules/items/widgets/filter_editor.html#bookmarks.items.widgets.filter_editor.TextFilterEditor.action">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Edit action.</span>
 
@@ -456,7 +457,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">editor</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">done</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="n">Accepted</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="FilterEditor.adjust_size"><a class="viewcode-back" href="../../../../modules/items/widgets/filter_editor.html#bookmarks.items.widgets.filter_editor.FilterEditor.adjust_size">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+<div class="viewcode-block" id="TextFilterEditor.adjust_size"><a class="viewcode-back" href="../../../../modules/items/widgets/filter_editor.html#bookmarks.items.widgets.filter_editor.TextFilterEditor.adjust_size">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">adjust_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Adjusts the editor&#39;s size.</span>
 
@@ -466,7 +467,7 @@
         <span class="n">geo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">geo</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="n">geo</span><span class="o">.</span><span class="n">height</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="FilterEditor.paintEvent"><a class="viewcode-back" href="../../../../modules/items/widgets/filter_editor.html#bookmarks.items.widgets.filter_editor.FilterEditor.paintEvent">[docs]</a>    <span class="k">def</span> <span class="nf">paintEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="TextFilterEditor.paintEvent"><a class="viewcode-back" href="../../../../modules/items/widgets/filter_editor.html#bookmarks.items.widgets.filter_editor.TextFilterEditor.paintEvent">[docs]</a>    <span class="k">def</span> <span class="nf">paintEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -491,7 +492,7 @@
         <span class="n">painter</span><span class="o">.</span><span class="n">drawRoundedRect</span><span class="p">(</span><span class="n">rect</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
         <span class="n">painter</span><span class="o">.</span><span class="n">end</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="FilterEditor.showEvent"><a class="viewcode-back" href="../../../../modules/items/widgets/filter_editor.html#bookmarks.items.widgets.filter_editor.FilterEditor.showEvent">[docs]</a>    <span class="k">def</span> <span class="nf">showEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="TextFilterEditor.showEvent"><a class="viewcode-back" href="../../../../modules/items/widgets/filter_editor.html#bookmarks.items.widgets.filter_editor.TextFilterEditor.showEvent">[docs]</a>    <span class="k">def</span> <span class="nf">showEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>

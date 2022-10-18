@@ -235,7 +235,7 @@ class TemplateListWidget(ui.ListWidget):
             item.setData(QtCore.Qt.DecorationRole, icon)
 
             path = f'{dir_.path()}/{f}'
-            with zipfile.ZipFile(path) as zip:
+            with zipfile.ZipFile(path, compression=zipfile.ZIP_STORED) as zip:
                 item.setData(TemplatePathRole, path)
                 item.setData(TemplateContentsRole, [f.strip(
                     '/') for f in sorted(zip.namelist())])

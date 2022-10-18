@@ -238,12 +238,6 @@ TABLES = {
     }
 }
 
-#: Database clipboard
-CLIPBOARD = {
-    BookmarkTable: {},
-    AssetTable: {},
-}
-
 
 def get_db(server, job, root, force=False):
     """Creates a database controller associated with a bookmark item.
@@ -314,66 +308,6 @@ def remove_all_connections():
         del common.db_connections[k]
 
 
-@common.debug
-@common.error
-def copy_properties(server, job, root, asset=None, table=BookmarkTable):
-    """Copies the database properties from the specified item to ``CLIPBOARD``.
-
-    Args:
-        server (str): `server` path segment.
-        job (str): `job` path segment.
-        root (str): `root` path segment.
-        asset (str, optional): Source asset name.
-        table (str, optional): Source table name.
-
-    """
-    data = {}
-
-    if asset:
-        source = '/'.join((server, job, root, asset))
-    else:
-        source = '/'.join((server, job, root))
-
-    db = get_db(server, job, root)
-    for k in TABLES[table]:
-        if k == 'id':
-            continue
-        data[k] = db.value(source, k, table)
-
-    if data:
-        global CLIPBOARD
-        CLIPBOARD[table] = data
-
-    return data
-
-
-@common.debug
-@common.error
-def paste_properties(server, job, root, asset=None, table=BookmarkTable):
-    """Loads the copied item properties from CLIPBOARD and saves it in the target item's database.
-
-    Args:
-        server (str): `server` path segment.
-        job (str): `job` path segment.
-        root (str): `root` path segment.
-        asset (str, optional): The target asset name.
-        table (str, optional): Target database table.
-
-    """
-    if not CLIPBOARD[table]:
-        return
-
-    if asset:
-        source = '/'.join((server, job, root, asset))
-    else:
-        source = '/'.join((server, job, root))
-
-    db = get_db(server, job, root)
-    with db.connection():
-        for k in CLIPBOARD[table]:
-            db.setValue(source, k, CLIPBOARD[table][k], table=table)
-
-
 @functools.lru_cache(maxsize=4194304)
 def b64encode(v):
     """Base64 encode function.
@@ -390,23 +324,6 @@ def b64decode(v):
     """
     common.check_type(v, bytes)
     return base64.b64decode(v).decode('utf-8')
-
-
-def int_key(x):
-    """Makes certain we convert int keys back to int values.
-
-    """
-
-    def _int(v):
-        try:
-            return int(v)
-        except:
-            return v
-
-    if isinstance(x, dict):
-        return {_int(k): v for k, v in x.items()}
-
-    return x
 
 
 def sleep():
@@ -467,7 +384,7 @@ def load_json(value):
         b64decode(value.encode('utf-8')),
         parse_int=int,
         parse_float=float,
-        object_hook=int_key
+        object_hook=common.int_key
     )
 
 
@@ -484,7 +401,7 @@ def convert_return_values(table, key, value):
         try:
             value = load_json(value)
         except Exception as e:
-            print(e)
+            log.error(e)
             value = None
     elif _type is str:
         try:
@@ -495,11 +412,13 @@ def convert_return_values(table, key, value):
         try:
             value = float(value)
         except Exception as e:
+            log.error(e)
             value = None
     elif _type is int:
         try:
             value = int(value)
         except Exception as e:
+            log.error(e)
             value = None
     return value
 
@@ -587,7 +506,7 @@ class BookmarkDB(QtCore.QObject):
         """Creates the `bookmark_cache_dir` if it does not yet exist.
 
         Returns:
-            bool: `True` if the folder already exists, or successfully created, or `False` when
+            bool: True if the folder already exists or successfully created, False when
                 can't create the folder.
 
         """
@@ -624,8 +543,8 @@ class BookmarkDB(QtCore.QObject):
         self.connection().execute(sql)
 
     def _patch_table(self, table):
-        """For backwards compatibility, we will ALTER the database if any of the
-        required columns are missing.
+        """Patches the table for backwards compatibility using ALTER if we encounter
+        missing columns.
 
         """
         sql = f'PRAGMA table_info(\'{table}\');'
@@ -738,6 +657,13 @@ class BookmarkDB(QtCore.QObject):
 
     def get_row(self, source, table):
         """Gets a row from the database.
+
+        Args:
+            source (str): A source file path.
+            table (str): A database table name.
+
+        Returns:
+            dict: A dictionary of column/value pairs.
 
         """
         common.check_type(source, str)

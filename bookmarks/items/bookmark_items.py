@@ -81,8 +81,8 @@ class BookmarkItemViewContextMenu(contextmenu.BaseContextMenu):
         """Creates the context menu.
 
         """
-        self.extra_menu()
         self.bookmark_editor_menu()
+        self.add_asset_to_bookmark_menu()
         self.separator()
         self.launcher_menu()
         self.separator()
@@ -94,9 +94,9 @@ class BookmarkItemViewContextMenu(contextmenu.BaseContextMenu):
         self.reveal_item_menu()
         self.copy_menu()
         self.separator()
-        self.add_asset_to_bookmark_menu()
+        self.import_export_menu()
+        self.separator()
         self.edit_selected_bookmark_menu()
-        self.bookmark_clipboard_menu()
         self.notes_menu()
         self.toggle_item_flags_menu()
         self.separator()

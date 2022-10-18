@@ -348,8 +348,6 @@ class FileItemViewContextMenu(contextmenu.BaseContextMenu):
         """Creates the context menu.
 
         """
-        if self.index.flags() & QtCore.Qt.ItemIsEnabled:
-            self.extra_menu()
         self.task_folder_toggle_menu()
         self.separator()
         self.launcher_menu()

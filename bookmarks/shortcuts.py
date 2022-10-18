@@ -37,9 +37,6 @@ CopyAltItemPath = next(n)
 RevealItem = next(n)
 RevealAltItem = next(n)
 
-CopyProperties = next(n)
-PasteProperties = next(n)
-
 Quit = next(n)
 Minimize = next(n)
 Maximize = next(n)
@@ -210,20 +207,6 @@ MainWidgetShortcuts = {
         'default': 'Ctrl+E',
         'repeat': False,
         'description': 'Edit Properties...',
-        'shortcut': None,
-    },
-    CopyProperties: {
-        'value': 'Ctrl+Alt+C',
-        'default': 'Ctrl+Alt+C',
-        'repeat': False,
-        'description': 'Copy Properties...',
-        'shortcut': None,
-    },
-    PasteProperties: {
-        'value': 'Ctrl+Alt+V',
-        'default': 'Ctrl+Alt+V',
-        'repeat': False,
-        'description': 'Paste Properties...',
         'shortcut': None,
     },
     Quit: {

@@ -566,6 +566,24 @@ def get_py_obj_size(obj):
     return size
 
 
+def int_key(x):
+    """Makes certain we convert int keys back to int values.
+
+    """
+
+    def _int(v):
+        try:
+            return int(v)
+        except:
+            return v
+
+    if isinstance(x, dict):
+        return {_int(k): v for k, v in x.items()}
+
+    return x
+
+
+
 class Timer(QtCore.QTimer):
     """A custom QTimer class used across the app.
 

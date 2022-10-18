@@ -60,8 +60,6 @@ class AssetItemViewContextMenu(contextmenu.BaseContextMenu):
         """Creates the context menu.
 
         """
-        self.extra_menu()
-        self.separator()
         self.show_add_asset_menu()
         self.add_file_to_asset_menu()
         self.separator()
@@ -70,7 +68,6 @@ class AssetItemViewContextMenu(contextmenu.BaseContextMenu):
         self.sg_link_assets_menu()
         self.sg_link_asset_menu()
         self.sg_url_menu()
-        self.import_json_menu()
         self.separator()
         self.asset_progress_menu()
         self.separator()
@@ -79,9 +76,10 @@ class AssetItemViewContextMenu(contextmenu.BaseContextMenu):
         self.reveal_item_menu()
         self.copy_menu()
         self.separator()
+        self.import_export_menu()
+        self.separator()
         self.edit_active_bookmark_menu()
         self.edit_selected_asset_menu()
-        self.asset_clipboard_menu()
         self.notes_menu()
         self.toggle_item_flags_menu()
         self.separator()
@@ -314,11 +312,6 @@ class AssetItemModel(models.ItemModel):
             if links:
                 continue
 
-            yield entry
-
-        # Studio Aka Pipe entries
-        from ..studioaka import base
-        for entry in base.item_generator(path):
             yield entry
 
     def save_active(self):

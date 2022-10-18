@@ -134,7 +134,12 @@ def _init_config():
     p = common.rsc(common.CONFIG)
 
     with open(p, 'r', encoding='utf8') as f:
-        config = json.loads(f.read())
+        config = json.loads(
+            f.read(),
+            parse_int=int,
+            parse_float=float,
+            object_hook=common.int_key
+        )
 
     # Set config values in the common module
     for k, v in config.items():

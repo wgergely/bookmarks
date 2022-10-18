@@ -49,8 +49,6 @@ class FavouriteItemViewContextMenu(contextmenu.BaseContextMenu):
         """Creates the context menu.
 
         """
-        self.extra_menu()
-        self.separator()
         self.control_favourites_menu()
         if self.index.isValid():
             self.remove_favourite_menu()

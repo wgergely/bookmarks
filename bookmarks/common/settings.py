@@ -256,7 +256,12 @@ def get_default_bookmarks():
     data = {}
     try:
         with open(source, 'r', encoding='utf8') as f:
-            data = json.loads(f.read())
+            data = json.loads(
+                f.read(),
+                parse_int=int,
+                parse_float=float,
+                object_hook=common.int_key
+            )
     except (ValueError, TypeError):
         log.error(f'Could not decode `{source}`')
     except RuntimeError:

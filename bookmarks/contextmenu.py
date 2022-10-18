@@ -601,10 +601,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         favourite = self.index.flags() & common.MarkedAsFavourite
         archived = self.index.flags() & common.MarkedAsArchived
 
-        if self.__class__.__name__ == 'BookmarkItemViewContextMenu':
-            text = 'Remove Bookmark'
-        else:
-            text = 'Archived'
+        text = 'Toggle Archived'
 
         k = 'Flags'
         self.menu[k] = collections.OrderedDict()
@@ -625,7 +622,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             ),
         }
         self.menu[k][key()] = {
-            'text': 'My File',
+            'text': 'Toggle Favourite',
             'icon': favourite_icon if not favourite else on_icon,
             'checkable': False,
             'action': actions.toggle_favourite,
@@ -648,7 +645,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.separator()
 
         self.menu[key()] = {
-            'text': 'Hide Progress Tracker',
+            'text': 'Toggle Progress Tracker',
             'icon': icon,
             'action': actions.toggle_progress_columns,
         }
@@ -1167,96 +1164,6 @@ class BaseContextMenu(QtWidgets.QMenu):
             ),
         }
 
-    def bookmark_clipboard_menu(self):
-        """Bookmark item properties clipboard actions.
-
-        """
-        if not self.index.isValid():
-            return
-
-        k = 'Properties'
-        if k not in self.menu:
-            self.menu[k] = collections.OrderedDict()
-            self.menu[f'{k}:icon'] = ui.get_icon('settings')
-
-        self.separator(menu=self.menu[k])
-
-        self.menu[k][key()] = {
-            'text': 'Copy Bookmark Properties',
-            'action': actions.copy_bookmark_properties,
-            'icon': ui.get_icon('copy'),
-            'shortcut': shortcuts.get(
-                shortcuts.MainWidgetShortcuts,
-                shortcuts.CopyProperties
-            ).key(),
-            'description': shortcuts.hint(
-                shortcuts.MainWidgetShortcuts,
-                shortcuts.CopyProperties
-            ),
-        }
-
-        if not database.CLIPBOARD[database.BookmarkTable]:
-            return
-
-        self.menu[k][key()] = {
-            'text': 'Paste Bookmark Properties',
-            'action': actions.paste_bookmark_properties,
-            'icon': ui.get_icon('copy'),
-            'shortcut': shortcuts.get(
-                shortcuts.MainWidgetShortcuts,
-                shortcuts.PasteProperties
-            ).key(),
-            'description': shortcuts.hint(
-                shortcuts.MainWidgetShortcuts,
-                shortcuts.PasteProperties
-            ),
-        }
-
-    def asset_clipboard_menu(self):
-        """Asset item properties clipboard menu.
-
-        """
-        if not self.index.isValid():
-            return
-
-        k = 'Properties'
-        if k not in self.menu:
-            self.menu[k] = collections.OrderedDict()
-            self.menu[f'{k}:icon'] = ui.get_icon('settings')
-
-        self.separator(menu=self.menu[k])
-
-        self.menu[k][key()] = {
-            'text': 'Copy Asset Properties',
-            'action': actions.copy_asset_properties,
-            'icon': ui.get_icon('copy'),
-            'shortcut': shortcuts.get(
-                shortcuts.MainWidgetShortcuts,
-                shortcuts.CopyProperties
-            ).key(),
-            'description': shortcuts.hint(
-                shortcuts.MainWidgetShortcuts,
-                shortcuts.CopyProperties
-            ),
-        }
-
-        if not database.CLIPBOARD[database.AssetTable]:
-            return
-
-        self.menu[k][key()] = {
-            'text': 'Paste Asset Properties',
-            'action': actions.paste_asset_properties,
-            'icon': ui.get_icon('copy'),
-            'shortcut': shortcuts.get(
-                shortcuts.MainWidgetShortcuts,
-                shortcuts.PasteProperties
-            ).key(),
-            'description': shortcuts.hint(
-                shortcuts.MainWidgetShortcuts,
-                shortcuts.PasteProperties
-            ),
-        }
-
     def edit_active_bookmark_menu(self):
         """Active bookmark item property menu.
 
@@ -1640,49 +1547,6 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         self.separator()
 
-    def import_json_menu(self):
-        """JSON property import menu.
-
-        """
-        k = 'Properties'
-        if k not in self.menu:
-            self.menu[k] = collections.OrderedDict()
-            self.menu[f'{k}:icon'] = ui.get_icon('settings')
-
-        self.menu[k][key()] = {
-            'text': 'Apply JSON Data to Visible Items',
-            'action': actions.import_asset_properties_from_json,
-            'icon': ui.get_icon('branch_closed')
-        }
-
-        self.separator(menu=self.menu[k])
-
-    def extra_menu(self):
-        """A placeholder for site-specific menu actions.
-
-        """
-        try:
-            import akapipe
-        except ModuleNotFoundError:
-            return
-        except ImportError:
-            return
-
-        from .studioaka import pipe
-
-        k = u'Studio Aka'
-        if k not in self.menu:
-            self.menu[k] = collections.OrderedDict()
-            self.menu[f'{k}:icon'] = ui.get_icon('studioaka')
-
-        self.menu[k][key()] = {
-            'text': 'Show Akapipe',
-            'icon': ui.get_icon(
-                'studioaka', color=common.color(common.color_green)
-            ),
-            'action': pipe.show_akapipe
-        }
-
     def delete_selected_files_menu(self):
         """Delete file item menu actions.
 
@@ -1706,3 +1570,31 @@ class BaseContextMenu(QtWidgets.QMenu):
             'text': 'Publish...',
             'action': actions.show_publish_widget,
         }
+
+    def import_export_menu(self):
+        """Export property
+
+        """
+        if not self.index.isValid():
+            return
+
+        k = 'Properties'
+        if k not in self.menu:
+            self.menu[k] = collections.OrderedDict()
+            self.menu[f'{k}:icon'] = ui.get_icon('settings')
+
+        self.separator(menu=self.menu[k])
+
+        self.menu[k][key()] = {
+            'text': 'Export properties...',
+            'action': actions.export_properties,
+            'icon': ui.get_icon('branch_closed')
+        }
+
+        self.menu[k][key()] = {
+            'text': 'Import properties...',
+            'action': actions.import_properties,
+            'icon': ui.get_icon('branch_backwards')
+        }
+
+        self.separator(menu=self.menu[k])

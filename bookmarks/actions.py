@@ -309,7 +309,7 @@ def export_favourites(*args, destination=None):
     data = common.favourites.copy()
 
     # Assemble the zip file
-    with zipfile.ZipFile(destination, 'w') as _zip:
+    with zipfile.ZipFile(destination, 'w', compression=zipfile.ZIP_STORED) as _zip:
 
         # Add thumbnail to zip
         for source, source_paths in common.favourites.items():
@@ -364,16 +364,16 @@ def import_favourites(*args, source=None):
     if source is None:
         source, _ = QtWidgets.QFileDialog.getOpenFileName(
             caption='Select the favourites file to import',
-            filter='*.{}'.format(common.favorite_file_ext)
+            filter=f'*.{common.favorite_file_ext}'
         )
         if not source:
             return
 
-    with zipfile.ZipFile(source) as _zip:
+    with zipfile.ZipFile(source, compression=zipfile.ZIP_STORED) as _zip:
         corrupt = _zip.testzip()
         if corrupt:
             raise RuntimeError(
-                'This zip archive seem corrupted: {}.'.format(corrupt)
+                f'This zip archive seem corrupted: {corrupt}.'
             )
 
         if common.favorite_file_ext not in _zip.namelist():
@@ -382,7 +382,12 @@ def import_favourites(*args, source=None):
         with _zip.open(common.favorite_file_ext) as _f:
             v = _f.read()
 
-        data = json.loads(v)
+        data = json.loads(
+            v,
+            parse_int=int,
+            parse_float=float,
+            object_hook=common.int_key
+        )
 
         for _source, source_paths in data.items():
             server, job, root = source_paths[0:3]
@@ -1696,76 +1701,6 @@ def remove_thumbnail(index):
 
 @common.error
 @common.debug
-def copy_properties():
-    """Copy the selected item's properties.
-
-    """
-    idx = common.current_tab()
-    if idx == common.BookmarkTab:
-        copy_bookmark_properties()
-    elif idx == common.AssetTab:
-        copy_asset_properties()
-    else:
-        return
-
-
-@common.error
-@common.debug
-def paste_properties():
-    """Paste previously copied item properties to the selected item.
-
-    """
-    idx = common.current_tab()
-    if idx == common.BookmarkTab:
-        paste_bookmark_properties()
-    elif idx == common.AssetTab:
-        paste_asset_properties()
-    else:
-        return
-
-
-@common.error
-@common.debug
-@selection
-def copy_bookmark_properties(index):
-    """Copy bookmark properties to clipboard.
-
-    Args:
-        index (QModelIndex): Index of the currently selected item.
-
-    """
-    server, job, root = index.data(common.ParentPathRole)[0:3]
-    database.copy_properties(
-        server,
-        job,
-        root,
-        None,
-        table=database.BookmarkTable
-    )
-
-
-@common.error
-@common.debug
-@selection
-def paste_bookmark_properties(index):
-    """Paste bookmark properties from clipboard to the selected item.
-
-    Args:
-        index (QModelIndex): Index of the currently selected item.
-
-    """
-    server, job, root = index.data(common.ParentPathRole)[0:3]
-    database.paste_properties(
-        server,
-        job,
-        root,
-        None,
-        table=database.BookmarkTable
-    )
-
-
-@common.error
-@common.debug
 @selection
 def copy_asset_properties(index):
     """Copy asset properties to clipboard.
@@ -1823,77 +1758,24 @@ def toggle_active_mode():
 
 @common.error
 @common.debug
-def import_asset_properties_from_json():
-    """Import and apply asset properties from a JSON file.
+@selection
+def export_properties(index):
+    """Exports the selected item's properties.
 
     """
-    source, _ = QtWidgets.QFileDialog.getOpenFileName(
-        caption='Select *.json file to import properties from',
-        filter='*.json'
-    )
-    if not source:
-        return
+    from . import importexport
+    importexport.export_item_properties(index)
 
-    # Load config values from JSON
-    with open(source, 'r', encoding='utf8') as f:
-        v = f.read()
-    import_data = json.loads(v)
 
-    # Progress bar
-    from . import ui
-    mbox = ui.MessageBox('Applying properties...', no_buttons=True)
-    mbox.open()
+@common.error
+@common.debug
+@selection
+def import_properties(index):
+    """Imports properties and applies them to the selected item.
 
-    try:
-        w = common.widget(common.AssetTab)
-        proxy = w.model()
-        model = w.model().sourceModel()
-        data = model.model_data()
-
-        for k in import_data:
-            # Progress update
-            mbox_title = f'Applying properties ({k})...'
-            mbox.set_labels(mbox_title)
-            QtWidgets.QApplication.instance().processEvents()
-
-            # Iterate over visible items
-            for proxy_idx in range(proxy.rowCount()):
-                index = proxy.index(proxy_idx, 0)
-                source_index = proxy.mapToSource(index)
-                idx = source_index.row()
-
-                # Check for any partial matches and omit items if not found
-                if k.lower() not in data[idx][common.PathRole].lower():
-                    continue
-                if not data[idx][common.ParentPathRole]:
-                    continue
-
-                # Update progress bar
-                mbox.set_labels((mbox_title, data[idx][QtCore.Qt.DisplayRole]))
-                QtWidgets.QApplication.instance().processEvents()
-
-                server, job, root = data[idx][common.ParentPathRole][0:3]
-                if not all((server, job, root)):
-                    continue
-
-                db = database.get_db(server, job, root)
-                with db.connection():
-                    # Iterate over all our implemented asset keys and check if
-                    # we have any data to import
-                    for key in database.TABLES[database.AssetTable]:
-                        if key not in import_data[k]:
-                            continue
-
-                        db.setValue(
-                            data[idx][common.PathRole],
-                            key,
-                            import_data[k][key],
-                            table=database.AssetTable,
-                        )
-    except:
-        raise
-    finally:
-        mbox.close()
+    """
+    from . import importexport
+    importexport.import_item_properties(index)
 
 
 @common.debug
@@ -1911,12 +1793,12 @@ def add_zip_template(source, mode, prompt=False):
     """Adds the selected source zip archive as a `mode` template file.
 
     Args:
-        source (str): Path to a source file.
-        mode (str): A template mode, e.g. 'job' or 'asset'.
-        prompt (bool): Prompt user to confirm override for existing files.
+        source (str): Path to a zip template file.
+        mode (str): A template mode (one of  'job' or 'asset').
+        prompt (bool): Prompt user to confirm overriding existing files.
 
     Returns:
-        str: Path to the saved template file, or `None`.
+        str: Path to the saved template file, or None.
 
     """
     common.check_type(source, str)
@@ -1930,12 +1812,10 @@ def add_zip_template(source, mode, prompt=False):
     if not zipfile.is_zipfile(source):
         raise RuntimeError('Source is not a zip file.')
 
-    with zipfile.ZipFile(source) as f:
+    with zipfile.ZipFile(source, compression=zipfile.ZIP_STORED) as f:
         corrupt = f.testzip()
         if corrupt:
-            raise RuntimeError(
-                'The zip archive seems corrupted: {}'.format(corrupt)
-            )
+            raise RuntimeError(f'The zip archive seems corrupt: {corrupt}')
 
     from . import templates
     root = templates.get_template_folder(mode)
@@ -2013,13 +1893,11 @@ def extract_zip_template(source, destination, name):
         )
 
     with zipfile.ZipFile(
-            source_file_info.absoluteFilePath(), 'r', zipfile.ZIP_DEFLATED
+            source_file_info.absoluteFilePath(), 'r', compression=zipfile.ZIP_STORED
     ) as f:
         corrupt = f.testzip()
         if corrupt:
-            raise RuntimeError(
-                f'This zip archive seems to be corrupt: {corrupt}'
-            )
+            raise RuntimeError(f'The zip archive seems corrupt: {corrupt}')
 
         f.extractall(
             dest_file_info.absoluteFilePath(),

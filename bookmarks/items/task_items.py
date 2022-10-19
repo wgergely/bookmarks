@@ -245,9 +245,7 @@ class TaskItemModel(models.ItemModel):
         """
         flags = (
                 QtCore.Qt.ItemIsSelectable |
-                QtCore.Qt.ItemIsEnabled |
-                QtCore.Qt.ItemIsDropEnabled |
-                QtCore.Qt.ItemIsEditable
+                QtCore.Qt.ItemIsEnabled
         )
         data = self.model_data()
         source_path = self.source_path()
@@ -521,21 +519,19 @@ class TaskItemView(views.ThreadedItemView):
         """Event filter handler.
 
         """
-        if widget == self.parent():
-            return True
         if widget is not self:
-            return False
+            return super().eventFilter(widget, event)
 
         if event.type() == QtCore.QEvent.Paint:
             painter = QtGui.QPainter()
             painter.begin(self)
             painter.setPen(QtCore.Qt.NoPen)
             painter.setBrush(common.color(common.color_separator))
-            painter.setOpacity(0.75)
             painter.drawRect(self.rect())
             painter.end()
-            return True
-        return False
+            return super().eventFilter(widget, event)
+
+        return super().eventFilter(widget, event)
 
     def keyPressEvent(self, event):
         """Key press event handler.

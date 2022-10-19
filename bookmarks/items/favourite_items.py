@@ -1,7 +1,6 @@
 """Classes responsible for viewing and editing items marked as favourites.
 
 """
-import functools
 import os
 
 from PySide2 import QtCore, QtWidgets
@@ -364,7 +363,6 @@ class FavouriteItemView(file_items.FileItemView):
 
         """
         self.reset_timer.start(self.reset_timer.interval())
-
 
     def dragEnterEvent(self, event):
         """Event handler.

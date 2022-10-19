@@ -186,8 +186,6 @@ def verify_zip_file(path, item_type):
             f'This is a {a} property file, and it isn\'t compatible with {b} items.')
 
 
-
-
 def export_item_properties(index, destination=None):
     """The principal function used to export an item's properties to an external file.
 
@@ -246,27 +244,28 @@ def export_item_properties(index, destination=None):
         log.success(f'Properties saved to {destination}')
 
 
-def import_item_properties(index, ignore_empty=True):
+def import_item_properties(index, source=None, prompt=True):
     """The principal function used to import an item's properties from an external file.
 
     Args:
         index (QtCore.QModelIndex): An item index.
-        ignore_empty (bool):
-            When true, null values won't be written to the database.
-            Optional. Default: true.
+        source (str): Path to a preset file. Optional.
+        prompt (bool): Show prompt before overriding.
 
     """
-    mbox = ui.MessageBox(
-        'Are you sure you want to import the preset file?',
-        'This will override current item property values.',
-        buttons=[ui.YesButton, ui.CancelButton]
-    )
-    if mbox.exec_() == QtWidgets.QDialog.Rejected:
-        return None
+    if prompt:
+        mbox = ui.MessageBox(
+            'Are you sure you want to import the preset file?',
+            'This will override current item property values.',
+            buttons=[ui.YesButton, ui.CancelButton]
+        )
+        if mbox.exec_() == QtWidgets.QDialog.Rejected:
+            return None
 
-    source = get_load_path()
-    if not source:
-        return
+    if source is None:
+        source = get_load_path()
+        if not source:
+            return
 
     item_type = index.data(common.ItemTabRole)
     verify_zip_file(source, item_type)
@@ -304,6 +303,7 @@ def import_item_properties(index, ignore_empty=True):
             with f.open(f'thumbnail.{common.thumbnail_format}') as t, open(p, 'wb') as _t:
                 shutil.copyfileobj(t, _t)
             images.ImageCache.flush(index.data(common.PathRole))
+            images.ImageCache.flush(p)
 
         f.close()
 
@@ -314,6 +314,3 @@ def import_item_properties(index, ignore_empty=True):
             db.setValue(source, k, v, table=database.BookmarkTable)
         for k, v in asset_table_data.items():
             db.setValue(source, k, v, table=database.AssetTable)
-
-
-

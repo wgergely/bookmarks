@@ -2272,9 +2272,45 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
             cursor_position
         ) = args
 
-        if not self.parent().drag_source_index.isValid():
+        if self.parent().drag_source_row == -1:
             return
-        if index == self.parent().drag_source_index:
+
+        if (
+                index.flags() & QtCore.Qt.ItemIsDropEnabled and
+                option.rect.contains(cursor_position) and
+                self.parent().drag_source_row != index.row()
+        ):
+            painter.setOpacity(0.5)
+            painter.setBrush(common.color(common.color_separator))
+            painter.drawRect(rectangles[DataRect])
+
+            painter.setOpacity(1.0)
+            painter.setBrush(QtCore.Qt.NoBrush)
+            pen = QtGui.QPen(common.color(common.color_selected_text))
+            pen.setWidthF(common.size(common.size_separator) * 2)
+            painter.setPen(pen)
+            painter.drawRect(rectangles[DataRect])
+
+            font, metrics = common.font_db.medium_font(
+                common.size(common.size_font_small)
+            )
+            painter.setFont(font)
+            text = 'Paste item properties'
+            painter.setPen(common.color(common.color_green))
+            painter.drawText(
+                option.rect.adjusted(
+                    common.size(
+                        common.size_margin
+                    ), 0, -common.size(common.size_margin), 0
+                ),
+                QtCore.Qt.AlignVCenter | QtCore.Qt.AlignHCenter |
+                QtCore.Qt.TextWordWrap,
+                text,
+                boundingRect=option.rect,
+            )
+            return
+
+        if index.row() == self.parent().drag_source_row:
             painter.setBrush(common.color(common.color_separator))
             painter.drawRect(option.rect)
 
@@ -2284,8 +2320,13 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
             )
             painter.setFont(font)
 
-            text = '"Drag+Shift" grabs all files    |    "Drag+Alt" grabs the ' \
-                   'first file    |    "Drag+Shift+Alt" grabs the parent folder'
+            text = ''
+            if index.data(common.ItemTabRole) in (common.FileTab, common.FavouriteTab):
+                text = '"Drag+Shift" grabs all files    |    "Drag+Alt" grabs the ' \
+                       'first file    |    "Drag+Shift+Alt" grabs the parent folder'
+            if index.data(common.ItemTabRole) in (common.BookmarkTab, common.AssetTab):
+                text = 'Copied properties'
+
             painter.drawText(
                 option.rect.adjusted(
                     common.size(
@@ -2298,7 +2339,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
                 boundingRect=option.rect,
             )
         else:
-            painter.setOpacity(0.66)
+            painter.setOpacity(0.33)
             painter.setBrush(common.color(common.color_separator))
             painter.drawRect(option.rect)
 
@@ -2763,6 +2804,8 @@ class BookmarkItemViewDelegate(ItemDelegate):
             self.paint_selection_indicator(*args)
             self.paint_slack_status(*args)
             self.paint_shotgun_status(*args)
+            self.paint_drag_source(*args)
+            self.paint_deleted(*args)
 
     def sizeHint(self, option, index):
         """Returns the item's size hint.
@@ -2803,6 +2846,8 @@ class AssetItemViewDelegate(ItemDelegate):
             self.paint_selection_indicator(*args)
             self.paint_shotgun_status(*args)
             self.paint_dcc_icon(*args)
+            self.paint_drag_source(*args)
+            self.paint_deleted(*args)
 
     def sizeHint(self, option, index):
         """Returns the item's size hint.

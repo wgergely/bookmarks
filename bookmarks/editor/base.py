@@ -523,6 +523,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
             lambda: self.done(QtWidgets.QDialog.Accepted)
         )
 
+        common.signals.databaseValueUpdated.connect(self.update_changed_database_value)
+
     def _connect_settings_save_signals(self, keys):
         """Utility method for connecting editor signals to save their current
         value in the user setting file.

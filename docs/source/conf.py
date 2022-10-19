@@ -35,6 +35,11 @@ author = 'Gergely Wootsch'
 # The full version, including alpha/beta/rc tags
 release = '0.7.4'
 
+html_baseurl = 'https://bookmarks-vfx.com'
+html_extra_path = [
+    'robots.txt',
+]
+
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -48,6 +53,7 @@ extensions = [
     'sphinx.ext.autosectionlabel',
     'sphinx.ext.githubpages',
     'autodocsumm',
+    'sphinx_sitemap',
     'sphinx_markdown_builder',
     'sphinx_design',
     'sphinxcontrib.youtube'

@@ -432,13 +432,12 @@ class RemoveNoteButton(ui.ClickableIconButton):
 class DragIndicatorButton(QtWidgets.QLabel):
     """Dotted button indicating a draggable item.
 
-    The button is responsible for initiating a QDrag operation and setting the
-    mime data. The data is populated with the `TodoEditor`'s text and the
-    custom mime type ('bookmarks/todo-drag'). The latter is needed to accept the
-    drag operation
-    in the target drop widet.
+    The button is responsible for initiating a QDrag operation and setting the mime 
+    data. The data is populated with the `TodoEditor`'s text and the custom mime type. 
+    The latter is needed to accept the drag operation in the target drop widget. 
+    
     """
-
+    
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.dragStartPosition = None
@@ -475,7 +474,7 @@ class DragIndicatorButton(QtWidgets.QLabel):
 
         # Setting Mime Data
         mime_data = QtCore.QMimeData()
-        mime_data.setData('bookmarks/todo-drag', QtCore.QByteArray(bytes()))
+        mime_data.setData('applications/todo-drag', QtCore.QByteArray(bytes()))
         drag.setMimeData(mime_data)
 
         # Drag pixmap
@@ -553,7 +552,7 @@ class Separator(QtWidgets.QLabel):
         """Event handler.
 
         """
-        if event.mimeData().hasFormat('bookmarks/todo-drag'):
+        if event.mimeData().hasFormat('application/todo-drag'):
             event.acceptProposedAction()
 
     def dropEvent(self, event):
@@ -595,7 +594,7 @@ class NoteContainerWidget(QtWidgets.QWidget):
         """Event handler.
 
         """
-        if event.mimeData().hasFormat('bookmarks/todo-drag'):
+        if event.mimeData().hasFormat('application/todo-drag'):
             event.acceptProposedAction()
 
     def dragMoveEvent(self, event):

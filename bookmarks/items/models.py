@@ -28,12 +28,14 @@ is implemented separately to run directly over the source data.
 """
 import functools
 import re
+import uuid
 import weakref
 
 from PySide2 import QtWidgets, QtCore
 
 from .. import common
 from .. import images
+from .. import importexport
 from .. import log
 
 MAX_HISTORY = 20
@@ -41,7 +43,9 @@ DEFAULT_ITEM_FLAGS = (
         QtCore.Qt.ItemNeverHasChildren |
         QtCore.Qt.ItemIsEnabled |
         QtCore.Qt.ItemIsEditable |
-        QtCore.Qt.ItemIsSelectable
+        QtCore.Qt.ItemIsSelectable |
+        QtCore.Qt.ItemIsDropEnabled |
+        QtCore.Qt.ItemIsDragEnabled
 )
 
 #: A default container used to sort items by name
@@ -204,6 +208,204 @@ class ItemModel(QtCore.QAbstractTableModel):
 
         self.modelAboutToBeReset.connect(common.signals.updateTopBarButtons)
         self.modelReset.connect(common.signals.updateTopBarButtons)
+
+    def rowCount(self, parent=QtCore.QModelIndex()):
+        """The model's row count.
+
+        """
+        p = self.source_path()
+        k = self.task()
+        t = self.data_type()
+        if not all((p, k)) or t is None:
+            return 0
+        return common.data_count(p, k, t)
+
+    def columnCount(self, parent=QtCore.QModelIndex()):
+        """Number of columns the model has."""
+        return 1
+
+    def data(self, index, role=QtCore.Qt.DisplayRole):
+        """Returns and item data associated with the given index.
+
+        """
+        if not index.isValid():
+            return None
+        data = self.model_data()
+        if index.column() == 0:
+            if index.row() not in data:
+                return None
+            if role in data[index.row()]:
+                return data[index.row()][role]
+
+        # Return the column 0 flags for all columns
+        if role == common.FlagsRole:
+            if role in data[index.row()]:
+                return data[index.row()][role]
+
+        return None
+
+    def setData(self, index, v, role=QtCore.Qt.DisplayRole):
+        """
+
+        """
+        if not index.isValid():
+            return False
+        if index.column() != 0:
+            return False
+
+        data = self.model_data()
+        if index.row() not in data:
+            return False
+        data[index.row()][role] = v
+        self.dataChanged.emit(index, index)
+        return True
+
+    def headerData(self, idx, orientation, role=QtCore.Qt.DisplayRole):
+        if orientation == QtCore.Qt.Vertical:
+            if role == QtCore.Qt.SizeHintRole:
+                v = QtCore.QSize(common.size(common.size_margin), self.row_size.height())
+                return v
+        return None
+
+    def flags(self, index):
+        """Returns the item's flags.
+
+        """
+        v = self.data(index, role=common.FlagsRole)
+        if not isinstance(v, QtCore.Qt.ItemFlags) or not v:
+            return QtCore.Qt.NoItemFlags
+        return v
+
+    def parent(self, child):
+        """The parent of an item.
+
+        """
+        return QtCore.QModelIndex()
+
+    def supportedDropActions(self):
+        return QtCore.Qt.MoveAction | QtCore.Qt.CopyAction
+
+    def supportedDragActions(self):
+        return QtCore.Qt.MoveAction
+
+    def mimeData(self, indexes):
+        """Returns the drag mime data for the given indexes.
+
+        """
+        mime = super().mimeData(indexes)
+        index = next((f for f in indexes if f.column() == 0), None)
+        path = index.data(common.PathRole)
+        if not index.isValid() or not path:
+            return QtCore.QMimeData()
+
+        modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
+        no_modifier = modifiers == QtCore.Qt.NoModifier
+        alt_modifier = modifiers & QtCore.Qt.AltModifier
+
+        if no_modifier:
+            return QtCore.QMimeData()
+
+        if alt_modifier:
+            b_path = QtCore.QByteArray(path.encode('utf-8'))
+            mime.setData('application/item-property', b_path)
+            return mime
+
+        return QtCore.QMimeData()
+
+    def canDropMimeData(self, mime, action, row, column, parent=QtCore.QModelIndex()):
+        """Checks drop support for the given mime data.
+
+        """
+        if not self.supportedDropActions() & action:
+            return False
+        if self.can_drop_image_file(mime, action, row, column, parent):
+            return True
+        if self.can_drop_properties(mime, action, row, column, parent):
+            return True
+        return False
+
+    def can_drop_image_file(self, mime, action, row, column, parent=QtCore.QModelIndex()):
+        if mime.hasUrls():
+            source = next(f for f in mime.urls())
+            source = source.toLocalFile()
+            if images.oiio_get_buf(source):
+                images.ImageCache.flush(source)
+                return True
+        return False
+
+    def can_drop_properties(self, mime, action, row, column, parent=QtCore.QModelIndex()):
+        if 'application/item-property' in mime.formats():
+            return True
+        return False
+
+    def dropMimeData(self, mime, action, row, column, parent):
+        """Handles drop actions.
+
+        """
+        if not action & self.supportedDropActions():
+            return False
+
+        if self.can_drop_image_file(mime, action, row, column, parent):
+            return self._drop_image_action(mime, action, row, column, parent)
+
+        if self.can_drop_properties(mime, action, row, column, parent):
+            return self._drop_properties_action(mime, action, row, column, parent)
+
+        return False
+
+    def _drop_image_action(self, mime, action, row, column, parent):
+        """Handles an image drop.
+
+        """
+        image = next((f for f in mime.urls()), None)
+        if not image:
+            return False
+
+        image = image.toLocalFile()
+        if not images.oiio_get_buf(image):
+            images.ImageCache.flush(image)
+            return False
+
+        index = self.index(row, 0)
+        source = index.data(common.PathRole)
+
+        proxy = bool(common.is_collapsed(source))
+        server, job, root = index.data(common.ParentPathRole)[0:3]
+
+        images.create_thumbnail_from_image(
+            server,
+            job,
+            root,
+            source,
+            image,
+            proxy=proxy
+        )
+        images.ImageCache.flush(image)
+        return True
+
+    def _drop_properties_action(self, mime, action, row, column, parent):
+        b_path = mime.data('application/item-property')
+        source_path = bytes(b_path).decode()
+
+        temp_path = f'{common.temp_path()}/{uuid.uuid1().hex}.preset'
+
+        data = self.model_data()
+        for idx in data:
+            if not data[idx][common.PathRole] == source_path:
+                continue
+
+            importexport.export_item_properties(
+                self.index(idx, 0),
+                destination=temp_path
+            )
+            importexport.import_item_properties(
+                self.index(row, 0),
+                source=temp_path,
+                prompt=False
+            )
+            if not QtCore.QFile(temp_path).remove():
+                log.error('Could not remove temp file.')
+            return
 
     def item_generator(self):
         """A generator method used by :func:`init_data` to yield the items the model
@@ -571,124 +773,6 @@ class ItemModel(QtCore.QAbstractTableModel):
         _v = _v if _v else {}
         _v[dict_key] = v
         common.settings.setValue(key, _v)
-
-    def setData(self, index, data, role=QtCore.Qt.DisplayRole):
-        """Sets the given data to the model's internal data.
-
-        """
-        if not index.isValid():
-            return False
-        if index.row() not in self.model_data():
-            return False
-        data = self.model_data()
-        data[index.row()][role] = data
-        self.dataChanged.emit(index, index)
-        return True
-
-    def supportedDropActions(self):
-        """Returns the supported drop actions.
-
-        """
-        return QtCore.Qt.CopyAction
-
-    def canDropMimeData(self, data, action, row, column,
-                        parent=QtCore.QModelIndex()):
-        """Checks drop support for the given mime data.
-
-        """
-        if not self.supportedDropActions() & action:
-            return False
-        if row == -1:
-            return False
-
-        if not data.hasUrls():
-            return False
-        else:
-            source = data.urls()[0].toLocalFile()
-            if not images.oiio_get_buf(source):
-                return False
-
-        data = self.model_data()
-        if row not in data:
-            return False
-        if data[row][common.FlagsRole] & common.MarkedAsArchived:
-            return False
-        return True
-
-    def dropMimeData(self, data, action, row, column, parent=QtCore.QModelIndex()):
-        """Returns the drop mime data.
-
-        """
-        image = data.urls()[0].toLocalFile()
-        if not images.oiio_get_buf(image):
-            return False
-
-        index = self.index(row, 0)
-        source = index.data(common.PathRole)
-
-        proxy = bool(common.is_collapsed(source))
-        server, job, root = index.data(common.ParentPathRole)[0:3]
-        images.create_thumbnail_from_image(
-            server, job, root, source, image, proxy=proxy)
-
-        return True
-
-    def columnCount(self, parent=QtCore.QModelIndex()):
-        """Number of columns the model has."""
-        return 1
-
-    def rowCount(self, parent=QtCore.QModelIndex()):
-        """The model's row count.
-
-        """
-        p = self.source_path()
-        k = self.task()
-        t = self.data_type()
-        if not all((p, k)) or t is None:
-            return 0
-        return common.data_count(p, k, t)
-
-    def data(self, index, role=QtCore.Qt.DisplayRole):
-        """Returns and item data associated with the given index.
-
-        """
-        if not index.isValid():
-            return None
-        data = self.model_data()
-        if index.column() == 0:
-            if index.row() not in data:
-                return None
-            if role in data[index.row()]:
-                return data[index.row()][role]
-
-        # Return the column 0 flags for all columns
-        if role == common.FlagsRole:
-            if role in data[index.row()]:
-                return data[index.row()][role]
-
-        return None
-
-    def headerData(self, idx, orientation, role=QtCore.Qt.DisplayRole):
-        if orientation == QtCore.Qt.Vertical:
-            if role == QtCore.Qt.SizeHintRole:
-                v = QtCore.QSize(common.size(common.size_margin), self.row_size.height())
-                return v
-        return None
-
-    def flags(self, index):
-        """Returns the item's flags.
-
-        """
-        v = self.data(index, role=common.FlagsRole)
-        if not isinstance(v, QtCore.Qt.ItemFlags) or not v:
-            return QtCore.Qt.NoItemFlags
-        return v
-
-    def parent(self, child):
-        """The parent of an item.
-
-        """
-        return QtCore.QModelIndex()
 
 
 class FilterProxyModel(QtCore.QSortFilterProxyModel):

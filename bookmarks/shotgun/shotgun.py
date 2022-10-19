@@ -354,7 +354,6 @@ class ShotgunProperties(object):
             return False
         if not self.asset and not asset:
             return True
-
         if not all((self.asset_type, self.asset_id, self.asset_name)):
             return False
 

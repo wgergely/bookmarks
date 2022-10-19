@@ -21,7 +21,7 @@ User Guide
 
 
 Get Bookmarks
-------------
+----------------
 
 The project is hosted on `Github <https://github.com/wgergely/bookmarks>`_.
 

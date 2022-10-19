@@ -239,41 +239,21 @@ class LinkMultiple(QtWidgets.QDialog):
         )
         sg_properties.init(db=db)
 
-        identifier = db.value(
-            db.source(),
-            'identifier',
-            database.BookmarkTable
-        )
-
         if not sg_properties.verify(connection=True):
             raise RuntimeError(
                 'Bookmark is not configured to use ShotGrid.')
 
         self.emit_request(sg_properties)
 
-        for entry in os.scandir(self.source()):
-            # Skip archived items
-            flags = db.value(
-                db.source(entry.name),
-                'flags',
-                database.AssetTable
-            )
-            if flags and flags & common.MarkedAsArchived:
-                continue
+        model = common.source_model(common.AssetTab)
+        data = model.model_data()
 
-            # Skip non-folders and hidden files
-            if not entry.is_dir():
-                continue
-            if entry.name.startswith('.'):
-                continue
-
-            # Skip if identifier is set but missing
-            p = '{}/{}'.format(entry.path, identifier)
-            if identifier and not QtCore.QFileInfo(p).exists():
+        for idx in data:
+            if data[idx][common.FlagsRole] & common.MarkedAsArchived:
                 continue
 
             # Manually create an entity based on the current db values
-            s = db.source(entry.name)
+            s = data[idx][common.ParentPathRole][3]
             t = database.AssetTable
             entity = {
                 'id': db.value(s, 'shotgun_id', t),
@@ -294,7 +274,7 @@ class LinkMultiple(QtWidgets.QDialog):
             self.entityTypeFilterChanged.connect(proxy.set_entity_type)
             self.model.entityDataReceived.connect(self.select_candidates)
 
-            self.table.add_row(entry.name, editor, entity)
+            self.table.add_row(s, editor, entity)
 
         self.entityTypeFilterChanged.connect(self.select_candidates)
         self.emit_filter_changed()

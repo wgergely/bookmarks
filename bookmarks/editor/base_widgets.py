@@ -527,9 +527,3 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
             break
 
         self.repaint()
-
-    def supportedDropActions(self):
-        """Supported drop actions.
-        
-        """
-        return QtCore.Qt.CopyAction | QtCore.Qt.MoveAction

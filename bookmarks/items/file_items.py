@@ -40,7 +40,7 @@ See the :mod:`~bookmarks.common.sequence` module for details on sequence definit
 import functools
 import os
 
-from PySide2 import QtWidgets, QtCore, QtGui
+from PySide2 import QtWidgets, QtCore
 
 from . import delegate
 from . import models
@@ -48,7 +48,6 @@ from . import views
 from .. import actions
 from .. import common
 from .. import contextmenu
-from .. import images
 from .. import log
 from ..threads import threads
 from ..tokens import tokens
@@ -62,8 +61,10 @@ active_keys = {
 }
 
 
-def add_path_to_mime(mime, path):
-    """Adds the given path to the mime data."""
+def _add_path_to_mime(mime, path):
+    """Utility function adds a path to the mime data.
+
+    """
     common.check_type(path, str)
 
     path = QtCore.QFileInfo(path).absoluteFilePath()
@@ -72,12 +73,11 @@ def add_path_to_mime(mime, path):
     path = QtCore.QDir.toNativeSeparators(path)
     _bytes = QtCore.QByteArray(path.encode('utf-8'))
 
-    mime.setData(
-        'application/x-qt-windows-mime;value="FileName"', _bytes
-    )
-    mime.setData(
-        'application/x-qt-windows-mime;value="FileNameW"', _bytes
-    )
+    if common.get_platform() == common.PlatformWindows:
+        mime.setData(
+            'application/x-qt-windows-mime;value="FileName"', _bytes)
+        mime.setData(
+            'application/x-qt-windows-mime;value="FileNameW"', _bytes)
 
     return mime
 
@@ -142,199 +142,6 @@ def get_sequence_elements(filepath):
     if seq:
         sequence_path = f'{seq.group(1)}{common.SEQPROXY}{seq.group(3)}.{seq.group(4)}'
     return seq, sequence_path
-
-
-class DropIndicatorWidget(QtWidgets.QWidget):
-    """Widgets responsible for drawing an overlay."""
-
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
-        self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
-
-    def paintEvent(self, event):
-        """Event handler.
-
-        """
-        painter = QtGui.QPainter()
-        painter.begin(self)
-        pen = QtGui.QPen(common.color(common.color_blue))
-        pen.setWidth(common.size(common.size_indicator))
-        painter.setPen(pen)
-        painter.setBrush(common.color(common.color_blue))
-        painter.setOpacity(0.35)
-        painter.drawRect(self.rect())
-        painter.setOpacity(1.0)
-        common.draw_aliased_text(
-            painter,
-            common.font_db.bold_font(common.size(common.size_font_medium))[0],
-            self.rect(),
-            'Drop to add bookmark',
-            QtCore.Qt.AlignCenter,
-            common.color(common.color_blue)
-        )
-        painter.end()
-
-    def show(self):
-        """Shows and sets the size of the widget."""
-        self.setGeometry(self.parent().geometry())
-        super().show()
-
-
-class ItemDrag(QtGui.QDrag):
-    """A utility class used to start a drag operation.
-    
-    """
-
-    def __init__(self, index, widget):
-        super(ItemDrag, self).__init__(widget)
-
-        model = index.model().sourceModel()
-        self.setMimeData(model.mimeData([index, ]))
-
-        def _get(s, color=common.color(common.color_green)):
-            return images.ImageCache.rsc_pixmap(
-                s, color,
-                common.size(
-                    common.size_margin
-                ) * common.pixel_ratio
-            )
-
-        # Set drag icon
-        self.setDragCursor(_get('add_circle'), QtCore.Qt.CopyAction)
-        self.setDragCursor(_get('file'), QtCore.Qt.MoveAction)
-        self.setDragCursor(
-            _get('close', color=common.color(common.color_red)),
-            QtCore.Qt.ActionMask
-        )
-        self.setDragCursor(
-            _get('close', color=common.color(common.color_red)),
-            QtCore.Qt.IgnoreAction
-        )
-
-        # Set pixmap
-        source = index.data(common.PathRole)
-
-        modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
-        no_modifier = modifiers == QtCore.Qt.NoModifier
-        alt_modifier = modifiers & QtCore.Qt.AltModifier
-        shift_modifier = modifiers & QtCore.Qt.ShiftModifier
-
-        if no_modifier:
-            source = common.get_sequence_end_path(source)
-            pixmap, _ = images.get_thumbnail(
-                index.data(common.ParentPathRole)[0],
-                index.data(common.ParentPathRole)[1],
-                index.data(common.ParentPathRole)[2],
-                source,
-                size=common.size(common.size_row_height),
-            )
-        elif alt_modifier and shift_modifier:
-            pixmap = images.ImageCache.rsc_pixmap(
-                'folder', common.color(common.color_secondary_text),
-                common.size(common.size_row_height)
-            )
-            source = QtCore.QFileInfo(source).dir().path()
-        elif alt_modifier:
-            pixmap = images.ImageCache.rsc_pixmap(
-                'file', common.color(common.color_secondary_text),
-                common.size(common.size_row_height)
-            )
-            source = common.get_sequence_start_path(source)
-        elif shift_modifier:
-            source = common.get_sequence_start_path(source) + ', ++'
-            pixmap = images.ImageCache.rsc_pixmap(
-                'multiples_files', common.color(common.color_secondary_text),
-                common.size(common.size_row_height)
-            )
-        else:
-            return
-
-        if pixmap and not pixmap.isNull():
-            pixmap = DragPixmapFactory.pixmap(pixmap, source)
-            self.setPixmap(pixmap)
-
-
-class DragPixmapFactory(QtWidgets.QWidget):
-    """Widget used to define the appearance of an item being dragged."""
-
-    def __init__(self, pixmap, text, parent=None):
-        super().__init__(parent=parent)
-        self._pixmap = pixmap
-        self._text = text
-
-        _, metrics = common.font_db.bold_font(
-            common.size(common.size_font_medium)
-        )
-        self._text_width = metrics.horizontalAdvance(text)
-
-        width = self._text_width + common.size(common.size_margin)
-        width = common.size(common.size_width) + common.size(
-            common.size_margin
-        ) if width > common.size(common.size_width) else width
-
-        self.setFixedHeight(common.size(common.size_row_height))
-
-        longest_edge = max((pixmap.width(), pixmap.height()))
-        o = common.size(common.size_indicator)
-        self.setFixedWidth(
-            longest_edge + (o * 2) + width
-        )
-
-        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.Window)
-        self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
-        self.adjustSize()
-
-    @classmethod
-    def pixmap(cls, pixmap, text):
-        """Returns the widget as a rendered pixmap."""
-        w = cls(pixmap, text)
-        pixmap = QtGui.QPixmap(w.size() * common.pixel_ratio, )
-        pixmap.setDevicePixelRatio(common.pixel_ratio)
-        pixmap.fill(QtCore.Qt.transparent)
-        painter = QtGui.QPainter(pixmap)
-        w.render(painter, QtCore.QPoint(), QtGui.QRegion())
-        return pixmap
-
-    def paintEvent(self, event):
-        """Event handler.
-
-        """
-        painter = QtGui.QPainter()
-        painter.begin(self)
-
-        painter.setPen(QtCore.Qt.NoPen)
-        painter.setBrush(common.color(common.color_dark_background))
-        painter.setOpacity(0.6)
-        painter.drawRoundedRect(self.rect(), 4, 4)
-        painter.setOpacity(1.0)
-
-        pixmap_rect = QtCore.QRect(
-            0, 0, common.size(common.size_row_height), common.size(common.size_row_height)
-        )
-        painter.drawPixmap(pixmap_rect, self._pixmap, self._pixmap.rect())
-
-        width = self._text_width + common.size(common.size_indicator)
-        width = 640 if width > 640 else width
-        rect = QtCore.QRect(
-            common.size(common.size_row_height) + common.size(common.size_indicator),
-            0,
-            width,
-            self.height()
-        )
-        common.draw_aliased_text(
-            painter,
-            common.font_db.bold_font(common.size(common.size_font_medium))[0],
-            rect,
-            self._text,
-            QtCore.Qt.AlignCenter,
-            common.color(common.color_selected_text)
-        )
-        painter.end()
 
 
 class FileItemViewContextMenu(contextmenu.BaseContextMenu):
@@ -851,6 +658,9 @@ class FileItemModel(models.ItemModel):
 
         return '/'.join(v)
 
+    def can_drop_properties(self, mime, action, row, column, parent=QtCore.QModelIndex()):
+        return False
+
     def mimeData(self, indexes):
         """The data necessary for supporting drag and drop operations are
         constructed here.
@@ -865,7 +675,8 @@ class FileItemModel(models.ItemModel):
             necessary, but on macOS a simple uri list seem to suffice.
 
         """
-        mime = QtCore.QMimeData()
+        mime = super().mimeData(indexes)
+
         modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
         no_modifier = modifiers == QtCore.Qt.NoModifier
         alt_modifier = modifiers & QtCore.Qt.AltModifier
@@ -878,17 +689,17 @@ class FileItemModel(models.ItemModel):
 
             if no_modifier:
                 path = common.get_sequence_end_path(path)
-                add_path_to_mime(mime, path)
+                _add_path_to_mime(mime, path)
             elif alt_modifier and shift_modifier:
                 path = QtCore.QFileInfo(path).dir().path()
-                add_path_to_mime(mime, path)
+                _add_path_to_mime(mime, path)
             elif alt_modifier:
                 path = common.get_sequence_start_path(path)
-                add_path_to_mime(mime, path)
+                _add_path_to_mime(mime, path)
             elif shift_modifier:
                 paths = common.get_sequence_paths(index)
                 for path in paths:
-                    add_path_to_mime(mime, path)
+                    _add_path_to_mime(mime, path)
         return mime
 
 
@@ -906,15 +717,6 @@ class FileItemView(views.ThreadedItemView):
             icon=icon,
             parent=parent
         )
-        self.drop_indicator_widget = DropIndicatorWidget(parent=self)
-        self.drop_indicator_widget.hide()
-
-        self.drag_source_index = QtCore.QModelIndex()
-        self.setDragDropMode(QtWidgets.QAbstractItemView.DragDrop)
-        self.viewport().setAcceptDrops(True)
-        self.setDropIndicatorShown(True)
-        self.setDragEnabled(True)
-
         common.signals.fileAdded.connect(
             functools.partial(self.show_item, role=common.PathRole)
         )
@@ -937,29 +739,6 @@ class FileItemView(views.ThreadedItemView):
         index = common.get_selected_index(self)
         if not index.isValid():
             self.activate(index)
-
-    def startDrag(self, supported_actions):
-        """Drag action start.
-
-        """
-        index = common.get_selected_index(self)
-        if not index.isValid():
-            return
-        if not index.data(common.PathRole):
-            return
-        if not index.data(common.ParentPathRole):
-            return
-
-        self.drag_source_index = index
-        self.update(index)
-
-        drag = ItemDrag(index, self)
-        common.main_widget.topbar_widget.slack_drop_area_widget.setHidden(False)
-        QtCore.QTimer.singleShot(1, self.viewport().update)
-        drag.exec_(supported_actions)
-        common.main_widget.topbar_widget.slack_drop_area_widget.setHidden(True)
-
-        self.drag_source_index = QtCore.QModelIndex()
 
     def get_hint_string(self):
         """Returns an informative hint text.

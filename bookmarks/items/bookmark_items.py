@@ -2,6 +2,7 @@
 and ``root`` components. We usually store them in the following form:
 
 .. code-block:: python
+    :linenos:
 
     {
         '//path/to/my/server/my_job/my_shots': {
@@ -30,6 +31,7 @@ Hint:
     become active.
 
     .. code-block:: python
+        :linenos:
 
         server = common.active('server')
         job = common.active('job')
@@ -45,6 +47,7 @@ Model items store their path segments using the
 :attr:`~bookmarks.common.ParentPathRole` role. E.g.:
 
 .. code-block:: python
+    :linenos:
 
     # ...in case of a QtCore.QModelIndex item:
     server, job, root = index.data(common.ParentPathRole)[0:3]

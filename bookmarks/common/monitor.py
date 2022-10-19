@@ -35,6 +35,7 @@ class FileWatcher(QtCore.QFileSystemWatcher):
         self.directoryChanged.connect(self.queue_changed_item)
 
     QtCore.Slot(str)
+
     def queue_changed_item(self, v):
         if v not in self.changed_items:
             self.changed_items.add(v)

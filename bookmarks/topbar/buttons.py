@@ -69,8 +69,8 @@ class BaseControlButton(ui.ClickableIconButton):
             pixmap,
             description,
             color=(
-                common.color(common.color_selected_text),
-                common.color(common.color_disabled_text)
+                    common.color(common.color_selected_text),
+                    common.color(common.color_disabled_text)
             ),
             parent=None
     ):

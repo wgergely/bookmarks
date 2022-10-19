@@ -1,12 +1,22 @@
 """Bookmarks' main widget.
 
-:class:`.MainWidget` consist of :class:`bookmarks.topbar.TopBarWidget`,
-:class:`bookmarks.statusbar.StatusBar`,
-and :class:`bookmarks.items.views.ListsWidget`. The latter is the container
+:class:`.MainWidget` consist of :class:`~bookmarks.topbar.topbar.TopBarWidget`,
+:class:`~bookmarks.statusbar.StatusBar`,
+and :class:`~bookmarks.items.views.ListsWidget`. The latter is the container
 for the three main list item widgets:
-:class:`bookmarks.items.bookmark_items.BookmarkItemView`,
-:class:`bookmarks.items.asset_items.AssetItemView` and
-:class:`bookmarks.items.files.FileItemView`.
+:class:`~bookmarks.items.bookmark_items.BookmarkItemView`,
+:class:`~bookmarks.items.asset_items.AssetItemView` and
+:class:`~bookmarks.items.file_items.FileItemView`.
+
+You can always access the main widget from the :mod:`~bookmarks.common` module directly:
+
+.. code-block:: python
+    :linenos:
+
+    from bookmarks import common
+    common.main_widget.show()
+
+
 
 Important:
 
@@ -49,9 +59,9 @@ def init():
 
 
 class MainWidget(QtWidgets.QWidget):
-    """Bookmark's main widget when initialized in :attr:`common.EmbeddedMode`.
-    See also :class:`bookmarks.standalone.StandaloneMainWidget`, a subclass used
-    as the main widget when run in :attr:`common.StandaloneMode`.
+    """Bookmark's main widget when initialized in :attr:`~bookmarks.common.core.EmbeddedMode`.
+    See also :class:`bookmarks.standalone.BookmarksAppWindow`, a subclass used
+    as the main widget when run in :attr:`~bookmarks.common.core.StandaloneMode`.
 
     Attributes:
         aboutToInitialize (Signal): Emitted just before the main widget is about to

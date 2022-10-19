@@ -35,7 +35,7 @@ Note:
 Important to note that :class:`FileItemModel` interacts with two data sets
 simultaneously: a *collapsed* sequence and a regular file data set.
 See the :mod:`~bookmarks.common.sequence` module for details on sequence definitions, and
-:meth:~bookmarks.items.models.BaseItemModel.model_data`.
+:meth:`~bookmarks.items.models.BaseItemModel.model_data`.
 
 """
 import functools

@@ -114,7 +114,7 @@ def get_sequence(s):
     be **0001**, and not 010 or 002.
 
     Args:
-            s (str): A file path.
+        s (str): A file path.
 
     Returns:
             group 1 (SRE_Match): All the characters **before** the sequence number.
@@ -125,13 +125,13 @@ def get_sequence(s):
     .. code-block:: python
         :linenos:
 
-       s = 'job_sh010_animation_v002_username.c4d'
-       m = get_sequence(s)
-       if m:
-               prefix = match.group(1)
-               sequence_number = match.group(2)
-               suffix = match.group(3)
-               extension = match.group(4)
+        s = 'job_sh010_animation_v002_username.c4d'
+        m = get_sequence(s)
+        if m:
+            prefix = match.group(1)
+            sequence_number = match.group(2)
+            suffix = match.group(3)
+            extension = match.group(4)
 
     Returns:
             ``SRE_Match``: ``None`` if the text doesn't contain a number or an ``SRE_Match`` object.

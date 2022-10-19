@@ -1363,6 +1363,7 @@ class BaseContextMenu(QtWidgets.QMenu):
 
         self.separator(self.menu[k])
         for url in reversed(sg_properties.urls()):
+            print(url)
             self.menu[k][key()] = {
                 'text': url,
                 'icon': ui.get_icon('sg'),

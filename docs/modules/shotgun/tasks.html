@@ -1,0 +1,823 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="slack" href="../slack.html" /><link rel="prev" title="shotgun.shotgun" href="shotgun.html" />
+
+    <meta name="generator" content="sphinx-5.2.2, furo 2022.09.15"/>
+        <title>shotgun.tasks - Bookmarks 0.7.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #ffffff;
+  --color-code-foreground: black;
+  --color-brand-primary: rgba(75, 180, 135, 1);
+  --color-brand-content: rgba(75, 180, 135, 1);
+  --color-api-name: rgba(0, 0, 0, 0.9);
+  --color-api-pre-name: rgba(75, 180, 135, 0.75);
+  --color-highlight-on-target: rgba(0,0,0,0);
+  --api-font-size: var(--font-size--normal);
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-highlight-on-target: rgba(0,0,0,0);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-highlight-on-target: rgba(0,0,0,0);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.4 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../../_static/icon.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Bookmarks 0.7.4 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html">User Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Technical Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../modules.html">Python Modules</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../actions.html">actions</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../bookmarker.html">bookmarker</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../bookmarker/bookmark_editor.html">bookmarker.bookmark_editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../bookmarker/job_editor.html">bookmarker.job_editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../bookmarker/main.html">bookmarker.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../bookmarker/server_editor.html">bookmarker.server_editor</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../common.html">common</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../common/core.html">common.core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/data.html">common.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/env.html">common.env</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/font.html">common.font</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/monitor.html">common.monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/sequence.html">common.sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/session_lock.html">common.session_lock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/settings.html">common.settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/setup.html">common.setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/signals.html">common.signals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/ui.html">common.ui</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contextmenu.html">contextmenu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database.html">database</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../editor.html">editor</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../editor/asset_properties.html">editor.asset_properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../editor/base.html">editor.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../editor/base_widgets.html">editor.base_widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../editor/bookmark_properties.html">editor.bookmark_properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../editor/preferences.html">editor.preferences</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../external.html">external</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../external/ffmpeg.html">external.ffmpeg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../external/ffmpeg_widget.html">external.ffmpeg_widget</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../external/rv.html">external.rv</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../file_saver.html">file_saver</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../file_saver/main.html">file_saver.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../file_saver/widgets.html">file_saver.widgets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../importexport.html">importexport</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../items.html">items</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../items/asset_items.html">items.asset_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/bookmark_items.html">items.bookmark_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/delegate.html">items.delegate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/favourite_items.html">items.favourite_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/file_items.html">items.file_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/models.html">items.models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/task_items.html">items.task_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/views.html">items.views</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/widgets/filter_editor.html">items.widgets.filter_editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/widgets/image_viewer.html">items.widgets.image_viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/widgets/thumb_capture.html">items.widgets.thumb_capture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/widgets/thumb_library.html">items.widgets.thumb_library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/widgets/thumb_picker.html">items.widgets.thumb_picker</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../launcher.html">launcher</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../launcher/gallery.html">launcher.gallery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../launcher/main.html">launcher.main</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../log.html">log</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html">main</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../maya.html">maya</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../maya/actions.html">maya.actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/base.html">maya.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/capture.html">maya.capture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/contextmenu.html">maya.contextmenu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/export.html">maya.export</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/main.html">maya.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/plugin.html">maya.plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/shadertool.html">maya.shadertool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/viewport.html">maya.viewport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../notes.html">notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../progress.html">progress</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../publish.html">publish</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shortcuts.html">shortcuts</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../shotgun.html">shotgun</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="actions.html">shotgun.actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="link.html">shotgun.link</a></li>
+<li class="toctree-l3"><a class="reference internal" href="link_asset.html">shotgun.link_asset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="link_assets.html">shotgun.link_assets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="link_bookmark.html">shotgun.link_bookmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="publish.html">shotgun.publish</a></li>
+<li class="toctree-l3"><a class="reference internal" href="publish_widgets.html">shotgun.publish_widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="shotgun.html">shotgun.shotgun</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">shotgun.tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../slack.html">slack</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../slack/slack.html">slack.slack</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../standalone.html">standalone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../statusbar.html">statusbar</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../teams.html">teams</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../teams/message.html">teams.message</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../templates.html">templates</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../threads.html">threads</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../threads/threads.html">threads.threads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../threads/workers.html">threads.workers</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../tokens.html">tokens</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tokens/tokens.html">tokens.tokens</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tokens/tokens_editor.html">tokens.tokens_editor</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../topbar.html">topbar</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../topbar/buttons.html">topbar.buttons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../topbar/quickswitch.html">topbar.quickswitch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../topbar/tabs.html">topbar.tabs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../topbar/topbar.html">topbar.topbar</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../ui.html">ui</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../versioncontrol.html">versioncontrol</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../versioncontrol/version.html">versioncontrol.version</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../versioncontrol/versioncontrol.html">versioncontrol.versioncontrol</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="module-bookmarks.shotgun.tasks">
+<span id="shotgun-tasks"></span><h1>shotgun.tasks<a class="headerlink" href="#module-bookmarks.shotgun.tasks" title="Permalink to this heading">#</a></h1>
+<p>Module contains all widgets and utility classes used to select a Task
+when publishing to shotgun.</p>
+<p><strong>Classes:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.InteralNode" title="bookmarks.shotgun.tasks.InteralNode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InteralNode</span></code></a>(data[, parentNode, parent])</p></td>
+<td><p>Utility class to represent a hierarchy needed by the tree view.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.ProxyModel" title="bookmarks.shotgun.tasks.ProxyModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProxyModel</span></code></a>([parent])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel" title="bookmarks.shotgun.tasks.TaskModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TaskModel</span></code></a>(entities[, parent])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskPicker" title="bookmarks.shotgun.tasks.TaskPicker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TaskPicker</span></code></a>([parent])</p></td>
+<td><p>The main dialog used to select a task entity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskView" title="bookmarks.shotgun.tasks.TaskView"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TaskView</span></code></a>([parent])</p></td>
+<td><p>Tree view used to display the current ShotGrid Steps and Tasks.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskViewContextMenu" title="bookmarks.shotgun.tasks.TaskViewContextMenu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TaskViewContextMenu</span></code></a>(index[, parent])</p></td>
+<td><p>The context menu associated with the AssetItemView.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.InteralNode">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.tasks.</span></span><span class="sig-name descname"><span class="pre">InteralNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parentNode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#InteralNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.InteralNode" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QObject</span></code></p>
+<p>Utility class to represent a hierarchy needed by the tree view.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.InteralNode.addChild" title="bookmarks.shotgun.tasks.InteralNode.addChild"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addChild</span></code></a>(child)</p></td>
+<td><p>Add a child node.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.InteralNode.getChild" title="bookmarks.shotgun.tasks.InteralNode.getChild"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getChild</span></code></a>(row)</p></td>
+<td><p>Child at the provided index/row.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.InteralNode.removeChild" title="bookmarks.shotgun.tasks.InteralNode.removeChild"><code class="xref py py-obj docutils literal notranslate"><span class="pre">removeChild</span></code></a>(child)</p></td>
+<td><p>Remove the given node from the children.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.InteralNode.removeSelf" title="bookmarks.shotgun.tasks.InteralNode.removeSelf"><code class="xref py py-obj docutils literal notranslate"><span class="pre">removeSelf</span></code></a>()</p></td>
+<td><p>Removes itself from the parent's children.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.InteralNode.row" title="bookmarks.shotgun.tasks.InteralNode.row"><code class="xref py py-obj docutils literal notranslate"><span class="pre">row</span></code></a>()</p></td>
+<td><p>Row number of this node.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Attributes:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.InteralNode.childCount" title="bookmarks.shotgun.tasks.InteralNode.childCount"><code class="xref py py-obj docutils literal notranslate"><span class="pre">childCount</span></code></a></p></td>
+<td><p>Children of the this node.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.InteralNode.children" title="bookmarks.shotgun.tasks.InteralNode.children"><code class="xref py py-obj docutils literal notranslate"><span class="pre">children</span></code></a></p></td>
+<td><p>Children of the node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.InteralNode.parentNode" title="bookmarks.shotgun.tasks.InteralNode.parentNode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parentNode</span></code></a></p></td>
+<td><p>Parent of this node.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.InteralNode.addChild">
+<span class="sig-name descname"><span class="pre">addChild</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">child</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#InteralNode.addChild"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.InteralNode.addChild" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a child node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.InteralNode.getChild">
+<span class="sig-name descname"><span class="pre">getChild</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#InteralNode.getChild"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.InteralNode.getChild" title="Permalink to this definition">#</a></dt>
+<dd><p>Child at the provided index/row.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.InteralNode.removeChild">
+<span class="sig-name descname"><span class="pre">removeChild</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">child</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#InteralNode.removeChild"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.InteralNode.removeChild" title="Permalink to this definition">#</a></dt>
+<dd><p>Remove the given node from the children.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.InteralNode.removeSelf">
+<span class="sig-name descname"><span class="pre">removeSelf</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#InteralNode.removeSelf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.InteralNode.removeSelf" title="Permalink to this definition">#</a></dt>
+<dd><p>Removes itself from the parent’s children.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.InteralNode.row">
+<span class="sig-name descname"><span class="pre">row</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#InteralNode.row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.InteralNode.row" title="Permalink to this definition">#</a></dt>
+<dd><p>Row number of this node.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.InteralNode.childCount">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">childCount</span></span><a class="headerlink" href="#bookmarks.shotgun.tasks.InteralNode.childCount" title="Permalink to this definition">#</a></dt>
+<dd><p>Children of the this node.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.InteralNode.children">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">children</span></span><a class="headerlink" href="#bookmarks.shotgun.tasks.InteralNode.children" title="Permalink to this definition">#</a></dt>
+<dd><p>Children of the node.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.InteralNode.parentNode">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parentNode</span></span><a class="headerlink" href="#bookmarks.shotgun.tasks.InteralNode.parentNode" title="Permalink to this definition">#</a></dt>
+<dd><p>Parent of this node.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.ProxyModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.tasks.</span></span><span class="sig-name descname"><span class="pre">ProxyModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#ProxyModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.ProxyModel" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QSortFilterProxyModel</span></code></p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.ProxyModel.filterAcceptsColumn" title="bookmarks.shotgun.tasks.ProxyModel.filterAcceptsColumn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filterAcceptsColumn</span></code></a>(self, source_column, ...)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.ProxyModel.filterAcceptsRow" title="bookmarks.shotgun.tasks.ProxyModel.filterAcceptsRow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filterAcceptsRow</span></code></a>(source_row[, parent])</p></td>
+<td><p>Filters rows of the proxy model based on the current flags and filter string.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.ProxyModel.filterAcceptsColumn">
+<span class="sig-name descname"><span class="pre">filterAcceptsColumn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#ProxyModel.filterAcceptsColumn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.ProxyModel.filterAcceptsColumn" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.ProxyModel.filterAcceptsRow">
+<span class="sig-name descname"><span class="pre">filterAcceptsRow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">QtCore.QModelIndex()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#ProxyModel.filterAcceptsRow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.ProxyModel.filterAcceptsRow" title="Permalink to this definition">#</a></dt>
+<dd><p>Filters rows of the proxy model based on the current flags and
+filter string.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.tasks.</span></span><span class="sig-name descname"><span class="pre">TaskModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskModel" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QAbstractItemModel</span></code></p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel.columnCount" title="bookmarks.shotgun.tasks.TaskModel.columnCount"><code class="xref py py-obj docutils literal notranslate"><span class="pre">columnCount</span></code></a>(self[, parent])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel.createIndexFromNode" title="bookmarks.shotgun.tasks.TaskModel.createIndexFromNode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createIndexFromNode</span></code></a>(node)</p></td>
+<td><p>Creates a QModelIndex based on a Node</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel.data" title="bookmarks.shotgun.tasks.TaskModel.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a>(self, index[, role])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel.entities_to_nodes" title="bookmarks.shotgun.tasks.TaskModel.entities_to_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">entities_to_nodes</span></code></a>()</p></td>
+<td><p>Builds the internal node hierarchy base on the given entity data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel.flags" title="bookmarks.shotgun.tasks.TaskModel.flags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flags</span></code></a>(self, index)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel.headerData" title="bookmarks.shotgun.tasks.TaskModel.headerData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">headerData</span></code></a>(self, section, orientation[, role])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel.index" title="bookmarks.shotgun.tasks.TaskModel.index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a>(self, row, column[, parent])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel.parent" title="bookmarks.shotgun.tasks.TaskModel.parent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parent</span></code></a>(-&gt; PySide2.QtCore.QObject)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel.rowCount" title="bookmarks.shotgun.tasks.TaskModel.rowCount"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rowCount</span></code></a>(self[, parent])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskModel.columnCount">
+<span class="sig-name descname"><span class="pre">columnCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Invalid(PySide2.QtCore.QModelIndex)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskModel.columnCount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskModel.columnCount" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskModel.createIndexFromNode">
+<span class="sig-name descname"><span class="pre">createIndexFromNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskModel.createIndexFromNode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskModel.createIndexFromNode" title="Permalink to this definition">#</a></dt>
+<dd><p>Creates a QModelIndex based on a Node</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskModel.data">
+<span class="sig-name descname"><span class="pre">data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PySide2.QtCore.Qt.ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskModel.data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskModel.data" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskModel.entities_to_nodes">
+<span class="sig-name descname"><span class="pre">entities_to_nodes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskModel.entities_to_nodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskModel.entities_to_nodes" title="Permalink to this definition">#</a></dt>
+<dd><p>Builds the internal node hierarchy base on the given entity data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskModel.flags">
+<span class="sig-name descname"><span class="pre">flags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PySide2.QtCore.Qt.ItemFlags</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskModel.flags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskModel.flags" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskModel.headerData">
+<span class="sig-name descname"><span class="pre">headerData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.Qt.Orientation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PySide2.QtCore.Qt.ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskModel.headerData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskModel.headerData" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskModel.index">
+<span class="sig-name descname"><span class="pre">index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">column</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Invalid(PySide2.QtCore.QModelIndex)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PySide2.QtCore.QModelIndex</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskModel.index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskModel.index" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskModel.parent">
+<span class="sig-name descname"><span class="pre">parent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PySide2.QtCore.QObject</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskModel.parent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskModel.parent" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">parent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">child</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PySide2.QtCore.QModelIndex</span></span></span></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskModel.rowCount">
+<span class="sig-name descname"><span class="pre">rowCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Invalid(PySide2.QtCore.QModelIndex)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskModel.rowCount"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskModel.rowCount" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskPicker">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.tasks.</span></span><span class="sig-name descname"><span class="pre">TaskPicker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskPicker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskPicker" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<p>The main dialog used to select a task entity.</p>
+<p>The task is to associate a file publish, or a version when publishing to
+ShotGrid.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskPicker.done" title="bookmarks.shotgun.tasks.TaskPicker.done"><code class="xref py py-obj docutils literal notranslate"><span class="pre">done</span></code></a>(self, arg__1)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskPicker.showEvent" title="bookmarks.shotgun.tasks.TaskPicker.showEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showEvent</span></code></a>(event)</p></td>
+<td><p>Show event handler.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskPicker.sizeHint" title="bookmarks.shotgun.tasks.TaskPicker.sizeHint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sizeHint</span></code></a>()</p></td>
+<td><p>Returns a size hint.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskPicker.done">
+<span class="sig-name descname"><span class="pre">done</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arg__1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskPicker.done"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskPicker.done" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskPicker.showEvent">
+<span class="sig-name descname"><span class="pre">showEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskPicker.showEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskPicker.showEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Show event handler.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskPicker.sizeHint">
+<span class="sig-name descname"><span class="pre">sizeHint</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskPicker.sizeHint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskPicker.sizeHint" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns a size hint.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.tasks.</span></span><span class="sig-name descname"><span class="pre">TaskView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskView" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QTreeView</span></code></p>
+<p>Tree view used to display the current ShotGrid Steps and Tasks.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskView.contextMenuEvent" title="bookmarks.shotgun.tasks.TaskView.contextMenuEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contextMenuEvent</span></code></a>(event)</p></td>
+<td><p>Custom context menu event.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskView.reset_root_node" title="bookmarks.shotgun.tasks.TaskView.reset_root_node"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_root_node</span></code></a>()</p></td>
+<td><p>Resets the root node to the initial root node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskView.resizeEvent" title="bookmarks.shotgun.tasks.TaskView.resizeEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resizeEvent</span></code></a>(self, event)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskView.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskView.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskView.contextMenuEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Custom context menu event.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskView.reset_root_node">
+<span class="sig-name descname"><span class="pre">reset_root_node</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskView.reset_root_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskView.reset_root_node" title="Permalink to this definition">#</a></dt>
+<dd><p>Resets the root node to the initial root node.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskView.resizeEvent">
+<span class="sig-name descname"><span class="pre">resizeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtGui.QResizeEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskView.resizeEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskView.resizeEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskViewContextMenu">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.tasks.</span></span><span class="sig-name descname"><span class="pre">TaskViewContextMenu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskViewContextMenu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskViewContextMenu" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../contextmenu.html#bookmarks.contextmenu.BaseContextMenu" title="bookmarks.contextmenu.BaseContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseContextMenu</span></code></a></p>
+<p>The context menu associated with the AssetItemView.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskViewContextMenu.setup" title="bookmarks.shotgun.tasks.TaskViewContextMenu.setup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code></a>()</p></td>
+<td><p>Creates the context menu.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.tasks.TaskViewContextMenu.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/tasks.html#TaskViewContextMenu.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.tasks.TaskViewContextMenu.setup" title="Permalink to this definition">#</a></dt>
+<dd><p>Creates the context menu.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="../slack.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">slack</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="shotgun.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">shotgun.shotgun</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Gergely Wootsch
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">shotgun.tasks</a><ul>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.InteralNode"><code class="docutils literal notranslate"><span class="pre">InteralNode</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.InteralNode.addChild"><code class="docutils literal notranslate"><span class="pre">InteralNode.addChild()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.InteralNode.getChild"><code class="docutils literal notranslate"><span class="pre">InteralNode.getChild()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.InteralNode.removeChild"><code class="docutils literal notranslate"><span class="pre">InteralNode.removeChild()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.InteralNode.removeSelf"><code class="docutils literal notranslate"><span class="pre">InteralNode.removeSelf()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.InteralNode.row"><code class="docutils literal notranslate"><span class="pre">InteralNode.row()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.InteralNode.childCount"><code class="docutils literal notranslate"><span class="pre">InteralNode.childCount</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.InteralNode.children"><code class="docutils literal notranslate"><span class="pre">InteralNode.children</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.InteralNode.parentNode"><code class="docutils literal notranslate"><span class="pre">InteralNode.parentNode</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.ProxyModel"><code class="docutils literal notranslate"><span class="pre">ProxyModel</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.ProxyModel.filterAcceptsColumn"><code class="docutils literal notranslate"><span class="pre">ProxyModel.filterAcceptsColumn()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.ProxyModel.filterAcceptsRow"><code class="docutils literal notranslate"><span class="pre">ProxyModel.filterAcceptsRow()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel"><code class="docutils literal notranslate"><span class="pre">TaskModel</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel.columnCount"><code class="docutils literal notranslate"><span class="pre">TaskModel.columnCount()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel.createIndexFromNode"><code class="docutils literal notranslate"><span class="pre">TaskModel.createIndexFromNode()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel.data"><code class="docutils literal notranslate"><span class="pre">TaskModel.data()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel.entities_to_nodes"><code class="docutils literal notranslate"><span class="pre">TaskModel.entities_to_nodes()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel.flags"><code class="docutils literal notranslate"><span class="pre">TaskModel.flags()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel.headerData"><code class="docutils literal notranslate"><span class="pre">TaskModel.headerData()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel.index"><code class="docutils literal notranslate"><span class="pre">TaskModel.index()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel.parent"><code class="docutils literal notranslate"><span class="pre">TaskModel.parent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskModel.rowCount"><code class="docutils literal notranslate"><span class="pre">TaskModel.rowCount()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskPicker"><code class="docutils literal notranslate"><span class="pre">TaskPicker</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskPicker.done"><code class="docutils literal notranslate"><span class="pre">TaskPicker.done()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskPicker.showEvent"><code class="docutils literal notranslate"><span class="pre">TaskPicker.showEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskPicker.sizeHint"><code class="docutils literal notranslate"><span class="pre">TaskPicker.sizeHint()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskView"><code class="docutils literal notranslate"><span class="pre">TaskView</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskView.contextMenuEvent"><code class="docutils literal notranslate"><span class="pre">TaskView.contextMenuEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskView.reset_root_node"><code class="docutils literal notranslate"><span class="pre">TaskView.reset_root_node()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskView.resizeEvent"><code class="docutils literal notranslate"><span class="pre">TaskView.resizeEvent()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskViewContextMenu"><code class="docutils literal notranslate"><span class="pre">TaskViewContextMenu</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.shotgun.tasks.TaskViewContextMenu.setup"><code class="docutils literal notranslate"><span class="pre">TaskViewContextMenu.setup()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/scripts/furo.js"></script>
+    <script src="../../_static/design-tabs.js"></script>
+    </body>
+</html>

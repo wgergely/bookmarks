@@ -82,11 +82,13 @@ html_theme_options = {
         "color-brand-content": "rgba(75, 180, 135, 1)",
         "color-api-name": "rgba(0, 0, 0, 0.9)",
         "color-api-pre-name": "rgba(75, 180, 135, 0.75)",
+        "color-highlight-on-target": "rgba(0,0,0,0)",
         "api-font-size": "var(--font-size--normal)",
     },
     "dark_css_variables": {
         "color-brand-primary": "rgba(90, 200, 155, 1)",
         "color-brand-content": "rgba(90, 200, 155, 1)",
+        "color-highlight-on-target": "rgba(0,0,0,0)",
         "color-api-name": "rgba(255, 255, 255, 0.9)",
     },
     "navigation_with_keys": True,

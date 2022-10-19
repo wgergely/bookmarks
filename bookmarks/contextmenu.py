@@ -100,6 +100,7 @@ class BaseContextMenu(QtWidgets.QMenu):
     The internal :attr:`BaseContextMenu.menu` dict object assumes the following form:
 
     .. code-block:: python
+        :linenos:
 
         self.menu = collections.OrderedDict({
             'uuid1': {

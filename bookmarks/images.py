@@ -1,19 +1,21 @@
 """The module defines :class:`.ImageCache`, a utility class used to store image and color data and
 all other utility methods needed to create, load and store thumbnail images.
 
-Custom, and generated item thumbnails are stored in the ``common.bookmark_cache_dir``.
-The highest-level method to retrieve the thumbnail of a list item is :func:`get_thumbnail`.
-This function relies on the ImageCache to retrieve data and will return an existing thumbnail image
-or a suitable placeholder image (see :func:`get_placeholder_path`).
+Use the high-level :func:`get_thumbnail` to get an item's thumbnail. This relies on the
+:class:`ImageCache` to retrieve data and will return an existing thumbnail image or a
+suitable placeholder image. See  :func:`get_placeholder_path`.
 
-The lower level methods are to load image data are :meth:`ImageCache.get_pixmap` and
+Note:
+    The thumbnail files are stored in the bookmark item cache folder (see
+    ``common.bookmark_cache_dir``).
+
+Under the hood, :func:`get_thumbnail` uses :meth:`ImageCache.get_pixmap` and
 :meth:`ImageCache.get_image`.
 
-Bookmarks uses OpenImageIO to generate thumbnails. See :meth:`ImageCache.oiio_make_thumbnail`.
+We're using OpenImageIO to generate thumbnails. See :meth:`ImageCache.oiio_make_thumbnail`.
 To load an image using OpenImageIO as a QtGui.QImage see :func:`oiio_get_qimage`.
 
-When loading resource images to use in the Gui use :meth:`.ImageCache.rsc_pixmap`.
-
+To load gui resources, use :meth:`.ImageCache.rsc_pixmap`.
 
 """
 import functools
@@ -41,6 +43,7 @@ ResourcePixmapType = IconType + 1
 ColorType = ResourcePixmapType + 1
 
 accepted_codecs = ('h.264', 'h264', 'mpeg-4', 'mpeg4')
+
 
 def get_cache_size():
     v = common.get_py_obj_size(common.oiio_cache)
@@ -87,7 +90,7 @@ def init_resources():
 
 
 def init_pixel_ratio():
-    """Initialises the pixel ration value.
+    """Initialises the pixel ratio value.
 
     """
     app = QtWidgets.QApplication.instance()
@@ -372,7 +375,7 @@ def get_placeholder_path(file_path, fallback):
 
 
 def oiio_get_buf(source, hash=None, force=False, subimage=0):
-    """Check and load a source image with OpenImageIO's format reader.
+    """Checks and loads a source image with OpenImageIO's format reader.
 
 
     Args:
@@ -485,24 +488,29 @@ def oiio_get_qimage(source, buf=None, force=True):
 class ImageCache(QtCore.QObject):
     """Utility class for storing, and accessing image data.
 
-    The stored data is associated with a `type` and `hash` (see :func:`.common.get_hash`) and
-    `size`. This means single source image can have multiple QPixmap and QImage entries as
-    various sizes are requested via the cache.
+    You shouldn't have to use the :meth:`value` and :meth:`setValue` methods. Instead,
+    use the :meth:`get_image` and :meth:`get_pixmap` - they're high-level functions, that
+    will automatically cache and convert resources.
+
+    The stored data is associated with a `type` and `hash` (see
+    :func:`~bookmarks.common.core.get_hash`) and `size`. This means a single source image can have
+    multiple QPixmap and QImage cache entries as various sizes are requested and cached.
 
     .. code-block:: python
+        :linenos:
 
         common.image_cache[cache_type][hash][size] = pixmap
 
-    Whilst the cache provides a :meth:`.value` and :meth:`setValue`, and :meth:`contains` methods,
-    loading is usually done using :meth:`get_image` and :meth:`get_pixmap`.
-
-    When loading resource images to use in the Gui use :meth:`rsc_pixmap`.
+    To remove a resource from the cache use the :meth:`flush` method.
 
     """
 
     @classmethod
     def flush(cls, source):
         """Flushes all values associated with a given source from the image cache.
+
+        Args:
+            source (str): A file path.
 
         """
         hash = common.get_hash(source)

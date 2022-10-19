@@ -2,6 +2,7 @@
 and ``asset`` components.
 
 .. code-block:: python
+    :linenos:
 
     server, job, root, asset = common.active('asset', args=True)
     asset = f'{server}/{job}/{root}/{asset}'
@@ -11,6 +12,14 @@ The app considers folders found in the root of a bookmark item assets.
 We don't have any notion of asset types (like how some pipelines make a distinction
 between shots and assets), nor do we understand nested assets by default (like a
 ``SEQ010/SH010`` structure).
+
+Hint:
+
+    It is possible to use nested assets with a little workaround. If an asset folder
+    contains a special ``.link`` file, any relative path defined inside it will be read
+    and added to the asset items. See :func:`~bookmarks.common.core.get_links` for
+    details.
+
 
 Asset data is queried by :class:`AssetItemModel`, and displayed by
 :class:`AssetItemView`. Any custom logic of how assets are queried should be

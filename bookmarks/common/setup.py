@@ -23,11 +23,35 @@ dependencies = (
 
 
 def initialize(mode):
-    """Initialize the components required to run Bookmarks.
+    """Initializes the components required to run Bookmarks.
+
+    It is important to call this function before running the app as it is responsible
+    for loading the resource variables and starting the helper threads item models use
+    to load information.
+
+    Note:
+        Don't forget to call :func:`uninitialize` before terminating the application,
+        to gracefully stop threads and remove previously initialized components from the
+        memory.
+
+    When Bookmarks is used inside a compatible DCC, the mode should be
+    :attr:`~bookmarks.common.core.EmbeddedMode`. When running as a standalone application, use
+    :attr:`~bookmarks.common.core.StandaloneMode`.
+
+
+    .. code-block:: python
+        :linenos:
+
+        from bookmarks import common
+
+        common.initialize(common.StandaloneMode)
+        common.main_widget.show()
+        common.uninitialize()
+
 
     Args:
-        mode (str): The initialization mode. One of ``common.StandaloneMode``
-                or ``common.EmbeddedMode``.
+        mode (str): The initialization mode. One of :attr:`~bookmarks.common.core.StandaloneMode`
+            or :attr:`~bookmarks.common.core.EmbeddedMode`.
 
     """
     from . import verify_dependencies
@@ -38,7 +62,7 @@ def initialize(mode):
     if mode not in (common.StandaloneMode, common.EmbeddedMode):
         raise ValueError(
             f'Invalid initialization mode. Got "{mode}", expected '
-            f'`common.StandaloneMode` or `common.EmbeddedMode`'
+            f'`StandaloneMode` or `EmbeddedMode`'
         )
 
     common.init_mode = mode
@@ -98,7 +122,7 @@ def initialize(mode):
 
 
 def uninitialize():
-    """Un-initialize all app components.
+    """Un-initializes all app components.
 
     """
     from ..threads import threads

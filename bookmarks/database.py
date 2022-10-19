@@ -1,29 +1,53 @@
-"""Defines :class:`BookmarkDB`, the sqlite3 database interface used to store item
-properties, such as custom descriptions, flags, ``width``, ``height``,
+"""Defines :class:`BookmarkDB`, the SQLite database interface used to store item
+properties, such as custom descriptions, flags, width, height,
 :mod:`bookmarks.tokens.tokens` values, etc.
 
 Each bookmark item has its own database file stored in the root of the bookmark item's
-cache folder (defined by :attr:``common.bookmark_cache_dir``).
+cache folder as defined by :attr:`common.bookmark_cache_dir`.
 
 .. code-block:: python
+    :linenos:
 
-    db_path = f'{server}/{job}/{root}/{common.bookmark_cache_dir}/{common.bookmark_database}'
-
-
-The database table layout is defined by :attr:`TABLES`, which defines the sqlite3 and
-python types for each column.
+    f'{server}/{job}/{root}/{common.bookmark_cache_dir}/{common.bookmark_database}'
 
 
-Don't create DatabaseDB instances directly, instead use :func:`.get_db` to get cached,
-thread-specific database controllers. E.g.:
+The database table layout is defined by :attr:`TABLES`. It maps the SQLite column types
+to the python types used in the application.
+
+To get and set values use :func:`get_db`, the preferred database interface getter.
+This will return cached, thread-specific database controllers. E.g.:
 
 .. code-block:: python
+    :linenos:
+
+    from bookmarks import database
+
+    db = database.get_db(server, job, root)
+    v = db.value(*args)
+
+Each :meth:`BookmarkDB.value` and :meth:`BookmarkDB.setValue` call will autocommit.
+You can batch commits together by using the built-in context manager:
+
+.. code-block:: python
+    :linenos:
 
     from bookmarks import database
 
     db = database.get_db(server, job, root)
     with db.connection():
-        v = db.value(*args)
+        db.setValue(*args)
+
+There are two tables that hold item data: ``common.BookmarkTable`` and
+``common.AssetTable``. The asset table is meant to be used as a general table to hold
+descriptions and notes for all items where the bookmark table contains properties
+specifically related to the bookmark item.
+
+Warning:
+
+    Bookmark items should store their description in the asset table as it is a general
+    property, but they don't and instead use the superfluous bookmark table
+    'description' column. Sorry about that...
+
 
 
 """
@@ -345,8 +369,7 @@ def set_flag(server, job, root, k, mode, flag):
     f = db.value(k, 'flags', AssetTable)
     f = 0 if f is None else f
     f = f | flag if mode else f & ~flag
-    with db.connection():
-        db.setValue(k, 'flags', f, AssetTable)
+    db.setValue(k, 'flags', f, AssetTable)
 
 
 def _verify_args(source, key, table, value=None):
@@ -736,14 +759,12 @@ class BookmarkDB(QtCore.QObject):
     def setValue(self, source, key, value, table=AssetTable):
         """Sets the given value in the database.
 
-        Example:
-
         .. code-block:: python
+            :linenos:
 
             db = database.get_db(server, job, root)
-            with db.connection():
-                source = f'//{server}/{job}/{root}/sh0010/scenes/my_scene.ma'
-                db.setValue(source, 'description', 'hello world')
+            source = f'//{server}/{job}/{root}/sh0010/scenes/my_scene.ma'
+            db.setValue(source, 'description', 'hello world')
 
         Args:
             source (str): Source file path.

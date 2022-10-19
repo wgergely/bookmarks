@@ -6,6 +6,7 @@ linked with ShotGrid) we can initiate a connection using a :class:`ShotgunProper
 instance:
 
 .. code-block:: python
+    :linenos:
 
     import bookmarks.shotgun.shotgun as shotgun
 
@@ -36,7 +37,6 @@ from PySide2 import QtCore, QtWidgets, QtGui
 from .. import common
 from .. import database
 from .. import images
-from .. import log
 from ..threads import threads
 
 EntityRole = QtCore.Qt.UserRole + 1000

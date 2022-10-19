@@ -4,6 +4,7 @@ A sequence item is a file that has a number component that can be incremented. S
 :func:`get_sequence`. E.g.:
 
 .. code-block:: python
+    :linenos:
 
     s = 'C:/test/my_image_sequence_0001.png'
     seq = common.get_sequence(s)
@@ -14,6 +15,7 @@ and is marked by the :attr:`.SEQSTART`, sequence range and :attr:`.SEQEND` chara
 :func:`is_collapsed`. E.g.:
 
 .. code-block:: python
+    :linenos:
 
     s = 'C:/test/my_image_sequence_{1-200}.png'
     common.is_collapsed(s) # = True
@@ -73,6 +75,7 @@ def is_collapsed(s):
     Example:
 
         .. code-block:: python
+            :linenos:
 
             filename = 'job_sh010_animation_{001-299}_gw.png'
             m = is_collapsed(filename)
@@ -120,6 +123,7 @@ def get_sequence(s):
             group 4 (SRE_Match): The file extension **without** the '.' dot.
 
     .. code-block:: python
+        :linenos:
 
        s = 'job_sh010_animation_v002_username.c4d'
        m = get_sequence(s)

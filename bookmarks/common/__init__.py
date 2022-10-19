@@ -9,9 +9,10 @@ Configurable properties, such as colors and size settings are loaded from
 
 Tip:
 
-    Submodules can be accessed directly from this top module, like so:
+    Submodules can be accessed directly from this top module. E.g.:
 
     .. code-block:: python
+        :linenos:
 
         # bookmarks.common.setup.initialize(common.EmbeddedMode) can be imported as
         from bookmarks import common
@@ -22,12 +23,13 @@ The app can be run in two modes. As a standalone application, or embedded in a
 PySide2 environment. The base-layers can be initialized with:
 
 .. code-block:: python
+    :linenos:
 
     from bookmarks import common
     common.initialize(common.EmbeddedMode) # or common.StandaloneMode
 
 :func:`bookmarks.exec_()` is a utility method for starting Bookmarks in
-:attr:`common.StandaloneMode`, whilst :attr:`common.EmbeddedMode` is useful when
+:attr:`~bookmarks.common.core.StandaloneMode`, whilst :attr:`~bookmarks.common.core.EmbeddedMode` is useful when
 running from inside a host DCC. Currently only the Maya plugin makes use of this mode.
 See :mod:`bookmarks.maya` and :mod:`bookmarks.common` for the related methods.
 
@@ -84,7 +86,6 @@ image_resource_data = {}
 image_cache = {}
 
 token_configs = {}
-
 
 # Widget instance bindings
 main_widget = None

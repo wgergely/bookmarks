@@ -138,6 +138,7 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
     """The delegate used to display task progress information.
 
     """
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -321,13 +322,12 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
         # Write current data to the database
         pp = data[index.row()][common.ParentPathRole]
         db = database.get_db(*pp[0:3])
-        with db.connection():
-            db.setValue(
-                data[index.row()][common.PathRole],
-                'progress',
-                progress_data,
-                table=database.AssetTable
-            )
+        db.setValue(
+            data[index.row()][common.PathRole],
+            'progress',
+            progress_data,
+            table=database.AssetTable
+        )
 
     def updateEditorGeometry(self, editor, option, index):
         """Resizes the editor.

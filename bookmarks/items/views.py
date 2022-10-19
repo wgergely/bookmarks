@@ -3,7 +3,7 @@
 items.
 
 The view uses :class:`~bookmarks.items.models.ItemModel` for getting the item data,
-:class:`~bookmarks.items.delegate.rst.ItemDelegate` to paint the items.
+:class:`~bookmarks.items.delegate.ItemDelegate` to paint the items.
 
 :class:`BaseItemView` is a customised QListView widget augmented by
 :class:`.InlineIconView` (adds inline icon functionality),

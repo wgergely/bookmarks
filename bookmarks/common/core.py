@@ -6,6 +6,7 @@ import functools
 import hashlib
 import os
 import re
+import sys
 import time
 import uuid
 
@@ -16,9 +17,9 @@ from .. import common
 #: The config file name
 CONFIG = 'config.json'
 
-#: standalone active path save mode
+#: Startup mode when `Bookmarks` is running as a standalone Qt application
 StandaloneMode = 'standalone'
-#: standalone active path save mode
+#: Startup mode used when `Bookmarks` runs embedded in a host DCC.
 EmbeddedMode = 'embedded'
 
 BookmarkTab = 0
@@ -424,7 +425,7 @@ def get_entry_from_path(path, is_dir=True):
     file_info = QtCore.QFileInfo(path)
     if not file_info.exists():
         return None
-    
+
     for entry in os.scandir(file_info.dir().path()):
         if is_dir and not entry.is_dir():
             continue
@@ -435,6 +436,25 @@ def get_entry_from_path(path, is_dir=True):
 
 def get_links(path, section='links/assets'):
     """Returns a list of file links defined in a ``.links`` file.
+
+    .link files are simple QSettings ini files that define a list of paths relative to the
+    .link file. These can be used to define nested assets or bookmark item locations
+    inside job templates.
+
+    If a .links file contains two relative paths,
+    `subfolder1/nested_asset1` and `subfolder2/nested_asset2`...
+
+    .. code-block:: text
+
+        asset/
+        ├─ .links
+        ├─ subfolder1/
+        │  ├─ nested_asset1/
+        ├─ subfolder2/
+        │  ├─ nested_asset2/
+
+    ...two asset will be read, `nested_asset1` and `nested_asset2`
+    (but not the original root `asset`).
 
     Args:
         path (str): Path to a folder.
@@ -465,65 +485,6 @@ def get_links(path, section='links/assets'):
         return sorted(links)
     except:
         return []
-
-
-class DataDict(dict):
-    """Custom dictionary class used to store model item data.
-
-    This class adds compatibility for :class:`weakref.ref` referencing
-    and custom attributes for storing data state.
-
-    """
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._loaded = False
-        self._refresh_needed = False
-        self._data_type = None
-
-    @property
-    def loaded(self):
-        """Special attribute used by the item models and associated thread workers.
-
-        When set to `True`, the helper threads have finished populating data and the item
-        is considered fully loaded.
-
-        """
-        return self._loaded
-
-    @loaded.setter
-    def loaded(self, v):
-        self._loaded = v
-
-    @property
-    def refresh_needed(self):
-        """Used to signal that the cached data is out of date and needs updating.
-
-        """
-        return self._refresh_needed
-
-    @refresh_needed.setter
-    def refresh_needed(self, v):
-        self._refresh_needed = v
-
-    @property
-    def data_type(self):
-        """Returns the associated model item type.
-
-        """
-        return self._data_type
-
-    @data_type.setter
-    def data_type(self, v):
-        self._data_type = v
-
-
-import sys
-
-
-# Custom objects know their class.
-# Function objects seem to know way too much, including modules.
-# Exclude modules as well.
 
 
 def byte_to_pretty_string(num, suffix='B'):
@@ -582,6 +543,56 @@ def int_key(x):
 
     return x
 
+
+class DataDict(dict):
+    """Custom dictionary class used to store model item data.
+
+    This class adds compatibility for :class:`weakref.ref` referencing
+    and custom attributes for storing data state.
+
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._loaded = False
+        self._refresh_needed = False
+        self._data_type = None
+
+    @property
+    def loaded(self):
+        """Special attribute used by the item models and associated thread workers.
+
+        When set to `True`, the helper threads have finished populating data and the item
+        is considered fully loaded.
+
+        """
+        return self._loaded
+
+    @loaded.setter
+    def loaded(self, v):
+        self._loaded = v
+
+    @property
+    def refresh_needed(self):
+        """Used to signal that the cached data is out of date and needs updating.
+
+        """
+        return self._refresh_needed
+
+    @refresh_needed.setter
+    def refresh_needed(self, v):
+        self._refresh_needed = v
+
+    @property
+    def data_type(self):
+        """Returns the associated model item type.
+
+        """
+        return self._data_type
+
+    @data_type.setter
+    def data_type(self, v):
+        self._data_type = v
 
 
 class Timer(QtCore.QTimer):

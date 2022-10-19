@@ -466,13 +466,12 @@ class PrefixEditor(QtWidgets.QDialog):
             self.parent().job,
             self.parent().root
         )
-        with db.connection():
-            db.setValue(
-                db.source(),
-                'prefix',
-                self.editor.text(),
-                table=database.BookmarkTable
-            )
+        db.setValue(
+            db.source(),
+            'prefix',
+            self.editor.text(),
+            table=database.BookmarkTable
+        )
 
     def sizeHint(self):
         """Returns a size hint.

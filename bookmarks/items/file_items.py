@@ -2,6 +2,7 @@
 ``job``, ``root``, ``asset``, ``task`` and ``file`` path segments.
 
 .. code-block:: python
+    :linenos:
 
     # The following file path...
     my_file = '//my/server/my_job/my_asset/my_task_folder/take1/my_file.psd

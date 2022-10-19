@@ -5,7 +5,7 @@ information is stored in the bookmark item database. The utility methods allow g
 and setting some basic information in Bookmarks and ShotGrid to synchronize cut data,
 thumbnails, descriptions.
 
-I've also included an experimental publish script, but it was not tested very well.
+I've also included an experimental publish script, but it was not tested.
 
 Note:
     This module unfortunately is not well maintained. Still, in principle, as long as the

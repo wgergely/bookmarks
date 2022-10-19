@@ -1,6 +1,6 @@
 <p align="center">
-  <img width="200" src="https://bookmarks.gergely-wootsch.com/html/_static/icon.png">
-  <img width="480" src="https://bookmarks.gergely-wootsch.com/html/_images/active_bookmark.png">
+  <img width="200" src="https://bookmarks-vfx.com/_static/icon.png">
+  <img width="480" src="https://bookmarks-vfx.com/_images/active_bookmark.png">
 </p>
 
 <p align="center">
@@ -17,18 +17,18 @@
 ---
 
 
-[`User Guide`](https://bookmarks.gergely-wootsch.com/html/guide.html#user-guide)  |  [`Python Modules`](https://bookmarks.gergely-wootsch.com/html/modules.html#python-modules)  |  [`Get Bookmarks`](https://bookmarks.gergely-wootsch.com/html/guide.html#get-bookmarks)
+[`User Guide`](https://bookmarks-vfx.com/guide.html#user-guide)  |  [`Python Modules`](https://bookmarks-vfx.com/modules.html#python-modules)  |  [`Get Bookmarks`](https://bookmarks-vfx.com/guide.html#get-bookmarks)
 
 ---
 
 # Features
 
-The app categorises  project content as separate [`bookmarks`](https://bookmarks.gergely-wootsch.com/html/modules/items/bookmark_items.html#module-bookmarks.items.bookmark_items),
-[`assets`](https://bookmarks.gergely-wootsch.com/html/modules/items/asset_items.html#module-bookmarks.items.asset_items) and [`file items`](https://bookmarks.gergely-wootsch.com/html/modules/items/file_items.html#module-bookmarks.items.file_items).
+The app categorises  project content as separate [`bookmarks`](https://bookmarks-vfx.com/modules/items/bookmark_items.html#module-bookmarks.items.bookmark_items),
+[`assets`](https://bookmarks-vfx.com/modules/items/asset_items.html#module-bookmarks.items.asset_items) and [`file items`](https://bookmarks-vfx.com/modules/items/file_items.html#module-bookmarks.items.file_items).
 You can configure these independently to link with, for instance, ShotGrid entities or
-configure their properties like frame rate and resolution to set [`Maya scene settings`](https://bookmarks.gergely-wootsch.com/html/modules/maya/plugin.html#module-bookmarks.maya.plugin).
+configure their properties like frame rate and resolution to set [`Maya scene settings`](https://bookmarks-vfx.com/modules/maya/plugin.html#module-bookmarks.maya.plugin).
 You can use filters to sort and hide items, preview images, convert footage sequences, or ‘publish’ files.
-See [User Guide](https://bookmarks.gergely-wootsch.com/html/guide.html#user-guide) for more information.
+See [User Guide](https://bookmarks-vfx.com/guide.html#user-guide) for more information.
 
 # Background
 

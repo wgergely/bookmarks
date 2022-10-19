@@ -13,4 +13,16 @@ See the item specific submodules for more information:
 To customize the items served by a model take a look at
 :meth:`.models.ItemModel.item_generator` and :meth:`.models.ItemModel.init_data` methods.
 
+The :mod:`~bookmarks.common` module offers shortcuts for accessing item views and models:
+
+.. code-block:: python
+    :linenos:
+
+    from bookmarks import common
+
+    widget = common.widget(common.BookmarkTab)
+    model = common.model(common.BookmarkTab)
+    source_model = common.source_model(common.BookmarkTab)
+
+
 """

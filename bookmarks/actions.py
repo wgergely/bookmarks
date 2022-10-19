@@ -191,6 +191,7 @@ def add_favourite(source_paths, source):
     common.settings.set_favourites(common.favourites)
     common.signals.favouriteAdded.emit(source_paths, source)
 
+
 def remove_favourite(source_paths, source):
     """Remove a saved favourite item.
 
@@ -245,7 +246,7 @@ def filter_flag_changed(flag, parent_paths, source, state=None, limit=9999):
     k = model.task()
 
     # Make sure data is up-to-date in all data sets.
-    for t in (common.FileItem, common.SequenceItem, ):
+    for t in (common.FileItem, common.SequenceItem,):
         data = common.get_data(p, k, t)
 
         for n, item in enumerate(data.values()):
@@ -428,8 +429,7 @@ def import_favourites(*args, source=None):
                 table = database.BookmarkTable
             else:
                 table = database.AssetTable
-            with db.connection():
-                db.setValue(source, k, database.b64decode(v), table=table)
+            db.setValue(source, k, database.b64decode(v), table=table)
 
     common.settings.set_favourites(data)
     common.signals.favouritesChanged.emit()
@@ -733,7 +733,6 @@ def reset_row_size():
     v = model.default_row_size().height()
 
     widget.set_row_size(v)
-
 
 
 @common.error

@@ -4,6 +4,7 @@ The :class:`.FontDatabase` instance is saved at :attr:`bookmarks.common.font_db`
 QFont and QFontMetrics instances can be retrieved using:
 
 .. code-block:: python
+    :linenos:
 
     from bookmarks import common
     font, metrics = common.font_db.bold_font(common.size(common.size_font_small))

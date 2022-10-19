@@ -8,8 +8,8 @@ from PySide2 import QtCore, QtWidgets
 from . import ffmpeg
 from .. import common
 from .. import images
-from ..editor import base
 from .. import log
+from ..editor import base
 
 
 def close():
@@ -206,7 +206,6 @@ class FFMpegWidget(base.BasePropertyEditor):
         QtCore.QFile.rename(mov, _mov)
         common.widget(common.FileTab).show_item(_mov, role=common.PathRole, update=True)
         return True
-
 
     def sizeHint(self):
         """Returns a size hint.

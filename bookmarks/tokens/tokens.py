@@ -10,6 +10,7 @@ data.
 Use :func:`.get` to retrieve token config controller instances.
 
 .. code-block:: python
+    :linenos:
 
     from bookmarks.tokens import tokens
 
@@ -579,13 +580,12 @@ class TokenConfig(QtCore.QObject):
         common.check_type(data, dict)
 
         db = database.get_db(self.server, self.job, self.root)
-        with db.connection():
-            db.setValue(
-                db.source(),
-                TOKENS_DB_KEY,
-                data,
-                table=database.BookmarkTable
-            )
+        db.setValue(
+            db.source(),
+            TOKENS_DB_KEY,
+            data,
+            table=database.BookmarkTable
+        )
 
         # Re-fetching data from the database
         return self.data(force=True)

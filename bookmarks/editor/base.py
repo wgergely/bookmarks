@@ -1,11 +1,11 @@
 """Contains :class:`.BasePropertyEditor` and its required attributes and methods.
 
 The property editor's layout is defined by a previously specified SECTIONS
-dictionary, that contains the sections, rows and editor widget definitions - and
-linkage information needed to associate the widget with a bookmark database or
-user settings.
+dictionary. This contains the sections, rows and editor widget definitions - plus
+linkage information needed to associate the widget with a bookmark database columns or
+user setting keys.
 
-The :class:`BasePropertyEditor` is relatively flexible and has a number of
+:class:`BasePropertyEditor` is relatively flexible and has a number of
 abstract methods that need implementing in subclasses depending on the desired
 functionality. See, :meth:`.BasePropertyEditor.db_source`,
 :meth:`.BasePropertyEditor.init_data` and :meth:`.BasePropertyEditor.save_changes`.

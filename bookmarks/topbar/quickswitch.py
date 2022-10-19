@@ -47,7 +47,6 @@ class BaseQuickSwitchMenu(contextmenu.BaseContextMenu):
 
         on_icon = ui.get_icon('check', color=common.color(common.color_green))
 
-
         self.menu[label] = {
             'disabled': True
         }

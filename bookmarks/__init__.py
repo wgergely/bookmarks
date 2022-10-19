@@ -34,6 +34,7 @@ Quick Start
 The simplest way to start Bookmarks as a standalone application is to run:
 
 .. code-block:: python
+    :linenos:
 
     import bookmarks
     bookmarks.exec_()
@@ -81,7 +82,6 @@ The release contains all Windows dependencies. For setting up a custom developme
 
 """
 import importlib
-import os
 import platform
 import sys
 
@@ -91,7 +91,7 @@ from PySide2 import QtWidgets
 __author__ = 'Gergely Wootsch'
 
 #: Project homepage
-__website__ = 'https://github.com/wgergely/bookmarks'
+__website__ = 'https://bookmarks-vfx.com'
 
 #: Author email
 __email__ = 'hello@gergely-wootsch.com'

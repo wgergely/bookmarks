@@ -919,8 +919,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
 
         # Set the database value
         db = database.get_db(*source_path[0:3])
-        with db.connection():
-            db.setValue(k, 'description', editor.text())
+        db.setValue(k, 'description', editor.text())
 
         # Set value to cached data
         source_index = index.model().mapToSource(index)
@@ -2746,8 +2745,7 @@ class BookmarkItemViewDelegate(ItemDelegate):
 
         # Get the database value
         db = database.get_db(*source_path[0:3])
-        with db.connection():
-            v = db.value(k, 'description', database.BookmarkTable)
+        v = db.value(k, 'description', database.BookmarkTable)
 
         editor.setText(v)
 

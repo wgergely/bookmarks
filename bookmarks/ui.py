@@ -1000,6 +1000,7 @@ class ListWidget(QtWidgets.QListWidget):
             paint_background_icon(self.default_icon, widget)
             return True
         return False
+
     def _connect_signals(self):
         self.resized.connect(self.overlay.resize)
 
@@ -1111,6 +1112,7 @@ class ListViewWidget(QtWidgets.QListView):
         self.overlay.show()
 
         self.installEventFilter(self)
+
     def eventFilter(self, widget, event):
         """Event filter handler.
 

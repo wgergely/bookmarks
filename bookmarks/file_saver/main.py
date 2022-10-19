@@ -9,6 +9,7 @@ See the :mod:`bookmarks.tokens` and :mod:`bookmarks.editor.bookmark_properties` 
 for more information.
 
 .. code-block:: python
+    :linenos:
 
     editor = FileSaverWidget(
         server,

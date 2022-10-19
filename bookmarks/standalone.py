@@ -1,9 +1,9 @@
-"""The module contains the elements used when initialized in ``StandaloneMode``.
+"""The module contains the elements used when initialized in :attr:`~bookmarks.common.core.StandaloneMode`.
 
 It defines :class:`.BookmarksApp`, Bookmark's custom QApplication, and
 :class:`.BookmarksAppWindow`, a modified :class:`.main.MainWidget`.
 
-Note, in ``EmbeddedMode``, Bookmarks uses :class:`.main.MainWidget` as the main
+Note, in :attr:`~bookmarks.common.core.EmbeddedMode`, Bookmarks uses :class:`.main.MainWidget` as the main
 widget.
 
 """

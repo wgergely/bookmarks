@@ -54,12 +54,11 @@ class LauncherGallery(ui.GalleryWidget):
             return
 
         db = database.get_db(server, job, root)
-        with db.connection():
-            v = db.value(
-                db.source(),
-                'applications',
-                database.BookmarkTable
-            )
+        v = db.value(
+            db.source(),
+            'applications',
+            database.BookmarkTable
+        )
 
         if not isinstance(v, dict) or not v:
             ui.MessageBox(

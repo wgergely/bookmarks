@@ -9,7 +9,6 @@ from PySide2 import QtWidgets, QtCore, QtGui
 from . import base
 from .. import actions
 from .. import common
-from .. import images
 from .. import ui
 
 
@@ -266,7 +265,8 @@ SECTIONS = {
                     'widget': None,
                     'placeholder': '',
                     'description': '',
-                    'help': importlib.import_module(__name__.split('.', maxsplit=1)[0]).info(),
+                    'help': importlib.import_module(
+                        __name__.split('.', maxsplit=1)[0]).info(),
                 },
             },
             2: {

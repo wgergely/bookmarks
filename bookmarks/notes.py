@@ -437,7 +437,7 @@ class DragIndicatorButton(QtWidgets.QLabel):
     The latter is needed to accept the drag operation in the target drop widget. 
     
     """
-    
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.dragStartPosition = None
@@ -1084,8 +1084,7 @@ class NoteEditor(QtWidgets.QDialog):
             source = common.proxy_path(self.index)
 
         db = database.get_db(*self.index.data(common.ParentPathRole)[0:3])
-        with db.connection():
-            db.setValue(source, 'notes', data)
+        db.setValue(source, 'notes', data)
 
     def init_lock(self):
         """Creates a lock file.

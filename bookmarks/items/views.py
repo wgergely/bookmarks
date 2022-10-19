@@ -24,8 +24,214 @@ from .. import actions
 from .. import common
 from .. import contextmenu
 from .. import database
+from .. import images
 from .. import ui
 from ..threads import threads
+
+
+class DropIndicatorWidget(QtWidgets.QWidget):
+    """Widgets responsible for drawing an overlay."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+
+    def paintEvent(self, event):
+        """Event handler.
+
+        """
+        painter = QtGui.QPainter()
+        painter.begin(self)
+        pen = QtGui.QPen(common.color(common.color_blue))
+        pen.setWidth(common.size(common.size_indicator))
+        painter.setPen(pen)
+        painter.setBrush(common.color(common.color_blue))
+        painter.setOpacity(0.35)
+        painter.drawRect(self.rect())
+        painter.setOpacity(1.0)
+        common.draw_aliased_text(
+            painter,
+            common.font_db.bold_font(common.size(common.size_font_medium))[0],
+            self.rect(),
+            'Drop to add bookmark',
+            QtCore.Qt.AlignCenter,
+            common.color(common.color_blue)
+        )
+        painter.end()
+
+    def show(self):
+        """Shows and sets the size of the widget."""
+        self.setGeometry(self.parent().geometry())
+        super().show()
+
+
+class DragPixmapFactory(QtWidgets.QWidget):
+    """Widget used to define the appearance of an item being dragged."""
+
+    def __init__(self, pixmap, text, parent=None):
+        super().__init__(parent=parent)
+        self._pixmap = pixmap
+        self._text = text
+
+        _, metrics = common.font_db.bold_font(
+            common.size(common.size_font_medium)
+        )
+        self._text_width = metrics.horizontalAdvance(text)
+
+        width = self._text_width + common.size(common.size_margin)
+        width = common.size(common.size_width) + common.size(
+            common.size_margin
+        ) if width > common.size(common.size_width) else width
+
+        self.setFixedHeight(common.size(common.size_row_height))
+
+        longest_edge = max((pixmap.width(), pixmap.height()))
+        o = common.size(common.size_indicator)
+        self.setFixedWidth(
+            longest_edge + (o * 2) + width
+        )
+
+        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+        self.setWindowFlags(QtCore.Qt.FramelessWindowHint | QtCore.Qt.Window)
+        self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+        self.adjustSize()
+
+    @classmethod
+    def pixmap(cls, pixmap, text):
+        """Returns the widget as a rendered pixmap."""
+        w = cls(pixmap, text)
+        pixmap = QtGui.QPixmap(w.size() * common.pixel_ratio, )
+        pixmap.setDevicePixelRatio(common.pixel_ratio)
+        pixmap.fill(QtCore.Qt.transparent)
+        painter = QtGui.QPainter(pixmap)
+        w.render(painter, QtCore.QPoint(), QtGui.QRegion())
+        return pixmap
+
+    def paintEvent(self, event):
+        """Event handler.
+
+        """
+        painter = QtGui.QPainter()
+        painter.begin(self)
+
+        painter.setPen(QtCore.Qt.NoPen)
+        painter.setBrush(common.color(common.color_dark_background))
+        painter.setOpacity(0.6)
+        o = common.size(common.size_indicator)
+        painter.drawRoundedRect(self.rect(), o, o)
+        painter.setOpacity(1.0)
+
+        pixmap_rect = QtCore.QRect(
+            0, 0, common.size(common.size_row_height), common.size(common.size_row_height)
+        )
+        painter.drawPixmap(pixmap_rect, self._pixmap, self._pixmap.rect())
+
+        width = self._text_width + common.size(common.size_indicator)
+        max_width = common.size(common.size_width)
+        width = max_width if width > max_width else width
+        rect = QtCore.QRect(
+            common.size(common.size_row_height) + common.size(common.size_indicator),
+            0,
+            width,
+            self.height()
+        )
+        common.draw_aliased_text(
+            painter,
+            common.font_db.bold_font(common.size(common.size_font_medium))[0],
+            rect,
+            self._text,
+            QtCore.Qt.AlignCenter,
+            common.color(common.color_selected_text)
+        )
+        painter.end()
+
+
+class ItemDrag(QtGui.QDrag):
+    """A utility class used to start a drag operation.
+
+    """
+
+    def __init__(self, index, widget):
+        super().__init__(widget)
+
+        model = index.model().sourceModel()
+        self.setMimeData(model.mimeData([index, ]))
+
+        def _get(s, color=common.color(common.color_green)):
+            return images.ImageCache.rsc_pixmap(
+                s, color,
+                common.size(
+                    common.size_margin
+                ) * common.pixel_ratio
+            )
+
+        # Set drag icon
+        self.setDragCursor(_get('add_circle'), QtCore.Qt.CopyAction)
+        self.setDragCursor(_get('file'), QtCore.Qt.MoveAction)
+        self.setDragCursor(
+            _get('close', color=common.color(common.color_red)),
+            QtCore.Qt.ActionMask
+        )
+        self.setDragCursor(
+            _get('close', color=common.color(common.color_red)),
+            QtCore.Qt.IgnoreAction
+        )
+
+        # Set file item apperance
+        if index.data(common.ItemTabRole) in (common.BookmarkTab, common.AssetTab):
+            pixmap = images.ImageCache.rsc_pixmap(
+                'copy',
+                common.color(common.color_disabled_text),
+                common.size(common.size_row_height)
+            )
+            pixmap = DragPixmapFactory.pixmap(pixmap, '< Item Properties >')
+            self.setPixmap(pixmap)
+
+        if index.data(common.ItemTabRole) in (common.FileTab, common.FavouriteTab):
+            source = index.data(common.PathRole)
+
+            modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
+            no_modifier = modifiers == QtCore.Qt.NoModifier
+            alt_modifier = modifiers & QtCore.Qt.AltModifier
+            shift_modifier = modifiers & QtCore.Qt.ShiftModifier
+
+            if no_modifier:
+                source = common.get_sequence_end_path(source)
+                pixmap, _ = images.get_thumbnail(
+                    index.data(common.ParentPathRole)[0],
+                    index.data(common.ParentPathRole)[1],
+                    index.data(common.ParentPathRole)[2],
+                    source,
+                    size=common.size(common.size_row_height),
+                )
+            elif alt_modifier and shift_modifier:
+                pixmap = images.ImageCache.rsc_pixmap(
+                    'folder', common.color(common.color_secondary_text),
+                    common.size(common.size_row_height)
+                )
+                source = QtCore.QFileInfo(source).dir().path()
+            elif alt_modifier:
+                pixmap = images.ImageCache.rsc_pixmap(
+                    'file', common.color(common.color_secondary_text),
+                    common.size(common.size_row_height)
+                )
+                source = common.get_sequence_start_path(source)
+            elif shift_modifier:
+                source = common.get_sequence_start_path(source) + ', ++'
+                pixmap = images.ImageCache.rsc_pixmap(
+                    'multiples_files', common.color(common.color_secondary_text),
+                    common.size(common.size_row_height)
+                )
+            else:
+                return
+
+            if pixmap and not pixmap.isNull():
+                pixmap = DragPixmapFactory.pixmap(pixmap, source)
+                self.setPixmap(pixmap)
 
 
 class ListsWidget(QtWidgets.QStackedWidget):
@@ -244,10 +450,17 @@ class BaseItemView(QtWidgets.QTableView):
         self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
         self.horizontalHeader().setHidden(True)
 
-        self.setDragDropOverwriteMode(False)
-        self.setDropIndicatorShown(True)
+        self.drop_indicator_widget = DropIndicatorWidget(parent=self)
+        self.drop_indicator_widget.hide()
+
+        self.drag_current_row = -1
+        self.drag_source_row = -1
+
+        self.setDragDropMode(QtWidgets.QAbstractItemView.NoDragDrop)
+        self.setDragEnabled(True)
+        self.setDropIndicatorShown(False)
         self.viewport().setAcceptDrops(True)
-        self.setDragDropMode(QtWidgets.QAbstractItemView.DropOnly)
+        self.setAcceptDrops(False)
 
         self.setEditTriggers(
             QtWidgets.QAbstractItemView.DoubleClicked |
@@ -263,7 +476,7 @@ class BaseItemView(QtWidgets.QTableView):
 
         self._buttons_hidden = False
 
-        self._thumbnail_drop = (-1, False)  # row, accepted
+        self._thumbnail_drop = (-1, False)  # row, accepted state
         self._background_icon = icon
 
         self.progress_indicator_widget = ProgressWidget(parent=self)
@@ -382,7 +595,6 @@ class BaseItemView(QtWidgets.QTableView):
         self.interruptRequested.connect(model.set_interrupt_requested)
 
         self.filter_editor.finished.connect(proxy.set_filter_text)
-
 
         model.modelReset.connect(self.delay_restore_selection)
         proxy.invalidated.connect(self.delay_restore_selection)
@@ -951,7 +1163,6 @@ class BaseItemView(QtWidgets.QTableView):
         delegate.draw_painter_path(painter, x, y, font, text)
         painter.end()
 
-
     @QtCore.Slot()
     def repaint_visible_rows(self):
         """Slot used to repaint all currently visible items.
@@ -1068,64 +1279,87 @@ class BaseItemView(QtWidgets.QTableView):
                 self.save_selection()
                 return
 
-    def dragEnterEvent(self, event):
-        """Event handler.
-        
-        """
+    def _reset_drag_indicators(self):
         self._thumbnail_drop = (-1, False)
-        self.repaint(self.rect())
-        if event.source() == self:
-            event.ignore()
-            return
-        if not event.mimeData().hasUrls():
-            event.ignore()
-            return
-        event.accept()
-
-    def dragLeaveEvent(self, event):
-        """Event handler.
-        
-        """
-        self._thumbnail_drop = (-1, False)
-        self.repaint(self.rect())
+        self.drag_source_row = -1
+        self.drag_current_row = -1
+        self.stopAutoScroll()
+        self.setState(QtWidgets.QAbstractItemView.NoState)
+        self.viewport().update()
 
     def dragMoveEvent(self, event):
-        """Event handler.
-        
+        """Drag move events checks source validity against available drop actions.
+
         """
         self._thumbnail_drop = (-1, False)
-        pos = common.cursor.pos()
-        pos = self.viewport().mapFromGlobal(pos)
 
+        pos = self.viewport().mapFromGlobal(common.cursor.pos())
         index = self.indexAt(pos)
-        row = index.row()
 
         if not index.isValid():
-            self._thumbnail_drop = (-1, False)
-            self.repaint(self.rect())
             event.ignore()
+            self.viewport().update()
             return
 
         proxy = self.model()
         model = proxy.sourceModel()
         index = proxy.mapToSource(index)
 
-        if not model.canDropMimeData(event.mimeData(), event.proposedAction(),
-                                     index.row(), 0):
-            self._thumbnail_drop = (-1, False)
-            self.repaint(self.rect())
-            event.ignore()
+        # Thumbnail image drop
+        if model.can_drop_image_file(
+                event.mimeData(),
+                event.proposedAction(),
+                index.row(),
+                0,
+                QtCore.QModelIndex()
+        ):
+            self._thumbnail_drop = (index.row(), True)
+            event.accept()
+            self.viewport().update()
             return
 
-        event.accept()
-        self._thumbnail_drop = (row, True)
-        self.repaint(self.rect())
+        # Internal property copy
+        if model.can_drop_properties(
+                event.mimeData(),
+                event.proposedAction(),
+                index.row(),
+                0,
+                QtCore.QModelIndex()
+        ):
+            event.accept()
+            self._thumbnail_drop = (-1, False)
+            self.viewport().update()
+            return
+
+        self._thumbnail_drop = (-1, False)
+        self.viewport().update()
+        return super().dragMoveEvent(event)
+
+    def startDrag(self, supported_actions):
+        """Drag action start.
+
+        """
+        index = common.get_selected_index(self)
+        if not index.isValid():
+            return super().startDrag(supported_actions)
+        if not index.data(common.PathRole):
+            return super().startDrag(supported_actions)
+        if not index.data(common.ParentPathRole):
+            return super().startDrag(supported_actions)
+
+        self.drag_source_row = index.row()
+
+        drag = ItemDrag(index, self)
+        common.main_widget.topbar_widget.slack_drop_area_widget.setHidden(False)
+        QtCore.QTimer.singleShot(1, self.viewport().update)
+        drag.exec_(supported_actions)
+        common.main_widget.topbar_widget.slack_drop_area_widget.setHidden(True)
+        QtCore.QTimer.singleShot(10, self._reset_drag_indicators)
 
     def dropEvent(self, event):
         """Event handler.
-        
+
         """
-        self._thumbnail_drop = (-1, False)
 
         pos = common.cursor.pos()
         pos = self.viewport().mapFromGlobal(pos)
@@ -1133,17 +1367,26 @@ class BaseItemView(QtWidgets.QTableView):
         index = self.indexAt(pos)
         if not index.isValid():
             event.ignore()
+            self._reset_drag_indicators()
             return
+
         proxy = self.model()
         model = proxy.sourceModel()
         index = proxy.mapToSource(index)
 
-        if not model.canDropMimeData(event.mimeData(), event.proposedAction(),
-                                     index.row(), 0):
-            event.ignore()
+        if model.dropMimeData(
+                event.mimeData(),
+                event.proposedAction(),
+                index.row(),
+                0,
+                QtCore.QModelIndex()
+        ):
+            event.accept()
+            self._reset_drag_indicators()
             return
-        model.dropMimeData(
-            event.mimeData(), event.proposedAction(), index.row(), 0)
+
+        event.ignore()
+        self._reset_drag_indicators()
 
     def showEvent(self, event):
         """Show event handler.
@@ -1692,7 +1935,7 @@ class InlineIconView(BaseItemView):
                 self.edit_item_action(index)
 
             self._clicked_rect = QtCore.QRect()
-        
+
         super(InlineIconView, self).mouseReleaseEvent(event)
 
     def add_item_action(self, index):
@@ -2027,4 +2270,3 @@ class ThreadedItemView(InlineIconView):
             index = self.indexAt(rect.topLeft())
             if not index.isValid():
                 break
-

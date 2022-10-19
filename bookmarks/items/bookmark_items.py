@@ -53,7 +53,7 @@ Model items store their path segments using the
 """
 import os
 
-from PySide2 import QtGui, QtCore
+from PySide2 import QtCore, QtWidgets
 
 from . import delegate
 from . import models
@@ -62,9 +62,6 @@ from .. import actions
 from .. import common
 from .. import contextmenu
 from ..threads import threads
-
-#: Default item flags used by the item model.
-DEFAULT_ITEM_FLAGS = models.DEFAULT_ITEM_FLAGS | QtCore.Qt.ItemIsDropEnabled
 
 
 class BookmarkItemViewContextMenu(contextmenu.BaseContextMenu):
@@ -159,9 +156,9 @@ class BookmarkItemModel(models.ItemModel):
             # We'll mark the item archived if the saved bookmark does not refer
             # to an existing file
             if exists:
-                flags = DEFAULT_ITEM_FLAGS
+                flags = models.DEFAULT_ITEM_FLAGS
             else:
-                flags = DEFAULT_ITEM_FLAGS | common.MarkedAsArchived
+                flags = models.DEFAULT_ITEM_FLAGS | common.MarkedAsArchived
 
             if k in common.default_bookmarks:
                 flags = flags | common.MarkedAsDefault
@@ -292,6 +289,18 @@ class BookmarkItemModel(models.ItemModel):
 
         """
         return 'bookmarks'
+
+    def flags(self, index):
+        """Overrides the flag behaviour to disable drag if the alt modifier is not pressed.
+
+        """
+        modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
+        alt_modifier = modifiers & QtCore.Qt.AltModifier
+
+        flags = super().flags(index)
+        if not alt_modifier:
+            flags &= ~QtCore.Qt.ItemIsDragEnabled
+        return flags
 
 
 class BookmarkItemView(views.ThreadedItemView):

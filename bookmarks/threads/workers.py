@@ -558,11 +558,7 @@ class InfoWorker(BaseWorker):
         if not pp or not st:
             raise RuntimeError('Failed to process item.')
 
-        flags = (
-                ref()[common.FlagsRole] |
-                QtCore.Qt.ItemIsEditable |
-                QtCore.Qt.ItemIsDragEnabled
-        )
+        flags = ref()[common.FlagsRole]
         item_type = ref()[common.TypeRole]
 
         if len(pp) > 4:

@@ -138,13 +138,24 @@ class AssetItemModel(models.ItemModel):
             return v[index.column() - 1]['value']
 
     def flags(self, index):
+        """Overrides the flag behaviour to disable drag if the alt modifier is not pressed.
+
+        """
         if index.column() == 0:
-            return super().flags(index)
-        return (
-                QtCore.Qt.ItemIsEnabled |
-                QtCore.Qt.ItemIsSelectable |
-                QtCore.Qt.ItemIsEditable
-        )
+            flags = super().flags(index)
+        else:
+            flags = (
+                    QtCore.Qt.ItemIsEnabled |
+                    QtCore.Qt.ItemIsSelectable |
+                    QtCore.Qt.ItemIsEditable
+            )
+
+        modifiers = QtWidgets.QApplication.instance().keyboardModifiers()
+        alt_modifier = modifiers & QtCore.Qt.AltModifier
+
+        if not alt_modifier:
+            flags &= ~QtCore.Qt.ItemIsDragEnabled
+        return flags
 
     @common.status_bar_message('Loading assets...')
     @models.initdata

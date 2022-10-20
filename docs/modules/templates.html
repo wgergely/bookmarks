@@ -1,17 +1,17 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="threads" href="threads.html" /><link rel="prev" title="teams.message" href="teams/message.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/templates.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
         <title>templates - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -163,7 +163,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -325,11 +325,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
 </ul>
 
 </div>
@@ -358,14 +358,14 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-bookmarks.templates">
-<span id="templates"></span><h1>templates<a class="headerlink" href="#module-bookmarks.templates" title="Permalink to this heading">#</a></h1>
+          <div class="section" id="module-bookmarks.templates">
+<span id="templates"></span><h1>templates<a class="headerlink" href="#module-bookmarks.templates" title="Permalink to this headline">#</a></h1>
 <p>The module used to create job and asset items based on zip template files.</p>
 <p>The template files usually contain a folder structure used to define the skeleton
 of a project file structure.</p>
@@ -374,8 +374,12 @@ of a project file structure.</p>
 <p>The template mode can be any arbitrary string - we’re defining them as
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">JobTemplateMode</span></code> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">AssetTemplateMode</span></code>.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.templates.TemplateContextMenu" title="bookmarks.templates.TemplateContextMenu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TemplateContextMenu</span></code></a>(index[, parent])</p></td>
 <td><p>Context menu associated with the <a class="reference internal" href="#bookmarks.templates.TemplatesWidget" title="bookmarks.templates.TemplatesWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">TemplatesWidget</span></code></a>.</p></td>
@@ -396,8 +400,12 @@ of a project file structure.</p>
 </table>
 </div>
 <p><strong>Functions:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.templates.get_template_folder" title="bookmarks.templates.get_template_folder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_template_folder</span></code></a>(mode)</p></td>
 <td><p>Returns the path where the ZIP template files are stored, associated with the given <cite>mode</cite>.</p></td>
@@ -408,11 +416,15 @@ of a project file structure.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.templates.TemplateContextMenu">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.templates.</span></span><span class="sig-name descname"><span class="pre">TemplateContextMenu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/templates.html#TemplateContextMenu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.templates.TemplateContextMenu" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="contextmenu.html#bookmarks.contextmenu.BaseContextMenu" title="bookmarks.contextmenu.BaseContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseContextMenu</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="contextmenu.html#bookmarks.contextmenu.BaseContextMenu" title="bookmarks.contextmenu.BaseContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.contextmenu.BaseContextMenu</span></code></a></p>
 <p>Context menu associated with the <a class="reference internal" href="#bookmarks.templates.TemplatesWidget" title="bookmarks.templates.TemplatesWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">TemplatesWidget</span></code></a>.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.templates.TemplateContextMenu.add_menu" title="bookmarks.templates.TemplateContextMenu.add_menu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_menu</span></code></a>()</p></td>
 <td><p>Add action menu.</p></td>
@@ -467,11 +479,15 @@ of a project file structure.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.templates.TemplateListDelegate">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.templates.</span></span><span class="sig-name descname"><span class="pre">TemplateListDelegate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/templates.html#TemplateListDelegate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.templates.TemplateListDelegate" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="ui.html#bookmarks.ui.ListWidgetDelegate" title="bookmarks.ui.ListWidgetDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">ListWidgetDelegate</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="ui.html#bookmarks.ui.ListWidgetDelegate" title="bookmarks.ui.ListWidgetDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.ui.ListWidgetDelegate</span></code></a></p>
 <p>Delegate associated with <a class="reference internal" href="#bookmarks.templates.TemplateListWidget" title="bookmarks.templates.TemplateListWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">TemplateListWidget</span></code></a>.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.templates.TemplateListDelegate.createEditor" title="bookmarks.templates.TemplateListDelegate.createEditor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createEditor</span></code></a>(parent, option, index)</p></td>
 <td><p>Custom editor for editing the template's name.</p></td>
@@ -490,12 +506,16 @@ of a project file structure.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.templates.TemplateListWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.templates.</span></span><span class="sig-name descname"><span class="pre">TemplateListWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">JobTemplateMode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/templates.html#TemplateListWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.templates.TemplateListWidget" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="ui.html#bookmarks.ui.ListWidget" title="bookmarks.ui.ListWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">ListWidget</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="ui.html#bookmarks.ui.ListWidget" title="bookmarks.ui.ListWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.ui.ListWidget</span></code></a></p>
 <p>Widget used to display a list of zip template files associated with
 the given <cite>mode</cite>.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.templates.TemplateListWidget.contextMenuEvent" title="bookmarks.templates.TemplateListWidget.contextMenuEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contextMenuEvent</span></code></a>(event)</p></td>
 <td><p>Event handler.</p></td>
@@ -542,7 +562,7 @@ the given <cite>mode</cite>.</p>
 <dd><p>The main method used to expand the selected zip template into a
 destination folder.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – The name of the folder the contents of the zip archive will be saved to.</p></li>
 <li><p><strong>destination</strong> (<em>str</em>) – The destination folder where the new asset will be expanded to.</p></li>
@@ -574,10 +594,10 @@ destination folder.</p>
 <span class="sig-name descname"><span class="pre">mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/templates.html#TemplateListWidget.mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.templates.TemplateListWidget.mode" title="Permalink to this definition">#</a></dt>
 <dd><p>The TemplateWidget’s current mode.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A template mode, e.g. <cite>AssetTable</cite> or <cite>JobTemplateMode</cite>.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>str</p>
 </dd>
 </dl>
@@ -612,11 +632,15 @@ destination folder.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.templates.TemplatesPreviewWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.templates.</span></span><span class="sig-name descname"><span class="pre">TemplatesPreviewWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/templates.html#TemplatesPreviewWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.templates.TemplatesPreviewWidget" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QListWidget</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QListWidget</span></code></p>
 <p>List widget used to peak into the contents of a zip template file.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.templates.TemplatesPreviewWidget.eventFilter" title="bookmarks.templates.TemplatesPreviewWidget.eventFilter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eventFilter</span></code></a>(widget, event)</p></td>
 <td><p>Event filter handler.</p></td>
@@ -641,7 +665,7 @@ destination folder.</p>
 <span class="sig-name descname"><span class="pre">init_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">files</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/templates.html#TemplatesPreviewWidget.init_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.templates.TemplatesPreviewWidget.init_data" title="Permalink to this definition">#</a></dt>
 <dd><p>Slot responsible for displaying a list of file names.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>files</strong> (<em>tuple</em>) – A list of file names.</p>
 </dd>
 </dl>
@@ -658,11 +682,15 @@ destination folder.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.templates.TemplatesWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.templates.</span></span><span class="sig-name descname"><span class="pre">TemplatesWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/templates.html#TemplatesWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.templates.TemplatesWidget" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QSplitter</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QSplitter</span></code></p>
 <p>Main template list with a template content preview widget.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.templates.TemplatesWidget.itemActivated" title="bookmarks.templates.TemplatesWidget.itemActivated"><code class="xref py py-obj docutils literal notranslate"><span class="pre">itemActivated</span></code></a>(selectionList)</p></td>
 <td><p>Slot called when a template was selected by the user.</p></td>
@@ -683,7 +711,7 @@ destination folder.</p>
 <p>It will load and display the contents of the zip file in the
 <cite>template_contents_widget</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>selectionList</strong> (<em>QItemSelection</em>) – A QItemSelection instance of QModelIndexes.</p>
 </dd>
 </dl>
@@ -709,19 +737,19 @@ destination folder.</p>
 <dd><p>Returns the path where the ZIP template files are stored, associated with
 the given <cite>mode</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>mode</strong> (<em>str</em>) – A template mode, e.g. <cite>JobTemplateMode</cite>.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Path to the folder where the template zip files are stored.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
 
-</section>
+</div>
 
         </article>
       </div>
@@ -752,7 +780,7 @@ the given <cite>mode</cite>.</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Gergely Wootsch
+                Copyright &#169; © 2022 Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -768,64 +796,8 @@ the given <cite>mode</cite>.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">templates</a><ul>
-<li><a class="reference internal" href="#bookmarks.templates.TemplateContextMenu"><code class="docutils literal notranslate"><span class="pre">TemplateContextMenu</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.templates.TemplateContextMenu.add_menu"><code class="docutils literal notranslate"><span class="pre">TemplateContextMenu.add_menu()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplateContextMenu.refresh_menu"><code class="docutils literal notranslate"><span class="pre">TemplateContextMenu.refresh_menu()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplateContextMenu.remove_menu"><code class="docutils literal notranslate"><span class="pre">TemplateContextMenu.remove_menu()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplateContextMenu.reveal_menu"><code class="docutils literal notranslate"><span class="pre">TemplateContextMenu.reveal_menu()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplateContextMenu.setup"><code class="docutils literal notranslate"><span class="pre">TemplateContextMenu.setup()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplateListDelegate"><code class="docutils literal notranslate"><span class="pre">TemplateListDelegate</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.templates.TemplateListDelegate.createEditor"><code class="docutils literal notranslate"><span class="pre">TemplateListDelegate.createEditor()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplateListWidget"><code class="docutils literal notranslate"><span class="pre">TemplateListWidget</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.templates.TemplateListWidget.contextMenuEvent"><code class="docutils literal notranslate"><span class="pre">TemplateListWidget.contextMenuEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplateListWidget.create"><code class="docutils literal notranslate"><span class="pre">TemplateListWidget.create()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplateListWidget.dropMimeData"><code class="docutils literal notranslate"><span class="pre">TemplateListWidget.dropMimeData()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplateListWidget.eventFilter"><code class="docutils literal notranslate"><span class="pre">TemplateListWidget.eventFilter()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplateListWidget.init_data"><code class="docutils literal notranslate"><span class="pre">TemplateListWidget.init_data()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplateListWidget.mode"><code class="docutils literal notranslate"><span class="pre">TemplateListWidget.mode()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplateListWidget.showEvent"><code class="docutils literal notranslate"><span class="pre">TemplateListWidget.showEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplateListWidget.sizeHint"><code class="docutils literal notranslate"><span class="pre">TemplateListWidget.sizeHint()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplateListWidget.supportedDropActions"><code class="docutils literal notranslate"><span class="pre">TemplateListWidget.supportedDropActions()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplateListWidget.update_name"><code class="docutils literal notranslate"><span class="pre">TemplateListWidget.update_name()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplatesPreviewWidget"><code class="docutils literal notranslate"><span class="pre">TemplatesPreviewWidget</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.templates.TemplatesPreviewWidget.eventFilter"><code class="docutils literal notranslate"><span class="pre">TemplatesPreviewWidget.eventFilter()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplatesPreviewWidget.init_data"><code class="docutils literal notranslate"><span class="pre">TemplatesPreviewWidget.init_data()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplatesPreviewWidget.sizeHint"><code class="docutils literal notranslate"><span class="pre">TemplatesPreviewWidget.sizeHint()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplatesWidget"><code class="docutils literal notranslate"><span class="pre">TemplatesWidget</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.templates.TemplatesWidget.itemActivated"><code class="docutils literal notranslate"><span class="pre">TemplatesWidget.itemActivated()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplatesWidget.mode"><code class="docutils literal notranslate"><span class="pre">TemplatesWidget.mode()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.templates.TemplatesWidget.sizeHint"><code class="docutils literal notranslate"><span class="pre">TemplatesWidget.sizeHint()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.templates.get_template_folder"><code class="docutils literal notranslate"><span class="pre">get_template_folder()</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
@@ -833,9 +805,7 @@ the given <cite>mode</cite>.</p>
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/design-tabs.js"></script>
     </body>

@@ -1,17 +1,17 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="maya.capture" href="capture.html" /><link rel="prev" title="maya.actions" href="actions.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/maya/base.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
         <title>maya.base - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -163,7 +163,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -325,11 +325,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 </ul>
 
 </div>
@@ -358,18 +358,22 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-bookmarks.maya.base">
-<span id="maya-base"></span><h1>maya.base<a class="headerlink" href="#module-bookmarks.maya.base" title="Permalink to this heading">#</a></h1>
+          <div class="section" id="module-bookmarks.maya.base">
+<span id="maya-base"></span><h1>maya.base<a class="headerlink" href="#module-bookmarks.maya.base" title="Permalink to this headline">#</a></h1>
 <p>Maya-specific methods and values.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.base.MayaProperties" title="bookmarks.maya.base.MayaProperties"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MayaProperties</span></code></a>([parent])</p></td>
 <td><p>Utility class used to interface with values stored in the bookmark item's database.</p></td>
@@ -378,8 +382,12 @@
 </table>
 </div>
 <p><strong>Functions:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.base.apply_default_render_values" title="bookmarks.maya.base.apply_default_render_values"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_default_render_values</span></code></a>()</p></td>
 <td><p>Sets the default render values for the current scene.</p></td>
@@ -424,8 +432,12 @@
 </table>
 </div>
 <p><strong>Data:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.base.AGNOSTIC_CAPTURE_FILE" title="bookmarks.maya.base.AGNOSTIC_CAPTURE_FILE"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AGNOSTIC_CAPTURE_FILE</span></code></a></p></td>
 <td><p>Default capture agnostic publish file name template</p></td>
@@ -481,8 +493,12 @@
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Utility class used to interface with values stored in the bookmark item’s database.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.base.MayaProperties.get_info" title="bookmarks.maya.base.MayaProperties.get_info"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_info</span></code></a>()</p></td>
 <td><p>Returns an informative text about the current Maya properties.</p></td>
@@ -494,8 +510,12 @@
 </table>
 </div>
 <p><strong>Attributes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.base.MayaProperties.endframe" title="bookmarks.maya.base.MayaProperties.endframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">endframe</span></code></a></p></td>
 <td><p>A current end-frame value.</p></td>
@@ -578,13 +598,13 @@ frame we’ll use that value instead.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.maya.base.</span></span><span class="sig-name descname"><span class="pre">find_project_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/maya/base.html#find_project_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.base.find_project_folder" title="Permalink to this definition">#</a></dt>
 <dd><p>Return the relative path of a project folder.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>key</strong> (<em>str</em>) – The name of a Maya project folder name, e.g. ‘sourceImages’.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The name of the folder that corresponds with <cite>key</cite>.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -603,10 +623,10 @@ frame we’ll use that value instead.</p>
 from the current Maya scene. There’s an extra caveat: the set has to contain
 the word ‘GEO_SUFFIX’ to be considered valid.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A dict of set name / mesh list pairs.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>dict</p>
 </dd>
 </dl>
@@ -639,13 +659,13 @@ active bookmark item’s token configuration.</p>
 Any namespace will be enclosed in brackets and the ‘:’ characters will be
 replaced with underscores.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>s</strong> (<em>str</em>) – A string that contains namespace names.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The sanitized string.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -656,7 +676,7 @@ replaced with underscores.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.maya.base.</span></span><span class="sig-name descname"><span class="pre">set_endframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/maya/base.html#set_endframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.base.set_endframe" title="Permalink to this definition">#</a></dt>
 <dd><p>Sets the scene’s animation end time.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>frame</strong> (<em>int</em>) – The end frame.</p>
 </dd>
 </dl>
@@ -679,7 +699,7 @@ replaced with underscores.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.maya.base.</span></span><span class="sig-name descname"><span class="pre">set_startframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/maya/base.html#set_startframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.base.set_startframe" title="Permalink to this definition">#</a></dt>
 <dd><p>Sets the scene’s animation start time.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>frame</strong> (<em>int</em>) – The start frame.</p>
 </dd>
 </dl>
@@ -775,7 +795,7 @@ replaced with underscores.</p>
 <dd><p>Default render template</p>
 </dd></dl>
 
-</section>
+</div>
 
         </article>
       </div>
@@ -806,7 +826,7 @@ replaced with underscores.</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Gergely Wootsch
+                Copyright &#169; © 2022 Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -822,64 +842,8 @@ replaced with underscores.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">maya.base</a><ul>
-<li><a class="reference internal" href="#bookmarks.maya.base.MayaProperties"><code class="docutils literal notranslate"><span class="pre">MayaProperties</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.maya.base.MayaProperties.get_info"><code class="docutils literal notranslate"><span class="pre">MayaProperties.get_info()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.MayaProperties.init_data"><code class="docutils literal notranslate"><span class="pre">MayaProperties.init_data()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.MayaProperties.endframe"><code class="docutils literal notranslate"><span class="pre">MayaProperties.endframe</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.MayaProperties.framerate"><code class="docutils literal notranslate"><span class="pre">MayaProperties.framerate</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.MayaProperties.height"><code class="docutils literal notranslate"><span class="pre">MayaProperties.height</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.MayaProperties.startframe"><code class="docutils literal notranslate"><span class="pre">MayaProperties.startframe</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.MayaProperties.width"><code class="docutils literal notranslate"><span class="pre">MayaProperties.width</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.maya.base.apply_default_render_values"><code class="docutils literal notranslate"><span class="pre">apply_default_render_values()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.capture_viewport_destination"><code class="docutils literal notranslate"><span class="pre">capture_viewport_destination()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.find_project_folder"><code class="docutils literal notranslate"><span class="pre">find_project_folder()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.get_framerate"><code class="docutils literal notranslate"><span class="pre">get_framerate()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.get_geo_sets"><code class="docutils literal notranslate"><span class="pre">get_geo_sets()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.is_scene_modified"><code class="docutils literal notranslate"><span class="pre">is_scene_modified()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.patch_workspace_file_rules"><code class="docutils literal notranslate"><span class="pre">patch_workspace_file_rules()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.report_export_progress"><code class="docutils literal notranslate"><span class="pre">report_export_progress()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.sanitize_namespace"><code class="docutils literal notranslate"><span class="pre">sanitize_namespace()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.set_endframe"><code class="docutils literal notranslate"><span class="pre">set_endframe()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.set_framerate"><code class="docutils literal notranslate"><span class="pre">set_framerate()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.set_render_resolution"><code class="docutils literal notranslate"><span class="pre">set_render_resolution()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.set_startframe"><code class="docutils literal notranslate"><span class="pre">set_startframe()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.AGNOSTIC_CAPTURE_FILE"><code class="docutils literal notranslate"><span class="pre">AGNOSTIC_CAPTURE_FILE</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.CACHE_LAYER_PATH"><code class="docutils literal notranslate"><span class="pre">CACHE_LAYER_PATH</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.CACHE_PATH"><code class="docutils literal notranslate"><span class="pre">CACHE_PATH</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.CAPTURE_DESTINATION"><code class="docutils literal notranslate"><span class="pre">CAPTURE_DESTINATION</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.CAPTURE_FILE"><code class="docutils literal notranslate"><span class="pre">CAPTURE_FILE</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.CAPTURE_PUBLISH_DIR"><code class="docutils literal notranslate"><span class="pre">CAPTURE_PUBLISH_DIR</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.CameraOptions"><code class="docutils literal notranslate"><span class="pre">CameraOptions</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.CaptureOptions"><code class="docutils literal notranslate"><span class="pre">CaptureOptions</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.DEFAULT_CACHE_DIR"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CACHE_DIR</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.DEFAULT_CAPTURE_DIR"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CAPTURE_DIR</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.DefaultPadding"><code class="docutils literal notranslate"><span class="pre">DefaultPadding</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.DisplayOptions"><code class="docutils literal notranslate"><span class="pre">DisplayOptions</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.EXPORT_FILE_RULES"><code class="docutils literal notranslate"><span class="pre">EXPORT_FILE_RULES</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.MAYA_FPS"><code class="docutils literal notranslate"><span class="pre">MAYA_FPS</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.base.RENDER_NAME_TEMPLATE"><code class="docutils literal notranslate"><span class="pre">RENDER_NAME_TEMPLATE</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
@@ -887,9 +851,7 @@ replaced with underscores.</p>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     </body>

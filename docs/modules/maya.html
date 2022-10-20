@@ -1,17 +1,17 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="maya.actions" href="maya/actions.html" /><link rel="prev" title="main" href="main.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/maya.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
         <title>maya - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -163,7 +163,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -325,11 +325,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
 </ul>
 
 </div>
@@ -358,14 +358,14 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-bookmarks.maya">
-<span id="maya"></span><h1>maya<a class="headerlink" href="#module-bookmarks.maya" title="Permalink to this heading">#</a></h1>
+          <div class="section" id="module-bookmarks.maya">
+<span id="maya"></span><h1>maya<a class="headerlink" href="#module-bookmarks.maya" title="Permalink to this headline">#</a></h1>
 <p>Autodesk Maya plugin.</p>
 <p>See the <a class="reference internal" href="maya/plugin.html#module-bookmarks.maya.plugin" title="bookmarks.maya.plugin"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.maya.plugin</span></code></a> for the installable Maya plugin.</p>
 <p>This module provides an implementation to embed Bookmarks into the Maya UI. See
@@ -376,8 +376,12 @@ the dynamic libraries and python modules used by OpenImageIO. The libraries the 
 is pointing at mirror the current distribution package structure but can be customized
 to suit site-specific needs.</p>
 <p><strong>Functions:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.initialize" title="bookmarks.maya.initialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">initialize</span></code></a>()</p></td>
 <td><p>Initializes the Bookmarks Maya module.</p></td>
@@ -404,209 +408,18 @@ and widgets needed to embed it into the Maya UI.</p>
 
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="maya/actions.html">maya.actions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.apply_settings"><code class="docutils literal notranslate"><span class="pre">apply_settings()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.apply_viewport_preset"><code class="docutils literal notranslate"><span class="pre">apply_viewport_preset()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.capture_viewport"><code class="docutils literal notranslate"><span class="pre">capture_viewport()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.execute"><code class="docutils literal notranslate"><span class="pre">execute()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.import_camera_preset"><code class="docutils literal notranslate"><span class="pre">import_camera_preset()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.import_scene"><code class="docutils literal notranslate"><span class="pre">import_scene()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.open_scene"><code class="docutils literal notranslate"><span class="pre">open_scene()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.publish_capture"><code class="docutils literal notranslate"><span class="pre">publish_capture()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.push_capture"><code class="docutils literal notranslate"><span class="pre">push_capture()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.remove_maya_button"><code class="docutils literal notranslate"><span class="pre">remove_maya_button()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.remove_maya_widget"><code class="docutils literal notranslate"><span class="pre">remove_maya_widget()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.remove_workspace_control"><code class="docutils literal notranslate"><span class="pre">remove_workspace_control()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.remove_workspace_controls"><code class="docutils literal notranslate"><span class="pre">remove_workspace_controls()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.reveal_capture"><code class="docutils literal notranslate"><span class="pre">reveal_capture()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.save_scene"><code class="docutils literal notranslate"><span class="pre">save_scene()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.save_warning"><code class="docutils literal notranslate"><span class="pre">save_warning()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.set_workspace"><code class="docutils literal notranslate"><span class="pre">set_workspace()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.show_shader_tool"><code class="docutils literal notranslate"><span class="pre">show_shader_tool()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.unmark_active"><code class="docutils literal notranslate"><span class="pre">unmark_active()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/actions.html#bookmarks.maya.actions.update_active_item"><code class="docutils literal notranslate"><span class="pre">update_active_item()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="maya/base.html">maya.base</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.MayaProperties"><code class="docutils literal notranslate"><span class="pre">MayaProperties</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.MayaProperties.get_info"><code class="docutils literal notranslate"><span class="pre">MayaProperties.get_info()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.MayaProperties.init_data"><code class="docutils literal notranslate"><span class="pre">MayaProperties.init_data()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.MayaProperties.endframe"><code class="docutils literal notranslate"><span class="pre">MayaProperties.endframe</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.MayaProperties.framerate"><code class="docutils literal notranslate"><span class="pre">MayaProperties.framerate</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.MayaProperties.height"><code class="docutils literal notranslate"><span class="pre">MayaProperties.height</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.MayaProperties.startframe"><code class="docutils literal notranslate"><span class="pre">MayaProperties.startframe</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.MayaProperties.width"><code class="docutils literal notranslate"><span class="pre">MayaProperties.width</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.apply_default_render_values"><code class="docutils literal notranslate"><span class="pre">apply_default_render_values()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.capture_viewport_destination"><code class="docutils literal notranslate"><span class="pre">capture_viewport_destination()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.find_project_folder"><code class="docutils literal notranslate"><span class="pre">find_project_folder()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.get_framerate"><code class="docutils literal notranslate"><span class="pre">get_framerate()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.get_geo_sets"><code class="docutils literal notranslate"><span class="pre">get_geo_sets()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.is_scene_modified"><code class="docutils literal notranslate"><span class="pre">is_scene_modified()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.patch_workspace_file_rules"><code class="docutils literal notranslate"><span class="pre">patch_workspace_file_rules()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.report_export_progress"><code class="docutils literal notranslate"><span class="pre">report_export_progress()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.sanitize_namespace"><code class="docutils literal notranslate"><span class="pre">sanitize_namespace()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.set_endframe"><code class="docutils literal notranslate"><span class="pre">set_endframe()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.set_framerate"><code class="docutils literal notranslate"><span class="pre">set_framerate()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.set_render_resolution"><code class="docutils literal notranslate"><span class="pre">set_render_resolution()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.set_startframe"><code class="docutils literal notranslate"><span class="pre">set_startframe()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.AGNOSTIC_CAPTURE_FILE"><code class="docutils literal notranslate"><span class="pre">AGNOSTIC_CAPTURE_FILE</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.CACHE_LAYER_PATH"><code class="docutils literal notranslate"><span class="pre">CACHE_LAYER_PATH</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.CACHE_PATH"><code class="docutils literal notranslate"><span class="pre">CACHE_PATH</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.CAPTURE_DESTINATION"><code class="docutils literal notranslate"><span class="pre">CAPTURE_DESTINATION</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.CAPTURE_FILE"><code class="docutils literal notranslate"><span class="pre">CAPTURE_FILE</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.CAPTURE_PUBLISH_DIR"><code class="docutils literal notranslate"><span class="pre">CAPTURE_PUBLISH_DIR</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.CameraOptions"><code class="docutils literal notranslate"><span class="pre">CameraOptions</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.CaptureOptions"><code class="docutils literal notranslate"><span class="pre">CaptureOptions</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.DEFAULT_CACHE_DIR"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CACHE_DIR</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.DEFAULT_CAPTURE_DIR"><code class="docutils literal notranslate"><span class="pre">DEFAULT_CAPTURE_DIR</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.DefaultPadding"><code class="docutils literal notranslate"><span class="pre">DefaultPadding</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.DisplayOptions"><code class="docutils literal notranslate"><span class="pre">DisplayOptions</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.EXPORT_FILE_RULES"><code class="docutils literal notranslate"><span class="pre">EXPORT_FILE_RULES</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.MAYA_FPS"><code class="docutils literal notranslate"><span class="pre">MAYA_FPS</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/base.html#bookmarks.maya.base.RENDER_NAME_TEMPLATE"><code class="docutils literal notranslate"><span class="pre">RENDER_NAME_TEMPLATE</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="maya/capture.html">maya.capture</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="maya/capture.html#bookmarks.maya.capture.apply_scene"><code class="docutils literal notranslate"><span class="pre">apply_scene()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/capture.html#bookmarks.maya.capture.apply_view"><code class="docutils literal notranslate"><span class="pre">apply_view()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/capture.html#bookmarks.maya.capture.capture"><code class="docutils literal notranslate"><span class="pre">capture()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/capture.html#bookmarks.maya.capture.nested"><code class="docutils literal notranslate"><span class="pre">nested()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/capture.html#bookmarks.maya.capture.parse_active_panel"><code class="docutils literal notranslate"><span class="pre">parse_active_panel()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/capture.html#bookmarks.maya.capture.parse_active_scene"><code class="docutils literal notranslate"><span class="pre">parse_active_scene()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/capture.html#bookmarks.maya.capture.parse_active_view"><code class="docutils literal notranslate"><span class="pre">parse_active_view()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/capture.html#bookmarks.maya.capture.parse_view"><code class="docutils literal notranslate"><span class="pre">parse_view()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/capture.html#bookmarks.maya.capture.snap"><code class="docutils literal notranslate"><span class="pre">snap()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="maya/contextmenu.html">maya.contextmenu</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="maya/contextmenu.html#bookmarks.maya.contextmenu.MayaButtonWidgetContextMenu"><code class="docutils literal notranslate"><span class="pre">MayaButtonWidgetContextMenu</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/contextmenu.html#bookmarks.maya.contextmenu.MayaWidgetContextMenu"><code class="docutils literal notranslate"><span class="pre">MayaWidgetContextMenu</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="maya/contextmenu.html#bookmarks.maya.contextmenu.MayaWidgetContextMenu.setup"><code class="docutils literal notranslate"><span class="pre">MayaWidgetContextMenu.setup()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="maya/contextmenu.html#bookmarks.maya.contextmenu.PluginContextMenu"><code class="docutils literal notranslate"><span class="pre">PluginContextMenu</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="maya/contextmenu.html#bookmarks.maya.contextmenu.PluginContextMenu.apply_bookmark_settings_menu"><code class="docutils literal notranslate"><span class="pre">PluginContextMenu.apply_bookmark_settings_menu()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/contextmenu.html#bookmarks.maya.contextmenu.PluginContextMenu.capture_menu"><code class="docutils literal notranslate"><span class="pre">PluginContextMenu.capture_menu()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/contextmenu.html#bookmarks.maya.contextmenu.PluginContextMenu.export_menu"><code class="docutils literal notranslate"><span class="pre">PluginContextMenu.export_menu()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/contextmenu.html#bookmarks.maya.contextmenu.PluginContextMenu.import_camera_menu"><code class="docutils literal notranslate"><span class="pre">PluginContextMenu.import_camera_menu()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/contextmenu.html#bookmarks.maya.contextmenu.PluginContextMenu.open_import_scene_menu"><code class="docutils literal notranslate"><span class="pre">PluginContextMenu.open_import_scene_menu()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/contextmenu.html#bookmarks.maya.contextmenu.PluginContextMenu.save_menu"><code class="docutils literal notranslate"><span class="pre">PluginContextMenu.save_menu()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/contextmenu.html#bookmarks.maya.contextmenu.PluginContextMenu.setup"><code class="docutils literal notranslate"><span class="pre">PluginContextMenu.setup()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/contextmenu.html#bookmarks.maya.contextmenu.PluginContextMenu.shader_tool_menu"><code class="docutils literal notranslate"><span class="pre">PluginContextMenu.shader_tool_menu()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/contextmenu.html#bookmarks.maya.contextmenu.PluginContextMenu.show_window_menu"><code class="docutils literal notranslate"><span class="pre">PluginContextMenu.show_window_menu()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/contextmenu.html#bookmarks.maya.contextmenu.PluginContextMenu.viewport_presets_menu"><code class="docutils literal notranslate"><span class="pre">PluginContextMenu.viewport_presets_menu()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="maya/export.html">maya.export</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.ExportWidget"><code class="docutils literal notranslate"><span class="pre">ExportWidget</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.ExportWidget.check_version"><code class="docutils literal notranslate"><span class="pre">ExportWidget.check_version()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.ExportWidget.db_source"><code class="docutils literal notranslate"><span class="pre">ExportWidget.db_source()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.ExportWidget.export_alembic"><code class="docutils literal notranslate"><span class="pre">ExportWidget.export_alembic()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.ExportWidget.export_ass"><code class="docutils literal notranslate"><span class="pre">ExportWidget.export_ass()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.ExportWidget.export_maya"><code class="docutils literal notranslate"><span class="pre">ExportWidget.export_maya()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.ExportWidget.export_obj"><code class="docutils literal notranslate"><span class="pre">ExportWidget.export_obj()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.ExportWidget.init_data"><code class="docutils literal notranslate"><span class="pre">ExportWidget.init_data()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.ExportWidget.init_progress_bar"><code class="docutils literal notranslate"><span class="pre">ExportWidget.init_progress_bar()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.ExportWidget.keyPressEvent"><code class="docutils literal notranslate"><span class="pre">ExportWidget.keyPressEvent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.ExportWidget.save_changes"><code class="docutils literal notranslate"><span class="pre">ExportWidget.save_changes()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.ExportWidget.sizeHint"><code class="docutils literal notranslate"><span class="pre">ExportWidget.sizeHint()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.SetsComboBox"><code class="docutils literal notranslate"><span class="pre">SetsComboBox</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.SetsComboBox.init_data"><code class="docutils literal notranslate"><span class="pre">SetsComboBox.init_data()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.TypeComboBox"><code class="docutils literal notranslate"><span class="pre">TypeComboBox</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.TypeComboBox.init_data"><code class="docutils literal notranslate"><span class="pre">TypeComboBox.init_data()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.VersionsComboBox"><code class="docutils literal notranslate"><span class="pre">VersionsComboBox</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.VersionsComboBox.init_data"><code class="docutils literal notranslate"><span class="pre">VersionsComboBox.init_data()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.show"><code class="docutils literal notranslate"><span class="pre">show()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.PRESETS"><code class="docutils literal notranslate"><span class="pre">PRESETS</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/export.html#bookmarks.maya.export.SECTIONS"><code class="docutils literal notranslate"><span class="pre">SECTIONS</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="maya/main.html">maya.main</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.MayaButtonWidget"><code class="docutils literal notranslate"><span class="pre">MayaButtonWidget</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.MayaButtonWidget.ContextMenu"><code class="docutils literal notranslate"><span class="pre">MayaButtonWidget.ContextMenu</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.MayaButtonWidget.contextMenuEvent"><code class="docutils literal notranslate"><span class="pre">MayaButtonWidget.contextMenuEvent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.MayaButtonWidget.enterEvent"><code class="docutils literal notranslate"><span class="pre">MayaButtonWidget.enterEvent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.MayaButtonWidget.init_shortcuts"><code class="docutils literal notranslate"><span class="pre">MayaButtonWidget.init_shortcuts()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.MayaButtonWidget.leaveEvent"><code class="docutils literal notranslate"><span class="pre">MayaButtonWidget.leaveEvent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.MayaButtonWidget.paintEvent"><code class="docutils literal notranslate"><span class="pre">MayaButtonWidget.paintEvent()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.MayaWidget"><code class="docutils literal notranslate"><span class="pre">MayaWidget</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.MayaWidget.active_changed"><code class="docutils literal notranslate"><span class="pre">MayaWidget.active_changed()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.MayaWidget.context_callbacks"><code class="docutils literal notranslate"><span class="pre">MayaWidget.context_callbacks()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.MayaWidget.customFilesContextMenuEvent"><code class="docutils literal notranslate"><span class="pre">MayaWidget.customFilesContextMenuEvent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.MayaWidget.paintEvent"><code class="docutils literal notranslate"><span class="pre">MayaWidget.paintEvent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.MayaWidget.remove_context_callbacks"><code class="docutils literal notranslate"><span class="pre">MayaWidget.remove_context_callbacks()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.MayaWidget.show"><code class="docutils literal notranslate"><span class="pre">MayaWidget.show()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.MayaWidget.sizeHint"><code class="docutils literal notranslate"><span class="pre">MayaWidget.sizeHint()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.PanelPicker"><code class="docutils literal notranslate"><span class="pre">PanelPicker</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.PanelPicker.keyPressEvent"><code class="docutils literal notranslate"><span class="pre">PanelPicker.keyPressEvent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.PanelPicker.mouseMoveEvent"><code class="docutils literal notranslate"><span class="pre">PanelPicker.mouseMoveEvent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.PanelPicker.mouseReleaseEvent"><code class="docutils literal notranslate"><span class="pre">PanelPicker.mouseReleaseEvent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.PanelPicker.paintEvent"><code class="docutils literal notranslate"><span class="pre">PanelPicker.paintEvent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.PanelPicker.showEvent"><code class="docutils literal notranslate"><span class="pre">PanelPicker.showEvent()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.init_maya_widget"><code class="docutils literal notranslate"><span class="pre">init_maya_widget()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.init_tool_button"><code class="docutils literal notranslate"><span class="pre">init_tool_button()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/main.html#bookmarks.maya.main.show"><code class="docutils literal notranslate"><span class="pre">show()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="maya/plugin.html">maya.plugin</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="maya/plugin.html#bookmarks.maya.plugin.init_environment"><code class="docutils literal notranslate"><span class="pre">init_environment()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/plugin.html#bookmarks.maya.plugin.initializePlugin"><code class="docutils literal notranslate"><span class="pre">initializePlugin()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/plugin.html#bookmarks.maya.plugin.is_batch"><code class="docutils literal notranslate"><span class="pre">is_batch()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/plugin.html#bookmarks.maya.plugin.uninitializePlugin"><code class="docutils literal notranslate"><span class="pre">uninitializePlugin()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="maya/shadertool.html">maya.shadertool</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="maya/shadertool.html#bookmarks.maya.shadertool.RenameDialog"><code class="docutils literal notranslate"><span class="pre">RenameDialog</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="maya/shadertool.html#bookmarks.maya.shadertool.RenameDialog.sizeHint"><code class="docutils literal notranslate"><span class="pre">RenameDialog.sizeHint()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="maya/shadertool.html#bookmarks.maya.shadertool.ShaderModel"><code class="docutils literal notranslate"><span class="pre">ShaderModel</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="maya/shadertool.html#bookmarks.maya.shadertool.ShaderModel.columnCount"><code class="docutils literal notranslate"><span class="pre">ShaderModel.columnCount()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/shadertool.html#bookmarks.maya.shadertool.ShaderModel.data"><code class="docutils literal notranslate"><span class="pre">ShaderModel.data()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/shadertool.html#bookmarks.maya.shadertool.ShaderModel.flags"><code class="docutils literal notranslate"><span class="pre">ShaderModel.flags()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/shadertool.html#bookmarks.maya.shadertool.ShaderModel.headerData"><code class="docutils literal notranslate"><span class="pre">ShaderModel.headerData()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/shadertool.html#bookmarks.maya.shadertool.ShaderModel.index"><code class="docutils literal notranslate"><span class="pre">ShaderModel.index()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/shadertool.html#bookmarks.maya.shadertool.ShaderModel.init_data"><code class="docutils literal notranslate"><span class="pre">ShaderModel.init_data()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/shadertool.html#bookmarks.maya.shadertool.ShaderModel.rowCount"><code class="docutils literal notranslate"><span class="pre">ShaderModel.rowCount()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="maya/shadertool.html#bookmarks.maya.shadertool.ShaderView"><code class="docutils literal notranslate"><span class="pre">ShaderView</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="maya/shadertool.html#bookmarks.maya.shadertool.ShadersWidget"><code class="docutils literal notranslate"><span class="pre">ShadersWidget</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="maya/shadertool.html#bookmarks.maya.shadertool.ShadersWidget.closeEvent"><code class="docutils literal notranslate"><span class="pre">ShadersWidget.closeEvent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/shadertool.html#bookmarks.maya.shadertool.ShadersWidget.hideEvent"><code class="docutils literal notranslate"><span class="pre">ShadersWidget.hideEvent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/shadertool.html#bookmarks.maya.shadertool.ShadersWidget.init_data"><code class="docutils literal notranslate"><span class="pre">ShadersWidget.init_data()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/shadertool.html#bookmarks.maya.shadertool.ShadersWidget.paintEvent"><code class="docutils literal notranslate"><span class="pre">ShadersWidget.paintEvent()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="maya/shadertool.html#bookmarks.maya.shadertool.ShadersWidget.showEvent"><code class="docutils literal notranslate"><span class="pre">ShadersWidget.showEvent()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="maya/viewport.html">maya.viewport</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="maya/viewport.html#bookmarks.maya.viewport.presets"><code class="docutils literal notranslate"><span class="pre">presets</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="maya/actions.html">maya.actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maya/base.html">maya.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maya/capture.html">maya.capture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maya/contextmenu.html">maya.contextmenu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maya/export.html">maya.export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maya/main.html">maya.main</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maya/plugin.html">maya.plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maya/shadertool.html">maya.shadertool</a></li>
+<li class="toctree-l1"><a class="reference internal" href="maya/viewport.html">maya.viewport</a></li>
 </ul>
 </div>
-</section>
+</div>
 
         </article>
       </div>
@@ -637,7 +450,7 @@ and widgets needed to embed it into the Maya UI.</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Gergely Wootsch
+                Copyright &#169; © 2022 Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -653,28 +466,8 @@ and widgets needed to embed it into the Maya UI.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">maya</a><ul>
-<li><a class="reference internal" href="#bookmarks.maya.initialize"><code class="docutils literal notranslate"><span class="pre">initialize()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.uninitialize"><code class="docutils literal notranslate"><span class="pre">uninitialize()</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
@@ -682,9 +475,7 @@ and widgets needed to embed it into the Maya UI.</p>
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/design-tabs.js"></script>
     </body>

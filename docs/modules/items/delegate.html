@@ -1,0 +1,1478 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+<meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="items.favourite_items" href="favourite_items.html" /><link rel="prev" title="items.bookmark_items" href="bookmark_items.html" />
+        <link rel="canonical" href="https://bookmarks-vfx.com/modules/items/delegate.html" />
+
+    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+        <title>items.delegate - Bookmarks 0.7.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #ffffff;
+  --color-code-foreground: black;
+  --color-brand-primary: rgba(75, 180, 135, 1);
+  --color-brand-content: rgba(75, 180, 135, 1);
+  --color-api-name: rgba(0, 0, 0, 0.9);
+  --color-api-pre-name: rgba(75, 180, 135, 0.75);
+  --color-highlight-on-target: rgba(0,0,0,0);
+  --api-font-size: var(--font-size--normal);
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-highlight-on-target: rgba(0,0,0,0);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-highlight-on-target: rgba(0,0,0,0);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+      }
+    }
+  }
+</style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TX95GG28E5"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-TX95GG28E5');
+    </script>
+    
+</head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.4 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../../_static/icon.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Bookmarks 0.7.4 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html">User Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Technical Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../modules.html">Python Modules</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../actions.html">actions</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../bookmarker.html">bookmarker</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../bookmarker/bookmark_editor.html">bookmarker.bookmark_editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../bookmarker/job_editor.html">bookmarker.job_editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../bookmarker/main.html">bookmarker.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../bookmarker/server_editor.html">bookmarker.server_editor</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../common.html">common</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../common/core.html">common.core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/data.html">common.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/env.html">common.env</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/font.html">common.font</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/monitor.html">common.monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/sequence.html">common.sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/session_lock.html">common.session_lock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/settings.html">common.settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/setup.html">common.setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/signals.html">common.signals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/ui.html">common.ui</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contextmenu.html">contextmenu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database.html">database</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../editor.html">editor</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../editor/asset_properties.html">editor.asset_properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../editor/base.html">editor.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../editor/base_widgets.html">editor.base_widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../editor/bookmark_properties.html">editor.bookmark_properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../editor/preferences.html">editor.preferences</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../external.html">external</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../external/ffmpeg.html">external.ffmpeg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../external/ffmpeg_widget.html">external.ffmpeg_widget</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../external/rv.html">external.rv</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../file_saver.html">file_saver</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../file_saver/main.html">file_saver.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../file_saver/widgets.html">file_saver.widgets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../importexport.html">importexport</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../items.html">items</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="asset_items.html">items.asset_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bookmark_items.html">items.bookmark_items</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">items.delegate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="favourite_items.html">items.favourite_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="file_items.html">items.file_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html">items.models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="task_items.html">items.task_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="views.html">items.views</a></li>
+<li class="toctree-l3"><a class="reference internal" href="widgets/filter_editor.html">items.widgets.filter_editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="widgets/image_viewer.html">items.widgets.image_viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="widgets/thumb_capture.html">items.widgets.thumb_capture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="widgets/thumb_library.html">items.widgets.thumb_library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="widgets/thumb_picker.html">items.widgets.thumb_picker</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../launcher.html">launcher</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../launcher/gallery.html">launcher.gallery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../launcher/main.html">launcher.main</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../log.html">log</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html">main</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../maya.html">maya</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../maya/actions.html">maya.actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/base.html">maya.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/capture.html">maya.capture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/contextmenu.html">maya.contextmenu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/export.html">maya.export</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/main.html">maya.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/plugin.html">maya.plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/shadertool.html">maya.shadertool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/viewport.html">maya.viewport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../notes.html">notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../progress.html">progress</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../publish.html">publish</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shortcuts.html">shortcuts</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../shotgun.html">shotgun</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../shotgun/actions.html">shotgun.actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../shotgun/link.html">shotgun.link</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../shotgun/link_asset.html">shotgun.link_asset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../shotgun/link_assets.html">shotgun.link_assets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../shotgun/link_bookmark.html">shotgun.link_bookmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../shotgun/publish.html">shotgun.publish</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../shotgun/publish_widgets.html">shotgun.publish_widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../shotgun/shotgun.html">shotgun.shotgun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../shotgun/tasks.html">shotgun.tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../slack.html">slack</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../slack/slack.html">slack.slack</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../standalone.html">standalone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../statusbar.html">statusbar</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../teams.html">teams</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../teams/message.html">teams.message</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../templates.html">templates</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../threads.html">threads</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../threads/threads.html">threads.threads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../threads/workers.html">threads.workers</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../tokens.html">tokens</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tokens/tokens.html">tokens.tokens</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tokens/tokens_editor.html">tokens.tokens_editor</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../topbar.html">topbar</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../topbar/buttons.html">topbar.buttons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../topbar/quickswitch.html">topbar.quickswitch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../topbar/tabs.html">topbar.tabs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../topbar/topbar.html">topbar.topbar</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../ui.html">ui</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../versioncontrol.html">versioncontrol</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../versioncontrol/version.html">versioncontrol.version</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../versioncontrol/versioncontrol.html">versioncontrol.versioncontrol</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="module-bookmarks.items.delegate">
+<span id="items-delegate"></span><h1>items.delegate<a class="headerlink" href="#module-bookmarks.items.delegate" title="Permalink to this heading">#</a></h1>
+<p>Item delegate used to draw bookmark, asset and file items.</p>
+<p>Defines <a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate" title="bookmarks.items.delegate.ItemDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemDelegate</span></code></a>, the base delegate class, subclasses and helper functions.</p>
+<p>The list views have a number of custom features, such as clickable in-line icons,
+folder names, custom thumbnails that the delegate implements. Since we’re using list
+views with a single column, the item layout is defined by a series of custom rectangles
+(see <a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.get_rectangles" title="bookmarks.items.delegate.ItemDelegate.get_rectangles"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ItemDelegate.get_rectangles()</span></code></a>.). These are used by the paint methods use to
+drawn elements and the views to define interactive regions.</p>
+<p>The downside of painting manually a complex layout is performance and no doubt the
+module could be more optimised. Still, most of the expensive functions are backed by
+caches.</p>
+<p><strong>Classes:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.AssetItemViewDelegate" title="bookmarks.items.delegate.AssetItemViewDelegate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AssetItemViewDelegate</span></code></a>([parent])</p></td>
+<td><p>The delegate used to render <a class="reference internal" href="asset_items.html#bookmarks.items.asset_items.AssetItemView" title="bookmarks.items.asset_items.AssetItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.asset_items.AssetItemView</span></code></a> items.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.BookmarkItemViewDelegate" title="bookmarks.items.delegate.BookmarkItemViewDelegate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BookmarkItemViewDelegate</span></code></a>([parent])</p></td>
+<td><p>The delegate used to render <a class="reference internal" href="bookmark_items.html#bookmarks.items.bookmark_items.BookmarkItemView" title="bookmarks.items.bookmark_items.BookmarkItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.bookmark_items.BookmarkItemView</span></code></a> items.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.FavouriteItemViewDelegate" title="bookmarks.items.delegate.FavouriteItemViewDelegate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FavouriteItemViewDelegate</span></code></a>([parent])</p></td>
+<td><p>The delegate used to render <a class="reference internal" href="favourite_items.html#bookmarks.items.favourite_items.FavouriteItemView" title="bookmarks.items.favourite_items.FavouriteItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.favourite_items.FavouriteItemView</span></code></a> items.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.FileItemViewDelegate" title="bookmarks.items.delegate.FileItemViewDelegate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FileItemViewDelegate</span></code></a>([parent])</p></td>
+<td><p>The delegate used to render <a class="reference internal" href="file_items.html#bookmarks.items.file_items.FileItemView" title="bookmarks.items.file_items.FileItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.file_items.FileItemView</span></code></a> items.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate" title="bookmarks.items.delegate.ItemDelegate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ItemDelegate</span></code></a>([parent])</p></td>
+<td><p>The main delegate used to represent lists derived from <cite>base.BaseItemView</cite>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Functions:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.add_clickable_rectangle" title="bookmarks.items.delegate.add_clickable_rectangle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_clickable_rectangle</span></code></a>(index, option, rect, ...)</p></td>
+<td><p>Add a clickable rectangle and its contents.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.draw_file_text_segments" title="bookmarks.items.delegate.draw_file_text_segments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_file_text_segments</span></code></a>(it, font, metrics, ...)</p></td>
+<td><p>Draws the given list of text segments.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.draw_gradient_background" title="bookmarks.items.delegate.draw_gradient_background"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_gradient_background</span></code></a>(*args)</p></td>
+<td><p>Helper method used to draw file items' gradient background.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.draw_painter_path" title="bookmarks.items.delegate.draw_painter_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_painter_path</span></code></a>(painter, x, y, font, text)</p></td>
+<td><p>Paints the given text using QPainterPath.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.draw_subdir_bg_rectangles" title="bookmarks.items.delegate.draw_subdir_bg_rectangles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_subdir_bg_rectangles</span></code></a>(text_edge, *args)</p></td>
+<td><p>Draws the rectangle behind the subdir item labels.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.elided_text" title="bookmarks.items.delegate.elided_text"><code class="xref py py-obj docutils literal notranslate"><span class="pre">elided_text</span></code></a>(metrics, text, elide_mode, width)</p></td>
+<td><p>Utility function used to elide the given text to fit to the given width.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.get_asset_text_segments" title="bookmarks.items.delegate.get_asset_text_segments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_asset_text_segments</span></code></a>(text, label)</p></td>
+<td><p>Caches and returns the text segments used to paint asset items.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.get_bookmark_text_segments" title="bookmarks.items.delegate.get_bookmark_text_segments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_bookmark_text_segments</span></code></a>(text, label)</p></td>
+<td><p>Caches and returns the text segments used to paint bookmark items.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.get_clickable_cache_key" title="bookmarks.items.delegate.get_clickable_cache_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_clickable_cache_key</span></code></a>(index, rect)</p></td>
+<td><p>Returns the cache key used to store sub-folder background rectangles.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.get_clickable_rectangles" title="bookmarks.items.delegate.get_clickable_rectangles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_clickable_rectangles</span></code></a>(index, rect)</p></td>
+<td><p>Returns a cached interactive rectangle region.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.get_description_cache_key" title="bookmarks.items.delegate.get_description_cache_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_description_cache_key</span></code></a>(index, rect, button)</p></td>
+<td><p>Returns the cache key used to store sub-folder background rectangles.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.get_description_rectangle" title="bookmarks.items.delegate.get_description_rectangle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_description_rectangle</span></code></a>(index, rect, button)</p></td>
+<td><p>Returns a cached interactive rectangle region.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.get_file_detail_text_segments" title="bookmarks.items.delegate.get_file_detail_text_segments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_file_detail_text_segments</span></code></a>(index)</p></td>
+<td><p>Returns the <cite>FileItemView</cite> item <cite>common.FileDetailsRole</cite> segments associated with custom colors.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.get_file_text_segments" title="bookmarks.items.delegate.get_file_text_segments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_file_text_segments</span></code></a>(s, k, f)</p></td>
+<td><p>Caches and returns the text segments used to paint file items.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.get_subdir_bg_cache_key" title="bookmarks.items.delegate.get_subdir_bg_cache_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_subdir_bg_cache_key</span></code></a>(index, rect)</p></td>
+<td><p>Returns the cache key used to store sub-folder background rectangles.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.get_subdir_cache_key" title="bookmarks.items.delegate.get_subdir_cache_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_subdir_cache_key</span></code></a>(index, rect)</p></td>
+<td><p>Returns the cache key used to store sub-folder rectangles.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.get_subdir_rectangles" title="bookmarks.items.delegate.get_subdir_rectangles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_subdir_rectangles</span></code></a>(option, index, ...)</p></td>
+<td><p>Returns the rectangles used to render sub-folder item labels.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.get_text_segments" title="bookmarks.items.delegate.get_text_segments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_text_segments</span></code></a>(index)</p></td>
+<td><p>Returns a list of text segments used to paint item names.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.save_painter" title="bookmarks.items.delegate.save_painter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_painter</span></code></a>(func)</p></td>
+<td><p>Decorator used to save and restore the painter state.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.subdir_text_it" title="bookmarks.items.delegate.subdir_text_it"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subdir_text_it</span></code></a>(pp)</p></td>
+<td><p>Yields text elements to be rendered as sub-folder item labels.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Data:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.DCC_ICONS" title="bookmarks.items.delegate.DCC_ICONS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DCC_ICONS</span></code></a></p></td>
+<td><p>Used to paint a DCC icon if the asset name contains any of these names</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.regex_remove_seq_marker" title="bookmarks.items.delegate.regex_remove_seq_marker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regex_remove_seq_marker</span></code></a></p></td>
+<td><p>Regex used to sanitize collapsed sequence items</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.regex_remove_version" title="bookmarks.items.delegate.regex_remove_version"><code class="xref py py-obj docutils literal notranslate"><span class="pre">regex_remove_version</span></code></a></p></td>
+<td><p>Regex used to sanitize version numbers</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.AssetItemViewDelegate">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">AssetItemViewDelegate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#AssetItemViewDelegate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.AssetItemViewDelegate" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate" title="bookmarks.items.delegate.ItemDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemDelegate</span></code></a></p>
+<p>The delegate used to render
+<a class="reference internal" href="asset_items.html#bookmarks.items.asset_items.AssetItemView" title="bookmarks.items.asset_items.AssetItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.asset_items.AssetItemView</span></code></a> items.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.AssetItemViewDelegate.paint" title="bookmarks.items.delegate.AssetItemViewDelegate.paint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint</span></code></a>(painter, option, index)</p></td>
+<td><p>Paints a <a class="reference internal" href="asset_items.html#bookmarks.items.asset_items.AssetItemView" title="bookmarks.items.asset_items.AssetItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.asset_items.AssetItemView</span></code></a> item.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.AssetItemViewDelegate.sizeHint" title="bookmarks.items.delegate.AssetItemViewDelegate.sizeHint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sizeHint</span></code></a>(option, index)</p></td>
+<td><p>Returns the item's size hint.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Attributes:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.AssetItemViewDelegate.fallback_thumb" title="bookmarks.items.delegate.AssetItemViewDelegate.fallback_thumb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fallback_thumb</span></code></a></p></td>
+<td><p>The item's default thumbnail image</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.AssetItemViewDelegate.paint">
+<span class="sig-name descname"><span class="pre">paint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">painter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#AssetItemViewDelegate.paint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.AssetItemViewDelegate.paint" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints a <a class="reference internal" href="asset_items.html#bookmarks.items.asset_items.AssetItemView" title="bookmarks.items.asset_items.AssetItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.asset_items.AssetItemView</span></code></a>
+item.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.AssetItemViewDelegate.sizeHint">
+<span class="sig-name descname"><span class="pre">sizeHint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">option</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#AssetItemViewDelegate.sizeHint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.AssetItemViewDelegate.sizeHint" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the item’s size hint.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.AssetItemViewDelegate.fallback_thumb">
+<span class="sig-name descname"><span class="pre">fallback_thumb</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'asset_item'</span></em><a class="headerlink" href="#bookmarks.items.delegate.AssetItemViewDelegate.fallback_thumb" title="Permalink to this definition">#</a></dt>
+<dd><p>The item’s default thumbnail image</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.BookmarkItemViewDelegate">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">BookmarkItemViewDelegate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#BookmarkItemViewDelegate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.BookmarkItemViewDelegate" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate" title="bookmarks.items.delegate.ItemDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemDelegate</span></code></a></p>
+<p>The delegate used to render
+<a class="reference internal" href="bookmark_items.html#bookmarks.items.bookmark_items.BookmarkItemView" title="bookmarks.items.bookmark_items.BookmarkItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.bookmark_items.BookmarkItemView</span></code></a> items.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.BookmarkItemViewDelegate.paint" title="bookmarks.items.delegate.BookmarkItemViewDelegate.paint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint</span></code></a>(painter, option, index)</p></td>
+<td><p>Paints a <a class="reference internal" href="bookmark_items.html#bookmarks.items.bookmark_items.BookmarkItemView" title="bookmarks.items.bookmark_items.BookmarkItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.bookmark_items.BookmarkItemView</span></code></a> item.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.BookmarkItemViewDelegate.setEditorData" title="bookmarks.items.delegate.BookmarkItemViewDelegate.setEditorData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setEditorData</span></code></a>(self, editor, index)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.BookmarkItemViewDelegate.setModelData" title="bookmarks.items.delegate.BookmarkItemViewDelegate.setModelData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setModelData</span></code></a>(self, editor, model, index)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.BookmarkItemViewDelegate.sizeHint" title="bookmarks.items.delegate.BookmarkItemViewDelegate.sizeHint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sizeHint</span></code></a>(option, index)</p></td>
+<td><p>Returns the item's size hint.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Attributes:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.BookmarkItemViewDelegate.fallback_thumb" title="bookmarks.items.delegate.BookmarkItemViewDelegate.fallback_thumb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fallback_thumb</span></code></a></p></td>
+<td><p>The item's default thumbnail image</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.BookmarkItemViewDelegate.paint">
+<span class="sig-name descname"><span class="pre">paint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">painter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#BookmarkItemViewDelegate.paint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.BookmarkItemViewDelegate.paint" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints a <a class="reference internal" href="bookmark_items.html#bookmarks.items.bookmark_items.BookmarkItemView" title="bookmarks.items.bookmark_items.BookmarkItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.bookmark_items.BookmarkItemView</span></code></a>
+item.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.BookmarkItemViewDelegate.setEditorData">
+<span class="sig-name descname"><span class="pre">setEditorData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtWidgets.QWidget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#BookmarkItemViewDelegate.setEditorData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.BookmarkItemViewDelegate.setEditorData" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.BookmarkItemViewDelegate.setModelData">
+<span class="sig-name descname"><span class="pre">setModelData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtWidgets.QWidget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QAbstractItemModel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#BookmarkItemViewDelegate.setModelData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.BookmarkItemViewDelegate.setModelData" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.BookmarkItemViewDelegate.sizeHint">
+<span class="sig-name descname"><span class="pre">sizeHint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">option</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#BookmarkItemViewDelegate.sizeHint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.BookmarkItemViewDelegate.sizeHint" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the item’s size hint.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.BookmarkItemViewDelegate.fallback_thumb">
+<span class="sig-name descname"><span class="pre">fallback_thumb</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'bookmark_item'</span></em><a class="headerlink" href="#bookmarks.items.delegate.BookmarkItemViewDelegate.fallback_thumb" title="Permalink to this definition">#</a></dt>
+<dd><p>The item’s default thumbnail image</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.FavouriteItemViewDelegate">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">FavouriteItemViewDelegate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#FavouriteItemViewDelegate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.FavouriteItemViewDelegate" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bookmarks.items.delegate.FileItemViewDelegate" title="bookmarks.items.delegate.FileItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileItemViewDelegate</span></code></a></p>
+<p>The delegate used to render
+<a class="reference internal" href="favourite_items.html#bookmarks.items.favourite_items.FavouriteItemView" title="bookmarks.items.favourite_items.FavouriteItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.favourite_items.FavouriteItemView</span></code></a> items.</p>
+<p><strong>Attributes:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.FavouriteItemViewDelegate.fallback_thumb" title="bookmarks.items.delegate.FavouriteItemViewDelegate.fallback_thumb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fallback_thumb</span></code></a></p></td>
+<td><p>The item's default thumbnail image</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.FavouriteItemViewDelegate.fallback_thumb">
+<span class="sig-name descname"><span class="pre">fallback_thumb</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'favourite_item'</span></em><a class="headerlink" href="#bookmarks.items.delegate.FavouriteItemViewDelegate.fallback_thumb" title="Permalink to this definition">#</a></dt>
+<dd><p>The item’s default thumbnail image</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.FileItemViewDelegate">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">FileItemViewDelegate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#FileItemViewDelegate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.FileItemViewDelegate" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate" title="bookmarks.items.delegate.ItemDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemDelegate</span></code></a></p>
+<p>The delegate used to render
+<a class="reference internal" href="file_items.html#bookmarks.items.file_items.FileItemView" title="bookmarks.items.file_items.FileItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.file_items.FileItemView</span></code></a> items.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.FileItemViewDelegate.paint" title="bookmarks.items.delegate.FileItemViewDelegate.paint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint</span></code></a>(painter, option, index)</p></td>
+<td><p>Paints a <a class="reference internal" href="file_items.html#bookmarks.items.file_items.FileItemView" title="bookmarks.items.file_items.FileItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.file_items.FileItemView</span></code></a> item.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.FileItemViewDelegate.sizeHint" title="bookmarks.items.delegate.FileItemViewDelegate.sizeHint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sizeHint</span></code></a>(option, index)</p></td>
+<td><p>Returns the item's size hint.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Attributes:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.FileItemViewDelegate.fallback_thumb" title="bookmarks.items.delegate.FileItemViewDelegate.fallback_thumb"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fallback_thumb</span></code></a></p></td>
+<td><p>The item's default thumbnail image</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.FileItemViewDelegate.paint">
+<span class="sig-name descname"><span class="pre">paint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">painter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#FileItemViewDelegate.paint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.FileItemViewDelegate.paint" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints a <a class="reference internal" href="file_items.html#bookmarks.items.file_items.FileItemView" title="bookmarks.items.file_items.FileItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.file_items.FileItemView</span></code></a>
+item.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.FileItemViewDelegate.sizeHint">
+<span class="sig-name descname"><span class="pre">sizeHint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">option</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#FileItemViewDelegate.sizeHint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.FileItemViewDelegate.sizeHint" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the item’s size hint.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.FileItemViewDelegate.fallback_thumb">
+<span class="sig-name descname"><span class="pre">fallback_thumb</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'file_item'</span></em><a class="headerlink" href="#bookmarks.items.delegate.FileItemViewDelegate.fallback_thumb" title="Permalink to this definition">#</a></dt>
+<dd><p>The item’s default thumbnail image</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">ItemDelegate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QAbstractItemDelegate</span></code></p>
+<p>The main delegate used to represent lists derived from <cite>base.BaseItemView</cite>.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.createEditor" title="bookmarks.items.delegate.ItemDelegate.createEditor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">createEditor</span></code></a>(self, parent, option, index)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.draw_file_description" title="bookmarks.items.delegate.ItemDelegate.draw_file_description"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_file_description</span></code></a>(font, metrics, ...)</p></td>
+<td><p>Draws file items' descriptions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.draw_subdir_rectangles" title="bookmarks.items.delegate.ItemDelegate.draw_subdir_rectangles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">draw_subdir_rectangles</span></code></a>(bg_rect, *args)</p></td>
+<td><p>Helper method used to draw the subdirectories of file items.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.get_paint_arguments" title="bookmarks.items.delegate.ItemDelegate.get_paint_arguments"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_paint_arguments</span></code></a>(painter, option, index)</p></td>
+<td><p>A utility class for gathering all the arguments needed to paint the individual list elements.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.get_rectangles" title="bookmarks.items.delegate.ItemDelegate.get_rectangles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_rectangles</span></code></a>(index)</p></td>
+<td><p>Return all rectangles needed to paint an item.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint" title="bookmarks.items.delegate.ItemDelegate.paint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint</span></code></a>(painter, option, index)</p></td>
+<td><p>Paints an item.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_active" title="bookmarks.items.delegate.ItemDelegate.paint_active"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_active</span></code></a>(*args)</p></td>
+<td><p>Paints the background for all list items.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_archived" title="bookmarks.items.delegate.ItemDelegate.paint_archived"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_archived</span></code></a>(*args)</p></td>
+<td><p>Paints a gray overlay when an item is archived.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_asset_name" title="bookmarks.items.delegate.ItemDelegate.paint_asset_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_asset_name</span></code></a>(*args[, offset])</p></td>
+<td><p>Paints name of the <code class="docutils literal notranslate"><span class="pre">AssetWidget</span></code>'s items.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_background" title="bookmarks.items.delegate.ItemDelegate.paint_background"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_background</span></code></a>(*args)</p></td>
+<td><p>Paints the background for all list items.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_bookmark_name" title="bookmarks.items.delegate.ItemDelegate.paint_bookmark_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_bookmark_name</span></code></a>(*args)</p></td>
+<td><p>Paints name of the <code class="docutils literal notranslate"><span class="pre">BookmarkWidget</span></code>'s items.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_dcc_icon" title="bookmarks.items.delegate.ItemDelegate.paint_dcc_icon"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_dcc_icon</span></code></a>(*args)</p></td>
+<td><p>Paints the item's DCC icon.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_default" title="bookmarks.items.delegate.ItemDelegate.paint_default"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_default</span></code></a>(*args)</p></td>
+<td><p>Paints a gray overlay when an item is archived.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_deleted" title="bookmarks.items.delegate.ItemDelegate.paint_deleted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_deleted</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Paints a deleted item.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_description_editor_background" title="bookmarks.items.delegate.ItemDelegate.paint_description_editor_background"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_description_editor_background</span></code></a>(*args, ...)</p></td>
+<td><p>Paints the background of the item.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_drag_source" title="bookmarks.items.delegate.ItemDelegate.paint_drag_source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_drag_source</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Overlay do indicate the source of a drag operation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_file_name" title="bookmarks.items.delegate.ItemDelegate.paint_file_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_file_name</span></code></a>(*args)</p></td>
+<td><p>Paints the clickable sub-folders and the filename of file items.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_hover" title="bookmarks.items.delegate.ItemDelegate.paint_hover"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_hover</span></code></a>(*args)</p></td>
+<td><p>Paints the background for all list items.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_inline_background" title="bookmarks.items.delegate.ItemDelegate.paint_inline_background"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_inline_background</span></code></a>(*args)</p></td>
+<td><p>Paints the item's inline buttons background.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_inline_count" title="bookmarks.items.delegate.ItemDelegate.paint_inline_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_inline_count</span></code></a>(painter, rect, ...)</p></td>
+<td><p>Paints an item count.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_inline_icons" title="bookmarks.items.delegate.ItemDelegate.paint_inline_icons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_inline_icons</span></code></a>(*args)</p></td>
+<td><p>Paints the item's inline buttons background.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_name" title="bookmarks.items.delegate.ItemDelegate.paint_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_name</span></code></a>(*args)</p></td>
+<td><p>Paints the name of the item.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_selection_indicator" title="bookmarks.items.delegate.ItemDelegate.paint_selection_indicator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_selection_indicator</span></code></a>(*args)</p></td>
+<td><p>Paints the leading rectangle indicating the selection.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_shotgun_status" title="bookmarks.items.delegate.ItemDelegate.paint_shotgun_status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_shotgun_status</span></code></a>(*args)</p></td>
+<td><p>Paints the item's ShotGrid configuration status.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_slack_status" title="bookmarks.items.delegate.ItemDelegate.paint_slack_status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_slack_status</span></code></a>(*args)</p></td>
+<td><p>Paints the item's Slack configuration status.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_thumbnail" title="bookmarks.items.delegate.ItemDelegate.paint_thumbnail"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_thumbnail</span></code></a>(*args)</p></td>
+<td><p>Paints an item's thumbnail.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_thumbnail_drop_indicator" title="bookmarks.items.delegate.ItemDelegate.paint_thumbnail_drop_indicator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_thumbnail_drop_indicator</span></code></a>(*args)</p></td>
+<td><p>Paints a drop indicator used when dropping thumbnail onto the item.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_thumbnail_shadow" title="bookmarks.items.delegate.ItemDelegate.paint_thumbnail_shadow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_thumbnail_shadow</span></code></a>(*args)</p></td>
+<td><p>Paints the item's thumbnail shadow.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.setEditorData" title="bookmarks.items.delegate.ItemDelegate.setEditorData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setEditorData</span></code></a>(self, editor, index)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.setModelData" title="bookmarks.items.delegate.ItemDelegate.setModelData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setModelData</span></code></a>(self, editor, model, index)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.updateEditorGeometry" title="bookmarks.items.delegate.ItemDelegate.updateEditorGeometry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">updateEditorGeometry</span></code></a>(self, editor, option, index)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.createEditor">
+<span class="sig-name descname"><span class="pre">createEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtWidgets.QWidget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtWidgets.QStyleOptionViewItem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">PySide2.QtWidgets.QWidget</span></span></span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.createEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.createEditor" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.draw_file_description">
+<span class="sig-name descname"><span class="pre">draw_file_description</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">font</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">left_limit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right_limit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">large_mode</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.draw_file_description"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.draw_file_description" title="Permalink to this definition">#</a></dt>
+<dd><p>Draws file items’ descriptions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.draw_subdir_rectangles">
+<span class="sig-name descname"><span class="pre">draw_subdir_rectangles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bg_rect</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.draw_subdir_rectangles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.draw_subdir_rectangles" title="Permalink to this definition">#</a></dt>
+<dd><p>Helper method used to draw the subdirectories of file items.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.get_paint_arguments">
+<span class="sig-name descname"><span class="pre">get_paint_arguments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">painter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">antialiasing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.get_paint_arguments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.get_paint_arguments" title="Permalink to this definition">#</a></dt>
+<dd><p>A utility class for gathering all the arguments needed to paint
+the individual list elements.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.get_rectangles">
+<span class="sig-name descname"><span class="pre">get_rectangles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.get_rectangles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.get_rectangles" title="Permalink to this definition">#</a></dt>
+<dd><p>Return all rectangles needed to paint an item.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> (<em>QModelIndex</em>) – An item index.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary containing <cite>count</cite> number of rectangles.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint">
+<span class="sig-name descname"><span class="pre">paint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">painter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints an item.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_active">
+<span class="sig-name descname"><span class="pre">paint_active</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_active" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints the background for all list items.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_archived">
+<span class="sig-name descname"><span class="pre">paint_archived</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_archived"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_archived" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints a gray overlay when an item is archived.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_asset_name">
+<span class="sig-name descname"><span class="pre">paint_asset_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_asset_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_asset_name" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints name of the <code class="docutils literal notranslate"><span class="pre">AssetWidget</span></code>’s items.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_background">
+<span class="sig-name descname"><span class="pre">paint_background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_background"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_background" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints the background for all list items.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_bookmark_name">
+<span class="sig-name descname"><span class="pre">paint_bookmark_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_bookmark_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_bookmark_name" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints name of the <code class="docutils literal notranslate"><span class="pre">BookmarkWidget</span></code>’s items.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_dcc_icon">
+<span class="sig-name descname"><span class="pre">paint_dcc_icon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_dcc_icon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_dcc_icon" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints the item’s DCC icon.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_default">
+<span class="sig-name descname"><span class="pre">paint_default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_default" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints a gray overlay when an item is archived.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_deleted">
+<span class="sig-name descname"><span class="pre">paint_deleted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_deleted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_deleted" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints a deleted item.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_description_editor_background">
+<span class="sig-name descname"><span class="pre">paint_description_editor_background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_description_editor_background"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_description_editor_background" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints the background of the item.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_drag_source">
+<span class="sig-name descname"><span class="pre">paint_drag_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_drag_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_drag_source" title="Permalink to this definition">#</a></dt>
+<dd><p>Overlay do indicate the source of a drag operation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_file_name">
+<span class="sig-name descname"><span class="pre">paint_file_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_file_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_file_name" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints the clickable sub-folders and the filename of file items.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_hover">
+<span class="sig-name descname"><span class="pre">paint_hover</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_hover"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_hover" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints the background for all list items.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_inline_background">
+<span class="sig-name descname"><span class="pre">paint_inline_background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_inline_background"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_inline_background" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints the item’s inline buttons background.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_inline_count">
+<span class="sig-name descname"><span class="pre">paint_inline_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">painter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cursor_position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">icon</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_inline_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_inline_count" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints an item count.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_inline_icons">
+<span class="sig-name descname"><span class="pre">paint_inline_icons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_inline_icons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_inline_icons" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints the item’s inline buttons background.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_name">
+<span class="sig-name descname"><span class="pre">paint_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_name" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints the name of the item.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_selection_indicator">
+<span class="sig-name descname"><span class="pre">paint_selection_indicator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_selection_indicator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_selection_indicator" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints the leading rectangle indicating the selection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_shotgun_status">
+<span class="sig-name descname"><span class="pre">paint_shotgun_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_shotgun_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_shotgun_status" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints the item’s ShotGrid configuration status.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_slack_status">
+<span class="sig-name descname"><span class="pre">paint_slack_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_slack_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_slack_status" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints the item’s Slack configuration status.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_thumbnail">
+<span class="sig-name descname"><span class="pre">paint_thumbnail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_thumbnail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_thumbnail" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints an item’s thumbnail.</p>
+<p>If a requested QPixmap has never been drawn before we will create and
+store it by calling <a class="reference internal" href="../images.html#bookmarks.images.get_thumbnail" title="bookmarks.images.get_thumbnail"><code class="xref py py-func docutils literal notranslate"><span class="pre">bookmarks.images.get_thumbnail()</span></code></a>. This method is
+backed
+by <a class="reference internal" href="../images.html#bookmarks.images.ImageCache" title="bookmarks.images.ImageCache"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.images.ImageCache</span></code></a> and stores the requested pixmap
+for future use.</p>
+<p>If no associated image data is available, we will use a generic
+thumbnail associated with the item’s type, or a fallback thumbnail set
+by the delegate.</p>
+<p>See the <a class="reference internal" href="../images.html#module-bookmarks.images" title="bookmarks.images"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.images</span></code></a> module for implementation details.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_thumbnail_drop_indicator">
+<span class="sig-name descname"><span class="pre">paint_thumbnail_drop_indicator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_thumbnail_drop_indicator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_thumbnail_drop_indicator" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints a drop indicator used when dropping thumbnail onto the item.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.paint_thumbnail_shadow">
+<span class="sig-name descname"><span class="pre">paint_thumbnail_shadow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.paint_thumbnail_shadow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.paint_thumbnail_shadow" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints the item’s thumbnail shadow.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.setEditorData">
+<span class="sig-name descname"><span class="pre">setEditorData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtWidgets.QWidget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.setEditorData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.setEditorData" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.setModelData">
+<span class="sig-name descname"><span class="pre">setModelData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtWidgets.QWidget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QAbstractItemModel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.setModelData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.setModelData" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.ItemDelegate.updateEditorGeometry">
+<span class="sig-name descname"><span class="pre">updateEditorGeometry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">editor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtWidgets.QWidget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtWidgets.QStyleOptionViewItem</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#ItemDelegate.updateEditorGeometry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.ItemDelegate.updateEditorGeometry" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.add_clickable_rectangle">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">add_clickable_rectangle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">option</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#add_clickable_rectangle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.add_clickable_rectangle" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a clickable rectangle and its contents.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> (<em>QModelIndex</em>) – The item’s index.</p></li>
+<li><p><strong>option</strong> (<em>QStyleOption</em>) – Style option instance.</p></li>
+<li><p><strong>rect</strong> (<em>QRect</em>) – The clickable area.</p></li>
+<li><p><strong>text</strong> (<em>str</em>) – The text of the rectangle.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.draw_file_text_segments">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">draw_file_text_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">it</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#draw_file_text_segments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.draw_file_text_segments" title="Permalink to this definition">#</a></dt>
+<dd><p>Draws the given list of text segments.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.draw_gradient_background">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">draw_gradient_background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#draw_gradient_background"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.draw_gradient_background" title="Permalink to this definition">#</a></dt>
+<dd><p>Helper method used to draw file items’ gradient background.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text_edge</strong> (<em>float</em>) – The left edge of the text to avoid clipping.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.draw_painter_path">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">draw_painter_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">painter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#draw_painter_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.draw_painter_path" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints the given text using QPainterPath.</p>
+<p>This exists to ensure consistent aliased text rendering across all platforms.
+The path rendering comes with a performance trade-off so the QPainterPaths
+are cached and stored for later use.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>painter</strong> (<em>QPainter</em>) – The painter used to draw the text.</p></li>
+<li><p><strong>x</strong> (<em>float</em>) – Horizontal position.</p></li>
+<li><p><strong>y</strong> (<em>float</em>) – Vertical position.</p></li>
+<li><p><strong>font</strong> (<em>QFont</em>) – The font used to render the path.</p></li>
+<li><p><strong>text</strong> (<em>str</em>) – The text to render.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.draw_subdir_bg_rectangles">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">draw_subdir_bg_rectangles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text_edge</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#draw_subdir_bg_rectangles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.draw_subdir_bg_rectangles" title="Permalink to this definition">#</a></dt>
+<dd><p>Draws the rectangle behind the subdir item labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>text_edge</strong> (<em>float</em>) – The left edge of the text to avoid clipping.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.elided_text">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">elided_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metrics</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elide_mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#elided_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.elided_text" title="Permalink to this definition">#</a></dt>
+<dd><p>Utility function used to elide the given text to fit to the given width.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metrics</strong> (<em>QFontMetrics</em>) – A font metrics instance.</p></li>
+<li><p><strong>text</strong> (<em>str</em>) – The text to elide.</p></li>
+<li><p><strong>elide_mode</strong> (<em>int</em>) – A text elide mode flag.</p></li>
+<li><p><strong>width</strong> (<em>float</em>) – The width to text must fit.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The elided text.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.get_asset_text_segments">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">get_asset_text_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#get_asset_text_segments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.get_asset_text_segments" title="Permalink to this definition">#</a></dt>
+<dd><p>Caches and returns the text segments used to paint asset items.</p>
+<p>Used to mimic rich-text like coloring of individual text elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – The source text.</p></li>
+<li><p><strong>label</strong> (<em>str</em>) – Item’s label string.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dict of (str, QColor) pairs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.get_bookmark_text_segments">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">get_bookmark_text_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#get_bookmark_text_segments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.get_bookmark_text_segments" title="Permalink to this definition">#</a></dt>
+<dd><p>Caches and returns the text segments used to paint bookmark items.</p>
+<p>Used to mimic rich-text like coloring of individual text elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) – The source text.</p></li>
+<li><p><strong>label</strong> (<em>str</em>) – Item’s label string.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dict of (str, QColor) pairs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.get_clickable_cache_key">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">get_clickable_cache_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rect</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#get_clickable_cache_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.get_clickable_cache_key" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the cache key used to store sub-folder background rectangles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> (<em>QModelIndex</em>) – Item index.</p></li>
+<li><p><strong>rect</strong> (<em>QRect</em>) – The item’s rectangle.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The cache key.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.get_clickable_rectangles">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">get_clickable_rectangles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rect</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#get_clickable_rectangles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.get_clickable_rectangles" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns a cached interactive rectangle region.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> (<em>QtCore.QModelIndex</em>) – The item’s index.</p></li>
+<li><p><strong>rect</strong> (<em>QRect</em>) – The item’s visual rectangle.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple of (QRect, str) pairs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.get_description_cache_key">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">get_description_cache_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#get_description_cache_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.get_description_cache_key" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the cache key used to store sub-folder background rectangles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> (<em>QModelIndex</em>) – Item index.</p></li>
+<li><p><strong>rect</strong> (<em>QRect</em>) – The item’s rectangle.</p></li>
+<li><p><strong>button</strong> (<em>bool</em>) – Inline icon visibility state.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The cache key.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.get_description_rectangle">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">get_description_rectangle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rect</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">button</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#get_description_rectangle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.get_description_rectangle" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns a cached interactive rectangle region.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> (<em>QtCore.QModelIndex</em>) – The item’s index.</p></li>
+<li><p><strong>rect</strong> (<em>QRect</em>) – The item’s visual rectangle.</p></li>
+<li><p><strong>button</strong> (<em>bool</em>) – Button visibility state.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple of (QRect, str) pairs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.get_file_detail_text_segments">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">get_file_detail_text_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#get_file_detail_text_segments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.get_file_detail_text_segments" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the <cite>FileItemView</cite> item <cite>common.FileDetailsRole</cite> segments
+associated with custom colors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> (<em>QModelIndex</em>) – The index currently being painted.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary of tuples “{0: (str, QtGui.QColor)}”.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.get_file_text_segments">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">get_file_text_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#get_file_text_segments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.get_file_text_segments" title="Permalink to this definition">#</a></dt>
+<dd><p>Caches and returns the text segments used to paint file items.</p>
+<p>Used to mimic rich-text like coloring of individual text elements.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s</strong> (<em>str</em>) – Item’s display name.</p></li>
+<li><p><strong>k</strong> (<em>str</em>) – Item’s file path.</p></li>
+<li><p><strong>f</strong> (<em>str</em>) – Item’s frame role data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dict of (str, QColor) pairs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.get_subdir_bg_cache_key">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">get_subdir_bg_cache_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rect</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#get_subdir_bg_cache_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.get_subdir_bg_cache_key" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the cache key used to store sub-folder background rectangles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The cache key.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.get_subdir_cache_key">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">get_subdir_cache_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rect</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#get_subdir_cache_key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.get_subdir_cache_key" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the cache key used to store sub-folder rectangles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The cache key.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.get_subdir_rectangles">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">get_subdir_rectangles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">option</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rectangles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metrics</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#get_subdir_rectangles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.get_subdir_rectangles" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the rectangles used to render sub-folder item labels.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.get_text_segments">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">get_text_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#get_text_segments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.get_text_segments" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns a list of text segments used to paint item names.</p>
+<p>Text segments mimic rich text like rendering where each
+segment can be coloured individually.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> (<em>QModelIndex</em>) – A QModelIndex instance.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The text / colour pairs used to paint segments.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.save_painter">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">save_painter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#save_painter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.save_painter" title="Permalink to this definition">#</a></dt>
+<dd><p>Decorator used to save and restore the painter state.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.subdir_text_it">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">subdir_text_it</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/delegate.html#subdir_text_it"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.delegate.subdir_text_it" title="Permalink to this definition">#</a></dt>
+<dd><p>Yields text elements to be rendered as sub-folder item labels.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.DCC_ICONS">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">DCC_ICONS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'aftereffects':</span> <span class="pre">'aep',</span> <span class="pre">'afx':</span> <span class="pre">'aep',</span> <span class="pre">'blender':</span> <span class="pre">'blend',</span> <span class="pre">'c4d':</span> <span class="pre">'c4d',</span> <span class="pre">'cinema4d':</span> <span class="pre">'c4d',</span> <span class="pre">'hou':</span> <span class="pre">'hip',</span> <span class="pre">'maya':</span> <span class="pre">'ma',</span> <span class="pre">'nuke':</span> <span class="pre">'nk',</span> <span class="pre">'photoshop':</span> <span class="pre">'psd'}</span></em><a class="headerlink" href="#bookmarks.items.delegate.DCC_ICONS" title="Permalink to this definition">#</a></dt>
+<dd><p>Used to paint a DCC icon if the asset name contains any of these names</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.regex_remove_seq_marker">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">regex_remove_seq_marker</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">re.compile('[{}]*',</span> <span class="pre">re.IGNORECASE)</span></em><a class="headerlink" href="#bookmarks.items.delegate.regex_remove_seq_marker" title="Permalink to this definition">#</a></dt>
+<dd><p>Regex used to sanitize collapsed sequence items</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="bookmarks.items.delegate.regex_remove_version">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.delegate.</span></span><span class="sig-name descname"><span class="pre">regex_remove_version</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">re.compile('(.*)(v)([{0-9\\-}]+.*)',</span> <span class="pre">re.IGNORECASE)</span></em><a class="headerlink" href="#bookmarks.items.delegate.regex_remove_version" title="Permalink to this definition">#</a></dt>
+<dd><p>Regex used to sanitize version numbers</p>
+</dd></dl>
+
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="favourite_items.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">items.favourite_items</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="bookmark_items.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">items.bookmark_items</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Gergely Wootsch
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">items.delegate</a><ul>
+<li><a class="reference internal" href="#bookmarks.items.delegate.AssetItemViewDelegate"><code class="docutils literal notranslate"><span class="pre">AssetItemViewDelegate</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.delegate.AssetItemViewDelegate.paint"><code class="docutils literal notranslate"><span class="pre">AssetItemViewDelegate.paint()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.AssetItemViewDelegate.sizeHint"><code class="docutils literal notranslate"><span class="pre">AssetItemViewDelegate.sizeHint()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.AssetItemViewDelegate.fallback_thumb"><code class="docutils literal notranslate"><span class="pre">AssetItemViewDelegate.fallback_thumb</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.BookmarkItemViewDelegate"><code class="docutils literal notranslate"><span class="pre">BookmarkItemViewDelegate</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.delegate.BookmarkItemViewDelegate.paint"><code class="docutils literal notranslate"><span class="pre">BookmarkItemViewDelegate.paint()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.BookmarkItemViewDelegate.setEditorData"><code class="docutils literal notranslate"><span class="pre">BookmarkItemViewDelegate.setEditorData()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.BookmarkItemViewDelegate.setModelData"><code class="docutils literal notranslate"><span class="pre">BookmarkItemViewDelegate.setModelData()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.BookmarkItemViewDelegate.sizeHint"><code class="docutils literal notranslate"><span class="pre">BookmarkItemViewDelegate.sizeHint()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.BookmarkItemViewDelegate.fallback_thumb"><code class="docutils literal notranslate"><span class="pre">BookmarkItemViewDelegate.fallback_thumb</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.FavouriteItemViewDelegate"><code class="docutils literal notranslate"><span class="pre">FavouriteItemViewDelegate</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.delegate.FavouriteItemViewDelegate.fallback_thumb"><code class="docutils literal notranslate"><span class="pre">FavouriteItemViewDelegate.fallback_thumb</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.FileItemViewDelegate"><code class="docutils literal notranslate"><span class="pre">FileItemViewDelegate</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.delegate.FileItemViewDelegate.paint"><code class="docutils literal notranslate"><span class="pre">FileItemViewDelegate.paint()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.FileItemViewDelegate.sizeHint"><code class="docutils literal notranslate"><span class="pre">FileItemViewDelegate.sizeHint()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.FileItemViewDelegate.fallback_thumb"><code class="docutils literal notranslate"><span class="pre">FileItemViewDelegate.fallback_thumb</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate"><code class="docutils literal notranslate"><span class="pre">ItemDelegate</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.createEditor"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.createEditor()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.draw_file_description"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.draw_file_description()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.draw_subdir_rectangles"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.draw_subdir_rectangles()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.get_paint_arguments"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.get_paint_arguments()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.get_rectangles"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.get_rectangles()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_active"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_active()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_archived"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_archived()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_asset_name"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_asset_name()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_background"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_background()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_bookmark_name"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_bookmark_name()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_dcc_icon"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_dcc_icon()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_default"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_default()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_deleted"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_deleted()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_description_editor_background"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_description_editor_background()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_drag_source"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_drag_source()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_file_name"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_file_name()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_hover"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_hover()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_inline_background"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_inline_background()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_inline_count"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_inline_count()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_inline_icons"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_inline_icons()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_name"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_name()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_selection_indicator"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_selection_indicator()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_shotgun_status"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_shotgun_status()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_slack_status"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_slack_status()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_thumbnail"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_thumbnail()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_thumbnail_drop_indicator"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_thumbnail_drop_indicator()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.paint_thumbnail_shadow"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.paint_thumbnail_shadow()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.setEditorData"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.setEditorData()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.setModelData"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.setModelData()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.ItemDelegate.updateEditorGeometry"><code class="docutils literal notranslate"><span class="pre">ItemDelegate.updateEditorGeometry()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.add_clickable_rectangle"><code class="docutils literal notranslate"><span class="pre">add_clickable_rectangle()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.draw_file_text_segments"><code class="docutils literal notranslate"><span class="pre">draw_file_text_segments()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.draw_gradient_background"><code class="docutils literal notranslate"><span class="pre">draw_gradient_background()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.draw_painter_path"><code class="docutils literal notranslate"><span class="pre">draw_painter_path()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.draw_subdir_bg_rectangles"><code class="docutils literal notranslate"><span class="pre">draw_subdir_bg_rectangles()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.elided_text"><code class="docutils literal notranslate"><span class="pre">elided_text()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.get_asset_text_segments"><code class="docutils literal notranslate"><span class="pre">get_asset_text_segments()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.get_bookmark_text_segments"><code class="docutils literal notranslate"><span class="pre">get_bookmark_text_segments()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.get_clickable_cache_key"><code class="docutils literal notranslate"><span class="pre">get_clickable_cache_key()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.get_clickable_rectangles"><code class="docutils literal notranslate"><span class="pre">get_clickable_rectangles()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.get_description_cache_key"><code class="docutils literal notranslate"><span class="pre">get_description_cache_key()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.get_description_rectangle"><code class="docutils literal notranslate"><span class="pre">get_description_rectangle()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.get_file_detail_text_segments"><code class="docutils literal notranslate"><span class="pre">get_file_detail_text_segments()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.get_file_text_segments"><code class="docutils literal notranslate"><span class="pre">get_file_text_segments()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.get_subdir_bg_cache_key"><code class="docutils literal notranslate"><span class="pre">get_subdir_bg_cache_key()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.get_subdir_cache_key"><code class="docutils literal notranslate"><span class="pre">get_subdir_cache_key()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.get_subdir_rectangles"><code class="docutils literal notranslate"><span class="pre">get_subdir_rectangles()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.get_text_segments"><code class="docutils literal notranslate"><span class="pre">get_text_segments()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.save_painter"><code class="docutils literal notranslate"><span class="pre">save_painter()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.subdir_text_it"><code class="docutils literal notranslate"><span class="pre">subdir_text_it()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.DCC_ICONS"><code class="docutils literal notranslate"><span class="pre">DCC_ICONS</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.regex_remove_seq_marker"><code class="docutils literal notranslate"><span class="pre">regex_remove_seq_marker</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.delegate.regex_remove_version"><code class="docutils literal notranslate"><span class="pre">regex_remove_version</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/scripts/furo.js"></script>
+    <script src="../../_static/design-tabs.js"></script>
+    </body>
+</html>

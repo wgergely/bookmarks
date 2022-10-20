@@ -1,17 +1,17 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="tokens" href="../tokens.html" /><link rel="prev" title="threads.threads" href="threads.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/threads/workers.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
         <title>threads.workers - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -163,7 +163,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -325,11 +325,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 </ul>
 
 </div>
@@ -358,19 +358,23 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-bookmarks.threads.workers">
-<span id="threads-workers"></span><h1>threads.workers<a class="headerlink" href="#module-bookmarks.threads.workers" title="Permalink to this heading">#</a></h1>
+          <div class="section" id="module-bookmarks.threads.workers">
+<span id="threads-workers"></span><h1>threads.workers<a class="headerlink" href="#module-bookmarks.threads.workers" title="Permalink to this headline">#</a></h1>
 <p>Defines <a class="reference internal" href="#bookmarks.threads.workers.BaseWorker" title="bookmarks.threads.workers.BaseWorker"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.threads.workers.BaseWorker</span></code></a>, the main thread worker base
 class, and various other helper functions.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.workers.BaseWorker" title="bookmarks.threads.workers.BaseWorker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseWorker</span></code></a>(queue[, parent])</p></td>
 <td><p>Base worker class used to load and process item data.</p></td>
@@ -391,8 +395,12 @@ class, and various other helper functions.</p>
 </table>
 </div>
 <p><strong>Functions:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.workers.count_assets" title="bookmarks.threads.workers.count_assets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">count_assets</span></code></a>(path, ASSET_IDENTIFIER)</p></td>
 <td><p>Get the number of asset items.</p></td>
@@ -424,13 +432,17 @@ class, and various other helper functions.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.threads.workers.BaseWorker">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.threads.workers.</span></span><span class="sig-name descname"><span class="pre">BaseWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">queue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/threads/workers.html#BaseWorker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.threads.workers.BaseWorker" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QObject</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtCore.QObject</span></code></p>
 <p>Base worker class used to load and process item data.</p>
 <p>Each worker is associated with a thread controller and a data queue.
 See <a class="reference internal" href="threads.html#module-bookmarks.threads.threads" title="bookmarks.threads.threads"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.threads.threads</span></code></a> for the definitions.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.workers.BaseWorker.clear_queue" title="bookmarks.threads.workers.BaseWorker.clear_queue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear_queue</span></code></a>()</p></td>
 <td><p>Slot called by the <cite>resetQueue</cite> signal and is responsible for clearing the worker's queue.</p></td>
@@ -451,8 +463,12 @@ See <a class="reference internal" href="threads.html#module-bookmarks.threads.th
 </table>
 </div>
 <p><strong>Attributes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.workers.BaseWorker.startTimer" title="bookmarks.threads.workers.BaseWorker.startTimer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">startTimer</span></code></a>(*args, **kwargs)</p></td>
 <td><p></p></td>
@@ -479,7 +495,7 @@ correct thread.</p>
 <span class="sig-name descname"><span class="pre">queue_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/threads/workers.html#BaseWorker.queue_items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.threads.workers.BaseWorker.queue_items" title="Permalink to this definition">#</a></dt>
 <dd><p>Queues the given list of weakrefs to the workers’ associated queue.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>refs</strong> (<em>list or tuple</em>) – A list of <code class="docutils literal notranslate"><span class="pre">weakref.ref</span></code> instances.</p>
 </dd>
 </dl>
@@ -498,7 +514,7 @@ collapsed sequence items of the given model.</p>
 <span class="sig-name descname"><span class="pre">update_changed_database_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/threads/workers.html#BaseWorker.update_changed_database_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.threads.workers.BaseWorker.update_changed_database_value" title="Permalink to this definition">#</a></dt>
 <dd><p>Process changes when any bookmark database value changes.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tab_type</strong> (<em>idx</em>) – A tab type used to match the slot with the model type.</p></li>
 <li><p><strong>source</strong> (<em>str</em>) – A file path.</p></li>
@@ -506,10 +522,10 @@ collapsed sequence items of the given model.</p>
 <li><p><strong>v</strong> (<em>object</em>) – The value to set.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Description of returned object.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>type</p>
 </dd>
 </dl>
@@ -525,13 +541,17 @@ collapsed sequence items of the given model.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.threads.workers.InfoWorker">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.threads.workers.</span></span><span class="sig-name descname"><span class="pre">InfoWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">queue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/threads/workers.html#InfoWorker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.threads.workers.InfoWorker" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#bookmarks.threads.workers.BaseWorker" title="bookmarks.threads.workers.BaseWorker"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseWorker</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#bookmarks.threads.workers.BaseWorker" title="bookmarks.threads.workers.BaseWorker"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.threads.workers.BaseWorker</span></code></a></p>
 <p>A worker used to retrieve file information.</p>
 <p>We will query the file system for file size, and the bookmark database
 for the description, and file flags.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.workers.InfoWorker.process_data" title="bookmarks.threads.workers.InfoWorker.process_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_data</span></code></a>(ref)</p></td>
 <td><p>Populates the item with the missing file information.</p></td>
@@ -544,13 +564,13 @@ for the description, and file flags.</p>
 <span class="sig-name descname"><span class="pre">process_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/threads/workers.html#InfoWorker.process_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.threads.workers.InfoWorker.process_data" title="Permalink to this definition">#</a></dt>
 <dd><p>Populates the item with the missing file information.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>ref</strong> (<em>weakref</em>) – An internal model data item’s weakref.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><cite>True</cite> on success, <cite>False</cite> otherwise.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -561,20 +581,24 @@ for the description, and file flags.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.threads.workers.ShotgunWorker">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.threads.workers.</span></span><span class="sig-name descname"><span class="pre">ShotgunWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">queue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/threads/workers.html#ShotgunWorker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.threads.workers.ShotgunWorker" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#bookmarks.threads.workers.BaseWorker" title="bookmarks.threads.workers.BaseWorker"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseWorker</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#bookmarks.threads.workers.BaseWorker" title="bookmarks.threads.workers.BaseWorker"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.threads.workers.BaseWorker</span></code></a></p>
 <p>This worker is used to retrieve data from ShotGrid.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.threads.workers.ThumbnailWorker">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.threads.workers.</span></span><span class="sig-name descname"><span class="pre">ThumbnailWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">queue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/threads/workers.html#ThumbnailWorker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.threads.workers.ThumbnailWorker" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#bookmarks.threads.workers.BaseWorker" title="bookmarks.threads.workers.BaseWorker"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseWorker</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#bookmarks.threads.workers.BaseWorker" title="bookmarks.threads.workers.BaseWorker"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.threads.workers.BaseWorker</span></code></a></p>
 <p>Thread worker responsible for creating and loading thumbnails.</p>
 <p>The resulting image data is saved in the <cite>ImageCache</cite> and used by the item
 delegates to paint thumbnails.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.workers.ThumbnailWorker.process_data" title="bookmarks.threads.workers.ThumbnailWorker.process_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">process_data</span></code></a>(ref)</p></td>
 <td><p>Populates the ImageCache with an existing thumbnail or generates a new one if <cite>ref</cite> refers to a file understood by OpenImageIO.</p></td>
@@ -594,13 +618,13 @@ new one if <cite>ref</cite> refers to a file understood by OpenImageIO.</p>
 event for the row the <cite>ref</cite> corresponds to. See the <cite>&#64;process</cite> decorator
 for details.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>ref</strong> (<em>weakref.ref</em>) – A weakref to a data segment.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><cite>ref</cite> if loaded successfully, else <cite>None</cite>.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ref or None</p>
 </dd>
 </dl>
@@ -611,7 +635,7 @@ for details.</p>
 <span class="sig-name descname"><span class="pre">queue_items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/threads/workers.html#ThumbnailWorker.queue_items"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.threads.workers.ThumbnailWorker.queue_items" title="Permalink to this definition">#</a></dt>
 <dd><p>Queues the given list of weakrefs to the workers’ associated queue.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>refs</strong> (<em>list or tuple</em>) – A list of <code class="docutils literal notranslate"><span class="pre">weakref.ref</span></code> instances.</p>
 </dd>
 </dl>
@@ -622,7 +646,7 @@ for details.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.threads.workers.TransactionsWorker">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.threads.workers.</span></span><span class="sig-name descname"><span class="pre">TransactionsWorker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">queue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/threads/workers.html#TransactionsWorker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.threads.workers.TransactionsWorker" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#bookmarks.threads.workers.BaseWorker" title="bookmarks.threads.workers.BaseWorker"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseWorker</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#bookmarks.threads.workers.BaseWorker" title="bookmarks.threads.workers.BaseWorker"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.threads.workers.BaseWorker</span></code></a></p>
 <p>This worker processes database transactions.</p>
 </dd></dl>
 
@@ -645,13 +669,13 @@ for details.</p>
 <p>The description includes currently set properties and the description of
 the bookmark.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>bookmark_row_data</strong> (<em>dict</em>) – Data retrieved from the database.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The description of the bookmark.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -663,16 +687,16 @@ the bookmark.</p>
 <dd><p>Given an array of numbers the method will return a string representation of
 the ranges contained in the array.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>arr</strong> (<em>list</em>) – An array of numbers.</p></li>
 <li><p><strong>padding</strong> (<em>int</em>) – The number of leading zeros before the number.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A string representation of the given array.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -703,13 +727,13 @@ and emits the <cite>refUpdated</cite> signal if the data has been correctly load
 <span class="sig-prename descclassname"><span class="pre">bookmarks.threads.workers.</span></span><span class="sig-name descname"><span class="pre">verify_thread_affinity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/threads/workers.html#verify_thread_affinity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.threads.workers.verify_thread_affinity" title="Permalink to this definition">#</a></dt>
 <dd><p>Prohibits running methods from the main gui thread.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dt class="field-odd">Raises</dt>
 <dd class="field-odd"><p><strong>RuntimeError</strong> – If the calling thread is the main gui thread.</p>
 </dd>
 </dl>
 </dd></dl>
 
-</section>
+</div>
 
         </article>
       </div>
@@ -740,7 +764,7 @@ and emits the <cite>refUpdated</cite> signal if the data has been correctly load
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Gergely Wootsch
+                Copyright &#169; © 2022 Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -756,54 +780,8 @@ and emits the <cite>refUpdated</cite> signal if the data has been correctly load
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">threads.workers</a><ul>
-<li><a class="reference internal" href="#bookmarks.threads.workers.BaseWorker"><code class="docutils literal notranslate"><span class="pre">BaseWorker</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.threads.workers.BaseWorker.clear_queue"><code class="docutils literal notranslate"><span class="pre">BaseWorker.clear_queue()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.BaseWorker.init_worker"><code class="docutils literal notranslate"><span class="pre">BaseWorker.init_worker()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.BaseWorker.queue_items"><code class="docutils literal notranslate"><span class="pre">BaseWorker.queue_items()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.BaseWorker.queue_model"><code class="docutils literal notranslate"><span class="pre">BaseWorker.queue_model()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.BaseWorker.update_changed_database_value"><code class="docutils literal notranslate"><span class="pre">BaseWorker.update_changed_database_value()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.BaseWorker.startTimer"><code class="docutils literal notranslate"><span class="pre">BaseWorker.startTimer</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.InfoWorker"><code class="docutils literal notranslate"><span class="pre">InfoWorker</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.threads.workers.InfoWorker.process_data"><code class="docutils literal notranslate"><span class="pre">InfoWorker.process_data()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.ShotgunWorker"><code class="docutils literal notranslate"><span class="pre">ShotgunWorker</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.ThumbnailWorker"><code class="docutils literal notranslate"><span class="pre">ThumbnailWorker</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.threads.workers.ThumbnailWorker.process_data"><code class="docutils literal notranslate"><span class="pre">ThumbnailWorker.process_data()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.ThumbnailWorker.queue_items"><code class="docutils literal notranslate"><span class="pre">ThumbnailWorker.queue_items()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.TransactionsWorker"><code class="docutils literal notranslate"><span class="pre">TransactionsWorker</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.count_assets"><code class="docutils literal notranslate"><span class="pre">count_assets()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.count_todos"><code class="docutils literal notranslate"><span class="pre">count_todos()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.get_bookmark_description"><code class="docutils literal notranslate"><span class="pre">get_bookmark_description()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.get_ranges"><code class="docutils literal notranslate"><span class="pre">get_ranges()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.process"><code class="docutils literal notranslate"><span class="pre">process()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.update_shotgun_configured"><code class="docutils literal notranslate"><span class="pre">update_shotgun_configured()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.update_slack_configured"><code class="docutils literal notranslate"><span class="pre">update_slack_configured()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.threads.workers.verify_thread_affinity"><code class="docutils literal notranslate"><span class="pre">verify_thread_affinity()</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
@@ -811,9 +789,7 @@ and emits the <cite>refUpdated</cite> signal if the data has been correctly load
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     </body>

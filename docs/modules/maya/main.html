@@ -1,17 +1,17 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="maya.plugin" href="plugin.html" /><link rel="prev" title="maya.export" href="export.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/maya/main.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
         <title>maya.main - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -163,7 +163,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -325,11 +325,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 </ul>
 
 </div>
@@ -358,18 +358,22 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-bookmarks.maya.main">
-<span id="maya-main"></span><h1>maya.main<a class="headerlink" href="#module-bookmarks.maya.main" title="Permalink to this heading">#</a></h1>
+          <div class="section" id="module-bookmarks.maya.main">
+<span id="maya-main"></span><h1>maya.main<a class="headerlink" href="#module-bookmarks.maya.main" title="Permalink to this headline">#</a></h1>
 <p>This module defines <a class="reference internal" href="#bookmarks.maya.main.MayaWidget" title="bookmarks.maya.main.MayaWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">MayaWidget</span></code></a>, Bookmarks’ container widget.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.MayaButtonWidget" title="bookmarks.maya.main.MayaButtonWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MayaButtonWidget</span></code></a>(size[, parent])</p></td>
 <td><p>A small control buttons used by the Maya plugin usually docked under the Maya Toolbox.</p></td>
@@ -384,8 +388,12 @@
 </table>
 </div>
 <p><strong>Functions:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.init_maya_widget" title="bookmarks.maya.main.init_maya_widget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_maya_widget</span></code></a>()</p></td>
 <td><p>Initializes the maya widget.</p></td>
@@ -402,22 +410,30 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.maya.main.MayaButtonWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.maya.main.</span></span><span class="sig-name descname"><span class="pre">MayaButtonWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/maya/main.html#MayaButtonWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.MayaButtonWidget" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../ui.html#bookmarks.ui.ClickableIconButton" title="bookmarks.ui.ClickableIconButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClickableIconButton</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="../ui.html#bookmarks.ui.ClickableIconButton" title="bookmarks.ui.ClickableIconButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.ui.ClickableIconButton</span></code></a></p>
 <p>A small control buttons used by the Maya plugin usually docked
 under the Maya Toolbox.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.MayaButtonWidget.ContextMenu" title="bookmarks.maya.main.MayaButtonWidget.ContextMenu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ContextMenu</span></code></a></p></td>
-<td><p>alias of <a class="reference internal" href="contextmenu.html#bookmarks.maya.contextmenu.MayaButtonWidgetContextMenu" title="bookmarks.maya.contextmenu.MayaButtonWidgetContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">MayaButtonWidgetContextMenu</span></code></a></p></td>
+<td><p>alias of <a class="reference internal" href="contextmenu.html#bookmarks.maya.contextmenu.MayaButtonWidgetContextMenu" title="bookmarks.maya.contextmenu.MayaButtonWidgetContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.maya.contextmenu.MayaButtonWidgetContextMenu</span></code></a></p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.MayaButtonWidget.contextMenuEvent" title="bookmarks.maya.main.MayaButtonWidget.contextMenuEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contextMenuEvent</span></code></a>(event)</p></td>
 <td><p>Event handler.</p></td>
@@ -440,7 +456,7 @@ under the Maya Toolbox.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="bookmarks.maya.main.MayaButtonWidget.ContextMenu">
 <span class="sig-name descname"><span class="pre">ContextMenu</span></span><a class="headerlink" href="#bookmarks.maya.main.MayaButtonWidget.ContextMenu" title="Permalink to this definition">#</a></dt>
-<dd><p>alias of <a class="reference internal" href="contextmenu.html#bookmarks.maya.contextmenu.MayaButtonWidgetContextMenu" title="bookmarks.maya.contextmenu.MayaButtonWidgetContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">MayaButtonWidgetContextMenu</span></code></a></p>
+<dd><p>alias of <a class="reference internal" href="contextmenu.html#bookmarks.maya.contextmenu.MayaButtonWidgetContextMenu" title="bookmarks.maya.contextmenu.MayaButtonWidgetContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.maya.contextmenu.MayaButtonWidgetContextMenu</span></code></a></p>
 </dd></dl>
 
 <dl class="py method">
@@ -478,11 +494,15 @@ under the Maya Toolbox.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.maya.main.MayaWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.maya.main.</span></span><span class="sig-name descname"><span class="pre">MayaWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/maya/main.html#MayaWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.MayaWidget" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">MayaQWidgetDockableMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">maya.app.general.mayaMixin.MayaQWidgetDockableMixin</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QWidget</span></code></p>
 <p>The main plugin widget.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.MayaWidget.active_changed" title="bookmarks.maya.main.MayaWidget.active_changed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">active_changed</span></code></a>()</p></td>
 <td><p>Slot called when an active asset changes.</p></td>
@@ -556,11 +576,15 @@ and the callback needed by the maya plugin.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.maya.main.PanelPicker">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.maya.main.</span></span><span class="sig-name descname"><span class="pre">PanelPicker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/maya/main.html#PanelPicker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.maya.main.PanelPicker" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QDialog</span></code></p>
 <p>Modal dialog used to select a visible modelPanel in Maya.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.maya.main.PanelPicker.keyPressEvent" title="bookmarks.maya.main.PanelPicker.keyPressEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keyPressEvent</span></code></a>(event)</p></td>
 <td><p>Key press event handler.</p></td>
@@ -635,7 +659,7 @@ it to the bar where AttributeEditor is found. If it exists it will get the
 existing instance and show it if not currently visible, hide it if visible.</p>
 </dd></dl>
 
-</section>
+</div>
 
         </article>
       </div>
@@ -666,7 +690,7 @@ existing instance and show it if not currently visible, hide it if visible.</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Gergely Wootsch
+                Copyright &#169; © 2022 Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -682,56 +706,8 @@ existing instance and show it if not currently visible, hide it if visible.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">maya.main</a><ul>
-<li><a class="reference internal" href="#bookmarks.maya.main.MayaButtonWidget"><code class="docutils literal notranslate"><span class="pre">MayaButtonWidget</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.maya.main.MayaButtonWidget.ContextMenu"><code class="docutils literal notranslate"><span class="pre">MayaButtonWidget.ContextMenu</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.main.MayaButtonWidget.contextMenuEvent"><code class="docutils literal notranslate"><span class="pre">MayaButtonWidget.contextMenuEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.main.MayaButtonWidget.enterEvent"><code class="docutils literal notranslate"><span class="pre">MayaButtonWidget.enterEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.main.MayaButtonWidget.init_shortcuts"><code class="docutils literal notranslate"><span class="pre">MayaButtonWidget.init_shortcuts()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.main.MayaButtonWidget.leaveEvent"><code class="docutils literal notranslate"><span class="pre">MayaButtonWidget.leaveEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.main.MayaButtonWidget.paintEvent"><code class="docutils literal notranslate"><span class="pre">MayaButtonWidget.paintEvent()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.maya.main.MayaWidget"><code class="docutils literal notranslate"><span class="pre">MayaWidget</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.maya.main.MayaWidget.active_changed"><code class="docutils literal notranslate"><span class="pre">MayaWidget.active_changed()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.main.MayaWidget.context_callbacks"><code class="docutils literal notranslate"><span class="pre">MayaWidget.context_callbacks()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.main.MayaWidget.customFilesContextMenuEvent"><code class="docutils literal notranslate"><span class="pre">MayaWidget.customFilesContextMenuEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.main.MayaWidget.paintEvent"><code class="docutils literal notranslate"><span class="pre">MayaWidget.paintEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.main.MayaWidget.remove_context_callbacks"><code class="docutils literal notranslate"><span class="pre">MayaWidget.remove_context_callbacks()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.main.MayaWidget.show"><code class="docutils literal notranslate"><span class="pre">MayaWidget.show()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.main.MayaWidget.sizeHint"><code class="docutils literal notranslate"><span class="pre">MayaWidget.sizeHint()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.maya.main.PanelPicker"><code class="docutils literal notranslate"><span class="pre">PanelPicker</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.maya.main.PanelPicker.keyPressEvent"><code class="docutils literal notranslate"><span class="pre">PanelPicker.keyPressEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.main.PanelPicker.mouseMoveEvent"><code class="docutils literal notranslate"><span class="pre">PanelPicker.mouseMoveEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.main.PanelPicker.mouseReleaseEvent"><code class="docutils literal notranslate"><span class="pre">PanelPicker.mouseReleaseEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.main.PanelPicker.paintEvent"><code class="docutils literal notranslate"><span class="pre">PanelPicker.paintEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.main.PanelPicker.showEvent"><code class="docutils literal notranslate"><span class="pre">PanelPicker.showEvent()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.maya.main.init_maya_widget"><code class="docutils literal notranslate"><span class="pre">init_maya_widget()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.main.init_tool_button"><code class="docutils literal notranslate"><span class="pre">init_tool_button()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.maya.main.show"><code class="docutils literal notranslate"><span class="pre">show()</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
@@ -739,9 +715,7 @@ existing instance and show it if not currently visible, hide it if visible.</p>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     </body>

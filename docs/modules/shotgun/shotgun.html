@@ -1,17 +1,17 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="shotgun.tasks" href="tasks.html" /><link rel="prev" title="shotgun.publish_widgets" href="publish_widgets.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/shotgun/shotgun.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
         <title>shotgun.shotgun - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -163,7 +163,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -325,11 +325,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 </ul>
 
 </div>
@@ -358,14 +358,14 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-bookmarks.shotgun.shotgun">
-<span id="shotgun-shotgun"></span><h1>shotgun.shotgun<a class="headerlink" href="#module-bookmarks.shotgun.shotgun" title="Permalink to this heading">#</a></h1>
+          <div class="section" id="module-bookmarks.shotgun.shotgun">
+<span id="shotgun-shotgun"></span><h1>shotgun.shotgun<a class="headerlink" href="#module-bookmarks.shotgun.shotgun" title="Permalink to this headline">#</a></h1>
 <p>The module contains the classes and methods needed to provide linkage
 with ShotGrid.</p>
 <p>In the simplest of cases (e.g. when a bookmark item is active and have already been
@@ -388,8 +388,12 @@ instance:</p>
 These values must be set in the bookmark database before initiating a connection.</p>
 <p><a class="reference external" href="https://developer.shotgunsoftware.com/python-api/reference.html">https://developer.shotgunsoftware.com/python-api/reference.html</a></p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityComboBox" title="bookmarks.shotgun.shotgun.EntityComboBox"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EntityComboBox</span></code></a>(items[, fixed_height, parent])</p></td>
 <td><p>A ShotGrid specific combobox, intended to be used with the <cite>EntityFilterModel</cite>.</p></td>
@@ -407,8 +411,12 @@ These values must be set in the bookmark database before initiating a connection
 </table>
 </div>
 <p><strong>Functions:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.connection" title="bookmarks.shotgun.shotgun.connection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connection</span></code></a>(sg_properties)</p></td>
 <td><p>Context manager used for connecting to ShotGrid using an API Script.</p></td>
@@ -423,8 +431,12 @@ These values must be set in the bookmark database before initiating a connection
 </table>
 </div>
 <p><strong>Data:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.ENTITY_URL" title="bookmarks.shotgun.shotgun.ENTITY_URL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ENTITY_URL</span></code></a></p></td>
 <td><p>ShotGrid entity url pattern</p></td>
@@ -441,12 +453,16 @@ These values must be set in the bookmark database before initiating a connection
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.EntityComboBox">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.shotgun.</span></span><span class="sig-name descname"><span class="pre">EntityComboBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">common.size(common.size_row_height)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/shotgun.html#EntityComboBox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.shotgun.EntityComboBox" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QComboBox</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QComboBox</span></code></p>
 <p>A ShotGrid specific combobox, intended to be used with the <cite>EntityFilterModel</cite>.
 Use <cite>self.set_model</cite> to set a new <cite>EntityModel</cite>.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityComboBox.append_entity" title="bookmarks.shotgun.shotgun.EntityComboBox.append_entity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append_entity</span></code></a>(entity)</p></td>
 <td><p>Appends a new row to the end of the model.</p></td>
@@ -474,13 +490,17 @@ Use <cite>self.set_model</cite> to set a new <cite>EntityModel</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.EntityFilterModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.shotgun.</span></span><span class="sig-name descname"><span class="pre">EntityFilterModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/shotgun.html#EntityFilterModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.shotgun.EntityFilterModel" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QSortFilterProxyModel</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtCore.QSortFilterProxyModel</span></code></p>
 <p>A filter model to wrap our EntityModel.</p>
 <p>Use it to filter entities by type. <cite>self.set_entity_type</cite>
 sets the filter entity type.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityFilterModel.filterAcceptsColumn" title="bookmarks.shotgun.shotgun.EntityFilterModel.filterAcceptsColumn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filterAcceptsColumn</span></code></a>(self, source_column, ...)</p></td>
 <td><p></p></td>
@@ -506,7 +526,7 @@ sets the filter entity type.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.EntityModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.shotgun.</span></span><span class="sig-name descname"><span class="pre">EntityModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/shotgun.html#EntityModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.shotgun.EntityModel" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QAbstractItemModel</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtCore.QAbstractItemModel</span></code></p>
 <p>Our custom model used to store ShotGrid entities.</p>
 <p>The model itself does not load any data but instead uses a secondary worker
 thread to do the heavy lifting. The <cite>entityDataRequested</cite> and
@@ -515,8 +535,12 @@ ShotGrid data.</p>
 <p>Each instance has a unique uuid used to match data requests with retrieved
 data.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityModel.columnCount" title="bookmarks.shotgun.shotgun.EntityModel.columnCount"><code class="xref py py-obj docutils literal notranslate"><span class="pre">columnCount</span></code></a>(self[, parent])</p></td>
 <td><p></p></td>
@@ -540,8 +564,12 @@ data.</p>
 </table>
 </div>
 <p><strong>Attributes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityModel.entityDataReceived" title="bookmarks.shotgun.shotgun.EntityModel.entityDataReceived"><code class="xref py py-obj docutils literal notranslate"><span class="pre">entityDataReceived</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Signal used by the worker thread when data is ready, with the data's uuid, and list of entities.</p></td>
@@ -559,7 +587,7 @@ data.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.shotgun.shotgun.EntityModel.data">
-<span class="sig-name descname"><span class="pre">data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PySide2.QtCore.Qt.ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/shotgun.html#EntityModel.data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.shotgun.EntityModel.data" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PySide2.QtCore.Qt.ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">typing.Any</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/shotgun.html#EntityModel.data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.shotgun.EntityModel.data" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -610,7 +638,7 @@ and are required to make ShotGrid connections.</p>
 <p>The instance is uninitialized by default, use self.init() to load the values
 from the bookmark database.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>server</strong> (<em>str</em>) – <cite>server</cite> path segment.</p></li>
 <li><p><strong>job</strong> (<em>str</em>) – <cite>job</cite> path segment.</p></li>
@@ -621,8 +649,12 @@ from the bookmark database.</p>
 </dd>
 </dl>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.init" title="bookmarks.shotgun.shotgun.ShotgunProperties.init"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init</span></code></a>([db])</p></td>
 <td><p>Load all current shotgun values from the bookmark item database.</p></td>
@@ -637,8 +669,12 @@ from the bookmark database.</p>
 </table>
 </div>
 <p><strong>Attributes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.asset" title="bookmarks.shotgun.shotgun.ShotgunProperties.asset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">asset</span></code></a></p></td>
 <td><p><cite>Asset</cite> path segment.</p></td>
@@ -666,10 +702,10 @@ from the bookmark database.</p>
 <span class="sig-name descname"><span class="pre">urls</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/shotgun.html#ShotgunProperties.urls"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.shotgun.ShotgunProperties.urls" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a list of available urls based on the sg_properties provided.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A list of urls.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>list</p>
 </dd>
 </dl>
@@ -680,17 +716,17 @@ from the bookmark database.</p>
 <span class="sig-name descname"><span class="pre">verify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bookmark</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/shotgun.html#ShotgunProperties.verify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.shotgun.ShotgunProperties.verify" title="Permalink to this definition">#</a></dt>
 <dd><p>Checks the validity of the current configuration.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>connection</strong> (<em>bool, optional</em>) – Verifies the connection information if True.</p></li>
 <li><p><strong>bookmark</strong> (<em>bool, optional</em>) – Checks only the bookmark item’s configuration if True.</p></li>
 <li><p><strong>asset</strong> (<em>bool, optional</em>) – Checks only the asset item’s configuration if True.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>True if the configuration is valid, False otherwise.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>bools</p>
 </dd>
 </dl>
@@ -729,10 +765,10 @@ from the bookmark database.</p>
 <p>The context manager will connect to shotgun on entering and close the
 connection when exiting.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>sg_properties</strong> (<em>dict</em>) – The shotgun properties saved in the bookmark database.</p>
 </dd>
-<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dt class="field-even">Yields</dt>
 <dd class="field-even"><p><em>ScriptConnection</em> – A connected shotgun connection instance</p>
 </dd>
 </dl>
@@ -748,7 +784,7 @@ backed by a cache.</p>
 <p>User authentication is not implemented currently!</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>domain</strong> (<em>str</em>) – The base url or domain where the shotgun server is located.</p></li>
 <li><p><strong>script</strong> (<em>str</em>) – A valid ShotGrid API Script’s name.</p></li>
@@ -782,7 +818,7 @@ backed by a cache.</p>
 <dd><p>A list of entity and field definitions used to assist entity data queries</p>
 </dd></dl>
 
-</section>
+</div>
 
         </article>
       </div>
@@ -813,7 +849,7 @@ backed by a cache.</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Gergely Wootsch
+                Copyright &#169; © 2022 Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -829,63 +865,8 @@ backed by a cache.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">shotgun.shotgun</a><ul>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityComboBox"><code class="docutils literal notranslate"><span class="pre">EntityComboBox</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityComboBox.append_entity"><code class="docutils literal notranslate"><span class="pre">EntityComboBox.append_entity()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityComboBox.set_model"><code class="docutils literal notranslate"><span class="pre">EntityComboBox.set_model()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityFilterModel"><code class="docutils literal notranslate"><span class="pre">EntityFilterModel</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityFilterModel.filterAcceptsColumn"><code class="docutils literal notranslate"><span class="pre">EntityFilterModel.filterAcceptsColumn()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityFilterModel.filterAcceptsRow"><code class="docutils literal notranslate"><span class="pre">EntityFilterModel.filterAcceptsRow()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityModel"><code class="docutils literal notranslate"><span class="pre">EntityModel</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityModel.columnCount"><code class="docutils literal notranslate"><span class="pre">EntityModel.columnCount()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityModel.data"><code class="docutils literal notranslate"><span class="pre">EntityModel.data()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityModel.flags"><code class="docutils literal notranslate"><span class="pre">EntityModel.flags()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityModel.index"><code class="docutils literal notranslate"><span class="pre">EntityModel.index()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityModel.parent"><code class="docutils literal notranslate"><span class="pre">EntityModel.parent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityModel.rowCount"><code class="docutils literal notranslate"><span class="pre">EntityModel.rowCount()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityModel.entityDataReceived"><code class="docutils literal notranslate"><span class="pre">EntityModel.entityDataReceived</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.EntityModel.entityDataRequested"><code class="docutils literal notranslate"><span class="pre">EntityModel.entityDataRequested</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.init"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.init()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.urls"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.urls()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.verify"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.verify()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.asset"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.asset</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.job"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.job</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.root"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.root</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.ShotgunProperties.server"><code class="docutils literal notranslate"><span class="pre">ShotgunProperties.server</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.connection"><code class="docutils literal notranslate"><span class="pre">connection()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.get_sg"><code class="docutils literal notranslate"><span class="pre">get_sg()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.sanitize_path"><code class="docutils literal notranslate"><span class="pre">sanitize_path()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.ENTITY_URL"><code class="docutils literal notranslate"><span class="pre">ENTITY_URL</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.SG_CONNECTIONS"><code class="docutils literal notranslate"><span class="pre">SG_CONNECTIONS</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.shotgun.fields"><code class="docutils literal notranslate"><span class="pre">fields</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
@@ -893,9 +874,7 @@ backed by a cache.</p>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     </body>

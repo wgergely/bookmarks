@@ -1,6 +1,7 @@
 """Editor widget used by :class:`~bookmarks.bookmarker.main.BookmarkerWidget` to save
 bookmark items to the user settings file.
 
+
 """
 import functools
 import json

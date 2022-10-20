@@ -1,17 +1,17 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="importexport" href="importexport.html" /><link rel="prev" title="file_saver.widgets" href="file_saver/widgets.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/images.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
         <title>images - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -163,7 +163,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -325,11 +325,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
 </ul>
 
 </div>
@@ -358,14 +358,14 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-bookmarks.images">
-<span id="images"></span><h1>images<a class="headerlink" href="#module-bookmarks.images" title="Permalink to this heading">#</a></h1>
+          <div class="section" id="module-bookmarks.images">
+<span id="images"></span><h1>images<a class="headerlink" href="#module-bookmarks.images" title="Permalink to this headline">#</a></h1>
 <p>The module defines <a class="reference internal" href="#bookmarks.images.ImageCache" title="bookmarks.images.ImageCache"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageCache</span></code></a>, a utility class used to store image and color data and
 all other utility methods needed to create, load and store thumbnail images.</p>
 <p>Use the high-level <a class="reference internal" href="#bookmarks.images.get_thumbnail" title="bookmarks.images.get_thumbnail"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_thumbnail()</span></code></a> to get an item’s thumbnail. This relies on the
@@ -382,8 +382,12 @@ suitable placeholder image. See  <a class="reference internal" href="#bookmarks.
 To load an image using OpenImageIO as a QtGui.QImage see <a class="reference internal" href="#bookmarks.images.oiio_get_qimage" title="bookmarks.images.oiio_get_qimage"><code class="xref py py-func docutils literal notranslate"><span class="pre">oiio_get_qimage()</span></code></a>.</p>
 <p>To load gui resources, use <a class="reference internal" href="#bookmarks.images.ImageCache.rsc_pixmap" title="bookmarks.images.ImageCache.rsc_pixmap"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ImageCache.rsc_pixmap()</span></code></a>.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.images.ImageCache" title="bookmarks.images.ImageCache"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImageCache</span></code></a></p></td>
 <td><p>Utility class for storing, and accessing image data.</p></td>
@@ -392,8 +396,12 @@ To load an image using OpenImageIO as a QtGui.QImage see <a class="reference int
 </table>
 </div>
 <p><strong>Functions:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.images.create_thumbnail_from_image" title="bookmarks.images.create_thumbnail_from_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_thumbnail_from_image</span></code></a>(server, job, ...)</p></td>
 <td><p>Creates a thumbnail from a given image file and saves it as the source file's thumbnail image.</p></td>
@@ -435,8 +443,12 @@ To load an image using OpenImageIO as a QtGui.QImage see <a class="reference int
 </table>
 </div>
 <p><strong>Data:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.images.QT_IMAGE_FORMATS" title="bookmarks.images.QT_IMAGE_FORMATS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QT_IMAGE_FORMATS</span></code></a></p></td>
 <td><p>The list of image formats QT is configured to read.</p></td>
@@ -447,7 +459,7 @@ To load an image using OpenImageIO as a QtGui.QImage see <a class="reference int
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.images.ImageCache">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.images.</span></span><span class="sig-name descname"><span class="pre">ImageCache</span></span><a class="reference internal" href="../_modules/bookmarks/images.html#ImageCache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.ImageCache" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QObject</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtCore.QObject</span></code></p>
 <p>Utility class for storing, and accessing image data.</p>
 <p>You shouldn’t have to use the <a class="reference internal" href="#bookmarks.images.ImageCache.value" title="bookmarks.images.ImageCache.value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">value()</span></code></a> and <a class="reference internal" href="#bookmarks.images.ImageCache.setValue" title="bookmarks.images.ImageCache.setValue"><code class="xref py py-meth docutils literal notranslate"><span class="pre">setValue()</span></code></a> methods. Instead,
 use the <a class="reference internal" href="#bookmarks.images.ImageCache.get_image" title="bookmarks.images.ImageCache.get_image"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_image()</span></code></a> and <a class="reference internal" href="#bookmarks.images.ImageCache.get_pixmap" title="bookmarks.images.ImageCache.get_pixmap"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_pixmap()</span></code></a> - they’re high-level functions, that
@@ -460,8 +472,12 @@ multiple QPixmap and QImage cache entries as various sizes are requested and cac
 </div>
 <p>To remove a resource from the cache use the <a class="reference internal" href="#bookmarks.images.ImageCache.flush" title="bookmarks.images.ImageCache.flush"><code class="xref py py-meth docutils literal notranslate"><span class="pre">flush()</span></code></a> method.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.images.ImageCache.contains" title="bookmarks.images.ImageCache.contains"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contains</span></code></a>(_hash, cache_type)</p></td>
 <td><p>Checks if the given hash exists in the database.</p></td>
@@ -510,7 +526,7 @@ multiple QPixmap and QImage cache entries as various sizes are requested and cac
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">flush</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#ImageCache.flush"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.ImageCache.flush" title="Permalink to this definition">#</a></dt>
 <dd><p>Flushes all values associated with a given source from the image cache.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>source</strong> (<em>str</em>) – A file path.</p>
 </dd>
 </dl>
@@ -521,7 +537,7 @@ multiple QPixmap and QImage cache entries as various sizes are requested and cac
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hash</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#ImageCache.get_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.ImageCache.get_color" title="Permalink to this definition">#</a></dt>
 <dd><p>Gets a cached QColor associated with the given source.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source</strong> (<em>str</em>) – A file path.</p></li>
 <li><p><strong>force</strong> (<em>bool</em>) – Force value recache.</p></li>
@@ -541,7 +557,7 @@ multiple QPixmap and QImage cache entries as various sizes are requested and cac
 using <cite>source</cite>’s value but this can be overwritten by explicitly
 setting <cite>hash</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source</strong> (<em>str</em>) – Path to an OpenImageIO compliant image file.</p></li>
 <li><p><strong>size</strong> (<em>int</em>) – The size of the requested image.</p></li>
@@ -550,10 +566,10 @@ setting <cite>hash</cite>.</p>
 <li><p><strong>oiio</strong> (<em>bool</em>) – Use OpenImageIO to load the image data.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The loaded and resized QImage, or <cite>None</cite> if loading fails.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>QImage</p>
 </dd>
 </dl>
@@ -574,7 +590,7 @@ Use <a class="reference internal" href="#bookmarks.images.ImageCache.get_image" 
 anyway.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source</strong> (<em>str</em>) – Path to an image file.</p></li>
 <li><p><strong>size</strong> (<em>int</em>) – The size of the requested image.</p></li>
@@ -583,10 +599,10 @@ anyway.</p>
 <li><p><strong>oiio</strong> (<em>bool</em>) – Use OpenImageIO to load the image, instead of Qt.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The loaded and resized QPixmap, or <cite>None</cite>.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>QPixmap</p>
 </dd>
 </dl>
@@ -597,16 +613,16 @@ anyway.</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hash</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#ImageCache.make_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.ImageCache.make_color" title="Permalink to this definition">#</a></dt>
 <dd><p>Calculate the average color of a source image.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source</strong> (<em>str</em>) – Path to an image file.</p></li>
 <li><p><strong>hash</strong> (<em>str, optional</em>) – Has value to use instead of source image’s hash.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The average color of the source image.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>QtGui.QImage</p>
 </dd>
 </dl>
@@ -619,7 +635,7 @@ anyway.</p>
 <cite>size</cite> and saves it to <cite>destination</cite>.</p>
 <p>If size is <cite>-1</cite>, the image won’t be resized.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source</strong> (<em>str</em>) – Source image’s file path.</p></li>
 <li><p><strong>destination</strong> (<em>str</em>) – Destination of the converted image.</p></li>
@@ -627,10 +643,10 @@ anyway.</p>
 <li><p><strong>nthreads</strong> (<em>int</em>) – Number of threads to use. Defaults to 4.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>True if successfully converted the image, False otherwise.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
@@ -641,16 +657,16 @@ anyway.</p>
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">resize_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#ImageCache.resize_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.ImageCache.resize_image" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a scaled copy of the image that fits in size.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>image</strong> (<em>QImage</em>) – The image to rescale.</p></li>
 <li><p><strong>size</strong> (<em>int</em>) – The size of the square to fit.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The resized copy of the original image.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>QImage</p>
 </dd>
 </dl>
@@ -658,10 +674,10 @@ anyway.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.images.ImageCache.rsc_pixmap">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rsc_pixmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">common.GuiResource</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oiio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#ImageCache.rsc_pixmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.ImageCache.rsc_pixmap" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rsc_pixmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'gui'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oiio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#ImageCache.rsc_pixmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.ImageCache.rsc_pixmap" title="Permalink to this definition">#</a></dt>
 <dd><p>Loads an image resource and returns it as a resized (and recolored) QPixmap.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – Name of the resource without the extension.</p></li>
 <li><p><strong>color</strong> (<em>QColor or None</em>) – The color of the icon.</p></li>
@@ -671,7 +687,7 @@ anyway.</p>
 <li><p><strong>get_path</strong> (<em>bool</em>) – Returns a path when True.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A QPixmap of the requested resource, or a str path if <code class="docutils literal notranslate"><span class="pre">get_path</span></code> is True.
 None if the resource could not be found.</p>
 </dd>
@@ -691,7 +707,7 @@ setting the new value. This only applies to Image- and PixmapTypes.</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hash</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#ImageCache.value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.ImageCache.value" title="Permalink to this definition">#</a></dt>
 <dd><p>Get a value from the ImageCache.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>hash</strong> (<em>str</em>) – A hash value generated by <cite>common.get_hash</cite></p>
 </dd>
 </dl>
@@ -709,7 +725,7 @@ want to create a new thumbnail for. The <code class="docutils literal notranslat
 an image file that will be converted using <code class="xref py py-func docutils literal notranslate"><span class="pre">oiio_make_thumbnail()</span></code> to a
 thumbnail image and saved to our image cache and disk to represent <code class="docutils literal notranslate"><span class="pre">source</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>server</strong> (<em>str</em>) – <cite>server</cite> path segment.</p></li>
 <li><p><strong>job</strong> (<em>str</em>) – <cite>job</cite> path segment.</p></li>
@@ -730,7 +746,7 @@ the proxy path should be used to save the thumbnail instead.</p></li>
 <p>When <cite>proxy</cite> is set to <cite>True</cite> or the source file is a sequence, we will use
 the sequence’s first item as our thumbnail source.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>server</strong> (<em>str</em>) – <cite>server</cite> path segment.</p></li>
 <li><p><strong>job</strong> (<em>str</em>) – <cite>job</cite> path segment.</p></li>
@@ -738,10 +754,10 @@ the sequence’s first item as our thumbnail source.</p>
 <li><p><strong>source</strong> (<em>str</em>) – The full file path.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The resolved thumbnail path.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -767,16 +783,16 @@ Use the return value on the QFileDialog.setNameFilters() method.</p>
 <p>In absence of a custom user, or generated thumbnail, we’ll try and find one based on
 the file’s format extension.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file_path</strong> (<em>str</em>) – Path to a file or folder.</p></li>
 <li><p><strong>fallback</strong> (<em>str</em>) – An image to use if no suitable placeholder is found.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Path to the placeholder image.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -795,7 +811,7 @@ bookmark’s, then the job’s root folder to see if we can find a
 <p>See also <a class="reference internal" href="#bookmarks.images.get_cached_thumbnail_path" title="bookmarks.images.get_cached_thumbnail_path"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_cached_thumbnail_path()</span></code></a> for a lower level method used
 to find a cached image file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>server</strong> (<em>str</em>) – <cite>server</cite> path segment.</p></li>
 <li><p><strong>job</strong> (<em>str</em>) – <cite>job</cite> path segment.</p></li>
@@ -806,11 +822,11 @@ to find a cached image file.</p>
 <li><p><strong>get_path</strong> (<em>bool</em>) – Returns a path instead of a QPixmap if set to <cite>True</cite>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p><cite>(QPixmap, QColor)</cite>, or <cite>(None, None)</cite>.
 str:                 Path to the thumbnail file when <cite>get_path=True</cite>.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
@@ -839,17 +855,17 @@ str:                 Path to the thumbnail file when <cite>get_path=True</cite>.
 <span class="sig-prename descclassname"><span class="pre">bookmarks.images.</span></span><span class="sig-name descname"><span class="pre">oiio_get_buf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hash</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subimage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#oiio_get_buf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.oiio_get_buf" title="Permalink to this definition">#</a></dt>
 <dd><p>Checks and loads a source image with OpenImageIO’s format reader.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source</strong> (<em>str</em>) – Path to an OpenImageIO compatible image file.</p></li>
 <li><p><strong>hash</strong> (<em>str</em>) – Specify the hash manually, otherwise will be generated.</p></li>
 <li><p><strong>force</strong> (<em>bool</em>) – When <cite>true</cite>, forces the buffer to be re-cached.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>An <cite>ImageBuf</cite> instance or <cite>None</cite> if the image cannot be read.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ImageBuf</p>
 </dd>
 </dl>
@@ -861,17 +877,17 @@ str:                 Path to the thumbnail file when <cite>get_path=True</cite>.
 <dd><p>Load the pixel data using OpenImageIO and return it as a
 <cite>RGBA8888</cite> / <cite>RGB888</cite> QImage.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source</strong> (<em>str</em>) – Path to an OpenImageIO readable image.</p></li>
 <li><p><strong>buf</strong> (<em>OpenImageIO.ImageBuf</em>) – When buf is valid ImageBuf instance it will be used
 as the source instead of <cite>source</cite>. Defaults to <cite>None</cite>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>An QImage instance or <cite>None</cite> if the image/source is invalid.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>QImage</p>
 </dd>
 </dl>
@@ -882,7 +898,7 @@ as the source instead of <cite>source</cite>. Defaults to <cite>None</cite>.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.images.</span></span><span class="sig-name descname"><span class="pre">wait_for_lock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#wait_for_lock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.wait_for_lock" title="Permalink to this definition">#</a></dt>
 <dd><p>Waits for a maximum amount of time when a lock file is present.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source</strong> (<em>str</em>) – A file path.</p></li>
 <li><p><strong>timeout</strong> (<em>float</em>) – The maximum amount of time to wait in seconds.</p></li>
@@ -897,7 +913,7 @@ as the source instead of <cite>source</cite>. Defaults to <cite>None</cite>.</p>
 <dd><p>The list of image formats QT is configured to read.</p>
 </dd></dl>
 
-</section>
+</div>
 
         </article>
       </div>
@@ -928,7 +944,7 @@ as the source instead of <cite>source</cite>. Defaults to <cite>None</cite>.</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Gergely Wootsch
+                Copyright &#169; © 2022 Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -944,53 +960,8 @@ as the source instead of <cite>source</cite>. Defaults to <cite>None</cite>.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">images</a><ul>
-<li><a class="reference internal" href="#bookmarks.images.ImageCache"><code class="docutils literal notranslate"><span class="pre">ImageCache</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.images.ImageCache.contains"><code class="docutils literal notranslate"><span class="pre">ImageCache.contains()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.ImageCache.flush"><code class="docutils literal notranslate"><span class="pre">ImageCache.flush()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.ImageCache.get_color"><code class="docutils literal notranslate"><span class="pre">ImageCache.get_color()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.ImageCache.get_image"><code class="docutils literal notranslate"><span class="pre">ImageCache.get_image()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.ImageCache.get_pixmap"><code class="docutils literal notranslate"><span class="pre">ImageCache.get_pixmap()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.ImageCache.make_color"><code class="docutils literal notranslate"><span class="pre">ImageCache.make_color()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.ImageCache.oiio_make_thumbnail"><code class="docutils literal notranslate"><span class="pre">ImageCache.oiio_make_thumbnail()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.ImageCache.resize_image"><code class="docutils literal notranslate"><span class="pre">ImageCache.resize_image()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.ImageCache.rsc_pixmap"><code class="docutils literal notranslate"><span class="pre">ImageCache.rsc_pixmap()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.ImageCache.setValue"><code class="docutils literal notranslate"><span class="pre">ImageCache.setValue()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.ImageCache.value"><code class="docutils literal notranslate"><span class="pre">ImageCache.value()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.images.create_thumbnail_from_image"><code class="docutils literal notranslate"><span class="pre">create_thumbnail_from_image()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.get_cached_thumbnail_path"><code class="docutils literal notranslate"><span class="pre">get_cached_thumbnail_path()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.get_oiio_extensions"><code class="docutils literal notranslate"><span class="pre">get_oiio_extensions()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.get_oiio_namefilters"><code class="docutils literal notranslate"><span class="pre">get_oiio_namefilters()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.get_placeholder_path"><code class="docutils literal notranslate"><span class="pre">get_placeholder_path()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.get_thumbnail"><code class="docutils literal notranslate"><span class="pre">get_thumbnail()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.init_image_cache"><code class="docutils literal notranslate"><span class="pre">init_image_cache()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.init_pixel_ratio"><code class="docutils literal notranslate"><span class="pre">init_pixel_ratio()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.init_resources"><code class="docutils literal notranslate"><span class="pre">init_resources()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.oiio_get_buf"><code class="docutils literal notranslate"><span class="pre">oiio_get_buf()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.oiio_get_qimage"><code class="docutils literal notranslate"><span class="pre">oiio_get_qimage()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.wait_for_lock"><code class="docutils literal notranslate"><span class="pre">wait_for_lock()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.QT_IMAGE_FORMATS"><code class="docutils literal notranslate"><span class="pre">QT_IMAGE_FORMATS</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
@@ -998,9 +969,7 @@ as the source instead of <cite>source</cite>. Defaults to <cite>None</cite>.</p>
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/design-tabs.js"></script>
     </body>

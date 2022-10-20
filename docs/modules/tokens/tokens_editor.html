@@ -1,17 +1,17 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="topbar" href="../topbar.html" /><link rel="prev" title="tokens.tokens" href="tokens.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/tokens/tokens_editor.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
         <title>tokens.tokens_editor - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -163,7 +163,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -325,11 +325,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 </ul>
 
 </div>
@@ -358,19 +358,23 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-bookmarks.tokens.tokens_editor">
-<span id="tokens-tokens-editor"></span><h1>tokens.tokens_editor<a class="headerlink" href="#module-bookmarks.tokens.tokens_editor" title="Permalink to this heading">#</a></h1>
+          <div class="section" id="module-bookmarks.tokens.tokens_editor">
+<span id="tokens-tokens-editor"></span><h1>tokens.tokens_editor<a class="headerlink" href="#module-bookmarks.tokens.tokens_editor" title="Permalink to this headline">#</a></h1>
 <p>Various widgets used to edit token values.</p>
 <p>See the <a class="reference internal" href="tokens.html#module-bookmarks.tokens.tokens" title="bookmarks.tokens.tokens"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.tokens.tokens</span></code></a> for the interface details.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.tokens.tokens_editor.FormatEditor" title="bookmarks.tokens.tokens_editor.FormatEditor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FormatEditor</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Popup widget used to set the acceptable file formats for a task folder.</p></td>
@@ -390,25 +394,29 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.tokens.tokens_editor.FormatEditor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.tokens.tokens_editor.</span></span><span class="sig-name descname"><span class="pre">FormatEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/tokens/tokens_editor.html#FormatEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.tokens.tokens_editor.FormatEditor" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QDialog</span></code></p>
 <p>Popup widget used to set the acceptable file formats for a task folder.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.tokens.tokens_editor.SubfolderEditor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.tokens.tokens_editor.</span></span><span class="sig-name descname"><span class="pre">SubfolderEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/tokens/tokens_editor.html#SubfolderEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.tokens.tokens_editor.SubfolderEditor" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QDialog</span></code></p>
 <p>A popup editor used to edit the subfolders of a task folder.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.tokens.tokens_editor.TokenConfigEditor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.tokens.tokens_editor.</span></span><span class="sig-name descname"><span class="pre">TokenConfigEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/tokens/tokens_editor.html#TokenConfigEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.tokens.tokens_editor.TokenConfigEditor" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QWidget</span></code></p>
 <p>The widget used to display and edit a bookmark’s token configuration.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.tokens.tokens_editor.TokenConfigEditor.contextMenuEvent" title="bookmarks.tokens.tokens_editor.TokenConfigEditor.contextMenuEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contextMenuEvent</span></code></a>(self, event)</p></td>
 <td><p></p></td>
@@ -453,12 +461,16 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.tokens.tokens_editor.TokenEditor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.tokens.tokens_editor.</span></span><span class="sig-name descname"><span class="pre">TokenEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/tokens/tokens_editor.html#TokenEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.tokens.tokens_editor.TokenEditor" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QDialog</span></code></p>
 <p>Popup dialog used to insert an available token to one of the file
 name template editors.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.tokens.tokens_editor.TokenEditor.showEvent" title="bookmarks.tokens.tokens_editor.TokenEditor.showEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showEvent</span></code></a>(event)</p></td>
 <td><p>Show event handler.</p></td>
@@ -483,7 +495,7 @@ name template editors.</p>
 
 </dd></dl>
 
-</section>
+</div>
 
         </article>
       </div>
@@ -514,7 +526,7 @@ name template editors.</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Gergely Wootsch
+                Copyright &#169; © 2022 Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -530,40 +542,8 @@ name template editors.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">tokens.tokens_editor</a><ul>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens_editor.FormatEditor"><code class="docutils literal notranslate"><span class="pre">FormatEditor</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens_editor.SubfolderEditor"><code class="docutils literal notranslate"><span class="pre">SubfolderEditor</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens_editor.TokenConfigEditor"><code class="docutils literal notranslate"><span class="pre">TokenConfigEditor</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens_editor.TokenConfigEditor.contextMenuEvent"><code class="docutils literal notranslate"><span class="pre">TokenConfigEditor.contextMenuEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens_editor.TokenConfigEditor.init_data"><code class="docutils literal notranslate"><span class="pre">TokenConfigEditor.init_data()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens_editor.TokenConfigEditor.save_changes"><code class="docutils literal notranslate"><span class="pre">TokenConfigEditor.save_changes()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens_editor.TokenConfigEditor.text_changed"><code class="docutils literal notranslate"><span class="pre">TokenConfigEditor.text_changed()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens_editor.TokenEditor"><code class="docutils literal notranslate"><span class="pre">TokenEditor</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens_editor.TokenEditor.showEvent"><code class="docutils literal notranslate"><span class="pre">TokenEditor.showEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens_editor.TokenEditor.sizeHint"><code class="docutils literal notranslate"><span class="pre">TokenEditor.sizeHint()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
@@ -571,9 +551,7 @@ name template editors.</p>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     </body>

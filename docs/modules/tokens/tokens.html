@@ -1,17 +1,17 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="tokens.tokens_editor" href="tokens_editor.html" /><link rel="prev" title="tokens" href="../tokens.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/tokens/tokens.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
         <title>tokens.tokens - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -163,7 +163,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -325,11 +325,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 </ul>
 
 </div>
@@ -358,14 +358,14 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-bookmarks.tokens.tokens">
-<span id="tokens-tokens"></span><h1>tokens.tokens<a class="headerlink" href="#module-bookmarks.tokens.tokens" title="Permalink to this heading">#</a></h1>
+          <div class="section" id="module-bookmarks.tokens.tokens">
+<span id="tokens-tokens"></span><h1>tokens.tokens<a class="headerlink" href="#module-bookmarks.tokens.tokens" title="Permalink to this headline">#</a></h1>
 <p>The module contains interface used to get and modify a bookmark item’s token
 values.</p>
 <p>The default values are stored in <code class="xref py py-attr docutils literal notranslate"><span class="pre">DEFAULT_TOKEN_CONFIG</span></code> but each
@@ -390,8 +390,12 @@ data.</p>
 </pre></div>
 </div>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.tokens.tokens.TokenConfig" title="bookmarks.tokens.tokens.TokenConfig"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TokenConfig</span></code></a>(server, job, root[, asset, parent])</p></td>
 <td><p>The class is used to interface with token configuration stored in the bookmark item's database.</p></td>
@@ -400,8 +404,12 @@ data.</p>
 </table>
 </div>
 <p><strong>Functions:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.tokens.tokens.get" title="bookmarks.tokens.tokens.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>(server, job, root[, force])</p></td>
 <td><p>Returns the <a class="reference internal" href="#bookmarks.tokens.tokens.TokenConfig" title="bookmarks.tokens.tokens.TokenConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">TokenConfig</span></code></a> of the specified bookmark item.</p></td>
@@ -422,8 +430,12 @@ data.</p>
 </table>
 </div>
 <p><strong>Data:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.tokens.tokens.DEFAULT_TOKEN_CONFIG" title="bookmarks.tokens.tokens.DEFAULT_TOKEN_CONFIG"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DEFAULT_TOKEN_CONFIG</span></code></a></p></td>
 <td><p>The default token value configuration</p></td>
@@ -440,7 +452,7 @@ data.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.tokens.tokens.TokenConfig">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.tokens.tokens.</span></span><span class="sig-name descname"><span class="pre">TokenConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/tokens/tokens.html#TokenConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.tokens.tokens.TokenConfig" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QObject</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtCore.QObject</span></code></p>
 <p>The class is used to interface with token configuration stored in the
 bookmark item’s database.</p>
 <p>As token config data might be used in performance sensitive sections,
@@ -448,8 +460,12 @@ the instance is uninitialized until <a class="reference internal" href="#bookmar
 values from the database and cache it internally. This cached data won’t be
 updated from the database until <code class="xref py py-meth docutils literal notranslate"><span class="pre">data(force=True)()</span></code> is called.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.tokens.tokens.TokenConfig.data" title="bookmarks.tokens.tokens.TokenConfig.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a>([force])</p></td>
 <td><p>Returns the current token config values stored in the bookmark database.</p></td>
@@ -495,7 +511,7 @@ updated from the database until <code class="xref py py-meth docutils literal no
 <cite>self._data</cite>. To re-query the values from the bookmark database, an
 optional <cite>force=True</cite> can be passed.</p>
 <dl class="field-list">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>force</strong> (<em>bool, optional</em>) – Force retrieve tokens from the database.</p>
 <dl class="simple">
 <dt>Returns:</dt><dd><p>dict: Token config values.</p>
@@ -510,7 +526,7 @@ optional <cite>force=True</cite> can be passed.</p>
 <span class="sig-name descname"><span class="pre">dump_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/tokens/tokens.html#TokenConfig.dump_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.tokens.tokens.TokenConfig.dump_json" title="Permalink to this definition">#</a></dt>
 <dd><p>Save the current configuration as a JSON file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>destination</strong> (<em>str</em>) – Destination path.</p></li>
 <li><p><strong>force</strong> (<em>bool, optional</em>) – Force retrieve tokens from the database.</p></li>
@@ -526,7 +542,7 @@ optional <cite>force=True</cite> can be passed.</p>
 database values.</p>
 <p>Invalid tokens will be marked <code class="xref py py-attr docutils literal notranslate"><span class="pre">invalid_token</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>s</strong> (<em>str</em>) – The string containing tokens to be expanded.</p></li>
 <li><p><strong>user</strong> (<em>str, optional</em>) – Username.</p></li>
@@ -538,11 +554,11 @@ database values.</p>
 <li><p><strong>_kwargs</strong> (<em>dict, optional</em>) – Optional token/value pairs.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The expanded string. It might contain <code class="xref py py-attr docutils literal notranslate"><span class="pre">invalid_token</span></code> markers
 if a token does not have a corresponding value.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -561,7 +577,7 @@ values.</p>
 <dd><p>Returns the value of an asset sub-folder based on the current token config
 values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>token</strong> (<em>str</em>) – An asset folder name (not value!),
 e.g.`config.ExportFolder`.</p></li>
@@ -569,10 +585,10 @@ e.g.`config.ExportFolder`.</p></li>
 <li><p><strong>force</strong> (<em>bool, optional</em>) – Force reload data from the database.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A custom value set in config settings, or None.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -584,17 +600,17 @@ e.g.`config.ExportFolder`.</p></li>
 <dd><p>Returns the value of an asset sub-folder based on the current token config
 values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>token</strong> (<em>str</em>) – An asset folder name (not value!),
 e.g.`tokens.ExportFolder`.</p></li>
 <li><p><strong>force</strong> (<em>bool, optional</em>) – Force reload data from the database.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A tuple of folder names.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -605,16 +621,16 @@ e.g.`tokens.ExportFolder`.</p></li>
 <span class="sig-name descname"><span class="pre">get_description</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/tokens/tokens.html#TokenConfig.get_description"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.tokens.tokens.TokenConfig.get_description" title="Permalink to this definition">#</a></dt>
 <dd><p>Utility method used to get the description of a token.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>token</strong> (<em>str</em>) – A file-format or a folder name, e.g. ‘anim’.</p></li>
 <li><p><strong>force</strong> (<em>bool, optional</em>) – Force retrieve tokens from the database.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The description of the token.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -625,16 +641,16 @@ e.g.`tokens.ExportFolder`.</p></li>
 <span class="sig-name descname"><span class="pre">get_extensions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/tokens/tokens.html#TokenConfig.get_extensions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.tokens.tokens.TokenConfig.get_extensions" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a list of extensions associated with the given flag.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>flag</strong> (<em>int</em>) – A format filter flag.</p></li>
 <li><p><strong>force</strong> (<em>bool, optional</em>) – Force retrieve tokens from the database.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A tuple of file format extensions.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
@@ -645,16 +661,16 @@ e.g.`tokens.ExportFolder`.</p></li>
 <span class="sig-name descname"><span class="pre">get_task_extensions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/tokens/tokens.html#TokenConfig.get_task_extensions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.tokens.tokens.TokenConfig.get_task_extensions" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a list of allowed extensions for the given task folder.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>task</strong> (<em>str</em>) – The name of a task folder.</p></li>
 <li><p><strong>force</strong> (<em>bool, optional</em>) – Force retrieve tokens from the database.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A set of file format extensions.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>set</p>
 </dd>
 </dl>
@@ -665,13 +681,13 @@ e.g.`tokens.ExportFolder`.</p></li>
 <span class="sig-name descname"><span class="pre">get_tokens</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/tokens/tokens.html#TokenConfig.get_tokens"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.tokens.tokens.TokenConfig.get_tokens" title="Permalink to this definition">#</a></dt>
 <dd><p>Get all available tokens.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>force</strong> (<em>bool, optional</em>) – Force retrieve tokens from the database.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A dictionary of token/value pairs.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -683,7 +699,7 @@ e.g.`tokens.ExportFolder`.</p></li>
 <dd><p>Saves a data dictionary to the bookmark database as an encoded
 JSON object.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – The token config data to save.</p>
 </dd>
 </dl>
@@ -697,7 +713,7 @@ JSON object.</p>
 <dd><p>Returns the <a class="reference internal" href="#bookmarks.tokens.tokens.TokenConfig" title="bookmarks.tokens.tokens.TokenConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">TokenConfig</span></code></a> of the specified
 bookmark item.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>server</strong> (<em>str</em>) – <cite>server</cite> path segment.</p></li>
 <li><p><strong>job</strong> (<em>str</em>) – <cite>job</cite> path segment.</p></li>
@@ -705,10 +721,10 @@ bookmark item.</p>
 <li><p><strong>force</strong> (<em>bool, optional</em>) – Force retrieve tokens from the database.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The token config controller instance.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="#bookmarks.tokens.tokens.TokenConfig" title="bookmarks.tokens.tokens.TokenConfig">TokenConfig</a></p>
 </dd>
 </dl>
@@ -719,13 +735,13 @@ bookmark item.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.tokens.tokens.</span></span><span class="sig-name descname"><span class="pre">get_description</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/tokens/tokens.html#get_description"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.tokens.tokens.get_description" title="Permalink to this definition">#</a></dt>
 <dd><p>Get a description of a token.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>token</strong> (<em>str</em>) – A token, e.g. <cite>tokens.SceneFormat</cite>.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Description of the item.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -737,10 +753,10 @@ bookmark item.</p>
 <dd><p>Find the value an asset folder token based on
 the bookmark item’s token configuration.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The current folder value.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>str</p>
 </dd>
 </dl>
@@ -752,16 +768,16 @@ the bookmark item’s token configuration.</p>
 <dd><p>Find the value an asset sub-folder based on the bookmark item’s token
 configuration.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>token</strong> (<em>str</em>) – Asset folder token, e.g. <cite>tokens.CacheFolder</cite>.</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – Sub-folder token.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The value of the current asset sub-folder.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -772,13 +788,13 @@ configuration.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.tokens.tokens.</span></span><span class="sig-name descname"><span class="pre">get_subfolders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/tokens/tokens.html#get_subfolders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.tokens.tokens.get_subfolders" title="Permalink to this definition">#</a></dt>
 <dd><p>Find all asset sub-folder values based on the bookmark item’s token configuration.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>token</strong> (<em>str</em>) – Asset folder token, e.g. <cite>tokens.CacheFolder</cite>.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A list of current asset sub-folder values.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -802,7 +818,7 @@ configuration.</p>
 <dd><p>Invalid token marker string</p>
 </dd></dl>
 
-</section>
+</div>
 
         </article>
       </div>
@@ -833,7 +849,7 @@ configuration.</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Gergely Wootsch
+                Copyright &#169; © 2022 Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -849,48 +865,8 @@ configuration.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">tokens.tokens</a><ul>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.TokenConfig"><code class="docutils literal notranslate"><span class="pre">TokenConfig</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.TokenConfig.data"><code class="docutils literal notranslate"><span class="pre">TokenConfig.data()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.TokenConfig.dump_json"><code class="docutils literal notranslate"><span class="pre">TokenConfig.dump_json()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.TokenConfig.expand_tokens"><code class="docutils literal notranslate"><span class="pre">TokenConfig.expand_tokens()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.TokenConfig.get_asset_folder"><code class="docutils literal notranslate"><span class="pre">TokenConfig.get_asset_folder()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.TokenConfig.get_asset_subfolder"><code class="docutils literal notranslate"><span class="pre">TokenConfig.get_asset_subfolder()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.TokenConfig.get_asset_subfolders"><code class="docutils literal notranslate"><span class="pre">TokenConfig.get_asset_subfolders()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.TokenConfig.get_description"><code class="docutils literal notranslate"><span class="pre">TokenConfig.get_description()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.TokenConfig.get_extensions"><code class="docutils literal notranslate"><span class="pre">TokenConfig.get_extensions()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.TokenConfig.get_task_extensions"><code class="docutils literal notranslate"><span class="pre">TokenConfig.get_task_extensions()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.TokenConfig.get_tokens"><code class="docutils literal notranslate"><span class="pre">TokenConfig.get_tokens()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.TokenConfig.set_data"><code class="docutils literal notranslate"><span class="pre">TokenConfig.set_data()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.get"><code class="docutils literal notranslate"><span class="pre">get()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.get_description"><code class="docutils literal notranslate"><span class="pre">get_description()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.get_folder"><code class="docutils literal notranslate"><span class="pre">get_folder()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.get_subfolder"><code class="docutils literal notranslate"><span class="pre">get_subfolder()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.get_subfolders"><code class="docutils literal notranslate"><span class="pre">get_subfolders()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.DEFAULT_TOKEN_CONFIG"><code class="docutils literal notranslate"><span class="pre">DEFAULT_TOKEN_CONFIG</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.TOKENS_DB_KEY"><code class="docutils literal notranslate"><span class="pre">TOKENS_DB_KEY</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.tokens.tokens.invalid_token"><code class="docutils literal notranslate"><span class="pre">invalid_token</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
@@ -898,9 +874,7 @@ configuration.</p>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     </body>

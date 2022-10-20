@@ -1,17 +1,17 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="file_saver.widgets" href="widgets.html" /><link rel="prev" title="file_saver" href="../file_saver.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/file_saver/main.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
         <title>file_saver.main - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -163,7 +163,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -325,11 +325,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 </ul>
 
 </div>
@@ -358,14 +358,14 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-bookmarks.file_saver.main">
-<span id="file-saver-main"></span><h1>file_saver.main<a class="headerlink" href="#module-bookmarks.file_saver.main" title="Permalink to this heading">#</a></h1>
+          <div class="section" id="module-bookmarks.file_saver.main">
+<span id="file-saver-main"></span><h1>file_saver.main<a class="headerlink" href="#module-bookmarks.file_saver.main" title="Permalink to this headline">#</a></h1>
 <p>The module contains the definition of <a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget" title="bookmarks.file_saver.main.FileSaverWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileSaverWidget</span></code></a>, the main widget used
 by Bookmarks to create versioned template files.</p>
 <p>The suggested save destination will be partially dependent on the extension
@@ -387,7 +387,7 @@ for more information.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.file_saver.main.</span></span><span class="sig-name descname"><span class="pre">SECTIONS</span></span><a class="headerlink" href="#bookmarks.file_saver.main.SECTIONS" title="Permalink to this definition">#</a></dt>
 <dd><p>The ui layout definition of the file saver widget.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -398,15 +398,19 @@ for more information.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.file_saver.main.</span></span><span class="sig-name descname"><span class="pre">INACTIVE_KEYS</span></span><a class="headerlink" href="#bookmarks.file_saver.main.INACTIVE_KEYS" title="Permalink to this definition">#</a></dt>
 <dd><p>A tuple of keys used to mark hidden and disabled editors.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
 </dd></dl>
 
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget" title="bookmarks.file_saver.main.FileSaverWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FileSaverWidget</span></code></a>(server, job, root, asset[, ...])</p></td>
 <td><p>The main widget used to create template files.</p></td>
@@ -415,8 +419,12 @@ for more information.</p>
 </table>
 </div>
 <p><strong>Functions:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.file_saver.main.close" title="bookmarks.file_saver.main.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a>()</p></td>
 <td><p>Close the <a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget" title="bookmarks.file_saver.main.FileSaverWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileSaverWidget</span></code></a> widget.</p></td>
@@ -431,8 +439,12 @@ for more information.</p>
 </table>
 </div>
 <p><strong>Data:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#id0" title="bookmarks.file_saver.main.SECTIONS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SECTIONS</span></code></a></p></td>
 <td><p>UI layout definition</p></td>
@@ -443,11 +455,15 @@ for more information.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.file_saver.main.FileSaverWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.file_saver.main.</span></span><span class="sig-name descname"><span class="pre">FileSaverWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">increment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/file_saver/main.html#FileSaverWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.file_saver.main.FileSaverWidget" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../editor/base.html#bookmarks.editor.base.BasePropertyEditor" title="bookmarks.editor.base.BasePropertyEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePropertyEditor</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="../editor/base.html#bookmarks.editor.base.BasePropertyEditor" title="bookmarks.editor.base.BasePropertyEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.editor.base.BasePropertyEditor</span></code></a></p>
 <p>The main widget used to create template files.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.add_task" title="bookmarks.file_saver.main.FileSaverWidget.add_task"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_task</span></code></a>(relative_path)</p></td>
 <td><p>Adds a task folder to the folder editor.</p></td>
@@ -526,10 +542,10 @@ for more information.</p>
 <span class="sig-name descname"><span class="pre">db_source</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/file_saver/main.html#FileSaverWidget.db_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.file_saver.main.FileSaverWidget.db_source" title="Permalink to this definition">#</a></dt>
 <dd><p>A file path to use as the source of database values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The database source file.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>str</p>
 </dd>
 </dl>
@@ -606,7 +622,7 @@ previously.</p>
 <span class="sig-name descname"><span class="pre">set_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/file_saver/main.html#FileSaverWidget.set_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.file_saver.main.FileSaverWidget.set_file" title="Permalink to this definition">#</a></dt>
 <dd><p>Set the given file as the current file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>file</strong> (<em>str</em>) – Path to a file.</p>
 </dd>
 </dl>
@@ -666,7 +682,7 @@ destination folder.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.file_saver.main.</span></span><span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">create_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">increment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/file_saver/main.html#show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.file_saver.main.show" title="Permalink to this definition">#</a></dt>
 <dd><p>Show the <a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget" title="bookmarks.file_saver.main.FileSaverWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileSaverWidget</span></code></a> widget.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>server</strong> (<em>str</em>) – <cite>server</cite> path segment.</p></li>
 <li><p><strong>job</strong> (<em>str</em>) – <cite>job</cite> path segment.</p></li>
@@ -685,11 +701,11 @@ placeholder files. Default is <code class="docutils literal notranslate"><span c
 
 <dl class="py data">
 <dt class="sig sig-object py" id="id0">
-<span class="sig-prename descclassname"><span class="pre">bookmarks.file_saver.main.</span></span><span class="sig-name descname"><span class="pre">SECTIONS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{0:</span> <span class="pre">{'color':</span> <span class="pre">PySide2.QtGui.QColor.fromRgbF(0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">1.000000),</span> <span class="pre">'groups':</span> <span class="pre">{0:</span> <span class="pre">{0:</span> <span class="pre">{'button':</span> <span class="pre">'Edit',</span> <span class="pre">'description':</span> <span class="pre">&quot;A</span> <span class="pre">short</span> <span class="pre">name</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">bookmark</span> <span class="pre">(or</span> <span class="pre">job)</span> <span class="pre">used</span> <span class="pre">when</span> <span class="pre">saving</span> <span class="pre">files.\n\ne.g.</span> <span class="pre">'MYB_sh0010_anim_v001.ma'</span> <span class="pre">where</span> <span class="pre">'MYB'</span> <span class="pre">is</span> <span class="pre">the</span> <span class="pre">prefix</span> <span class="pre">specified</span> <span class="pre">here.&quot;,</span> <span class="pre">'key':</span> <span class="pre">'file_saver/template',</span> <span class="pre">'name':</span> <span class="pre">'Template',</span> <span class="pre">'placeholder':</span> <span class="pre">&quot;Custom</span> <span class="pre">prefix,</span> <span class="pre">e.g.</span> <span class="pre">'MYB'&quot;,</span> <span class="pre">'validator':</span> <span class="pre">&lt;PySide2.QtGui.QRegExpValidator(0x1d50f8e9cb0)&gt;,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.file_saver.widgets.TemplateComboBox'&gt;},</span> <span class="pre">1:</span> <span class="pre">{'button':</span> <span class="pre">'Reveal',</span> <span class="pre">'description':</span> <span class="pre">'The</span> <span class="pre">file</span> <span class="pre">name,</span> <span class="pre">based</span> <span class="pre">on</span> <span class="pre">the</span> <span class="pre">current</span> <span class="pre">template.',</span> <span class="pre">'key':</span> <span class="pre">'filename',</span> <span class="pre">'name':</span> <span class="pre">'Name',</span> <span class="pre">'placeholder':</span> <span class="pre">'Invalid</span> <span class="pre">file</span> <span class="pre">name...',</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'PySide2.QtWidgets.QLabel'&gt;}}},</span> <span class="pre">'icon':</span> <span class="pre">'file',</span> <span class="pre">'name':</span> <span class="pre">'Name</span> <span class="pre">Template'},</span> <span class="pre">1:</span> <span class="pre">{'color':</span> <span class="pre">PySide2.QtGui.QColor.fromRgbF(0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">1.000000),</span> <span class="pre">'groups':</span> <span class="pre">{0:</span> <span class="pre">{0:</span> <span class="pre">{'description':</span> <span class="pre">'The</span> <span class="pre">current</span> <span class="pre">bookmark</span> <span class="pre">item.',</span> <span class="pre">'key':</span> <span class="pre">'bookmark',</span> <span class="pre">'name':</span> <span class="pre">'Bookmark',</span> <span class="pre">'placeholder':</span> <span class="pre">None,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.file_saver.widgets.BookmarkComboBox'&gt;},</span> <span class="pre">1:</span> <span class="pre">{'description':</span> <span class="pre">'The</span> <span class="pre">current</span> <span class="pre">asset</span> <span class="pre">item.',</span> <span class="pre">'key':</span> <span class="pre">'asset',</span> <span class="pre">'name':</span> <span class="pre">'Asset',</span> <span class="pre">'placeholder':</span> <span class="pre">None,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.file_saver.widgets.AssetComboBox'&gt;},</span> <span class="pre">2:</span> <span class="pre">{'button':</span> <span class="pre">'Pick',</span> <span class="pre">'description':</span> <span class="pre">'The</span> <span class="pre">current</span> <span class="pre">task</span> <span class="pre">item.',</span> <span class="pre">'key':</span> <span class="pre">'file_saver/task',</span> <span class="pre">'name':</span> <span class="pre">'Task',</span> <span class="pre">'placeholder':</span> <span class="pre">None,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.file_saver.widgets.TaskComboBox'&gt;}},</span> <span class="pre">1:</span> <span class="pre">{0:</span> <span class="pre">{'description':</span> <span class="pre">&quot;A</span> <span class="pre">short</span> <span class="pre">description</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">file's</span> <span class="pre">contents.\nIndicate</span> <span class="pre">significant</span> <span class="pre">changes</span> <span class="pre">and</span> <span class="pre">notes</span> <span class="pre">here.&quot;,</span> <span class="pre">'key':</span> <span class="pre">'description',</span> <span class="pre">'name':</span> <span class="pre">'Description',</span> <span class="pre">'placeholder':</span> <span class="pre">&quot;A</span> <span class="pre">short</span> <span class="pre">description,</span> <span class="pre">e.g.</span> <span class="pre">'Compositing</span> <span class="pre">files'&quot;,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.ui.LineEdit'&gt;}},</span> <span class="pre">2:</span> <span class="pre">{0:</span> <span class="pre">{'button':</span> <span class="pre">'Edit',</span> <span class="pre">'description':</span> <span class="pre">&quot;A</span> <span class="pre">short</span> <span class="pre">prefix</span> <span class="pre">used</span> <span class="pre">to</span> <span class="pre">identify</span> <span class="pre">the</span> <span class="pre">job</span> <span class="pre">e.g.'MYB'.&quot;,</span> <span class="pre">'key':</span> <span class="pre">'prefix',</span> <span class="pre">'name':</span> <span class="pre">'Project</span> <span class="pre">Prefix',</span> <span class="pre">'placeholder':</span> <span class="pre">'Prefix</span> <span class="pre">not</span> <span class="pre">yet</span> <span class="pre">set!',</span> <span class="pre">'validator':</span> <span class="pre">&lt;PySide2.QtGui.QRegExpValidator(0x1d50f8e9cb0)&gt;,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.ui.LineEdit'&gt;},</span> <span class="pre">1:</span> <span class="pre">{'description':</span> <span class="pre">&quot;The</span> <span class="pre">name</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">element</span> <span class="pre">being</span> <span class="pre">saved.</span> <span class="pre">e.g.,</span> <span class="pre">'ForegroundTower',</span> <span class="pre">or</span> <span class="pre">'BackgroundElements'&quot;,</span> <span class="pre">'key':</span> <span class="pre">'file_saver/element',</span> <span class="pre">'name':</span> <span class="pre">'Specify</span> <span class="pre">Element',</span> <span class="pre">'placeholder':</span> <span class="pre">&quot;The</span> <span class="pre">element</span> <span class="pre">being</span> <span class="pre">saved,</span> <span class="pre">e.g.</span> <span class="pre">'CastleInterior'&quot;,</span> <span class="pre">'validator':</span> <span class="pre">&lt;PySide2.QtGui.QRegExpValidator(0x1d50f8e9cb0)&gt;,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.ui.LineEdit'&gt;},</span> <span class="pre">2:</span> <span class="pre">{'button':</span> <span class="pre">'+',</span> <span class="pre">'button2':</span> <span class="pre">'-',</span> <span class="pre">'description':</span> <span class="pre">&quot;A</span> <span class="pre">version</span> <span class="pre">number</span> <span class="pre">with,</span> <span class="pre">or</span> <span class="pre">without,</span> <span class="pre">a</span> <span class="pre">preceding</span> <span class="pre">'v'.</span> <span class="pre">e.g.</span> <span class="pre">'v001'.&quot;,</span> <span class="pre">'key':</span> <span class="pre">'version',</span> <span class="pre">'name':</span> <span class="pre">'File</span> <span class="pre">Version',</span> <span class="pre">'placeholder':</span> <span class="pre">&quot;A</span> <span class="pre">version</span> <span class="pre">number,</span> <span class="pre">e.g.</span> <span class="pre">'v001'&quot;,</span> <span class="pre">'validator':</span> <span class="pre">&lt;PySide2.QtGui.QRegExpValidator(0x1d50f8eadf0)&gt;,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.ui.LineEdit'&gt;},</span> <span class="pre">3:</span> <span class="pre">{'description':</span> <span class="pre">&quot;The</span> <span class="pre">name</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">current</span> <span class="pre">user,</span> <span class="pre">e.g.</span> <span class="pre">'JohnDoe',</span> <span class="pre">or</span> <span class="pre">'JD'&quot;,</span> <span class="pre">'key':</span> <span class="pre">'file_saver/user',</span> <span class="pre">'name':</span> <span class="pre">'User',</span> <span class="pre">'placeholder':</span> <span class="pre">&quot;Your</span> <span class="pre">name,</span> <span class="pre">e.g.</span> <span class="pre">'JohnDoe'&quot;,</span> <span class="pre">'validator':</span> <span class="pre">&lt;PySide2.QtGui.QRegExpValidator(0x1d50f8e9cb0)&gt;,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.ui.LineEdit'&gt;},</span> <span class="pre">4:</span> <span class="pre">{'description':</span> <span class="pre">&quot;A</span> <span class="pre">file</span> <span class="pre">extension,</span> <span class="pre">without</span> <span class="pre">the</span> <span class="pre">leading</span> <span class="pre">dot.</span> <span class="pre">e.g.</span> <span class="pre">'ma'&quot;,</span> <span class="pre">'key':</span> <span class="pre">'file_saver/extension',</span> <span class="pre">'name':</span> <span class="pre">'Format',</span> <span class="pre">'placeholder':</span> <span class="pre">&quot;File</span> <span class="pre">extension,</span> <span class="pre">e.g.</span> <span class="pre">'exr'&quot;,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.file_saver.widgets.FormatComboBox'&gt;}}},</span> <span class="pre">'icon':</span> <span class="pre">'todo',</span> <span class="pre">'name':</span> <span class="pre">'Name</span> <span class="pre">Elements'}}</span></em><a class="headerlink" href="#id0" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">bookmarks.file_saver.main.</span></span><span class="sig-name descname"><span class="pre">SECTIONS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{0:</span> <span class="pre">{'color':</span> <span class="pre">PySide2.QtGui.QColor.fromRgbF(0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">1.000000),</span> <span class="pre">'groups':</span> <span class="pre">{0:</span> <span class="pre">{0:</span> <span class="pre">{'button':</span> <span class="pre">'Edit',</span> <span class="pre">'description':</span> <span class="pre">&quot;A</span> <span class="pre">short</span> <span class="pre">name</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">bookmark</span> <span class="pre">(or</span> <span class="pre">job)</span> <span class="pre">used</span> <span class="pre">when</span> <span class="pre">saving</span> <span class="pre">files.\n\ne.g.</span> <span class="pre">'MYB_sh0010_anim_v001.ma'</span> <span class="pre">where</span> <span class="pre">'MYB'</span> <span class="pre">is</span> <span class="pre">the</span> <span class="pre">prefix</span> <span class="pre">specified</span> <span class="pre">here.&quot;,</span> <span class="pre">'key':</span> <span class="pre">'file_saver/template',</span> <span class="pre">'name':</span> <span class="pre">'Template',</span> <span class="pre">'placeholder':</span> <span class="pre">&quot;Custom</span> <span class="pre">prefix,</span> <span class="pre">e.g.</span> <span class="pre">'MYB'&quot;,</span> <span class="pre">'validator':</span> <span class="pre">&lt;PySide2.QtGui.QRegExpValidator(0x2953d839110)&gt;,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.file_saver.widgets.TemplateComboBox'&gt;},</span> <span class="pre">1:</span> <span class="pre">{'button':</span> <span class="pre">'Reveal',</span> <span class="pre">'description':</span> <span class="pre">'The</span> <span class="pre">file</span> <span class="pre">name,</span> <span class="pre">based</span> <span class="pre">on</span> <span class="pre">the</span> <span class="pre">current</span> <span class="pre">template.',</span> <span class="pre">'key':</span> <span class="pre">'filename',</span> <span class="pre">'name':</span> <span class="pre">'Name',</span> <span class="pre">'placeholder':</span> <span class="pre">'Invalid</span> <span class="pre">file</span> <span class="pre">name...',</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'PySide2.QtWidgets.QLabel'&gt;}}},</span> <span class="pre">'icon':</span> <span class="pre">'file',</span> <span class="pre">'name':</span> <span class="pre">'Name</span> <span class="pre">Template'},</span> <span class="pre">1:</span> <span class="pre">{'color':</span> <span class="pre">PySide2.QtGui.QColor.fromRgbF(0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">1.000000),</span> <span class="pre">'groups':</span> <span class="pre">{0:</span> <span class="pre">{0:</span> <span class="pre">{'description':</span> <span class="pre">'The</span> <span class="pre">current</span> <span class="pre">bookmark</span> <span class="pre">item.',</span> <span class="pre">'key':</span> <span class="pre">'bookmark',</span> <span class="pre">'name':</span> <span class="pre">'Bookmark',</span> <span class="pre">'placeholder':</span> <span class="pre">None,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.file_saver.widgets.BookmarkComboBox'&gt;},</span> <span class="pre">1:</span> <span class="pre">{'description':</span> <span class="pre">'The</span> <span class="pre">current</span> <span class="pre">asset</span> <span class="pre">item.',</span> <span class="pre">'key':</span> <span class="pre">'asset',</span> <span class="pre">'name':</span> <span class="pre">'Asset',</span> <span class="pre">'placeholder':</span> <span class="pre">None,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.file_saver.widgets.AssetComboBox'&gt;},</span> <span class="pre">2:</span> <span class="pre">{'button':</span> <span class="pre">'Pick',</span> <span class="pre">'description':</span> <span class="pre">'The</span> <span class="pre">current</span> <span class="pre">task</span> <span class="pre">item.',</span> <span class="pre">'key':</span> <span class="pre">'file_saver/task',</span> <span class="pre">'name':</span> <span class="pre">'Task',</span> <span class="pre">'placeholder':</span> <span class="pre">None,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.file_saver.widgets.TaskComboBox'&gt;}},</span> <span class="pre">1:</span> <span class="pre">{0:</span> <span class="pre">{'description':</span> <span class="pre">&quot;A</span> <span class="pre">short</span> <span class="pre">description</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">file's</span> <span class="pre">contents.\nIndicate</span> <span class="pre">significant</span> <span class="pre">changes</span> <span class="pre">and</span> <span class="pre">notes</span> <span class="pre">here.&quot;,</span> <span class="pre">'key':</span> <span class="pre">'description',</span> <span class="pre">'name':</span> <span class="pre">'Description',</span> <span class="pre">'placeholder':</span> <span class="pre">&quot;A</span> <span class="pre">short</span> <span class="pre">description,</span> <span class="pre">e.g.</span> <span class="pre">'Compositing</span> <span class="pre">files'&quot;,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.ui.LineEdit'&gt;}},</span> <span class="pre">2:</span> <span class="pre">{0:</span> <span class="pre">{'button':</span> <span class="pre">'Edit',</span> <span class="pre">'description':</span> <span class="pre">&quot;A</span> <span class="pre">short</span> <span class="pre">prefix</span> <span class="pre">used</span> <span class="pre">to</span> <span class="pre">identify</span> <span class="pre">the</span> <span class="pre">job</span> <span class="pre">e.g.'MYB'.&quot;,</span> <span class="pre">'key':</span> <span class="pre">'prefix',</span> <span class="pre">'name':</span> <span class="pre">'Project</span> <span class="pre">Prefix',</span> <span class="pre">'placeholder':</span> <span class="pre">'Prefix</span> <span class="pre">not</span> <span class="pre">yet</span> <span class="pre">set!',</span> <span class="pre">'validator':</span> <span class="pre">&lt;PySide2.QtGui.QRegExpValidator(0x2953d839110)&gt;,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.ui.LineEdit'&gt;},</span> <span class="pre">1:</span> <span class="pre">{'description':</span> <span class="pre">&quot;The</span> <span class="pre">name</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">element</span> <span class="pre">being</span> <span class="pre">saved.</span> <span class="pre">e.g.,</span> <span class="pre">'ForegroundTower',</span> <span class="pre">or</span> <span class="pre">'BackgroundElements'&quot;,</span> <span class="pre">'key':</span> <span class="pre">'file_saver/element',</span> <span class="pre">'name':</span> <span class="pre">'Specify</span> <span class="pre">Element',</span> <span class="pre">'placeholder':</span> <span class="pre">&quot;The</span> <span class="pre">element</span> <span class="pre">being</span> <span class="pre">saved,</span> <span class="pre">e.g.</span> <span class="pre">'CastleInterior'&quot;,</span> <span class="pre">'validator':</span> <span class="pre">&lt;PySide2.QtGui.QRegExpValidator(0x2953d839110)&gt;,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.ui.LineEdit'&gt;},</span> <span class="pre">2:</span> <span class="pre">{'button':</span> <span class="pre">'+',</span> <span class="pre">'button2':</span> <span class="pre">'-',</span> <span class="pre">'description':</span> <span class="pre">&quot;A</span> <span class="pre">version</span> <span class="pre">number</span> <span class="pre">with,</span> <span class="pre">or</span> <span class="pre">without,</span> <span class="pre">a</span> <span class="pre">preceding</span> <span class="pre">'v'.</span> <span class="pre">e.g.</span> <span class="pre">'v001'.&quot;,</span> <span class="pre">'key':</span> <span class="pre">'version',</span> <span class="pre">'name':</span> <span class="pre">'File</span> <span class="pre">Version',</span> <span class="pre">'placeholder':</span> <span class="pre">&quot;A</span> <span class="pre">version</span> <span class="pre">number,</span> <span class="pre">e.g.</span> <span class="pre">'v001'&quot;,</span> <span class="pre">'validator':</span> <span class="pre">&lt;PySide2.QtGui.QRegExpValidator(0x2953d839860)&gt;,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.ui.LineEdit'&gt;},</span> <span class="pre">3:</span> <span class="pre">{'description':</span> <span class="pre">&quot;The</span> <span class="pre">name</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">current</span> <span class="pre">user,</span> <span class="pre">e.g.</span> <span class="pre">'JohnDoe',</span> <span class="pre">or</span> <span class="pre">'JD'&quot;,</span> <span class="pre">'key':</span> <span class="pre">'file_saver/user',</span> <span class="pre">'name':</span> <span class="pre">'User',</span> <span class="pre">'placeholder':</span> <span class="pre">&quot;Your</span> <span class="pre">name,</span> <span class="pre">e.g.</span> <span class="pre">'JohnDoe'&quot;,</span> <span class="pre">'validator':</span> <span class="pre">&lt;PySide2.QtGui.QRegExpValidator(0x2953d839110)&gt;,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.ui.LineEdit'&gt;},</span> <span class="pre">4:</span> <span class="pre">{'description':</span> <span class="pre">&quot;A</span> <span class="pre">file</span> <span class="pre">extension,</span> <span class="pre">without</span> <span class="pre">the</span> <span class="pre">leading</span> <span class="pre">dot.</span> <span class="pre">e.g.</span> <span class="pre">'ma'&quot;,</span> <span class="pre">'key':</span> <span class="pre">'file_saver/extension',</span> <span class="pre">'name':</span> <span class="pre">'Format',</span> <span class="pre">'placeholder':</span> <span class="pre">&quot;File</span> <span class="pre">extension,</span> <span class="pre">e.g.</span> <span class="pre">'exr'&quot;,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.file_saver.widgets.FormatComboBox'&gt;}}},</span> <span class="pre">'icon':</span> <span class="pre">'todo',</span> <span class="pre">'name':</span> <span class="pre">'Name</span> <span class="pre">Elements'}}</span></em><a class="headerlink" href="#id0" title="Permalink to this definition">#</a></dt>
 <dd><p>UI layout definition</p>
 </dd></dl>
 
-</section>
+</div>
 
         </article>
       </div>
@@ -720,7 +736,7 @@ placeholder files. Default is <code class="docutils literal notranslate"><span c
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Gergely Wootsch
+                Copyright &#169; © 2022 Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -736,54 +752,8 @@ placeholder files. Default is <code class="docutils literal notranslate"><span c
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">file_saver.main</a><ul>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.SECTIONS"><code class="docutils literal notranslate"><span class="pre">SECTIONS</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.INACTIVE_KEYS"><code class="docutils literal notranslate"><span class="pre">INACTIVE_KEYS</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.add_task"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget.add_task()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.create_file"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget.create_file()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.db_source"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget.db_source()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.exec_"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget.exec_()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.file_path"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget.file_path()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.file_saver_task_button_clicked"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget.file_saver_task_button_clicked()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.file_saver_template_button_clicked"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget.file_saver_template_button_clicked()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.filename_button_clicked"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget.filename_button_clicked()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.init_data"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget.init_data()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.name"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget.name()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.parent_folder"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget.parent_folder()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.prefix_button_clicked"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget.prefix_button_clicked()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.save_changes"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget.save_changes()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.set_file"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget.set_file()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.update_expanded_template"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget.update_expanded_template()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.update_tasks"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget.update_tasks()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.verify_unique"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget.verify_unique()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.version_button2_clicked"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget.version_button2_clicked()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.FileSaverWidget.version_button_clicked"><code class="docutils literal notranslate"><span class="pre">FileSaverWidget.version_button_clicked()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.increment_version"><code class="docutils literal notranslate"><span class="pre">increment_version()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.file_saver.main.show"><code class="docutils literal notranslate"><span class="pre">show()</span></code></a></li>
-<li><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">SECTIONS</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
@@ -791,9 +761,7 @@ placeholder files. Default is <code class="docutils literal notranslate"><span c
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     </body>

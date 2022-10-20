@@ -1,0 +1,730 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+<meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="shotgun.shotgun" href="shotgun.html" /><link rel="prev" title="shotgun.publish" href="publish.html" />
+        <link rel="canonical" href="https://bookmarks-vfx.com/modules/shotgun/publish_widgets.html" />
+
+    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+        <title>shotgun.publish_widgets - Bookmarks 0.7.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #ffffff;
+  --color-code-foreground: black;
+  --color-brand-primary: rgba(75, 180, 135, 1);
+  --color-brand-content: rgba(75, 180, 135, 1);
+  --color-api-name: rgba(0, 0, 0, 0.9);
+  --color-api-pre-name: rgba(75, 180, 135, 0.75);
+  --color-highlight-on-target: rgba(0,0,0,0);
+  --api-font-size: var(--font-size--normal);
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-highlight-on-target: rgba(0,0,0,0);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-highlight-on-target: rgba(0,0,0,0);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+      }
+    }
+  }
+</style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TX95GG28E5"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-TX95GG28E5');
+    </script>
+    
+</head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.4 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../../_static/icon.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Bookmarks 0.7.4 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html">User Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Technical Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../modules.html">Python Modules</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../actions.html">actions</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../bookmarker.html">bookmarker</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../bookmarker/bookmark_editor.html">bookmarker.bookmark_editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../bookmarker/job_editor.html">bookmarker.job_editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../bookmarker/main.html">bookmarker.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../bookmarker/server_editor.html">bookmarker.server_editor</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../common.html">common</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../common/core.html">common.core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/data.html">common.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/env.html">common.env</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/font.html">common.font</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/monitor.html">common.monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/sequence.html">common.sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/session_lock.html">common.session_lock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/settings.html">common.settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/setup.html">common.setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/signals.html">common.signals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/ui.html">common.ui</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contextmenu.html">contextmenu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database.html">database</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../editor.html">editor</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../editor/asset_properties.html">editor.asset_properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../editor/base.html">editor.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../editor/base_widgets.html">editor.base_widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../editor/bookmark_properties.html">editor.bookmark_properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../editor/preferences.html">editor.preferences</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../external.html">external</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../external/ffmpeg.html">external.ffmpeg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../external/ffmpeg_widget.html">external.ffmpeg_widget</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../external/rv.html">external.rv</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../file_saver.html">file_saver</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../file_saver/main.html">file_saver.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../file_saver/widgets.html">file_saver.widgets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../importexport.html">importexport</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../items.html">items</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../items/asset_items.html">items.asset_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/bookmark_items.html">items.bookmark_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/delegate.html">items.delegate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/favourite_items.html">items.favourite_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/file_items.html">items.file_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/models.html">items.models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/task_items.html">items.task_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/views.html">items.views</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/widgets/filter_editor.html">items.widgets.filter_editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/widgets/image_viewer.html">items.widgets.image_viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/widgets/thumb_capture.html">items.widgets.thumb_capture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/widgets/thumb_library.html">items.widgets.thumb_library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../items/widgets/thumb_picker.html">items.widgets.thumb_picker</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../launcher.html">launcher</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../launcher/gallery.html">launcher.gallery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../launcher/main.html">launcher.main</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../log.html">log</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html">main</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../maya.html">maya</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../maya/actions.html">maya.actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/base.html">maya.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/capture.html">maya.capture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/contextmenu.html">maya.contextmenu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/export.html">maya.export</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/main.html">maya.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/plugin.html">maya.plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/shadertool.html">maya.shadertool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/viewport.html">maya.viewport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../notes.html">notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../progress.html">progress</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../publish.html">publish</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shortcuts.html">shortcuts</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../shotgun.html">shotgun</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="actions.html">shotgun.actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="link.html">shotgun.link</a></li>
+<li class="toctree-l3"><a class="reference internal" href="link_asset.html">shotgun.link_asset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="link_assets.html">shotgun.link_assets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="link_bookmark.html">shotgun.link_bookmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="publish.html">shotgun.publish</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">shotgun.publish_widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="shotgun.html">shotgun.shotgun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="tasks.html">shotgun.tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../slack.html">slack</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../slack/slack.html">slack.slack</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../standalone.html">standalone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../statusbar.html">statusbar</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../teams.html">teams</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../teams/message.html">teams.message</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../templates.html">templates</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../threads.html">threads</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../threads/threads.html">threads.threads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../threads/workers.html">threads.workers</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../tokens.html">tokens</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tokens/tokens.html">tokens.tokens</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tokens/tokens_editor.html">tokens.tokens_editor</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../topbar.html">topbar</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../topbar/buttons.html">topbar.buttons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../topbar/quickswitch.html">topbar.quickswitch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../topbar/tabs.html">topbar.tabs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../topbar/topbar.html">topbar.topbar</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../ui.html">ui</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../versioncontrol.html">versioncontrol</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../versioncontrol/version.html">versioncontrol.version</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../versioncontrol/versioncontrol.html">versioncontrol.versioncontrol</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="module-bookmarks.shotgun.publish_widgets">
+<span id="shotgun-publish-widgets"></span><h1>shotgun.publish_widgets<a class="headerlink" href="#module-bookmarks.shotgun.publish_widgets" title="Permalink to this heading">#</a></h1>
+<p>Tree view and model used to display ShotGrid Steps and Tasks.</p>
+<p><strong>Classes:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.AssetEntityEditor" title="bookmarks.shotgun.publish_widgets.AssetEntityEditor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AssetEntityEditor</span></code></a>([parent])</p></td>
+<td><p>Displays the current asset entity.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget" title="bookmarks.shotgun.publish_widgets.DropWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DropWidget</span></code></a>([parent])</p></td>
+<td><p>Widget used to provide an area to drop a file onto.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.LocalStorageEditor" title="bookmarks.shotgun.publish_widgets.LocalStorageEditor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LocalStorageEditor</span></code></a>([parent])</p></td>
+<td><p>Lets the user select a ShotGrid task.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.PickFile" title="bookmarks.shotgun.publish_widgets.PickFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PickFile</span></code></a>([parent])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.ProjectEntityEditor" title="bookmarks.shotgun.publish_widgets.ProjectEntityEditor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProjectEntityEditor</span></code></a>([parent])</p></td>
+<td><p>Displays the current project entity.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.PublishedFileTypeEditor" title="bookmarks.shotgun.publish_widgets.PublishedFileTypeEditor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PublishedFileTypeEditor</span></code></a>([parent])</p></td>
+<td><p>Lets the user select a ShotGrid task.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.StatusEditor" title="bookmarks.shotgun.publish_widgets.StatusEditor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StatusEditor</span></code></a>([parent])</p></td>
+<td><p>Lets the user select a status code.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.TaskEditor" title="bookmarks.shotgun.publish_widgets.TaskEditor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TaskEditor</span></code></a>([parent])</p></td>
+<td><p>Lets the user select a ShotGrid task.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.AssetEntityEditor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.publish_widgets.</span></span><span class="sig-name descname"><span class="pre">AssetEntityEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#AssetEntityEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.AssetEntityEditor" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="shotgun.html#bookmarks.shotgun.shotgun.EntityComboBox" title="bookmarks.shotgun.shotgun.EntityComboBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityComboBox</span></code></a></p>
+<p>Displays the current asset entity.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.DropWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.publish_widgets.</span></span><span class="sig-name descname"><span class="pre">DropWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#DropWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.DropWidget" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Widget used to provide an area to drop a file onto.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.dragEnterEvent" title="bookmarks.shotgun.publish_widgets.DropWidget.dragEnterEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dragEnterEvent</span></code></a>(self, event)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.dragLeaveEvent" title="bookmarks.shotgun.publish_widgets.DropWidget.dragLeaveEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dragLeaveEvent</span></code></a>(self, event)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.dragMoveEvent" title="bookmarks.shotgun.publish_widgets.DropWidget.dragMoveEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dragMoveEvent</span></code></a>(self, event)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.dropEvent" title="bookmarks.shotgun.publish_widgets.DropWidget.dropEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dropEvent</span></code></a>(self, event)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.enterEvent" title="bookmarks.shotgun.publish_widgets.DropWidget.enterEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">enterEvent</span></code></a>(self, event)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.leaveEvent" title="bookmarks.shotgun.publish_widgets.DropWidget.leaveEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">leaveEvent</span></code></a>(self, event)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.mouseReleaseEvent" title="bookmarks.shotgun.publish_widgets.DropWidget.mouseReleaseEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mouseReleaseEvent</span></code></a>(self, event)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.paintEvent" title="bookmarks.shotgun.publish_widgets.DropWidget.paintEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paintEvent</span></code></a>(self, event)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.statusTip" title="bookmarks.shotgun.publish_widgets.DropWidget.statusTip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">statusTip</span></code></a>(self)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.toolTip" title="bookmarks.shotgun.publish_widgets.DropWidget.toolTip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toolTip</span></code></a>(self)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.DropWidget.dragEnterEvent">
+<span class="sig-name descname"><span class="pre">dragEnterEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtGui.QDragEnterEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#DropWidget.dragEnterEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.DropWidget.dragEnterEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.DropWidget.dragLeaveEvent">
+<span class="sig-name descname"><span class="pre">dragLeaveEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtGui.QDragLeaveEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#DropWidget.dragLeaveEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.DropWidget.dragLeaveEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.DropWidget.dragMoveEvent">
+<span class="sig-name descname"><span class="pre">dragMoveEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtGui.QDragMoveEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#DropWidget.dragMoveEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.DropWidget.dragMoveEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.DropWidget.dropEvent">
+<span class="sig-name descname"><span class="pre">dropEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtGui.QDropEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#DropWidget.dropEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.DropWidget.dropEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.DropWidget.enterEvent">
+<span class="sig-name descname"><span class="pre">enterEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#DropWidget.enterEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.DropWidget.enterEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.DropWidget.leaveEvent">
+<span class="sig-name descname"><span class="pre">leaveEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#DropWidget.leaveEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.DropWidget.leaveEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.DropWidget.mouseReleaseEvent">
+<span class="sig-name descname"><span class="pre">mouseReleaseEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtGui.QMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#DropWidget.mouseReleaseEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.DropWidget.mouseReleaseEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.DropWidget.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtGui.QPaintEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#DropWidget.paintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.DropWidget.paintEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.DropWidget.statusTip">
+<span class="sig-name descname"><span class="pre">statusTip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#DropWidget.statusTip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.DropWidget.statusTip" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.DropWidget.toolTip">
+<span class="sig-name descname"><span class="pre">toolTip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#DropWidget.toolTip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.DropWidget.toolTip" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.LocalStorageEditor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.publish_widgets.</span></span><span class="sig-name descname"><span class="pre">LocalStorageEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#LocalStorageEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.LocalStorageEditor" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="shotgun.html#bookmarks.shotgun.shotgun.EntityComboBox" title="bookmarks.shotgun.shotgun.EntityComboBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityComboBox</span></code></a></p>
+<p>Lets the user select a ShotGrid task.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.LocalStorageEditor.init_data" title="bookmarks.shotgun.publish_widgets.LocalStorageEditor.init_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_data</span></code></a>()</p></td>
+<td><p>Request Status entity data.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.LocalStorageEditor.init_data">
+<span class="sig-name descname"><span class="pre">init_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#LocalStorageEditor.init_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.LocalStorageEditor.init_data" title="Permalink to this definition">#</a></dt>
+<dd><p>Request Status entity data.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.PickFile">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.publish_widgets.</span></span><span class="sig-name descname"><span class="pre">PickFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#PickFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.PickFile" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QFileDialog</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.ProjectEntityEditor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.publish_widgets.</span></span><span class="sig-name descname"><span class="pre">ProjectEntityEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#ProjectEntityEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.ProjectEntityEditor" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="shotgun.html#bookmarks.shotgun.shotgun.EntityComboBox" title="bookmarks.shotgun.shotgun.EntityComboBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityComboBox</span></code></a></p>
+<p>Displays the current project entity.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.PublishedFileTypeEditor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.publish_widgets.</span></span><span class="sig-name descname"><span class="pre">PublishedFileTypeEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#PublishedFileTypeEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.PublishedFileTypeEditor" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="shotgun.html#bookmarks.shotgun.shotgun.EntityComboBox" title="bookmarks.shotgun.shotgun.EntityComboBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityComboBox</span></code></a></p>
+<p>Lets the user select a ShotGrid task.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.PublishedFileTypeEditor.init_data" title="bookmarks.shotgun.publish_widgets.PublishedFileTypeEditor.init_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_data</span></code></a>()</p></td>
+<td><p>Request Status entity data.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.PublishedFileTypeEditor.init_data">
+<span class="sig-name descname"><span class="pre">init_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#PublishedFileTypeEditor.init_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.PublishedFileTypeEditor.init_data" title="Permalink to this definition">#</a></dt>
+<dd><p>Request Status entity data.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.StatusEditor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.publish_widgets.</span></span><span class="sig-name descname"><span class="pre">StatusEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#StatusEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.StatusEditor" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="shotgun.html#bookmarks.shotgun.shotgun.EntityComboBox" title="bookmarks.shotgun.shotgun.EntityComboBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityComboBox</span></code></a></p>
+<p>Lets the user select a status code.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.StatusEditor.init_data" title="bookmarks.shotgun.publish_widgets.StatusEditor.init_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_data</span></code></a>()</p></td>
+<td><p>Request Status entity data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.StatusEditor.select_default" title="bookmarks.shotgun.publish_widgets.StatusEditor.select_default"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_default</span></code></a>()</p></td>
+<td><p>Select the default status code, if a 'default' value is found in the entity list.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.StatusEditor.init_data">
+<span class="sig-name descname"><span class="pre">init_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#StatusEditor.init_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.StatusEditor.init_data" title="Permalink to this definition">#</a></dt>
+<dd><p>Request Status entity data.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.StatusEditor.select_default">
+<span class="sig-name descname"><span class="pre">select_default</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#StatusEditor.select_default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.StatusEditor.select_default" title="Permalink to this definition">#</a></dt>
+<dd><p>Select the default status code, if a ‘default’ value is found in
+the entity list.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.TaskEditor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.publish_widgets.</span></span><span class="sig-name descname"><span class="pre">TaskEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#TaskEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.TaskEditor" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="shotgun.html#bookmarks.shotgun.shotgun.EntityComboBox" title="bookmarks.shotgun.shotgun.EntityComboBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityComboBox</span></code></a></p>
+<p>Lets the user select a ShotGrid task.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.TaskEditor.init_data" title="bookmarks.shotgun.publish_widgets.TaskEditor.init_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_data</span></code></a>()</p></td>
+<td><p>Request Status entity data.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.TaskEditor.init_data">
+<span class="sig-name descname"><span class="pre">init_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#TaskEditor.init_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.TaskEditor.init_data" title="Permalink to this definition">#</a></dt>
+<dd><p>Request Status entity data.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="shotgun.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">shotgun.shotgun</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="publish.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">shotgun.publish</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Gergely Wootsch
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">shotgun.publish_widgets</a><ul>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.AssetEntityEditor"><code class="docutils literal notranslate"><span class="pre">AssetEntityEditor</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget"><code class="docutils literal notranslate"><span class="pre">DropWidget</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.dragEnterEvent"><code class="docutils literal notranslate"><span class="pre">DropWidget.dragEnterEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.dragLeaveEvent"><code class="docutils literal notranslate"><span class="pre">DropWidget.dragLeaveEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.dragMoveEvent"><code class="docutils literal notranslate"><span class="pre">DropWidget.dragMoveEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.dropEvent"><code class="docutils literal notranslate"><span class="pre">DropWidget.dropEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.enterEvent"><code class="docutils literal notranslate"><span class="pre">DropWidget.enterEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.leaveEvent"><code class="docutils literal notranslate"><span class="pre">DropWidget.leaveEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.mouseReleaseEvent"><code class="docutils literal notranslate"><span class="pre">DropWidget.mouseReleaseEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.paintEvent"><code class="docutils literal notranslate"><span class="pre">DropWidget.paintEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.statusTip"><code class="docutils literal notranslate"><span class="pre">DropWidget.statusTip()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.toolTip"><code class="docutils literal notranslate"><span class="pre">DropWidget.toolTip()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.LocalStorageEditor"><code class="docutils literal notranslate"><span class="pre">LocalStorageEditor</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.LocalStorageEditor.init_data"><code class="docutils literal notranslate"><span class="pre">LocalStorageEditor.init_data()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.PickFile"><code class="docutils literal notranslate"><span class="pre">PickFile</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.ProjectEntityEditor"><code class="docutils literal notranslate"><span class="pre">ProjectEntityEditor</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.PublishedFileTypeEditor"><code class="docutils literal notranslate"><span class="pre">PublishedFileTypeEditor</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.PublishedFileTypeEditor.init_data"><code class="docutils literal notranslate"><span class="pre">PublishedFileTypeEditor.init_data()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.StatusEditor"><code class="docutils literal notranslate"><span class="pre">StatusEditor</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.StatusEditor.init_data"><code class="docutils literal notranslate"><span class="pre">StatusEditor.init_data()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.StatusEditor.select_default"><code class="docutils literal notranslate"><span class="pre">StatusEditor.select_default()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.TaskEditor"><code class="docutils literal notranslate"><span class="pre">TaskEditor</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.TaskEditor.init_data"><code class="docutils literal notranslate"><span class="pre">TaskEditor.init_data()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/scripts/furo.js"></script>
+    <script src="../../_static/design-tabs.js"></script>
+    </body>
+</html>

@@ -1,0 +1,1185 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
+        <link rel="canonical" href="https://bookmarks-vfx.com/_modules/bookmarks/maya/base.html" />
+
+    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+        <title>bookmarks.maya.base - Bookmarks 0.7.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #ffffff;
+  --color-code-foreground: black;
+  --color-brand-primary: rgba(75, 180, 135, 1);
+  --color-brand-content: rgba(75, 180, 135, 1);
+  --color-api-name: rgba(0, 0, 0, 0.9);
+  --color-api-pre-name: rgba(75, 180, 135, 0.75);
+  --color-highlight-on-target: rgba(0,0,0,0);
+  --api-font-size: var(--font-size--normal);
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-highlight-on-target: rgba(0,0,0,0);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-highlight-on-target: rgba(0,0,0,0);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+      }
+    }
+  }
+</style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TX95GG28E5"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-TX95GG28E5');
+    </script>
+    
+</head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.4 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../../../_static/icon.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Bookmarks 0.7.4 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide.html">User Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Technical Documentation</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../modules.html">Python Modules</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/actions.html">actions</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/bookmarker.html">bookmarker</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/bookmarker/bookmark_editor.html">bookmarker.bookmark_editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/bookmarker/job_editor.html">bookmarker.job_editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/bookmarker/main.html">bookmarker.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/bookmarker/server_editor.html">bookmarker.server_editor</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/common.html">common</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/core.html">common.core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/data.html">common.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/env.html">common.env</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/font.html">common.font</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/monitor.html">common.monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/sequence.html">common.sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/session_lock.html">common.session_lock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/settings.html">common.settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/setup.html">common.setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/signals.html">common.signals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/ui.html">common.ui</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/contextmenu.html">contextmenu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/database.html">database</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/editor.html">editor</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/editor/asset_properties.html">editor.asset_properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/editor/base.html">editor.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/editor/base_widgets.html">editor.base_widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/editor/bookmark_properties.html">editor.bookmark_properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/editor/preferences.html">editor.preferences</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/external.html">external</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/external/ffmpeg.html">external.ffmpeg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/external/ffmpeg_widget.html">external.ffmpeg_widget</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/external/rv.html">external.rv</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/file_saver.html">file_saver</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/file_saver/main.html">file_saver.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/file_saver/widgets.html">file_saver.widgets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/importexport.html">importexport</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/items.html">items</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/asset_items.html">items.asset_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/bookmark_items.html">items.bookmark_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/delegate.html">items.delegate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/favourite_items.html">items.favourite_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/file_items.html">items.file_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/models.html">items.models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/task_items.html">items.task_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/views.html">items.views</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/filter_editor.html">items.widgets.filter_editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/image_viewer.html">items.widgets.image_viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/thumb_capture.html">items.widgets.thumb_capture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/thumb_library.html">items.widgets.thumb_library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/thumb_picker.html">items.widgets.thumb_picker</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/launcher.html">launcher</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/launcher/gallery.html">launcher.gallery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/launcher/main.html">launcher.main</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/log.html">log</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/main.html">main</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/maya.html">maya</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/maya/actions.html">maya.actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/maya/base.html">maya.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/maya/capture.html">maya.capture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/maya/contextmenu.html">maya.contextmenu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/maya/export.html">maya.export</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/maya/main.html">maya.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/maya/plugin.html">maya.plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/maya/shadertool.html">maya.shadertool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/maya/viewport.html">maya.viewport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/notes.html">notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/progress.html">progress</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/publish.html">publish</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/shortcuts.html">shortcuts</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/shotgun.html">shotgun</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/shotgun/actions.html">shotgun.actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/shotgun/link.html">shotgun.link</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/shotgun/link_asset.html">shotgun.link_asset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/shotgun/link_assets.html">shotgun.link_assets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/shotgun/link_bookmark.html">shotgun.link_bookmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/shotgun/publish.html">shotgun.publish</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/shotgun/publish_widgets.html">shotgun.publish_widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/shotgun/shotgun.html">shotgun.shotgun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/shotgun/tasks.html">shotgun.tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/slack.html">slack</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/slack/slack.html">slack.slack</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/standalone.html">standalone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/statusbar.html">statusbar</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/teams.html">teams</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/teams/message.html">teams.message</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/templates.html">templates</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/threads.html">threads</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/threads/threads.html">threads.threads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/threads/workers.html">threads.workers</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/tokens.html">tokens</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/tokens/tokens.html">tokens.tokens</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/tokens/tokens_editor.html">tokens.tokens_editor</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/topbar.html">topbar</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/topbar/buttons.html">topbar.buttons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/topbar/quickswitch.html">topbar.quickswitch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/topbar/tabs.html">topbar.tabs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/topbar/topbar.html">topbar.topbar</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/ui.html">ui</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/versioncontrol.html">versioncontrol</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/versioncontrol/version.html">versioncontrol.version</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/versioncontrol/versioncontrol.html">versioncontrol.versioncontrol</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../py-modindex.html">Module Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <h1>Source code for bookmarks.maya.base</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Maya-specific methods and values.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">uuid</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">maya.cmds</span> <span class="k">as</span> <span class="nn">cmds</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s1">&#39;Could not find the Maya modules.&#39;</span><span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtCore</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">common</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">database</span>
+<span class="kn">from</span> <span class="nn">..tokens</span> <span class="kn">import</span> <span class="n">tokens</span>
+
+<span class="n">GEO_SUFFIX</span> <span class="o">=</span> <span class="s1">&#39;export&#39;</span>
+<span class="n">TEMP_NAMESPACE</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Temp_</span><span class="si">{</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()</span><span class="o">.</span><span class="n">hex</span><span class="si">}</span><span class="s1">&#39;</span>
+
+<span class="c1">#: Maya frame-rate enum definitions</span>
+<span class="n">MAYA_FPS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;hour&#39;</span><span class="p">:</span> <span class="mf">2.777777777777778e-4</span><span class="p">,</span>
+    <span class="s1">&#39;min&#39;</span><span class="p">:</span> <span class="mf">0.0166667</span><span class="p">,</span>
+    <span class="s1">&#39;sec&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="s1">&#39;millisec&#39;</span><span class="p">:</span> <span class="mf">1000.0</span><span class="p">,</span>
+    <span class="s1">&#39;game&#39;</span><span class="p">:</span> <span class="mf">15.0</span><span class="p">,</span>
+    <span class="s1">&#39;film&#39;</span><span class="p">:</span> <span class="mf">24.0</span><span class="p">,</span>
+    <span class="s1">&#39;pal&#39;</span><span class="p">:</span> <span class="mf">25.0</span><span class="p">,</span>
+    <span class="s1">&#39;ntsc&#39;</span><span class="p">:</span> <span class="mf">30.0</span><span class="p">,</span>
+    <span class="s1">&#39;show&#39;</span><span class="p">:</span> <span class="mf">48.0</span><span class="p">,</span>
+    <span class="s1">&#39;palf&#39;</span><span class="p">:</span> <span class="mf">50.0</span><span class="p">,</span>
+    <span class="s1">&#39;ntscf&#39;</span><span class="p">:</span> <span class="mf">60.0</span><span class="p">,</span>
+    <span class="s1">&#39;2fps&#39;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="s1">&#39;3fps&#39;</span><span class="p">:</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="s1">&#39;4fps&#39;</span><span class="p">:</span> <span class="mf">4.0</span><span class="p">,</span>
+    <span class="s1">&#39;5fps&#39;</span><span class="p">:</span> <span class="mf">5.0</span><span class="p">,</span>
+    <span class="s1">&#39;6fps&#39;</span><span class="p">:</span> <span class="mf">6.0</span><span class="p">,</span>
+    <span class="s1">&#39;8fps&#39;</span><span class="p">:</span> <span class="mf">8.0</span><span class="p">,</span>
+    <span class="s1">&#39;10fps&#39;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
+    <span class="s1">&#39;12fps&#39;</span><span class="p">:</span> <span class="mf">12.0</span><span class="p">,</span>
+    <span class="s1">&#39;16fps&#39;</span><span class="p">:</span> <span class="mf">16.0</span><span class="p">,</span>
+    <span class="s1">&#39;20fps&#39;</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span>
+    <span class="s1">&#39;40fps&#39;</span><span class="p">:</span> <span class="mf">40.0</span><span class="p">,</span>
+    <span class="s1">&#39;75fps&#39;</span><span class="p">:</span> <span class="mf">75.0</span><span class="p">,</span>
+    <span class="s1">&#39;100fps&#39;</span><span class="p">:</span> <span class="mf">100.0</span><span class="p">,</span>
+    <span class="s1">&#39;120fps&#39;</span><span class="p">:</span> <span class="mf">120.0</span><span class="p">,</span>
+    <span class="s1">&#39;200fps&#39;</span><span class="p">:</span> <span class="mf">200.0</span><span class="p">,</span>
+    <span class="s1">&#39;240fps&#39;</span><span class="p">:</span> <span class="mf">240.0</span><span class="p">,</span>
+    <span class="s1">&#39;250fps&#39;</span><span class="p">:</span> <span class="mf">250.0</span><span class="p">,</span>
+    <span class="s1">&#39;300fps&#39;</span><span class="p">:</span> <span class="mf">300.0</span><span class="p">,</span>
+    <span class="s1">&#39;400fps&#39;</span><span class="p">:</span> <span class="mf">400.0</span><span class="p">,</span>
+    <span class="s1">&#39;500fps&#39;</span><span class="p">:</span> <span class="mf">500.0</span><span class="p">,</span>
+    <span class="s1">&#39;600fps&#39;</span><span class="p">:</span> <span class="mf">600.0</span><span class="p">,</span>
+    <span class="s1">&#39;750fps&#39;</span><span class="p">:</span> <span class="mf">750.0</span><span class="p">,</span>
+    <span class="s1">&#39;1200fps&#39;</span><span class="p">:</span> <span class="mf">1200.0</span><span class="p">,</span>
+    <span class="s1">&#39;1500fps&#39;</span><span class="p">:</span> <span class="mf">1500.0</span><span class="p">,</span>
+    <span class="s1">&#39;2000fps&#39;</span><span class="p">:</span> <span class="mf">2000.0</span><span class="p">,</span>
+    <span class="s1">&#39;3000fps&#39;</span><span class="p">:</span> <span class="mf">3000.0</span><span class="p">,</span>
+    <span class="s1">&#39;6000fps&#39;</span><span class="p">:</span> <span class="mf">6000.0</span><span class="p">,</span>
+    <span class="s1">&#39;23.976fps&#39;</span><span class="p">:</span> <span class="mf">23.976</span><span class="p">,</span>
+    <span class="s1">&#39;29.97fps&#39;</span><span class="p">:</span> <span class="mf">29.976</span><span class="p">,</span>
+    <span class="s1">&#39;29.97df&#39;</span><span class="p">:</span> <span class="mf">29.976</span><span class="p">,</span>
+    <span class="s1">&#39;47.952fps&#39;</span><span class="p">:</span> <span class="mf">47.952</span><span class="p">,</span>
+    <span class="s1">&#39;59.94fps&#39;</span><span class="p">:</span> <span class="mf">59.94</span><span class="p">,</span>
+    <span class="s1">&#39;44100fps&#39;</span><span class="p">:</span> <span class="mf">44100.0</span><span class="p">,</span>
+    <span class="s1">&#39;48000fps&#39;</span><span class="p">:</span> <span class="mf">48000.0</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1">#: Default viewport display options</span>
+<span class="n">DisplayOptions</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;displayGradient&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;background&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>
+    <span class="s2">&quot;backgroundTop&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">),</span>
+    <span class="s2">&quot;backgroundBottom&quot;</span><span class="p">:</span> <span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">),</span>
+<span class="p">}</span>
+
+<span class="c1">#: Default camera display options</span>
+<span class="n">CameraOptions</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;displayGateMask&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;displayResolution&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;displayFilmGate&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;displayFieldChart&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;displaySafeAction&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;displaySafeTitle&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;displayFilmPivot&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;displayFilmOrigin&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;overscan&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="s2">&quot;depthOfField&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1">#: Default camera capture options</span>
+<span class="n">CaptureOptions</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;wireframeOnShaded&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;displayAppearance&quot;</span><span class="p">:</span> <span class="s1">&#39;smoothShaded&#39;</span><span class="p">,</span>
+    <span class="s2">&quot;selectionHiliteDisplay&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;headsUpDisplay&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;imagePlane&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;nurbsCurves&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;nurbsSurfaces&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;polymeshes&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;subdivSurfaces&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;planes&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;cameras&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;controlVertices&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;lights&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;grid&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;hulls&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;joints&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;ikHandles&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;deformers&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;dynamics&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;fluids&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;hairSystems&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;follicles&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;nCloths&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;nParticles&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;nRigids&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;dynamicConstraints&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;locators&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;manipulators&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;dimensions&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;handles&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;pivots&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;strokes&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;motionTrails&quot;</span><span class="p">:</span> <span class="kc">False</span>
+<span class="p">}</span>
+
+<span class="c1">#: Default frame padding</span>
+<span class="n">DefaultPadding</span> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="c1">#: Default cache export path template</span>
+<span class="n">CACHE_PATH</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{workspace}</span><span class="s1">/</span><span class="si">{export_dir}</span><span class="s1">/</span><span class="si">{set}</span><span class="s1">/</span><span class="si">{set}</span><span class="s1">.</span><span class="si">{ext}</span><span class="s1">&#39;</span>
+
+<span class="c1">#: Default cache directory template</span>
+<span class="n">DEFAULT_CACHE_DIR</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{export_dir}</span><span class="s1">/</span><span class="si">{ext}</span><span class="s1">&#39;</span>
+
+<span class="c1">#: Viewport capture direction name</span>
+<span class="n">DEFAULT_CAPTURE_DIR</span> <span class="o">=</span> <span class="s1">&#39;capture&#39;</span>
+
+<span class="c1">#: Default cache destination template</span>
+<span class="n">CACHE_LAYER_PATH</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{workspace}</span><span class="s1">/</span><span class="si">{export_dir}</span><span class="s1">/</span><span class="si">{set}</span><span class="s1">/</span><span class="si">{set}</span><span class="s1">_</span><span class="si">{layer}</span><span class="s1">.</span><span class="si">{ext}</span><span class="s1">&#39;</span>
+
+<span class="c1">#: Default capture destination path template</span>
+<span class="n">CAPTURE_DESTINATION</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{workspace}</span><span class="s1">/</span><span class="si">{capture_folder}</span><span class="s1">/</span><span class="si">{scene}</span><span class="s1">/</span><span class="si">{scene}</span><span class="s1">&#39;</span>
+
+<span class="c1">#: Default capture file path template</span>
+<span class="n">CAPTURE_FILE</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{workspace}</span><span class="s1">/</span><span class="si">{capture_folder}</span><span class="s1">/</span><span class="si">{scene}</span><span class="s1">/</span><span class="si">{scene}</span><span class="s1">.</span><span class="si">{frame}</span><span class="s1">.</span><span class="si">{ext}</span><span class="s1">&#39;</span>
+<span class="c1">#: Default capture agnostic publish path template</span>
+<span class="n">CAPTURE_PUBLISH_DIR</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{workspace}</span><span class="s1">/</span><span class="si">{capture_folder}</span><span class="s1">/latest&#39;</span>
+<span class="c1">#: Default capture agnostic publish file name template</span>
+<span class="n">AGNOSTIC_CAPTURE_FILE</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{workspace}</span><span class="s1">/</span><span class="si">{capture_folder}</span><span class="s1">/latest/</span><span class="si">{asset}</span><span class="s1">_capture_{&#39;</span> \
+                        <span class="s1">&#39;frame}.</span><span class="si">{ext}</span><span class="s1">&#39;</span>
+
+<span class="c1">#: Workspace file format rules</span>
+<span class="n">EXPORT_FILE_RULES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;Alembic&#39;</span><span class="p">:</span> <span class="s1">&#39;abc&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;alembicimport&#39;</span><span class="p">:</span> <span class="s1">&#39;abc&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;alembicexport&#39;</span><span class="p">:</span> <span class="s1">&#39;abc&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;alembicCache&#39;</span><span class="p">:</span> <span class="s1">&#39;abc&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;alembic import&#39;</span><span class="p">:</span> <span class="s1">&#39;abc&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;alembic export&#39;</span><span class="p">:</span> <span class="s1">&#39;abc&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;assexport&#39;</span><span class="p">:</span> <span class="s1">&#39;ass&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ass export&#39;</span><span class="p">:</span> <span class="s1">&#39;ass&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;ass import&#39;</span><span class="p">:</span> <span class="s1">&#39;ass&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;OBJ&#39;</span><span class="p">:</span> <span class="s1">&#39;obj&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;objimport&#39;</span><span class="p">:</span> <span class="s1">&#39;obj&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;obj import&#39;</span><span class="p">:</span> <span class="s1">&#39;obj&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;objexport&#39;</span><span class="p">:</span> <span class="s1">&#39;obj&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;OBJexport&#39;</span><span class="p">:</span> <span class="s1">&#39;obj&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;obj export&#39;</span><span class="p">:</span> <span class="s1">&#39;obj&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;fbxexport&#39;</span><span class="p">:</span> <span class="s1">&#39;fbx&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;fbx export&#39;</span><span class="p">:</span> <span class="s1">&#39;fbx&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;fbximport&#39;</span><span class="p">:</span> <span class="s1">&#39;fbx&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;fbx import&#39;</span><span class="p">:</span> <span class="s1">&#39;fbx&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Arnold-USD&#39;</span><span class="p">:</span> <span class="s1">&#39;usd&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;USD Import&#39;</span><span class="p">:</span> <span class="s1">&#39;usd&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;USD Export&#39;</span><span class="p">:</span> <span class="s1">&#39;usd&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1">#: Default render template</span>
+<span class="n">RENDER_NAME_TEMPLATE</span> <span class="o">=</span> <span class="s1">&#39;&lt;RenderLayer&gt;/&lt;Version&gt;/&lt;RenderPass&gt;/&lt;RenderLayer&gt;_&#39;</span> \
+                       <span class="s1">&#39;&lt;RenderPass&gt;_&lt;Version&gt;&#39;</span>
+
+<span class="n">SUFFIX_LABEL</span> <span class="o">=</span> <span class="s1">&#39;Select a suffix for this import.</span><span class="se">\n\n\</span>
+<span class="s1">Suffixes are always unique and help differentiate imports when the same file </span><span class="se">\</span>
+<span class="s1">is imported multiple times.&#39;</span>
+
+<span class="c1"># The list of database tables and column containing relevant properties</span>
+<span class="n">DB_KEYS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">database</span><span class="o">.</span><span class="n">BookmarkTable</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s1">&#39;width&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;height&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;framerate&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;startframe&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;duration&#39;</span>
+    <span class="p">),</span>
+    <span class="n">database</span><span class="o">.</span><span class="n">AssetTable</span><span class="p">:</span> <span class="p">(</span>
+        <span class="s1">&#39;cut_duration&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;cut_out&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;cut_in&#39;</span>
+    <span class="p">),</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="patch_workspace_file_rules"><a class="viewcode-back" href="../../../modules/maya/base.html#bookmarks.maya.base.patch_workspace_file_rules">[docs]</a><span class="k">def</span> <span class="nf">patch_workspace_file_rules</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Patches the current maya workspace to use the directories defined in the</span>
+<span class="sd">    active bookmark item&#39;s token configuration.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">rule</span><span class="p">,</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">EXPORT_FILE_RULES</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">DEFAULT_CACHE_DIR</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">export_dir</span><span class="o">=</span><span class="n">tokens</span><span class="o">.</span><span class="n">get_folder</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">CacheFolder</span><span class="p">),</span>
+            <span class="n">ext</span><span class="o">=</span><span class="n">tokens</span><span class="o">.</span><span class="n">get_subfolder</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">CacheFolder</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">cmds</span><span class="o">.</span><span class="n">workspace</span><span class="p">(</span><span class="n">fr</span><span class="o">=</span><span class="p">(</span><span class="n">rule</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+
+    <span class="n">cmds</span><span class="o">.</span><span class="n">workspace</span><span class="p">(</span><span class="n">fr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;scene&#39;</span><span class="p">,</span> <span class="n">tokens</span><span class="o">.</span><span class="n">get_folder</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">SceneFolder</span><span class="p">)))</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">workspace</span><span class="p">(</span><span class="n">fr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;sourceImages&#39;</span><span class="p">,</span> <span class="n">tokens</span><span class="o">.</span><span class="n">get_folder</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">TextureFolder</span><span class="p">)))</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">workspace</span><span class="p">(</span><span class="n">fr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;images&#39;</span><span class="p">,</span> <span class="n">tokens</span><span class="o">.</span><span class="n">get_folder</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">RenderFolder</span><span class="p">)))</span>
+
+    <span class="n">cmds</span><span class="o">.</span><span class="n">workspace</span><span class="p">(</span><span class="n">fr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;timeEditor&#39;</span><span class="p">,</span> <span class="n">tokens</span><span class="o">.</span><span class="n">get_folder</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">DataFolder</span><span class="p">)))</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">workspace</span><span class="p">(</span><span class="n">fr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;renderData&#39;</span><span class="p">,</span> <span class="n">tokens</span><span class="o">.</span><span class="n">get_folder</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">DataFolder</span><span class="p">)))</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">workspace</span><span class="p">(</span><span class="n">fr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;translatorData&#39;</span><span class="p">,</span> <span class="n">tokens</span><span class="o">.</span><span class="n">get_folder</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">DataFolder</span><span class="p">)))</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">workspace</span><span class="p">(</span><span class="n">fr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;sceneAssembly&#39;</span><span class="p">,</span> <span class="n">tokens</span><span class="o">.</span><span class="n">get_folder</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">DataFolder</span><span class="p">)))</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">workspace</span><span class="p">(</span><span class="n">fr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;diskCache&#39;</span><span class="p">,</span> <span class="n">tokens</span><span class="o">.</span><span class="n">get_folder</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">DataFolder</span><span class="p">)))</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">workspace</span><span class="p">(</span><span class="n">fr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;diskCache&#39;</span><span class="p">,</span> <span class="n">tokens</span><span class="o">.</span><span class="n">get_folder</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">DataFolder</span><span class="p">)))</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">workspace</span><span class="p">(</span><span class="n">fr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;fluidCache&#39;</span><span class="p">,</span> <span class="n">tokens</span><span class="o">.</span><span class="n">get_folder</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">DataFolder</span><span class="p">)))</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">workspace</span><span class="p">(</span><span class="n">fr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;offlineEdit&#39;</span><span class="p">,</span> <span class="n">tokens</span><span class="o">.</span><span class="n">get_folder</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">DataFolder</span><span class="p">)))</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">workspace</span><span class="p">(</span><span class="n">fr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;furShadowMap&#39;</span><span class="p">,</span> <span class="n">tokens</span><span class="o">.</span><span class="n">get_folder</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">DataFolder</span><span class="p">)))</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">workspace</span><span class="p">(</span><span class="n">fr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;shaders&#39;</span><span class="p">,</span> <span class="n">tokens</span><span class="o">.</span><span class="n">get_folder</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">DataFolder</span><span class="p">)))</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">workspace</span><span class="p">(</span><span class="n">fr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;furFiles&#39;</span><span class="p">,</span> <span class="n">tokens</span><span class="o">.</span><span class="n">get_folder</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">DataFolder</span><span class="p">)))</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">workspace</span><span class="p">(</span><span class="n">fr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;furEqualMap&#39;</span><span class="p">,</span> <span class="n">tokens</span><span class="o">.</span><span class="n">get_folder</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">DataFolder</span><span class="p">)))</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">workspace</span><span class="p">(</span><span class="n">fr</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;movie&#39;</span><span class="p">,</span> <span class="n">tokens</span><span class="o">.</span><span class="n">get_folder</span><span class="p">(</span><span class="n">tokens</span><span class="o">.</span><span class="n">DataFolder</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="set_startframe"><a class="viewcode-back" href="../../../modules/maya/base.html#bookmarks.maya.base.set_startframe">[docs]</a><span class="k">def</span> <span class="nf">set_startframe</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sets the scene&#39;s animation start time.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        frame (int): The start frame.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+    <span class="c1"># Set the current timeline to `frame`</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">playbackOptions</span><span class="p">(</span><span class="n">animationStartTime</span><span class="o">=</span><span class="n">frame</span><span class="p">)</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">playbackOptions</span><span class="p">(</span><span class="n">minTime</span><span class="o">=</span><span class="n">frame</span><span class="p">)</span>
+
+    <span class="c1"># Set the render start frame to `frame`</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">setAttr</span><span class="p">(</span><span class="s1">&#39;defaultRenderGlobals.startFrame&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+
+    <span class="c1"># Make sure the current frame is not outside our range</span>
+    <span class="n">current_frame</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">cmds</span><span class="o">.</span><span class="n">currentTime</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">current_frame</span> <span class="o">&lt;=</span> <span class="n">frame</span><span class="p">:</span>
+        <span class="n">cmds</span><span class="o">.</span><span class="n">currentTime</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">edit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cmds</span><span class="o">.</span><span class="n">currentTime</span><span class="p">(</span><span class="n">current_frame</span><span class="p">,</span> <span class="n">edit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="set_endframe"><a class="viewcode-back" href="../../../modules/maya/base.html#bookmarks.maya.base.set_endframe">[docs]</a><span class="k">def</span> <span class="nf">set_endframe</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sets the scene&#39;s animation end time.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        frame (int): The end frame.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+    <span class="c1"># Set the current timeline to `frame`</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">playbackOptions</span><span class="p">(</span><span class="n">animationEndTime</span><span class="o">=</span><span class="n">frame</span><span class="p">)</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">playbackOptions</span><span class="p">(</span><span class="n">maxTime</span><span class="o">=</span><span class="n">frame</span><span class="p">)</span>
+
+    <span class="c1"># Set the render start frame to `frame`</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">setAttr</span><span class="p">(</span><span class="s1">&#39;defaultRenderGlobals.endFrame&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+
+    <span class="c1"># Make sure the current frame is not outside our range</span>
+    <span class="n">current_frame</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">cmds</span><span class="o">.</span><span class="n">currentTime</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">current_frame</span> <span class="o">&gt;=</span> <span class="n">frame</span><span class="p">:</span>
+        <span class="n">cmds</span><span class="o">.</span><span class="n">currentTime</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">edit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cmds</span><span class="o">.</span><span class="n">currentTime</span><span class="p">(</span><span class="n">current_frame</span><span class="p">,</span> <span class="n">edit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="apply_default_render_values"><a class="viewcode-back" href="../../../modules/maya/base.html#bookmarks.maya.base.apply_default_render_values">[docs]</a><span class="k">def</span> <span class="nf">apply_default_render_values</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Sets the default render values for the current scene.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">setAttr</span><span class="p">(</span><span class="s1">&#39;perspShape.renderable&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># Enable versioned outputs</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">setAttr</span><span class="p">(</span>
+        <span class="s1">&#39;defaultRenderGlobals.imageFilePrefix&#39;</span><span class="p">,</span>
+        <span class="n">RENDER_NAME_TEMPLATE</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;string&#39;</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cmds</span><span class="o">.</span><span class="n">getAttr</span><span class="p">(</span><span class="s1">&#39;defaultRenderGlobals.renderVersion&#39;</span><span class="p">):</span>
+        <span class="n">cmds</span><span class="o">.</span><span class="n">setAttr</span><span class="p">(</span>
+            <span class="s1">&#39;defaultRenderGlobals.renderVersion&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;v001&#39;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">cmds</span><span class="o">.</span><span class="n">setAttr</span><span class="p">(</span><span class="s1">&#39;defaultRenderGlobals.extensionPadding&#39;</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">setAttr</span><span class="p">(</span><span class="s1">&#39;defaultRenderGlobals.animation&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">setAttr</span><span class="p">(</span><span class="s1">&#39;defaultRenderGlobals.putFrameBeforeExt&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">setAttr</span><span class="p">(</span><span class="s1">&#39;defaultRenderGlobals.periodInExt&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">setAttr</span><span class="p">(</span><span class="s1">&#39;defaultRenderGlobals.useFrameExt&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">setAttr</span><span class="p">(</span><span class="s1">&#39;defaultRenderGlobals.outFormatControl&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">setAttr</span><span class="p">(</span><span class="s1">&#39;defaultRenderGlobals.imageFormat&#39;</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+
+    <span class="c1"># Mostly because of After Effects</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cmds</span><span class="o">.</span><span class="n">setAttr</span><span class="p">(</span><span class="s1">&#39;defaultArnoldDriver.mergeAOVs&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="set_render_resolution"><a class="viewcode-back" href="../../../modules/maya/base.html#bookmarks.maya.base.set_render_resolution">[docs]</a><span class="k">def</span> <span class="nf">set_render_resolution</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sets the render resolution of the current scene.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">setAttr</span><span class="p">(</span><span class="s1">&#39;defaultResolution.width&#39;</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
+    <span class="n">cmds</span><span class="o">.</span><span class="n">setAttr</span><span class="p">(</span><span class="s1">&#39;defaultResolution.height&#39;</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="set_framerate"><a class="viewcode-back" href="../../../modules/maya/base.html#bookmarks.maya.base.set_framerate">[docs]</a><span class="k">def</span> <span class="nf">set_framerate</span><span class="p">(</span><span class="n">fps</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sets the frame-rate speed of the current scene.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fps</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="n">fps</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fps</span><span class="p">)</span>
+
+    <span class="c1"># Make sure the proposed fps is a valid Maya value</span>
+    <span class="k">if</span> <span class="n">fps</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">MAYA_FPS</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Invalid framerate&#39;</span><span class="p">)</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;animationStartTime&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s1">&#39;minTime&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s1">&#39;animationEndTime&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s1">&#39;maxTime&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Store current values</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">cmds</span><span class="o">.</span><span class="n">playbackOptions</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;query&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+
+    <span class="c1"># Set the frame range</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">MAYA_FPS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">fps</span> <span class="o">==</span> <span class="n">v</span><span class="p">:</span>
+            <span class="n">cmds</span><span class="o">.</span><span class="n">currentUnit</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">k</span><span class="p">)</span>
+            <span class="k">break</span>
+
+    <span class="c1"># Reapply original values</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">cmds</span><span class="o">.</span><span class="n">playbackOptions</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="get_framerate"><a class="viewcode-back" href="../../../modules/maya/base.html#bookmarks.maya.base.get_framerate">[docs]</a><span class="k">def</span> <span class="nf">get_framerate</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Returns the value of the current frame-rate enum.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">MAYA_FPS</span><span class="p">[</span><span class="n">cmds</span><span class="o">.</span><span class="n">currentUnit</span><span class="p">(</span><span class="n">query</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="find_project_folder"><a class="viewcode-back" href="../../../modules/maya/base.html#bookmarks.maya.base.find_project_folder">[docs]</a><span class="k">def</span> <span class="nf">find_project_folder</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the relative path of a project folder.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        key (str): The name of a Maya project folder name, e.g. &#39;sourceImages&#39;.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">        str: The name of the folder that corresponds with `key`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Key must be specified.&#39;</span><span class="p">)</span>
+
+    <span class="n">_file_rules</span> <span class="o">=</span> <span class="n">cmds</span><span class="o">.</span><span class="n">workspace</span><span class="p">(</span>
+        <span class="n">fr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">query</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">file_rules</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_file_rules</span><span class="p">):</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">_file_rules</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="n">m</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">file_rules</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">m</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">file_rules</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">_file_rules</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+
+    <span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">file_rules</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">file_rules</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">key</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_available_suffixes</span><span class="p">(</span><span class="n">basename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checks for already used suffixes in the current scene and returns a list</span>
+<span class="sd">    of available ones.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">alphabet</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span>
+    <span class="n">transforms</span> <span class="o">=</span> <span class="n">cmds</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">transforms</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">transforms</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">basename</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cmds</span><span class="o">.</span><span class="n">attributeQuery</span><span class="p">(</span><span class="s1">&#39;instance_suffix&#39;</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="n">cmds</span><span class="o">.</span><span class="n">getAttr</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">.instance_suffix&#39;</span><span class="p">)</span>
+        <span class="n">alphabet</span> <span class="o">=</span> <span class="n">alphabet</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">[</span><span class="n">suffix</span><span class="p">],</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">alphabet</span>
+
+
+<span class="k">def</span> <span class="nf">_add_suffix_attribute</span><span class="p">(</span><span class="n">rfn</span><span class="p">,</span> <span class="n">suffix</span><span class="p">,</span> <span class="n">reference</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Adds a custom attribute to the imported scene.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_id</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">suffix</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">reference</span><span class="p">:</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">cmds</span><span class="o">.</span><span class="n">referenceQuery</span><span class="p">(</span><span class="n">rfn</span><span class="p">,</span> <span class="n">nodes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">cmds</span><span class="o">.</span><span class="n">namespaceInfo</span><span class="p">(</span><span class="n">rfn</span><span class="p">,</span> <span class="n">listNamespace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
+        <span class="c1"># Conflict of duplicate name would prevent import... this is a hackish,</span>
+        <span class="c1"># yikes, workaround!</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_node</span> <span class="o">=</span> <span class="n">cmds</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">long</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">cmds</span><span class="o">.</span><span class="n">nodeType</span><span class="p">(</span><span class="n">_node</span><span class="p">)</span> <span class="o">!=</span> <span class="s1">&#39;transform&#39;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">cmds</span><span class="o">.</span><span class="n">listRelatives</span><span class="p">(</span><span class="n">_node</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">cmds</span><span class="o">.</span><span class="n">attributeQuery</span><span class="p">(</span><span class="s1">&#39;instance_suffix&#39;</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">node</span><span class="p">,</span> <span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="n">cmds</span><span class="o">.</span><span class="n">addAttr</span><span class="p">(</span>
+                    <span class="n">_node</span><span class="p">,</span> <span class="n">ln</span><span class="o">=</span><span class="s1">&#39;instance_suffix&#39;</span><span class="p">,</span> <span class="n">at</span><span class="o">=</span><span class="s1">&#39;enum&#39;</span><span class="p">,</span>
+                    <span class="n">en</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">cmds</span><span class="o">.</span><span class="n">setAttr</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">.instance_suffix&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_node</span><span class="p">),</span> <span class="n">_id</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Could not add attribute to </span><span class="si">{</span><span class="n">node</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="is_scene_modified"><a class="viewcode-back" href="../../../modules/maya/base.html#bookmarks.maya.base.is_scene_modified">[docs]</a><span class="k">def</span> <span class="nf">is_scene_modified</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;If the current scene was modified since the last save, the user will be</span>
+<span class="sd">    prompted to save the scene.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cmds</span><span class="o">.</span><span class="n">file</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">modified</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">return</span>
+
+    <span class="n">mbox</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">()</span>
+    <span class="n">mbox</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span>
+        <span class="s1">&#39;Current scene has unsaved changes.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">mbox</span><span class="o">.</span><span class="n">setInformativeText</span><span class="p">(</span><span class="s1">&#39;Do you want to save before continuing?&#39;</span><span class="p">)</span>
+    <span class="n">mbox</span><span class="o">.</span><span class="n">setStandardButtons</span><span class="p">(</span>
+        <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Save</span>
+        <span class="o">|</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">No</span>
+        <span class="o">|</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Cancel</span>
+    <span class="p">)</span>
+    <span class="n">mbox</span><span class="o">.</span><span class="n">setDefaultButton</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Save</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">mbox</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Cancel</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">elif</span> <span class="n">result</span> <span class="o">==</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">Save</span><span class="p">:</span>
+        <span class="n">cmds</span><span class="o">.</span><span class="n">SaveScene</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="report_export_progress"><a class="viewcode-back" href="../../../modules/maya/base.html#bookmarks.maya.base.report_export_progress">[docs]</a><span class="k">def</span> <span class="nf">report_export_progress</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">current</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">start_time</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A litle progress report get some export feedback.&quot;&quot;&quot;</span>
+    <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+    <span class="n">elapsed</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%H:%M.%Ssecs&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">(</span><span class="n">elapsed</span><span class="p">))</span>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+    <span class="n">current</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">current</span><span class="p">)</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+
+    <span class="n">_current</span> <span class="o">=</span> <span class="n">current</span> <span class="o">-</span> <span class="n">start</span>
+    <span class="n">_end</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span>
+
+    <span class="k">if</span> <span class="n">_end</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">progress</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">_current</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">progress</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">_current</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">_end</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+
+    <span class="n">progress</span> <span class="o">=</span> <span class="s1">&#39;[</span><span class="si">{}{}</span><span class="s1">] </span><span class="si">{}</span><span class="s1">%&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="s1">&#39;#&#39;</span> <span class="o">*</span> <span class="nb">int</span><span class="p">(</span><span class="n">progress</span><span class="p">),</span>
+        <span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="p">(</span><span class="mi">100</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">progress</span><span class="p">)),</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">progress</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;# Exporting frame </span><span class="si">{current}</span><span class="s1"> of </span><span class="si">{end}</span><span class="se">\n</span><span class="s1"># </span><span class="si">{progress}</span><span class="se">\n</span><span class="s1"># Elapsed: {&#39;</span> \
+          <span class="s1">&#39;elapsed}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">current</span><span class="o">=</span><span class="n">current</span><span class="p">,</span>
+        <span class="n">end</span><span class="o">=</span><span class="n">end</span><span class="p">,</span>
+        <span class="n">progress</span><span class="o">=</span><span class="n">progress</span><span class="p">,</span>
+        <span class="n">elapsed</span><span class="o">=</span><span class="n">elapsed</span>
+    <span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_is_set_created_by_user</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;From the good folks at cgsociety - filters the in-scene sets to return</span>
+<span class="sd">    the user-created items only.</span>
+
+<span class="sd">    https://forums.cgsociety.org/t/maya-mel-python-list-object-sets-visible-in</span>
+<span class="sd">    -the-dag/1586067/2</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if the user created the set, otherwise False.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># We first test for plug-in object sets.</span>
+        <span class="n">apiNodeType</span> <span class="o">=</span> <span class="n">cmds</span><span class="o">.</span><span class="n">nodeType</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">api</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="n">apiNodeType</span> <span class="o">==</span> <span class="s2">&quot;kPluginObjectSet&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="c1"># We do not need to test is the object is a set, since that test</span>
+    <span class="c1"># has already been done by the outliner</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">nodeType</span> <span class="o">=</span> <span class="n">cmds</span><span class="o">.</span><span class="n">nodeType</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># We do not want any rendering sets</span>
+    <span class="k">if</span> <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;shadingEngine&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># if the object is not a set, return false</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;objectSet&quot;</span> <span class="ow">or</span>
+            <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;textureBakeSet&quot;</span> <span class="ow">or</span>
+            <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;vertexBakeSet&quot;</span> <span class="ow">or</span>
+            <span class="n">nodeType</span> <span class="o">==</span> <span class="s2">&quot;character&quot;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># We also do not want any sets with restrictions</span>
+    <span class="n">restrictionAttrs</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;verticesOnlySet&quot;</span><span class="p">,</span> <span class="s2">&quot;edgesOnlySet&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;facetsOnlySet&quot;</span><span class="p">,</span> <span class="s2">&quot;editPointsOnlySet&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;renderableOnlySet&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">cmds</span><span class="o">.</span><span class="n">getAttr</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span>
+            <span class="n">restrictionAttrs</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># Do not show layers</span>
+    <span class="k">if</span> <span class="n">cmds</span><span class="o">.</span><span class="n">getAttr</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.isLayer&#39;</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># Do not show bookmarks</span>
+    <span class="n">annotation</span> <span class="o">=</span> <span class="n">cmds</span><span class="o">.</span><span class="n">getAttr</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">.annotation&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">annotation</span> <span class="o">==</span> <span class="s2">&quot;bookmarkAnimCurves&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="kc">True</span>
+
+
+<div class="viewcode-block" id="sanitize_namespace"><a class="viewcode-back" href="../../../modules/maya/base.html#bookmarks.maya.base.sanitize_namespace">[docs]</a><span class="k">def</span> <span class="nf">sanitize_namespace</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Converts the input string so that it can be safely used as a file name.</span>
+<span class="sd">    Any namespace will be enclosed in brackets and the &#39;:&#39; characters will be </span>
+<span class="sd">    replaced with underscores.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        s (str): A string that contains namespace names.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: The sanitized string.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">namespaces</span> <span class="o">=</span> <span class="p">{</span><span class="n">f</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">re</span><span class="o">.</span><span class="n">finditer</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;([^/:|</span><span class="se">\\</span><span class="s1">:]+):(?!/|</span><span class="se">\\</span><span class="s1">)&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)}</span>
+    <span class="k">for</span> <span class="n">ns</span> <span class="ow">in</span> <span class="n">namespaces</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">ns</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;(</span><span class="si">{</span><span class="n">ns</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;:+&#39;</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">rf</span><span class="s1">&#39;_</span><span class="si">{</span><span class="n">GEO_SUFFIX</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;([)a-zA-Z0-9])(:)([(a-zA-Z0-9])&#39;</span><span class="p">,</span> <span class="sa">r</span><span class="s1">&#39;\1_\3&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_geo_sets"><a class="viewcode-back" href="../../../modules/maya/base.html#bookmarks.maya.base.get_geo_sets">[docs]</a><span class="k">def</span> <span class="nf">get_geo_sets</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;The main function responsible for returning the user created object sets</span>
+<span class="sd">    from the current Maya scene. There&#39;s an extra caveat: the set has to contain</span>
+<span class="sd">    the word &#39;GEO_SUFFIX&#39; to be considered valid.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: A dict of set name / mesh list pairs.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sets_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">cmds</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">sets</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="n">_is_set_created_by_user</span><span class="p">(</span><span class="n">k</span><span class="p">)]):</span>
+        <span class="c1"># Filter sets based on their names</span>
+        <span class="k">if</span> <span class="n">GEO_SUFFIX</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">dag_set_members</span> <span class="o">=</span> <span class="n">cmds</span><span class="o">.</span><span class="n">listConnections</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">s</span><span class="si">}</span><span class="s1">.dagSetMembers&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dag_set_members</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># We can ignore this group is it does not contain any shapes</span>
+        <span class="n">members</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">cmds</span><span class="o">.</span><span class="n">ls</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">long</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">dag_set_members</span> <span class="k">if</span>
+            <span class="n">cmds</span><span class="o">.</span><span class="n">listRelatives</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">shapes</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fullPath</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">members</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="n">sets_data</span><span class="p">[</span><span class="n">s</span><span class="p">]</span> <span class="o">=</span> <span class="n">members</span>
+
+    <span class="k">return</span> <span class="n">sets_data</span></div>
+
+
+<div class="viewcode-block" id="capture_viewport_destination"><a class="viewcode-back" href="../../../modules/maya/base.html#bookmarks.maya.base.capture_viewport_destination">[docs]</a><span class="k">def</span> <span class="nf">capture_viewport_destination</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Returns a tuple of destination parameters.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Note that CAPTURE_DESTINATION does not actually refer to the full filename</span>
+    <span class="c1"># the padded frame numbers and the extensions are added to the base name</span>
+    <span class="c1"># by `capture.py`</span>
+    <span class="n">workspace</span> <span class="o">=</span> <span class="n">cmds</span><span class="o">.</span><span class="n">workspace</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rootDirectory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileInfo</span><span class="p">(</span><span class="n">cmds</span><span class="o">.</span><span class="n">file</span><span class="p">(</span><span class="n">q</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">expandName</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+    <span class="n">dest</span> <span class="o">=</span> <span class="n">CAPTURE_DESTINATION</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">workspace</span><span class="o">=</span><span class="n">workspace</span><span class="p">,</span>
+        <span class="n">capture_folder</span><span class="o">=</span><span class="n">DEFAULT_CAPTURE_DIR</span><span class="p">,</span>
+        <span class="n">scene</span><span class="o">=</span><span class="n">scene</span><span class="o">.</span><span class="n">baseName</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">DEFAULT_CAPTURE_DIR</span><span class="p">,</span> <span class="n">workspace</span><span class="p">,</span> <span class="n">dest</span></div>
+
+
+<div class="viewcode-block" id="MayaProperties"><a class="viewcode-back" href="../../../modules/maya/base.html#bookmarks.maya.base.MayaProperties">[docs]</a><span class="k">class</span> <span class="nc">MayaProperties</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Utility class used to interface with values stored in the bookmark item&#39;s database.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="n">server</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="s1">&#39;server&#39;</span><span class="p">)</span>
+        <span class="n">job</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="s1">&#39;job&#39;</span><span class="p">)</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="s1">&#39;root&#39;</span><span class="p">)</span>
+        <span class="n">asset</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">active</span><span class="p">(</span><span class="s1">&#39;asset&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">((</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">asset</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Could not find active asset.&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_data</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">asset</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MayaProperties.init_data"><a class="viewcode-back" href="../../../modules/maya/base.html#bookmarks.maya.base.MayaProperties.init_data">[docs]</a>    <span class="k">def</span> <span class="nf">init_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">asset</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initializes the maya properties instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Bookmark properties</span>
+        <span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get_db</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">DB_KEYS</span><span class="p">[</span><span class="n">database</span><span class="o">.</span><span class="n">BookmarkTable</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">value</span><span class="p">(</span>
+                <span class="n">db</span><span class="o">.</span><span class="n">source</span><span class="p">(),</span>
+                <span class="n">k</span><span class="p">,</span>
+                <span class="n">database</span><span class="o">.</span><span class="n">BookmarkTable</span>
+            <span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">DB_KEYS</span><span class="p">[</span><span class="n">database</span><span class="o">.</span><span class="n">AssetTable</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">value</span><span class="p">(</span>
+                <span class="n">db</span><span class="o">.</span><span class="n">source</span><span class="p">(</span><span class="n">asset</span><span class="p">),</span>
+                <span class="n">k</span><span class="p">,</span>
+                <span class="n">database</span><span class="o">.</span><span class="n">AssetTable</span>
+            <span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">framerate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A current frame-rate value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;framerate&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">))</span> <span class="ow">and</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="ow">in</span> <span class="n">MAYA_FPS</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">v</span>
+        <span class="k">return</span> <span class="n">get_framerate</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">startframe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A current start-frame value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># If the asset has an explicit in frame, we&#39;ll use that</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;cut_in&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">v</span>
+
+        <span class="c1"># Otherwise, we&#39;ll use the default bookmark frame</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;startframe&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">v</span>
+
+        <span class="k">return</span> <span class="n">cmds</span><span class="o">.</span><span class="n">playbackOptions</span><span class="p">(</span><span class="n">animationStartTime</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">endframe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A current end-frame value.</span>
+
+<span class="sd">        If the asset has an explicit out frame set that is bigger than the start</span>
+<span class="sd">        frame we&#39;ll use that value instead.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;cut_out&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">startframe</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">v</span>
+
+        <span class="c1"># If the asset has an explicit duration set we&#39;ll use that value</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;cut_duration&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">startframe</span> <span class="o">+</span> <span class="n">v</span>
+
+        <span class="c1"># Otherwise, we&#39;ll use the default bookmark duration</span>
+        <span class="c1"># If the asset has an explicit duration we&#39;ll use that value</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">startframe</span> <span class="o">+</span> <span class="n">v</span>
+
+        <span class="k">return</span> <span class="n">cmds</span><span class="o">.</span><span class="n">playbackOptions</span><span class="p">(</span><span class="n">animationEndTime</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">width</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A current width value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;width&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">v</span>
+        <span class="k">return</span> <span class="n">cmds</span><span class="o">.</span><span class="n">getAttr</span><span class="p">(</span><span class="s1">&#39;defaultResolution.width&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">height</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A current height value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;height&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">v</span>
+        <span class="k">return</span> <span class="n">cmds</span><span class="o">.</span><span class="n">getAttr</span><span class="p">(</span><span class="s1">&#39;defaultResolution.height&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MayaProperties.get_info"><a class="viewcode-back" href="../../../modules/maya/base.html#bookmarks.maya.base.MayaProperties.get_info">[docs]</a>    <span class="k">def</span> <span class="nf">get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns an informative text about the current Maya properties.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">duration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">endframe</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">startframe</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="s1">&#39;Resolution:  </span><span class="si">{w}{h}</span><span class="se">\n</span><span class="s1">Frame-rate:  </span><span class="si">{fps}</span><span class="se">\n</span><span class="s1">Cut:  </span><span class="si">{start}</span><span class="s1">{&#39;</span> \
+               <span class="s1">&#39;duration}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">w</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">))</span> <span class="k">if</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">h</span><span class="o">=</span><span class="s1">&#39;x</span><span class="si">{}</span><span class="s1">px&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">))</span> <span class="k">if</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">fps</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">fps&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">framerate</span>
+            <span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">framerate</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">start</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">startframe</span><span class="p">)</span>
+            <span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">startframe</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="n">duration</span><span class="o">=</span><span class="s1">&#39;-</span><span class="si">{}</span><span class="s1"> (</span><span class="si">{}</span><span class="s1"> frames)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">startframe</span><span class="p">)</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">duration</span><span class="p">),</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span> <span class="k">if</span> <span class="n">duration</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+            <span class="p">)</span> <span class="k">if</span> <span class="n">duration</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">info</span></div></div>
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Gergely Wootsch
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/scripts/furo.js"></script>
+    <script src="../../../_static/design-tabs.js"></script>
+    </body>
+</html>

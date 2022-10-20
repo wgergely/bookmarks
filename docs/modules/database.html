@@ -1,17 +1,17 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="editor" href="editor.html" /><link rel="prev" title="contextmenu" href="contextmenu.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/database.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
         <title>database - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -163,7 +163,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -325,11 +325,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
 </ul>
 
 </div>
@@ -358,14 +358,14 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-bookmarks.database">
-<span id="database"></span><h1>database<a class="headerlink" href="#module-bookmarks.database" title="Permalink to this heading">#</a></h1>
+          <div class="section" id="module-bookmarks.database">
+<span id="database"></span><h1>database<a class="headerlink" href="#module-bookmarks.database" title="Permalink to this headline">#</a></h1>
 <p>Defines <a class="reference internal" href="#bookmarks.database.BookmarkDB" title="bookmarks.database.BookmarkDB"><code class="xref py py-class docutils literal notranslate"><span class="pre">BookmarkDB</span></code></a>, the SQLite database interface used to store item
 properties, such as custom descriptions, flags, width, height,
 <a class="reference internal" href="tokens/tokens.html#module-bookmarks.tokens.tokens" title="bookmarks.tokens.tokens"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.tokens.tokens</span></code></a> values, etc.</p>
@@ -404,8 +404,12 @@ property, but they don’t and instead use the superfluous bookmark table
 ‘description’ column. Sorry about that…</p>
 </div>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.database.BookmarkDB" title="bookmarks.database.BookmarkDB"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BookmarkDB</span></code></a>(server, job, root[, parent])</p></td>
 <td><p>Database connector used to interface with the bookmark item's sqlite3 database.</p></td>
@@ -414,8 +418,12 @@ property, but they don’t and instead use the superfluous bookmark table
 </table>
 </div>
 <p><strong>Functions:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.database.b64decode" title="bookmarks.database.b64decode"><code class="xref py py-obj docutils literal notranslate"><span class="pre">b64decode</span></code></a>(v)</p></td>
 <td><p>Base64 decode function.</p></td>
@@ -448,8 +456,12 @@ property, but they don’t and instead use the superfluous bookmark table
 </table>
 </div>
 <p><strong>Data:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.database.AssetTable" title="bookmarks.database.AssetTable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AssetTable</span></code></a></p></td>
 <td><p>Database table name</p></td>
@@ -478,11 +490,15 @@ property, but they don’t and instead use the superfluous bookmark table
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.database.BookmarkDB">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.database.</span></span><span class="sig-name descname"><span class="pre">BookmarkDB</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/database.html#BookmarkDB"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.database.BookmarkDB" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QObject</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtCore.QObject</span></code></p>
 <p>Database connector used to interface with the bookmark item’s sqlite3 database.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.database.BookmarkDB.close" title="bookmarks.database.BookmarkDB.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a>()</p></td>
 <td><p>Closes the connection.</p></td>
@@ -540,16 +556,16 @@ mark the instance <code class="docutils literal notranslate"><span class="pre">i
 <span class="sig-name descname"><span class="pre">get_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/database.html#BookmarkDB.get_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.database.BookmarkDB.get_row" title="Permalink to this definition">#</a></dt>
 <dd><p>Gets a row from the database.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source</strong> (<em>str</em>) – A source file path.</p></li>
 <li><p><strong>table</strong> (<em>str</em>) – A database table name.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A dictionary of column/value pairs.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -560,10 +576,10 @@ mark the instance <code class="docutils literal notranslate"><span class="pre">i
 <span class="sig-name descname"><span class="pre">is_valid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/database.html#BookmarkDB.is_valid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.database.BookmarkDB.is_valid" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns the database’s status.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>True if the database is valid, False otherwise.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>bool</p>
 </dd>
 </dl>
@@ -579,7 +595,7 @@ mark the instance <code class="docutils literal notranslate"><span class="pre">i
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source</strong> (<em>str</em>) – Source file path.</p></li>
 <li><p><strong>key</strong> (<em>str</em>) – A database column name.</p></li>
@@ -595,13 +611,13 @@ mark the instance <code class="docutils literal notranslate"><span class="pre">i
 <span class="sig-name descname"><span class="pre">source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/database.html#BookmarkDB.source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.database.BookmarkDB.source" title="Permalink to this definition">#</a></dt>
 <dd><p>The source path of the database.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>args</strong> (<em>tuple</em>) – A tuple of path segments to be added to the base path.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The source path of the bookmark database.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -612,14 +628,14 @@ mark the instance <code class="docutils literal notranslate"><span class="pre">i
 <span class="sig-name descname"><span class="pre">value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/database.html#BookmarkDB.value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.database.BookmarkDB.value" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a value from the <cite>database</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source</strong> (<em>str</em>) – Path to a file or folder.</p></li>
 <li><p><strong>key</strong> (<em>str</em>) – A column, or a list of columns.</p></li>
 <li><p><strong>table</strong> (<em>str, optional</em>) – Optional table parameter, defaults to <cite>AssetTable</cite>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The value stored in the database, or None.</p>
 </dd>
 </dl>
@@ -653,7 +669,7 @@ mark the instance <code class="docutils literal notranslate"><span class="pre">i
 create and cache controllers per thread. The cached entries are stored
 in <cite>common.db_connections</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>server</strong> (<em>str</em>) – <cite>server</cite> path segment.</p></li>
 <li><p><strong>job</strong> (<em>str</em>) – <cite>job</cite> path segment.</p></li>
@@ -661,13 +677,13 @@ in <cite>common.db_connections</cite>.</p>
 <li><p><strong>force</strong> (<em>bool</em>) – Force retry connecting to the database.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Database controller instance.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="#bookmarks.database.BookmarkDB" title="bookmarks.database.BookmarkDB">BookmarkDB</a></p>
 </dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>RuntimeError</strong> – When the database is locked.</p></li>
 <li><p><strong>OSError</strong> – When the database is missing.</p></li>
@@ -693,7 +709,7 @@ in <cite>common.db_connections</cite>.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.database.</span></span><span class="sig-name descname"><span class="pre">remove_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/database.html#remove_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.database.remove_db" title="Permalink to this definition">#</a></dt>
 <dd><p>Removes and closes a cached a bookmark database connection.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>server</strong> (<em>str</em>) – <cite>server</cite> path segment.</p></li>
 <li><p><strong>job</strong> (<em>str</em>) – <cite>job</cite> path segment.</p></li>
@@ -757,7 +773,7 @@ in <cite>common.db_connections</cite>.</p>
 <dd><p>sqlite3 database structure definition</p>
 </dd></dl>
 
-</section>
+</div>
 
         </article>
       </div>
@@ -788,7 +804,7 @@ in <cite>common.db_connections</cite>.</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Gergely Wootsch
+                Copyright &#169; © 2022 Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -804,53 +820,8 @@ in <cite>common.db_connections</cite>.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">database</a><ul>
-<li><a class="reference internal" href="#bookmarks.database.BookmarkDB"><code class="docutils literal notranslate"><span class="pre">BookmarkDB</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.database.BookmarkDB.close"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.close()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.BookmarkDB.connect_with_retries"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.connect_with_retries()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.BookmarkDB.connection"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.connection()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.BookmarkDB.get_row"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.get_row()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.BookmarkDB.is_valid"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.is_valid()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.BookmarkDB.setValue"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.setValue()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.BookmarkDB.source"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.source()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.BookmarkDB.value"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.value()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.database.b64decode"><code class="docutils literal notranslate"><span class="pre">b64decode()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.b64encode"><code class="docutils literal notranslate"><span class="pre">b64encode()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.convert_return_values"><code class="docutils literal notranslate"><span class="pre">convert_return_values()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.get_db"><code class="docutils literal notranslate"><span class="pre">get_db()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.load_json"><code class="docutils literal notranslate"><span class="pre">load_json()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.remove_all_connections"><code class="docutils literal notranslate"><span class="pre">remove_all_connections()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.remove_db"><code class="docutils literal notranslate"><span class="pre">remove_db()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.set_flag"><code class="docutils literal notranslate"><span class="pre">set_flag()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.sleep"><code class="docutils literal notranslate"><span class="pre">sleep()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.AssetTable"><code class="docutils literal notranslate"><span class="pre">AssetTable</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.BookmarkTable"><code class="docutils literal notranslate"><span class="pre">BookmarkTable</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.DescriptionColumn"><code class="docutils literal notranslate"><span class="pre">DescriptionColumn</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.IdColumn"><code class="docutils literal notranslate"><span class="pre">IdColumn</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.InfoTable"><code class="docutils literal notranslate"><span class="pre">InfoTable</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.NotesColumn"><code class="docutils literal notranslate"><span class="pre">NotesColumn</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.TABLES"><code class="docutils literal notranslate"><span class="pre">TABLES</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
@@ -858,9 +829,7 @@ in <cite>common.db_connections</cite>.</p>
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/design-tabs.js"></script>
     </body>

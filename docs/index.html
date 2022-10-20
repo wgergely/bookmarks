@@ -1,17 +1,18 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
+<meta content="y51rSjHP3kvSHILPGb_k7cu8E5yNJ_XyRQ0eGwIqy2M" name="google-site-verification" />
 <link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="User Guide" href="guide.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/index.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
         <title>Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -325,11 +326,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
 </div>
@@ -370,29 +371,29 @@
 <hr class="docutils" />
 <p class="centered">
 <strong><a class="reference internal" href="guide.html#user-guide"><span class="std std-ref">User Guide</span></a>  |  <a class="reference internal" href="modules.html#python-modules"><span class="std std-ref">Python Modules</span></a>  |  <a class="reference internal" href="guide.html#get-bookmarks"><span class="std std-ref">Get Bookmarks</span></a></strong></p><hr class="docutils" />
-<section id="features">
-<h1>Features<a class="headerlink" href="#features" title="Permalink to this heading">#</a></h1>
+<div class="section" id="features">
+<h1>Features<a class="headerlink" href="#features" title="Permalink to this headline">#</a></h1>
 <p>The app categorises  project content as separate <a class="reference internal" href="modules/items/bookmark_items.html#module-bookmarks.items.bookmark_items" title="bookmarks.items.bookmark_items"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks</span></code></a>,
 <a class="reference internal" href="modules/items/asset_items.html#module-bookmarks.items.asset_items" title="bookmarks.items.asset_items"><code class="xref py py-mod docutils literal notranslate"><span class="pre">assets</span></code></a> and <a class="reference internal" href="modules/items/file_items.html#module-bookmarks.items.file_items" title="bookmarks.items.file_items"><code class="xref py py-mod docutils literal notranslate"><span class="pre">file</span> <span class="pre">items</span></code></a>.
 You can configure these independently to link with, for instance, ShotGrid entities or
 configure their properties like frame rate and resolution to set <a class="reference internal" href="modules/maya/plugin.html#module-bookmarks.maya.plugin" title="bookmarks.maya.plugin"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Maya</span> <span class="pre">scene</span> <span class="pre">settings</span></code></a>.
 You can use filters to sort and hide items, preview images, convert footage sequences, or ‘publish’ files.
 See <a class="reference internal" href="guide.html#user-guide"><span class="std std-ref">User Guide</span></a> for more information.</p>
-</section>
-<section id="background">
-<h1>Background<a class="headerlink" href="#background" title="Permalink to this heading">#</a></h1>
+</div>
+<div class="section" id="background">
+<h1>Background<a class="headerlink" href="#background" title="Permalink to this headline">#</a></h1>
 <p>I developed the app to help manage personal projects and keep myself organised (I’m a digitally messy person). So, whilst it works great for me, it might not work for you. Still, I tried to make it easily customisable to help adapt to site-specific environments. See the python modules documentation for more information.</p>
-</section>
-<section id="quick-start">
-<h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this heading">#</a></h1>
+</div>
+<div class="section" id="quick-start">
+<h1>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">#</a></h1>
 <p>The simplest way to start Bookmarks as a standalone application is to run:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kn">import</span> <span class="nn">bookmarks</span>
 <span class="linenos">2</span><span class="n">bookmarks</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
 </pre></div>
 </div>
-</section>
-<section id="dependencies">
-<h1>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">#</a></h1>
+</div>
+<div class="section" id="dependencies">
+<h1>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">#</a></h1>
 <p>The release contains all Windows dependencies. For setting up a custom development environment on another platform, you’ll need the following python dependencies:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/python/cpython">Python3</a> -  Tested against 3.9</p></li>
@@ -403,7 +404,7 @@ See <a class="reference internal" href="guide.html#user-guide"><span class="std 
 <li><p><a class="reference external" href="https://pypi.org/project/psutil">psutil</a></p></li>
 <li><p><a class="reference external" href="https://github.com/shotgunsoftware/python-api">shotgun_api3</a></p></li>
 </ul>
-</section>
+</div>
 <div class="toctree-wrapper compound">
 </div>
 <div class="toctree-wrapper compound">
@@ -430,7 +431,7 @@ See <a class="reference internal" href="guide.html#user-guide"><span class="std 
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Gergely Wootsch
+                Copyright &#169; © 2022 Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -455,9 +456,7 @@ See <a class="reference internal" href="guide.html#user-guide"><span class="std 
 </div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/scripts/furo.js"></script>
     <script src="_static/design-tabs.js"></script>
     </body>

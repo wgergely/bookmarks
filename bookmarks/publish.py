@@ -1,4 +1,8 @@
-"""Publish widget.
+"""This modules defines the widget and methods needed for a simple publish flow.
+
+This currently entails
+
+
 
 """
 import functools

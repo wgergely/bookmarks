@@ -1,17 +1,17 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="shotgun.shotgun" href="shotgun.html" /><link rel="prev" title="shotgun.publish" href="publish.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/shotgun/publish_widgets.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
         <title>shotgun.publish_widgets - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -163,7 +163,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -325,11 +325,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 </ul>
 
 </div>
@@ -358,18 +358,22 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-bookmarks.shotgun.publish_widgets">
-<span id="shotgun-publish-widgets"></span><h1>shotgun.publish_widgets<a class="headerlink" href="#module-bookmarks.shotgun.publish_widgets" title="Permalink to this heading">#</a></h1>
+          <div class="section" id="module-bookmarks.shotgun.publish_widgets">
+<span id="shotgun-publish-widgets"></span><h1>shotgun.publish_widgets<a class="headerlink" href="#module-bookmarks.shotgun.publish_widgets" title="Permalink to this headline">#</a></h1>
 <p>Tree view and model used to display ShotGrid Steps and Tasks.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.AssetEntityEditor" title="bookmarks.shotgun.publish_widgets.AssetEntityEditor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AssetEntityEditor</span></code></a>([parent])</p></td>
 <td><p>Displays the current asset entity.</p></td>
@@ -401,18 +405,22 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.AssetEntityEditor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.publish_widgets.</span></span><span class="sig-name descname"><span class="pre">AssetEntityEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#AssetEntityEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.AssetEntityEditor" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="shotgun.html#bookmarks.shotgun.shotgun.EntityComboBox" title="bookmarks.shotgun.shotgun.EntityComboBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityComboBox</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="shotgun.html#bookmarks.shotgun.shotgun.EntityComboBox" title="bookmarks.shotgun.shotgun.EntityComboBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.shotgun.shotgun.EntityComboBox</span></code></a></p>
 <p>Displays the current asset entity.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.DropWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.publish_widgets.</span></span><span class="sig-name descname"><span class="pre">DropWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#DropWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.DropWidget" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QWidget</span></code></p>
 <p>Widget used to provide an area to drop a file onto.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.dragEnterEvent" title="bookmarks.shotgun.publish_widgets.DropWidget.dragEnterEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dragEnterEvent</span></code></a>(self, event)</p></td>
 <td><p></p></td>
@@ -502,11 +510,15 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.LocalStorageEditor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.publish_widgets.</span></span><span class="sig-name descname"><span class="pre">LocalStorageEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#LocalStorageEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.LocalStorageEditor" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="shotgun.html#bookmarks.shotgun.shotgun.EntityComboBox" title="bookmarks.shotgun.shotgun.EntityComboBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityComboBox</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="shotgun.html#bookmarks.shotgun.shotgun.EntityComboBox" title="bookmarks.shotgun.shotgun.EntityComboBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.shotgun.shotgun.EntityComboBox</span></code></a></p>
 <p>Lets the user select a ShotGrid task.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.LocalStorageEditor.init_data" title="bookmarks.shotgun.publish_widgets.LocalStorageEditor.init_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_data</span></code></a>()</p></td>
 <td><p>Request Status entity data.</p></td>
@@ -525,24 +537,28 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.PickFile">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.publish_widgets.</span></span><span class="sig-name descname"><span class="pre">PickFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#PickFile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.PickFile" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QFileDialog</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QFileDialog</span></code></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.ProjectEntityEditor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.publish_widgets.</span></span><span class="sig-name descname"><span class="pre">ProjectEntityEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#ProjectEntityEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.ProjectEntityEditor" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="shotgun.html#bookmarks.shotgun.shotgun.EntityComboBox" title="bookmarks.shotgun.shotgun.EntityComboBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityComboBox</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="shotgun.html#bookmarks.shotgun.shotgun.EntityComboBox" title="bookmarks.shotgun.shotgun.EntityComboBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.shotgun.shotgun.EntityComboBox</span></code></a></p>
 <p>Displays the current project entity.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.PublishedFileTypeEditor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.publish_widgets.</span></span><span class="sig-name descname"><span class="pre">PublishedFileTypeEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#PublishedFileTypeEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.PublishedFileTypeEditor" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="shotgun.html#bookmarks.shotgun.shotgun.EntityComboBox" title="bookmarks.shotgun.shotgun.EntityComboBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityComboBox</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="shotgun.html#bookmarks.shotgun.shotgun.EntityComboBox" title="bookmarks.shotgun.shotgun.EntityComboBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.shotgun.shotgun.EntityComboBox</span></code></a></p>
 <p>Lets the user select a ShotGrid task.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.PublishedFileTypeEditor.init_data" title="bookmarks.shotgun.publish_widgets.PublishedFileTypeEditor.init_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_data</span></code></a>()</p></td>
 <td><p>Request Status entity data.</p></td>
@@ -561,11 +577,15 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.StatusEditor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.publish_widgets.</span></span><span class="sig-name descname"><span class="pre">StatusEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#StatusEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.StatusEditor" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="shotgun.html#bookmarks.shotgun.shotgun.EntityComboBox" title="bookmarks.shotgun.shotgun.EntityComboBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityComboBox</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="shotgun.html#bookmarks.shotgun.shotgun.EntityComboBox" title="bookmarks.shotgun.shotgun.EntityComboBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.shotgun.shotgun.EntityComboBox</span></code></a></p>
 <p>Lets the user select a status code.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.StatusEditor.init_data" title="bookmarks.shotgun.publish_widgets.StatusEditor.init_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_data</span></code></a>()</p></td>
 <td><p>Request Status entity data.</p></td>
@@ -594,11 +614,15 @@ the entity list.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.shotgun.publish_widgets.TaskEditor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.shotgun.publish_widgets.</span></span><span class="sig-name descname"><span class="pre">TaskEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/shotgun/publish_widgets.html#TaskEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.shotgun.publish_widgets.TaskEditor" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="shotgun.html#bookmarks.shotgun.shotgun.EntityComboBox" title="bookmarks.shotgun.shotgun.EntityComboBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">EntityComboBox</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="shotgun.html#bookmarks.shotgun.shotgun.EntityComboBox" title="bookmarks.shotgun.shotgun.EntityComboBox"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.shotgun.shotgun.EntityComboBox</span></code></a></p>
 <p>Lets the user select a ShotGrid task.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.TaskEditor.init_data" title="bookmarks.shotgun.publish_widgets.TaskEditor.init_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_data</span></code></a>()</p></td>
 <td><p>Request Status entity data.</p></td>
@@ -614,7 +638,7 @@ the entity list.</p>
 
 </dd></dl>
 
-</section>
+</div>
 
         </article>
       </div>
@@ -645,7 +669,7 @@ the entity list.</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Gergely Wootsch
+                Copyright &#169; © 2022 Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -661,59 +685,8 @@ the entity list.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">shotgun.publish_widgets</a><ul>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.AssetEntityEditor"><code class="docutils literal notranslate"><span class="pre">AssetEntityEditor</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget"><code class="docutils literal notranslate"><span class="pre">DropWidget</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.dragEnterEvent"><code class="docutils literal notranslate"><span class="pre">DropWidget.dragEnterEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.dragLeaveEvent"><code class="docutils literal notranslate"><span class="pre">DropWidget.dragLeaveEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.dragMoveEvent"><code class="docutils literal notranslate"><span class="pre">DropWidget.dragMoveEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.dropEvent"><code class="docutils literal notranslate"><span class="pre">DropWidget.dropEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.enterEvent"><code class="docutils literal notranslate"><span class="pre">DropWidget.enterEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.leaveEvent"><code class="docutils literal notranslate"><span class="pre">DropWidget.leaveEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.mouseReleaseEvent"><code class="docutils literal notranslate"><span class="pre">DropWidget.mouseReleaseEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.paintEvent"><code class="docutils literal notranslate"><span class="pre">DropWidget.paintEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.statusTip"><code class="docutils literal notranslate"><span class="pre">DropWidget.statusTip()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.DropWidget.toolTip"><code class="docutils literal notranslate"><span class="pre">DropWidget.toolTip()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.LocalStorageEditor"><code class="docutils literal notranslate"><span class="pre">LocalStorageEditor</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.LocalStorageEditor.init_data"><code class="docutils literal notranslate"><span class="pre">LocalStorageEditor.init_data()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.PickFile"><code class="docutils literal notranslate"><span class="pre">PickFile</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.ProjectEntityEditor"><code class="docutils literal notranslate"><span class="pre">ProjectEntityEditor</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.PublishedFileTypeEditor"><code class="docutils literal notranslate"><span class="pre">PublishedFileTypeEditor</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.PublishedFileTypeEditor.init_data"><code class="docutils literal notranslate"><span class="pre">PublishedFileTypeEditor.init_data()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.StatusEditor"><code class="docutils literal notranslate"><span class="pre">StatusEditor</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.StatusEditor.init_data"><code class="docutils literal notranslate"><span class="pre">StatusEditor.init_data()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.StatusEditor.select_default"><code class="docutils literal notranslate"><span class="pre">StatusEditor.select_default()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.TaskEditor"><code class="docutils literal notranslate"><span class="pre">TaskEditor</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.shotgun.publish_widgets.TaskEditor.init_data"><code class="docutils literal notranslate"><span class="pre">TaskEditor.init_data()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
@@ -721,9 +694,7 @@ the entity list.</p>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     </body>

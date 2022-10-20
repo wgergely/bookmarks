@@ -16,7 +16,7 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={autopf}\{#MyAppName}
 
-LicenseFile={#SourcePath}..\LICENCE
+LicenseFile={#SourcePath}..\LICENSE
 
 ArchitecturesInstallIn64BitMode=x64
 ArchitecturesAllowed=x64

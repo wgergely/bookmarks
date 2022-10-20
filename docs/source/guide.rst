@@ -35,15 +35,6 @@ The project is hosted on `Github <https://github.com/wgergely/bookmarks>`_.
 Introduction
 ------------
 
-----
-
-
-..  youtube:: oKb8KGj78Rg
-    :align: center
-    :aspect: 16:9
-
-----
-
 
 
 What is a bookmark item?

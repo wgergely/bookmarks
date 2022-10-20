@@ -1,0 +1,881 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
+        <link rel="canonical" href="https://bookmarks-vfx.com/_modules/bookmarks/versioncontrol/version.html" />
+
+    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+        <title>bookmarks.versioncontrol.version - Bookmarks 0.7.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #ffffff;
+  --color-code-foreground: black;
+  --color-brand-primary: rgba(75, 180, 135, 1);
+  --color-brand-content: rgba(75, 180, 135, 1);
+  --color-api-name: rgba(0, 0, 0, 0.9);
+  --color-api-pre-name: rgba(75, 180, 135, 0.75);
+  --color-highlight-on-target: rgba(0,0,0,0);
+  --api-font-size: var(--font-size--normal);
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-highlight-on-target: rgba(0,0,0,0);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-highlight-on-target: rgba(0,0,0,0);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+      }
+    }
+  }
+</style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TX95GG28E5"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-TX95GG28E5');
+    </script>
+    
+</head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.4 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../../../_static/icon.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Bookmarks 0.7.4 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../guide.html">User Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Technical Documentation</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../modules.html">Python Modules</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/actions.html">actions</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/bookmarker.html">bookmarker</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/bookmarker/bookmark_editor.html">bookmarker.bookmark_editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/bookmarker/job_editor.html">bookmarker.job_editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/bookmarker/main.html">bookmarker.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/bookmarker/server_editor.html">bookmarker.server_editor</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/common.html">common</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/core.html">common.core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/data.html">common.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/env.html">common.env</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/font.html">common.font</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/monitor.html">common.monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/sequence.html">common.sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/session_lock.html">common.session_lock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/settings.html">common.settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/setup.html">common.setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/signals.html">common.signals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/common/ui.html">common.ui</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/contextmenu.html">contextmenu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/database.html">database</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/editor.html">editor</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/editor/asset_properties.html">editor.asset_properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/editor/base.html">editor.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/editor/base_widgets.html">editor.base_widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/editor/bookmark_properties.html">editor.bookmark_properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/editor/preferences.html">editor.preferences</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/external.html">external</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/external/ffmpeg.html">external.ffmpeg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/external/ffmpeg_widget.html">external.ffmpeg_widget</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/external/rv.html">external.rv</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/file_saver.html">file_saver</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/file_saver/main.html">file_saver.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/file_saver/widgets.html">file_saver.widgets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/importexport.html">importexport</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/items.html">items</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/asset_items.html">items.asset_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/bookmark_items.html">items.bookmark_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/delegate.html">items.delegate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/favourite_items.html">items.favourite_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/file_items.html">items.file_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/models.html">items.models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/task_items.html">items.task_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/views.html">items.views</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/filter_editor.html">items.widgets.filter_editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/image_viewer.html">items.widgets.image_viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/thumb_capture.html">items.widgets.thumb_capture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/thumb_library.html">items.widgets.thumb_library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/items/widgets/thumb_picker.html">items.widgets.thumb_picker</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/launcher.html">launcher</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/launcher/gallery.html">launcher.gallery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/launcher/main.html">launcher.main</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/log.html">log</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/main.html">main</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/maya.html">maya</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/maya/actions.html">maya.actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/maya/base.html">maya.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/maya/capture.html">maya.capture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/maya/contextmenu.html">maya.contextmenu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/maya/export.html">maya.export</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/maya/main.html">maya.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/maya/plugin.html">maya.plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/maya/shadertool.html">maya.shadertool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/maya/viewport.html">maya.viewport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/notes.html">notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/progress.html">progress</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/publish.html">publish</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/shortcuts.html">shortcuts</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/shotgun.html">shotgun</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/shotgun/actions.html">shotgun.actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/shotgun/link.html">shotgun.link</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/shotgun/link_asset.html">shotgun.link_asset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/shotgun/link_assets.html">shotgun.link_assets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/shotgun/link_bookmark.html">shotgun.link_bookmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/shotgun/publish.html">shotgun.publish</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/shotgun/publish_widgets.html">shotgun.publish_widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/shotgun/shotgun.html">shotgun.shotgun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/shotgun/tasks.html">shotgun.tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/slack.html">slack</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/slack/slack.html">slack.slack</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/standalone.html">standalone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/statusbar.html">statusbar</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/teams.html">teams</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/teams/message.html">teams.message</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/templates.html">templates</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/threads.html">threads</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/threads/threads.html">threads.threads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/threads/workers.html">threads.workers</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/tokens.html">tokens</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/tokens/tokens.html">tokens.tokens</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/tokens/tokens_editor.html">tokens.tokens_editor</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/topbar.html">topbar</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/topbar/buttons.html">topbar.buttons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/topbar/quickswitch.html">topbar.quickswitch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/topbar/tabs.html">topbar.tabs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/topbar/topbar.html">topbar.topbar</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../modules/ui.html">ui</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../modules/versioncontrol.html">versioncontrol</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/versioncontrol/version.html">versioncontrol.version</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../modules/versioncontrol/versioncontrol.html">versioncontrol.versioncontrol</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../py-modindex.html">Module Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <h1>Source code for bookmarks.versioncontrol.version</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This file is dual licensed under the terms of the Apache License, Version</span>
+<span class="c1"># 2.0, and the BSD License. See the LICENSE file in the root of this repository</span>
+<span class="c1"># for complete details.</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;parse&quot;</span><span class="p">,</span> <span class="s2">&quot;Version&quot;</span><span class="p">,</span> <span class="s2">&quot;LegacyVersion&quot;</span><span class="p">,</span> <span class="s2">&quot;InvalidVersion&quot;</span><span class="p">,</span> <span class="s2">&quot;VERSION_PATTERN&quot;</span><span class="p">]</span>
+
+<span class="n">_Version</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">namedtuple</span><span class="p">(</span>
+    <span class="s2">&quot;_Version&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;release&quot;</span><span class="p">,</span> <span class="s2">&quot;dev&quot;</span><span class="p">,</span> <span class="s2">&quot;pre&quot;</span><span class="p">,</span> <span class="s2">&quot;post&quot;</span><span class="p">,</span> <span class="s2">&quot;local&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Infinity</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Infinity&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="fm">__neg__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">NegativeInfinity</span>
+
+
+<span class="n">Infinity</span> <span class="o">=</span> <span class="n">Infinity</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">NegativeInfinity</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;-Infinity&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__neg__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Infinity</span>
+
+
+<span class="n">NegativeInfinity</span> <span class="o">=</span> <span class="n">NegativeInfinity</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="parse"><a class="viewcode-back" href="../../../modules/versioncontrol/version.html#bookmarks.versioncontrol.version.parse">[docs]</a><span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">version</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse the given version string and return either a :class:`Version` object</span>
+<span class="sd">    or a :class:`LegacyVersion` object depending on if the given version is</span>
+<span class="sd">    a valid PEP 440 version or a legacy version.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Version</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">InvalidVersion</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">LegacyVersion</span><span class="p">(</span><span class="n">version</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InvalidVersion"><a class="viewcode-back" href="../../../modules/versioncontrol/version.html#bookmarks.versioncontrol.version.InvalidVersion">[docs]</a><span class="k">class</span> <span class="nc">InvalidVersion</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An invalid version was found, users should refer to PEP 440.</span>
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+<span class="k">class</span> <span class="nc">_BaseVersion</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_key</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span> <span class="n">o</span><span class="p">:</span> <span class="n">s</span> <span class="o">&lt;</span> <span class="n">o</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span> <span class="n">o</span><span class="p">:</span> <span class="n">s</span> <span class="o">&lt;=</span> <span class="n">o</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span> <span class="n">o</span><span class="p">:</span> <span class="n">s</span> <span class="o">==</span> <span class="n">o</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span> <span class="n">o</span><span class="p">:</span> <span class="n">s</span> <span class="o">&gt;=</span> <span class="n">o</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__gt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span> <span class="n">o</span><span class="p">:</span> <span class="n">s</span> <span class="o">&gt;</span> <span class="n">o</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compare</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">,</span> <span class="n">o</span><span class="p">:</span> <span class="n">s</span> <span class="o">!=</span> <span class="n">o</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_compare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">_BaseVersion</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+
+        <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_key</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">_key</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">LegacyVersion</span><span class="p">(</span><span class="n">_BaseVersion</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_version</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_key</span> <span class="o">=</span> <span class="n">_legacy_cmpkey</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;LegacyVersion(</span><span class="si">{0}</span><span class="s2">)&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">public</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">base_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pre</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dev</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_prerelease</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_postrelease</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_devrelease</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="n">_legacy_version_component_re</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+    <span class="sa">r</span><span class="s2">&quot;(\d+ | [a-z]+ | \.| -)&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">VERBOSE</span>
+<span class="p">)</span>
+
+<span class="n">_legacy_version_replacement_map</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pre&quot;</span><span class="p">:</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;preview&quot;</span><span class="p">:</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span> <span class="s2">&quot;final-&quot;</span><span class="p">,</span>
+                                   <span class="s2">&quot;rc&quot;</span><span class="p">:</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;dev&quot;</span><span class="p">:</span> <span class="s2">&quot;@&quot;</span><span class="p">,</span> <span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_version_parts</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">_legacy_version_component_re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="n">part</span> <span class="o">=</span> <span class="n">_legacy_version_replacement_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">part</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">part</span> <span class="ow">or</span> <span class="n">part</span> <span class="o">==</span> <span class="s2">&quot;.&quot;</span><span class="p">:</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="n">part</span><span class="p">[:</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="s2">&quot;0123456789&quot;</span><span class="p">:</span>
+            <span class="c1"># pad for numeric comparison</span>
+            <span class="k">yield</span> <span class="n">part</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="n">part</span>
+
+    <span class="c1"># ensure that alpha/beta/candidate are before final</span>
+    <span class="k">yield</span> <span class="s2">&quot;*final&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_legacy_cmpkey</span><span class="p">(</span><span class="n">version</span><span class="p">):</span>
+    <span class="c1"># We hardcode an epoch of -1 here. A PEP 440 version can only have a epoch</span>
+    <span class="c1"># greater than or equal to 0. This will effectively put the LegacyVersion,</span>
+    <span class="c1"># which uses the defacto standard originally implemented by setuptools,</span>
+    <span class="c1"># as before all PEP 440 versions.</span>
+    <span class="n">epoch</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="c1"># This scheme is taken from pkg_resources.parse_version setuptools prior to</span>
+    <span class="c1"># it&#39;s adoption of the packaging library.</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">_parse_version_parts</span><span class="p">(</span><span class="n">version</span><span class="o">.</span><span class="n">lower</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">):</span>
+            <span class="c1"># remove &quot;-&quot; before a prerelease tag</span>
+            <span class="k">if</span> <span class="n">part</span> <span class="o">&lt;</span> <span class="s2">&quot;*final&quot;</span><span class="p">:</span>
+                <span class="k">while</span> <span class="n">parts</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;*final-&quot;</span><span class="p">:</span>
+                    <span class="n">parts</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+            <span class="c1"># remove trailing zeros from each series of numeric parts</span>
+            <span class="k">while</span> <span class="n">parts</span> <span class="ow">and</span> <span class="n">parts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;00000000&quot;</span><span class="p">:</span>
+                <span class="n">parts</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">parts</span>
+
+
+<span class="c1"># Deliberately not anchored to the start and end of the string, to make it</span>
+<span class="c1"># easier for 3rd party code to reuse</span>
+<span class="n">VERSION_PATTERN</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    v?</span>
+<span class="s2">    (?:</span>
+<span class="s2">        (?:(?P&lt;epoch&gt;[0-9]+)!)?                           # epoch</span>
+<span class="s2">        (?P&lt;release&gt;[0-9]+(?:\.[0-9]+)*)                  # release segment</span>
+<span class="s2">        (?P&lt;pre&gt;                                          # pre-release</span>
+<span class="s2">            [-_\.]?</span>
+<span class="s2">            (?P&lt;pre_l&gt;(a|b|c|rc|alpha|beta|pre|preview))</span>
+<span class="s2">            [-_\.]?</span>
+<span class="s2">            (?P&lt;pre_n&gt;[0-9]+)?</span>
+<span class="s2">        )?</span>
+<span class="s2">        (?P&lt;post&gt;                                         # post release</span>
+<span class="s2">            (?:-(?P&lt;post_n1&gt;[0-9]+))</span>
+<span class="s2">            |</span>
+<span class="s2">            (?:</span>
+<span class="s2">                [-_\.]?</span>
+<span class="s2">                (?P&lt;post_l&gt;post|rev|r)</span>
+<span class="s2">                [-_\.]?</span>
+<span class="s2">                (?P&lt;post_n2&gt;[0-9]+)?</span>
+<span class="s2">            )</span>
+<span class="s2">        )?</span>
+<span class="s2">        (?P&lt;dev&gt;                                          # dev release</span>
+<span class="s2">            [-_\.]?</span>
+<span class="s2">            (?P&lt;dev_l&gt;dev)</span>
+<span class="s2">            [-_\.]?</span>
+<span class="s2">            (?P&lt;dev_n&gt;[0-9]+)?</span>
+<span class="s2">        )?</span>
+<span class="s2">    )</span>
+<span class="s2">    (?:\+(?P&lt;local&gt;[a-z0-9]+(?:[-_\.][a-z0-9]+)*))?       # local version</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">Version</span><span class="p">(</span><span class="n">_BaseVersion</span><span class="p">):</span>
+    <span class="n">_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+        <span class="sa">r</span><span class="s2">&quot;^\s*&quot;</span> <span class="o">+</span> <span class="n">VERSION_PATTERN</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">&quot;\s*$&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">VERBOSE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version</span><span class="p">):</span>
+        <span class="c1"># Validate the version and parse it into pieces</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidVersion</span><span class="p">(</span><span class="s2">&quot;Invalid version: &#39;</span><span class="si">{0}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">version</span><span class="p">))</span>
+
+        <span class="c1"># Store the parsed out pieces of the version</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_version</span> <span class="o">=</span> <span class="n">_Version</span><span class="p">(</span>
+            <span class="n">epoch</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;epoch&quot;</span><span class="p">))</span> <span class="k">if</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;epoch&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="n">release</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;release&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)),</span>
+            <span class="n">pre</span><span class="o">=</span><span class="n">_parse_letter_version</span><span class="p">(</span>
+                <span class="k">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;pre_l&quot;</span><span class="p">),</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;pre_n&quot;</span><span class="p">)</span>
+            <span class="p">),</span> <span class="n">post</span><span class="o">=</span><span class="n">_parse_letter_version</span><span class="p">(</span>
+                <span class="k">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;post_l&quot;</span><span class="p">),</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span>
+                    <span class="s2">&quot;post_n1&quot;</span>
+                <span class="p">)</span> <span class="ow">or</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;post_n2&quot;</span><span class="p">)</span>
+            <span class="p">),</span> <span class="n">dev</span><span class="o">=</span><span class="n">_parse_letter_version</span><span class="p">(</span>
+                <span class="k">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;dev_l&quot;</span><span class="p">),</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;dev_n&quot;</span><span class="p">)</span>
+            <span class="p">),</span> <span class="n">local</span><span class="o">=</span><span class="n">_parse_local_version</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;local&quot;</span><span class="p">)),</span> <span class="p">)</span>
+
+        <span class="c1"># Generate a key which will be used for sorting</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_key</span> <span class="o">=</span> <span class="n">_cmpkey</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">release</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">pre</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">post</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">dev</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">local</span><span class="p">,</span> <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;&lt;Version(</span><span class="si">{0}</span><span class="s2">)&gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Epoch</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">))</span>
+
+        <span class="c1"># Release segment</span>
+        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">release</span><span class="p">))</span>
+
+        <span class="c1"># Pre-release</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre</span><span class="p">))</span>
+
+        <span class="c1"># Post-release</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;.post</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">post</span><span class="p">))</span>
+
+        <span class="c1"># Development release</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dev</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;.dev</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dev</span><span class="p">))</span>
+
+        <span class="c1"># Local version segment</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">local</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;+</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">local</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">epoch</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">release</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">pre</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">pre</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">post</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">post</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dev</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">dev</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">dev</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">local</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">local</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_version</span><span class="o">.</span><span class="n">local</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">public</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">base_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Epoch</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">))</span>
+
+        <span class="c1"># Release segment</span>
+        <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">release</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_prerelease</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dev</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_postrelease</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">post</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_devrelease</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dev</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_letter_version</span><span class="p">(</span><span class="n">letter</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">letter</span><span class="p">:</span>
+        <span class="c1"># We consider there to be an implicit 0 in a pre-release if there is</span>
+        <span class="c1"># not a numeral associated with it.</span>
+        <span class="k">if</span> <span class="n">number</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">number</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># We normalize any letters to their lower case form</span>
+        <span class="n">letter</span> <span class="o">=</span> <span class="n">letter</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="c1"># We consider some words to be alternate spellings of other words and</span>
+        <span class="c1"># in those cases we want to normalize the spellings to our preferred</span>
+        <span class="c1"># spelling.</span>
+        <span class="k">if</span> <span class="n">letter</span> <span class="o">==</span> <span class="s2">&quot;alpha&quot;</span><span class="p">:</span>
+            <span class="n">letter</span> <span class="o">=</span> <span class="s2">&quot;a&quot;</span>
+        <span class="k">elif</span> <span class="n">letter</span> <span class="o">==</span> <span class="s2">&quot;beta&quot;</span><span class="p">:</span>
+            <span class="n">letter</span> <span class="o">=</span> <span class="s2">&quot;b&quot;</span>
+        <span class="k">elif</span> <span class="n">letter</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;pre&quot;</span><span class="p">,</span> <span class="s2">&quot;preview&quot;</span><span class="p">]:</span>
+            <span class="n">letter</span> <span class="o">=</span> <span class="s2">&quot;rc&quot;</span>
+        <span class="k">elif</span> <span class="n">letter</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;rev&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">]:</span>
+            <span class="n">letter</span> <span class="o">=</span> <span class="s2">&quot;post&quot;</span>
+
+        <span class="k">return</span> <span class="n">letter</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">letter</span> <span class="ow">and</span> <span class="n">number</span><span class="p">:</span>
+        <span class="c1"># We assume if we are given a number, but we are not given a letter</span>
+        <span class="c1"># then this is using the implicit post release syntax (e.g. 1.0-1)</span>
+        <span class="n">letter</span> <span class="o">=</span> <span class="s2">&quot;post&quot;</span>
+
+        <span class="k">return</span> <span class="n">letter</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+
+
+<span class="n">_local_version_separators</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[\._-]&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_local_version</span><span class="p">(</span><span class="n">local</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes a string like abc.1.twelve and turns it into (&quot;abc&quot;, 1, &quot;twelve&quot;).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">local</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="n">part</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">part</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">part</span><span class="p">)</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span>
+            <span class="n">_local_version_separators</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">local</span><span class="p">)</span>
+        <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_cmpkey</span><span class="p">(</span><span class="n">epoch</span><span class="p">,</span> <span class="n">release</span><span class="p">,</span> <span class="n">pre</span><span class="p">,</span> <span class="n">post</span><span class="p">,</span> <span class="n">dev</span><span class="p">,</span> <span class="n">local</span><span class="p">):</span>
+    <span class="c1"># When we compare a release version, we want to compare it with all of the</span>
+    <span class="c1"># trailing zeros removed. So we&#39;ll use a reverse the list, drop all the now</span>
+    <span class="c1"># leading zeros until we come to something non zero, then take the rest</span>
+    <span class="c1"># re-reverse it back into the correct order and make it a tuple and use</span>
+    <span class="c1"># that for our sorting key.</span>
+    <span class="n">release</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+        <span class="nb">reversed</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">dropwhile</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">release</span><span class="p">))))</span>
+    <span class="p">)</span>
+
+    <span class="c1"># We need to &quot;trick&quot; the sorting algorithm to put 1.0.dev0 before 1.0a0.</span>
+    <span class="c1"># We&#39;ll do this by abusing the pre segment, but we _only_ want to do this</span>
+    <span class="c1"># if there is not a pre or a post segment. If we have one of those then</span>
+    <span class="c1"># the normal sorting rules will handle this case correctly.</span>
+    <span class="k">if</span> <span class="n">pre</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">post</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dev</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pre</span> <span class="o">=</span> <span class="o">-</span><span class="n">Infinity</span>
+    <span class="c1"># Versions without a pre-release (except as noted above) should sort after</span>
+    <span class="c1"># those with one.</span>
+    <span class="k">elif</span> <span class="n">pre</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pre</span> <span class="o">=</span> <span class="n">Infinity</span>
+
+    <span class="c1"># Versions without a post segment should sort before those with one.</span>
+    <span class="k">if</span> <span class="n">post</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">post</span> <span class="o">=</span> <span class="o">-</span><span class="n">Infinity</span>
+
+    <span class="c1"># Versions without a development segment should sort after those with one.</span>
+    <span class="k">if</span> <span class="n">dev</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dev</span> <span class="o">=</span> <span class="n">Infinity</span>
+
+    <span class="k">if</span> <span class="n">local</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Versions without a local segment should sort before those with one.</span>
+        <span class="n">local</span> <span class="o">=</span> <span class="o">-</span><span class="n">Infinity</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Versions with a local segment need that segment parsed to implement</span>
+        <span class="c1"># the sorting rules in PEP440.</span>
+        <span class="c1"># - Alpha numeric segments sort before numeric segments</span>
+        <span class="c1"># - Alpha numeric segments sort lexicographically</span>
+        <span class="c1"># - Numeric segments sort numerically</span>
+        <span class="c1"># - Shorter versions sort before longer versions when the prefixes</span>
+        <span class="c1">#   match exactly</span>
+        <span class="n">local</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">else</span> <span class="p">(</span><span class="o">-</span><span class="n">Infinity</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">local</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">release</span><span class="p">,</span> <span class="n">pre</span><span class="p">,</span> <span class="n">post</span><span class="p">,</span> <span class="n">dev</span><span class="p">,</span> <span class="n">local</span>
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Gergely Wootsch
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/scripts/furo.js"></script>
+    <script src="../../../_static/design-tabs.js"></script>
+    </body>
+</html>

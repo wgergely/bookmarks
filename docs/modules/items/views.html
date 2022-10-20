@@ -1,0 +1,1535 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+<meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
+<link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="items.widgets.filter_editor" href="widgets/filter_editor.html" /><link rel="prev" title="items.task_items" href="task_items.html" />
+        <link rel="canonical" href="https://bookmarks-vfx.com/modules/items/views.html" />
+
+    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+        <title>items.views - Bookmarks 0.7.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #ffffff;
+  --color-code-foreground: black;
+  --color-brand-primary: rgba(75, 180, 135, 1);
+  --color-brand-content: rgba(75, 180, 135, 1);
+  --color-api-name: rgba(0, 0, 0, 0.9);
+  --color-api-pre-name: rgba(75, 180, 135, 0.75);
+  --color-highlight-on-target: rgba(0,0,0,0);
+  --api-font-size: var(--font-size--normal);
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-highlight-on-target: rgba(0,0,0,0);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #232629;
+  --color-code-foreground: #cccccc;
+  --color-brand-primary: rgba(90, 200, 155, 1);
+  --color-brand-content: rgba(90, 200, 155, 1);
+  --color-highlight-on-target: rgba(0,0,0,0);
+  --color-api-name: rgba(255, 255, 255, 0.9);
+  
+      }
+    }
+  }
+</style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-TX95GG28E5"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-TX95GG28E5');
+    </script>
+    
+</head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.4 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../../_static/icon.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">Bookmarks 0.7.4 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guide.html">User Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Technical Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../modules.html">Python Modules</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../actions.html">actions</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../bookmarker.html">bookmarker</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../bookmarker/bookmark_editor.html">bookmarker.bookmark_editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../bookmarker/job_editor.html">bookmarker.job_editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../bookmarker/main.html">bookmarker.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../bookmarker/server_editor.html">bookmarker.server_editor</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../common.html">common</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../common/core.html">common.core</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/data.html">common.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/env.html">common.env</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/font.html">common.font</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/monitor.html">common.monitor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/sequence.html">common.sequence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/session_lock.html">common.session_lock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/settings.html">common.settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/setup.html">common.setup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/signals.html">common.signals</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../common/ui.html">common.ui</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../contextmenu.html">contextmenu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../database.html">database</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../editor.html">editor</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../editor/asset_properties.html">editor.asset_properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../editor/base.html">editor.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../editor/base_widgets.html">editor.base_widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../editor/bookmark_properties.html">editor.bookmark_properties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../editor/preferences.html">editor.preferences</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../external.html">external</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../external/ffmpeg.html">external.ffmpeg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../external/ffmpeg_widget.html">external.ffmpeg_widget</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../external/rv.html">external.rv</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../file_saver.html">file_saver</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../file_saver/main.html">file_saver.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../file_saver/widgets.html">file_saver.widgets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../images.html">images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../importexport.html">importexport</a></li>
+<li class="toctree-l2 current has-children"><a class="reference internal" href="../items.html">items</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="asset_items.html">items.asset_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="bookmark_items.html">items.bookmark_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="delegate.html">items.delegate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="favourite_items.html">items.favourite_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="file_items.html">items.file_items</a></li>
+<li class="toctree-l3"><a class="reference internal" href="models.html">items.models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="task_items.html">items.task_items</a></li>
+<li class="toctree-l3 current current-page"><a class="current reference internal" href="#">items.views</a></li>
+<li class="toctree-l3"><a class="reference internal" href="widgets/filter_editor.html">items.widgets.filter_editor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="widgets/image_viewer.html">items.widgets.image_viewer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="widgets/thumb_capture.html">items.widgets.thumb_capture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="widgets/thumb_library.html">items.widgets.thumb_library</a></li>
+<li class="toctree-l3"><a class="reference internal" href="widgets/thumb_picker.html">items.widgets.thumb_picker</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../launcher.html">launcher</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../launcher/gallery.html">launcher.gallery</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../launcher/main.html">launcher.main</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../log.html">log</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html">main</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../maya.html">maya</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../maya/actions.html">maya.actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/base.html">maya.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/capture.html">maya.capture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/contextmenu.html">maya.contextmenu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/export.html">maya.export</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/main.html">maya.main</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/plugin.html">maya.plugin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/shadertool.html">maya.shadertool</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../maya/viewport.html">maya.viewport</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../notes.html">notes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../progress.html">progress</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../publish.html">publish</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shortcuts.html">shortcuts</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../shotgun.html">shotgun</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../shotgun/actions.html">shotgun.actions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../shotgun/link.html">shotgun.link</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../shotgun/link_asset.html">shotgun.link_asset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../shotgun/link_assets.html">shotgun.link_assets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../shotgun/link_bookmark.html">shotgun.link_bookmark</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../shotgun/publish.html">shotgun.publish</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../shotgun/publish_widgets.html">shotgun.publish_widgets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../shotgun/shotgun.html">shotgun.shotgun</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../shotgun/tasks.html">shotgun.tasks</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../slack.html">slack</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../slack/slack.html">slack.slack</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../standalone.html">standalone</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../statusbar.html">statusbar</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../teams.html">teams</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../teams/message.html">teams.message</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../templates.html">templates</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../threads.html">threads</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../threads/threads.html">threads.threads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../threads/workers.html">threads.workers</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../tokens.html">tokens</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" role="switch" type="checkbox"/><label for="toctree-checkbox-14"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../tokens/tokens.html">tokens.tokens</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../tokens/tokens_editor.html">tokens.tokens_editor</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../topbar.html">topbar</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" role="switch" type="checkbox"/><label for="toctree-checkbox-15"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../topbar/buttons.html">topbar.buttons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../topbar/quickswitch.html">topbar.quickswitch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../topbar/tabs.html">topbar.tabs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../topbar/topbar.html">topbar.topbar</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../ui.html">ui</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../versioncontrol.html">versioncontrol</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" role="switch" type="checkbox"/><label for="toctree-checkbox-16"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../versioncontrol/version.html">versioncontrol.version</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../versioncontrol/versioncontrol.html">versioncontrol.versioncontrol</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="module-bookmarks.items.views">
+<span id="items-views"></span><h1>items.views<a class="headerlink" href="#module-bookmarks.items.views" title="Permalink to this heading">#</a></h1>
+<p>Base views used to show <a class="reference internal" href="bookmark_items.html#module-bookmarks.items.bookmark_items" title="bookmarks.items.bookmark_items"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmark</span></code></a>,
+<a class="reference internal" href="asset_items.html#module-bookmarks.items.asset_items" title="bookmarks.items.asset_items"><code class="xref py py-mod docutils literal notranslate"><span class="pre">asset</span></code></a>, and <a class="reference internal" href="file_items.html#module-bookmarks.items.file_items" title="bookmarks.items.file_items"><code class="xref py py-mod docutils literal notranslate"><span class="pre">file</span></code></a>
+items.</p>
+<p>The view uses <a class="reference internal" href="models.html#bookmarks.items.models.ItemModel" title="bookmarks.items.models.ItemModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemModel</span></code></a> for getting the item data,
+<a class="reference internal" href="delegate.html#bookmarks.items.delegate.ItemDelegate" title="bookmarks.items.delegate.ItemDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemDelegate</span></code></a> to paint the items.</p>
+<p><a class="reference internal" href="#bookmarks.items.views.BaseItemView" title="bookmarks.items.views.BaseItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseItemView</span></code></a> is a customised QListView widget augmented by
+<a class="reference internal" href="#bookmarks.items.views.InlineIconView" title="bookmarks.items.views.InlineIconView"><code class="xref py py-class docutils literal notranslate"><span class="pre">InlineIconView</span></code></a> (adds inline icon functionality),
+and <a class="reference internal" href="#bookmarks.items.views.ThreadedItemView" title="bookmarks.items.views.ThreadedItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThreadedItemView</span></code></a> that implement threading related functionality.</p>
+<p><strong>Classes:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView" title="bookmarks.items.views.BaseItemView"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseItemView</span></code></a>([icon, parent])</p></td>
+<td><p>The base view of all subsequent item views.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.DragPixmapFactory" title="bookmarks.items.views.DragPixmapFactory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DragPixmapFactory</span></code></a>(pixmap, text[, parent])</p></td>
+<td><p>Widget used to define the appearance of an item being dragged.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.DropIndicatorWidget" title="bookmarks.items.views.DropIndicatorWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DropIndicatorWidget</span></code></a>([parent])</p></td>
+<td><p>Widgets responsible for drawing an overlay.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.FilterOnOverlayWidget" title="bookmarks.items.views.FilterOnOverlayWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FilterOnOverlayWidget</span></code></a>([parent])</p></td>
+<td><p>An indicator widget drawn on top of the list widgets to signal if a model has filters set or if it requires a refresh.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.InlineIconView" title="bookmarks.items.views.InlineIconView"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InlineIconView</span></code></a>([icon, parent])</p></td>
+<td><p>Adds multi-toggle and clickable in-line icons to <a class="reference internal" href="#bookmarks.items.views.BaseItemView" title="bookmarks.items.views.BaseItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseItemView</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.ItemDrag" title="bookmarks.items.views.ItemDrag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ItemDrag</span></code></a>(index, widget)</p></td>
+<td><p>A utility class used to start a drag operation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.ListsWidget" title="bookmarks.items.views.ListsWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ListsWidget</span></code></a>([parent])</p></td>
+<td><p>This stacked widget contains the main bookmark, asset, file and favourite item views.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.ProgressWidget" title="bookmarks.items.views.ProgressWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProgressWidget</span></code></a>([parent])</p></td>
+<td><p>Widget responsible for indicating files are being loaded.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.ThreadedItemView" title="bookmarks.items.views.ThreadedItemView"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ThreadedItemView</span></code></a>([icon, parent])</p></td>
+<td><p>Extends the <a class="reference internal" href="#bookmarks.items.views.InlineIconView" title="bookmarks.items.views.InlineIconView"><code class="xref py py-class docutils literal notranslate"><span class="pre">InlineIconView</span></code></a> with the methods used to interface with threads.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.ThumbnailsContextMenu" title="bookmarks.items.views.ThumbnailsContextMenu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ThumbnailsContextMenu</span></code></a>(index[, parent])</p></td>
+<td><p>Context menu associated with thumbnail actions.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.views.</span></span><span class="sig-name descname"><span class="pre">BaseItemView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">icon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'icon_bw'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QTableView</span></code></p>
+<p>The base view of all subsequent item views.</p>
+<p><strong>Miscellaneous:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.ContextMenu" title="bookmarks.items.views.BaseItemView.ContextMenu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ContextMenu</span></code></a></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.Delegate" title="bookmarks.items.views.BaseItemView.Delegate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Delegate</span></code></a></p></td>
+<td><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Classes:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.ThumbnailContextMenu" title="bookmarks.items.views.BaseItemView.ThumbnailContextMenu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ThumbnailContextMenu</span></code></a></p></td>
+<td><p>alias of <a class="reference internal" href="#bookmarks.items.views.ThumbnailsContextMenu" title="bookmarks.items.views.ThumbnailsContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThumbnailsContextMenu</span></code></a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.activate" title="bookmarks.items.views.BaseItemView.activate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">activate</span></code></a>(index)</p></td>
+<td><p>This method is called in response to a user action and is used to mark an item <cite>active</cite>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.buttons_hidden" title="bookmarks.items.views.BaseItemView.buttons_hidden"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buttons_hidden</span></code></a>()</p></td>
+<td><p>Returns the visibility of the inline icon buttons.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.contextMenuEvent" title="bookmarks.items.views.BaseItemView.contextMenuEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contextMenuEvent</span></code></a>(event)</p></td>
+<td><p>Custom context menu event.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.delay_restore_selection" title="bookmarks.items.views.BaseItemView.delay_restore_selection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delay_restore_selection</span></code></a>()</p></td>
+<td><p>Delays getting the saved selection from the user settings file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.delay_save_selection" title="bookmarks.items.views.BaseItemView.delay_save_selection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">delay_save_selection</span></code></a>()</p></td>
+<td><p>Delays saving the current item selection to the user settings file to reduce the number of file writes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.dragMoveEvent" title="bookmarks.items.views.BaseItemView.dragMoveEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dragMoveEvent</span></code></a>(event)</p></td>
+<td><p>Drag move events checks source validity against available drop actions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.dropEvent" title="bookmarks.items.views.BaseItemView.dropEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dropEvent</span></code></a>(event)</p></td>
+<td><p>Event handler.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.eventFilter" title="bookmarks.items.views.BaseItemView.eventFilter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eventFilter</span></code></a>(widget, event)</p></td>
+<td><p>Event filter handler.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.get_hint_string" title="bookmarks.items.views.BaseItemView.get_hint_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hint_string</span></code></a>()</p></td>
+<td><p>Returns an informative hint text.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.get_source_model" title="bookmarks.items.views.BaseItemView.get_source_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_source_model</span></code></a>()</p></td>
+<td><p>Returns the model class associated with this view.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.get_status_string" title="bookmarks.items.views.BaseItemView.get_status_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_status_string</span></code></a>()</p></td>
+<td><p>Returns an informative string to indicate if the list has hidden items.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.init_buttons_hidden" title="bookmarks.items.views.BaseItemView.init_buttons_hidden"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_buttons_hidden</span></code></a>()</p></td>
+<td><p>Restore the previous state of the inline icon buttons.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.init_model" title="bookmarks.items.views.BaseItemView.init_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_model</span></code></a>()</p></td>
+<td><p>Add a model to the view.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.keyPressEvent" title="bookmarks.items.views.BaseItemView.keyPressEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keyPressEvent</span></code></a>(event)</p></td>
+<td><p>Key press event handler.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.key_down" title="bookmarks.items.views.BaseItemView.key_down"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key_down</span></code></a>()</p></td>
+<td><p>Custom action on <cite>down</cite> arrow key-press.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.key_enter" title="bookmarks.items.views.BaseItemView.key_enter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key_enter</span></code></a>()</p></td>
+<td><p>Custom key action</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.key_space" title="bookmarks.items.views.BaseItemView.key_space"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key_space</span></code></a>()</p></td>
+<td><p>Custom key action.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.key_tab" title="bookmarks.items.views.BaseItemView.key_tab"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key_tab</span></code></a>()</p></td>
+<td><p>Custom key action</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.key_up" title="bookmarks.items.views.BaseItemView.key_up"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key_up</span></code></a>()</p></td>
+<td><p>Custom action to perform when the <cite>up</cite> arrow is pressed on the keyboard.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.mouseDoubleClickEvent" title="bookmarks.items.views.BaseItemView.mouseDoubleClickEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mouseDoubleClickEvent</span></code></a>(event)</p></td>
+<td><p>Custom doubleclick event.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.mousePressEvent" title="bookmarks.items.views.BaseItemView.mousePressEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mousePressEvent</span></code></a>(event)</p></td>
+<td><p>Deselect the current index when clicked on an empty space.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.mouseReleaseEvent" title="bookmarks.items.views.BaseItemView.mouseReleaseEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mouseReleaseEvent</span></code></a>(event)</p></td>
+<td><p>Event handler.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.paint_hint" title="bookmarks.items.views.BaseItemView.paint_hint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_hint</span></code></a>(widget, event)</p></td>
+<td><p>Paints the hint message.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.paint_loading" title="bookmarks.items.views.BaseItemView.paint_loading"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_loading</span></code></a>(widget, event)</p></td>
+<td><p>Paints the hint message.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.paint_status_message" title="bookmarks.items.views.BaseItemView.paint_status_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_status_message</span></code></a>(widget, event)</p></td>
+<td><p>Displays a visual hint for the user to indicate if the list has hidden items.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.repaint_visible_rows" title="bookmarks.items.views.BaseItemView.repaint_visible_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repaint_visible_rows</span></code></a>()</p></td>
+<td><p>Slot used to repaint all currently visible items.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.reset_row_layout" title="bookmarks.items.views.BaseItemView.reset_row_layout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_row_layout</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Re-initializes the rows to apply size and row height changes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.resizeEvent" title="bookmarks.items.views.BaseItemView.resizeEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resizeEvent</span></code></a>(event)</p></td>
+<td><p>Event handler.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.restore_selection" title="bookmarks.items.views.BaseItemView.restore_selection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">restore_selection</span></code></a>()</p></td>
+<td><p>Slot called to reselect a previously saved selection.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.save_selection" title="bookmarks.items.views.BaseItemView.save_selection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_selection</span></code></a>()</p></td>
+<td><p>Saves the current selection to the user settings file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.select_item" title="bookmarks.items.views.BaseItemView.select_item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">select_item</span></code></a>(v[, role])</p></td>
+<td><p>Select an item in the viewer.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.set_buttons_hidden" title="bookmarks.items.views.BaseItemView.set_buttons_hidden"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_buttons_hidden</span></code></a>(val)</p></td>
+<td><p>Sets the visibility of the inline icon buttons.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.set_row_size" title="bookmarks.items.views.BaseItemView.set_row_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_row_size</span></code></a>(v)</p></td>
+<td><p>Sets the row size.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.showEvent" title="bookmarks.items.views.BaseItemView.showEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showEvent</span></code></a>(event)</p></td>
+<td><p>Show event handler.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.show_item" title="bookmarks.items.views.BaseItemView.show_item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_item</span></code></a>(v[, role, update, limit])</p></td>
+<td><p>Show an item in the viewer.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.startDrag" title="bookmarks.items.views.BaseItemView.startDrag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">startDrag</span></code></a>(supported_actions)</p></td>
+<td><p>Drag action start.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.toggle_item_flag" title="bookmarks.items.views.BaseItemView.toggle_item_flag"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toggle_item_flag</span></code></a>(index, flag[, state, ...])</p></td>
+<td><p>Sets the index's filter flag value based on the passed state.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.update" title="bookmarks.items.views.BaseItemView.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>(index)</p></td>
+<td><p>This slot is used by all threads to repaint/update the given index after it's thumbnail or file information has been loaded.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.wheelEvent" title="bookmarks.items.views.BaseItemView.wheelEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">wheelEvent</span></code></a>(event)</p></td>
+<td><p>Custom wheel event responsible for scrolling the list.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Attributes:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.customContextMenuRequested" title="bookmarks.items.views.BaseItemView.customContextMenuRequested"><code class="xref py py-obj docutils literal notranslate"><span class="pre">customContextMenuRequested</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Emitted when the user shift+right-clicks on the view.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.interruptRequested" title="bookmarks.items.views.BaseItemView.interruptRequested"><code class="xref py py-obj docutils literal notranslate"><span class="pre">interruptRequested</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Called when the user requests model data load by pressing the ESC key.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.BaseItemView.resized" title="bookmarks.items.views.BaseItemView.resized"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resized</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Signals window size change</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.ContextMenu">
+<span class="sig-name descname"><span class="pre">ContextMenu</span></span><a class="headerlink" href="#bookmarks.items.views.BaseItemView.ContextMenu" title="Permalink to this definition">#</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.Delegate">
+<span class="sig-name descname"><span class="pre">Delegate</span></span><a class="headerlink" href="#bookmarks.items.views.BaseItemView.Delegate" title="Permalink to this definition">#</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">NotImplementedError</span></code></p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.ThumbnailContextMenu">
+<span class="sig-name descname"><span class="pre">ThumbnailContextMenu</span></span><a class="headerlink" href="#bookmarks.items.views.BaseItemView.ThumbnailContextMenu" title="Permalink to this definition">#</a></dt>
+<dd><p>alias of <a class="reference internal" href="#bookmarks.items.views.ThumbnailsContextMenu" title="bookmarks.items.views.ThumbnailsContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThumbnailsContextMenu</span></code></a>
+<strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code>()</p></td>
+<td><p>Creates the context menu.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.activate">
+<span class="sig-name descname"><span class="pre">activate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.activate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.activate" title="Permalink to this definition">#</a></dt>
+<dd><p>This method is called in response to a user action and is used
+to mark an item <cite>active</cite>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.buttons_hidden">
+<span class="sig-name descname"><span class="pre">buttons_hidden</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.buttons_hidden"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.buttons_hidden" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the visibility of the inline icon buttons.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.contextMenuEvent">
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.contextMenuEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.contextMenuEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Custom context menu event.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.delay_restore_selection">
+<span class="sig-name descname"><span class="pre">delay_restore_selection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.delay_restore_selection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.delay_restore_selection" title="Permalink to this definition">#</a></dt>
+<dd><p>Delays getting the saved selection from the user settings file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.delay_save_selection">
+<span class="sig-name descname"><span class="pre">delay_save_selection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.delay_save_selection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.delay_save_selection" title="Permalink to this definition">#</a></dt>
+<dd><p>Delays saving the current item selection to the user settings file to reduce
+the number of file writes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.dragMoveEvent">
+<span class="sig-name descname"><span class="pre">dragMoveEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.dragMoveEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.dragMoveEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Drag move events checks source validity against available drop actions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.dropEvent">
+<span class="sig-name descname"><span class="pre">dropEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.dropEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.dropEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Event handler.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.eventFilter">
+<span class="sig-name descname"><span class="pre">eventFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.eventFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.eventFilter" title="Permalink to this definition">#</a></dt>
+<dd><p>Event filter handler.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.get_hint_string">
+<span class="sig-name descname"><span class="pre">get_hint_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.get_hint_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.get_hint_string" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns an informative hint text.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.get_source_model">
+<span class="sig-name descname"><span class="pre">get_source_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.get_source_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.get_source_model" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the model class associated with this view.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.get_status_string">
+<span class="sig-name descname"><span class="pre">get_status_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.get_status_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.get_status_string" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns an informative string to indicate if the list has hidden items.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.init_buttons_hidden">
+<span class="sig-name descname"><span class="pre">init_buttons_hidden</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.init_buttons_hidden"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.init_buttons_hidden" title="Permalink to this definition">#</a></dt>
+<dd><p>Restore the previous state of the inline icon buttons.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.init_model">
+<span class="sig-name descname"><span class="pre">init_model</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.init_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.init_model" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a model to the view.</p>
+<p>The ItemModel subclasses are wrapped in a QSortFilterProxyModel. All
+the necessary internal signal-slot connections needed for the proxy, model
+and the view to communicate are made here.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.keyPressEvent">
+<span class="sig-name descname"><span class="pre">keyPressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.keyPressEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.keyPressEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Key press event handler.</p>
+<p>We’re defining the default behaviour of the list-items here, including
+defining the actions needed to navigate the list using keyboard presses.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.key_down">
+<span class="sig-name descname"><span class="pre">key_down</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.key_down"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.key_down" title="Permalink to this definition">#</a></dt>
+<dd><p>Custom action on <cite>down</cite> arrow key-press.</p>
+<p>We’re implementing a continuous scroll: when reaching the last
+item in the list, we’ll jump to the beginning, and vice-versa.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.key_enter">
+<span class="sig-name descname"><span class="pre">key_enter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.key_enter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.key_enter" title="Permalink to this definition">#</a></dt>
+<dd><p>Custom key action</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.key_space">
+<span class="sig-name descname"><span class="pre">key_space</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.key_space"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.key_space" title="Permalink to this definition">#</a></dt>
+<dd><p>Custom key action.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.key_tab">
+<span class="sig-name descname"><span class="pre">key_tab</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.key_tab"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.key_tab" title="Permalink to this definition">#</a></dt>
+<dd><p>Custom key action</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.key_up">
+<span class="sig-name descname"><span class="pre">key_up</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.key_up"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.key_up" title="Permalink to this definition">#</a></dt>
+<dd><p>Custom action to perform when the <cite>up</cite> arrow is pressed
+on the keyboard.</p>
+<p>We’re implementing a continuous scroll: when reaching the last
+item in the list, we’ll jump to the beginning, and vice-versa.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.mouseDoubleClickEvent">
+<span class="sig-name descname"><span class="pre">mouseDoubleClickEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.mouseDoubleClickEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.mouseDoubleClickEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Custom doubleclick event.</p>
+<p>A double click can <cite>activate</cite> an item, or it can trigger an edit event.
+As each item is associated with multiple editors we have to inspect
+the double click location before deciding what action to take.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.mousePressEvent">
+<span class="sig-name descname"><span class="pre">mousePressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.mousePressEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.mousePressEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Deselect the current index when clicked on an empty space.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.mouseReleaseEvent">
+<span class="sig-name descname"><span class="pre">mouseReleaseEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.mouseReleaseEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.mouseReleaseEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Event handler.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.paint_hint">
+<span class="sig-name descname"><span class="pre">paint_hint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.paint_hint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.paint_hint" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints the hint message.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.paint_loading">
+<span class="sig-name descname"><span class="pre">paint_loading</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.paint_loading"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.paint_loading" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints the hint message.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.paint_status_message">
+<span class="sig-name descname"><span class="pre">paint_status_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.paint_status_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.paint_status_message" title="Permalink to this definition">#</a></dt>
+<dd><p>Displays a visual hint for the user to indicate if the list
+has hidden items.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.repaint_visible_rows">
+<span class="sig-name descname"><span class="pre">repaint_visible_rows</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.repaint_visible_rows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.repaint_visible_rows" title="Permalink to this definition">#</a></dt>
+<dd><p>Slot used to repaint all currently visible items.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.reset_row_layout">
+<span class="sig-name descname"><span class="pre">reset_row_layout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.reset_row_layout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.reset_row_layout" title="Permalink to this definition">#</a></dt>
+<dd><p>Re-initializes the rows to apply size and row height changes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.resizeEvent">
+<span class="sig-name descname"><span class="pre">resizeEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.resizeEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.resizeEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Event handler.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.restore_selection">
+<span class="sig-name descname"><span class="pre">restore_selection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.restore_selection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.restore_selection" title="Permalink to this definition">#</a></dt>
+<dd><p>Slot called to reselect a previously saved selection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.save_selection">
+<span class="sig-name descname"><span class="pre">save_selection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.save_selection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.save_selection" title="Permalink to this definition">#</a></dt>
+<dd><p>Saves the current selection to the user settings file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.select_item">
+<span class="sig-name descname"><span class="pre">select_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">QtCore.Qt.DisplayRole</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.select_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.select_item" title="Permalink to this definition">#</a></dt>
+<dd><p>Select an item in the viewer.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.set_buttons_hidden">
+<span class="sig-name descname"><span class="pre">set_buttons_hidden</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.set_buttons_hidden"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.set_buttons_hidden" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets the visibility of the inline icon buttons.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.set_row_size">
+<span class="sig-name descname"><span class="pre">set_row_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.set_row_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.set_row_size" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets the row size.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>v</strong> (<em>int</em>) – The new row size</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.showEvent">
+<span class="sig-name descname"><span class="pre">showEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.showEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.showEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Show event handler.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.show_item">
+<span class="sig-name descname"><span class="pre">show_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">QtCore.Qt.DisplayRole</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.show_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.show_item" title="Permalink to this definition">#</a></dt>
+<dd><p>Show an item in the viewer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>v</strong> (<em>any</em>) – A value to match.</p></li>
+<li><p><strong>role</strong> (<em>QtCore.Qt.ItemRole</em>) – An item data role.</p></li>
+<li><p><strong>update</strong> (<em>bool</em>) – Refreshes the model if <cite>True</cite> (the default).</p></li>
+<li><p><strong>limit</strong> (<em>int</em>) – Maximum item search number.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.startDrag">
+<span class="sig-name descname"><span class="pre">startDrag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">supported_actions</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.startDrag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.startDrag" title="Permalink to this definition">#</a></dt>
+<dd><p>Drag action start.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.toggle_item_flag">
+<span class="sig-name descname"><span class="pre">toggle_item_flag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">commit_now</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.toggle_item_flag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.toggle_item_flag" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets the index’s filter flag value based on the passed state.</p>
+<p>We’re using the method to mark items archived, or favourite and save the
+changes to the database and the user settings file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> (<em>QModelIndex</em>) – Model index.</p></li>
+<li><p><strong>flag</strong> (<em>int</em>) – A filter flag, e.g. <code class="docutils literal notranslate"><span class="pre">MarkedAsArchived</span></code>.</p></li>
+<li><p><strong>state</strong> (<em>bool</em>) – Pass an explicit state value. Defaults to None.</p></li>
+<li><p><strong>commit_now</strong> (<em>bool</em>) – When <cite>True</cite>, commits database values immediately.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The key used to find and match items.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.update" title="Permalink to this definition">#</a></dt>
+<dd><p>This slot is used by all threads to repaint/update the given index
+after it’s thumbnail or file information has been loaded.</p>
+<p>An actual repaint event will only trigger if the index is visible
+in the view.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.wheelEvent">
+<span class="sig-name descname"><span class="pre">wheelEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#BaseItemView.wheelEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.BaseItemView.wheelEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Custom wheel event responsible for scrolling the list.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.customContextMenuRequested">
+<span class="sig-name descname"><span class="pre">customContextMenuRequested</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bookmarks.items.views.BaseItemView.customContextMenuRequested" title="Permalink to this definition">#</a></dt>
+<dd><p>Emitted when the user shift+right-clicks on the view. Use this to show DCC
+specific context menus.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.interruptRequested">
+<span class="sig-name descname"><span class="pre">interruptRequested</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bookmarks.items.views.BaseItemView.interruptRequested" title="Permalink to this definition">#</a></dt>
+<dd><p>Called when the user requests model data load by pressing the ESC key.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="bookmarks.items.views.BaseItemView.resized">
+<span class="sig-name descname"><span class="pre">resized</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bookmarks.items.views.BaseItemView.resized" title="Permalink to this definition">#</a></dt>
+<dd><p>Signals window size change</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.items.views.DragPixmapFactory">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.views.</span></span><span class="sig-name descname"><span class="pre">DragPixmapFactory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pixmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#DragPixmapFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.DragPixmapFactory" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Widget used to define the appearance of an item being dragged.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.DragPixmapFactory.paintEvent" title="bookmarks.items.views.DragPixmapFactory.paintEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paintEvent</span></code></a>(event)</p></td>
+<td><p>Event handler.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.DragPixmapFactory.pixmap" title="bookmarks.items.views.DragPixmapFactory.pixmap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pixmap</span></code></a>(pixmap, text)</p></td>
+<td><p>Returns the widget as a rendered pixmap.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.DragPixmapFactory.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#DragPixmapFactory.paintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.DragPixmapFactory.paintEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Event handler.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.DragPixmapFactory.pixmap">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pixmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pixmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#DragPixmapFactory.pixmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.DragPixmapFactory.pixmap" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the widget as a rendered pixmap.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.items.views.DropIndicatorWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.views.</span></span><span class="sig-name descname"><span class="pre">DropIndicatorWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#DropIndicatorWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.DropIndicatorWidget" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Widgets responsible for drawing an overlay.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.DropIndicatorWidget.paintEvent" title="bookmarks.items.views.DropIndicatorWidget.paintEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paintEvent</span></code></a>(event)</p></td>
+<td><p>Event handler.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.DropIndicatorWidget.show" title="bookmarks.items.views.DropIndicatorWidget.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>()</p></td>
+<td><p>Shows and sets the size of the widget.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.DropIndicatorWidget.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#DropIndicatorWidget.paintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.DropIndicatorWidget.paintEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Event handler.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.DropIndicatorWidget.show">
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#DropIndicatorWidget.show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.DropIndicatorWidget.show" title="Permalink to this definition">#</a></dt>
+<dd><p>Shows and sets the size of the widget.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.items.views.FilterOnOverlayWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.views.</span></span><span class="sig-name descname"><span class="pre">FilterOnOverlayWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#FilterOnOverlayWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.FilterOnOverlayWidget" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bookmarks.items.views.ProgressWidget" title="bookmarks.items.views.ProgressWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProgressWidget</span></code></a></p>
+<p>An indicator widget drawn on top of the list widgets to signal
+if a model has filters set or if it requires a refresh.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.FilterOnOverlayWidget.paintEvent" title="bookmarks.items.views.FilterOnOverlayWidget.paintEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paintEvent</span></code></a>(event)</p></td>
+<td><p>Event handler.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.FilterOnOverlayWidget.paint_filter_indicator" title="bookmarks.items.views.FilterOnOverlayWidget.paint_filter_indicator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_filter_indicator</span></code></a>(painter)</p></td>
+<td><p>Paints the filter indicator.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.FilterOnOverlayWidget.paint_needs_refresh" title="bookmarks.items.views.FilterOnOverlayWidget.paint_needs_refresh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint_needs_refresh</span></code></a>(painter)</p></td>
+<td><p>Paints the data status indicator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.FilterOnOverlayWidget.showEvent" title="bookmarks.items.views.FilterOnOverlayWidget.showEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showEvent</span></code></a>(event)</p></td>
+<td><p>Event handler.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.FilterOnOverlayWidget.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#FilterOnOverlayWidget.paintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.FilterOnOverlayWidget.paintEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Event handler.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.FilterOnOverlayWidget.paint_filter_indicator">
+<span class="sig-name descname"><span class="pre">paint_filter_indicator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">painter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#FilterOnOverlayWidget.paint_filter_indicator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.FilterOnOverlayWidget.paint_filter_indicator" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints the filter indicator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.FilterOnOverlayWidget.paint_needs_refresh">
+<span class="sig-name descname"><span class="pre">paint_needs_refresh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">painter</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#FilterOnOverlayWidget.paint_needs_refresh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.FilterOnOverlayWidget.paint_needs_refresh" title="Permalink to this definition">#</a></dt>
+<dd><p>Paints the data status indicator.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.FilterOnOverlayWidget.showEvent">
+<span class="sig-name descname"><span class="pre">showEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#FilterOnOverlayWidget.showEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.FilterOnOverlayWidget.showEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Event handler.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.items.views.InlineIconView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.views.</span></span><span class="sig-name descname"><span class="pre">InlineIconView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">icon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bw_icon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#InlineIconView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.InlineIconView" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bookmarks.items.views.BaseItemView" title="bookmarks.items.views.BaseItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseItemView</span></code></a></p>
+<p>Adds multi-toggle and clickable in-line icons to <a class="reference internal" href="#bookmarks.items.views.BaseItemView" title="bookmarks.items.views.BaseItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseItemView</span></code></a>.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.InlineIconView.add_item_action" title="bookmarks.items.views.InlineIconView.add_item_action"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_item_action</span></code></a>(index)</p></td>
+<td><p>Action to execute when the add item icon is clicked.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.InlineIconView.clickable_rectangle_event" title="bookmarks.items.views.InlineIconView.clickable_rectangle_event"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clickable_rectangle_event</span></code></a>(event)</p></td>
+<td><p>Handle mouse press &amp; release events on an item's interactive rectangle.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.InlineIconView.edit_item_action" title="bookmarks.items.views.InlineIconView.edit_item_action"><code class="xref py py-obj docutils literal notranslate"><span class="pre">edit_item_action</span></code></a>(index)</p></td>
+<td><p>Action to execute when the edit item icon is clicked.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.InlineIconView.enterEvent" title="bookmarks.items.views.InlineIconView.enterEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">enterEvent</span></code></a>(event)</p></td>
+<td><p>Event handler.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.InlineIconView.inline_icons_count" title="bookmarks.items.views.InlineIconView.inline_icons_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">inline_icons_count</span></code></a>()</p></td>
+<td><p>Inline buttons count.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.InlineIconView.leaveEvent" title="bookmarks.items.views.InlineIconView.leaveEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">leaveEvent</span></code></a>(event)</p></td>
+<td><p>Event handler.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.InlineIconView.mouseMoveEvent" title="bookmarks.items.views.InlineIconView.mouseMoveEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mouseMoveEvent</span></code></a>(event)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">InlineIconView</span></code>'s mouse move event is responsible for handling the multi-toggle operations and repainting the current index under the mouse.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.InlineIconView.mousePressEvent" title="bookmarks.items.views.InlineIconView.mousePressEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mousePressEvent</span></code></a>(event)</p></td>
+<td><p>The <cite>InlineIconView</cite>'s mousePressEvent initiates multi-row flag toggling.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.InlineIconView.mouseReleaseEvent" title="bookmarks.items.views.InlineIconView.mouseReleaseEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mouseReleaseEvent</span></code></a>(event)</p></td>
+<td><p>Concludes <cite>InlineIconView</cite>'s multi-item toggle operation, and resets the associated variables.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.InlineIconView.reset_multi_toggle" title="bookmarks.items.views.InlineIconView.reset_multi_toggle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_multi_toggle</span></code></a>()</p></td>
+<td><p>Resets the multi-toggle state.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.InlineIconView.add_item_action">
+<span class="sig-name descname"><span class="pre">add_item_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#InlineIconView.add_item_action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.InlineIconView.add_item_action" title="Permalink to this definition">#</a></dt>
+<dd><p>Action to execute when the add item icon is clicked.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.InlineIconView.clickable_rectangle_event">
+<span class="sig-name descname"><span class="pre">clickable_rectangle_event</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#InlineIconView.clickable_rectangle_event"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.InlineIconView.clickable_rectangle_event" title="Permalink to this definition">#</a></dt>
+<dd><p>Handle mouse press &amp; release events on an item’s interactive rectangle.</p>
+<p>The clickable rectangles are defined by and stored by the item delegate. See
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">get_clickable_rectangles()</span></code>.</p>
+<p>We’re implementing filtering by reacting to clicks on item labels:
+<code class="docutils literal notranslate"><span class="pre">shift</span></code> modifier will add a _positive_ filter and hide all items not
+containing the clicked rectangle’s text content.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">alt</span></code> and <code class="docutils literal notranslate"><span class="pre">control</span></code> modifiers will add a negative filter and hide all
+items containing the clicked rectangle’s text content.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.InlineIconView.edit_item_action">
+<span class="sig-name descname"><span class="pre">edit_item_action</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#InlineIconView.edit_item_action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.InlineIconView.edit_item_action" title="Permalink to this definition">#</a></dt>
+<dd><p>Action to execute when the edit item icon is clicked.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.InlineIconView.enterEvent">
+<span class="sig-name descname"><span class="pre">enterEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#InlineIconView.enterEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.InlineIconView.enterEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Event handler.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.InlineIconView.inline_icons_count">
+<span class="sig-name descname"><span class="pre">inline_icons_count</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#InlineIconView.inline_icons_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.InlineIconView.inline_icons_count" title="Permalink to this definition">#</a></dt>
+<dd><p>Inline buttons count.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.InlineIconView.leaveEvent">
+<span class="sig-name descname"><span class="pre">leaveEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#InlineIconView.leaveEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.InlineIconView.leaveEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Event handler.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.InlineIconView.mouseMoveEvent">
+<span class="sig-name descname"><span class="pre">mouseMoveEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#InlineIconView.mouseMoveEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.InlineIconView.mouseMoveEvent" title="Permalink to this definition">#</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">InlineIconView</span></code>’s mouse move event is responsible for
+handling the multi-toggle operations and repainting the current index
+under the mouse.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.InlineIconView.mousePressEvent">
+<span class="sig-name descname"><span class="pre">mousePressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#InlineIconView.mousePressEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.InlineIconView.mousePressEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>The <cite>InlineIconView</cite>’s mousePressEvent initiates multi-row
+flag toggling.</p>
+<p>This event is responsible for setting <code class="docutils literal notranslate"><span class="pre">multi_toggle_pos</span></code>, the start
+position of the toggle, <code class="docutils literal notranslate"><span class="pre">multi_toggle_state</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">multi_toggle_flag</span></code>
+the modes of the toggle, based on the state of the state and location of
+the clicked item.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.InlineIconView.mouseReleaseEvent">
+<span class="sig-name descname"><span class="pre">mouseReleaseEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#InlineIconView.mouseReleaseEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.InlineIconView.mouseReleaseEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Concludes <cite>InlineIconView</cite>’s multi-item toggle operation, and
+resets the associated variables.</p>
+<p>The inline icon buttons are also triggered here. We’re using the
+delegate’s <code class="docutils literal notranslate"><span class="pre">get_rectangles</span></code> function to determine which icon was
+clicked.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.InlineIconView.reset_multi_toggle">
+<span class="sig-name descname"><span class="pre">reset_multi_toggle</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#InlineIconView.reset_multi_toggle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.InlineIconView.reset_multi_toggle" title="Permalink to this definition">#</a></dt>
+<dd><p>Resets the multi-toggle state.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.items.views.ItemDrag">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.views.</span></span><span class="sig-name descname"><span class="pre">ItemDrag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">widget</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#ItemDrag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.ItemDrag" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDrag</span></code></p>
+<p>A utility class used to start a drag operation.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.items.views.ListsWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.views.</span></span><span class="sig-name descname"><span class="pre">ListsWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#ListsWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.ListsWidget" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QStackedWidget</span></code></p>
+<p>This stacked widget contains the main bookmark, asset, file and favourite item
+views.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.ListsWidget.setCurrentIndex" title="bookmarks.items.views.ListsWidget.setCurrentIndex"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setCurrentIndex</span></code></a>(idx)</p></td>
+<td><p>Sets the current index of the <code class="docutils literal notranslate"><span class="pre">ListsWidget</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.ListsWidget.showEvent" title="bookmarks.items.views.ListsWidget.showEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showEvent</span></code></a>(event)</p></td>
+<td><p>Event handler.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.ListsWidget.setCurrentIndex">
+<span class="sig-name descname"><span class="pre">setCurrentIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#ListsWidget.setCurrentIndex"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.ListsWidget.setCurrentIndex" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets the current index of the <code class="docutils literal notranslate"><span class="pre">ListsWidget</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>idx</strong> (<em>int</em>) – The index of the widget to set.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.ListsWidget.showEvent">
+<span class="sig-name descname"><span class="pre">showEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#ListsWidget.showEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.ListsWidget.showEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Event handler.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.items.views.ProgressWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.views.</span></span><span class="sig-name descname"><span class="pre">ProgressWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#ProgressWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.ProgressWidget" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Widget responsible for indicating files are being loaded.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.ProgressWidget.mousePressEvent" title="bookmarks.items.views.ProgressWidget.mousePressEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mousePressEvent</span></code></a>(event)</p></td>
+<td><p>Event handler.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.ProgressWidget.paintEvent" title="bookmarks.items.views.ProgressWidget.paintEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paintEvent</span></code></a>(event)</p></td>
+<td><p>Event handler.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.ProgressWidget.set_message" title="bookmarks.items.views.ProgressWidget.set_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_message</span></code></a>(text)</p></td>
+<td><p>Sets the message to be displayed when saving the widget.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.ProgressWidget.showEvent" title="bookmarks.items.views.ProgressWidget.showEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showEvent</span></code></a>(event)</p></td>
+<td><p>Event handler.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.ProgressWidget.mousePressEvent">
+<span class="sig-name descname"><span class="pre">mousePressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#ProgressWidget.mousePressEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.ProgressWidget.mousePressEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Event handler.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.ProgressWidget.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#ProgressWidget.paintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.ProgressWidget.paintEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Event handler.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.ProgressWidget.set_message">
+<span class="sig-name descname"><span class="pre">set_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#ProgressWidget.set_message"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.ProgressWidget.set_message" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets the message to be displayed when saving the widget.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.ProgressWidget.showEvent">
+<span class="sig-name descname"><span class="pre">showEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#ProgressWidget.showEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.ProgressWidget.showEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Event handler.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.items.views.ThreadedItemView">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.views.</span></span><span class="sig-name descname"><span class="pre">ThreadedItemView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">icon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'bw_icon'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#ThreadedItemView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.ThreadedItemView" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bookmarks.items.views.InlineIconView" title="bookmarks.items.views.InlineIconView"><code class="xref py py-class docutils literal notranslate"><span class="pre">InlineIconView</span></code></a></p>
+<p>Extends the <a class="reference internal" href="#bookmarks.items.views.InlineIconView" title="bookmarks.items.views.InlineIconView"><code class="xref py py-class docutils literal notranslate"><span class="pre">InlineIconView</span></code></a> with the methods used to interface with
+threads.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.ThreadedItemView.init_model" title="bookmarks.items.views.ThreadedItemView.init_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_model</span></code></a>(*args, **kwargs)</p></td>
+<td><p>The methods responsible for connecting the associated item model with the view.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.ThreadedItemView.init_threads" title="bookmarks.items.views.ThreadedItemView.init_threads"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_threads</span></code></a>()</p></td>
+<td><p>Starts and connects the threads.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.ThreadedItemView.queue_visible_indexes" title="bookmarks.items.views.ThreadedItemView.queue_visible_indexes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">queue_visible_indexes</span></code></a>(**kwargs)</p></td>
+<td><p>Function wrapper.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.ThreadedItemView.queued_row_update" title="bookmarks.items.views.ThreadedItemView.queued_row_update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">queued_row_update</span></code></a>()</p></td>
+<td><p>Process a repaint request.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.ThreadedItemView.save_visible_rows" title="bookmarks.items.views.ThreadedItemView.save_visible_rows"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_visible_rows</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Cache the currently visible rows.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.views.ThreadedItemView.start_delayed_queue_timer" title="bookmarks.items.views.ThreadedItemView.start_delayed_queue_timer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">start_delayed_queue_timer</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Starts the delayed queue timer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.ThreadedItemView.update_row" title="bookmarks.items.views.ThreadedItemView.update_row"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_row</span></code></a>(ref)</p></td>
+<td><p>Queues an update request by the threads for later processing.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.ThreadedItemView.init_model">
+<span class="sig-name descname"><span class="pre">init_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#ThreadedItemView.init_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.ThreadedItemView.init_model" title="Permalink to this definition">#</a></dt>
+<dd><p>The methods responsible for connecting the associated item model with the view.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.ThreadedItemView.init_threads">
+<span class="sig-name descname"><span class="pre">init_threads</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#ThreadedItemView.init_threads"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.ThreadedItemView.init_threads" title="Permalink to this definition">#</a></dt>
+<dd><p>Starts and connects the threads.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.ThreadedItemView.queue_visible_indexes">
+<span class="sig-name descname"><span class="pre">queue_visible_indexes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#bookmarks.items.views.ThreadedItemView.queue_visible_indexes" title="Permalink to this definition">#</a></dt>
+<dd><p>Function wrapper.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.ThreadedItemView.queued_row_update">
+<span class="sig-name descname"><span class="pre">queued_row_update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#ThreadedItemView.queued_row_update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.ThreadedItemView.queued_row_update" title="Permalink to this definition">#</a></dt>
+<dd><p>Process a repaint request.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.ThreadedItemView.save_visible_rows">
+<span class="sig-name descname"><span class="pre">save_visible_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#ThreadedItemView.save_visible_rows"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.ThreadedItemView.save_visible_rows" title="Permalink to this definition">#</a></dt>
+<dd><p>Cache the currently visible rows.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.ThreadedItemView.start_delayed_queue_timer">
+<span class="sig-name descname"><span class="pre">start_delayed_queue_timer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#ThreadedItemView.start_delayed_queue_timer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.ThreadedItemView.start_delayed_queue_timer" title="Permalink to this definition">#</a></dt>
+<dd><p>Starts the delayed queue timer.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.ThreadedItemView.update_row">
+<span class="sig-name descname"><span class="pre">update_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#ThreadedItemView.update_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.ThreadedItemView.update_row" title="Permalink to this definition">#</a></dt>
+<dd><p>Queues an update request by the threads for later processing.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.items.views.ThumbnailsContextMenu">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.views.</span></span><span class="sig-name descname"><span class="pre">ThumbnailsContextMenu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#ThumbnailsContextMenu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.ThumbnailsContextMenu" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../contextmenu.html#bookmarks.contextmenu.BaseContextMenu" title="bookmarks.contextmenu.BaseContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseContextMenu</span></code></a></p>
+<p>Context menu associated with thumbnail actions.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.views.ThumbnailsContextMenu.setup" title="bookmarks.items.views.ThumbnailsContextMenu.setup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code></a>()</p></td>
+<td><p>Creates the context menu.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.items.views.ThumbnailsContextMenu.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/views.html#ThumbnailsContextMenu.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.views.ThumbnailsContextMenu.setup" title="Permalink to this definition">#</a></dt>
+<dd><p>Creates the context menu.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="widgets/filter_editor.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">items.widgets.filter_editor</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="task_items.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">items.task_items</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2022, Gergely Wootsch
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">items.views</a><ul>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView"><code class="docutils literal notranslate"><span class="pre">BaseItemView</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.ContextMenu"><code class="docutils literal notranslate"><span class="pre">BaseItemView.ContextMenu</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.Delegate"><code class="docutils literal notranslate"><span class="pre">BaseItemView.Delegate</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.ThumbnailContextMenu"><code class="docutils literal notranslate"><span class="pre">BaseItemView.ThumbnailContextMenu</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.activate"><code class="docutils literal notranslate"><span class="pre">BaseItemView.activate()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.buttons_hidden"><code class="docutils literal notranslate"><span class="pre">BaseItemView.buttons_hidden()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.contextMenuEvent"><code class="docutils literal notranslate"><span class="pre">BaseItemView.contextMenuEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.delay_restore_selection"><code class="docutils literal notranslate"><span class="pre">BaseItemView.delay_restore_selection()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.delay_save_selection"><code class="docutils literal notranslate"><span class="pre">BaseItemView.delay_save_selection()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.dragMoveEvent"><code class="docutils literal notranslate"><span class="pre">BaseItemView.dragMoveEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.dropEvent"><code class="docutils literal notranslate"><span class="pre">BaseItemView.dropEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.eventFilter"><code class="docutils literal notranslate"><span class="pre">BaseItemView.eventFilter()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.get_hint_string"><code class="docutils literal notranslate"><span class="pre">BaseItemView.get_hint_string()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.get_source_model"><code class="docutils literal notranslate"><span class="pre">BaseItemView.get_source_model()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.get_status_string"><code class="docutils literal notranslate"><span class="pre">BaseItemView.get_status_string()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.init_buttons_hidden"><code class="docutils literal notranslate"><span class="pre">BaseItemView.init_buttons_hidden()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.init_model"><code class="docutils literal notranslate"><span class="pre">BaseItemView.init_model()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.keyPressEvent"><code class="docutils literal notranslate"><span class="pre">BaseItemView.keyPressEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.key_down"><code class="docutils literal notranslate"><span class="pre">BaseItemView.key_down()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.key_enter"><code class="docutils literal notranslate"><span class="pre">BaseItemView.key_enter()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.key_space"><code class="docutils literal notranslate"><span class="pre">BaseItemView.key_space()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.key_tab"><code class="docutils literal notranslate"><span class="pre">BaseItemView.key_tab()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.key_up"><code class="docutils literal notranslate"><span class="pre">BaseItemView.key_up()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.mouseDoubleClickEvent"><code class="docutils literal notranslate"><span class="pre">BaseItemView.mouseDoubleClickEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.mousePressEvent"><code class="docutils literal notranslate"><span class="pre">BaseItemView.mousePressEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.mouseReleaseEvent"><code class="docutils literal notranslate"><span class="pre">BaseItemView.mouseReleaseEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.paint_hint"><code class="docutils literal notranslate"><span class="pre">BaseItemView.paint_hint()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.paint_loading"><code class="docutils literal notranslate"><span class="pre">BaseItemView.paint_loading()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.paint_status_message"><code class="docutils literal notranslate"><span class="pre">BaseItemView.paint_status_message()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.repaint_visible_rows"><code class="docutils literal notranslate"><span class="pre">BaseItemView.repaint_visible_rows()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.reset_row_layout"><code class="docutils literal notranslate"><span class="pre">BaseItemView.reset_row_layout()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.resizeEvent"><code class="docutils literal notranslate"><span class="pre">BaseItemView.resizeEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.restore_selection"><code class="docutils literal notranslate"><span class="pre">BaseItemView.restore_selection()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.save_selection"><code class="docutils literal notranslate"><span class="pre">BaseItemView.save_selection()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.select_item"><code class="docutils literal notranslate"><span class="pre">BaseItemView.select_item()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.set_buttons_hidden"><code class="docutils literal notranslate"><span class="pre">BaseItemView.set_buttons_hidden()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.set_row_size"><code class="docutils literal notranslate"><span class="pre">BaseItemView.set_row_size()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.showEvent"><code class="docutils literal notranslate"><span class="pre">BaseItemView.showEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.show_item"><code class="docutils literal notranslate"><span class="pre">BaseItemView.show_item()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.startDrag"><code class="docutils literal notranslate"><span class="pre">BaseItemView.startDrag()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.toggle_item_flag"><code class="docutils literal notranslate"><span class="pre">BaseItemView.toggle_item_flag()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.update"><code class="docutils literal notranslate"><span class="pre">BaseItemView.update()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.wheelEvent"><code class="docutils literal notranslate"><span class="pre">BaseItemView.wheelEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.customContextMenuRequested"><code class="docutils literal notranslate"><span class="pre">BaseItemView.customContextMenuRequested</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.interruptRequested"><code class="docutils literal notranslate"><span class="pre">BaseItemView.interruptRequested</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.BaseItemView.resized"><code class="docutils literal notranslate"><span class="pre">BaseItemView.resized</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.views.DragPixmapFactory"><code class="docutils literal notranslate"><span class="pre">DragPixmapFactory</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.views.DragPixmapFactory.paintEvent"><code class="docutils literal notranslate"><span class="pre">DragPixmapFactory.paintEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.DragPixmapFactory.pixmap"><code class="docutils literal notranslate"><span class="pre">DragPixmapFactory.pixmap()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.views.DropIndicatorWidget"><code class="docutils literal notranslate"><span class="pre">DropIndicatorWidget</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.views.DropIndicatorWidget.paintEvent"><code class="docutils literal notranslate"><span class="pre">DropIndicatorWidget.paintEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.DropIndicatorWidget.show"><code class="docutils literal notranslate"><span class="pre">DropIndicatorWidget.show()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.views.FilterOnOverlayWidget"><code class="docutils literal notranslate"><span class="pre">FilterOnOverlayWidget</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.views.FilterOnOverlayWidget.paintEvent"><code class="docutils literal notranslate"><span class="pre">FilterOnOverlayWidget.paintEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.FilterOnOverlayWidget.paint_filter_indicator"><code class="docutils literal notranslate"><span class="pre">FilterOnOverlayWidget.paint_filter_indicator()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.FilterOnOverlayWidget.paint_needs_refresh"><code class="docutils literal notranslate"><span class="pre">FilterOnOverlayWidget.paint_needs_refresh()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.FilterOnOverlayWidget.showEvent"><code class="docutils literal notranslate"><span class="pre">FilterOnOverlayWidget.showEvent()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.views.InlineIconView"><code class="docutils literal notranslate"><span class="pre">InlineIconView</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.views.InlineIconView.add_item_action"><code class="docutils literal notranslate"><span class="pre">InlineIconView.add_item_action()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.InlineIconView.clickable_rectangle_event"><code class="docutils literal notranslate"><span class="pre">InlineIconView.clickable_rectangle_event()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.InlineIconView.edit_item_action"><code class="docutils literal notranslate"><span class="pre">InlineIconView.edit_item_action()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.InlineIconView.enterEvent"><code class="docutils literal notranslate"><span class="pre">InlineIconView.enterEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.InlineIconView.inline_icons_count"><code class="docutils literal notranslate"><span class="pre">InlineIconView.inline_icons_count()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.InlineIconView.leaveEvent"><code class="docutils literal notranslate"><span class="pre">InlineIconView.leaveEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.InlineIconView.mouseMoveEvent"><code class="docutils literal notranslate"><span class="pre">InlineIconView.mouseMoveEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.InlineIconView.mousePressEvent"><code class="docutils literal notranslate"><span class="pre">InlineIconView.mousePressEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.InlineIconView.mouseReleaseEvent"><code class="docutils literal notranslate"><span class="pre">InlineIconView.mouseReleaseEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.InlineIconView.reset_multi_toggle"><code class="docutils literal notranslate"><span class="pre">InlineIconView.reset_multi_toggle()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.views.ItemDrag"><code class="docutils literal notranslate"><span class="pre">ItemDrag</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.ListsWidget"><code class="docutils literal notranslate"><span class="pre">ListsWidget</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.views.ListsWidget.setCurrentIndex"><code class="docutils literal notranslate"><span class="pre">ListsWidget.setCurrentIndex()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.ListsWidget.showEvent"><code class="docutils literal notranslate"><span class="pre">ListsWidget.showEvent()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.views.ProgressWidget"><code class="docutils literal notranslate"><span class="pre">ProgressWidget</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.views.ProgressWidget.mousePressEvent"><code class="docutils literal notranslate"><span class="pre">ProgressWidget.mousePressEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.ProgressWidget.paintEvent"><code class="docutils literal notranslate"><span class="pre">ProgressWidget.paintEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.ProgressWidget.set_message"><code class="docutils literal notranslate"><span class="pre">ProgressWidget.set_message()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.ProgressWidget.showEvent"><code class="docutils literal notranslate"><span class="pre">ProgressWidget.showEvent()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.views.ThreadedItemView"><code class="docutils literal notranslate"><span class="pre">ThreadedItemView</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.views.ThreadedItemView.init_model"><code class="docutils literal notranslate"><span class="pre">ThreadedItemView.init_model()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.ThreadedItemView.init_threads"><code class="docutils literal notranslate"><span class="pre">ThreadedItemView.init_threads()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.ThreadedItemView.queue_visible_indexes"><code class="docutils literal notranslate"><span class="pre">ThreadedItemView.queue_visible_indexes()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.ThreadedItemView.queued_row_update"><code class="docutils literal notranslate"><span class="pre">ThreadedItemView.queued_row_update()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.ThreadedItemView.save_visible_rows"><code class="docutils literal notranslate"><span class="pre">ThreadedItemView.save_visible_rows()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.ThreadedItemView.start_delayed_queue_timer"><code class="docutils literal notranslate"><span class="pre">ThreadedItemView.start_delayed_queue_timer()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.views.ThreadedItemView.update_row"><code class="docutils literal notranslate"><span class="pre">ThreadedItemView.update_row()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.views.ThumbnailsContextMenu"><code class="docutils literal notranslate"><span class="pre">ThumbnailsContextMenu</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.views.ThumbnailsContextMenu.setup"><code class="docutils literal notranslate"><span class="pre">ThumbnailsContextMenu.setup()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/scripts/furo.js"></script>
+    <script src="../../_static/design-tabs.js"></script>
+    </body>
+</html>

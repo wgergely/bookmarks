@@ -1,17 +1,17 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="items.delegate" href="delegate.html" /><link rel="prev" title="items.asset_items" href="asset_items.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/items/bookmark_items.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
         <title>items.bookmark_items - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -163,7 +163,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -325,11 +325,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 </ul>
 
 </div>
@@ -358,14 +358,14 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-bookmarks.items.bookmark_items">
-<span id="items-bookmark-items"></span><h1>items.bookmark_items<a class="headerlink" href="#module-bookmarks.items.bookmark_items" title="Permalink to this heading">#</a></h1>
+          <div class="section" id="module-bookmarks.items.bookmark_items">
+<span id="items-bookmark-items"></span><h1>items.bookmark_items<a class="headerlink" href="#module-bookmarks.items.bookmark_items" title="Permalink to this headline">#</a></h1>
 <p>Bookmark items at their core are simple file paths made up of a <code class="docutils literal notranslate"><span class="pre">server</span></code>, <code class="docutils literal notranslate"><span class="pre">job</span></code>
 and <code class="docutils literal notranslate"><span class="pre">root</span></code> components. We usually store them in the following form:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="p">{</span>
@@ -408,8 +408,12 @@ become active.</p>
 </pre></div>
 </div>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemModel" title="bookmarks.items.bookmark_items.BookmarkItemModel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BookmarkItemModel</span></code></a>([parent])</p></td>
 <td><p>The model used store the data necessary to display bookmark item.</p></td>
@@ -426,11 +430,15 @@ become active.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.items.bookmark_items.BookmarkItemModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.bookmark_items.</span></span><span class="sig-name descname"><span class="pre">BookmarkItemModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/bookmark_items.html#BookmarkItemModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.bookmark_items.BookmarkItemModel" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="models.html#bookmarks.items.models.ItemModel" title="bookmarks.items.models.ItemModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemModel</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="models.html#bookmarks.items.models.ItemModel" title="bookmarks.items.models.ItemModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.models.ItemModel</span></code></a></p>
 <p>The model used store the data necessary to display bookmark item.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemModel.data_type" title="bookmarks.items.bookmark_items.BookmarkItemModel.data_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_type</span></code></a>()</p></td>
 <td><p>The data type of the model.</p></td>
@@ -515,25 +523,33 @@ names.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.items.bookmark_items.BookmarkItemView">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.bookmark_items.</span></span><span class="sig-name descname"><span class="pre">BookmarkItemView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/bookmark_items.html#BookmarkItemView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.bookmark_items.BookmarkItemView" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="views.html#bookmarks.items.views.ThreadedItemView" title="bookmarks.items.views.ThreadedItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThreadedItemView</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="views.html#bookmarks.items.views.ThreadedItemView" title="bookmarks.items.views.ThreadedItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.views.ThreadedItemView</span></code></a></p>
 <p>The view used to display bookmark item.</p>
 <p>See <a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemModel" title="bookmarks.items.bookmark_items.BookmarkItemModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">BookmarkItemModel</span></code></a>.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemView.ContextMenu" title="bookmarks.items.bookmark_items.BookmarkItemView.ContextMenu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ContextMenu</span></code></a></p></td>
-<td><p>alias of <a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemViewContextMenu" title="bookmarks.items.bookmark_items.BookmarkItemViewContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">BookmarkItemViewContextMenu</span></code></a></p></td>
+<td><p>alias of <a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemViewContextMenu" title="bookmarks.items.bookmark_items.BookmarkItemViewContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.bookmark_items.BookmarkItemViewContextMenu</span></code></a></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemView.Delegate" title="bookmarks.items.bookmark_items.BookmarkItemView.Delegate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Delegate</span></code></a></p></td>
-<td><p>alias of <a class="reference internal" href="delegate.html#bookmarks.items.delegate.BookmarkItemViewDelegate" title="bookmarks.items.delegate.BookmarkItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">BookmarkItemViewDelegate</span></code></a></p></td>
+<td><p>alias of <a class="reference internal" href="delegate.html#bookmarks.items.delegate.BookmarkItemViewDelegate" title="bookmarks.items.delegate.BookmarkItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.delegate.BookmarkItemViewDelegate</span></code></a></p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemView.add_item_action" title="bookmarks.items.bookmark_items.BookmarkItemView.add_item_action"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_item_action</span></code></a>(index)</p></td>
 <td><p>Action to execute when the add item icon is clicked.</p></td>
@@ -556,10 +572,14 @@ names.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="bookmarks.items.bookmark_items.BookmarkItemView.ContextMenu">
 <span class="sig-name descname"><span class="pre">ContextMenu</span></span><a class="headerlink" href="#bookmarks.items.bookmark_items.BookmarkItemView.ContextMenu" title="Permalink to this definition">#</a></dt>
-<dd><p>alias of <a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemViewContextMenu" title="bookmarks.items.bookmark_items.BookmarkItemViewContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">BookmarkItemViewContextMenu</span></code></a>
+<dd><p>alias of <a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemViewContextMenu" title="bookmarks.items.bookmark_items.BookmarkItemViewContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.bookmark_items.BookmarkItemViewContextMenu</span></code></a>
 <strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code>()</p></td>
 <td><p>Creates the context menu.</p></td>
@@ -572,10 +592,14 @@ names.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="bookmarks.items.bookmark_items.BookmarkItemView.Delegate">
 <span class="sig-name descname"><span class="pre">Delegate</span></span><a class="headerlink" href="#bookmarks.items.bookmark_items.BookmarkItemView.Delegate" title="Permalink to this definition">#</a></dt>
-<dd><p>alias of <a class="reference internal" href="delegate.html#bookmarks.items.delegate.BookmarkItemViewDelegate" title="bookmarks.items.delegate.BookmarkItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">BookmarkItemViewDelegate</span></code></a>
+<dd><p>alias of <a class="reference internal" href="delegate.html#bookmarks.items.delegate.BookmarkItemViewDelegate" title="bookmarks.items.delegate.BookmarkItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.delegate.BookmarkItemViewDelegate</span></code></a>
 <strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">paint</span></code>(painter, option, index)</p></td>
 <td><p>Paints a <a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemView" title="bookmarks.items.bookmark_items.BookmarkItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.bookmark_items.BookmarkItemView</span></code></a> item.</p></td>
@@ -588,16 +612,6 @@ names.</p>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sizeHint</span></code>(option, index)</p></td>
 <td><p>Returns the item's size hint.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><strong>Attributes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fallback_thumb</span></code></p></td>
-<td><p>The item's default thumbnail image</p></td>
 </tr>
 </tbody>
 </table>
@@ -639,7 +653,7 @@ names.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.items.bookmark_items.BookmarkItemViewContextMenu">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.bookmark_items.</span></span><span class="sig-name descname"><span class="pre">BookmarkItemViewContextMenu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/bookmark_items.html#BookmarkItemViewContextMenu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.bookmark_items.BookmarkItemViewContextMenu" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../contextmenu.html#bookmarks.contextmenu.BaseContextMenu" title="bookmarks.contextmenu.BaseContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseContextMenu</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="../contextmenu.html#bookmarks.contextmenu.BaseContextMenu" title="bookmarks.contextmenu.BaseContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.contextmenu.BaseContextMenu</span></code></a></p>
 <p>Context menu associated with the BookmarkItemView.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.items.bookmark_items.BookmarkItemViewContextMenu.refresh">
@@ -648,8 +662,12 @@ names.</p>
 </dd></dl>
 
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemViewContextMenu.setup" title="bookmarks.items.bookmark_items.BookmarkItemViewContextMenu.setup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code></a>()</p></td>
 <td><p>Creates the context menu.</p></td>
@@ -665,7 +683,7 @@ names.</p>
 
 </dd></dl>
 
-</section>
+</div>
 
         </article>
       </div>
@@ -696,7 +714,7 @@ names.</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Gergely Wootsch
+                Copyright &#169; © 2022 Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -712,52 +730,8 @@ names.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">items.bookmark_items</a><ul>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemModel"><code class="docutils literal notranslate"><span class="pre">BookmarkItemModel</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemModel.data_type"><code class="docutils literal notranslate"><span class="pre">BookmarkItemModel.data_type()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemModel.default_row_size"><code class="docutils literal notranslate"><span class="pre">BookmarkItemModel.default_row_size()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemModel.filter_setting_dict_key"><code class="docutils literal notranslate"><span class="pre">BookmarkItemModel.filter_setting_dict_key()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemModel.flags"><code class="docutils literal notranslate"><span class="pre">BookmarkItemModel.flags()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemModel.init_data"><code class="docutils literal notranslate"><span class="pre">BookmarkItemModel.init_data()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemModel.item_generator"><code class="docutils literal notranslate"><span class="pre">BookmarkItemModel.item_generator()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemModel.save_active"><code class="docutils literal notranslate"><span class="pre">BookmarkItemModel.save_active()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemModel.source_path"><code class="docutils literal notranslate"><span class="pre">BookmarkItemModel.source_path()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemView"><code class="docutils literal notranslate"><span class="pre">BookmarkItemView</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemView.ContextMenu"><code class="docutils literal notranslate"><span class="pre">BookmarkItemView.ContextMenu</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemView.Delegate"><code class="docutils literal notranslate"><span class="pre">BookmarkItemView.Delegate</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemView.add_item_action"><code class="docutils literal notranslate"><span class="pre">BookmarkItemView.add_item_action()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemView.edit_item_action"><code class="docutils literal notranslate"><span class="pre">BookmarkItemView.edit_item_action()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemView.get_hint_string"><code class="docutils literal notranslate"><span class="pre">BookmarkItemView.get_hint_string()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemView.get_source_model"><code class="docutils literal notranslate"><span class="pre">BookmarkItemView.get_source_model()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemView.inline_icons_count"><code class="docutils literal notranslate"><span class="pre">BookmarkItemView.inline_icons_count()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemViewContextMenu"><code class="docutils literal notranslate"><span class="pre">BookmarkItemViewContextMenu</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemViewContextMenu.refresh"><code class="docutils literal notranslate"><span class="pre">BookmarkItemViewContextMenu.refresh()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.bookmark_items.BookmarkItemViewContextMenu.setup"><code class="docutils literal notranslate"><span class="pre">BookmarkItemViewContextMenu.setup()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
@@ -765,9 +739,7 @@ names.</p>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     </body>

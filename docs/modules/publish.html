@@ -1,17 +1,17 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="shortcuts" href="shortcuts.html" /><link rel="prev" title="progress" href="progress.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/publish.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
         <title>publish - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -163,7 +163,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -325,11 +325,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
 </ul>
 
 </div>
@@ -358,18 +358,23 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-bookmarks.publish">
-<span id="publish"></span><h1>publish<a class="headerlink" href="#module-bookmarks.publish" title="Permalink to this heading">#</a></h1>
-<p>Publish widget.</p>
+          <div class="section" id="module-bookmarks.publish">
+<span id="publish"></span><h1>publish<a class="headerlink" href="#module-bookmarks.publish" title="Permalink to this headline">#</a></h1>
+<p>This modules defines the widget and methods needed for a simple publish flow.</p>
+<p>This currently entails</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.publish.PublishWidget" title="bookmarks.publish.PublishWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PublishWidget</span></code></a>(index[, parent])</p></td>
 <td><p>Publishes a footage.</p></td>
@@ -390,8 +395,12 @@
 </table>
 </div>
 <p><strong>Functions:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.publish.close" title="bookmarks.publish.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a>()</p></td>
 <td><p>Closes the <a class="reference internal" href="#bookmarks.publish.PublishWidget" title="bookmarks.publish.PublishWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">PublishWidget</span></code></a> editor.</p></td>
@@ -406,8 +415,12 @@
 </table>
 </div>
 <p><strong>Data:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.publish.SECTIONS" title="bookmarks.publish.SECTIONS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SECTIONS</span></code></a></p></td>
 <td><p>UI layout definition</p></td>
@@ -418,11 +431,15 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.publish.PublishWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.publish.</span></span><span class="sig-name descname"><span class="pre">PublishWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/publish.html#PublishWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.publish.PublishWidget" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="editor/base.html#bookmarks.editor.base.BasePropertyEditor" title="bookmarks.editor.base.BasePropertyEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePropertyEditor</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="editor/base.html#bookmarks.editor.base.BasePropertyEditor" title="bookmarks.editor.base.BasePropertyEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.editor.base.BasePropertyEditor</span></code></a></p>
 <p>Publishes a footage.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.publish.PublishWidget.copy_payload_files" title="bookmarks.publish.PublishWidget.copy_payload_files"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy_payload_files</span></code></a>([payload])</p></td>
 <td><p>Copy files based on the given payload.</p></td>
@@ -483,7 +500,7 @@
 <span class="sig-name descname"><span class="pre">copy_payload_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/publish.html#PublishWidget.copy_payload_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.publish.PublishWidget.copy_payload_files" title="Permalink to this definition">#</a></dt>
 <dd><p>Copy files based on the given payload.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>payload</strong> (<em>dict</em>) – Payload data.</p>
 </dd>
 </dl>
@@ -494,10 +511,10 @@
 <span class="sig-name descname"><span class="pre">db_source</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/publish.html#PublishWidget.db_source"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.publish.PublishWidget.db_source" title="Permalink to this definition">#</a></dt>
 <dd><p>A file path to use as the source of database values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The database source file.</p>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dt class="field-even">Return type</dt>
 <dd class="field-even"><p>str</p>
 </dd>
 </dl>
@@ -508,13 +525,13 @@
 <span class="sig-name descname"><span class="pre">get_publish_kwargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/publish.html#PublishWidget.get_publish_kwargs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.publish.PublishWidget.get_publish_kwargs" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the list of properties needed to publish the item.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>_kwargs</strong> (<em>dict</em>) – Dictionary of properties overrides.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Dictionary of properties.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -552,13 +569,13 @@ based on the input name we’ll set them for the user.</p>
 <span class="sig-name descname"><span class="pre">make_jpegs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/publish.html#PublishWidget.make_jpegs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.publish.PublishWidget.make_jpegs" title="Permalink to this definition">#</a></dt>
 <dd><p>Convert the source image files to a jpeg sequence.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>payload</strong> (<em>dict</em>) – The payload data used to publish the item.</p>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A list of file paths of the created jpeg files, or <cite>None</cite>.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>list</p>
 </dd>
 </dl>
@@ -569,7 +586,7 @@ based on the input name we’ll set them for the user.</p>
 <span class="sig-name descname"><span class="pre">make_videos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jpegs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/publish.html#PublishWidget.make_videos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.publish.PublishWidget.make_videos" title="Permalink to this definition">#</a></dt>
 <dd><p>Create videos from the source images.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>destination</strong> (<em>str</em>) – Publish destination path.</p></li>
 <li><p><strong>jpegs</strong> (<em>list</em>) – A list of file paths of previously created jpeg images.</p></li>
@@ -584,7 +601,7 @@ based on the input name we’ll set them for the user.</p>
 <span class="sig-name descname"><span class="pre">post_publish</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/publish.html#PublishWidget.post_publish"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.publish.PublishWidget.post_publish" title="Permalink to this definition">#</a></dt>
 <dd><p>Post publish actions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>destination</strong> (<em>str</em>) – Publish destination path.</p></li>
 <li><p><strong>kwargs</strong> (<em>dict, optional</em>) – Optional. Dictionary of payload data.</p></li>
@@ -634,7 +651,7 @@ based on the input name we’ll set them for the user.</p>
 <span class="sig-name descname"><span class="pre">write_manifest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">payload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/publish.html#PublishWidget.write_manifest"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.publish.PublishWidget.write_manifest" title="Permalink to this definition">#</a></dt>
 <dd><p>Write an informative manifest file with information about this publish.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>destination</strong> (<em>str</em>) – Publish destination path.</p></li>
 <li><p><strong>payload</strong> (<em>dict, optional</em>) – Optional. Dictionary of payload data.</p></li>
@@ -648,17 +665,21 @@ based on the input name we’ll set them for the user.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.publish.TaskComboBox">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.publish.</span></span><span class="sig-name descname"><span class="pre">TaskComboBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/publish.html#TaskComboBox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.publish.TaskComboBox" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QComboBox</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QComboBox</span></code></p>
 <p>Task picker.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.publish.TaskModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.publish.</span></span><span class="sig-name descname"><span class="pre">TaskModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/publish.html#TaskModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.publish.TaskModel" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="ui.html#bookmarks.ui.AbstractListModel" title="bookmarks.ui.AbstractListModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractListModel</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="ui.html#bookmarks.ui.AbstractListModel" title="bookmarks.ui.AbstractListModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.ui.AbstractListModel</span></code></a></p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.publish.TaskModel.add_item" title="bookmarks.publish.TaskModel.add_item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_item</span></code></a>(task)</p></td>
 <td><p>Adds a new task item.</p></td>
@@ -686,18 +707,22 @@ based on the input name we’ll set them for the user.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.publish.TemplateComboBox">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.publish.</span></span><span class="sig-name descname"><span class="pre">TemplateComboBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/publish.html#TemplateComboBox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.publish.TemplateComboBox" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QComboBox</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QComboBox</span></code></p>
 <p>Publish template picker.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.publish.TemplateModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.publish.</span></span><span class="sig-name descname"><span class="pre">TemplateModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/publish.html#TemplateModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.publish.TemplateModel" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="ui.html#bookmarks.ui.AbstractListModel" title="bookmarks.ui.AbstractListModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractListModel</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="ui.html#bookmarks.ui.AbstractListModel" title="bookmarks.ui.AbstractListModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.ui.AbstractListModel</span></code></a></p>
 <p>Model used to list all available publish templates.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.publish.TemplateModel.init_data" title="bookmarks.publish.TemplateModel.init_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_data</span></code></a>()</p></td>
 <td><p>Initializes data.</p></td>
@@ -724,16 +749,16 @@ based on the input name we’ll set them for the user.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.publish.</span></span><span class="sig-name descname"><span class="pre">get_payload</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/publish.html#get_payload"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.publish.get_payload" title="Permalink to this definition">#</a></dt>
 <dd><p>Get the payload for the publish process.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>kwargs</strong> (<em>dict</em>) – A list of keyword arguments.</p></li>
 <li><p><strong>destination</strong> (<em>str</em>) – The destination path.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The payload information used to publish the item.</p>
 </dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
@@ -747,11 +772,11 @@ based on the input name we’ll set them for the user.</p>
 
 <dl class="py data">
 <dt class="sig sig-object py" id="bookmarks.publish.SECTIONS">
-<span class="sig-prename descclassname"><span class="pre">bookmarks.publish.</span></span><span class="sig-name descname"><span class="pre">SECTIONS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{0:</span> <span class="pre">{'color':</span> <span class="pre">PySide2.QtGui.QColor.fromRgbF(0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">1.000000),</span> <span class="pre">'groups':</span> <span class="pre">{0:</span> <span class="pre">{0:</span> <span class="pre">{'description':</span> <span class="pre">'Source</span> <span class="pre">file</span> <span class="pre">path',</span> <span class="pre">'key':</span> <span class="pre">'source',</span> <span class="pre">'name':</span> <span class="pre">'Source',</span> <span class="pre">'placeholder':</span> <span class="pre">'',</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'PySide2.QtWidgets.QLabel'&gt;},</span> <span class="pre">1:</span> <span class="pre">{'description':</span> <span class="pre">'Final</span> <span class="pre">output</span> <span class="pre">path',</span> <span class="pre">'key':</span> <span class="pre">'destination',</span> <span class="pre">'name':</span> <span class="pre">'Destination',</span> <span class="pre">'placeholder':</span> <span class="pre">'',</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'PySide2.QtWidgets.QLabel'&gt;}}},</span> <span class="pre">'icon':</span> <span class="pre">None,</span> <span class="pre">'name':</span> <span class="pre">None},</span> <span class="pre">1:</span> <span class="pre">{'color':</span> <span class="pre">PySide2.QtGui.QColor.fromRgbF(0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">1.000000),</span> <span class="pre">'groups':</span> <span class="pre">{0:</span> <span class="pre">{0:</span> <span class="pre">{'description':</span> <span class="pre">'Select</span> <span class="pre">the</span> <span class="pre">publish</span> <span class="pre">template',</span> <span class="pre">'key':</span> <span class="pre">'publish/template',</span> <span class="pre">'name':</span> <span class="pre">'Publish</span> <span class="pre">Template',</span> <span class="pre">'placeholder':</span> <span class="pre">None,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.publish.TemplateComboBox'&gt;},</span> <span class="pre">1:</span> <span class="pre">{'button1':</span> <span class="pre">'Custom',</span> <span class="pre">'description':</span> <span class="pre">'Select</span> <span class="pre">the</span> <span class="pre">publish</span> <span class="pre">template',</span> <span class="pre">'key':</span> <span class="pre">'publish/task',</span> <span class="pre">'name':</span> <span class="pre">'Task',</span> <span class="pre">'placeholder':</span> <span class="pre">None,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.publish.TaskComboBox'&gt;},</span> <span class="pre">2:</span> <span class="pre">{'description':</span> <span class="pre">'A</span> <span class="pre">short</span> <span class="pre">description</span> <span class="pre">of</span> <span class="pre">this</span> <span class="pre">file</span> <span class="pre">publish.\nIndicate</span> <span class="pre">significant</span> <span class="pre">changes</span> <span class="pre">and</span> <span class="pre">notes</span> <span class="pre">here.',</span> <span class="pre">'key':</span> <span class="pre">'description',</span> <span class="pre">'name':</span> <span class="pre">'Description',</span> <span class="pre">'placeholder':</span> <span class="pre">'Enter</span> <span class="pre">a</span> <span class="pre">short</span> <span class="pre">description</span> <span class="pre">here...',</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.ui.LineEdit'&gt;},</span> <span class="pre">3:</span> <span class="pre">{'description':</span> <span class="pre">&quot;The</span> <span class="pre">name</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">element</span> <span class="pre">being</span> <span class="pre">published.</span> <span class="pre">E.g.,</span> <span class="pre">'ForegroundTower',</span> <span class="pre">or</span> <span class="pre">'BackgroundElements'&quot;,</span> <span class="pre">'key':</span> <span class="pre">'element',</span> <span class="pre">'name':</span> <span class="pre">'Specify</span> <span class="pre">Element',</span> <span class="pre">'placeholder':</span> <span class="pre">&quot;The</span> <span class="pre">element</span> <span class="pre">being</span> <span class="pre">published,</span> <span class="pre">e.g.</span> <span class="pre">'CastleInterior'&quot;,</span> <span class="pre">'validator':</span> <span class="pre">&lt;PySide2.QtGui.QRegExpValidator(0x1d50f8e9cb0)&gt;,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.ui.LineEdit'&gt;}}},</span> <span class="pre">'icon':</span> <span class="pre">None,</span> <span class="pre">'name':</span> <span class="pre">'Template'},</span> <span class="pre">2:</span> <span class="pre">{'color':</span> <span class="pre">PySide2.QtGui.QColor.fromRgbF(0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">1.000000),</span> <span class="pre">'groups':</span> <span class="pre">{0:</span> <span class="pre">{0:</span> <span class="pre">{'description':</span> <span class="pre">'Copy</span> <span class="pre">the</span> <span class="pre">path</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">clipboard</span> <span class="pre">after</span> <span class="pre">finish.',</span> <span class="pre">'key':</span> <span class="pre">'publish/copy_path',</span> <span class="pre">'name':</span> <span class="pre">'Copy</span> <span class="pre">Path</span> <span class="pre">to</span> <span class="pre">Clipboard',</span> <span class="pre">'placeholder':</span> <span class="pre">None,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">functools.partial(&lt;class</span> <span class="pre">'PySide2.QtWidgets.QCheckBox'&gt;,</span> <span class="pre">'Enable')},</span> <span class="pre">1:</span> <span class="pre">{'description':</span> <span class="pre">'Reveal</span> <span class="pre">the</span> <span class="pre">published</span> <span class="pre">files</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">explorer.',</span> <span class="pre">'key':</span> <span class="pre">'publish/reveal',</span> <span class="pre">'name':</span> <span class="pre">'Reveal</span> <span class="pre">Publish',</span> <span class="pre">'placeholder':</span> <span class="pre">None,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">functools.partial(&lt;class</span> <span class="pre">'PySide2.QtWidgets.QCheckBox'&gt;,</span> <span class="pre">'Enable')},</span> <span class="pre">2:</span> <span class="pre">{'description':</span> <span class="pre">'Send</span> <span class="pre">a</span> <span class="pre">notification</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">publish</span> <span class="pre">to</span> <span class="pre">a</span> <span class="pre">Teams</span> <span class="pre">channel.',</span> <span class="pre">'key':</span> <span class="pre">'publish/teams_notification',</span> <span class="pre">'name':</span> <span class="pre">'Teams</span> <span class="pre">Notification',</span> <span class="pre">'placeholder':</span> <span class="pre">None,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">functools.partial(&lt;class</span> <span class="pre">'PySide2.QtWidgets.QCheckBox'&gt;,</span> <span class="pre">'Enable')}}},</span> <span class="pre">'icon':</span> <span class="pre">None,</span> <span class="pre">'name':</span> <span class="pre">'Post-Publish'}}</span></em><a class="headerlink" href="#bookmarks.publish.SECTIONS" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">bookmarks.publish.</span></span><span class="sig-name descname"><span class="pre">SECTIONS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{0:</span> <span class="pre">{'color':</span> <span class="pre">PySide2.QtGui.QColor.fromRgbF(0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">1.000000),</span> <span class="pre">'groups':</span> <span class="pre">{0:</span> <span class="pre">{0:</span> <span class="pre">{'description':</span> <span class="pre">'Source</span> <span class="pre">file</span> <span class="pre">path',</span> <span class="pre">'key':</span> <span class="pre">'source',</span> <span class="pre">'name':</span> <span class="pre">'Source',</span> <span class="pre">'placeholder':</span> <span class="pre">'',</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'PySide2.QtWidgets.QLabel'&gt;},</span> <span class="pre">1:</span> <span class="pre">{'description':</span> <span class="pre">'Final</span> <span class="pre">output</span> <span class="pre">path',</span> <span class="pre">'key':</span> <span class="pre">'destination',</span> <span class="pre">'name':</span> <span class="pre">'Destination',</span> <span class="pre">'placeholder':</span> <span class="pre">'',</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'PySide2.QtWidgets.QLabel'&gt;}}},</span> <span class="pre">'icon':</span> <span class="pre">None,</span> <span class="pre">'name':</span> <span class="pre">None},</span> <span class="pre">1:</span> <span class="pre">{'color':</span> <span class="pre">PySide2.QtGui.QColor.fromRgbF(0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">1.000000),</span> <span class="pre">'groups':</span> <span class="pre">{0:</span> <span class="pre">{0:</span> <span class="pre">{'description':</span> <span class="pre">'Select</span> <span class="pre">the</span> <span class="pre">publish</span> <span class="pre">template',</span> <span class="pre">'key':</span> <span class="pre">'publish/template',</span> <span class="pre">'name':</span> <span class="pre">'Publish</span> <span class="pre">Template',</span> <span class="pre">'placeholder':</span> <span class="pre">None,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.publish.TemplateComboBox'&gt;},</span> <span class="pre">1:</span> <span class="pre">{'button1':</span> <span class="pre">'Custom',</span> <span class="pre">'description':</span> <span class="pre">'Select</span> <span class="pre">the</span> <span class="pre">publish</span> <span class="pre">template',</span> <span class="pre">'key':</span> <span class="pre">'publish/task',</span> <span class="pre">'name':</span> <span class="pre">'Task',</span> <span class="pre">'placeholder':</span> <span class="pre">None,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.publish.TaskComboBox'&gt;},</span> <span class="pre">2:</span> <span class="pre">{'description':</span> <span class="pre">'A</span> <span class="pre">short</span> <span class="pre">description</span> <span class="pre">of</span> <span class="pre">this</span> <span class="pre">file</span> <span class="pre">publish.\nIndicate</span> <span class="pre">significant</span> <span class="pre">changes</span> <span class="pre">and</span> <span class="pre">notes</span> <span class="pre">here.',</span> <span class="pre">'key':</span> <span class="pre">'description',</span> <span class="pre">'name':</span> <span class="pre">'Description',</span> <span class="pre">'placeholder':</span> <span class="pre">'Enter</span> <span class="pre">a</span> <span class="pre">short</span> <span class="pre">description</span> <span class="pre">here...',</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.ui.LineEdit'&gt;},</span> <span class="pre">3:</span> <span class="pre">{'description':</span> <span class="pre">&quot;The</span> <span class="pre">name</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">element</span> <span class="pre">being</span> <span class="pre">published.</span> <span class="pre">E.g.,</span> <span class="pre">'ForegroundTower',</span> <span class="pre">or</span> <span class="pre">'BackgroundElements'&quot;,</span> <span class="pre">'key':</span> <span class="pre">'element',</span> <span class="pre">'name':</span> <span class="pre">'Specify</span> <span class="pre">Element',</span> <span class="pre">'placeholder':</span> <span class="pre">&quot;The</span> <span class="pre">element</span> <span class="pre">being</span> <span class="pre">published,</span> <span class="pre">e.g.</span> <span class="pre">'CastleInterior'&quot;,</span> <span class="pre">'validator':</span> <span class="pre">&lt;PySide2.QtGui.QRegExpValidator(0x2953d839110)&gt;,</span> <span class="pre">'widget':</span> <span class="pre">&lt;class</span> <span class="pre">'bookmarks.ui.LineEdit'&gt;}}},</span> <span class="pre">'icon':</span> <span class="pre">None,</span> <span class="pre">'name':</span> <span class="pre">'Template'},</span> <span class="pre">2:</span> <span class="pre">{'color':</span> <span class="pre">PySide2.QtGui.QColor.fromRgbF(0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">0.254902,</span> <span class="pre">1.000000),</span> <span class="pre">'groups':</span> <span class="pre">{0:</span> <span class="pre">{0:</span> <span class="pre">{'description':</span> <span class="pre">'Copy</span> <span class="pre">the</span> <span class="pre">path</span> <span class="pre">to</span> <span class="pre">the</span> <span class="pre">clipboard</span> <span class="pre">after</span> <span class="pre">finish.',</span> <span class="pre">'key':</span> <span class="pre">'publish/copy_path',</span> <span class="pre">'name':</span> <span class="pre">'Copy</span> <span class="pre">Path</span> <span class="pre">to</span> <span class="pre">Clipboard',</span> <span class="pre">'placeholder':</span> <span class="pre">None,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">functools.partial(&lt;class</span> <span class="pre">'PySide2.QtWidgets.QCheckBox'&gt;,</span> <span class="pre">'Enable')},</span> <span class="pre">1:</span> <span class="pre">{'description':</span> <span class="pre">'Reveal</span> <span class="pre">the</span> <span class="pre">published</span> <span class="pre">files</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">explorer.',</span> <span class="pre">'key':</span> <span class="pre">'publish/reveal',</span> <span class="pre">'name':</span> <span class="pre">'Reveal</span> <span class="pre">Publish',</span> <span class="pre">'placeholder':</span> <span class="pre">None,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">functools.partial(&lt;class</span> <span class="pre">'PySide2.QtWidgets.QCheckBox'&gt;,</span> <span class="pre">'Enable')},</span> <span class="pre">2:</span> <span class="pre">{'description':</span> <span class="pre">'Send</span> <span class="pre">a</span> <span class="pre">notification</span> <span class="pre">of</span> <span class="pre">the</span> <span class="pre">publish</span> <span class="pre">to</span> <span class="pre">a</span> <span class="pre">Teams</span> <span class="pre">channel.',</span> <span class="pre">'key':</span> <span class="pre">'publish/teams_notification',</span> <span class="pre">'name':</span> <span class="pre">'Teams</span> <span class="pre">Notification',</span> <span class="pre">'placeholder':</span> <span class="pre">None,</span> <span class="pre">'validator':</span> <span class="pre">None,</span> <span class="pre">'widget':</span> <span class="pre">functools.partial(&lt;class</span> <span class="pre">'PySide2.QtWidgets.QCheckBox'&gt;,</span> <span class="pre">'Enable')}}},</span> <span class="pre">'icon':</span> <span class="pre">None,</span> <span class="pre">'name':</span> <span class="pre">'Post-Publish'}}</span></em><a class="headerlink" href="#bookmarks.publish.SECTIONS" title="Permalink to this definition">#</a></dt>
 <dd><p>UI layout definition</p>
 </dd></dl>
 
-</section>
+</div>
 
         </article>
       </div>
@@ -782,7 +807,7 @@ based on the input name we’ll set them for the user.</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Gergely Wootsch
+                Copyright &#169; © 2022 Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -798,61 +823,8 @@ based on the input name we’ll set them for the user.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">publish</a><ul>
-<li><a class="reference internal" href="#bookmarks.publish.PublishWidget"><code class="docutils literal notranslate"><span class="pre">PublishWidget</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.publish.PublishWidget.copy_payload_files"><code class="docutils literal notranslate"><span class="pre">PublishWidget.copy_payload_files()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.PublishWidget.db_source"><code class="docutils literal notranslate"><span class="pre">PublishWidget.db_source()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.PublishWidget.get_publish_kwargs"><code class="docutils literal notranslate"><span class="pre">PublishWidget.get_publish_kwargs()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.PublishWidget.guess_task_and_element"><code class="docutils literal notranslate"><span class="pre">PublishWidget.guess_task_and_element()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.PublishWidget.init_data"><code class="docutils literal notranslate"><span class="pre">PublishWidget.init_data()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.PublishWidget.init_progress_bar"><code class="docutils literal notranslate"><span class="pre">PublishWidget.init_progress_bar()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.PublishWidget.init_thumbnail"><code class="docutils literal notranslate"><span class="pre">PublishWidget.init_thumbnail()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.PublishWidget.make_jpegs"><code class="docutils literal notranslate"><span class="pre">PublishWidget.make_jpegs()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.PublishWidget.make_videos"><code class="docutils literal notranslate"><span class="pre">PublishWidget.make_videos()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.PublishWidget.post_publish"><code class="docutils literal notranslate"><span class="pre">PublishWidget.post_publish()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.PublishWidget.post_teams_message"><code class="docutils literal notranslate"><span class="pre">PublishWidget.post_teams_message()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.PublishWidget.prepare_publish"><code class="docutils literal notranslate"><span class="pre">PublishWidget.prepare_publish()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.PublishWidget.save_changes"><code class="docutils literal notranslate"><span class="pre">PublishWidget.save_changes()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.PublishWidget.save_thumbnail"><code class="docutils literal notranslate"><span class="pre">PublishWidget.save_thumbnail()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.PublishWidget.set_source_text"><code class="docutils literal notranslate"><span class="pre">PublishWidget.set_source_text()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.PublishWidget.update_expanded_template"><code class="docutils literal notranslate"><span class="pre">PublishWidget.update_expanded_template()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.PublishWidget.write_manifest"><code class="docutils literal notranslate"><span class="pre">PublishWidget.write_manifest()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.publish.TaskComboBox"><code class="docutils literal notranslate"><span class="pre">TaskComboBox</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.TaskModel"><code class="docutils literal notranslate"><span class="pre">TaskModel</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.publish.TaskModel.add_item"><code class="docutils literal notranslate"><span class="pre">TaskModel.add_item()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.TaskModel.init_data"><code class="docutils literal notranslate"><span class="pre">TaskModel.init_data()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.publish.TemplateComboBox"><code class="docutils literal notranslate"><span class="pre">TemplateComboBox</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.TemplateModel"><code class="docutils literal notranslate"><span class="pre">TemplateModel</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.publish.TemplateModel.init_data"><code class="docutils literal notranslate"><span class="pre">TemplateModel.init_data()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.publish.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.get_payload"><code class="docutils literal notranslate"><span class="pre">get_payload()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.show"><code class="docutils literal notranslate"><span class="pre">show()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.publish.SECTIONS"><code class="docutils literal notranslate"><span class="pre">SECTIONS</span></code></a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
@@ -860,9 +832,7 @@ based on the input name we’ll set them for the user.</p>
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/design-tabs.js"></script>
     </body>

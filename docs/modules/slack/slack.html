@@ -1,17 +1,17 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="standalone" href="../standalone.html" /><link rel="prev" title="slack" href="../slack.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/slack/slack.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
         <title>slack.slack - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -325,11 +325,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 </ul>
 
 </div>
@@ -364,27 +364,30 @@
           </label>
         </div>
         <article role="main">
-          <section id="module-bookmarks.slack.slack">
-<span id="slack-slack"></span><h1>slack.slack<a class="headerlink" href="#module-bookmarks.slack.slack" title="Permalink to this heading">#</a></h1>
+          <div class="section" id="module-bookmarks.slack.slack">
+<span id="slack-slack"></span><h1>slack.slack<a class="headerlink" href="#module-bookmarks.slack.slack" title="Permalink to this headline">#</a></h1>
 <p>Slacker is a lightweight wrapper used to send messages using SlackClient,
 Slack’s python API library.</p>
-<section id="slack-token">
-<h2>Slack Token<a class="headerlink" href="#slack-token" title="Permalink to this heading">#</a></h2>
+<div class="section" id="slack-token">
+<h2>Slack Token<a class="headerlink" href="#slack-token" title="Permalink to this headline">#</a></h2>
 <p>You will have to create a new Slack App and install it to your workspace. This
 should generate the OAuth token needed by Bookmarks.</p>
-</section>
-<section id="scopes">
-<h2>Scopes<a class="headerlink" href="#scopes" title="Permalink to this heading">#</a></h2>
+</div>
+<div class="section" id="scopes">
+<h2>Scopes<a class="headerlink" href="#scopes" title="Permalink to this headline">#</a></h2>
 <p>The Slack App requires the <cite>users:read</cite> and
 <cite>chat:write</cite> scopes to function. To send messages to Slack Channels
 the bot is not part of add <cite>chat:write.public</cite>.
 Scopes <cite>channels:read</cite> and <cite>groups:read</cite> are needed to list the available
 Slack channels.</p>
 <p>See <a class="reference external" href="http://api.slack.com/apps">http://api.slack.com/apps</a> for more information.</p>
-</section>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.slack.slack.OverlayWidget" title="bookmarks.slack.slack.OverlayWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OverlayWidget</span></code></a>([parent])</p></td>
 <td><p></p></td>
@@ -407,10 +410,14 @@ Slack channels.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.slack.slack.OverlayWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.slack.slack.</span></span><span class="sig-name descname"><span class="pre">OverlayWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/slack/slack.html#OverlayWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.slack.slack.OverlayWidget" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QWidget</span></code></p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.slack.slack.OverlayWidget.paintEvent" title="bookmarks.slack.slack.OverlayWidget.paintEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paintEvent</span></code></a>(self, event)</p></td>
 <td><p></p></td>
@@ -437,11 +444,15 @@ Slack channels.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.slack.slack.SlackClient">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.slack.slack.</span></span><span class="sig-name descname"><span class="pre">SlackClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/slack/slack.html#SlackClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.slack.slack.SlackClient" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">WebClient</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">slack_sdk.web.client.WebClient</span></code></p>
 <p>Customized SlackClient used by bookmarks to send and receive messages.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.slack.slack.SlackClient.get_channels" title="bookmarks.slack.slack.SlackClient.get_channels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_channels</span></code></a>()</p></td>
 <td><p>Returns all conversations and groups.</p></td>
@@ -470,7 +481,7 @@ Slack channels.</p>
 <dd><p>Returns all available profiles in the workspace associated with the
 token. Make sure scope <cite>users.read</cite> is available for the token.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dt class="field-odd">Raises</dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – If the token is invalid or missing a required scope.</p>
 </dd>
 </dl>
@@ -491,7 +502,7 @@ channels.</p>
 <cite>groups:read</cite> to get channel lists.</p>
 <p>Addittionally, <cite>chat.write</cite> and <cite>users.read</cite> are <em>required</em> to send messages.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dt class="field-odd">Raises</dt>
 <dd class="field-odd"><p><strong>ValueError</strong> – When the any problems with the token.</p>
 </dd>
 </dl>
@@ -502,10 +513,14 @@ channels.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.slack.slack.SlackWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.slack.slack.</span></span><span class="sig-name descname"><span class="pre">SlackWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/slack/slack.html#SlackWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.slack.slack.SlackWidget" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QDialog</span></code></p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.slack.slack.SlackWidget.send_message" title="bookmarks.slack.slack.SlackWidget.send_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">send_message</span></code></a>()</p></td>
 <td><p>Sends a message using the SlackClient API.</p></td>
@@ -533,11 +548,15 @@ channels.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.slack.slack.UsersModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.slack.slack.</span></span><span class="sig-name descname"><span class="pre">UsersModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/slack/slack.html#UsersModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.slack.slack.UsersModel" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QAbstractItemModel</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtCore.QAbstractItemModel</span></code></p>
 <p>Model used to store the available profiles.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.slack.slack.UsersModel.columnCount" title="bookmarks.slack.slack.UsersModel.columnCount"><code class="xref py py-obj docutils literal notranslate"><span class="pre">columnCount</span></code></a>(self[, parent])</p></td>
 <td><p></p></td>
@@ -576,7 +595,7 @@ channels.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.slack.slack.UsersModel.data">
-<span class="sig-name descname"><span class="pre">data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PySide2.QtCore.Qt.ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../_modules/bookmarks/slack/slack.html#UsersModel.data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.slack.slack.UsersModel.data" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PySide2.QtCore.Qt.ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">typing.Any</span></span></span><a class="reference internal" href="../../_modules/bookmarks/slack/slack.html#UsersModel.data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.slack.slack.UsersModel.data" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -617,7 +636,7 @@ channels.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.slack.slack.UsersModel.setData">
-<span class="sig-name descname"><span class="pre">setData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PySide2.QtCore.Qt.ItemDataRole.EditRole</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/bookmarks/slack/slack.html#UsersModel.setData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.slack.slack.UsersModel.setData" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">setData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QModelIndex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">typing.Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PySide2.QtCore.Qt.ItemDataRole.EditRole</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/bookmarks/slack/slack.html#UsersModel.setData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.slack.slack.UsersModel.setData" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -625,10 +644,11 @@ channels.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.slack.slack.UsersWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.slack.slack.</span></span><span class="sig-name descname"><span class="pre">UsersWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/slack/slack.html#UsersWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.slack.slack.UsersWidget" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QListView</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QListView</span></code></p>
 </dd></dl>
 
-</section>
+</div>
+</div>
 
         </article>
       </div>
@@ -659,7 +679,7 @@ channels.</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Gergely Wootsch
+                Copyright &#169; © 2022 Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -690,36 +710,6 @@ channels.</p>
 <li><a class="reference internal" href="#">slack.slack</a><ul>
 <li><a class="reference internal" href="#slack-token">Slack Token</a></li>
 <li><a class="reference internal" href="#scopes">Scopes</a></li>
-<li><a class="reference internal" href="#bookmarks.slack.slack.OverlayWidget"><code class="docutils literal notranslate"><span class="pre">OverlayWidget</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.slack.slack.OverlayWidget.paintEvent"><code class="docutils literal notranslate"><span class="pre">OverlayWidget.paintEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.slack.slack.OverlayWidget.showEvent"><code class="docutils literal notranslate"><span class="pre">OverlayWidget.showEvent()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.slack.slack.SlackClient"><code class="docutils literal notranslate"><span class="pre">SlackClient</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.slack.slack.SlackClient.get_channels"><code class="docutils literal notranslate"><span class="pre">SlackClient.get_channels()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.slack.slack.SlackClient.get_user_profiles"><code class="docutils literal notranslate"><span class="pre">SlackClient.get_user_profiles()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.slack.slack.SlackClient.send_message"><code class="docutils literal notranslate"><span class="pre">SlackClient.send_message()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.slack.slack.SlackClient.verify_token"><code class="docutils literal notranslate"><span class="pre">SlackClient.verify_token()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.slack.slack.SlackWidget"><code class="docutils literal notranslate"><span class="pre">SlackWidget</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.slack.slack.SlackWidget.send_message"><code class="docutils literal notranslate"><span class="pre">SlackWidget.send_message()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.slack.slack.SlackWidget.showEvent"><code class="docutils literal notranslate"><span class="pre">SlackWidget.showEvent()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.slack.slack.UsersModel"><code class="docutils literal notranslate"><span class="pre">UsersModel</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.slack.slack.UsersModel.columnCount"><code class="docutils literal notranslate"><span class="pre">UsersModel.columnCount()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.slack.slack.UsersModel.data"><code class="docutils literal notranslate"><span class="pre">UsersModel.data()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.slack.slack.UsersModel.get_icon"><code class="docutils literal notranslate"><span class="pre">UsersModel.get_icon()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.slack.slack.UsersModel.get_pretty_name"><code class="docutils literal notranslate"><span class="pre">UsersModel.get_pretty_name()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.slack.slack.UsersModel.index"><code class="docutils literal notranslate"><span class="pre">UsersModel.index()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.slack.slack.UsersModel.init_data"><code class="docutils literal notranslate"><span class="pre">UsersModel.init_data()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.slack.slack.UsersModel.parent"><code class="docutils literal notranslate"><span class="pre">UsersModel.parent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.slack.slack.UsersModel.rowCount"><code class="docutils literal notranslate"><span class="pre">UsersModel.rowCount()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.slack.slack.UsersModel.setData"><code class="docutils literal notranslate"><span class="pre">UsersModel.setData()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.slack.slack.UsersWidget"><code class="docutils literal notranslate"><span class="pre">UsersWidget</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -734,9 +724,7 @@ channels.</p>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     </body>

@@ -1,17 +1,17 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="threads.threads" href="threads/threads.html" /><link rel="prev" title="templates" href="templates.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/threads.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
         <title>threads - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -325,11 +325,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">License</a></li>
 </ul>
 
 </div>
@@ -364,8 +364,8 @@
           </label>
         </div>
         <article role="main">
-          <section id="module-bookmarks.threads">
-<span id="threads"></span><h1>threads<a class="headerlink" href="#module-bookmarks.threads" title="Permalink to this heading">#</a></h1>
+          <div class="section" id="module-bookmarks.threads">
+<span id="threads"></span><h1>threads<a class="headerlink" href="#module-bookmarks.threads" title="Permalink to this headline">#</a></h1>
 <p>Multi-threading utility classes and methods.</p>
 <p>Certain expensive data load happens on secondary worker threads. Each thread is
 assigned a single worker class instance and a thread data queue.</p>
@@ -374,58 +374,11 @@ by the list models. See <code class="xref py py-attr docutils literal notranslat
 thread definitions.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="threads/threads.html">threads.threads</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="threads/threads.html#bookmarks.threads.threads.BaseThread"><code class="docutils literal notranslate"><span class="pre">BaseThread</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threads/threads.html#bookmarks.threads.threads.BaseThread.initWorker"><code class="docutils literal notranslate"><span class="pre">BaseThread.initWorker</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threads/threads.html#bookmarks.threads.threads.BaseThread.startTimer"><code class="docutils literal notranslate"><span class="pre">BaseThread.startTimer</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threads/threads.html#bookmarks.threads.threads.BaseThread.stopTimer"><code class="docutils literal notranslate"><span class="pre">BaseThread.stopTimer</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threads/threads.html#bookmarks.threads.threads.BaseThread.move_worker_to_thread"><code class="docutils literal notranslate"><span class="pre">BaseThread.move_worker_to_thread()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threads/threads.html#id0"><code class="docutils literal notranslate"><span class="pre">BaseThread.startTimer</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="threads/threads.html#bookmarks.threads.threads.DataType"><code class="docutils literal notranslate"><span class="pre">DataType</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="threads/threads.html#bookmarks.threads.threads.add_to_queue"><code class="docutils literal notranslate"><span class="pre">add_to_queue()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="threads/threads.html#bookmarks.threads.threads.get_thread"><code class="docutils literal notranslate"><span class="pre">get_thread()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="threads/threads.html#bookmarks.threads.threads.queue"><code class="docutils literal notranslate"><span class="pre">queue()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="threads/threads.html#bookmarks.threads.threads.queue_database_transaction"><code class="docutils literal notranslate"><span class="pre">queue_database_transaction()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="threads/threads.html#bookmarks.threads.threads.quit_threads"><code class="docutils literal notranslate"><span class="pre">quit_threads()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="threads/threads.html#bookmarks.threads.threads.reset_all_queues"><code class="docutils literal notranslate"><span class="pre">reset_all_queues()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="threads/workers.html">threads.workers</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.BaseWorker"><code class="docutils literal notranslate"><span class="pre">BaseWorker</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.BaseWorker.clear_queue"><code class="docutils literal notranslate"><span class="pre">BaseWorker.clear_queue()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.BaseWorker.init_worker"><code class="docutils literal notranslate"><span class="pre">BaseWorker.init_worker()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.BaseWorker.queue_items"><code class="docutils literal notranslate"><span class="pre">BaseWorker.queue_items()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.BaseWorker.queue_model"><code class="docutils literal notranslate"><span class="pre">BaseWorker.queue_model()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.BaseWorker.update_changed_database_value"><code class="docutils literal notranslate"><span class="pre">BaseWorker.update_changed_database_value()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.BaseWorker.startTimer"><code class="docutils literal notranslate"><span class="pre">BaseWorker.startTimer</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.InfoWorker"><code class="docutils literal notranslate"><span class="pre">InfoWorker</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.InfoWorker.process_data"><code class="docutils literal notranslate"><span class="pre">InfoWorker.process_data()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.ShotgunWorker"><code class="docutils literal notranslate"><span class="pre">ShotgunWorker</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.ThumbnailWorker"><code class="docutils literal notranslate"><span class="pre">ThumbnailWorker</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.ThumbnailWorker.process_data"><code class="docutils literal notranslate"><span class="pre">ThumbnailWorker.process_data()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.ThumbnailWorker.queue_items"><code class="docutils literal notranslate"><span class="pre">ThumbnailWorker.queue_items()</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.TransactionsWorker"><code class="docutils literal notranslate"><span class="pre">TransactionsWorker</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.count_assets"><code class="docutils literal notranslate"><span class="pre">count_assets()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.count_todos"><code class="docutils literal notranslate"><span class="pre">count_todos()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.get_bookmark_description"><code class="docutils literal notranslate"><span class="pre">get_bookmark_description()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.get_ranges"><code class="docutils literal notranslate"><span class="pre">get_ranges()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.process"><code class="docutils literal notranslate"><span class="pre">process()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.update_shotgun_configured"><code class="docutils literal notranslate"><span class="pre">update_shotgun_configured()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.update_slack_configured"><code class="docutils literal notranslate"><span class="pre">update_slack_configured()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="threads/workers.html#bookmarks.threads.workers.verify_thread_affinity"><code class="docutils literal notranslate"><span class="pre">verify_thread_affinity()</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="threads/threads.html">threads.threads</a></li>
+<li class="toctree-l1"><a class="reference internal" href="threads/workers.html">threads.workers</a></li>
 </ul>
 </div>
-</section>
+</div>
 
         </article>
       </div>
@@ -456,7 +409,7 @@ thread definitions.</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Gergely Wootsch
+                Copyright &#169; © 2022 Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -481,9 +434,7 @@ thread definitions.</p>
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/design-tabs.js"></script>
     </body>

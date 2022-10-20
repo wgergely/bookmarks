@@ -29,7 +29,7 @@ print('\n\n#####################################################################
 # -- Project information -----------------------------------------------------
 
 project = 'Bookmarks'
-copyright = '2022, Gergely Wootsch'
+copyright = '© 2022 Gergely Wootsch'
 author = 'Gergely Wootsch'
 
 # The full version, including alpha/beta/rc tags
@@ -38,7 +38,15 @@ release = '0.7.4'
 html_baseurl = 'https://bookmarks-vfx.com'
 html_extra_path = [
     'robots.txt',
+    'google287f295c58adf6d0.html'
 ]
+html_context = {
+    "display_github": True,
+    "github_user": "wgergely",
+    "github_repo": "bookmarks",
+    "github_version": "main",
+    "conf_py_path": "/docs/source",
+}
 
 # -- General configuration ---------------------------------------------------
 
@@ -56,7 +64,8 @@ extensions = [
     'sphinx_sitemap',
     'sphinx_markdown_builder',
     'sphinx_design',
-    'sphinxcontrib.youtube'
+    'sphinxcontrib.youtube',
+    'sphinx_licenseinfo'
 ]
 
 napoleon_google_docstring = True

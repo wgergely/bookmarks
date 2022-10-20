@@ -1,17 +1,17 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="items.views" href="views.html" /><link rel="prev" title="items.models" href="models.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/items/task_items.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
         <title>items.task_items - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
     
@@ -163,7 +163,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -325,11 +325,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/wgergely/bookmarks">GitHub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../license.html">License</a></li>
 </ul>
 
 </div>
@@ -358,22 +358,26 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
-          <section id="module-bookmarks.items.task_items">
-<span id="items-task-items"></span><h1>items.task_items<a class="headerlink" href="#module-bookmarks.items.task_items" title="Permalink to this heading">#</a></h1>
+          <div class="section" id="module-bookmarks.items.task_items">
+<span id="items-task-items"></span><h1>items.task_items<a class="headerlink" href="#module-bookmarks.items.task_items" title="Permalink to this headline">#</a></h1>
 <p>The view and model used to display task folder items.</p>
 <p>Folders found in an asset’s root are referred to as <cite>task folders</cite>. Bookmarks
 generally expects them to be associated with a task or data-type e.g. <code class="docutils literal notranslate"><span class="pre">render</span></code>,
 <code class="docutils literal notranslate"><span class="pre">comp</span></code>, <code class="docutils literal notranslate"><span class="pre">textures</span></code>, etc.</p>
 <p>Some default task-folders are defined by <a class="reference internal" href="../tokens/tokens.html#module-bookmarks.tokens.tokens" title="bookmarks.tokens.tokens"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.tokens.tokens</span></code></a>.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.task_items.TaskItemContextMenu" title="bookmarks.items.task_items.TaskItemContextMenu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TaskItemContextMenu</span></code></a>(index[, parent])</p></td>
 <td><p>Context menu associated with <a class="reference internal" href="#bookmarks.items.task_items.TaskItemView" title="bookmarks.items.task_items.TaskItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaskItemView</span></code></a>.</p></td>
@@ -393,11 +397,15 @@ generally expects them to be associated with a task or data-type e.g. <code clas
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.items.task_items.TaskItemContextMenu">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.task_items.</span></span><span class="sig-name descname"><span class="pre">TaskItemContextMenu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/task_items.html#TaskItemContextMenu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.task_items.TaskItemContextMenu" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../contextmenu.html#bookmarks.contextmenu.BaseContextMenu" title="bookmarks.contextmenu.BaseContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseContextMenu</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="../contextmenu.html#bookmarks.contextmenu.BaseContextMenu" title="bookmarks.contextmenu.BaseContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.contextmenu.BaseContextMenu</span></code></a></p>
 <p>Context menu associated with <a class="reference internal" href="#bookmarks.items.task_items.TaskItemView" title="bookmarks.items.task_items.TaskItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaskItemView</span></code></a>.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.task_items.TaskItemContextMenu.setup" title="bookmarks.items.task_items.TaskItemContextMenu.setup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code></a>()</p></td>
 <td><p>Creates the context menu.</p></td>
@@ -416,11 +424,15 @@ generally expects them to be associated with a task or data-type e.g. <code clas
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.items.task_items.TaskItemModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.task_items.</span></span><span class="sig-name descname"><span class="pre">TaskItemModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/task_items.html#TaskItemModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.task_items.TaskItemModel" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="models.html#bookmarks.items.models.ItemModel" title="bookmarks.items.models.ItemModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemModel</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="models.html#bookmarks.items.models.ItemModel" title="bookmarks.items.models.ItemModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.models.ItemModel</span></code></a></p>
 <p>Task folder item model used to get task folders of an asset item.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.task_items.TaskItemModel.data_type" title="bookmarks.items.task_items.TaskItemModel.data_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_type</span></code></a>()</p></td>
 <td><p>The model's data type.</p></td>
@@ -485,7 +497,7 @@ file.</p>
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">item_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/task_items.html#TaskItemModel.item_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.task_items.TaskItemModel.item_generator" title="Permalink to this definition">#</a></dt>
 <dd><p>Used to iterate over all files in a given folder.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Yields<span class="colon">:</span></dt>
+<dt class="field-odd">Yields</dt>
 <dd class="field-odd"><p><em>DirEntry</em> – A DirEntry instance.</p>
 </dd>
 </dl>
@@ -508,24 +520,32 @@ file.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.items.task_items.TaskItemView">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.task_items.</span></span><span class="sig-name descname"><span class="pre">TaskItemView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/task_items.html#TaskItemView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.task_items.TaskItemView" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="views.html#bookmarks.items.views.ThreadedItemView" title="bookmarks.items.views.ThreadedItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThreadedItemView</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="views.html#bookmarks.items.views.ThreadedItemView" title="bookmarks.items.views.ThreadedItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.views.ThreadedItemView</span></code></a></p>
 <p>The view responsible for displaying the available data-keys.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView.ContextMenu" title="bookmarks.items.task_items.TaskItemView.ContextMenu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ContextMenu</span></code></a></p></td>
-<td><p>alias of <a class="reference internal" href="#bookmarks.items.task_items.TaskItemContextMenu" title="bookmarks.items.task_items.TaskItemContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaskItemContextMenu</span></code></a></p></td>
+<td><p>alias of <a class="reference internal" href="#bookmarks.items.task_items.TaskItemContextMenu" title="bookmarks.items.task_items.TaskItemContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.task_items.TaskItemContextMenu</span></code></a></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView.Delegate" title="bookmarks.items.task_items.TaskItemView.Delegate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Delegate</span></code></a></p></td>
-<td><p>alias of <a class="reference internal" href="#bookmarks.items.task_items.TaskItemViewDelegate" title="bookmarks.items.task_items.TaskItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaskItemViewDelegate</span></code></a></p></td>
+<td><p>alias of <a class="reference internal" href="#bookmarks.items.task_items.TaskItemViewDelegate" title="bookmarks.items.task_items.TaskItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.task_items.TaskItemViewDelegate</span></code></a></p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView.contextMenuEvent" title="bookmarks.items.task_items.TaskItemView.contextMenuEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contextMenuEvent</span></code></a>(event)</p></td>
 <td><p>Event handler.</p></td>
@@ -575,10 +595,14 @@ file.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="bookmarks.items.task_items.TaskItemView.ContextMenu">
 <span class="sig-name descname"><span class="pre">ContextMenu</span></span><a class="headerlink" href="#bookmarks.items.task_items.TaskItemView.ContextMenu" title="Permalink to this definition">#</a></dt>
-<dd><p>alias of <a class="reference internal" href="#bookmarks.items.task_items.TaskItemContextMenu" title="bookmarks.items.task_items.TaskItemContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaskItemContextMenu</span></code></a>
+<dd><p>alias of <a class="reference internal" href="#bookmarks.items.task_items.TaskItemContextMenu" title="bookmarks.items.task_items.TaskItemContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.task_items.TaskItemContextMenu</span></code></a>
 <strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">setup</span></code>()</p></td>
 <td><p>Creates the context menu.</p></td>
@@ -591,10 +615,14 @@ file.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="bookmarks.items.task_items.TaskItemView.Delegate">
 <span class="sig-name descname"><span class="pre">Delegate</span></span><a class="headerlink" href="#bookmarks.items.task_items.TaskItemView.Delegate" title="Permalink to this definition">#</a></dt>
-<dd><p>alias of <a class="reference internal" href="#bookmarks.items.task_items.TaskItemViewDelegate" title="bookmarks.items.task_items.TaskItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaskItemViewDelegate</span></code></a>
+<dd><p>alias of <a class="reference internal" href="#bookmarks.items.task_items.TaskItemViewDelegate" title="bookmarks.items.task_items.TaskItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.task_items.TaskItemViewDelegate</span></code></a>
 <strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_description_rect</span></code>(*args, **kwargs)</p></td>
 <td><p>Get description rectangle.</p></td>
@@ -708,11 +736,15 @@ file.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.items.task_items.TaskItemViewDelegate">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.task_items.</span></span><span class="sig-name descname"><span class="pre">TaskItemViewDelegate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/task_items.html#TaskItemViewDelegate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.task_items.TaskItemViewDelegate" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="delegate.html#bookmarks.items.delegate.ItemDelegate" title="bookmarks.items.delegate.ItemDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemDelegate</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="delegate.html#bookmarks.items.delegate.ItemDelegate" title="bookmarks.items.delegate.ItemDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.delegate.ItemDelegate</span></code></a></p>
 <p>Delegate used to paint <a class="reference internal" href="#bookmarks.items.task_items.TaskItemView" title="bookmarks.items.task_items.TaskItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">TaskItemView</span></code></a>.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
+<div class="table-wrapper longtable docutils container">
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.task_items.TaskItemViewDelegate.get_description_rect" title="bookmarks.items.task_items.TaskItemViewDelegate.get_description_rect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_description_rect</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Get description rectangle.</p></td>
@@ -774,7 +806,7 @@ task item.</p>
 
 </dd></dl>
 
-</section>
+</div>
 
         </article>
       </div>
@@ -805,7 +837,7 @@ task item.</p>
         <div class="bottom-of-page">
           <div class="left-details">
             <div class="copyright">
-                Copyright &#169; 2022, Gergely Wootsch
+                Copyright &#169; © 2022 Gergely Wootsch
             </div>
             Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
             
@@ -821,69 +853,8 @@ task item.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">items.task_items</a><ul>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemContextMenu"><code class="docutils literal notranslate"><span class="pre">TaskItemContextMenu</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemContextMenu.setup"><code class="docutils literal notranslate"><span class="pre">TaskItemContextMenu.setup()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemModel"><code class="docutils literal notranslate"><span class="pre">TaskItemModel</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemModel.data_type"><code class="docutils literal notranslate"><span class="pre">TaskItemModel.data_type()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemModel.default_row_size"><code class="docutils literal notranslate"><span class="pre">TaskItemModel.default_row_size()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemModel.file_count"><code class="docutils literal notranslate"><span class="pre">TaskItemModel.file_count()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemModel.filter_setting_dict_key"><code class="docutils literal notranslate"><span class="pre">TaskItemModel.filter_setting_dict_key()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemModel.init_data"><code class="docutils literal notranslate"><span class="pre">TaskItemModel.init_data()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemModel.item_generator"><code class="docutils literal notranslate"><span class="pre">TaskItemModel.item_generator()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemModel.reset_data"><code class="docutils literal notranslate"><span class="pre">TaskItemModel.reset_data()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemModel.source_path"><code class="docutils literal notranslate"><span class="pre">TaskItemModel.source_path()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView"><code class="docutils literal notranslate"><span class="pre">TaskItemView</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView.ContextMenu"><code class="docutils literal notranslate"><span class="pre">TaskItemView.ContextMenu</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView.Delegate"><code class="docutils literal notranslate"><span class="pre">TaskItemView.Delegate</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView.contextMenuEvent"><code class="docutils literal notranslate"><span class="pre">TaskItemView.contextMenuEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView.eventFilter"><code class="docutils literal notranslate"><span class="pre">TaskItemView.eventFilter()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView.focusOutEvent"><code class="docutils literal notranslate"><span class="pre">TaskItemView.focusOutEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView.get_source_model"><code class="docutils literal notranslate"><span class="pre">TaskItemView.get_source_model()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView.hideEvent"><code class="docutils literal notranslate"><span class="pre">TaskItemView.hideEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView.inline_icons_count"><code class="docutils literal notranslate"><span class="pre">TaskItemView.inline_icons_count()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView.item_clicked"><code class="docutils literal notranslate"><span class="pre">TaskItemView.item_clicked()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView.keyPressEvent"><code class="docutils literal notranslate"><span class="pre">TaskItemView.keyPressEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView.key_enter"><code class="docutils literal notranslate"><span class="pre">TaskItemView.key_enter()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView.mousePressEvent"><code class="docutils literal notranslate"><span class="pre">TaskItemView.mousePressEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView.resize_widget"><code class="docutils literal notranslate"><span class="pre">TaskItemView.resize_widget()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView.select_active_item"><code class="docutils literal notranslate"><span class="pre">TaskItemView.select_active_item()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView.showEvent"><code class="docutils literal notranslate"><span class="pre">TaskItemView.showEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemView.tab_changed"><code class="docutils literal notranslate"><span class="pre">TaskItemView.tab_changed()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemViewDelegate"><code class="docutils literal notranslate"><span class="pre">TaskItemViewDelegate</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemViewDelegate.get_description_rect"><code class="docutils literal notranslate"><span class="pre">TaskItemViewDelegate.get_description_rect()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemViewDelegate.get_text_segments"><code class="docutils literal notranslate"><span class="pre">TaskItemViewDelegate.get_text_segments()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemViewDelegate.paint"><code class="docutils literal notranslate"><span class="pre">TaskItemViewDelegate.paint()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemViewDelegate.paint_background"><code class="docutils literal notranslate"><span class="pre">TaskItemViewDelegate.paint_background()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemViewDelegate.paint_name"><code class="docutils literal notranslate"><span class="pre">TaskItemViewDelegate.paint_name()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.items.task_items.TaskItemViewDelegate.sizeHint"><code class="docutils literal notranslate"><span class="pre">TaskItemViewDelegate.sizeHint()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>
@@ -891,9 +862,7 @@ task item.</p>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     </body>

@@ -434,7 +434,7 @@ def get_entry_from_path(path, is_dir=True):
     return None
 
 
-def get_links(path, section='links/assets'):
+def get_links(path, section='links/asset'):
     """Returns a list of file links defined in a ``.links`` file.
 
     .link files are simple QSettings ini files that define a list of paths relative to the
@@ -457,10 +457,10 @@ def get_links(path, section='links/assets'):
     (but not the original root `asset`).
 
     Args:
-        path (str): Path to a folder.
+        path (str): Path to a folder where the link file resides. E.g. an asset root folder.
         section (str):
             The settings section to look for links in.
-            Optional. Defaults to 'links/assets'.
+            Optional. Defaults to 'links/asset'.
 
     Returns:
         list: A list of relative file paths.
@@ -485,6 +485,36 @@ def get_links(path, section='links/assets'):
         return sorted(links)
     except:
         return []
+
+
+def add_link(path, link, section='links/asset'):
+    """Add a relative link to a link config file fount in the root of "path".
+
+    Args:
+        path (str): Path to a folder where the link file resides. E.g. an asset root folder.
+        link (str): Relative path to the link file.
+        section (str):
+            The settings section to look for links in. Defaults to `links/assets`.
+
+    """
+    l = f'{path}/{common.link_file}'
+    s = QtCore.QSettings(l, QtCore.QSettings.IniFormat)
+
+    links = []
+    if QtCore.QFileInfo(l).exists():
+        links = s.value(section)
+    links = links if links else []
+
+    # Make sure the link points to a valid file
+    file_info = QtCore.QFileInfo(f'{path}/{link}')
+    if not file_info.exists():
+        raise RuntimeError(f'{file_info.filePath()} does not exist')
+
+    if link not in links:
+        links.append(link)
+        links = sorted(set(links))
+    s.setValue(section, links)
+    return True
 
 
 def byte_to_pretty_string(num, suffix='B'):

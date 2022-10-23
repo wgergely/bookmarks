@@ -6,7 +6,7 @@ Attributes:
 
 """
 import functools
-import os
+import re
 
 from PySide2 import QtWidgets, QtCore
 
@@ -14,6 +14,7 @@ from . import base
 from . import base_widgets
 from .. import common
 from .. import database
+from .. import log
 from .. import templates
 from .. import ui
 from ..shotgun import actions as sg_actions
@@ -248,7 +249,37 @@ class AssetPropertyEditor(base.BasePropertyEditor):
     def _connect_signals(self):
         super()._connect_signals()
         self.thumbnailUpdated.connect(common.signals.thumbnailUpdated)
+        self.itemCreated.connect(self.create_link_file)
         self.itemCreated.connect(common.signals.assetAdded)
+
+    def create_link_file(self, path):
+        """Creates a link file for nested assets.
+
+        Args:
+            path (str): Path to the newly created asset.
+
+        """
+        if not path:
+            return
+
+        path = path.replace('\\', '/')
+
+        bookmark = '/'.join((self.server, self.job, self.root))
+        asset = path.replace(bookmark, '').strip('/')
+
+        # Nothing to do if the asset is not nested
+        if '/' not in asset:
+            return
+
+        root = '/'.join((
+            self.server,
+            self.job,
+            self.root,
+            asset.split('/')[0]
+        ))
+        rel = '/'.join(asset.split('/')[1:])
+        if not common.add_link(root, rel, section='links/asset'):
+            log.error('Could not add link')
 
     def name(self):
         """Returns the name of the asset.
@@ -306,8 +337,29 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         """Add the current list of assets to the name editor's completer.
 
         """
-        source = '/'.join((self.server, self.job, self.root))
-        items = [f.name for f in os.scandir(source) if f.is_dir()]
+        items = []
+
+        model = common.source_model(common.AssetTab)
+        data = model.model_data()
+        for idx in data:
+            if data[idx][common.FlagsRole] & common.MarkedAsArchived:
+                continue
+            v = data[idx][common.ParentPathRole][-1]
+            items.append(v)
+
+            match = re.search(r'[0-9]+$', v)
+            if match:
+                pad = len(match.group(0))
+                num = int(match.group(0))
+                span = match.span()
+                _v1 = str(num + 1).zfill(pad)
+                _v2 = str(num + 10).zfill(pad)
+                v1 = v[0:span[0]] + _v1 + v[span[1]:-1]
+                v2 = v[0:span[0]] + _v2 + v[span[1]:-1]
+                items.append(v1)
+                items.append(v2)
+
+        items = sorted(set(items), reverse=True)
         completer = QtWidgets.QCompleter(items, parent=self)
         completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
         common.set_stylesheet(completer.popup())
@@ -362,7 +414,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
             raise RuntimeError('Must enter a name to create asset.')
 
         file_info = QtCore.QFileInfo(f'{self.server}/{self.job}/{self.root}/{name}')
-        if not file_info.dir().exists() and file_info.dir().mkpath('.'):
+        if not file_info.exists() and not file_info.dir().mkpath('.'):
             raise RuntimeError(f'Could not create {file_info.dir().path()}')
 
         editor.create(
@@ -373,6 +425,7 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         if not file_info.exists():
             raise RuntimeError('Failed to create asset.')
 
+        self.create_link_file(file_info.absoluteFilePath())
         self.itemCreated.emit(file_info.absoluteFilePath())
 
     @common.error

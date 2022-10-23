@@ -322,7 +322,10 @@ class AssetItemModel(models.ItemModel):
                 continue
 
             # Check if the asset has links to sub-folders
-            links = common.get_links(entry.path, section='links/asset')
+            links = common.get_links(
+                entry.path.replace('\\', '/'),
+                section='links/asset'
+            )
             for link in links:
                 v = f'{path}/{entry.name}/{link}'
                 _entry = common.get_entry_from_path(v)

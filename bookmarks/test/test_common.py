@@ -19,8 +19,6 @@ class Test(base.BaseCase):
         self.assertIsNotNone(common.bookmark_cache_dir)
         self.assertIsNotNone(common.favorite_file_ext)
         self.assertIsNotNone(common.default_bookmarks_template)
-        self.assertIsNotNone(common.job_template)
-        self.assertIsNotNone(common.asset_template)
         self.assertIsNotNone(common.max_list_items)
         self.assertIsNotNone(common.ui_scale_factors)
         self.assertIsNotNone(common.bold_font)
@@ -59,16 +57,6 @@ class Test(base.BaseCase):
 
         self.assertIsInstance(common.rsc(common.stylesheet_file), str)
         self.assertTrue(os.path.isfile(common.rsc(common.stylesheet_file)))
-
-        self.assertIsInstance(
-            common.rsc(f'{common.TemplateResource}/{common.job_template}'), str)
-        self.assertTrue(os.path.isfile(
-            common.rsc(f'{common.TemplateResource}/{common.job_template}')))
-
-        self.assertIsInstance(
-            common.rsc(f'{common.TemplateResource}/{common.asset_template}'), str)
-        self.assertTrue(os.path.isfile(
-            common.rsc(f'{common.TemplateResource}/{common.asset_template}')))
 
     def test_check_type(self):
         common.typecheck_on = True

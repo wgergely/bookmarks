@@ -113,15 +113,6 @@ def get_sequence(s):
     Likewise, in ``job_sh010_animation_v002.0001.c4d`` the sequence number will
     be **0001**, and not 010 or 002.
 
-    Args:
-        s (str): A file path.
-
-    Returns:
-            group 1 (SRE_Match): All the characters **before** the sequence number.
-            group 2 (SRE_Match): The sequence number, as a string.
-            group 3 (SRE_Match): All the characters **after** the sequence number up until the file extensions.
-            group 4 (SRE_Match): The file extension **without** the '.' dot.
-
     .. code-block:: python
         :linenos:
 
@@ -133,8 +124,15 @@ def get_sequence(s):
             suffix = match.group(3)
             extension = match.group(4)
 
+    Args:
+        s (str): A file path.
+
     Returns:
-            ``SRE_Match``: ``None`` if the text doesn't contain a number or an ``SRE_Match`` object.
+            group 1 (SRE_Match): All the characters **before** the sequence number.
+            group 2 (SRE_Match): The sequence number, as a string.
+            group 3 (SRE_Match):
+                All the characters after the sequence number up until the file extensions.
+            group 4 (SRE_Match): The file extension without the '.' dot.
 
     """
     common.check_type(s, str)

@@ -639,14 +639,15 @@ class BaseContextMenu(QtWidgets.QMenu):
         return
 
     def asset_progress_menu(self):
-        on_icon = ui.get_icon('check', color=common.color(common.color_green))
-        off_icon = ui.get_icon('showbuttons')
+        on_icon = ui.get_icon('showbuttons')
+        off_icon = ui.get_icon('showbuttons', color=common.color(common.color_green))
         icon = on_icon if self.parent().progress_hidden() else off_icon
+        t = 'Show' if self.parent().progress_hidden() else 'Hide'
 
         self.separator()
 
         self.menu[key()] = {
-            'text': 'Toggle Progress Tracker',
+            'text': f'{t} Progress Tracker',
             'icon': icon,
             'action': actions.toggle_progress_columns,
         }

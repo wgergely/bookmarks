@@ -81,10 +81,15 @@ Source:  "{#SourcePath}..\bookmarks\*"; DestDir: "{app}\shared\bookmarks"; Flags
 
 ; Maya plugin
 Source:  "{#SourcePath}..\bookmarks\maya\plugin.py"; DestName: "Bookmarks.py"; DestDir: {userdocs}\maya\plug-ins; Components: maya; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
-; Example templates
-Source:  "{#SourcePath}..\bookmarks\rsc\templates\Asset.zip"; DestDir: "{localappdata}\{#MyAppName}\asset_templates"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
-Source:  "{#SourcePath}..\bookmarks\rsc\templates\Job.zip"; DestDir: "{localappdata}\{#MyAppName}\job_templates"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
 
+; Asset Templates
+Source:  "{#SourcePath}..\bookmarks\rsc\templates\bookmarks_asset.zip"; DestDir: "{localappdata}\{#MyAppName}\asset_templates"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
+Source:  "{#SourcePath}..\bookmarks\rsc\templates\studioaka_legacy_asset.zip"; DestDir: "{localappdata}\{#MyAppName}\asset_templates"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
+Source:  "{#SourcePath}..\bookmarks\rsc\templates\studioaka_legacy_shot.zip"; DestDir: "{localappdata}\{#MyAppName}\asset_templates"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
+
+; Job Templates
+Source:  "{#SourcePath}..\bookmarks\rsc\templates\bookmarks_job.zip"; DestDir: "{localappdata}\{#MyAppName}\job_templates"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
+Source:  "{#SourcePath}..\bookmarks\rsc\templates\studioaka_legacy_job.zip"; DestDir: "{localappdata}\{#MyAppName}\job_templates"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: users-modify
 
 [Registry]
 ; Used by the DCC plugins and the standalone executable to locate the install dir

@@ -487,15 +487,6 @@
 <span class="sd">    Likewise, in ``job_sh010_animation_v002.0001.c4d`` the sequence number will</span>
 <span class="sd">    be **0001**, and not 010 or 002.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        s (str): A file path.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">            group 1 (SRE_Match): All the characters **before** the sequence number.</span>
-<span class="sd">            group 2 (SRE_Match): The sequence number, as a string.</span>
-<span class="sd">            group 3 (SRE_Match): All the characters **after** the sequence number up until the file extensions.</span>
-<span class="sd">            group 4 (SRE_Match): The file extension **without** the &#39;.&#39; dot.</span>
-
 <span class="sd">    .. code-block:: python</span>
 <span class="sd">        :linenos:</span>
 
@@ -507,8 +498,15 @@
 <span class="sd">            suffix = match.group(3)</span>
 <span class="sd">            extension = match.group(4)</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        s (str): A file path.</span>
+
 <span class="sd">    Returns:</span>
-<span class="sd">            ``SRE_Match``: ``None`` if the text doesn&#39;t contain a number or an ``SRE_Match`` object.</span>
+<span class="sd">            group 1 (SRE_Match): All the characters **before** the sequence number.</span>
+<span class="sd">            group 2 (SRE_Match): The sequence number, as a string.</span>
+<span class="sd">            group 3 (SRE_Match):</span>
+<span class="sd">                All the characters after the sequence number up until the file extensions.</span>
+<span class="sd">            group 4 (SRE_Match): The file extension without the &#39;.&#39; dot.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>

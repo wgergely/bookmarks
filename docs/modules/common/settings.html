@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Developer documentation page for the Bookmarks python modules" name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="common.setup" href="setup.html" /><link rel="prev" title="common.session_lock" href="session_lock.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/common/settings.html" />
 
-    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
         <title>common.settings - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
@@ -173,7 +173,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -335,6 +335,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
@@ -368,20 +369,20 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
           <div class="section" id="module-bookmarks.common.settings">
-<span id="common-settings"></span><h1>common.settings<a class="headerlink" href="#module-bookmarks.common.settings" title="Permalink to this headline">#</a></h1>
+<span id="common-settings"></span><h1>common.settings<a class="headerlink" href="#module-bookmarks.common.settings" title="Permalink to this heading">#</a></h1>
 <p>Defines a customized QSettings object used to store user settings.</p>
 <p>The user settings are stored in an ini file stored at <a class="reference internal" href="#bookmarks.common.settings.get_user_settings_path" title="bookmarks.common.settings.get_user_settings_path"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_user_settings_path()</span></code></a>.
 The current ui state, current active paths and application settings are all stored in here.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -394,8 +395,8 @@ The current ui state, current active paths and application settings are all stor
 </table>
 </div>
 <p><strong>Functions:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -426,8 +427,8 @@ The current ui state, current active paths and application settings are all stor
 </table>
 </div>
 <p><strong>Data:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -442,11 +443,11 @@ The current ui state, current active paths and application settings are all stor
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.common.settings.UserSettings">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.common.settings.</span></span><span class="sig-name descname"><span class="pre">UserSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/common/settings.html#UserSettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.settings.UserSettings" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtCore.QSettings</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QSettings</span></code></p>
 <p>An INI config file used to store local user settings.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -714,8 +715,44 @@ Types are saved in <cite>{key}_type</cite>.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">common.settings</a><ul>
+<li><a class="reference internal" href="#bookmarks.common.settings.UserSettings"><code class="docutils literal notranslate"><span class="pre">UserSettings</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.common.settings.UserSettings.load_active_values"><code class="docutils literal notranslate"><span class="pre">UserSettings.load_active_values()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.settings.UserSettings.setValue"><code class="docutils literal notranslate"><span class="pre">UserSettings.setValue()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.settings.UserSettings.set_bookmarks"><code class="docutils literal notranslate"><span class="pre">UserSettings.set_bookmarks()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.settings.UserSettings.set_favourites"><code class="docutils literal notranslate"><span class="pre">UserSettings.set_favourites()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.settings.UserSettings.set_servers"><code class="docutils literal notranslate"><span class="pre">UserSettings.set_servers()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.settings.UserSettings.value"><code class="docutils literal notranslate"><span class="pre">UserSettings.value()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.settings.UserSettings.verify_active"><code class="docutils literal notranslate"><span class="pre">UserSettings.verify_active()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.common.settings.active"><code class="docutils literal notranslate"><span class="pre">active()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.settings.bookmark_key"><code class="docutils literal notranslate"><span class="pre">bookmark_key()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.settings.get_default_bookmarks"><code class="docutils literal notranslate"><span class="pre">get_default_bookmarks()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.settings.get_user_settings_path"><code class="docutils literal notranslate"><span class="pre">get_user_settings_path()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.settings.init_settings"><code class="docutils literal notranslate"><span class="pre">init_settings()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.settings.strip"><code class="docutils literal notranslate"><span class="pre">strip()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.settings.update_private_values"><code class="docutils literal notranslate"><span class="pre">update_private_values()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.settings.SECTIONS"><code class="docutils literal notranslate"><span class="pre">SECTIONS</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
@@ -723,7 +760,9 @@ Types are saved in <cite>{key}_type</cite>.</p>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     </body>

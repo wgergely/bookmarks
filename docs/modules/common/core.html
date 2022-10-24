@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Developer documentation page for the Bookmarks python modules" name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="common.data" href="data.html" /><link rel="prev" title="common" href="../common.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/common/core.html" />
 
-    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
         <title>common.core - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
@@ -173,7 +173,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -335,6 +335,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
@@ -368,18 +369,18 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
           <div class="section" id="module-bookmarks.common.core">
-<span id="common-core"></span><h1>common.core<a class="headerlink" href="#module-bookmarks.common.core" title="Permalink to this headline">#</a></h1>
+<span id="common-core"></span><h1>common.core<a class="headerlink" href="#module-bookmarks.common.core" title="Permalink to this heading">#</a></h1>
 <p>Common attributes, methods and flag values.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -395,76 +396,79 @@
 </table>
 </div>
 <p><strong>Functions:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.byte_to_pretty_string" title="bookmarks.common.core.byte_to_pretty_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">byte_to_pretty_string</span></code></a>(num[, suffix])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.add_link" title="bookmarks.common.core.add_link"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_link</span></code></a>(path, link[, section])</p></td>
+<td><p>Add a relative link to a link config file fount in the root of &quot;path&quot;.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.core.byte_to_pretty_string" title="bookmarks.common.core.byte_to_pretty_string"><code class="xref py py-obj docutils literal notranslate"><span class="pre">byte_to_pretty_string</span></code></a>(num[, suffix])</p></td>
 <td><p>Converts a numeric byte value to a human-readable string.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.core.check_type" title="bookmarks.common.core.check_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_type</span></code></a>(value, _type)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.check_type" title="bookmarks.common.core.check_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_type</span></code></a>(value, _type)</p></td>
 <td><p>Verify the type of object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.debug" title="bookmarks.common.core.debug"><code class="xref py py-obj docutils literal notranslate"><span class="pre">debug</span></code></a>(func)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.core.debug" title="bookmarks.common.core.debug"><code class="xref py py-obj docutils literal notranslate"><span class="pre">debug</span></code></a>(func)</p></td>
 <td><p>Function decorator used to log a debug message.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.core.error" title="bookmarks.common.core.error"><code class="xref py py-obj docutils literal notranslate"><span class="pre">error</span></code></a>(func)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.error" title="bookmarks.common.core.error"><code class="xref py py-obj docutils literal notranslate"><span class="pre">error</span></code></a>(func)</p></td>
 <td><p>Decorator function used to handle exceptions and report them to the user.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.get_entry_from_path" title="bookmarks.common.core.get_entry_from_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_entry_from_path</span></code></a>(path[, is_dir])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.core.get_entry_from_path" title="bookmarks.common.core.get_entry_from_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_entry_from_path</span></code></a>(path[, is_dir])</p></td>
 <td><p>Returns a scandir entry of the given file path.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.core.get_hash" title="bookmarks.common.core.get_hash"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hash</span></code></a>(key)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.get_hash" title="bookmarks.common.core.get_hash"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_hash</span></code></a>(key)</p></td>
 <td><p>Calculates the md5 hash of a string.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.get_links" title="bookmarks.common.core.get_links"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_links</span></code></a>(path[, section])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.core.get_links" title="bookmarks.common.core.get_links"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_links</span></code></a>(path[, section])</p></td>
 <td><p>Returns a list of file links defined in a <code class="docutils literal notranslate"><span class="pre">.links</span></code> file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.core.get_platform" title="bookmarks.common.core.get_platform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_platform</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.get_platform" title="bookmarks.common.core.get_platform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_platform</span></code></a>()</p></td>
 <td><p>Returns the current platform.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.get_py_obj_size" title="bookmarks.common.core.get_py_obj_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_py_obj_size</span></code></a>(obj)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.core.get_py_obj_size" title="bookmarks.common.core.get_py_obj_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_py_obj_size</span></code></a>(obj)</p></td>
 <td><p>Sum size of object &amp; members.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.core.get_sequence_and_shot" title="bookmarks.common.core.get_sequence_and_shot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_sequence_and_shot</span></code></a>(s)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.get_sequence_and_shot" title="bookmarks.common.core.get_sequence_and_shot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_sequence_and_shot</span></code></a>(s)</p></td>
 <td><p>Returns the sequence and shot name of the given path.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.get_template_file_path" title="bookmarks.common.core.get_template_file_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_template_file_path</span></code></a>(name)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.core.get_template_file_path" title="bookmarks.common.core.get_template_file_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_template_file_path</span></code></a>(name)</p></td>
 <td><p>Returns the path to the source template file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.core.get_thread_key" title="bookmarks.common.core.get_thread_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_thread_key</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.get_thread_key" title="bookmarks.common.core.get_thread_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_thread_key</span></code></a>(*args)</p></td>
 <td><p>Returns the key associated with args and the current thread.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.get_username" title="bookmarks.common.core.get_username"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_username</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.core.get_username" title="bookmarks.common.core.get_username"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_username</span></code></a>()</p></td>
 <td><p>Returns the name of the currently logged-in user.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.core.int_key" title="bookmarks.common.core.int_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int_key</span></code></a>(x)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.int_key" title="bookmarks.common.core.int_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">int_key</span></code></a>(x)</p></td>
 <td><p>Makes certain we convert int keys back to int values.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.is_dir" title="bookmarks.common.core.is_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_dir</span></code></a>(path)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.core.is_dir" title="bookmarks.common.core.is_dir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_dir</span></code></a>(path)</p></td>
 <td><p>Cache-back type query.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.core.pseudo_local_bookmark" title="bookmarks.common.core.pseudo_local_bookmark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pseudo_local_bookmark</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.pseudo_local_bookmark" title="bookmarks.common.core.pseudo_local_bookmark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pseudo_local_bookmark</span></code></a>()</p></td>
 <td><p>Return a location on the local system to store temporary files.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.rsc" title="bookmarks.common.core.rsc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rsc</span></code></a>(rel_path)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.core.rsc" title="bookmarks.common.core.rsc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rsc</span></code></a>(rel_path)</p></td>
 <td><p>Returns a resource item from the <cite>rsc</cite> directory.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.core.sort_words" title="bookmarks.common.core.sort_words"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_words</span></code></a>(s)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.sort_words" title="bookmarks.common.core.sort_words"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort_words</span></code></a>(s)</p></td>
 <td><p>Sorts a comma separated list of words found in the given string.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.common.core.temp_path" title="bookmarks.common.core.temp_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">temp_path</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.common.core.temp_path" title="bookmarks.common.core.temp_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">temp_path</span></code></a>()</p></td>
 <td><p>Path to the folder to store temporary files.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <p><strong>Data:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -490,8 +494,8 @@
 <p>This class adds compatibility for <code class="xref py py-class docutils literal notranslate"><span class="pre">weakref.ref</span></code> referencing
 and custom attributes for storing data state.</p>
 <p><strong>Attributes:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -534,11 +538,11 @@ is considered fully loaded.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.common.core.Timer">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.common.core.</span></span><span class="sig-name descname"><span class="pre">Timer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/common/core.html#Timer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.core.Timer" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtCore.QTimer</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QTimer</span></code></p>
 <p>A custom QTimer class used across the app.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -570,6 +574,21 @@ is considered fully loaded.</p>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.common.core.add_link">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.common.core.</span></span><span class="sig-name descname"><span class="pre">add_link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">link</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'links/asset'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/common/core.html#add_link"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.common.core.add_link" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a relative link to a link config file fount in the root of “path”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – Path to a folder where the link file resides. E.g. an asset root folder.</p></li>
+<li><p><strong>link</strong> (<em>str</em>) – Relative path to the link file.</p></li>
+<li><p><strong>section</strong> (<em>str</em>) – The settings section to look for links in. Defaults to <cite>links/assets</cite>.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -687,9 +706,9 @@ inside job templates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<em>str</em>) – Path to a folder.</p></li>
+<li><p><strong>path</strong> (<em>str</em>) – Path to a folder where the link file resides. E.g. an asset root folder.</p></li>
 <li><p><strong>section</strong> (<em>str</em>) – The settings section to look for links in.
-Optional. Defaults to ‘links/assets’.</p></li>
+Optional. Defaults to ‘links/asset’.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -902,8 +921,60 @@ This is used to store thumbnails for starred items and other temporary items.</p
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">common.core</a><ul>
+<li><a class="reference internal" href="#bookmarks.common.core.DataDict"><code class="docutils literal notranslate"><span class="pre">DataDict</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.common.core.DataDict.data_type"><code class="docutils literal notranslate"><span class="pre">DataDict.data_type</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.DataDict.loaded"><code class="docutils literal notranslate"><span class="pre">DataDict.loaded</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.DataDict.refresh_needed"><code class="docutils literal notranslate"><span class="pre">DataDict.refresh_needed</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.common.core.Timer"><code class="docutils literal notranslate"><span class="pre">Timer</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.common.core.Timer.delete_timers"><code class="docutils literal notranslate"><span class="pre">Timer.delete_timers()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.Timer.setObjectName"><code class="docutils literal notranslate"><span class="pre">Timer.setObjectName()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.common.core.add_link"><code class="docutils literal notranslate"><span class="pre">add_link()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.byte_to_pretty_string"><code class="docutils literal notranslate"><span class="pre">byte_to_pretty_string()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.check_type"><code class="docutils literal notranslate"><span class="pre">check_type()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.debug"><code class="docutils literal notranslate"><span class="pre">debug()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.error"><code class="docutils literal notranslate"><span class="pre">error()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.get_entry_from_path"><code class="docutils literal notranslate"><span class="pre">get_entry_from_path()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.get_hash"><code class="docutils literal notranslate"><span class="pre">get_hash()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.get_links"><code class="docutils literal notranslate"><span class="pre">get_links()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.get_platform"><code class="docutils literal notranslate"><span class="pre">get_platform()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.get_py_obj_size"><code class="docutils literal notranslate"><span class="pre">get_py_obj_size()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.get_sequence_and_shot"><code class="docutils literal notranslate"><span class="pre">get_sequence_and_shot()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.get_template_file_path"><code class="docutils literal notranslate"><span class="pre">get_template_file_path()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.get_thread_key"><code class="docutils literal notranslate"><span class="pre">get_thread_key()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.get_username"><code class="docutils literal notranslate"><span class="pre">get_username()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.int_key"><code class="docutils literal notranslate"><span class="pre">int_key()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.is_dir"><code class="docutils literal notranslate"><span class="pre">is_dir()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.pseudo_local_bookmark"><code class="docutils literal notranslate"><span class="pre">pseudo_local_bookmark()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.rsc"><code class="docutils literal notranslate"><span class="pre">rsc()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.sort_words"><code class="docutils literal notranslate"><span class="pre">sort_words()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.temp_path"><code class="docutils literal notranslate"><span class="pre">temp_path()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.CONFIG"><code class="docutils literal notranslate"><span class="pre">CONFIG</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.EmbeddedMode"><code class="docutils literal notranslate"><span class="pre">EmbeddedMode</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.core.StandaloneMode"><code class="docutils literal notranslate"><span class="pre">StandaloneMode</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
@@ -911,7 +982,9 @@ This is used to store thumbnails for starred items and other temporary items.</p
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     </body>

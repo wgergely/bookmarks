@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Developer documentation page for the Bookmarks python modules" name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="items.models" href="models.html" /><link rel="prev" title="items.favourite_items" href="favourite_items.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/items/file_items.html" />
 
-    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
         <title>items.file_items - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
@@ -173,7 +173,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -335,6 +335,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
@@ -368,14 +369,14 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
           <div class="section" id="module-bookmarks.items.file_items">
-<span id="items-file-items"></span><h1>items.file_items<a class="headerlink" href="#module-bookmarks.items.file_items" title="Permalink to this headline">#</a></h1>
+<span id="items-file-items"></span><h1>items.file_items<a class="headerlink" href="#module-bookmarks.items.file_items" title="Permalink to this heading">#</a></h1>
 <p>File items are files found inside an asset item. They’re made up of <code class="docutils literal notranslate"><span class="pre">server</span></code>,
 <code class="docutils literal notranslate"><span class="pre">job</span></code>, <code class="docutils literal notranslate"><span class="pre">root</span></code>, <code class="docutils literal notranslate"><span class="pre">asset</span></code>, <code class="docutils literal notranslate"><span class="pre">task</span></code> and <code class="docutils literal notranslate"><span class="pre">file</span></code> path segments.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="c1"># The following file path...</span>
@@ -408,8 +409,8 @@ simultaneously: a <em>collapsed</em> sequence and a regular file data set.
 See the <a class="reference internal" href="../common/sequence.html#module-bookmarks.common.sequence" title="bookmarks.common.sequence"><code class="xref py py-mod docutils literal notranslate"><span class="pre">sequence</span></code></a> module for details on sequence definitions, and
 <code class="xref py py-meth docutils literal notranslate"><span class="pre">model_data()</span></code>.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -428,8 +429,8 @@ See the <a class="reference internal" href="../common/sequence.html#module-bookm
 </table>
 </div>
 <p><strong>Functions:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -447,7 +448,7 @@ See the <a class="reference internal" href="../common/sequence.html#module-bookm
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.items.file_items.FileItemModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.file_items.</span></span><span class="sig-name descname"><span class="pre">FileItemModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/file_items.html#FileItemModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.file_items.FileItemModel" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="models.html#bookmarks.items.models.ItemModel" title="bookmarks.items.models.ItemModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.models.ItemModel</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="models.html#bookmarks.items.models.ItemModel" title="bookmarks.items.models.ItemModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemModel</span></code></a></p>
 <p>Model used to list files in an asset.</p>
 <p>The model will load files from one task folder at any given time. The current
 task folder can be retrieved by <a class="reference internal" href="#bookmarks.items.file_items.FileItemModel.task" title="bookmarks.items.file_items.FileItemModel.task"><code class="xref py py-meth docutils literal notranslate"><span class="pre">task()</span></code></a>. Switching tasks is done via
@@ -465,8 +466,8 @@ bookmark item has a valid token config set, certain file extension might be
 excluded. See the <a class="reference internal" href="../tokens/tokens.html#module-bookmarks.tokens.tokens" title="bookmarks.tokens.tokens"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.tokens.tokens</span></code></a> for details.</p>
 </div>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -622,28 +623,28 @@ type is <code class="docutils literal notranslate"><span class="pre">common.File
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.items.file_items.FileItemView">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.file_items.</span></span><span class="sig-name descname"><span class="pre">FileItemView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">icon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'file'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/file_items.html#FileItemView"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.file_items.FileItemView" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="views.html#bookmarks.items.views.ThreadedItemView" title="bookmarks.items.views.ThreadedItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.views.ThreadedItemView</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="views.html#bookmarks.items.views.ThreadedItemView" title="bookmarks.items.views.ThreadedItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThreadedItemView</span></code></a></p>
 <p>The view used to display <a class="reference internal" href="#bookmarks.items.file_items.FileItemModel" title="bookmarks.items.file_items.FileItemModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileItemModel</span></code></a> items.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.ContextMenu" title="bookmarks.items.file_items.FileItemView.ContextMenu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ContextMenu</span></code></a></p></td>
-<td><p>alias of <a class="reference internal" href="#bookmarks.items.file_items.FileItemViewContextMenu" title="bookmarks.items.file_items.FileItemViewContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.file_items.FileItemViewContextMenu</span></code></a></p></td>
+<td><p>alias of <a class="reference internal" href="#bookmarks.items.file_items.FileItemViewContextMenu" title="bookmarks.items.file_items.FileItemViewContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileItemViewContextMenu</span></code></a></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.Delegate" title="bookmarks.items.file_items.FileItemView.Delegate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Delegate</span></code></a></p></td>
-<td><p>alias of <a class="reference internal" href="delegate.html#bookmarks.items.delegate.FileItemViewDelegate" title="bookmarks.items.delegate.FileItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.delegate.FileItemViewDelegate</span></code></a></p></td>
+<td><p>alias of <a class="reference internal" href="delegate.html#bookmarks.items.delegate.FileItemViewDelegate" title="bookmarks.items.delegate.FileItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileItemViewDelegate</span></code></a></p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -670,10 +671,10 @@ type is <code class="docutils literal notranslate"><span class="pre">common.File
 <dl class="py attribute">
 <dt class="sig sig-object py" id="bookmarks.items.file_items.FileItemView.ContextMenu">
 <span class="sig-name descname"><span class="pre">ContextMenu</span></span><a class="headerlink" href="#bookmarks.items.file_items.FileItemView.ContextMenu" title="Permalink to this definition">#</a></dt>
-<dd><p>alias of <a class="reference internal" href="#bookmarks.items.file_items.FileItemViewContextMenu" title="bookmarks.items.file_items.FileItemViewContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.file_items.FileItemViewContextMenu</span></code></a>
+<dd><p>alias of <a class="reference internal" href="#bookmarks.items.file_items.FileItemViewContextMenu" title="bookmarks.items.file_items.FileItemViewContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileItemViewContextMenu</span></code></a>
 <strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -690,10 +691,10 @@ type is <code class="docutils literal notranslate"><span class="pre">common.File
 <dl class="py attribute">
 <dt class="sig sig-object py" id="bookmarks.items.file_items.FileItemView.Delegate">
 <span class="sig-name descname"><span class="pre">Delegate</span></span><a class="headerlink" href="#bookmarks.items.file_items.FileItemView.Delegate" title="Permalink to this definition">#</a></dt>
-<dd><p>alias of <a class="reference internal" href="delegate.html#bookmarks.items.delegate.FileItemViewDelegate" title="bookmarks.items.delegate.FileItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.items.delegate.FileItemViewDelegate</span></code></a>
+<dd><p>alias of <a class="reference internal" href="delegate.html#bookmarks.items.delegate.FileItemViewDelegate" title="bookmarks.items.delegate.FileItemViewDelegate"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileItemViewDelegate</span></code></a>
 <strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -704,6 +705,20 @@ type is <code class="docutils literal notranslate"><span class="pre">common.File
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sizeHint</span></code>(option, index)</p></td>
 <td><p>Returns the item's size hint.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Attributes:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">fallback_thumb</span></code></p></td>
+<td><p>The item's default thumbnail image</p></td>
 </tr>
 </tbody>
 </table>
@@ -747,11 +762,11 @@ in the files tab.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.items.file_items.FileItemViewContextMenu">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.file_items.</span></span><span class="sig-name descname"><span class="pre">FileItemViewContextMenu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/file_items.html#FileItemViewContextMenu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.file_items.FileItemViewContextMenu" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../contextmenu.html#bookmarks.contextmenu.BaseContextMenu" title="bookmarks.contextmenu.BaseContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.contextmenu.BaseContextMenu</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="../contextmenu.html#bookmarks.contextmenu.BaseContextMenu" title="bookmarks.contextmenu.BaseContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseContextMenu</span></code></a></p>
 <p>Context menu associated with <a class="reference internal" href="#bookmarks.items.file_items.FileItemView" title="bookmarks.items.file_items.FileItemView"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileItemView</span></code></a>.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -854,8 +869,57 @@ path.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">items.file_items</a><ul>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemModel"><code class="docutils literal notranslate"><span class="pre">FileItemModel</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemModel.data_type"><code class="docutils literal notranslate"><span class="pre">FileItemModel.data_type()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemModel.disable_filter"><code class="docutils literal notranslate"><span class="pre">FileItemModel.disable_filter()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemModel.filter_setting_dict_key"><code class="docutils literal notranslate"><span class="pre">FileItemModel.filter_setting_dict_key()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemModel.init_data"><code class="docutils literal notranslate"><span class="pre">FileItemModel.init_data()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemModel.item_generator"><code class="docutils literal notranslate"><span class="pre">FileItemModel.item_generator()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemModel.mimeData"><code class="docutils literal notranslate"><span class="pre">FileItemModel.mimeData()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemModel.refresh_needed"><code class="docutils literal notranslate"><span class="pre">FileItemModel.refresh_needed()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemModel.save_active"><code class="docutils literal notranslate"><span class="pre">FileItemModel.save_active()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemModel.set_data_type"><code class="docutils literal notranslate"><span class="pre">FileItemModel.set_data_type()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemModel.set_refresh_needed"><code class="docutils literal notranslate"><span class="pre">FileItemModel.set_refresh_needed()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemModel.source_path"><code class="docutils literal notranslate"><span class="pre">FileItemModel.source_path()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemModel.task"><code class="docutils literal notranslate"><span class="pre">FileItemModel.task()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemView"><code class="docutils literal notranslate"><span class="pre">FileItemView</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.ContextMenu"><code class="docutils literal notranslate"><span class="pre">FileItemView.ContextMenu</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.Delegate"><code class="docutils literal notranslate"><span class="pre">FileItemView.Delegate</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.get_hint_string"><code class="docutils literal notranslate"><span class="pre">FileItemView.get_hint_string()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.get_source_model"><code class="docutils literal notranslate"><span class="pre">FileItemView.get_source_model()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.inline_icons_count"><code class="docutils literal notranslate"><span class="pre">FileItemView.inline_icons_count()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.key_enter"><code class="docutils literal notranslate"><span class="pre">FileItemView.key_enter()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemView.show_item"><code class="docutils literal notranslate"><span class="pre">FileItemView.show_item()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemViewContextMenu"><code class="docutils literal notranslate"><span class="pre">FileItemViewContextMenu</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.file_items.FileItemViewContextMenu.setup"><code class="docutils literal notranslate"><span class="pre">FileItemViewContextMenu.setup()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.get_path_elements"><code class="docutils literal notranslate"><span class="pre">get_path_elements()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.file_items.get_sequence_elements"><code class="docutils literal notranslate"><span class="pre">get_sequence_elements()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
@@ -863,7 +927,9 @@ path.</p>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     </body>

@@ -696,7 +696,10 @@
                 <span class="k">continue</span>
 
             <span class="c1"># Check if the asset has links to sub-folders</span>
-            <span class="n">links</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_links</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="s1">&#39;links/asset&#39;</span><span class="p">)</span>
+            <span class="n">links</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_links</span><span class="p">(</span>
+                <span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">),</span>
+                <span class="n">section</span><span class="o">=</span><span class="s1">&#39;links/asset&#39;</span>
+            <span class="p">)</span>
             <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">links</span><span class="p">:</span>
                 <span class="n">v</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">entry</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">link</span><span class="si">}</span><span class="s1">&#39;</span>
                 <span class="n">_entry</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_entry_from_path</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>

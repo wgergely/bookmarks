@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Developer documentation page for the Bookmarks python modules" name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" /><link rel="next" title="items.widgets.thumb_capture" href="thumb_capture.html" /><link rel="prev" title="items.widgets.filter_editor" href="filter_editor.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/items/widgets/image_viewer.html" />
 
-    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
         <title>items.widgets.image_viewer - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
@@ -173,7 +173,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -335,6 +335,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
@@ -368,18 +369,18 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
           <div class="section" id="module-bookmarks.items.widgets.image_viewer">
-<span id="items-widgets-image-viewer"></span><h1>items.widgets.image_viewer<a class="headerlink" href="#module-bookmarks.items.widgets.image_viewer" title="Permalink to this headline">#</a></h1>
+<span id="items-widgets-image-viewer"></span><h1>items.widgets.image_viewer<a class="headerlink" href="#module-bookmarks.items.widgets.image_viewer" title="Permalink to this heading">#</a></h1>
 <p>A pop-up widget used to display an image preview of a selected item.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -395,8 +396,8 @@
 </table>
 </div>
 <p><strong>Functions:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -414,11 +415,11 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.items.widgets.image_viewer.ImageViewer">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.widgets.image_viewer.</span></span><span class="sig-name descname"><span class="pre">ImageViewer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/image_viewer.html#ImageViewer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.image_viewer.ImageViewer" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QWidget</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
 <p>The top-level widget containing the QGraphicsScene items.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -444,7 +445,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.items.widgets.image_viewer.ImageViewer.set_image">
-<span class="sig-name descname"><span class="pre">set_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oiio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/image_viewer.html#ImageViewer.set_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.image_viewer.ImageViewer.set_image" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">set_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oiio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/image_viewer.html#ImageViewer.set_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.image_viewer.ImageViewer.set_image" title="Permalink to this definition">#</a></dt>
 <dd><p>Loads an image and displays the contents as a QPixmap item.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -469,11 +470,11 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.items.widgets.image_viewer.Viewer">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.widgets.image_viewer.</span></span><span class="sig-name descname"><span class="pre">Viewer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/image_viewer.html#Viewer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.image_viewer.Viewer" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QGraphicsView</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QGraphicsView</span></code></p>
 <p>The graphics view used to display a QPixmap.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -527,7 +528,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.items.widgets.image_viewer.show">
-<span class="sig-prename descclassname"><span class="pre">bookmarks.items.widgets.image_viewer.</span></span><span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oiio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/image_viewer.html#show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.image_viewer.show" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">bookmarks.items.widgets.image_viewer.</span></span><span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oiio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/bookmarks/items/widgets/image_viewer.html#show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.widgets.image_viewer.show" title="Permalink to this definition">#</a></dt>
 <dd><p>Shows the image preview widget.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -593,8 +594,40 @@ Defaults to <cite>False</cite>.</p></li>
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">items.widgets.image_viewer</a><ul>
+<li><a class="reference internal" href="#bookmarks.items.widgets.image_viewer.ImageViewer"><code class="docutils literal notranslate"><span class="pre">ImageViewer</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.widgets.image_viewer.ImageViewer.keyPressEvent"><code class="docutils literal notranslate"><span class="pre">ImageViewer.keyPressEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.widgets.image_viewer.ImageViewer.set_image"><code class="docutils literal notranslate"><span class="pre">ImageViewer.set_image()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.widgets.image_viewer.ImageViewer.showEvent"><code class="docutils literal notranslate"><span class="pre">ImageViewer.showEvent()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.widgets.image_viewer.Viewer"><code class="docutils literal notranslate"><span class="pre">Viewer</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.widgets.image_viewer.Viewer.keyPressEvent"><code class="docutils literal notranslate"><span class="pre">Viewer.keyPressEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.widgets.image_viewer.Viewer.paintEvent"><code class="docutils literal notranslate"><span class="pre">Viewer.paintEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.widgets.image_viewer.Viewer.wheelEvent"><code class="docutils literal notranslate"><span class="pre">Viewer.wheelEvent()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.widgets.image_viewer.get_item_info"><code class="docutils literal notranslate"><span class="pre">get_item_info()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.widgets.image_viewer.show"><code class="docutils literal notranslate"><span class="pre">show()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
@@ -602,7 +635,9 @@ Defaults to <cite>False</cite>.</p></li>
 </div><script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/scripts/furo.js"></script>
     <script src="../../../_static/design-tabs.js"></script>
     </body>

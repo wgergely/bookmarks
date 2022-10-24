@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Developer documentation page for the Bookmarks python modules" name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="items.task_items" href="task_items.html" /><link rel="prev" title="items.file_items" href="file_items.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/items/models.html" />
 
-    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
         <title>items.models - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
@@ -173,7 +173,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -335,6 +335,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
@@ -368,14 +369,14 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
           <div class="section" id="module-bookmarks.items.models">
-<span id="items-models"></span><h1>items.models<a class="headerlink" href="#module-bookmarks.items.models" title="Permalink to this headline">#</a></h1>
+<span id="items-models"></span><h1>items.models<a class="headerlink" href="#module-bookmarks.items.models" title="Permalink to this heading">#</a></h1>
 <p>Defines the base model used to display bookmark, asset and files items.</p>
 <p>The model loads and reset data via the <a class="reference internal" href="#bookmarks.items.models.ItemModel.init_data" title="bookmarks.items.models.ItemModel.init_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ItemModel.init_data()</span></code></a> and
 <a class="reference internal" href="#bookmarks.items.models.ItemModel.reset_data" title="bookmarks.items.models.ItemModel.reset_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ItemModel.reset_data()</span></code></a> methods.</p>
@@ -397,8 +398,8 @@ threads to offload work. The model’s associated threads are defined by overrid
 <p>Each base model is nested inside a QSortFilterProxy used for filtering <strong>only</strong>. Sorting
 is implemented separately to run directly over the source data.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -414,8 +415,8 @@ is implemented separately to run directly over the source data.</p>
 </table>
 </div>
 <p><strong>Functions:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -431,8 +432,8 @@ is implemented separately to run directly over the source data.</p>
 </table>
 </div>
 <p><strong>Data:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -447,7 +448,7 @@ is implemented separately to run directly over the source data.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.items.models.FilterProxyModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.models.</span></span><span class="sig-name descname"><span class="pre">FilterProxyModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/models.html#FilterProxyModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.models.FilterProxyModel" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtCore.QSortFilterProxyModel</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QSortFilterProxyModel</span></code></p>
 <p>Proxy model responsible for data filtering.</p>
 <p>We filter items using item flags defined in <a class="reference internal" href="../common/core.html#module-bookmarks.common.core" title="bookmarks.common.core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">bookmarks.common.core</span></code></a> and their
 display and description roles. Sorting is not implemented by this model, and instead is
@@ -488,8 +489,8 @@ text.</p>
 </dd></dl>
 
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -642,7 +643,7 @@ remain hidden when they’re not meant to be visible.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.items.models.ItemModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.items.models.</span></span><span class="sig-name descname"><span class="pre">ItemModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/items/models.html#ItemModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.models.ItemModel" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtCore.QAbstractTableModel</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QAbstractTableModel</span></code></p>
 <p>The base model used for interacting with all bookmark, asset and file items.</p>
 <p>Data is stored in the datacache module that can be fetched using the model’s
 <cite>source_path</cite>, <cite>task</cite> and <cite>data_type</cite>.</p>
@@ -743,8 +744,8 @@ repaint is requested.</p>
 </dd></dl>
 
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -955,7 +956,7 @@ in a dictionary object inside the user settings file.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.items.models.ItemModel.headerData">
-<span class="sig-name descname"><span class="pre">headerData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.Qt.Orientation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PySide2.QtCore.Qt.ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">typing.Any</span></span></span><a class="reference internal" href="../../_modules/bookmarks/items/models.html#ItemModel.headerData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.models.ItemModel.headerData" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">headerData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.Qt.Orientation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PySide2.QtCore.Qt.ItemDataRole.DisplayRole</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../_modules/bookmarks/items/models.html#ItemModel.headerData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.items.models.ItemModel.headerData" title="Permalink to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -1220,8 +1221,98 @@ signals.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">items.models</a><ul>
+<li><a class="reference internal" href="#bookmarks.items.models.FilterProxyModel"><code class="docutils literal notranslate"><span class="pre">FilterProxyModel</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.models.FilterProxyModel.filterFlagChanged"><code class="docutils literal notranslate"><span class="pre">FilterProxyModel.filterFlagChanged</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.FilterProxyModel.filterTextChanged"><code class="docutils literal notranslate"><span class="pre">FilterProxyModel.filterTextChanged</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.FilterProxyModel.invalidated"><code class="docutils literal notranslate"><span class="pre">FilterProxyModel.invalidated</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.FilterProxyModel.delayed_invalidate"><code class="docutils literal notranslate"><span class="pre">FilterProxyModel.delayed_invalidate()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.FilterProxyModel.filterAcceptsColumn"><code class="docutils literal notranslate"><span class="pre">FilterProxyModel.filterAcceptsColumn()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.FilterProxyModel.filterAcceptsRow"><code class="docutils literal notranslate"><span class="pre">FilterProxyModel.filterAcceptsRow()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.FilterProxyModel.filter_flag"><code class="docutils literal notranslate"><span class="pre">FilterProxyModel.filter_flag()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.FilterProxyModel.filter_text"><code class="docutils literal notranslate"><span class="pre">FilterProxyModel.filter_text()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.FilterProxyModel.init_filter_values"><code class="docutils literal notranslate"><span class="pre">FilterProxyModel.init_filter_values()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.FilterProxyModel.invalidate"><code class="docutils literal notranslate"><span class="pre">FilterProxyModel.invalidate()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.FilterProxyModel.invalidateFilter"><code class="docutils literal notranslate"><span class="pre">FilterProxyModel.invalidateFilter()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.FilterProxyModel.reset"><code class="docutils literal notranslate"><span class="pre">FilterProxyModel.reset()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.FilterProxyModel.save_history"><code class="docutils literal notranslate"><span class="pre">FilterProxyModel.save_history()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.FilterProxyModel.set_filter_flag"><code class="docutils literal notranslate"><span class="pre">FilterProxyModel.set_filter_flag()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.FilterProxyModel.set_filter_text"><code class="docutils literal notranslate"><span class="pre">FilterProxyModel.set_filter_text()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.FilterProxyModel.sort"><code class="docutils literal notranslate"><span class="pre">FilterProxyModel.sort()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.FilterProxyModel.verify"><code class="docutils literal notranslate"><span class="pre">FilterProxyModel.verify()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel"><code class="docutils literal notranslate"><span class="pre">ItemModel</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.coreDataLoaded"><code class="docutils literal notranslate"><span class="pre">ItemModel.coreDataLoaded</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.coreDataReset"><code class="docutils literal notranslate"><span class="pre">ItemModel.coreDataReset</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.dataTypeSorted"><code class="docutils literal notranslate"><span class="pre">ItemModel.dataTypeSorted</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.sortingChanged"><code class="docutils literal notranslate"><span class="pre">ItemModel.sortingChanged</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.activeChanged"><code class="docutils literal notranslate"><span class="pre">ItemModel.activeChanged</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.dataTypeChanged"><code class="docutils literal notranslate"><span class="pre">ItemModel.dataTypeChanged</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.updateIndex"><code class="docutils literal notranslate"><span class="pre">ItemModel.updateIndex</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.queues"><code class="docutils literal notranslate"><span class="pre">ItemModel.queues</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.active_index"><code class="docutils literal notranslate"><span class="pre">ItemModel.active_index()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.canDropMimeData"><code class="docutils literal notranslate"><span class="pre">ItemModel.canDropMimeData()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.columnCount"><code class="docutils literal notranslate"><span class="pre">ItemModel.columnCount()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.data"><code class="docutils literal notranslate"><span class="pre">ItemModel.data()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.data_type"><code class="docutils literal notranslate"><span class="pre">ItemModel.data_type()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.default_row_size"><code class="docutils literal notranslate"><span class="pre">ItemModel.default_row_size()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.dropMimeData"><code class="docutils literal notranslate"><span class="pre">ItemModel.dropMimeData()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.emit_reset_model"><code class="docutils literal notranslate"><span class="pre">ItemModel.emit_reset_model()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.filter_setting_dict_key"><code class="docutils literal notranslate"><span class="pre">ItemModel.filter_setting_dict_key()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.flags"><code class="docutils literal notranslate"><span class="pre">ItemModel.flags()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.get_filter_setting"><code class="docutils literal notranslate"><span class="pre">ItemModel.get_filter_setting()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.headerData"><code class="docutils literal notranslate"><span class="pre">ItemModel.headerData()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.init_data"><code class="docutils literal notranslate"><span class="pre">ItemModel.init_data()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.init_row_size"><code class="docutils literal notranslate"><span class="pre">ItemModel.init_row_size()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.init_sort_values"><code class="docutils literal notranslate"><span class="pre">ItemModel.init_sort_values()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.is_data_type_loaded"><code class="docutils literal notranslate"><span class="pre">ItemModel.is_data_type_loaded()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.item_generator"><code class="docutils literal notranslate"><span class="pre">ItemModel.item_generator()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.mimeData"><code class="docutils literal notranslate"><span class="pre">ItemModel.mimeData()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.model_data"><code class="docutils literal notranslate"><span class="pre">ItemModel.model_data()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.parent"><code class="docutils literal notranslate"><span class="pre">ItemModel.parent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.reset_data"><code class="docutils literal notranslate"><span class="pre">ItemModel.reset_data()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.rowCount"><code class="docutils literal notranslate"><span class="pre">ItemModel.rowCount()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.save_active"><code class="docutils literal notranslate"><span class="pre">ItemModel.save_active()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.setData"><code class="docutils literal notranslate"><span class="pre">ItemModel.setData()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.set_active"><code class="docutils literal notranslate"><span class="pre">ItemModel.set_active()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.set_filter_setting"><code class="docutils literal notranslate"><span class="pre">ItemModel.set_filter_setting()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.set_interrupt_requested"><code class="docutils literal notranslate"><span class="pre">ItemModel.set_interrupt_requested()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.set_sort_by"><code class="docutils literal notranslate"><span class="pre">ItemModel.set_sort_by()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.set_sort_order"><code class="docutils literal notranslate"><span class="pre">ItemModel.set_sort_order()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.set_sorting"><code class="docutils literal notranslate"><span class="pre">ItemModel.set_sorting()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.sort_by"><code class="docutils literal notranslate"><span class="pre">ItemModel.sort_by()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.sort_data"><code class="docutils literal notranslate"><span class="pre">ItemModel.sort_data()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.sort_order"><code class="docutils literal notranslate"><span class="pre">ItemModel.sort_order()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.source_path"><code class="docutils literal notranslate"><span class="pre">ItemModel.source_path()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.supportedDragActions"><code class="docutils literal notranslate"><span class="pre">ItemModel.supportedDragActions()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.supportedDropActions"><code class="docutils literal notranslate"><span class="pre">ItemModel.supportedDropActions()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.task"><code class="docutils literal notranslate"><span class="pre">ItemModel.task()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.ItemModel.unset_active"><code class="docutils literal notranslate"><span class="pre">ItemModel.unset_active()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.items.models.filter_includes_row"><code class="docutils literal notranslate"><span class="pre">filter_includes_row()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.initdata"><code class="docutils literal notranslate"><span class="pre">initdata()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.items.models.DEFAULT_SORT_BY_NAME_ROLE"><code class="docutils literal notranslate"><span class="pre">DEFAULT_SORT_BY_NAME_ROLE</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
@@ -1229,7 +1320,9 @@ signals.</p>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     </body>

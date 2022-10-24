@@ -1013,14 +1013,15 @@
         <span class="k">return</span></div>
 
     <span class="k">def</span> <span class="nf">asset_progress_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">on_icon</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">get_icon</span><span class="p">(</span><span class="s1">&#39;check&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_green</span><span class="p">))</span>
-        <span class="n">off_icon</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">get_icon</span><span class="p">(</span><span class="s1">&#39;showbuttons&#39;</span><span class="p">)</span>
+        <span class="n">on_icon</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">get_icon</span><span class="p">(</span><span class="s1">&#39;showbuttons&#39;</span><span class="p">)</span>
+        <span class="n">off_icon</span> <span class="o">=</span> <span class="n">ui</span><span class="o">.</span><span class="n">get_icon</span><span class="p">(</span><span class="s1">&#39;showbuttons&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">color</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">color_green</span><span class="p">))</span>
         <span class="n">icon</span> <span class="o">=</span> <span class="n">on_icon</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">progress_hidden</span><span class="p">()</span> <span class="k">else</span> <span class="n">off_icon</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="s1">&#39;Show&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">()</span><span class="o">.</span><span class="n">progress_hidden</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;Hide&#39;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">separator</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">menu</span><span class="p">[</span><span class="n">key</span><span class="p">()]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;Toggle Progress Tracker&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s1"> Progress Tracker&#39;</span><span class="p">,</span>
             <span class="s1">&#39;icon&#39;</span><span class="p">:</span> <span class="n">icon</span><span class="p">,</span>
             <span class="s1">&#39;action&#39;</span><span class="p">:</span> <span class="n">actions</span><span class="o">.</span><span class="n">toggle_progress_columns</span><span class="p">,</span>
         <span class="p">}</span>

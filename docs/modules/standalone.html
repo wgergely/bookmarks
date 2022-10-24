@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Developer documentation page for the Bookmarks python modules" name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="statusbar" href="statusbar.html" /><link rel="prev" title="slack.slack" href="slack/slack.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/standalone.html" />
 
-    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
         <title>standalone - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
@@ -173,7 +173,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -335,6 +335,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
@@ -368,22 +369,22 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
           <div class="section" id="module-bookmarks.standalone">
-<span id="standalone"></span><h1>standalone<a class="headerlink" href="#module-bookmarks.standalone" title="Permalink to this headline">#</a></h1>
+<span id="standalone"></span><h1>standalone<a class="headerlink" href="#module-bookmarks.standalone" title="Permalink to this heading">#</a></h1>
 <p>The module contains the elements used when initialized in <a class="reference internal" href="common/core.html#bookmarks.common.core.StandaloneMode" title="bookmarks.common.core.StandaloneMode"><code class="xref py py-attr docutils literal notranslate"><span class="pre">StandaloneMode</span></code></a>.</p>
 <p>It defines <a class="reference internal" href="#bookmarks.standalone.BookmarksApp" title="bookmarks.standalone.BookmarksApp"><code class="xref py py-class docutils literal notranslate"><span class="pre">BookmarksApp</span></code></a>, Bookmark’s custom QApplication, and
 <a class="reference internal" href="#bookmarks.standalone.BookmarksAppWindow" title="bookmarks.standalone.BookmarksAppWindow"><code class="xref py py-class docutils literal notranslate"><span class="pre">BookmarksAppWindow</span></code></a>, a modified <a class="reference internal" href="main.html#bookmarks.main.MainWidget" title="bookmarks.main.MainWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">main.MainWidget</span></code></a>.</p>
 <p>Note, in <a class="reference internal" href="common/core.html#bookmarks.common.core.EmbeddedMode" title="bookmarks.common.core.EmbeddedMode"><code class="xref py py-attr docutils literal notranslate"><span class="pre">EmbeddedMode</span></code></a>, Bookmarks uses <a class="reference internal" href="main.html#bookmarks.main.MainWidget" title="bookmarks.main.MainWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">main.MainWidget</span></code></a> as the main
 widget.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -414,8 +415,8 @@ widget.</p>
 </table>
 </div>
 <p><strong>Functions:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -436,14 +437,14 @@ widget.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.standalone.BookmarksApp">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.standalone.</span></span><span class="sig-name descname"><span class="pre">BookmarksApp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/standalone.html#BookmarksApp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.standalone.BookmarksApp" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QApplication</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QApplication</span></code></p>
 <p>A customized QApplication used by Bookmarks to run in standalone mode.</p>
 <p>The app will start with OpenGL and high dpi support and initializes
 the submodules.</p>
 <p>See <code class="xref py py-func docutils literal notranslate"><span class="pre">bookmarks.exec()</span></code>.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -466,11 +467,11 @@ the submodules.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.standalone.BookmarksAppWindow">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.standalone.</span></span><span class="sig-name descname"><span class="pre">BookmarksAppWindow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/standalone.html#BookmarksAppWindow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.standalone.BookmarksAppWindow" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="main.html#bookmarks.main.MainWidget" title="bookmarks.main.MainWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.main.MainWidget</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="main.html#bookmarks.main.MainWidget" title="bookmarks.main.MainWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">MainWidget</span></code></a></p>
 <p>The main application window.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -529,18 +530,18 @@ the submodules.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.standalone.CloseButton">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.standalone.</span></span><span class="sig-name descname"><span class="pre">CloseButton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/standalone.html#CloseButton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.standalone.CloseButton" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="ui.html#bookmarks.ui.ClickableIconButton" title="bookmarks.ui.ClickableIconButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.ui.ClickableIconButton</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="ui.html#bookmarks.ui.ClickableIconButton" title="bookmarks.ui.ClickableIconButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClickableIconButton</span></code></a></p>
 <p>Button used to close/hide a widget or window.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.standalone.HeaderWidget">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.standalone.</span></span><span class="sig-name descname"><span class="pre">HeaderWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/standalone.html#HeaderWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.standalone.HeaderWidget" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QWidget</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
 <p>Horizontal widget for controlling the position of the active window.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -590,19 +591,19 @@ the submodules.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.standalone.MinimizeButton">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.standalone.</span></span><span class="sig-name descname"><span class="pre">MinimizeButton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/standalone.html#MinimizeButton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.standalone.MinimizeButton" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="ui.html#bookmarks.ui.ClickableIconButton" title="bookmarks.ui.ClickableIconButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.ui.ClickableIconButton</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="ui.html#bookmarks.ui.ClickableIconButton" title="bookmarks.ui.ClickableIconButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClickableIconButton</span></code></a></p>
 <p>Custom QLabel with a <cite>clicked</cite> signal.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.standalone.Tray">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.standalone.</span></span><span class="sig-name descname"><span class="pre">Tray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/standalone.html#Tray"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.standalone.Tray" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QSystemTrayIcon</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QSystemTrayIcon</span></code></p>
 <p>A system tray icon used to control Bookmarks from the Windows Task Bar
 (on Windows).</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -634,11 +635,11 @@ the submodules.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.standalone.TrayMenu">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.standalone.</span></span><span class="sig-name descname"><span class="pre">TrayMenu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/standalone.html#TrayMenu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.standalone.TrayMenu" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="contextmenu.html#bookmarks.contextmenu.BaseContextMenu" title="bookmarks.contextmenu.BaseContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.contextmenu.BaseContextMenu</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="contextmenu.html#bookmarks.contextmenu.BaseContextMenu" title="bookmarks.contextmenu.BaseContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseContextMenu</span></code></a></p>
 <p>The context menu associated with <a class="reference internal" href="#bookmarks.standalone.Tray" title="bookmarks.standalone.Tray"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tray</span></code></a>.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -732,8 +733,60 @@ the submodules.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">standalone</a><ul>
+<li><a class="reference internal" href="#bookmarks.standalone.BookmarksApp"><code class="docutils literal notranslate"><span class="pre">BookmarksApp</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.standalone.BookmarksApp.eventFilter"><code class="docutils literal notranslate"><span class="pre">BookmarksApp.eventFilter()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.standalone.BookmarksAppWindow"><code class="docutils literal notranslate"><span class="pre">BookmarksAppWindow</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.standalone.BookmarksAppWindow.changeEvent"><code class="docutils literal notranslate"><span class="pre">BookmarksAppWindow.changeEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.standalone.BookmarksAppWindow.closeEvent"><code class="docutils literal notranslate"><span class="pre">BookmarksAppWindow.closeEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.standalone.BookmarksAppWindow.hideEvent"><code class="docutils literal notranslate"><span class="pre">BookmarksAppWindow.hideEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.standalone.BookmarksAppWindow.showEvent"><code class="docutils literal notranslate"><span class="pre">BookmarksAppWindow.showEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.standalone.BookmarksAppWindow.update_window_flags"><code class="docutils literal notranslate"><span class="pre">BookmarksAppWindow.update_window_flags()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.standalone.CloseButton"><code class="docutils literal notranslate"><span class="pre">CloseButton</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.standalone.HeaderWidget"><code class="docutils literal notranslate"><span class="pre">HeaderWidget</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.standalone.HeaderWidget.contextMenuEvent"><code class="docutils literal notranslate"><span class="pre">HeaderWidget.contextMenuEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.standalone.HeaderWidget.mouseDoubleClickEvent"><code class="docutils literal notranslate"><span class="pre">HeaderWidget.mouseDoubleClickEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.standalone.HeaderWidget.mouseMoveEvent"><code class="docutils literal notranslate"><span class="pre">HeaderWidget.mouseMoveEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.standalone.HeaderWidget.mousePressEvent"><code class="docutils literal notranslate"><span class="pre">HeaderWidget.mousePressEvent()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.standalone.MinimizeButton"><code class="docutils literal notranslate"><span class="pre">MinimizeButton</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.standalone.Tray"><code class="docutils literal notranslate"><span class="pre">Tray</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.standalone.Tray.tray_activated"><code class="docutils literal notranslate"><span class="pre">Tray.tray_activated()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.standalone.Tray.window"><code class="docutils literal notranslate"><span class="pre">Tray.window()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.standalone.TrayMenu"><code class="docutils literal notranslate"><span class="pre">TrayMenu</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.standalone.TrayMenu.setup"><code class="docutils literal notranslate"><span class="pre">TrayMenu.setup()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.standalone.TrayMenu.tray_menu"><code class="docutils literal notranslate"><span class="pre">TrayMenu.tray_menu()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.standalone.init"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.standalone.init_tray"><code class="docutils literal notranslate"><span class="pre">init_tray()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.standalone.show"><code class="docutils literal notranslate"><span class="pre">show()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
@@ -741,7 +794,9 @@ the submodules.</p>
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/design-tabs.js"></script>
     </body>

@@ -808,7 +808,7 @@
     <span class="k">return</span> <span class="kc">None</span></div>
 
 
-<div class="viewcode-block" id="get_links"><a class="viewcode-back" href="../../../modules/common/core.html#bookmarks.common.core.get_links">[docs]</a><span class="k">def</span> <span class="nf">get_links</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="s1">&#39;links/assets&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="get_links"><a class="viewcode-back" href="../../../modules/common/core.html#bookmarks.common.core.get_links">[docs]</a><span class="k">def</span> <span class="nf">get_links</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="s1">&#39;links/asset&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Returns a list of file links defined in a ``.links`` file.</span>
 
 <span class="sd">    .link files are simple QSettings ini files that define a list of paths relative to the</span>
@@ -831,10 +831,10 @@
 <span class="sd">    (but not the original root `asset`).</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        path (str): Path to a folder.</span>
+<span class="sd">        path (str): Path to a folder where the link file resides. E.g. an asset root folder.</span>
 <span class="sd">        section (str):</span>
 <span class="sd">            The settings section to look for links in.</span>
-<span class="sd">            Optional. Defaults to &#39;links/assets&#39;.</span>
+<span class="sd">            Optional. Defaults to &#39;links/asset&#39;.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        list: A list of relative file paths.</span>
@@ -859,6 +859,36 @@
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">links</span><span class="p">)</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">[]</span></div>
+
+
+<div class="viewcode-block" id="add_link"><a class="viewcode-back" href="../../../modules/common/core.html#bookmarks.common.core.add_link">[docs]</a><span class="k">def</span> <span class="nf">add_link</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">link</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="s1">&#39;links/asset&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add a relative link to a link config file fount in the root of &quot;path&quot;.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path (str): Path to a folder where the link file resides. E.g. an asset root folder.</span>
+<span class="sd">        link (str): Relative path to the link file.</span>
+<span class="sd">        section (str):</span>
+<span class="sd">            The settings section to look for links in. Defaults to `links/assets`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">link_file</span><span class="si">}</span><span class="s1">&#39;</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSettings</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSettings</span><span class="o">.</span><span class="n">IniFormat</span><span class="p">)</span>
+
+    <span class="n">links</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileInfo</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="n">links</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+    <span class="n">links</span> <span class="o">=</span> <span class="n">links</span> <span class="k">if</span> <span class="n">links</span> <span class="k">else</span> <span class="p">[]</span>
+
+    <span class="c1"># Make sure the link points to a valid file</span>
+    <span class="n">file_info</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileInfo</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">link</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">file_info</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">file_info</span><span class="o">.</span><span class="n">filePath</span><span class="p">()</span><span class="si">}</span><span class="s1"> does not exist&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">link</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">links</span><span class="p">:</span>
+        <span class="n">links</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">link</span><span class="p">)</span>
+        <span class="n">links</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">links</span><span class="p">))</span>
+    <span class="n">s</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">links</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
 
 
 <div class="viewcode-block" id="byte_to_pretty_string"><a class="viewcode-back" href="../../../modules/common/core.html#bookmarks.common.core.byte_to_pretty_string">[docs]</a><span class="k">def</span> <span class="nf">byte_to_pretty_string</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s1">&#39;B&#39;</span><span class="p">):</span>

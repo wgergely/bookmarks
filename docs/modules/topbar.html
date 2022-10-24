@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Developer documentation page for the Bookmarks python modules" name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="topbar.buttons" href="topbar/buttons.html" /><link rel="prev" title="tokens.tokens_editor" href="tokens/tokens_editor.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/topbar.html" />
 
-    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
         <title>topbar - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
@@ -335,6 +335,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
@@ -375,15 +376,105 @@
         </div>
         <article role="main">
           <div class="section" id="module-bookmarks.topbar">
-<span id="topbar"></span><h1>topbar<a class="headerlink" href="#module-bookmarks.topbar" title="Permalink to this headline">#</a></h1>
+<span id="topbar"></span><h1>topbar<a class="headerlink" href="#module-bookmarks.topbar" title="Permalink to this heading">#</a></h1>
 <p>Defines the main top bar widget used to control the current item tab, and filter
 settings.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="topbar/buttons.html">topbar.buttons</a></li>
-<li class="toctree-l1"><a class="reference internal" href="topbar/quickswitch.html">topbar.quickswitch</a></li>
-<li class="toctree-l1"><a class="reference internal" href="topbar/tabs.html">topbar.tabs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="topbar/topbar.html">topbar.topbar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topbar/buttons.html">topbar.buttons</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="topbar/buttons.html#bookmarks.topbar.buttons.BaseControlButton"><code class="docutils literal notranslate"><span class="pre">BaseControlButton</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="topbar/buttons.html#bookmarks.topbar.buttons.FilterButton"><code class="docutils literal notranslate"><span class="pre">FilterButton</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="topbar/buttons.html#bookmarks.topbar.buttons.FilterButton.contextMenuEvent"><code class="docutils literal notranslate"><span class="pre">FilterButton.contextMenuEvent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="topbar/buttons.html#bookmarks.topbar.buttons.FilterButton.mouseReleaseEvent"><code class="docutils literal notranslate"><span class="pre">FilterButton.mouseReleaseEvent()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="topbar/buttons.html#bookmarks.topbar.buttons.FilterHistoryMenu"><code class="docutils literal notranslate"><span class="pre">FilterHistoryMenu</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="topbar/buttons.html#bookmarks.topbar.buttons.FilterHistoryMenu.setup"><code class="docutils literal notranslate"><span class="pre">FilterHistoryMenu.setup()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="topbar/buttons.html#bookmarks.topbar.buttons.RefreshButton"><code class="docutils literal notranslate"><span class="pre">RefreshButton</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="topbar/buttons.html#bookmarks.topbar.buttons.RefreshButton.state"><code class="docutils literal notranslate"><span class="pre">RefreshButton.state()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="topbar/buttons.html#bookmarks.topbar.buttons.SlackButton"><code class="docutils literal notranslate"><span class="pre">SlackButton</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="topbar/buttons.html#bookmarks.topbar.buttons.SlackButton.action"><code class="docutils literal notranslate"><span class="pre">SlackButton.action()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="topbar/buttons.html#bookmarks.topbar.buttons.SlackButton.check_token"><code class="docutils literal notranslate"><span class="pre">SlackButton.check_token()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="topbar/buttons.html#bookmarks.topbar.buttons.ToggleArchivedButton"><code class="docutils literal notranslate"><span class="pre">ToggleArchivedButton</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="topbar/buttons.html#bookmarks.topbar.buttons.ToggleArchivedButton.pixmap"><code class="docutils literal notranslate"><span class="pre">ToggleArchivedButton.pixmap()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="topbar/buttons.html#bookmarks.topbar.buttons.ToggleFavouriteButton"><code class="docutils literal notranslate"><span class="pre">ToggleFavouriteButton</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="topbar/buttons.html#bookmarks.topbar.buttons.ToggleFavouriteButton.update"><code class="docutils literal notranslate"><span class="pre">ToggleFavouriteButton.update()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="topbar/buttons.html#bookmarks.topbar.buttons.ToggleInlineIcons"><code class="docutils literal notranslate"><span class="pre">ToggleInlineIcons</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="topbar/buttons.html#bookmarks.topbar.buttons.ToggleSequenceButton"><code class="docutils literal notranslate"><span class="pre">ToggleSequenceButton</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="topbar/buttons.html#bookmarks.topbar.buttons.ToggleSequenceButton.pixmap"><code class="docutils literal notranslate"><span class="pre">ToggleSequenceButton.pixmap()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="topbar/buttons.html#bookmarks.topbar.buttons.ToggleSequenceButton.update"><code class="docutils literal notranslate"><span class="pre">ToggleSequenceButton.update()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="topbar/quickswitch.html">topbar.quickswitch</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="topbar/quickswitch.html#bookmarks.topbar.quickswitch.BaseQuickSwitchMenu"><code class="docutils literal notranslate"><span class="pre">BaseQuickSwitchMenu</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="topbar/quickswitch.html#bookmarks.topbar.quickswitch.BaseQuickSwitchMenu.add_switch_menu"><code class="docutils literal notranslate"><span class="pre">BaseQuickSwitchMenu.add_switch_menu()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="topbar/quickswitch.html#bookmarks.topbar.quickswitch.SwitchAssetMenu"><code class="docutils literal notranslate"><span class="pre">SwitchAssetMenu</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="topbar/quickswitch.html#bookmarks.topbar.quickswitch.SwitchAssetMenu.setup"><code class="docutils literal notranslate"><span class="pre">SwitchAssetMenu.setup()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="topbar/quickswitch.html#bookmarks.topbar.quickswitch.SwitchBookmarkMenu"><code class="docutils literal notranslate"><span class="pre">SwitchBookmarkMenu</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="topbar/quickswitch.html#bookmarks.topbar.quickswitch.SwitchBookmarkMenu.setup"><code class="docutils literal notranslate"><span class="pre">SwitchBookmarkMenu.setup()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="topbar/tabs.html">topbar.tabs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="topbar/tabs.html#bookmarks.topbar.tabs.AssetsTabButton"><code class="docutils literal notranslate"><span class="pre">AssetsTabButton</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="topbar/tabs.html#bookmarks.topbar.tabs.AssetsTabButton.contextMenuEvent"><code class="docutils literal notranslate"><span class="pre">AssetsTabButton.contextMenuEvent()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="topbar/tabs.html#bookmarks.topbar.tabs.BaseTabButton"><code class="docutils literal notranslate"><span class="pre">BaseTabButton</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="topbar/tabs.html#bookmarks.topbar.tabs.BaseTabButton.adjust_size"><code class="docutils literal notranslate"><span class="pre">BaseTabButton.adjust_size()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="topbar/tabs.html#bookmarks.topbar.tabs.BaseTabButton.enterEvent"><code class="docutils literal notranslate"><span class="pre">BaseTabButton.enterEvent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="topbar/tabs.html#bookmarks.topbar.tabs.BaseTabButton.leaveEvent"><code class="docutils literal notranslate"><span class="pre">BaseTabButton.leaveEvent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="topbar/tabs.html#bookmarks.topbar.tabs.BaseTabButton.mouseDoubleClickEvent"><code class="docutils literal notranslate"><span class="pre">BaseTabButton.mouseDoubleClickEvent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="topbar/tabs.html#bookmarks.topbar.tabs.BaseTabButton.mouseReleaseEvent"><code class="docutils literal notranslate"><span class="pre">BaseTabButton.mouseReleaseEvent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="topbar/tabs.html#bookmarks.topbar.tabs.BaseTabButton.paintEvent"><code class="docutils literal notranslate"><span class="pre">BaseTabButton.paintEvent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="topbar/tabs.html#bookmarks.topbar.tabs.BaseTabButton.showEvent"><code class="docutils literal notranslate"><span class="pre">BaseTabButton.showEvent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="topbar/tabs.html#bookmarks.topbar.tabs.BaseTabButton.text"><code class="docutils literal notranslate"><span class="pre">BaseTabButton.text()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="topbar/tabs.html#bookmarks.topbar.tabs.BookmarksTabButton"><code class="docutils literal notranslate"><span class="pre">BookmarksTabButton</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="topbar/tabs.html#bookmarks.topbar.tabs.BookmarksTabButton.contextMenuEvent"><code class="docutils literal notranslate"><span class="pre">BookmarksTabButton.contextMenuEvent()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="topbar/tabs.html#bookmarks.topbar.tabs.FavouritesTabButton"><code class="docutils literal notranslate"><span class="pre">FavouritesTabButton</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="topbar/tabs.html#bookmarks.topbar.tabs.FilesTabButton"><code class="docutils literal notranslate"><span class="pre">FilesTabButton</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="topbar/tabs.html#bookmarks.topbar.tabs.FilesTabButton.contextMenuEvent"><code class="docutils literal notranslate"><span class="pre">FilesTabButton.contextMenuEvent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="topbar/tabs.html#bookmarks.topbar.tabs.FilesTabButton.paintEvent"><code class="docutils literal notranslate"><span class="pre">FilesTabButton.paintEvent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="topbar/tabs.html#bookmarks.topbar.tabs.FilesTabButton.text"><code class="docutils literal notranslate"><span class="pre">FilesTabButton.text()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="topbar/topbar.html">topbar.topbar</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="topbar/topbar.html#bookmarks.topbar.topbar.SlackDropAreaWidget"><code class="docutils literal notranslate"><span class="pre">SlackDropAreaWidget</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="topbar/topbar.html#bookmarks.topbar.topbar.SlackDropAreaWidget.dragEnterEvent"><code class="docutils literal notranslate"><span class="pre">SlackDropAreaWidget.dragEnterEvent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="topbar/topbar.html#bookmarks.topbar.topbar.SlackDropAreaWidget.dropEvent"><code class="docutils literal notranslate"><span class="pre">SlackDropAreaWidget.dropEvent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="topbar/topbar.html#bookmarks.topbar.topbar.SlackDropAreaWidget.paintEvent"><code class="docutils literal notranslate"><span class="pre">SlackDropAreaWidget.paintEvent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="topbar/topbar.html#bookmarks.topbar.topbar.SlackDropAreaWidget.showEvent"><code class="docutils literal notranslate"><span class="pre">SlackDropAreaWidget.showEvent()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="topbar/topbar.html#bookmarks.topbar.topbar.TopBarWidget"><code class="docutils literal notranslate"><span class="pre">TopBarWidget</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="topbar/topbar.html#bookmarks.topbar.topbar.TopBarWidget.paintEvent"><code class="docutils literal notranslate"><span class="pre">TopBarWidget.paintEvent()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -442,7 +533,9 @@ settings.</p>
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/design-tabs.js"></script>
     </body>

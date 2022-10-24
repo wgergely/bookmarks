@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Developer documentation page for the Bookmarks python modules" name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="tokens.tokens" href="tokens/tokens.html" /><link rel="prev" title="threads.workers" href="threads/workers.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/tokens.html" />
 
-    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
         <title>tokens - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
@@ -335,6 +335,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
@@ -375,7 +376,7 @@
         </div>
         <article role="main">
           <div class="section" id="module-bookmarks.tokens">
-<span id="tokens"></span><h1>tokens<a class="headerlink" href="#module-bookmarks.tokens" title="Permalink to this headline">#</a></h1>
+<span id="tokens"></span><h1>tokens<a class="headerlink" href="#module-bookmarks.tokens" title="Permalink to this heading">#</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">Tokens</span></code> are properties associated with bookmark items and hold some generic file
 and folder definitions of asset items.</p>
 <p>This information can be used, for instance, to suggest default save locations
@@ -391,8 +392,48 @@ interface or the ui elements defined in <a class="reference internal" href="toke
 editor widgets are embedded in the standard bookmark item editor widget.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="tokens/tokens.html">tokens.tokens</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tokens/tokens_editor.html">tokens.tokens_editor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tokens/tokens.html">tokens.tokens</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.TokenConfig"><code class="docutils literal notranslate"><span class="pre">TokenConfig</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.TokenConfig.data"><code class="docutils literal notranslate"><span class="pre">TokenConfig.data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.TokenConfig.dump_json"><code class="docutils literal notranslate"><span class="pre">TokenConfig.dump_json()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.TokenConfig.expand_tokens"><code class="docutils literal notranslate"><span class="pre">TokenConfig.expand_tokens()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.TokenConfig.get_asset_folder"><code class="docutils literal notranslate"><span class="pre">TokenConfig.get_asset_folder()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.TokenConfig.get_asset_subfolder"><code class="docutils literal notranslate"><span class="pre">TokenConfig.get_asset_subfolder()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.TokenConfig.get_asset_subfolders"><code class="docutils literal notranslate"><span class="pre">TokenConfig.get_asset_subfolders()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.TokenConfig.get_description"><code class="docutils literal notranslate"><span class="pre">TokenConfig.get_description()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.TokenConfig.get_extensions"><code class="docutils literal notranslate"><span class="pre">TokenConfig.get_extensions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.TokenConfig.get_task_extensions"><code class="docutils literal notranslate"><span class="pre">TokenConfig.get_task_extensions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.TokenConfig.get_tokens"><code class="docutils literal notranslate"><span class="pre">TokenConfig.get_tokens()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.TokenConfig.set_data"><code class="docutils literal notranslate"><span class="pre">TokenConfig.set_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.get"><code class="docutils literal notranslate"><span class="pre">get()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.get_description"><code class="docutils literal notranslate"><span class="pre">get_description()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.get_folder"><code class="docutils literal notranslate"><span class="pre">get_folder()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.get_subfolder"><code class="docutils literal notranslate"><span class="pre">get_subfolder()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.get_subfolders"><code class="docutils literal notranslate"><span class="pre">get_subfolders()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.DEFAULT_TOKEN_CONFIG"><code class="docutils literal notranslate"><span class="pre">DEFAULT_TOKEN_CONFIG</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.TOKENS_DB_KEY"><code class="docutils literal notranslate"><span class="pre">TOKENS_DB_KEY</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tokens/tokens.html#bookmarks.tokens.tokens.invalid_token"><code class="docutils literal notranslate"><span class="pre">invalid_token</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tokens/tokens_editor.html">tokens.tokens_editor</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tokens/tokens_editor.html#bookmarks.tokens.tokens_editor.FormatEditor"><code class="docutils literal notranslate"><span class="pre">FormatEditor</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tokens/tokens_editor.html#bookmarks.tokens.tokens_editor.SubfolderEditor"><code class="docutils literal notranslate"><span class="pre">SubfolderEditor</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tokens/tokens_editor.html#bookmarks.tokens.tokens_editor.TokenConfigEditor"><code class="docutils literal notranslate"><span class="pre">TokenConfigEditor</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tokens/tokens_editor.html#bookmarks.tokens.tokens_editor.TokenConfigEditor.contextMenuEvent"><code class="docutils literal notranslate"><span class="pre">TokenConfigEditor.contextMenuEvent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tokens/tokens_editor.html#bookmarks.tokens.tokens_editor.TokenConfigEditor.init_data"><code class="docutils literal notranslate"><span class="pre">TokenConfigEditor.init_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tokens/tokens_editor.html#bookmarks.tokens.tokens_editor.TokenConfigEditor.save_changes"><code class="docutils literal notranslate"><span class="pre">TokenConfigEditor.save_changes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tokens/tokens_editor.html#bookmarks.tokens.tokens_editor.TokenConfigEditor.text_changed"><code class="docutils literal notranslate"><span class="pre">TokenConfigEditor.text_changed()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tokens/tokens_editor.html#bookmarks.tokens.tokens_editor.TokenEditor"><code class="docutils literal notranslate"><span class="pre">TokenEditor</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="tokens/tokens_editor.html#bookmarks.tokens.tokens_editor.TokenEditor.showEvent"><code class="docutils literal notranslate"><span class="pre">TokenEditor.showEvent()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="tokens/tokens_editor.html#bookmarks.tokens.tokens_editor.TokenEditor.sizeHint"><code class="docutils literal notranslate"><span class="pre">TokenEditor.sizeHint()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -451,7 +492,9 @@ editor widgets are embedded in the standard bookmark item editor widget.</p>
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/design-tabs.js"></script>
     </body>

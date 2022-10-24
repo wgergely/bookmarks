@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Developer documentation page for the Bookmarks python modules" name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="topbar.quickswitch" href="quickswitch.html" /><link rel="prev" title="topbar" href="../topbar.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/topbar/buttons.html" />
 
-    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
         <title>topbar.buttons - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
@@ -173,7 +173,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -335,6 +335,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
@@ -368,18 +369,18 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
           <div class="section" id="module-bookmarks.topbar.buttons">
-<span id="topbar-buttons"></span><h1>topbar.buttons<a class="headerlink" href="#module-bookmarks.topbar.buttons" title="Permalink to this headline">#</a></h1>
+<span id="topbar-buttons"></span><h1>topbar.buttons<a class="headerlink" href="#module-bookmarks.topbar.buttons" title="Permalink to this heading">#</a></h1>
 <p>Defines the small control buttons found on the right-hand side of the top bar.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -418,17 +419,17 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.topbar.buttons.BaseControlButton">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.topbar.buttons.</span></span><span class="sig-name descname"><span class="pre">BaseControlButton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pixmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(common.color(common.color_selected_text),</span> <span class="pre">common.color(common.color_disabled_text))</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/topbar/buttons.html#BaseControlButton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.topbar.buttons.BaseControlButton" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../ui.html#bookmarks.ui.ClickableIconButton" title="bookmarks.ui.ClickableIconButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.ui.ClickableIconButton</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="../ui.html#bookmarks.ui.ClickableIconButton" title="bookmarks.ui.ClickableIconButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">ClickableIconButton</span></code></a></p>
 <p>Base-class used for control buttons on the top bar.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.topbar.buttons.FilterButton">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.topbar.buttons.</span></span><span class="sig-name descname"><span class="pre">FilterButton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/topbar/buttons.html#FilterButton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.topbar.buttons.FilterButton" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#bookmarks.topbar.buttons.BaseControlButton" title="bookmarks.topbar.buttons.BaseControlButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.topbar.buttons.BaseControlButton</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#bookmarks.topbar.buttons.BaseControlButton" title="bookmarks.topbar.buttons.BaseControlButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseControlButton</span></code></a></p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -460,10 +461,10 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.topbar.buttons.FilterHistoryMenu">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.topbar.buttons.</span></span><span class="sig-name descname"><span class="pre">FilterHistoryMenu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/topbar/buttons.html#FilterHistoryMenu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.topbar.buttons.FilterHistoryMenu" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../contextmenu.html#bookmarks.contextmenu.BaseContextMenu" title="bookmarks.contextmenu.BaseContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.contextmenu.BaseContextMenu</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="../contextmenu.html#bookmarks.contextmenu.BaseContextMenu" title="bookmarks.contextmenu.BaseContextMenu"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseContextMenu</span></code></a></p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -486,10 +487,10 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.topbar.buttons.RefreshButton">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.topbar.buttons.</span></span><span class="sig-name descname"><span class="pre">RefreshButton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/topbar/buttons.html#RefreshButton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.topbar.buttons.RefreshButton" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#bookmarks.topbar.buttons.BaseControlButton" title="bookmarks.topbar.buttons.BaseControlButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.topbar.buttons.BaseControlButton</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#bookmarks.topbar.buttons.BaseControlButton" title="bookmarks.topbar.buttons.BaseControlButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseControlButton</span></code></a></p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -512,10 +513,10 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.topbar.buttons.SlackButton">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.topbar.buttons.</span></span><span class="sig-name descname"><span class="pre">SlackButton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/topbar/buttons.html#SlackButton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.topbar.buttons.SlackButton" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#bookmarks.topbar.buttons.BaseControlButton" title="bookmarks.topbar.buttons.BaseControlButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.topbar.buttons.BaseControlButton</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#bookmarks.topbar.buttons.BaseControlButton" title="bookmarks.topbar.buttons.BaseControlButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseControlButton</span></code></a></p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -548,10 +549,10 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.topbar.buttons.ToggleArchivedButton">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.topbar.buttons.</span></span><span class="sig-name descname"><span class="pre">ToggleArchivedButton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/topbar/buttons.html#ToggleArchivedButton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.topbar.buttons.ToggleArchivedButton" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#bookmarks.topbar.buttons.BaseControlButton" title="bookmarks.topbar.buttons.BaseControlButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.topbar.buttons.BaseControlButton</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#bookmarks.topbar.buttons.BaseControlButton" title="bookmarks.topbar.buttons.BaseControlButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseControlButton</span></code></a></p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -573,10 +574,10 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.topbar.buttons.ToggleFavouriteButton">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.topbar.buttons.</span></span><span class="sig-name descname"><span class="pre">ToggleFavouriteButton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/topbar/buttons.html#ToggleFavouriteButton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.topbar.buttons.ToggleFavouriteButton" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#bookmarks.topbar.buttons.BaseControlButton" title="bookmarks.topbar.buttons.BaseControlButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.topbar.buttons.BaseControlButton</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#bookmarks.topbar.buttons.BaseControlButton" title="bookmarks.topbar.buttons.BaseControlButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseControlButton</span></code></a></p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -606,16 +607,16 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.topbar.buttons.ToggleInlineIcons">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.topbar.buttons.</span></span><span class="sig-name descname"><span class="pre">ToggleInlineIcons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/topbar/buttons.html#ToggleInlineIcons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.topbar.buttons.ToggleInlineIcons" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#bookmarks.topbar.buttons.BaseControlButton" title="bookmarks.topbar.buttons.BaseControlButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.topbar.buttons.BaseControlButton</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#bookmarks.topbar.buttons.BaseControlButton" title="bookmarks.topbar.buttons.BaseControlButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseControlButton</span></code></a></p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.topbar.buttons.ToggleSequenceButton">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.topbar.buttons.</span></span><span class="sig-name descname"><span class="pre">ToggleSequenceButton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/topbar/buttons.html#ToggleSequenceButton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.topbar.buttons.ToggleSequenceButton" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#bookmarks.topbar.buttons.BaseControlButton" title="bookmarks.topbar.buttons.BaseControlButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.topbar.buttons.BaseControlButton</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#bookmarks.topbar.buttons.BaseControlButton" title="bookmarks.topbar.buttons.BaseControlButton"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseControlButton</span></code></a></p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -697,8 +698,59 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">topbar.buttons</a><ul>
+<li><a class="reference internal" href="#bookmarks.topbar.buttons.BaseControlButton"><code class="docutils literal notranslate"><span class="pre">BaseControlButton</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.topbar.buttons.FilterButton"><code class="docutils literal notranslate"><span class="pre">FilterButton</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.topbar.buttons.FilterButton.contextMenuEvent"><code class="docutils literal notranslate"><span class="pre">FilterButton.contextMenuEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.topbar.buttons.FilterButton.mouseReleaseEvent"><code class="docutils literal notranslate"><span class="pre">FilterButton.mouseReleaseEvent()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.topbar.buttons.FilterHistoryMenu"><code class="docutils literal notranslate"><span class="pre">FilterHistoryMenu</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.topbar.buttons.FilterHistoryMenu.setup"><code class="docutils literal notranslate"><span class="pre">FilterHistoryMenu.setup()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.topbar.buttons.RefreshButton"><code class="docutils literal notranslate"><span class="pre">RefreshButton</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.topbar.buttons.RefreshButton.state"><code class="docutils literal notranslate"><span class="pre">RefreshButton.state()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.topbar.buttons.SlackButton"><code class="docutils literal notranslate"><span class="pre">SlackButton</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.topbar.buttons.SlackButton.action"><code class="docutils literal notranslate"><span class="pre">SlackButton.action()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.topbar.buttons.SlackButton.check_token"><code class="docutils literal notranslate"><span class="pre">SlackButton.check_token()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.topbar.buttons.ToggleArchivedButton"><code class="docutils literal notranslate"><span class="pre">ToggleArchivedButton</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.topbar.buttons.ToggleArchivedButton.pixmap"><code class="docutils literal notranslate"><span class="pre">ToggleArchivedButton.pixmap()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.topbar.buttons.ToggleFavouriteButton"><code class="docutils literal notranslate"><span class="pre">ToggleFavouriteButton</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.topbar.buttons.ToggleFavouriteButton.update"><code class="docutils literal notranslate"><span class="pre">ToggleFavouriteButton.update()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.topbar.buttons.ToggleInlineIcons"><code class="docutils literal notranslate"><span class="pre">ToggleInlineIcons</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.topbar.buttons.ToggleSequenceButton"><code class="docutils literal notranslate"><span class="pre">ToggleSequenceButton</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.topbar.buttons.ToggleSequenceButton.pixmap"><code class="docutils literal notranslate"><span class="pre">ToggleSequenceButton.pixmap()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.topbar.buttons.ToggleSequenceButton.update"><code class="docutils literal notranslate"><span class="pre">ToggleSequenceButton.update()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
@@ -706,7 +758,9 @@
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     </body>

@@ -17,6 +17,31 @@ customized by modifying the ``rsc/config.json`` file. The application stylesheet
 defined by ``rsc/stylesheet.qss``.
 
 
+Dependencies
+-------------------------------
+
+The release contains all Windows dependencies. For setting up a custom development environment on another platform, you'll need the following python dependencies:
+
+.. grid:: 1
+
+    .. grid-item-card::
+
+        * `Python3 <https://github.com/python/cpython>`_ -  Tested against 3.9
+        * `PySide2 <https://pypi.org/project/PySide2>`_ - Tested against Qt 5.15.2
+        * `OpenImageIO <https://github.com/OpenImageIO/oiio>`_ - Tested against 2.3
+        * `numpy <https://pypi.org/project/numpy>`_
+        * `slack_sdk <https://pypi.org/project/slack_sdk>`_
+        * `psutil <https://pypi.org/project/psutil>`_
+        * `shotgun_api3 <https://github.com/shotgunsoftware/python-api>`_
+
+
+.. note::
+
+    * Currently, Windows is the only supported platform (although much of the codebase should be platform-agnostic).
+    * OpenImageIO does not currently maintain installable python packages.
+
+
+
 Development environment
 -------------------------------
 
@@ -124,7 +149,7 @@ Index
 
         **Maya module**
         ^^^
-        Maya related functionality can be found in the :mod:`bookmarks.modules.maya`
+        Maya related functionality can be found in the :mod:`bookmarks.maya`
         The installable maya plugins is here: :mod:`~bookmarks.maya.plugin`.
 
 

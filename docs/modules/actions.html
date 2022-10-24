@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Developer documentation page for the Bookmarks python modules" name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="bookmarker" href="bookmarker.html" /><link rel="prev" title="Python Modules" href="../modules.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/actions.html" />
 
-    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
         <title>actions - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
@@ -173,7 +173,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -335,6 +335,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
@@ -368,20 +369,20 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
           <div class="section" id="module-bookmarks.actions">
-<span id="actions"></span><h1>actions<a class="headerlink" href="#module-bookmarks.actions" title="Permalink to this headline">#</a></h1>
+<span id="actions"></span><h1>actions<a class="headerlink" href="#module-bookmarks.actions" title="Permalink to this heading">#</a></h1>
 <p>User actions module.</p>
 <p>These actions are usually triggered by the user via keyboard shortcuts or by
 interactions with the UI.</p>
 <p><strong>Functions:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -1563,8 +1564,115 @@ path file.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">actions</a><ul>
+<li><a class="reference internal" href="#bookmarks.actions.add_bookmark"><code class="docutils literal notranslate"><span class="pre">add_bookmark()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.add_favourite"><code class="docutils literal notranslate"><span class="pre">add_favourite()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.add_item"><code class="docutils literal notranslate"><span class="pre">add_item()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.add_server"><code class="docutils literal notranslate"><span class="pre">add_server()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.add_zip_template"><code class="docutils literal notranslate"><span class="pre">add_zip_template()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.adjust_tab_button_size"><code class="docutils literal notranslate"><span class="pre">adjust_tab_button_size()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.asset_identifier_changed"><code class="docutils literal notranslate"><span class="pre">asset_identifier_changed()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.capture_thumbnail"><code class="docutils literal notranslate"><span class="pre">capture_thumbnail()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.change_sorting"><code class="docutils literal notranslate"><span class="pre">change_sorting()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.change_tab"><code class="docutils literal notranslate"><span class="pre">change_tab()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.clear_favourites"><code class="docutils literal notranslate"><span class="pre">clear_favourites()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.convert_image_sequence"><code class="docutils literal notranslate"><span class="pre">convert_image_sequence()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.copy_asset_properties"><code class="docutils literal notranslate"><span class="pre">copy_asset_properties()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.copy_path"><code class="docutils literal notranslate"><span class="pre">copy_path()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.copy_selected_alt_path"><code class="docutils literal notranslate"><span class="pre">copy_selected_alt_path()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.copy_selected_path"><code class="docutils literal notranslate"><span class="pre">copy_selected_path()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.decrease_row_size"><code class="docutils literal notranslate"><span class="pre">decrease_row_size()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.delete_selected_files"><code class="docutils literal notranslate"><span class="pre">delete_selected_files()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.edit_asset"><code class="docutils literal notranslate"><span class="pre">edit_asset()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.edit_bookmark"><code class="docutils literal notranslate"><span class="pre">edit_bookmark()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.edit_file"><code class="docutils literal notranslate"><span class="pre">edit_file()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.edit_item"><code class="docutils literal notranslate"><span class="pre">edit_item()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.exec_instance"><code class="docutils literal notranslate"><span class="pre">exec_instance()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.execute"><code class="docutils literal notranslate"><span class="pre">execute()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.execute_detached"><code class="docutils literal notranslate"><span class="pre">execute_detached()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.export_favourites"><code class="docutils literal notranslate"><span class="pre">export_favourites()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.export_properties"><code class="docutils literal notranslate"><span class="pre">export_properties()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.extract_zip_template"><code class="docutils literal notranslate"><span class="pre">extract_zip_template()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.filter_flag_changed"><code class="docutils literal notranslate"><span class="pre">filter_flag_changed()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.generate_thumbnails_changed"><code class="docutils literal notranslate"><span class="pre">generate_thumbnails_changed()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.hide_sg_connecting_message"><code class="docutils literal notranslate"><span class="pre">hide_sg_connecting_message()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.import_favourites"><code class="docutils literal notranslate"><span class="pre">import_favourites()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.import_properties"><code class="docutils literal notranslate"><span class="pre">import_properties()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.increase_row_size"><code class="docutils literal notranslate"><span class="pre">increase_row_size()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.must_be_initialized"><code class="docutils literal notranslate"><span class="pre">must_be_initialized()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.next_tab"><code class="docutils literal notranslate"><span class="pre">next_tab()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.paste_asset_properties"><code class="docutils literal notranslate"><span class="pre">paste_asset_properties()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.pick_launcher_item"><code class="docutils literal notranslate"><span class="pre">pick_launcher_item()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.pick_template"><code class="docutils literal notranslate"><span class="pre">pick_template()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.pick_thumbnail_from_file"><code class="docutils literal notranslate"><span class="pre">pick_thumbnail_from_file()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.pick_thumbnail_from_library"><code class="docutils literal notranslate"><span class="pre">pick_thumbnail_from_library()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.preview_image"><code class="docutils literal notranslate"><span class="pre">preview_image()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.preview_thumbnail"><code class="docutils literal notranslate"><span class="pre">preview_thumbnail()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.previous_tab"><code class="docutils literal notranslate"><span class="pre">previous_tab()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.prune_bookmarks"><code class="docutils literal notranslate"><span class="pre">prune_bookmarks()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.refresh"><code class="docutils literal notranslate"><span class="pre">refresh()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.remove_bookmark"><code class="docutils literal notranslate"><span class="pre">remove_bookmark()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.remove_favourite"><code class="docutils literal notranslate"><span class="pre">remove_favourite()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.remove_server"><code class="docutils literal notranslate"><span class="pre">remove_server()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.remove_thumbnail"><code class="docutils literal notranslate"><span class="pre">remove_thumbnail()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.remove_zip_template"><code class="docutils literal notranslate"><span class="pre">remove_zip_template()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.reset_row_size"><code class="docutils literal notranslate"><span class="pre">reset_row_size()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.reveal"><code class="docutils literal notranslate"><span class="pre">reveal()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.reveal_default_bookmarks_json"><code class="docutils literal notranslate"><span class="pre">reveal_default_bookmarks_json()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.reveal_selected"><code class="docutils literal notranslate"><span class="pre">reveal_selected()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.reveal_url"><code class="docutils literal notranslate"><span class="pre">reveal_url()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.selection"><code class="docutils literal notranslate"><span class="pre">selection()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.set_active"><code class="docutils literal notranslate"><span class="pre">set_active()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.set_task_folder"><code class="docutils literal notranslate"><span class="pre">set_task_folder()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.show_add_asset"><code class="docutils literal notranslate"><span class="pre">show_add_asset()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.show_add_file"><code class="docutils literal notranslate"><span class="pre">show_add_file()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.show_asset"><code class="docutils literal notranslate"><span class="pre">show_asset()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.show_bookmarker"><code class="docutils literal notranslate"><span class="pre">show_bookmarker()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.show_preferences"><code class="docutils literal notranslate"><span class="pre">show_preferences()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.show_publish_widget"><code class="docutils literal notranslate"><span class="pre">show_publish_widget()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.show_sg_connecting_message"><code class="docutils literal notranslate"><span class="pre">show_sg_connecting_message()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.show_sg_error_message"><code class="docutils literal notranslate"><span class="pre">show_sg_error_message()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.show_slack"><code class="docutils literal notranslate"><span class="pre">show_slack()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.show_todos"><code class="docutils literal notranslate"><span class="pre">show_todos()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.suggest_prefix"><code class="docutils literal notranslate"><span class="pre">suggest_prefix()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.test_slack_token"><code class="docutils literal notranslate"><span class="pre">test_slack_token()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.toggle_active_item"><code class="docutils literal notranslate"><span class="pre">toggle_active_item()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.toggle_active_mode"><code class="docutils literal notranslate"><span class="pre">toggle_active_mode()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.toggle_archived"><code class="docutils literal notranslate"><span class="pre">toggle_archived()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.toggle_archived_items"><code class="docutils literal notranslate"><span class="pre">toggle_archived_items()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.toggle_debug"><code class="docutils literal notranslate"><span class="pre">toggle_debug()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.toggle_favourite"><code class="docutils literal notranslate"><span class="pre">toggle_favourite()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.toggle_favourite_items"><code class="docutils literal notranslate"><span class="pre">toggle_favourite_items()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.toggle_filter_editor"><code class="docutils literal notranslate"><span class="pre">toggle_filter_editor()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.toggle_flag"><code class="docutils literal notranslate"><span class="pre">toggle_flag()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.toggle_full_screen"><code class="docutils literal notranslate"><span class="pre">toggle_full_screen()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.toggle_inline_icons"><code class="docutils literal notranslate"><span class="pre">toggle_inline_icons()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.toggle_maximized"><code class="docutils literal notranslate"><span class="pre">toggle_maximized()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.toggle_minimized"><code class="docutils literal notranslate"><span class="pre">toggle_minimized()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.toggle_progress_columns"><code class="docutils literal notranslate"><span class="pre">toggle_progress_columns()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.toggle_sequence"><code class="docutils literal notranslate"><span class="pre">toggle_sequence()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.toggle_sort_order"><code class="docutils literal notranslate"><span class="pre">toggle_sort_order()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.toggle_stays_always_on_top"><code class="docutils literal notranslate"><span class="pre">toggle_stays_always_on_top()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.toggle_task_view"><code class="docutils literal notranslate"><span class="pre">toggle_task_view()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
@@ -1572,7 +1680,9 @@ path file.</p>
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>
     <script src="../_static/design-tabs.js"></script>
     </body>

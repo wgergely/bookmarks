@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Developer documentation page for the Bookmarks python modules" name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="contextmenu" href="../contextmenu.html" /><link rel="prev" title="common.signals" href="signals.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/common/ui.html" />
 
-    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
         <title>common.ui - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
@@ -173,7 +173,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -335,6 +335,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
@@ -368,21 +369,21 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
           <div class="section" id="module-bookmarks.common.ui">
-<span id="common-ui"></span><h1>common.ui<a class="headerlink" href="#module-bookmarks.common.ui" title="Permalink to this headline">#</a></h1>
+<span id="common-ui"></span><h1>common.ui<a class="headerlink" href="#module-bookmarks.common.ui" title="Permalink to this heading">#</a></h1>
 <p>Collection of common utility methods used by UI elements.</p>
 <p>The app has some DPI awareness, although, I’m pretty confident it wasn’t implemented
 correctly. Still, all size values must be queried using <a class="reference internal" href="#bookmarks.common.ui.size" title="bookmarks.common.ui.size"><code class="xref py py-func docutils literal notranslate"><span class="pre">size()</span></code></a> to get a DPI
 dependent pixel value.</p>
 <p><strong>Functions:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -828,8 +829,49 @@ otherwise, returns the specified widget.</p>
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">common.ui</a><ul>
+<li><a class="reference internal" href="#bookmarks.common.ui.active_index"><code class="docutils literal notranslate"><span class="pre">active_index()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.center_window"><code class="docutils literal notranslate"><span class="pre">center_window()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.color"><code class="docutils literal notranslate"><span class="pre">color()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.current_tab"><code class="docutils literal notranslate"><span class="pre">current_tab()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.draw_aliased_text"><code class="docutils literal notranslate"><span class="pre">draw_aliased_text()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.fit_screen_geometry"><code class="docutils literal notranslate"><span class="pre">fit_screen_geometry()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.get_selected_index"><code class="docutils literal notranslate"><span class="pre">get_selected_index()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.init_stylesheet"><code class="docutils literal notranslate"><span class="pre">init_stylesheet()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.model"><code class="docutils literal notranslate"><span class="pre">model()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.move_widget_to_available_geo"><code class="docutils literal notranslate"><span class="pre">move_widget_to_available_geo()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.restore_selection"><code class="docutils literal notranslate"><span class="pre">restore_selection()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.restore_window_geometry"><code class="docutils literal notranslate"><span class="pre">restore_window_geometry()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.restore_window_state"><code class="docutils literal notranslate"><span class="pre">restore_window_state()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.rgb"><code class="docutils literal notranslate"><span class="pre">rgb()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.save_selection"><code class="docutils literal notranslate"><span class="pre">save_selection()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.save_window_state"><code class="docutils literal notranslate"><span class="pre">save_window_state()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.select_index"><code class="docutils literal notranslate"><span class="pre">select_index()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.selected_index"><code class="docutils literal notranslate"><span class="pre">selected_index()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.set_stylesheet"><code class="docutils literal notranslate"><span class="pre">set_stylesheet()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.size"><code class="docutils literal notranslate"><span class="pre">size()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.source_model"><code class="docutils literal notranslate"><span class="pre">source_model()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.status_bar_message"><code class="docutils literal notranslate"><span class="pre">status_bar_message()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.common.ui.widget"><code class="docutils literal notranslate"><span class="pre">widget()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
@@ -837,7 +879,9 @@ otherwise, returns the specified widget.</p>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     </body>

@@ -1,13 +1,13 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta content="Bookmarks: A free and open-source asset manager for film, animation and VFX projects." name="description" />
+    <meta name="color-scheme" content="light dark"><meta content="Developer documentation page for the Bookmarks python modules" name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="images" href="../images.html" /><link rel="prev" title="file_saver.main" href="main.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/file_saver/widgets.html" />
 
-    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
+    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
         <title>file_saver.widgets - Bookmarks 0.7.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
@@ -173,7 +173,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -335,6 +335,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
@@ -368,18 +369,18 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
           <div class="section" id="module-bookmarks.file_saver.widgets">
-<span id="file-saver-widgets"></span><h1>file_saver.widgets<a class="headerlink" href="#module-bookmarks.file_saver.widgets" title="Permalink to this headline">#</a></h1>
+<span id="file-saver-widgets"></span><h1>file_saver.widgets<a class="headerlink" href="#module-bookmarks.file_saver.widgets" title="Permalink to this heading">#</a></h1>
 <p>Widgets used by <code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.file_saver.file_saver.FileSaverWidget</span></code>.</p>
 <p><strong>Classes:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -424,18 +425,18 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.file_saver.widgets.AssetComboBox">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.file_saver.widgets.</span></span><span class="sig-name descname"><span class="pre">AssetComboBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/file_saver/widgets.html#AssetComboBox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.file_saver.widgets.AssetComboBox" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QComboBox</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QComboBox</span></code></p>
 <p>Asset item picker.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.file_saver.widgets.AssetItemModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.file_saver.widgets.</span></span><span class="sig-name descname"><span class="pre">AssetItemModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/file_saver/widgets.html#AssetItemModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.file_saver.widgets.AssetItemModel" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../ui.html#bookmarks.ui.AbstractListModel" title="bookmarks.ui.AbstractListModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.ui.AbstractListModel</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="../ui.html#bookmarks.ui.AbstractListModel" title="bookmarks.ui.AbstractListModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractListModel</span></code></a></p>
 <p>Asset item picker model.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -472,18 +473,18 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.file_saver.widgets.BookmarkComboBox">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.file_saver.widgets.</span></span><span class="sig-name descname"><span class="pre">BookmarkComboBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/file_saver/widgets.html#BookmarkComboBox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.file_saver.widgets.BookmarkComboBox" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QComboBox</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QComboBox</span></code></p>
 <p>Bookmark item picker.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.file_saver.widgets.BookmarkItemModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.file_saver.widgets.</span></span><span class="sig-name descname"><span class="pre">BookmarkItemModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/file_saver/widgets.html#BookmarkItemModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.file_saver.widgets.BookmarkItemModel" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../ui.html#bookmarks.ui.AbstractListModel" title="bookmarks.ui.AbstractListModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.ui.AbstractListModel</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="../ui.html#bookmarks.ui.AbstractListModel" title="bookmarks.ui.AbstractListModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractListModel</span></code></a></p>
 <p>Bookmark item picker model.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -506,18 +507,18 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.file_saver.widgets.FormatComboBox">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.file_saver.widgets.</span></span><span class="sig-name descname"><span class="pre">FormatComboBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/file_saver/widgets.html#FormatComboBox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.file_saver.widgets.FormatComboBox" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QComboBox</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QComboBox</span></code></p>
 <p>Format item picker.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.file_saver.widgets.FormatModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.file_saver.widgets.</span></span><span class="sig-name descname"><span class="pre">FormatModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/file_saver/widgets.html#FormatModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.file_saver.widgets.FormatModel" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../ui.html#bookmarks.ui.AbstractListModel" title="bookmarks.ui.AbstractListModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.ui.AbstractListModel</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="../ui.html#bookmarks.ui.AbstractListModel" title="bookmarks.ui.AbstractListModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractListModel</span></code></a></p>
 <p>Format item picker model.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -540,11 +541,11 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.file_saver.widgets.PrefixEditor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.file_saver.widgets.</span></span><span class="sig-name descname"><span class="pre">PrefixEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/file_saver/widgets.html#PrefixEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.file_saver.widgets.PrefixEditor" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QDialog</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
 <p>A popup editor used to edit a bookmark prefix.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -585,11 +586,11 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.file_saver.widgets.TaskComboBox">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.file_saver.widgets.</span></span><span class="sig-name descname"><span class="pre">TaskComboBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">SceneMode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/file_saver/widgets.html#TaskComboBox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.file_saver.widgets.TaskComboBox" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QComboBox</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QComboBox</span></code></p>
 <p>Task item picker.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -612,11 +613,11 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.file_saver.widgets.TaskModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.file_saver.widgets.</span></span><span class="sig-name descname"><span class="pre">TaskModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/file_saver/widgets.html#TaskModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.file_saver.widgets.TaskModel" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../ui.html#bookmarks.ui.AbstractListModel" title="bookmarks.ui.AbstractListModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.ui.AbstractListModel</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="../ui.html#bookmarks.ui.AbstractListModel" title="bookmarks.ui.AbstractListModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractListModel</span></code></a></p>
 <p>Task item picker model.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -671,18 +672,18 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.file_saver.widgets.TemplateComboBox">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.file_saver.widgets.</span></span><span class="sig-name descname"><span class="pre">TemplateComboBox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/file_saver/widgets.html#TemplateComboBox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.file_saver.widgets.TemplateComboBox" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PySide2.QtWidgets.QComboBox</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QComboBox</span></code></p>
 <p>Template item picker.</p>
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.file_saver.widgets.TemplateModel">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.file_saver.widgets.</span></span><span class="sig-name descname"><span class="pre">TemplateModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/file_saver/widgets.html#TemplateModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.file_saver.widgets.TemplateModel" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../ui.html#bookmarks.ui.AbstractListModel" title="bookmarks.ui.AbstractListModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">bookmarks.ui.AbstractListModel</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="../ui.html#bookmarks.ui.AbstractListModel" title="bookmarks.ui.AbstractListModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractListModel</span></code></a></p>
 <p>Template item picker model.</p>
 <p><strong>Methods:</strong></p>
-<div class="table-wrapper longtable docutils container">
-<table class="longtable docutils align-default">
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -749,8 +750,64 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">file_saver.widgets</a><ul>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.AssetComboBox"><code class="docutils literal notranslate"><span class="pre">AssetComboBox</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.AssetItemModel"><code class="docutils literal notranslate"><span class="pre">AssetItemModel</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.AssetItemModel.display_name"><code class="docutils literal notranslate"><span class="pre">AssetItemModel.display_name()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.AssetItemModel.init_data"><code class="docutils literal notranslate"><span class="pre">AssetItemModel.init_data()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.BookmarkComboBox"><code class="docutils literal notranslate"><span class="pre">BookmarkComboBox</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.BookmarkItemModel"><code class="docutils literal notranslate"><span class="pre">BookmarkItemModel</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.BookmarkItemModel.init_data"><code class="docutils literal notranslate"><span class="pre">BookmarkItemModel.init_data()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.FormatComboBox"><code class="docutils literal notranslate"><span class="pre">FormatComboBox</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.FormatModel"><code class="docutils literal notranslate"><span class="pre">FormatModel</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.FormatModel.init_data"><code class="docutils literal notranslate"><span class="pre">FormatModel.init_data()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.PrefixEditor"><code class="docutils literal notranslate"><span class="pre">PrefixEditor</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.PrefixEditor.init_data"><code class="docutils literal notranslate"><span class="pre">PrefixEditor.init_data()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.PrefixEditor.save_changes"><code class="docutils literal notranslate"><span class="pre">PrefixEditor.save_changes()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.PrefixEditor.sizeHint"><code class="docutils literal notranslate"><span class="pre">PrefixEditor.sizeHint()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.TaskComboBox"><code class="docutils literal notranslate"><span class="pre">TaskComboBox</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.TaskComboBox.set_mode"><code class="docutils literal notranslate"><span class="pre">TaskComboBox.set_mode()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.TaskModel"><code class="docutils literal notranslate"><span class="pre">TaskModel</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.TaskModel.add_item"><code class="docutils literal notranslate"><span class="pre">TaskModel.add_item()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.TaskModel.init_data"><code class="docutils literal notranslate"><span class="pre">TaskModel.init_data()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.TaskModel.mode"><code class="docutils literal notranslate"><span class="pre">TaskModel.mode()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.TaskModel.set_mode"><code class="docutils literal notranslate"><span class="pre">TaskModel.set_mode()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.TemplateComboBox"><code class="docutils literal notranslate"><span class="pre">TemplateComboBox</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.TemplateModel"><code class="docutils literal notranslate"><span class="pre">TemplateModel</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.file_saver.widgets.TemplateModel.init_data"><code class="docutils literal notranslate"><span class="pre">TemplateModel.init_data()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
@@ -758,7 +815,9 @@
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     </body>

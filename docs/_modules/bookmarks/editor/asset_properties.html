@@ -380,7 +380,7 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">functools</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
 
 <span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtCore</span>
 
@@ -388,6 +388,7 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">base_widgets</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">common</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">database</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">log</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">templates</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">ui</span>
 <span class="kn">from</span> <span class="nn">..shotgun</span> <span class="kn">import</span> <span class="n">actions</span> <span class="k">as</span> <span class="n">sg_actions</span>
@@ -622,7 +623,37 @@
     <span class="k">def</span> <span class="nf">_connect_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_connect_signals</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">thumbnailUpdated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">thumbnailUpdated</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">itemCreated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">create_link_file</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">itemCreated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">assetAdded</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AssetPropertyEditor.create_link_file"><a class="viewcode-back" href="../../../modules/editor/asset_properties.html#bookmarks.editor.asset_properties.AssetPropertyEditor.create_link_file">[docs]</a>    <span class="k">def</span> <span class="nf">create_link_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Creates a link file for nested assets.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            path (str): Path to the newly created asset.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+
+        <span class="n">bookmark</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">))</span>
+        <span class="n">asset</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">bookmark</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Nothing to do if the asset is not nested</span>
+        <span class="k">if</span> <span class="s1">&#39;/&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">asset</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">root</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">,</span>
+            <span class="n">asset</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">))</span>
+        <span class="n">rel</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">asset</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">common</span><span class="o">.</span><span class="n">add_link</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">rel</span><span class="p">,</span> <span class="n">section</span><span class="o">=</span><span class="s1">&#39;links/asset&#39;</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Could not add link&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="AssetPropertyEditor.name"><a class="viewcode-back" href="../../../modules/editor/asset_properties.html#bookmarks.editor.asset_properties.AssetPropertyEditor.name">[docs]</a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the name of the asset.</span>
@@ -680,8 +711,29 @@
         <span class="sd">&quot;&quot;&quot;Add the current list of assets to the name editor&#39;s completer.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="p">))</span>
-        <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()]</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">source_model</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">AssetTab</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">model_data</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="n">common</span><span class="o">.</span><span class="n">ParentPathRole</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+            <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[0-9]+$&#39;</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="n">pad</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+                <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+                <span class="n">span</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">span</span><span class="p">()</span>
+                <span class="n">_v1</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">num</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="n">pad</span><span class="p">)</span>
+                <span class="n">_v2</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">num</span> <span class="o">+</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">zfill</span><span class="p">(</span><span class="n">pad</span><span class="p">)</span>
+                <span class="n">v1</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">span</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="n">_v1</span> <span class="o">+</span> <span class="n">v</span><span class="p">[</span><span class="n">span</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">v2</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">span</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+</span> <span class="n">_v2</span> <span class="o">+</span> <span class="n">v</span><span class="p">[</span><span class="n">span</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span>
+                <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span>
+
+        <span class="n">items</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">items</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">completer</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCompleter</span><span class="p">(</span><span class="n">items</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="n">completer</span><span class="o">.</span><span class="n">setCaseSensitivity</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">CaseInsensitive</span><span class="p">)</span>
         <span class="n">common</span><span class="o">.</span><span class="n">set_stylesheet</span><span class="p">(</span><span class="n">completer</span><span class="o">.</span><span class="n">popup</span><span class="p">())</span>
@@ -736,7 +788,7 @@
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Must enter a name to create asset.&#39;</span><span class="p">)</span>
 
         <span class="n">file_info</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileInfo</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">server</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">job</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">root</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">file_info</span><span class="o">.</span><span class="n">dir</span><span class="p">()</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="n">file_info</span><span class="o">.</span><span class="n">dir</span><span class="p">()</span><span class="o">.</span><span class="n">mkpath</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">file_info</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">file_info</span><span class="o">.</span><span class="n">dir</span><span class="p">()</span><span class="o">.</span><span class="n">mkpath</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Could not create </span><span class="si">{</span><span class="n">file_info</span><span class="o">.</span><span class="n">dir</span><span class="p">()</span><span class="o">.</span><span class="n">path</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="n">editor</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
@@ -747,6 +799,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">file_info</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Failed to create asset.&#39;</span><span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_link_file</span><span class="p">(</span><span class="n">file_info</span><span class="o">.</span><span class="n">absoluteFilePath</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">itemCreated</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">file_info</span><span class="o">.</span><span class="n">absoluteFilePath</span><span class="p">())</span></div>
 
 <div class="viewcode-block" id="AssetPropertyEditor.link_button_clicked"><a class="viewcode-back" href="../../../modules/editor/asset_properties.html#bookmarks.editor.asset_properties.AssetPropertyEditor.link_button_clicked">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>

@@ -1,11 +1,11 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="#" /><link rel="search" title="Search" href="search.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/genindex.html" />
 
-    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/><title>Index - Bookmarks 0.7.4 documentation</title>
+    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/><title>Index - Bookmarks 0.7.4 documentation</title>
 <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
     <link rel="stylesheet" type="text/css" href="_static/css/license_info.css" />
@@ -332,6 +332,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
@@ -459,6 +460,8 @@
 </li>
         <li><a href="modules/ui.html#bookmarks.ui.add_line_edit">add_line_edit() (in module bookmarks.ui)</a>
 </li>
+        <li><a href="modules/common/core.html#bookmarks.common.core.add_link">add_link() (in module bookmarks.common.core)</a>
+</li>
         <li><a href="modules/bookmarker/bookmark_editor.html#bookmarks.bookmarker.bookmark_editor.BookmarkEditorContextMenu.add_menu">add_menu() (bookmarks.bookmarker.bookmark_editor.BookmarkEditorContextMenu method)</a>
 
         <ul>
@@ -473,10 +476,10 @@
 </li>
         <li><a href="modules/bookmarker/bookmark_editor.html#bookmarks.bookmarker.bookmark_editor.BookmarkItemEditor.add_remove_bookmark">add_remove_bookmark() (bookmarks.bookmarker.bookmark_editor.BookmarkItemEditor method)</a>
 </li>
-        <li><a href="modules/ui.html#bookmarks.ui.add_row">add_row() (in module bookmarks.ui)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="modules/ui.html#bookmarks.ui.add_row">add_row() (in module bookmarks.ui)</a>
+</li>
         <li><a href="modules/editor/base.html#bookmarks.editor.base.add_section">add_section() (in module bookmarks.editor.base)</a>
 </li>
         <li><a href="modules/editor/base.html#bookmarks.editor.base.BasePropertyEditor.add_section_header_button">add_section_header_button() (bookmarks.editor.base.BasePropertyEditor method)</a>
@@ -639,13 +642,6 @@
 </li>
         <li><a href="modules/common/signals.html#bookmarks.common.signals.CoreSignals.bookmarkRemoved">bookmarkRemoved (bookmarks.common.signals.CoreSignals attribute)</a>
 </li>
-        <li>
-    bookmarks
-
-        <ul>
-          <li><a href="index.html#module-bookmarks">module</a>
-</li>
-        </ul></li>
         <li>
     bookmarks.actions
 
@@ -1514,10 +1510,10 @@
           <li><a href="modules/shotgun/shotgun.html#bookmarks.shotgun.shotgun.connection">(in module bookmarks.shotgun.shotgun)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="modules/images.html#bookmarks.images.ImageCache.contains">contains() (bookmarks.images.ImageCache class method)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="modules/notes.html#bookmarks.notes.NoteTextEditor.contentChanged">contentChanged() (bookmarks.notes.NoteTextEditor method)</a>
 </li>
         <li><a href="modules/maya/main.html#bookmarks.maya.main.MayaWidget.context_callbacks">context_callbacks() (bookmarks.maya.main.MayaWidget method)</a>
@@ -1629,6 +1625,8 @@
 </li>
         </ul></li>
         <li><a href="modules/file_saver/main.html#bookmarks.file_saver.main.FileSaverWidget.create_file">create_file() (bookmarks.file_saver.main.FileSaverWidget method)</a>
+</li>
+        <li><a href="modules/editor/asset_properties.html#bookmarks.editor.asset_properties.AssetPropertyEditor.create_link_file">create_link_file() (bookmarks.editor.asset_properties.AssetPropertyEditor method)</a>
 </li>
         <li><a href="modules/contextmenu.html#bookmarks.contextmenu.BaseContextMenu.create_menu">create_menu() (bookmarks.contextmenu.BaseContextMenu method)</a>
 </li>
@@ -2078,6 +2076,8 @@
 
         <ul>
           <li><a href="modules/items/delegate.html#bookmarks.items.delegate.BookmarkItemViewDelegate.fallback_thumb">(bookmarks.items.delegate.BookmarkItemViewDelegate attribute)</a>
+</li>
+          <li><a href="modules/items/delegate.html#bookmarks.items.delegate.FavouriteItemViewDelegate.fallback_thumb">(bookmarks.items.delegate.FavouriteItemViewDelegate attribute)</a>
 </li>
           <li><a href="modules/items/delegate.html#bookmarks.items.delegate.FileItemViewDelegate.fallback_thumb">(bookmarks.items.delegate.FileItemViewDelegate attribute)</a>
 </li>
@@ -3106,8 +3106,6 @@
     module
 
         <ul>
-          <li><a href="index.html#module-bookmarks">bookmarks</a>
-</li>
           <li><a href="modules/actions.html#module-bookmarks.actions">bookmarks.actions</a>
 </li>
           <li><a href="modules/bookmarker.html#module-bookmarks.bookmarker">bookmarks.bookmarker</a>
@@ -5128,7 +5126,9 @@
 </div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/scripts/furo.js"></script>
     <script src="_static/design-tabs.js"></script>
     </body>

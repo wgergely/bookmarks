@@ -25,7 +25,7 @@ Get Bookmarks
 
 The project is hosted on `Github <https://github.com/wgergely/bookmarks>`_.
 
-.. admonition:: Download the latest Windows release: `Bookmarks v0.7.4 <https://github.com/wgergely/bookmarks/releases/download/0.7.4/Bookmarks_0.7.4.exe>`_
+.. admonition:: Download the latest Windows release: `Bookmarks v0.7.5 <https://github.com/wgergely/bookmarks/releases/download/0.7.5/Bookmarks_0.7.5.exe>`_
 
     ☹ Currently, Bookmarks only supports Windows.
 
@@ -98,11 +98,11 @@ There are two ways to add bookmark items, by hand, or by editing the ``default_b
     .. grid:: 1
         :gutter: 3
 
-        .. grid-item-card:: 1. Add server
+        .. grid-item-card:: 2.1. Add server
 
             Click the green icon on the left-hand side. A server is usually a network location, but local folders work too. Make sure the folder exists before adding it.
 
-        .. grid-item-card:: 2. Select or create a job
+        .. grid-item-card:: 2.2. Select or create a job
 
             If the server already contains folders (jobs), select one here. Otherwise, click the green add icon in the middle column to create a new job.
 
@@ -111,7 +111,7 @@ There are two ways to add bookmark items, by hand, or by editing the ``default_b
                 You can add your own job folder templates by dragging them onto the template picker. They should be zip files containing a folder structure.
 
 
-        .. grid-item-card:: 3. Select or pick new root folders
+        .. grid-item-card:: 2.3. Select or pick new root folders
 
             Select a job. If you used the default job template to create one, it comes with pre-defined root-folders (e.g. the ``data/asset``, ``data/shot`` folders). If you used a custom template, you might need to pick a new root folder by clicking the green add icon on the right-hand side.
 
@@ -119,7 +119,7 @@ There are two ways to add bookmark items, by hand, or by editing the ``default_b
 
                 Any folder with a ``.bookmark`` folder inside them will be read as a root folder. If the folder doesn't show up, you might have to change the folder parsing depth in the preferences.
 
-        Done! Close the editor when finished.
+            Done! Close the editor when finished.
 
 
 How do you add new shots and assets?
@@ -199,16 +199,15 @@ How do you configure bookmark items?
 ************************************************
 
 .. card:: Bookmark property editor
-    :class-card: sd-text-center
 
     .. figure:: images/bookmark_properties2.png
-        :width: 440
+        :width: 480
 
-To edit basic properties, like external URLs, frame rate, file-filter rules, width, and height attributes, select a bookmark item and click the settings icon, or hit ``Ctrl+E``.
+    To edit basic properties, like external URLs, frame rate, file-filter rules, width, and height attributes, select a bookmark item and click the settings icon, or hit ``Ctrl+E``.
 
-The properties will help create footage 'publishes', convert image sequences, and, using the Maya plugin, set the Maya workspace and scene settings. Linking URLs and ShotGrid entities with local files can be beneficial when the project has a lot of external resources to keep track of.
+    The properties will help create footage 'publishes', convert image sequences, and, using the Maya plugin, set the Maya workspace and scene settings. Linking URLs and ShotGrid entities with local files can be beneficial when the project has a lot of external resources to keep track of.
 
-There are also filter options to associate task folders with file formats. And more!
+    There are also filter options to associate task folders with file formats. And more!
 
 
 Report issues

@@ -165,13 +165,23 @@ class FFMpegWidget(base.BasePropertyEditor):
         pbar = ffmpeg.get_progress_bar(start_n, end_n)
         pbar.open()
 
-        for n in range(start_n, end_n + 1):
+        # Get all frames from first until the last frame
+        all_frames = [f'{f}'.zfill(padding) for f in range(start_n, end_n + 1)]
+        available_frames = common.is_collapsed(self._file).group(2).strip(common.SEQSTART).strip(common.SEQEND).split(',')
+        available_frames_it = (f for f in available_frames)
+
+        # Loop through all frames
+        # Note all of these frames might refer to a real file on disk, so we'll increment
+        # the available frame number as we're looping
+        _frame = available_frames[0]
+        for n, frame in enumerate(all_frames):
             pbar.setValue(n)
 
-            n = f'{n}'.zfill(padding)
-            source = f'{start_seq.group(1)}{n}{start_seq.group(3)}.{start_seq.group(4)}'
-            file_info = QtCore.QFileInfo(source)
-            destination = f'{file_info.path()}/temp_{file_info.baseName()}.jpg'
+            if frame in available_frames:
+                _frame = next(available_frames_it)
+
+            source = f'{start_seq.group(1)}{_frame}{start_seq.group(3)}.{start_seq.group(4)}'
+            destination = f'{start_seq.group(1)}{frame}{start_seq.group(3)}_ffmpegtemp.jpg'
             _destinations.append(destination)
 
             # Convert to jpeg
@@ -183,7 +193,7 @@ class FFMpegWidget(base.BasePropertyEditor):
         pbar.close()
 
         file_info = QtCore.QFileInfo(self._file)
-        _file = f'{file_info.path()}/temp_{file_info.baseName()}.jpg'
+        _file = f'{file_info.path()}/{file_info.baseName()}_ffmpegtemp.jpg'
 
         mov = ffmpeg.convert(
             _file,

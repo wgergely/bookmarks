@@ -147,7 +147,8 @@ class FFMpegWidget(base.BasePropertyEditor):
         """Saves changes.
 
         """
-        if not common.is_collapsed(self._file):
+        is_collapsed = common.is_collapsed(self._file)
+        if not is_collapsed:
             raise RuntimeError(f'{self._file} is not a sequence.')
 
         start_path = common.get_sequence_start_path(self._file)
@@ -167,8 +168,12 @@ class FFMpegWidget(base.BasePropertyEditor):
 
         # Get all frames from first until the last frame
         all_frames = [f'{f}'.zfill(padding) for f in range(start_n, end_n + 1)]
-        available_frames = common.is_collapsed(self._file).group(2).strip(common.SEQSTART).strip(common.SEQEND).split(',')
+        available_frames = is_collapsed.group(2).strip(common.SEQSTART).strip(common.SEQEND).split(',')
         available_frames_it = (f for f in available_frames)
+
+        _dir = QtCore.QDir(f'{common.temp_path()}/ffmpeg')
+        if not _dir.exists():
+            _dir.mkpath('.')
 
         # Loop through all frames
         # Note all of these frames might refer to a real file on disk, so we'll increment
@@ -181,7 +186,8 @@ class FFMpegWidget(base.BasePropertyEditor):
                 _frame = next(available_frames_it)
 
             source = f'{start_seq.group(1)}{_frame}{start_seq.group(3)}.{start_seq.group(4)}'
-            destination = f'{start_seq.group(1)}{frame}{start_seq.group(3)}_ffmpegtemp.jpg'
+
+            destination = f'{_dir.path()}/ffmpeg_{frame}.jpg'
             _destinations.append(destination)
 
             # Convert to jpeg
@@ -193,7 +199,7 @@ class FFMpegWidget(base.BasePropertyEditor):
         pbar.close()
 
         file_info = QtCore.QFileInfo(self._file)
-        _file = f'{file_info.path()}/{file_info.baseName()}_ffmpegtemp.jpg'
+        _file = f'{_dir.path()}/ffmpeg_{is_collapsed.group(2)}.jpg'
 
         mov = ffmpeg.convert(
             _file,
@@ -212,7 +218,8 @@ class FFMpegWidget(base.BasePropertyEditor):
             return False
 
         # Rename output video
-        _mov = mov.replace('temp_', '')
+        _ext = QtCore.QFileInfo(mov).suffix()
+        _mov = f'{start_seq.group(1).strip().strip("_")}{start_seq.group(3).strip().strip("_")}.{_ext}'
         QtCore.QFile.rename(mov, _mov)
         common.widget(common.FileTab).show_item(_mov, role=common.PathRole, update=True)
         return True

@@ -310,7 +310,6 @@ class AssetItemModel(models.ItemModel):
         except OSError as e:
             log.error(e)
             return
-            yield
 
         # Get folders from the root of the bookmark item
         for entry in it:
@@ -329,7 +328,8 @@ class AssetItemModel(models.ItemModel):
             for link in links:
                 v = f'{path}/{entry.name}/{link}'
                 _entry = common.get_entry_from_path(v)
-                if not entry:
+                if not _entry:
+                    log.error(f'Could not get entry from link {v}')
                     continue
                 yield _entry
             if links:

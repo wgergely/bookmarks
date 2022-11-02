@@ -870,6 +870,7 @@ class BaseItemView(QtWidgets.QTableView):
                     'flags',
                     database.AssetTable
                 )
+                flags = flags if flags else 0
 
                 # Active items can't be archived
                 if flags & common.MarkedAsActive:

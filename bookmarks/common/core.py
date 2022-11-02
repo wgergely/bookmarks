@@ -474,6 +474,8 @@ def get_links(path, section='links/asset'):
     v = s.value(section)
     if not v:
         return []
+    if not isinstance(v, (list, tuple)):
+        v = [v,]
 
     try:
         # Check validity of the list before returning anything
@@ -482,6 +484,9 @@ def get_links(path, section='links/asset'):
             file_info = QtCore.QFileInfo(f'{path}/{_v}')
             if file_info.exists():
                 links.append(_v.replace('\\', '/'))
+            else:
+                from .. import log
+                log.error(f'Link "{file_info.filePath()}" does not exist.')
         return sorted(links)
     except:
         return []

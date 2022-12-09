@@ -74,5 +74,6 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "fstream": "cpp"
-    }
+    },
+    "python.analysis.typeCheckingMode": "basic"
 }

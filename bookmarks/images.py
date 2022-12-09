@@ -911,12 +911,15 @@ class ImageCache(QtCore.QObject):
             bool: True if successfully converted the image, False otherwise.
 
         """
+        if not os.path.isfile(source):
+            return
         _lock_path = f'{destination}.lock'
         if os.path.isfile(_lock_path):
             return
 
         log.debug(f'Converting {source}...', cls)
-        open(_lock_path, 'a', encoding='utf8')
+        with open(_lock_path, 'a', encoding='utf8') as _f:
+            pass
 
         def _get_scaled_spec(source_spec):
             w = source_spec.width

@@ -161,23 +161,30 @@ class TopBarWidget(QtWidgets.QWidget):
         self.layout().setSpacing(0)
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
 
-        height = common.size(common.size_margin) + \
-                 (common.size(common.size_indicator) * 3)
+        o = common.size(common.size_indicator) * 3
+        height = common.size(common.size_margin) + o
         self.setFixedHeight(height)
+
+        widget = QtWidgets.QWidget()
+        QtWidgets.QHBoxLayout(widget)
+        widget.layout().setContentsMargins(0, 0, o, 0)
+        widget.layout().setSpacing(o)
+        widget.setAttribute(QtCore.Qt.WA_NoBackground, True)
+        widget.setAttribute(QtCore.Qt.WA_TranslucentBackground, True)
 
         for idx in BUTTONS:
             self._buttons[idx] = BUTTONS[idx]['widget'](parent=self)
             self._buttons[idx].setHidden(BUTTONS[idx]['hidden'])
 
-            if idx < common.FavouriteTab:
-                self.layout().addWidget(self._buttons[idx], 1)
+            if idx > common.FavouriteTab:
+                widget.layout().addWidget(self._buttons[idx], 0)
             else:
-                self.layout().addWidget(self._buttons[idx], 0)
-                self.layout().addSpacing(common.size(common.size_indicator))
+                self.layout().addWidget(self._buttons[idx], 1)
 
             if idx == common.FavouriteTab:
                 self.layout().addStretch()
 
+        self.layout().addWidget(widget)
         self.slack_drop_area_widget = SlackDropAreaWidget(parent=self)
         self.slack_drop_area_widget.setHidden(True)
 

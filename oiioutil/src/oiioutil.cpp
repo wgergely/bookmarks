@@ -372,6 +372,36 @@ bool make_thumbnail(char *source_c, char *destination_c, int size)
     return 0;
 }
 
+bool save_image(char* source_c, char* destination_c)
+{
+    // Parse the source and destination file paths
+    std::string source = source_c;
+    std::string destination = destination_c;
+
+    // Check if the source file exists
+    if (!_is_file(source_c))
+    {
+        std::cerr << "Source file does not exist: " << source << std::endl;
+        return 1;
+    }
+
+
+    OIIO::ImageBuf buf = get_buf(source_c, 0);
+
+    if (!buf.initialized())
+    {
+        return 1;
+    }
+    // Write the image
+    if (!buf.write(destination))
+    {
+        std::cerr << "Failed to write the image" << std::endl;
+        return 1;
+    }
+    return 0;
+}
+
+
 // Create Python bindings
 PYBIND11_MODULE(bookmarks_oiio, m)
 {
@@ -382,4 +412,10 @@ PYBIND11_MODULE(bookmarks_oiio, m)
         py::arg("source"), py::arg("destination"), py::arg("size"),
         py::return_value_policy::copy,
         "Create a thumbnail from a source image");
+    m.def(
+        "save_image",
+        &save_image,
+        py::arg("source"), py::arg("destination"),
+        py::return_value_policy::copy,
+        "Save source as a destination image");
 }

@@ -198,7 +198,7 @@ def init_stylesheet():
             size_margin2=int(size(common.size_margin) * 2),
             size_margin3=int(size(common.size_margin) * 4),
             size_row_height=int(size(common.size_row_height)),
-            size_row_height2=int(size(common.size_row_height) * 0.66),
+            size_row_height2=int(size(common.size_row_height) * 0.8),
             color_background=rgb(common.color(common.color_background)),
             color_light_background=rgb(common.color(common.color_light_background)),
             color_dark_background=rgb(common.color(common.color_dark_background)),

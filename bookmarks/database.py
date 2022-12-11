@@ -70,19 +70,12 @@ BookmarkTable = 'BookmarkData'
 #: Database table name
 InfoTable = 'InfoData'
 
-#: Database column name
-IdColumn = 'id'
-#: Database column name
-DescriptionColumn = 'description'
-#: Database column name
-NotesColumn = 'notes'
-
 database_connect_retries = 100
 
 #: sqlite3 database structure definition
 TABLES = {
     AssetTable: {
-        IdColumn: {
+        'id': {
             'sql': 'TEXT PRIMARY KEY COLLATE NOCASE',
             'type': str
         },
@@ -145,7 +138,7 @@ TABLES = {
 
     },
     InfoTable: {
-        IdColumn: {
+        'id': {
             'sql': 'TEXT PRIMARY KEY COLLATE NOCASE',
             'type': str
         },
@@ -175,7 +168,7 @@ TABLES = {
         }
     },
     BookmarkTable: {
-        IdColumn: {
+        'id': {
             'sql': 'TEXT PRIMARY KEY COLLATE NOCASE',
             'type': str
         },
@@ -452,12 +445,14 @@ class BookmarkDB(QtCore.QObject):
     """
 
     def __init__(self, server, job, root, parent=None):
-        super(BookmarkDB, self).__init__(parent=parent)
+        super().__init__(parent=parent)
+
         for arg in (server, job, root):
             common.check_type(arg, str)
 
         self._is_valid = False
         self._connection = None
+        self._version = None
 
         self.server = server
         self.job = job
@@ -472,9 +467,19 @@ class BookmarkDB(QtCore.QObject):
         else:
             self._connect_to_memory_db()
 
+        self._init_version()
         self._init_tables()
 
         self.destroyed.connect(self.close)
+
+    def _init_version(self):
+        if not self._connection:
+            return
+        v = self._connection.execute("SELECT sqlite_version();").fetchone()[0]
+        if not v:
+            self._version = [0, 0, 0]
+            return
+        self._version = [int(i) for i in v.split('.')]
 
     def _connect_to_memory_db(self):
         """Creates an in-memory database when we're unable to connect to the
@@ -487,7 +492,8 @@ class BookmarkDB(QtCore.QObject):
         self._connection = sqlite3.connect(
             ':memory:',
             isolation_level=None,
-            check_same_thread=False
+            check_same_thread=False,
+            cached_statements=1000
         )
         self._is_valid = False
         return self._connection
@@ -510,7 +516,8 @@ class BookmarkDB(QtCore.QObject):
                 self._connection = sqlite3.connect(
                     self._database_path,
                     isolation_level=None,
-                    check_same_thread=False
+                    check_same_thread=False,
+                    cached_statements=1000
                 )
                 self._is_valid = True
                 return self._connection
@@ -563,6 +570,9 @@ class BookmarkDB(QtCore.QObject):
             args.append(f'{k} {v["sql"]}')
 
         sql = f'CREATE TABLE IF NOT EXISTS {table} ({",".join(args)})'
+        self.connection().execute(sql)
+
+        sql = f'CREATE UNIQUE INDEX IF NOT EXISTS {table}_id_idx ON {table} (id)'
         self.connection().execute(sql)
 
     def _patch_table(self, table):
@@ -707,14 +717,12 @@ class BookmarkDB(QtCore.QObject):
 
         if not row:
             for key in columns:
-                # skip 'id'
                 if key == 'id':
                     continue
                 values[key] = None
             return values
 
         for idx, key in enumerate(columns):
-            # skip 'id'
             if key == 'id':
                 continue
             values[key] = convert_return_values(table, key, row[idx])
@@ -739,6 +747,7 @@ class BookmarkDB(QtCore.QObject):
 
         @functools.lru_cache(maxsize=4194304)
         def _get_sql(_source, _key, _table):
+            """Returns a cached SQL statement for the value query."""
             _hash = common.get_hash(_source)
             return f'SELECT {_key} FROM {_table} WHERE id=\'{_hash}\''
 
@@ -798,27 +807,36 @@ class BookmarkDB(QtCore.QObject):
                 value = None
 
         _hash = common.get_hash(source)
-        values = []
 
-        # Earlier versions of the sqlite3 library lack `UPSERT` or `WITH`
-        # A workaround is found here:
+        # Versions earlier than 3.24.0 lack `UPSERT` so based on
+        # the following article, we'll use a `INSERT OR REPLACE` instead
         # https://stackoverflow.com/questions/418898/sqlite-upsert-not-insert-or-replace
-        for k in TABLES[table]:
-            if k == key:
-                v = '\n null' if value is None else '\n \'' + value + '\''
+        if self._version < [3, 24, 0]:
+            values = []
+            for k in TABLES[table]:
+                if k == key:
+                    v = '\n null' if value is None else '\n \'' + value + '\''
+                    values.append(v)
+                    continue
+
+                v = '\n(SELECT ' + k + ' FROM ' + table + \
+                    ' WHERE id =\'' + _hash + '\')'
                 values.append(v)
-                continue
 
-            v = '\n(SELECT ' + k + ' FROM ' + table + \
-                ' WHERE id =\'' + _hash + '\')'
-            values.append(v)
-
-        sql = 'INSERT OR REPLACE INTO {table} (id, {allkeys}) VALUES (\'{hash}\', {values});'.format(
-            hash=_hash,
-            allkeys=', '.join(TABLES[table]),
-            values=','.join(values),
-            table=table
-        )
+            sql = 'INSERT OR REPLACE INTO {table} (id, {allkeys}) VALUES (\'{hash}\', {values});'.format(
+                hash=_hash,
+                allkeys=', '.join(TABLES[table]),
+                values=','.join(values),
+                table=table
+            )
+        else: # use upsert for versions 3.24.0 and above
+            sql = 'INSERT INTO {table} (id, {key}) VALUES (\'{hash}\', \'{value}\')' \
+                  ' ON CONFLICT(id) DO UPDATE SET {key}=excluded.{key};'.format(
+                hash=_hash,
+                key=key,
+                value=value,
+                table=table
+            )
 
         try:
             self.connection().execute(sql)

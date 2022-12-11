@@ -14,6 +14,7 @@
 #include <OpenImageIO/imagebuf.h>
 #include <OpenImageIO/imagebufalgo.h>
 #include <OpenImageIO/imagecache.h>
+#include <OpenImageIO/strutil.h>
 
 #include <pybind11/pybind11.h>
 
@@ -31,6 +32,35 @@ namespace py = pybind11;
 #if !defined(S_ISDIR) && defined(S_IFMT) && defined(S_IFDIR)
 #define S_ISDIR(m) (((m)&S_IFMT) == S_IFDIR)
 #endif
+
+
+
+bool is_extension_valid(const std::string& ext) {
+    // Get the string attribute containing the extensions
+    std::string v = OIIO::get_string_attribute("extension_list");
+
+    // Initialize the vector of extensions
+    std::vector<std::string> extensions;
+
+    // Split the string by ';' and iterate over the resulting substrings
+    std::vector<std::string> _f;
+    OIIO::Strutil::split(v, _f, ";");
+    for (const std::string& f: _f) {
+        // Split each substring by ':' and get the second element (the extension list)
+        std::vector<std::string> fields;
+        OIIO::Strutil::split(f, fields, ":", -1);
+        if (fields.size() >= 2) {
+            // Split the extension list by ',' and add each extension to the vector
+            std::vector<std::string> e;
+            OIIO::Strutil::split(fields[1], e, ",", -1);
+            extensions.insert(extensions.end(), e.begin(), e.end());
+        }
+    }
+
+    // Check if the input extension is in the vector of extensions
+    return std::find(extensions.begin(), extensions.end(), ext) != extensions.end();
+}
+
 
 // Define a custom comparison function for use with std::equal()
 bool equal_ignore_case(char a, char b)
@@ -68,6 +98,22 @@ OIIO::ImageSpec _get_scaled_spec(const OIIO::ImageSpec &source_spec, int size)
 // Helper function to shuffle channels of the image
 OIIO::ImageBuf _shuffle_channels(const OIIO::ImageBuf &buf, const OIIO::ImageSpec &source_spec)
 {
+    if (
+        source_spec.channelindex("R") == 0 &&
+        source_spec.channelindex("G") == 1 &&
+        source_spec.channelindex("B") == 2 &&
+        source_spec.channelindex("A") != 3)
+    {
+        return buf;
+    }
+    if (
+        source_spec.channelindex("R") == 0 &&
+        source_spec.channelindex("G") == 1 &&
+        source_spec.channelindex("B") == 2 &&
+        source_spec.channelindex("A") == -1)
+    {
+        return buf;
+    }      
     // Let's check if the RGBA channels exist
     if (
         source_spec.channelindex("R") > -1 &&
@@ -117,21 +163,17 @@ OIIO::ImageBuf _flatten(const OIIO::ImageBuf &buf, const OIIO::ImageSpec &source
     {
         return buf;
     }
-    if (source_spec.deep)
-    {
-        return OIIO::ImageBufAlgo::flatten(buf);
-    }
-    return buf;
+    return OIIO::ImageBufAlgo::flatten(buf);
 }
 
 // Helper function to convert the color profile of the image
 OIIO::ImageBuf _colorconvert(const OIIO::ImageBuf &buf, const OIIO::ImageSpec &source_spec)
 {
-    if (source_spec.get_int_attribute("oiio:Movie") == 1)
+    if (source_spec.get_int_attribute("oiio:Movie", -1) == 1)
     {
         return buf;
     }
-    std::string colorspace = source_spec.get_string_attribute("oiio:ColorSpace");
+    std::string colorspace = source_spec.get_string_attribute("oiio:ColorSpace", "linear");
     try
     {
         if (colorspace == "linear")
@@ -156,13 +198,15 @@ OIIO::ImageBuf get_buf(const std::string &filename, int subimage)
 
     std::string ext = filename.substr(filename.find_last_of('.') + 1);
     std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
-    if (!OIIO::is_imageio_format_name(ext))
-    {
-        std::cerr << "Unsupported file format: " << ext << std::endl;
+
+    if (!is_extension_valid(ext)) {
+        std::cerr << ext << " doesn't seem like a valid extension" << std::endl;
+        std::cerr << OIIO::geterror() << std::endl;
         return OIIO::ImageBuf();
     }
 
     auto i = OIIO::ImageInput::create(ext);
+
     if (!i || !i->valid_file(filename.c_str()))
     {
         i->close();
@@ -256,7 +300,6 @@ bool make_thumbnail(char *source_c, char *destination_c, int size)
     if (!buf.initialized())
     {
         remove_lock_file(destination_c);
-        std::cerr << "Failed to get the image buffer" << std::endl;
         return 1;
     }
 

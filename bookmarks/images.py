@@ -12,7 +12,7 @@ Note:
 Under the hood, :func:`get_thumbnail` uses :meth:`ImageCache.get_pixmap` and
 :meth:`ImageCache.get_image`.
 
-We're using OpenImageIO to generate thumbnails. See :meth:`ImageCache.oiio_make_thumbnail`.
+We're using OpenImageIO to generate thumbnails.
 To load an image using OpenImageIO as a QtGui.QImage see :func:`oiio_get_qimage`.
 
 To load gui resources, use :meth:`.ImageCache.rsc_pixmap`.
@@ -26,8 +26,11 @@ import time
 import OpenImageIO
 from PySide2 import QtWidgets, QtGui, QtCore
 
+import bookmarks_oiio
+
 from . import common
 from . import log
+
 
 #: The list of image formats QT is configured to read.
 QT_IMAGE_FORMATS = {f.data().decode('utf8')
@@ -129,9 +132,8 @@ def get_thumbnail(server, job, root, source, size=common.thumbnail_size,
         get_path (bool): Returns a path instead of a QPixmap if set to `True`.
 
     Returns:
-        tuple:                   `(QPixmap, QColor)`, or `(None, None)`.
-        str:                 Path to the thumbnail file when `get_path=True`.
-
+        tuple: `(QPixmap, QColor)`, or `(None, None)`.
+        str: Path to the thumbnail file when `get_path=True`.
 
     """
     if not all((server, job, root, source)):
@@ -277,7 +279,7 @@ def create_thumbnail_from_image(server, job, root, source, image, proxy=False):
 
     The ``server``, ``job``, ``root``, ``source`` arguments refer to a file we
     want to create a new thumbnail for. The ``image`` argument should be a path to
-    an image file that will be converted using :func:`oiio_make_thumbnail()` to a
+    an image file that will be converted using `bookmarks_oiio.make_thumbnail()` to a
     thumbnail image and saved to our image cache and disk to represent ``source``.
 
     Args:
@@ -298,12 +300,12 @@ def create_thumbnail_from_image(server, job, root, source, image, proxy=False):
             s = 'Failed to remove existing thumbnail file.'
             raise RuntimeError(s)
 
-    res = ImageCache.oiio_make_thumbnail(
+    res = bookmarks_oiio.make_thumbnail(
         image,
         thumbnail_path,
-        common.thumbnail_size
+        int(common.thumbnail_size)
     )
-    if not res:
+    if res == 1:
         raise RuntimeError('Failed to make thumbnail.')
 
     ImageCache.flush(thumbnail_path)
@@ -403,6 +405,9 @@ def oiio_get_buf(source, hash=None, force=False, subimage=0):
     if ext not in get_oiio_extensions():
         return None
     i = OpenImageIO.ImageInput.create(ext)
+
+    if not os.path.exists(source) or os.path.getsize(source) == 0:
+        return None
     if not i or not i.valid_file(source):
         i.close()
         return None
@@ -414,7 +419,6 @@ def oiio_get_buf(source, hash=None, force=False, subimage=0):
     buf = OpenImageIO.ImageBuf()
     buf.reset(source, subimage, 0, config=config)
     if buf.has_error:
-        log.error(buf.geterror())
         return None
 
     ImageCache.setValue(hash, buf, BufferType)
@@ -893,180 +897,3 @@ class ImageCache(QtCore.QObject):
         pixmap.convertFromImage(image, flags=QtCore.Qt.ColorOnly)
         common.image_resource_data[k] = pixmap
         return common.image_resource_data[k]
-
-    @classmethod
-    def oiio_make_thumbnail(cls, source, destination, size, nthreads=2):
-        """Converts the `source` image to an sRGB image fitting the bounds of
-        `size` and saves it to `destination`.
-
-        If size is `-1`, the image won't be resized.
-
-        Args:
-            source (str): Source image's file path.
-            destination (str): Destination of the converted image.
-            size (int): The bounds to fit the converted image (in pixels).
-            nthreads (int): Number of threads to use. Defaults to 4.
-
-        Returns:
-            bool: True if successfully converted the image, False otherwise.
-
-        """
-<<<<<<< HEAD
-        if not os.path.isfile(source):
-            return
-=======
->>>>>>> 3b027d0b1c05ef5a5eb1c2ae81977c003beced35
-        _lock_path = f'{destination}.lock'
-        if os.path.isfile(_lock_path):
-            return
-
-        log.debug(f'Converting {source}...', cls)
-<<<<<<< HEAD
-        with open(_lock_path, 'a', encoding='utf8') as _f:
-            pass
-=======
-        open(_lock_path, 'a', encoding='utf8')
->>>>>>> 3b027d0b1c05ef5a5eb1c2ae81977c003beced35
-
-        def _get_scaled_spec(source_spec):
-            w = source_spec.width
-            h = source_spec.height
-            factor = float(size) / max(float(w), float(h))
-            w *= factor
-            h *= factor
-
-            s = OpenImageIO.ImageSpec(int(w), int(h), 4, OpenImageIO.UINT8)
-            s.channelnames = ('R', 'G', 'B', 'A')
-            s.alpha_channel = 3
-            s.attribute('oiio:ColorSpace', 'sRGB')
-            s.attribute('oiio:Gamma', '0.454545')
-            return s
-
-        def _shuffle_channels(buf, source_spec):
-            if int(source_spec.nchannels) < 3:
-                buf = OpenImageIO.ImageBufAlgo.channels(
-                    buf,
-                    (source_spec.channelnames[0], source_spec.channelnames[0],
-                     source_spec.channelnames[0]),
-                    ('R', 'G', 'B')
-                )
-            elif int(source_spec.nchannels) > 4:
-                if source_spec.channelindex('A') > -1:
-                    buf = OpenImageIO.ImageBufAlgo.channels(
-                        buf, ('R', 'G', 'B', 'A'), ('R', 'G', 'B', 'A'))
-                else:
-                    buf = OpenImageIO.ImageBufAlgo.channels(
-                        buf, ('R', 'G', 'B'), ('R', 'G', 'B'))
-            return buf
-
-        def _resize(buf, destination_spec):
-            return OpenImageIO.ImageBufAlgo.resample(
-                buf, roi=destination_spec.roi, interpolate=True, nthreads=nthreads)
-
-        def _flatten(buf, source_spec):
-            if source_spec.get_int_attribute('deep', defaultval=-1) != 1:
-                return buf
-            if source_spec.deep:
-                buf = OpenImageIO.ImageBufAlgo.flatten(buf, nthreads=nthreads)
-            return buf
-
-        def _colorconvert(buf, source_spec):
-            if source_spec.get_int_attribute('oiio:Movie') == 1:
-                return buf
-            colorspace = source_spec.get_string_attribute('oiio:ColorSpace')
-            try:
-                if colorspace == 'linear':
-                    buf = OpenImageIO.ImageBufAlgo._colorconvert(
-                        buf, colorspace, 'sRGB')
-            except:
-                log.error('Could not convert the color profile')
-            return buf
-
-        def _checker(buf, source_spec, destination_spec):
-            if source_spec.get_int_attribute('oiio:Movie', defaultval=-1) == 1:
-                return buf
-            if buf.nchannels <= 3:
-                return buf
-            background_buf = OpenImageIO.ImageBuf(destination_spec)
-            OpenImageIO.ImageBufAlgo._checker(
-                background_buf,
-                12, 12, 1,
-                (0.3, 0.3, 0.3),
-                (0.2, 0.2, 0.2)
-            )
-            buf = OpenImageIO.ImageBufAlgo.over(buf, background_buf)
-            return buf
-
-        buf = oiio_get_buf(source)
-        if not buf:
-            common.oiio_cache.invalidate(source, force=True)
-            os.remove(_lock_path)
-            return False
-
-        source_spec = buf.spec()
-
-        # The LibPNG seems to be fussy about corrupted and invalid ICC profiles
-        # and OpenImageIO seems to interpret warning about these as errors that
-        # causes the interpreter to crash. Removing the ICC profile seems to fix
-        # the issue. Also, OpenImageIO seems to have a bug when trying to
-        # explicitly erase the attribute. The workaround seems to be to set the
-        # attribute value prior to deleting it.
-        source_spec['ICCProfile'] = 0
-        source_spec.erase_attribute('ICCProfile')
-
-        if source_spec.get_int_attribute('oiio:Movie', defaultval=-1) == 1:
-            # Load the middle frame of the video
-            buf = oiio_get_buf(source, subimage=int(buf.nsubimages / 2))
-
-            is_gif = source_spec.get_int_attribute('gif:LoopCount', defaultval=-1) >= 0
-
-            # I'm having issues working with very short movie files - that contain only a couple of frames,
-            # so, let's ignore those (gifs are fine)
-            if not is_gif and source_spec.get_int_attribute('oiio:subimages',
-                                                            defaultval=-1) <= 2:
-                common.oiio_cache.invalidate(source, force=True)
-                os.remove(_lock_path)
-                return False
-
-            # [BUG] Not all codec formats are supported by ffmpeg. There does
-            # not seem to be (?) error handling and an unsupported codec will
-            # crash ffmpeg and the rest of the app.
-            codec_name = source_spec.get_string_attribute('ffmpeg:codec_name')
-            if not is_gif and codec_name:
-                if not [f for f in accepted_codecs if f.lower() in codec_name.lower()]:
-                    log.debug(f'Unsupported movie format: {codec_name}')
-                    common.oiio_cache.invalidate(source, force=True)
-                    os.remove(_lock_path)
-                    return False
-
-        destination_spec = _get_scaled_spec(source_spec)
-        if size != -1:
-            buf = _resize(buf, destination_spec)
-        buf = _shuffle_channels(buf, source_spec)
-        buf = _flatten(buf, source_spec)
-        buf = _colorconvert(buf, source_spec)
-        # buf = _checker(buf, source_spec, destination_spec)
-
-        spec = buf.spec()
-        buf.set_write_format(OpenImageIO.UINT8)
-
-        # On some dpx images I'm getting "GammaCorrectedinf"
-        if 'gammacorrectedinf' in spec.get_string_attribute('oiio:ColorSpace').lower():
-            spec['oiio:ColorSpace'] = 'sRGB'
-            spec['oiio:Gamma'] = '0.454545'
-
-        # Create a lock file before writing
-        success = buf.write(destination, dtype=OpenImageIO.UINT8)
-        os.remove(_lock_path)
-
-        if not success:
-            log.error(f'{buf.geterror()}\n{OpenImageIO.geterror()}')
-
-            if not QtCore.QFile(destination).remove():
-                log.error('Cleanup failed.')
-
-            common.oiio_cache.invalidate(source, force=True)
-            return False
-
-        common.oiio_cache.invalidate(source, force=True)
-        return True

@@ -5,6 +5,8 @@ import uuid
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
+import bookmarks_oiio
+
 from .. import common
 from .. import contextmenu
 from .. import images
@@ -45,13 +47,12 @@ def process_image(source):
         if not f.dir().mkpath('.'):
             raise RuntimeError('Could not create temp folder')
 
-    res = images.ImageCache.oiio_make_thumbnail(
+    res = bookmarks_oiio.make_thumbnail(
         source,
         destination,
-        common.thumbnail_size
+        int(common.thumbnail_size)
     )
-
-    if not res:
+    if res == 1:
         raise RuntimeError('Failed to convert the thumbnail')
 
     images.ImageCache.flush(destination)

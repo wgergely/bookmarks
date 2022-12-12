@@ -102,18 +102,10 @@ OIIO::ImageBuf _shuffle_channels(const OIIO::ImageBuf &buf, const OIIO::ImageSpe
         source_spec.channelindex("R") == 0 &&
         source_spec.channelindex("G") == 1 &&
         source_spec.channelindex("B") == 2 &&
-        source_spec.channelindex("A") != 3)
+        source_spec.channelindex("A") == 3)
     {
         return buf;
     }
-    if (
-        source_spec.channelindex("R") == 0 &&
-        source_spec.channelindex("G") == 1 &&
-        source_spec.channelindex("B") == 2 &&
-        source_spec.channelindex("A") == -1)
-    {
-        return buf;
-    }      
     // Let's check if the RGBA channels exist
     if (
         source_spec.channelindex("R") > -1 &&

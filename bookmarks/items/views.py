@@ -2109,7 +2109,7 @@ class ThreadedItemView(InlineIconView):
         self.update_queue = collections.deque([], common.max_list_items)
         self.update_queue_timer = common.Timer()
         self.update_queue_timer.setSingleShot(True)
-        self.update_queue_timer.setInterval(1)
+        self.update_queue_timer.setInterval(10)
         self.update_queue_timer.timeout.connect(self.queued_row_update)
 
         self.init_threads()
@@ -2209,12 +2209,10 @@ class ThreadedItemView(InlineIconView):
         except:
             raise
 
-    @QtCore.Slot(int)
+    @QtCore.Slot(weakref.ref)
     def update_row(self, ref):
         """Queues an update request by the threads for later processing."""
         if not ref():
-            return
-        if ref()[common.TypeRole] != self.model().sourceModel().data_type():
             return
         if ref not in self.update_queue:
             self.update_queue.append(ref)
@@ -2226,7 +2224,6 @@ class ThreadedItemView(InlineIconView):
             ref = self.update_queue.popleft()
         except IndexError:
             return
-
         if not ref():
             return
 
@@ -2234,6 +2231,7 @@ class ThreadedItemView(InlineIconView):
             index = self.model().index(row, 0)
             if index.data(common.PathRole) == ref()[common.PathRole]:
                 super().update(index)
+                break
 
         self.update_queue_timer.start(self.update_queue_timer.interval())
 

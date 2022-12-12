@@ -103,8 +103,7 @@ Index
         :mod:`~bookmarks.images`
 
         Most image manipulation methods are stored in this module.
-        Bookmarks uses OpenImageIO to create image thumbnails, e.g.
-        :meth:`~bookmarks.images.ImageCache.oiio_make_thumbnail`.
+        Bookmarks uses OpenImageIO to create image thumbnails.
 
         See :class:`~bookmarks.images.ImageCache` for the getting and caching image
         resources.

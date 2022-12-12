@@ -7,7 +7,9 @@ import os
 import uuid
 import weakref
 
-from PySide2 import QtCore, QtWidgets
+from PySide2 import QtCore, QtWidgets, QtGui
+
+import bookmarks_oiio
 
 from .. import common
 from .. import database
@@ -819,12 +821,12 @@ class ThumbnailWorker(BaseWorker):
             if QtCore.QFileInfo(source).size() >= pow(1024, 3) * 2:
                 return True
 
-            res = images.ImageCache.oiio_make_thumbnail(
+            res = bookmarks_oiio.make_thumbnail(
                 source,
                 destination,
-                common.thumbnail_size,
+                int(common.thumbnail_size),
             )
-            if res:
+            if res == 0:
                 with images.lock:
                     images.ImageCache.get_image(destination, int(size), force=True)
                     images.ImageCache.make_color(destination)
@@ -832,15 +834,17 @@ class ThumbnailWorker(BaseWorker):
 
             # We should never get here ideally, but if we do we'll mark the item
             # with a bespoke 'failed' thumbnail
+
             fpath = common.rsc(
                 f'{common.GuiResource}/failed.{common.thumbnail_format}')
-            hash = common.get_hash(fpath)
+            hash = common.get_hash(destination)
 
             with images.lock:
-                images.ImageCache.get_image(fpath, int(size), hash=hash)
-                images.ImageCache.make_color(fpath, hash=hash)
-
+                images.ImageCache.get_image(fpath, int(size), hash=hash, force=True)
+                images.ImageCache.setValue(
+                    hash, common.color(common.color_dark_background), images.ColorType)
             return True
+
         except TypeError:
             return False
         except:

@@ -204,6 +204,12 @@ QLineEdit:disabled {{
     background-color: {color_dark_background};
 }}
 
+QTextBrowser {{
+    height: -1px;
+    max-height: -1px;
+    min-height: -1px;
+}}
+
 QScrollBar {{
     background: {color_separator};
     width: {size_indicator2}px;

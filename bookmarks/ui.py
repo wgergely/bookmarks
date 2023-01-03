@@ -607,7 +607,8 @@ class ClickableIconButton(QtWidgets.QLabel):
         disabled states.
         size (int): The value for width and height.
         description (str): A user readable description of the action the button
-        performs.
+            performs.
+        state (bool): Optional button state. 'False' by default.
         parent (QObject): The widget's parent.
 
     Signals:

@@ -7,53 +7,85 @@ import re
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
+from . import common
+from . import actions
+from . import ui
+
 
 class SyntaxHighliter(QtGui.QSyntaxHighlighter):
     formats = {
-        'bold': re.compile(r'(\*\*|__)(.*?)(\*\*|__)', re.IGNORECASE),
-        'italic': re.compile(r'(\*|_)(.*?)(\*|_)', re.IGNORECASE),
-        'header': re.compile(r'(#+)(.*)', re.IGNORECASE),
-        'link': re.compile(r'\[(.*?)\]\((.*?)\)', re.IGNORECASE),
-        'image': re.compile(r'!\[(.*?)\]\((.*?)\)', re.IGNORECASE),
-        'quote': re.compile(r'>\s(.*)', re.IGNORECASE),
-        # 'url': re.compile(r'(?!mailto:)(?:(?:https?|ftp):\/\/)?(?:\S+(?::\S*)?@)?(?:(?:(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[0-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))|localhost)(?::\d{2,5})?(?:\/[^\s]*)?', re.IGNORECASE),
-        'unc': re.compile(r'(?:\\\\|\/\/|[a-zA-Z]:[\\/]|\/)[^\s/]+[/\\]?(?:[^\s/\\]+[/\\]?)*', re.IGNORECASE)
+        'bold': {
+            'regex': re.compile(r'(\*\*|__)(.*?)(\*\*|__)', re.IGNORECASE),
+            'flag': 0b000000,
+        },
+        'italic': {
+            'regex': re.compile(r'(\*|_)(.*?)(\*|_)', re.IGNORECASE),
+            'flag': 0b000001,
+        },
+        'header': {
+            'regex': re.compile(r'(#+)(.*)', re.IGNORECASE),
+            'flag': 0b000010,
+        },
+        'link': {
+            'regex': re.compile(r'\[(.*?)\]\((.*?)\)', re.IGNORECASE),
+            'flag': 0b000100,
+        },
+        'image': {
+            'regex': re.compile(r'!\[(.*?)\]\((.*?)\)', re.IGNORECASE),
+            'flag': 0b001000,
+        },
+        'quote': {
+            'regex': re.compile(r'>\s(.*)', re.IGNORECASE),
+            'flag': 0b010000,
+        },
+        'url': {
+            'regex': re.compile(
+                r'(?!mailto:)(?:(?:https?|ftp|rvlink):\/\/)?(?:\S+(?::\S*)?@)?(?:(?:(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[0-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))|localhost)(?::\d{2,5})?(?:\/[^\s]*)?',
+                re.IGNORECASE),
+            'flag': 0b100000,
+        },
+        'filepath': {
+            'regex': re.compile(r'(?:\\\\|\/\/|[a-zA-Z]:[\\/]|\/)[^\s/]+[/\\]?(?:[^\s/\\]+[/\\]?)*', re.IGNORECASE),
+            'flag': 0b000000,
+        },
     }
-
-    # (?:[a-zA-Z]\: | \\\\[\w\.]+\\[\w.$]+)\\(?:[\w]+\\) *\w([\w.])+
 
     def __init__(self, document, parent=None):
         super().__init__(document, parent=parent)
 
     def highlightBlock(self, text):
+        light_font, _ = common.font_db.light_font(common.size(common.size_font_medium))
+        large_font, _ = common.font_db.bold_font(common.size(common.size_font_large))
 
+        f = QtGui.QTextCharFormat()
         for k in self.formats:
-            f = QtGui.QTextCharFormat()
+            f.setFont(light_font)
+            f.setFontWeight(QtGui.QFont.Light)
 
             if k == 'bold':
                 f.setFontWeight(QtGui.QFont.Bold)
             elif k == 'italic':
                 f.setFontItalic(True)
             elif k == 'header':
+                f.setFont(large_font)
                 f.setFontWeight(QtGui.QFont.Bold)
-                f.setForeground(QtCore.Qt.darkBlue)
-                f.setFontPointSize(f.fontPointSize() * 10)
+                f.setForeground(common.color(common.color_blue))
             elif k == 'link':
-                f.setForeground(QtCore.Qt.blue)
+                f.setForeground(common.color(common.color_green))
             elif k == 'image':
-                f.setForeground(QtCore.Qt.darkRed)
+                f.setForeground(common.color(common.color_blue))
             elif k == 'quote':
-                f.setForeground(QtCore.Qt.darkGreen)
+                f.setForeground(common.color(common.color_blue))
             elif k == 'url':
                 f.setFontWeight(QtGui.QFont.Bold)
-                f.setForeground(QtCore.Qt.green)
-            elif k == 'unc':
+                f.setForeground(common.color(common.color_blue))
+            elif k == 'filepath':
                 f.setFontWeight(QtGui.QFont.Bold)
-                f.setForeground(QtCore.Qt.green)
+                f.setForeground(common.color(common.color_green))
             else:
                 continue
 
-            e = self.formats[k]
+            e = self.formats[k]['regex']
 
             m = e.search(text)
             if not m:
@@ -62,19 +94,115 @@ class SyntaxHighliter(QtGui.QSyntaxHighlighter):
             index = m.span()[0]
             length = m.span()[1] - m.span()[0]
 
+            n = 0
             while index >= 0:
-                self.setFormat(index, length, f)
+                # check character before span
+                if k == 'filepath' and index - 1 > 0 and re.match(r'[\S]', text[index - 1][0]):
+                    pass
+                else:
+                    self.setFormat(index, length, f)
 
                 r = e.search(text, index + length)
                 index = r.span()[0] if r else -1
                 length = r.span()[1] - r.span()[0] if r else 0
+                n += 1
 
 
-class TextEditor(QtWidgets.QTextEdit):
+class TextEditor(QtWidgets.QTextBrowser):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
         self.highlighter = SyntaxHighliter(self.document())
+
+        self.document().setUseDesignMetrics(True)
+        self.document().setDocumentMargin(common.size(common.size_margin))
+
+        self.setTabStopWidth(common.size(common.size_margin))
+
+        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+
+        self.setUndoRedoEnabled(True)
+        self.setOpenExternalLinks(True)
+        self.setOpenLinks(False)
+        self.setReadOnly(False)
+        self.setTextInteractionFlags(
+            QtCore.Qt.TextEditorInteraction |
+            QtCore.Qt.LinksAccessibleByMouse
+        )
+
+        self.setAcceptRichText(False)
+
+        self.setFocusPolicy(QtCore.Qt.StrongFocus)
+
+        self._connect_signals()
+
+    def _connect_signals(self):
+        self.document().contentsChanged.connect(self.contents_changed)
+        self.anchorClicked.connect(self.anchor_clicked)
+
+    @QtCore.Slot()
+    def contents_changed(self):
+        text = self.document().toPlainText()
+        localfiles, urls = self._get_filepath_and_urls(text)
+        print(localfiles, urls)
+
+    def _get_filepath_and_urls(self, text):
+        v = set()
+
+        for k in ('url', 'filepath'):
+            e = self.highlighter.formats[k]['regex']
+
+            m = e.search(text)
+            if not m:
+                continue
+            v.add(m.group(0))
+
+            index = m.span()[0]
+            length = m.span()[1] - m.span()[0]
+
+            n = 0
+            while index >= 0:
+                if n > 100:
+                    break
+                r = e.search(text, index + length)
+                if r:
+                    if k == 'filepath' and index - 1 > 0 and re.match(r'[\S]', text[index - 1][0]):
+                        pass
+                    else:
+                        v.add(r.group(0))
+                index = r.span()[0] if r else -1
+                length = r.span()[1] - r.span()[0] if r else 0
+                n += 1
+
+        localfiles = set()
+        urls = set()
+
+        for _v in v:
+            url = QtCore.QUrl(_v)
+            file_info = QtCore.QFileInfo(_v)
+            if file_info.exists() or url.isLocalFile():
+                localfiles.add(file_info.filePath())
+                continue
+            if not url.isValid():
+                continue
+            urls.add(url.url())
+            continue
+        return localfiles, urls
+
+    @QtCore.Slot(str)
+    def anchor_clicked(self, url):
+        """We're handling the clicking of anchors here manually."""
+        if not url.isValid():
+            return
+        file_info = QtCore.QFileInfo(url.url())
+        if file_info.exists():
+            actions.reveal(file_info.filePath())
+            QtWidgets.QApplication.clipboard().setText(
+                file_info.filePath()
+            )
+        else:
+            QtGui.QDesktopServices.openUrl(url)
 
 
 class CardWidget(QtWidgets.QWidget):
@@ -89,32 +217,65 @@ class CardWidget(QtWidgets.QWidget):
 
         self.title_editor = None
         self.body_editor = None
-        self.url_editor = None
+        self.buttons_widget = None
 
         self._create_ui()
         self._connect_signals()
 
     def _create_ui(self):
+        common.set_stylesheet(self)
+
         QtWidgets.QVBoxLayout(self)
-        self.layout().setContentsMargins(0, 0, 0, 0)
-        self.layout().setSpacing(0)
 
-        self.title_editor = QtWidgets.QLineEdit(parent=self)
+        o = common.size(common.size_margin)
+        _o = o / 2.0
+        self.layout().setContentsMargins(_o, _o, _o, _o)
+        self.layout().setSpacing(_o)
+
+        self.title_editor = ui.LineEdit(parent=self)
+        self.title_editor.setPlaceholderText('Title...')
+        self.title_editor.setStatusTip('Enter a title')
+        self.title_editor.setWhatsThis('Enter a title')
+        self.title_editor.setToolTip('Enter a title')
+
         self.body_editor = TextEditor(parent=self)
-        self.url_editor = TextEditor(parent=self)
+        self.body_editor.setSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding,
+            QtWidgets.QSizePolicy.MinimumExpanding
+        )
+        self.title_editor.setStatusTip('Edit note')
+        self.title_editor.setWhatsThis('Edit note')
+        self.title_editor.setToolTip('Edit note')
 
-        self.layout().addWidget(self.title_editor)
-        self.layout().addWidget(self.body_editor)
-        self.layout().addWidget(self.url_editor)
+        widget = QtWidgets.QWidget(parent=self)
+        QtWidgets.QHBoxLayout(widget)
+        widget.layout().setContentsMargins(0, 0, 0, 0)
+        widget.layout().setSpacing(o)
+        self.buttons_widget = widget
+
+        for k in ('bold', 'italics', 'underline'):
+            self._add_button(k)
+
+    def _add_button(self, label):
+        h = common.size(common.size_row_height) * 0.85
+        widget = ui.ClickableIconButton(
+            'add',
+            (common.color(common.color_text),
+             common.color(common.color_selected_text)),
+            h,
+            description='Make the selected text "bold"',
+            parent=self
+        )
+        setattr(self, f'{label}_button', widget)
+        self.buttons_widget.layout().addWidget(widget)
+
+
+        self.layout().addWidget(self.buttons_widget, 0)
+        self.layout().addWidget(self.title_editor, 0)
+        self.layout().addWidget(self.body_editor, 1)
 
     def _connect_signals(self):
         pass
-
-
-app = QtWidgets.QApplication([])
-w = CardWidget()
-w.show()
-app.exec_()
 
 # from . import actions
 # from . import common

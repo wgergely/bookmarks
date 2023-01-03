@@ -1,5 +1,5 @@
 # OpenImageIO does not currently maintain installable python packages
-OpenImageIO >= 2.3.0
+OpenImageIO >= 2.4.0
 
 # Qt5
 PySide2 >= 5.12.0

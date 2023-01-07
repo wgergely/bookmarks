@@ -86,7 +86,7 @@ def verify_response(response):
 
 class OverlayWidget(QtWidgets.QWidget):
     def __init__(self, parent=None):
-        super(OverlayWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self._text = 'Loading...'
 
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)

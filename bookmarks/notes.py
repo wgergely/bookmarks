@@ -3,13 +3,89 @@
 The main edit widget is :class:`NoteEditor`, a 
 
 """
+import functools
 import re
+import time
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from . import common
 from . import actions
+from . import common
+from . import images
 from . import ui
+
+
+class Lockfile(QtCore.QSettings):
+    """Lockfile to prevent another user from modifying the database whilst
+    an edit is in progress.
+
+    """
+
+    def __init__(self, index, parent=None):
+        self.index = index
+        self.lockstamp = int(round(time.time() * 1000))
+        self.read_only = False
+
+        if index.isValid():
+            p = '/'.join(index.data(common.ParentPathRole)[0:3])
+            f = QtCore.QFileInfo(index.data(common.PathRole))
+            self.config_path = f'{p}/{common.bookmark_cache_dir}/{f.baseName()}.lock'
+        else:
+            self.config_path = '/'
+
+        super().__init__(
+            self.config_path,
+            QtCore.QSettings.IniFormat,
+            parent=parent
+        )
+
+    def _get_values(self):
+        is_open = self.value('open')
+        is_open = False if is_open is None else is_open
+        is_open = is_open if isinstance(is_open, bool) else (
+            False if is_open.lower() == 'false' else True)
+
+        stamp = self.value('stamp')
+        if stamp is not None:
+            stamp = int(stamp)
+
+        return is_open, stamp
+
+    def init_lock(self):
+        """Creates a lock file.
+
+        This will prevent other sessions editing notes.
+
+        """
+        if not self.index.isValid():
+            return
+
+        is_open, stamp = self._get_values()
+
+        if not is_open:
+            self.read_only = False
+            self.setValue('open', True)
+            self.setValue('stamp', self.lockstamp)
+            return
+
+        if stamp == self.lockstamp:
+            self.lock.setValue('stamp', self.lockstamp)
+            return
+
+        if stamp != self.lockstamp:
+            self.read_only = True
+
+    @QtCore.Slot()
+    def unlock(self):
+        """Removes the temporary lockfile on close"""
+        if not self.index.isValid():
+            return
+
+        is_open, stamp = self._get_values()
+
+        if is_open and stamp == self.lockstamp:
+            self.setValue('stamp', None)
+            self.setValue('open', False)
 
 
 class SyntaxHighliter(QtGui.QSyntaxHighlighter):
@@ -26,10 +102,6 @@ class SyntaxHighliter(QtGui.QSyntaxHighlighter):
             'regex': re.compile(r'(#+)(.*)', re.IGNORECASE),
             'flag': 0b000010,
         },
-        'link': {
-            'regex': re.compile(r'\[(.*?)\]\((.*?)\)', re.IGNORECASE),
-            'flag': 0b000100,
-        },
         'image': {
             'regex': re.compile(r'!\[(.*?)\]\((.*?)\)', re.IGNORECASE),
             'flag': 0b001000,
@@ -40,12 +112,14 @@ class SyntaxHighliter(QtGui.QSyntaxHighlighter):
         },
         'url': {
             'regex': re.compile(
-                r'(?!mailto:)(?:(?:https?|ftp|rvlink):\/\/)?(?:\S+(?::\S*)?@)?(?:(?:(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[0-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))|localhost)(?::\d{2,5})?(?:\/[^\s]*)?',
+                r'\b[\w.+-]+://[^\s]+',
                 re.IGNORECASE),
             'flag': 0b100000,
         },
         'filepath': {
-            'regex': re.compile(r'(?:\\\\|\/\/|[a-zA-Z]:[\\/]|\/)[^\s/]+[/\\]?(?:[^\s/\\]+[/\\]?)*', re.IGNORECASE),
+            'regex': re.compile(
+                r'^(?:\s|^)((?:[A-Za-z]\:|(?:\/|\\))(?:[\/\\][^\/\\:*?"<>|\r\n]+)*[\/\\][^\/\\:*?"<>|\r\n]+|(?:[A-Za-z]\:|(?:\/|\\))(?:[\/\\][^\/\\:*?"<>|\r\n]+)*(?:[^\/\\:*?"<>|\r\n]+\.?)+)(?=\s|$)$',
+                re.IGNORECASE | re.MULTILINE),
             'flag': 0b000000,
         },
     }
@@ -53,59 +127,44 @@ class SyntaxHighliter(QtGui.QSyntaxHighlighter):
     def __init__(self, document, parent=None):
         super().__init__(document, parent=parent)
 
-    def highlightBlock(self, text):
+    @functools.lru_cache(maxsize=4194304)
+    def _get_text_format(self, k, href):
         light_font, _ = common.font_db.light_font(common.size(common.size_font_medium))
         large_font, _ = common.font_db.bold_font(common.size(common.size_font_large))
-
         f = QtGui.QTextCharFormat()
+        f.setFont(light_font)
+        if k == 'bold':
+            f.setFontWeight(QtGui.QFont.Bold)
+        elif k == 'italic':
+            f.setFontItalic(True)
+        elif k == 'header':
+            f.setFont(large_font)
+            f.setFontWeight(QtGui.QFont.Bold)
+            f.setForeground(common.color(common.color_blue))
+        elif k == 'image':
+            f.setForeground(common.color(common.color_blue))
+        elif k == 'quote':
+            f.setForeground(common.color(common.color_blue))
+        elif k == 'url':
+            f.setFontWeight(QtGui.QFont.Bold)
+            f.setForeground(common.color(common.color_blue))
+        elif k == 'filepath':
+            f.setFontWeight(QtGui.QFont.Bold)
+            f.setForeground(common.color(common.color_green))
+        return f
+
+    def highlightBlock(self, text):
         for k in self.formats:
-            f.setFont(light_font)
-            f.setFontWeight(QtGui.QFont.Light)
-
-            if k == 'bold':
-                f.setFontWeight(QtGui.QFont.Bold)
-            elif k == 'italic':
-                f.setFontItalic(True)
-            elif k == 'header':
-                f.setFont(large_font)
-                f.setFontWeight(QtGui.QFont.Bold)
-                f.setForeground(common.color(common.color_blue))
-            elif k == 'link':
-                f.setForeground(common.color(common.color_green))
-            elif k == 'image':
-                f.setForeground(common.color(common.color_blue))
-            elif k == 'quote':
-                f.setForeground(common.color(common.color_blue))
-            elif k == 'url':
-                f.setFontWeight(QtGui.QFont.Bold)
-                f.setForeground(common.color(common.color_blue))
-            elif k == 'filepath':
-                f.setFontWeight(QtGui.QFont.Bold)
-                f.setForeground(common.color(common.color_green))
-            else:
-                continue
-
             e = self.formats[k]['regex']
+            it = e.finditer(text)
 
-            m = e.search(text)
-            if not m:
-                continue
+            for match in it:
+                grp = match.group(0)
 
-            index = m.span()[0]
-            length = m.span()[1] - m.span()[0]
-
-            n = 0
-            while index >= 0:
-                # check character before span
-                if k == 'filepath' and index - 1 > 0 and re.match(r'[\S]', text[index - 1][0]):
-                    pass
-                else:
-                    self.setFormat(index, length, f)
-
-                r = e.search(text, index + length)
-                index = r.span()[0] if r else -1
-                length = r.span()[1] - r.span()[0] if r else 0
-                n += 1
+                index = match.span()[0]
+                length = match.span()[1] - match.span()[0]
+                f = self._get_text_format(k, grp)
+                self.setFormat(index, length, f)
 
 
 class TextEditor(QtWidgets.QTextBrowser):
@@ -123,7 +182,7 @@ class TextEditor(QtWidgets.QTextBrowser):
         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
 
         self.setUndoRedoEnabled(True)
-        self.setOpenExternalLinks(True)
+        self.setOpenExternalLinks(False)
         self.setOpenLinks(False)
         self.setReadOnly(False)
         self.setTextInteractionFlags(
@@ -138,107 +197,331 @@ class TextEditor(QtWidgets.QTextBrowser):
         self._connect_signals()
 
     def _connect_signals(self):
-        self.document().contentsChanged.connect(self.contents_changed)
-        self.anchorClicked.connect(self.anchor_clicked)
+        pass
 
-    @QtCore.Slot()
-    def contents_changed(self):
-        text = self.document().toPlainText()
-        localfiles, urls = self._get_filepath_and_urls(text)
-        print(localfiles, urls)
+    def mouseMoveEvent(self, event):
+        QtWidgets.QApplication.instance().restoreOverrideCursor()
+        super().mouseMoveEvent(event)
 
-    def _get_filepath_and_urls(self, text):
-        v = set()
+        if self.textCursor().selectedText():
+            return
+        if not self.underMouse():
+            return
+
+        pos = event.pos()
+        cursor = self.cursorForPosition(pos)
+        block = cursor.block()
+        text = block.text()
+        idx = cursor.positionInBlock()
 
         for k in ('url', 'filepath'):
             e = self.highlighter.formats[k]['regex']
+            it = e.finditer(text)
 
-            m = e.search(text)
-            if not m:
-                continue
-            v.add(m.group(0))
+            for match in it:
+                grp = match.group(0)
 
-            index = m.span()[0]
-            length = m.span()[1] - m.span()[0]
+                index = match.span()[0]
+                length = match.span()[1] - match.span()[0]
 
-            n = 0
-            while index >= 0:
-                if n > 100:
-                    break
-                r = e.search(text, index + length)
-                if r:
-                    if k == 'filepath' and index - 1 > 0 and re.match(r'[\S]', text[index - 1][0]):
-                        pass
-                    else:
-                        v.add(r.group(0))
-                index = r.span()[0] if r else -1
-                length = r.span()[1] - r.span()[0] if r else 0
-                n += 1
+                # Match anchor based on cursor position
+                if not (index <= idx <= index + length):
+                    continue
 
-        localfiles = set()
-        urls = set()
+                _rect = self.cursorRect(cursor)
+                _center = _rect.center()
+                _rect.setWidth(common.size(common.size_margin))
+                _rect.moveCenter(_center)
 
-        for _v in v:
-            url = QtCore.QUrl(_v)
-            file_info = QtCore.QFileInfo(_v)
-            if file_info.exists() or url.isLocalFile():
-                localfiles.add(file_info.filePath())
-                continue
-            if not url.isValid():
-                continue
-            urls.add(url.url())
-            continue
-        return localfiles, urls
+                if not _rect.contains(pos):
+                    continue
 
-    @QtCore.Slot(str)
-    def anchor_clicked(self, url):
-        """We're handling the clicking of anchors here manually."""
-        if not url.isValid():
+                if k == 'url':
+                    QtWidgets.QApplication.instance().setOverrideCursor(
+                        QtCore.Qt.PointingHandCursor)
+                    return
+                if k == 'filepath':
+                    QtWidgets.QApplication.instance().setOverrideCursor(
+                        QtCore.Qt.PointingHandCursor)
+                    return
+
+    def mouseReleaseEvent(self, event):
+        super().mouseReleaseEvent(event)
+
+        if self.textCursor().selectedText():
             return
-        file_info = QtCore.QFileInfo(url.url())
-        if file_info.exists():
-            actions.reveal(file_info.filePath())
-            QtWidgets.QApplication.clipboard().setText(
-                file_info.filePath()
+        if not self.underMouse():
+            return
+
+        pos = event.pos()
+        cursor = self.cursorForPosition(pos)
+        block = cursor.block()
+        text = block.text()
+        idx = cursor.positionInBlock()
+
+        for k in ('url', 'filepath'):
+            e = self.highlighter.formats[k]['regex']
+            it = e.finditer(text)
+
+            for match in it:
+                grp = match.group(0)
+
+                index = match.span()[0]
+                length = match.span()[1] - match.span()[0]
+
+                # Match anchor based on cursor position
+                if not (index <= idx <= index + length):
+                    continue
+
+                _rect = self.cursorRect(cursor)
+                _center = _rect.center()
+                _rect.setWidth(common.size(common.size_margin))
+                _rect.moveCenter(_center)
+
+                if not _rect.contains(pos):
+                    continue
+
+                if k == 'url':
+                    url = QtCore.QUrl(grp)
+                    QtGui.QDesktopServices.openUrl(url)
+                    return
+                if k == 'filepath':
+                    fpath = QtCore.QFileInfo(grp).filePath()
+                    actions.reveal(fpath)
+
+    def keyPressEvent(self, event):
+        """Key press event handler.
+
+        """
+        cursor = self.textCursor()
+        cursor.setVisualNavigation(True)
+
+        if event.key() == QtCore.Qt.Key_Backtab:
+            cursor.movePosition(
+                QtGui.QTextCursor.Start,
+                QtGui.QTextCursor.MoveAnchor,
+                cursor.position(),
             )
-        else:
-            QtGui.QDesktopServices.openUrl(url)
+            return
+        super().keyPressEvent(event)
+
+    def showEvent(self, event):
+        """Event handler.
+
+        """
+        # Move the cursor to the end of the document
+        cursor = QtGui.QTextCursor(self.document())
+        cursor.movePosition(QtGui.QTextCursor.End)
+        self.setTextCursor(cursor)
+
+        # Rehighlight the document to apply the formatting
+        self.highlighter.rehighlight()
+
+
+class RemoveNoteButton(ui.ClickableIconButton):
+    """Button used to remove a note item.
+
+    """
+
+    def __init__(self, parent=None):
+        super().__init__(
+            'close',
+            (common.color(common.color_red), common.color(common.color_red)),
+            common.size(common.size_margin) * 1.2,
+            description='Delete note',
+            parent=parent
+        )
+
+    @QtCore.Slot()
+    def action(self):
+        """Remove note item action.
+
+        """
+        mbox = ui.MessageBox(
+            'Remove note?',
+            buttons=[ui.YesButton, ui.NoButton]
+        )
+        if mbox.exec_() == QtWidgets.QDialog.Rejected:
+            return
+
+        parent_widget = self.parent().parent()
+        parent_widget.deleteCard.emit(parent_widget)
+
+
+class DragIndicatorButton(QtWidgets.QLabel):
+    """Dotted button indicating a draggable item.
+
+    The button is responsible for initiating a QDrag operation and setting the mime
+    data. The data is populated with the `TodoEditor`'s text and the custom mime type.
+    The latter is needed to accept the drag operation in the target drop widget.
+
+    """
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.dragStartPosition = None
+
+        self.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        pixmap = images.ImageCache.rsc_pixmap(
+            'drag_indicator', common.color(common.color_dark_background),
+            common.size(common.size_margin) * 1.2
+        )
+        self.setPixmap(pixmap)
+
+    def mousePressEvent(self, event):
+        """Event handler.
+
+        """
+        if not isinstance(event, QtGui.QMouseEvent):
+            return
+        self.dragStartPosition = event.pos()
+
+    def mouseMoveEvent(self, event):
+        """Event handler.
+
+        """
+        if not isinstance(event, QtGui.QMouseEvent):
+            return
+
+        left_button = event.buttons() & QtCore.Qt.LeftButton
+        if not left_button:
+            return
+
+        parent_widget = self.parent().parent()
+        parent_widget.clearFocus()
+        parent_widget.title_editor.clearFocus()
+        parent_widget.body_editor.clearFocus()
+
+        # Setting Mime Data
+        drag = QtGui.QDrag(parent_widget)
+        mime_data = QtCore.QMimeData()
+        mime_data.setData('application/todo-drag', QtCore.QByteArray(bytes()))
+        drag.setMimeData(mime_data)
+
+        # Drag pixmap
+        pixmap = QtGui.QPixmap(parent_widget.size())
+        parent_widget.render(pixmap)
+
+        pos = self.mapTo(parent_widget, event.pos())
+        drag.setPixmap(pixmap)
+        drag.setHotSpot(pos)
+
+        # Starting the drag...
+        parent_widget.beginDrag.emit(parent_widget)
+        drag.exec_(QtCore.Qt.CopyAction)
+        parent_widget.endDrag.emit(parent_widget)
+
+
+class OverlayWidget(QtWidgets.QWidget):
+    """Widget responsible for indicating files are being loaded."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self._drag = False
+
+        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.setAttribute(QtCore.Qt.WA_TransparentForMouseEvents)
+        self.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.setWindowFlags(QtCore.Qt.Widget)
+
+    def paintEvent(self, event):
+        if not self._drag:
+            return
+
+        painter = QtGui.QPainter()
+        painter.begin(self)
+        painter.setPen(QtCore.Qt.NoPen)
+        painter.setBrush(common.color(common.color_dark_background))
+        painter.setRenderHint(QtGui.QPainter.Antialiasing)
+        o = common.size(common.size_margin) * 0.2
+        painter.drawRoundedRect(self.rect(), o, o)
+
+    def begin_drag(self):
+        self._drag = True
+
+    def end_drag(self):
+        self._drag = False
+
+
+class DragOverlayWidget(OverlayWidget):
+    """Widget responsible for indicating files are being loaded."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
+    def paintEvent(self, event):
+        widget = self.parent().widget()
+        idx = self.parent().drag_item_properties['current_idx']
+        _idx = self.parent().drag_item_properties['original_idx']
+        if idx == -1 or idx == _idx:
+            return
+
+        card_widget = widget.layout().itemAt(idx).widget()
+
+        painter = QtGui.QPainter()
+        painter.begin(self)
+        painter.setPen(QtCore.Qt.NoPen)
+        painter.setBrush(common.color(common.color_blue))
+        painter.setRenderHint(QtGui.QPainter.Antialiasing)
+        o = common.size(common.size_margin) * 0.2
+        painter.setOpacity(0.5)
+        painter.drawRoundedRect(card_widget.geometry(), o, o)
 
 
 class CardWidget(QtWidgets.QWidget):
-    """Card widget.
+    """Card widget represents a single note item.
 
-    Contains a header and a main text body.
+    It has a title and a main note editor. Use :meth:`set_data` to set,
+    and :meth:`get_data` to retrieve the card contents.
 
     """
+    deleteCard = QtCore.Signal(QtWidgets.QWidget)
+    beginDrag = QtCore.Signal(QtWidgets.QWidget)
+    endDrag = QtCore.Signal(QtWidgets.QWidget)
+    resized = QtCore.Signal(QtCore.QRect)
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
         self.title_editor = None
         self.body_editor = None
-        self.buttons_widget = None
+        self.fold_button = None
+        self.remove_button = None
+        self.move_button = None
+        self.overlay_widget = None
+
+        self.installEventFilter(self)
 
         self._create_ui()
         self._connect_signals()
 
     def _create_ui(self):
-        common.set_stylesheet(self)
-
-        QtWidgets.QVBoxLayout(self)
+        QtWidgets.QHBoxLayout(self)
 
         o = common.size(common.size_margin)
         _o = o / 2.0
-        self.layout().setContentsMargins(_o, _o, _o, _o)
-        self.layout().setSpacing(_o)
 
-        self.title_editor = ui.LineEdit(parent=self)
-        self.title_editor.setPlaceholderText('Title...')
-        self.title_editor.setStatusTip('Enter a title')
-        self.title_editor.setWhatsThis('Enter a title')
-        self.title_editor.setToolTip('Enter a title')
+        self.layout().setContentsMargins(0, 0, 0, 0)
+        self.layout().setSpacing(0)
+
+        self.title_editor = QtWidgets.QLineEdit(parent=self)
+        self.title_editor.setStyleSheet(
+            f'QLineEdit {{ background-color: transparent;'
+            f'font-size: {int(common.size(common.size_font_large))}px;}}'
+        )
+        self.title_editor.setPlaceholderText('Edit title...')
+        self.title_editor.setStatusTip('Edit title...')
+        self.title_editor.setWhatsThis('Edit title...')
+        self.title_editor.setToolTip('Edit title...')
 
         self.body_editor = TextEditor(parent=self)
+        self.body_editor.setPlaceholderText('Edit note...')
+        self.body_editor.setStatusTip('Edit note...')
+        self.body_editor.setWhatsThis('Edit note...')
+        self.body_editor.setToolTip('Edit note...')
         self.body_editor.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding
@@ -247,762 +530,304 @@ class CardWidget(QtWidgets.QWidget):
         self.title_editor.setWhatsThis('Edit note')
         self.title_editor.setToolTip('Edit note')
 
-        widget = QtWidgets.QWidget(parent=self)
-        QtWidgets.QHBoxLayout(widget)
-        widget.layout().setContentsMargins(0, 0, 0, 0)
-        widget.layout().setSpacing(o)
-        self.buttons_widget = widget
-
-        for k in ('bold', 'italics', 'underline'):
-            self._add_button(k)
-
-    def _add_button(self, label):
-        h = common.size(common.size_row_height) * 0.85
-        widget = ui.ClickableIconButton(
-            'add',
+        h = common.size(common.size_margin) * 1.3
+        self.fold_button = ui.ClickableIconButton(
+            'branch_open',
             (common.color(common.color_text),
-             common.color(common.color_selected_text)),
+             common.color(common.color_text)),
             h,
-            description='Make the selected text "bold"',
+            description='Fold/Unfold the note',
+            state=True,
             parent=self
         )
-        setattr(self, f'{label}_button', widget)
-        self.buttons_widget.layout().addWidget(widget)
 
+        widget = ui.get_group(parent=self, margin=o / 4.0)
+        widget.setSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding,
+            QtWidgets.QSizePolicy.MinimumExpanding,
+        )
 
-        self.layout().addWidget(self.buttons_widget, 0)
-        self.layout().addWidget(self.title_editor, 0)
-        self.layout().addWidget(self.body_editor, 1)
+        _widget = QtWidgets.QWidget(parent=self)
+        _widget.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        QtWidgets.QHBoxLayout(_widget)
+        _widget.layout().setContentsMargins(0, 0, 0, 0)
+        _widget.layout().setSpacing(0)
+        _widget.layout().addWidget(self.fold_button, 0)
+        _widget.layout().addWidget(self.title_editor, 0)
+
+        widget.layout().addWidget(_widget)
+        widget.layout().addWidget(self.body_editor, 1)
+        self.layout().addWidget(widget, 1)
+
+        widget = QtWidgets.QWidget(parent=self)
+        QtWidgets.QVBoxLayout(widget)
+        widget.layout().setContentsMargins(_o, _o, _o, _o)
+        widget.layout().setSpacing(_o)
+
+        self.remove_button = RemoveNoteButton(parent=self)
+        self.move_button = DragIndicatorButton(parent=self)
+
+        widget.layout().addWidget(self.remove_button, 0)
+        widget.layout().addWidget(self.move_button, 0)
+
+        self.layout().addWidget(widget)
+
+        self.overlay_widget = OverlayWidget(parent=self)
 
     def _connect_signals(self):
-        pass
+        self.beginDrag.connect(self.overlay_widget.begin_drag)
+        self.endDrag.connect(self.overlay_widget.end_drag)
+        self.resized.connect(self.overlay_widget.setGeometry)
+        self.fold_button.clicked.connect(self.fold_card)
 
-# from . import actions
-# from . import common
-# from . import database
-# from . import images
-# from . import ui
+    @QtCore.Slot()
+    def fold_card(self):
+        self.body_editor.setHidden(not self.body_editor.isHidden())
 
-# NoHighlightFlag = 0b000000
-# HeadingHighlight = 0b000001
-# QuoteHighlight = 0b000010
-# ItalicsHighlight = 0b001000
-# BoldHighlight = 0b010000
-# PathHighlight = 0b100000
-#
-# HIGHLIGHT_RULES = {
-#     'url': {
-#         're': re.compile(
-#             r'((?:rvlink|file|http)[s]?:[/\\][/\\](?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
-#             flags=re.IGNORECASE | re.MULTILINE
-#         ),
-#         'flag': PathHighlight
-#     },
-#     'drivepath': {
-#         're': re.compile(
-#             r'((?:[a-zA-Z]{1})[s]?:[/\\](?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
-#             flags=re.IGNORECASE | re.MULTILINE
-#         ),
-#         'flag': PathHighlight
-#     },
-#     'uncpath': {
-#         're': re.compile(
-#             r'([/\\]{1,2}(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)',
-#             flags=re.IGNORECASE | re.MULTILINE
-#         ),
-#         'flag': PathHighlight
-#     },
-#     'heading': {
-#         're': re.compile(
-#             r'^(?<!#)#{1,2}(?!#)',
-#             flags=re.IGNORECASE | re.MULTILINE
-#         ),
-#         'flag': HeadingHighlight
-#     },
-#     'quotes': {
-#         're': re.compile(
-#             # Group(2) captures the contents
-#             r'([\"\'])((?:(?=(\\?))\3.)*?)\1',
-#             flags=re.IGNORECASE | re.MULTILINE
-#         ),
-#         'flag': QuoteHighlight
-#     },
-#     'italics': {
-#         're': re.compile(
-#             r'([\_])((?:(?=(\\?))\3.)*?)\1',  # Group(2) captures the contents
-#             flags=re.IGNORECASE | re.MULTILINE
-#         ),
-#         'flag': ItalicsHighlight
-#     },
-#     'bold': {
-#         're': re.compile(
-#             r'([\*])((?:(?=(\\?))\3.)*?)\1',  # Group(2) captures the contents
-#             flags=re.IGNORECASE | re.MULTILINE
-#         ),
-#         'flag': BoldHighlight
-#     },
-# }
-#
-#
-# class Lockfile(QtCore.QSettings):
-#     """Lockfile to prevent another user from modifying the database whilst
-#     an edit is in progress.
-#
-#     """
-#
-#     def __init__(self, index, parent=None):
-#         if index.isValid():
-#             p = '/'.join(index.data(common.ParentPathRole)[0:3])
-#             f = QtCore.QFileInfo(index.data(common.PathRole))
-#             self.config_path = f'{p}/{common.bookmark_cache_dir}/{f.baseName()}.lock'
-#         else:
-#             self.config_path = '/'
-#
-#         super().__init__(
-#             self.config_path,
-#             QtCore.QSettings.IniFormat,
-#             parent=parent
-#         )
-#
-#
-# class Highlighter(QtGui.QSyntaxHighlighter):
-#     """Class responsible for highlighting urls"""
-#
-#     def highlightBlock(self, text):
-#         """Highlights the given text.
-#
-#         Args:
-#             text (str): The text to assess.
-#
-#         Returns:
-#             tuple: int, int, int
-#
-#         """
-#         font = self.document().defaultFont()
-#         font.setPixelSize(common.size(common.size_font_medium))
-#
-#         char_format = QtGui.QTextCharFormat()
-#         char_format.setFont(font)
-#         char_format.setFontWeight(QtGui.QFont.Normal)
-#         self.setFormat(0, len(text), char_format)
-#
-#         _font = char_format.font()
-#         _foreground = char_format.foreground()
-#         _weight = char_format.fontWeight()
-#
-#         flag = NoHighlightFlag
-#         for case in HIGHLIGHT_RULES.values():
-#             flag = flag | case['flag']
-#
-#             if case['flag'] == HeadingHighlight:
-#                 match = case['re'].match(text)
-#                 if match:
-#                     n = 3 - len(match.group(0))
-#                     font.setPixelSize(font.pixelSize() + (n * 4))
-#                     char_format.setFont(font)
-#                     self.setFormat(0, len(text), char_format)
-#
-#                     char_format.setForeground(QtGui.QColor(0, 0, 0, 80))
-#                     self.setFormat(
-#                         match.start(0), len(
-#                             match.group(0)
-#                         ), char_format
-#                     )
-#
-#             if case['flag'] == PathHighlight:
-#                 it = case['re'].finditer(text)
-#                 for match in it:
-#                     groups = match.groups()
-#                     if groups:
-#                         grp = match.group(0)
-#                         if grp:
-#                             char_format.setAnchor(True)
-#                             char_format.setForeground(
-#                                 common.color(common.color_green)
-#                             )
-#                             char_format.setAnchorHref(grp)
-#                             self.setFormat(
-#                                 match.start(
-#                                     0
-#                                 ), len(grp), char_format
-#                             )
-#
-#             if case['flag'] == QuoteHighlight:
-#                 it = case['re'].finditer(text)
-#                 for match in it:
-#                     groups = match.groups()
-#                     if groups:
-#                         if match.group(1) in ('\'', '\"'):
-#                             grp = match.group(2)
-#                             if grp:
-#                                 char_format.setAnchor(True)
-#                                 char_format.setForeground(
-#                                     common.color(common.color_green)
-#                                 )
-#                                 char_format.setAnchorHref(grp)
-#                                 self.setFormat(
-#                                     match.start(
-#                                         2
-#                                     ), len(grp), char_format
-#                                 )
-#
-#                                 char_format.setForeground(
-#                                     QtGui.QColor(0, 0, 0, 40)
-#                                 )
-#                                 self.setFormat(
-#                                     match.start(
-#                                         2
-#                                     ) - 1, 1, char_format
-#                                 )
-#                                 self.setFormat(
-#                                     match.start(
-#                                         2
-#                                     ) + len(grp), 1, char_format
-#                                 )
-#
-#             if case['flag'] == ItalicsHighlight:
-#                 it = case['re'].finditer(text)
-#                 for match in it:
-#                     groups = match.groups()
-#                     if groups:
-#                         if match.group(1) in '_':
-#                             grp = match.group(2)
-#                             if grp:
-#                                 flag == flag | ItalicsHighlight
-#                                 char_format.setFontItalic(True)
-#                                 self.setFormat(
-#                                     match.start(
-#                                         2
-#                                     ), len(grp), char_format
-#                                 )
-#
-#                                 char_format.setForeground(
-#                                     QtGui.QColor(0, 0, 0, 20)
-#                                 )
-#                                 self.setFormat(
-#                                     match.start(
-#                                         2
-#                                     ) - 1, 1, char_format
-#                                 )
-#                                 self.setFormat(
-#                                     match.start(
-#                                         2
-#                                     ) + len(grp), 1, char_format
-#                                 )
-#
-#             if case['flag'] == BoldHighlight:
-#                 it = case['re'].finditer(text)
-#                 for match in it:
-#                     groups = match.groups()
-#                     if groups:
-#                         if match.group(1) in '*':
-#                             grp = match.group(2)
-#                             if grp:
-#                                 char_format.setFontWeight(QtGui.QFont.Bold)
-#                                 self.setFormat(
-#                                     match.start(
-#                                         2
-#                                     ), len(grp), char_format
-#                                 )
-#
-#                                 char_format.setForeground(
-#                                     QtGui.QColor(0, 0, 0, 20)
-#                                 )
-#                                 self.setFormat(
-#                                     match.start(
-#                                         2
-#                                     ) - 1, 1, char_format
-#                                 )
-#                                 self.setFormat(
-#                                     match.start(
-#                                         2
-#                                     ) + len(grp), 1, char_format
-#                                 )
-#
-#             char_format.setFont(_font)
-#             char_format.setForeground(_foreground)
-#             char_format.setFontWeight(_weight)
-#
-#
-# class NoteTextEditor(QtWidgets.QTextBrowser):
-#     """Custom QTextBrowser widget for writing note items.
-#
-#     The editor automatically sets its size to accommodate the contents of the
-#     document.
-#
-#     """
-#
-#     def __init__(self, text, read_only=False, parent=None):
-#         super().__init__(parent=parent)
-#
-#         self.document().setDocumentMargin(common.size(common.size_margin))
-#         self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-#         self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-#
-#         self.highlighter = Highlighter(self.document())
-#
-#         self.setOpenExternalLinks(True)
-#         self.setOpenLinks(False)
-#         self.setReadOnly(False)
-#
-#         if read_only:
-#             self.setTextInteractionFlags(
-#                 QtCore.Qt.TextSelectableByMouse | QtCore.Qt.LinksAccessibleByMouse
-#             )
-#         else:
-#             self.setTextInteractionFlags(
-#                 QtCore.Qt.TextEditorInteraction | QtCore.Qt.LinksAccessibleByMouse
-#             )
-#
-#         self.setTabStopWidth(common.size(common.size_margin))
-#         self.setUndoRedoEnabled(True)
-#
-#         self.setSizePolicy(
-#             QtWidgets.QSizePolicy.Preferred,
-#             QtWidgets.QSizePolicy.Fixed
-#         )
-#         self.setFocusPolicy(QtCore.Qt.StrongFocus)
-#
-#         self.document().setUseDesignMetrics(True)
-#         self.document().setHtml(text)
-#
-#         self.document().contentsChanged.connect(self.contentChanged)
-#         self.anchorClicked.connect(self.open_url)
-#
-#     @QtCore.Slot()
-#     def contentChanged(self):
-#         """Sets the height of the editor."""
-#         self.adjust_height()
-#
-#     def adjust_height(self):
-#         """Slot used to set the editor height based on the current item contents.
-#
-#         """
-#         height = self.document().size().height()
-#         if height > (common.size(common.size_row_height) * 2) and not self.isEnabled():
-#             self.setFixedHeight(common.size(common.size_row_height) * 2)
-#             return
-#         self.setFixedHeight(height)
-#
-#     def keyPressEvent(self, event):
-#         """Key press event handler.
-#
-#         """
-#         cursor = self.textCursor()
-#         cursor.setVisualNavigation(True)
-#
-#         if event.key() == QtCore.Qt.Key_Backtab:
-#             cursor.movePosition(
-#                 QtGui.QTextCursor.Start,
-#                 QtGui.QTextCursor.MoveAnchor,
-#                 cursor.position(),
-#             )
-#             return
-#         super().keyPressEvent(event)
-#
-#     def dragEnterEvent(self, event):
-#         """Event handler.
-#
-#         """
-#         if not self.canInsertFromMimeData(event.mimeData()):
-#             return
-#         event.accept()
-#
-#     def dropEvent(self, event):
-#         """Event handler.
-#
-#         """
-#         index = self.parent().parent().parent().parent().parent().index
-#         if not index.isValid():
-#             return
-#
-#         if not self.canInsertFromMimeData(event.mimeData()):
-#             return
-#         event.accept()
-#
-#         mimedata = event.mimeData()
-#         self.insertFromMimeData(mimedata)
-#
-#     def showEvent(self, event):
-#         """Event handler.
-#
-#         """
-#         # Sets the height of the note item
-#         self.adjust_height()
-#
-#         # Move the cursor to the end of the document
-#         cursor = QtGui.QTextCursor(self.document())
-#         cursor.movePosition(QtGui.QTextCursor.End)
-#         self.setTextCursor(cursor)
-#
-#         # Rehighlight the document to apply the formatting
-#         self.highlighter.rehighlight()
-#
-#     def canInsertFromMimeData(self, mimedata):
-#         """Checks if we can insert from the given mime-type."""
-#         if mimedata.hasUrls():
-#             return True
-#         if mimedata.hasHtml():
-#             return True
-#         if mimedata.hasText():
-#             return True
-#         if mimedata.hasImage():
-#             return True
-#         return False
-#
-#     def open_url(self, url):
-#         """We're handling the clicking of anchors here manually."""
-#         if not url.isValid():
-#             return
-#         file_info = QtCore.QFileInfo(url.url())
-#         if file_info.exists():
-#             actions.reveal(file_info.filePath())
-#             QtWidgets.QApplication.clipboard().setText(
-#                 file_info.filePath()
-#             )
-#         else:
-#             QtGui.QDesktopServices.openUrl(url)
-#
-#
-# class RemoveNoteButton(ui.ClickableIconButton):
-#     """Button used to remove a note item.
-#
-#     """
-#
-#     def __init__(self, parent=None):
-#         super().__init__(
-#             'close',
-#             (common.color(common.color_red), common.color(common.color_red)),
-#             common.size(common.size_margin),
-#             description='Click to remove this note',
-#             parent=parent
-#         )
-#         self.clicked.connect(self.remove_note)
-#
-#     @QtCore.Slot()
-#     def remove_note(self):
-#         """Remove note item action.
-#
-#         """
-#         mbox = ui.MessageBox(
-#             'Remove note?',
-#             buttons=[ui.YesButton, ui.NoButton]
-#         )
-#         if mbox.exec_() == QtWidgets.QDialog.Rejected:
-#             return
-#
-#         editors_widget = self.parent().parent()
-#         idx = editors_widget.items.index(self.parent())
-#         row = editors_widget.items.pop(idx)
-#         editors_widget.layout().removeWidget(row)
-#         row.deleteLater()
-#
-#
-# class DragIndicatorButton(QtWidgets.QLabel):
-#     """Dotted button indicating a draggable item.
-#
-#     The button is responsible for initiating a QDrag operation and setting the mime
-#     data. The data is populated with the `TodoEditor`'s text and the custom mime type.
-#     The latter is needed to accept the drag operation in the target drop widget.
-#
-#     """
-#
-#     def __init__(self, parent=None):
-#         super().__init__(parent=parent)
-#         self.dragStartPosition = None
-#
-#         self.setFocusPolicy(QtCore.Qt.NoFocus)
-#         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
-#         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-#         pixmap = images.ImageCache.rsc_pixmap(
-#             'drag_indicator', common.color(common.color_dark_background),
-#             common.size(common.size_margin)
-#         )
-#         self.setPixmap(pixmap)
-#
-#     def mousePressEvent(self, event):
-#         """Event handler.
-#
-#         """
-#         if not isinstance(event, QtGui.QMouseEvent):
-#             return
-#         self.dragStartPosition = event.pos()
-#
-#     def mouseMoveEvent(self, event):
-#         """Event handler.
-#
-#         """
-#         if not isinstance(event, QtGui.QMouseEvent):
-#             return
-#         left_button = event.buttons() & QtCore.Qt.LeftButton
-#         if not left_button:
-#             return
-#
-#         parent_widget = self.parent()
-#         drag = QtGui.QDrag(parent_widget)
-#
-#         # Setting Mime Data
-#         mime_data = QtCore.QMimeData()
-#         mime_data.setData('applications/todo-drag', QtCore.QByteArray(bytes()))
-#         drag.setMimeData(mime_data)
-#
-#         # Drag pixmap
-#         # Transparent image
-#         pixmap = QtGui.QPixmap(parent_widget.size())
-#         parent_widget.render(pixmap)
-#
-#         drag.setPixmap(pixmap)
-#         drag.setHotSpot(
-#             QtCore.QPoint(
-#                 pixmap.width() - ((common.size(common.size_margin)) * 2),
-#                 pixmap.height() / 2.0
-#             )
-#         )
-#
-#         # Drag origin indicator
-#         pixmap = QtGui.QPixmap(parent_widget.size())
-#
-#         painter = QtGui.QPainter()
-#         painter.begin(pixmap)
-#         painter.setPen(QtGui.QPen(QtCore.Qt.NoPen))
-#         painter.setBrush(QtGui.QBrush(QtGui.QColor(200, 200, 200, 255)))
-#         painter.drawRect(pixmap.rect())
-#         painter.end()
-#
-#         overlay_widget = QtWidgets.QLabel(parent=parent_widget)
-#         overlay_widget.setFixedSize(parent_widget.size())
-#         overlay_widget.setPixmap(pixmap)
-#
-#         # Preparing the drag...
-#         parent_widget.parent().separator.setHidden(False)
-#         overlay_widget.show()
-#
-#         # Starting the drag...
-#         drag.exec_(QtCore.Qt.CopyAction)
-#
-#         # Cleanup after drag has finished...
-#         overlay_widget.close()
-#         overlay_widget.deleteLater()
-#         parent_widget.parent().separator.setHidden(True)
-#
-#
-# class Separator(QtWidgets.QLabel):
-#     """A custom label used as an item separator.
-#
-#     """
-#
-#     def __init__(self, parent=None):
-#         super().__init__(parent=parent)
-#         pixmap = QtGui.QPixmap(
-#             QtCore.QSize(4096, common.size(common.size_separator))
-#         )
-#         pixmap.fill(common.color(common.color_blue))
-#         self.setPixmap(pixmap)
-#
-#         self.setHidden(True)
-#
-#         self.setFocusPolicy(QtCore.Qt.NoFocus)
-#
-#         self.setWindowFlags(
-#             QtCore.Qt.Window |
-#             QtCore.Qt.FramelessWindowHint
-#         )
-#         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
-#         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-#         self.setAcceptDrops(True)
-#
-#         self.setSizePolicy(
-#             QtWidgets.QSizePolicy.Minimum,
-#             QtWidgets.QSizePolicy.Minimum
-#         )
-#         self.setFixedWidth(common.size(common.size_separator))
-#
-#     def dragEnterEvent(self, event):
-#         """Event handler.
-#
-#         """
-#         if event.mimeData().hasFormat('application/todo-drag'):
-#             event.acceptProposedAction()
-#
-#     def dropEvent(self, event):
-#         """Event handler.
-#
-#         """
-#         self.parent().dropEvent(event)
-#
-#
-# class NoteContainerWidget(QtWidgets.QWidget):
-#     """This widget for storing the added note items.
-#
-#     As this is the container widget, it is responsible for handling the dragging
-#     and setting the order of the contained child widgets.
-#
-#     Attributes:
-#         items (list): The added note items.
-#
-#     """
-#
-#     def __init__(self, parent=None):
-#         super().__init__(parent=parent)
-#         QtWidgets.QVBoxLayout(self)
-#         self.layout().setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter)
-#         o = common.size(common.size_margin) * 0.5
-#         self.layout().setContentsMargins(o, o, o, o)
-#         self.layout().setSpacing(common.size(common.size_indicator) * 2)
-#
-#         self.setAcceptDrops(True)
-#
-#         self.separator = Separator(parent=self)
-#         self.drop_target_index = -1
-#
-#         self.items = []
-#
-#         self.setFocusPolicy(QtCore.Qt.NoFocus)
-#
-#     def dragEnterEvent(self, event):
-#         """Event handler.
-#
-#         """
-#         if event.mimeData().hasFormat('application/todo-drag'):
-#             event.acceptProposedAction()
-#
-#     def dragMoveEvent(self, event):
-#         """Event handler.
-#
-#         """
-#         # Move indicator
-#         idx, y = self._separator_pos(event)
-#
-#         if y == -1:
-#             self.separator.setHidden(True)
-#             self.drop_target_index = -1
-#             event.ignore()
-#             return
-#
-#         event.accept()
-#         self.drop_target_index = idx
-#
-#         self.separator.setHidden(False)
-#         pos = self.mapToGlobal(QtCore.QPoint(self.geometry().x(), y))
-#         self.separator.move(pos)
-#         self.separator.setFixedWidth(self.width())
-#
-#     def dropEvent(self, event):
-#         """Event handler.
-#
-#         """
-#         if self.drop_target_index == -1:
-#             event.ignore()
-#             return
-#
-#         event.accept()
-#
-#         # Drag from another todo list
-#         if event.source() not in self.items:
-#             text = event.source().findChild(NoteTextEditor).document().toHtml()
-#             self.parent().parent().parent().add_item(idx=0, text=text)
-#             self.separator.setHidden(True)
-#             return
-#
-#         # Change internal order
-#         self.setUpdatesEnabled(False)
-#
-#         self.items.insert(
-#             self.drop_target_index,
-#             self.items.pop(self.items.index(event.source()))
-#         )
-#         self.layout().removeWidget(event.source())
-#         self.layout().insertWidget(self.drop_target_index, event.source(), 0)
-#
-#         self.setUpdatesEnabled(True)
-#
-#     def _separator_pos(self, event):
-#         """Returns the position of"""
-#         idx = 0
-#         dis = []
-#
-#         y = event.pos().y()
-#
-#         # Collecting the available hot-spots for the drag operation
-#         lines = []
-#         for n in range(len(self.items)):
-#             if n == 0:  # first
-#                 line = self.items[n].geometry().top()
-#                 lines.append(line)
-#                 continue
-#
-#             line = (
-#                            self.items[n - 1].geometry().bottom() +
-#                            self.items[n].geometry().top()
-#                    ) / 2.0
-#             lines.append(line)
-#
-#             if n == len(self.items) - 1:  # last
-#                 line = ((
-#                                 self.items[n - 1].geometry().bottom() +
-#                                 self.items[n].geometry().top()
-#                         ) / 2.0)
-#                 lines.append(line)
-#                 line = self.items[n].geometry().bottom()
-#                 lines.append(line)
-#                 break
-#
-#         # Finding the closest
-#         for line in lines:
-#             dis.append(y - line)
-#
-#         # Case when items is dragged from another editor instance
-#         if not dis:
-#             return 0, 0
-#
-#         idx = dis.index(min(dis, key=abs))  # The selected line
-#         if event.source() not in self.items:
-#             source_idx = idx + 1
-#         else:
-#             source_idx = self.items.index(event.source())
-#
-#         if idx == 0:  # first item
-#             return (0, lines[idx])
-#         elif source_idx == idx:  # order remains unchanged
-#             return (source_idx, lines[idx])
-#         elif (source_idx + 1) == idx:  # order remains unchanged
-#             return (source_idx, lines[idx])
-#         elif source_idx < idx:  # moves up
-#             return (idx - 1, lines[idx])
-#         elif source_idx > idx:  # move down
-#             return (idx, lines[idx])
-#
-#
-# class NoteItemWidget(QtWidgets.QWidget):
-#     """The item-wrapper widget for the drag indicator and editor widgets."""
-#
-#     def __init__(self, parent=None):
-#         super().__init__(parent=parent)
-#         self.editor = None
-#         self.setFocusPolicy(QtCore.Qt.NoFocus)
-#         self._create_ui()
-#
-#     def _create_ui(self):
-#         QtWidgets.QHBoxLayout(self)
-#         o = common.size(common.size_indicator)
-#         self.layout().setContentsMargins(0, 0, 0, 0)
-#         self.layout().setSpacing(o)
-#
-#     def paintEvent(self, event):
-#         """Event handler.
-#
-#         """
-#         painter = QtGui.QPainter()
-#         painter.begin(self)
-#         painter.setPen(QtCore.Qt.NoPen)
-#         painter.setBrush(QtGui.QColor(255, 255, 255, 255))
-#         painter.drawRoundedRect(
-#             self.rect(), common.size(common.size_indicator),
-#             common.size(common.size_indicator)
-#         )
-#         painter.end()
-#
-#
+        if self.body_editor.isHidden():
+            self.fold_button.set_pixmap('branch_closed')
+        else:
+            self.fold_button.set_pixmap('branch_open')
+    def eventFilter(self, widget, event):
+        if widget != self:
+            return False
+        if event.type() != QtCore.QEvent.Resize:
+            return False
+        self.resized.emit(self.rect())
+        return False
+
+    def set_data(self, title, note):
+        """Set the data for the note.
+
+        Args:
+            title (str): Title of the note.
+            note (str): Note.
+
+        """
+        if title:
+            self.title_editor.setText(title)
+        if note:
+            self.body_editor.setPlainText(note)
+
+    def get_data(self):
+        """Returns the title and note of the card.
+
+        Returns:
+            dict: Title and note of the card.
+
+        """
+        return {
+            'title': self.title_editor.text(),
+            'note': self.body_editor.toPlainText(),
+        }
+
+
+class CardsScrollWidget(QtWidgets.QScrollArea):
+    """Widget used to store a list of :class:`CardWidget`s.
+
+    The widget implements user sorting by custom drag and drop
+    mechanisms.
+
+    """
+    cardAdded = QtCore.Signal(QtWidgets.QWidget)
+    cardRemoved = QtCore.Signal(QtWidgets.QWidget)
+    resized = QtCore.Signal(QtCore.QRect)
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+
+        self.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.setWidgetResizable(True)
+        self.viewport().setAcceptDrops(True)
+        self.viewport().installEventFilter(self)
+
+        self.overlay_widget = None
+
+        self.drag_item_properties = {
+            'original_height': -1,
+            'original_max_height': -1,
+            'original_idx': -1,
+            'current_idx': -1,
+        }
+
+        self._create_ui()
+        self._connect_signals()
+
+    def _create_ui(self):
+        widget = QtWidgets.QWidget(parent=self)
+        widget.setObjectName('card_container_widget')
+        widget.setMouseTracking(True)
+
+        QtWidgets.QVBoxLayout(widget)
+        widget.layout().setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignHCenter)
+
+        o = common.size(common.size_margin) * 0.5
+        widget.layout().setContentsMargins(o, o, o, o)
+        widget.layout().setSpacing(common.size(common.size_indicator) * 2)
+
+        self.setWidget(widget)
+
+        self.overlay_widget = DragOverlayWidget(parent=self)
+
+    def _connect_signals(self):
+        self.resized.connect(self.overlay_widget.setGeometry)
+
+    def add_card(self, title, note, fold):
+        """Add a new :class:`CardWidget` to the list.
+
+        Args:
+            title (str): Title of the note.
+            note (str): Note.
+
+        """
+        widget = CardWidget(parent=self)
+        widget.set_data(title, note)
+        widget.beginDrag.connect(self.begin_drag)
+        widget.endDrag.connect(self.end_drag)
+        widget.deleteCard.connect(self.delete_card)
+        if fold:
+            widget.fold_card()
+
+        self.widget().layout().insertWidget(0, widget)
+
+        # widget.title_editor.setFocus()
+
+    def _reset_drag_item_properties(self):
+        self.drag_item_properties = {
+            'original_height': -1,
+            'original_max_height': -1,
+            'original_idx': -1,
+            'current_idx': -1,
+        }
+
+    @QtCore.Slot(QtWidgets.QWidget)
+    def delete_card(self, widget):
+        # Find the index of the widget we want to move
+        animation = QtCore.QPropertyAnimation(widget, b'maximumHeight', parent=widget)
+        animation.setEasingCurve(QtCore.QEasingCurve.OutQuart)
+        animation.setDuration(300)
+        animation.setStartValue(widget.rect().height())
+        animation.setEndValue(0)
+
+        def _remove(widget):
+            idx = self.widget().layout().indexOf(widget)
+            w = self.widget().layout().takeAt(idx).widget()
+            w.deleteLater()
+
+        animation.finished.connect(lambda: _remove(widget))
+        animation.start(QtCore.QAbstractAnimation.DeleteWhenStopped)
+
+    @QtCore.Slot(QtWidgets.QWidget)
+    def begin_drag(self, widget):
+        self.drag_item_properties['original_height'] = widget.rect().height()
+        self.drag_item_properties['original_max_height'] = widget.maximumHeight()
+        self.drag_item_properties['original_idx'] = self.widget().layout().indexOf(widget)
+
+    @QtCore.Slot(QtWidgets.QWidget)
+    def end_drag(self, widget):
+        idx = self.drag_item_properties['current_idx']
+        _idx = self.drag_item_properties['original_idx']
+
+        widget = self.widget().layout().takeAt(_idx).widget()
+        self.widget().layout().insertWidget(idx, widget)
+
+        self._reset_drag_item_properties()
+        self.overlay_widget.update()
+    def eventFilter(self, widget, event):
+        """Custom event filter.
+
+        """
+        if widget.objectName() != 'qt_scrollarea_viewport':
+            return False
+        if event.type() == QtCore.QEvent.Resize:
+            self.resized.emit(self.rect())
+        if event.type() != QtCore.QEvent.DragMove:
+            return False
+
+        container = next(
+            f for f in widget.children() if f.objectName() == 'card_container_widget')
+        child_at = container.childAt(event.pos())
+        if not child_at:
+            return False
+
+        children = [
+            container.layout().itemAt(idx).widget() for idx in
+            range(container.layout().count())
+        ]
+        if not children:
+            return False
+        child = next(
+            f for f in children if child_at in f.findChildren(type(child_at), None))
+        if not child:
+            return False
+
+        idx = container.layout().indexOf(child)
+        self.drag_item_properties['current_idx'] = idx
+        self.overlay_widget.update()
+        return False
+
+    def dragEnterEvent(self, event):
+        """Event handler.
+
+        """
+        if not event.mimeData().hasFormat('application/todo-drag'):
+            event.ignore()
+            return
+        event.accept()
+
+
+class CardsWidget(QtWidgets.QWidget):
+
+    def __init__(self, parent=None):
+        super().__init__(parent=parent)
+        self.add_button = None
+        self.refresh_button = None
+        self.save_button = None
+
+        self.container_widget = None
+
+        self._create_ui()
+        self._connect_signals()
+
+    def _create_ui(self):
+        common.set_stylesheet(self)
+
+        QtWidgets.QVBoxLayout(self)
+        self.layout().setContentsMargins(0, 0, 0, 0)
+        self.layout().setSpacing(0)
+
+        widget = QtWidgets.QWidget(parent=self)
+        QtWidgets.QHBoxLayout(widget)
+        self.layout().addWidget(widget, 0)
+
+        h = common.size(common.size_margin) * 1.3
+        self.add_button = ui.ClickableIconButton(
+            'add',
+            (common.color(common.color_green),
+             common.color(common.color_selected_text)),
+            h,
+            description='Click to add a new note',
+            state=True,
+            parent=self
+        )
+        self.refresh_button = ui.PaintedButton('Refresh', parent=self)
+        self.close_button = ui.PaintedButton('Close', parent=self)
+
+        widget.layout().addWidget(self.add_button, 0)
+        widget.layout().addStretch(1)
+        widget.layout().addWidget(self.refresh_button, 0)
+        widget.layout().addWidget(self.close_button, 0)
+
+        self.container_widget = CardsScrollWidget(parent=self)
+        self.layout().addWidget(self.container_widget, 1)
+
+    def _connect_signals(self):
+        self.add_button.clicked.connect(self.add_new_note)
+
+    @QtCore.Slot()
+    def add_new_note(self):
+        self.container_widget.add_card('', '', False)
+
 # class NoteEditor(QtWidgets.QDialog):
 #     """Main widget used to view and edit and add Notes and Tasks."""
 #
@@ -1407,27 +1232,7 @@ class CardWidget(QtWidgets.QWidget):
 #             self.save_timer.stop()
 #             self.refresh_timer.start()
 #
-#     @QtCore.Slot()
-#     def unlock(self):
-#         """Removes the temporary lockfile on close"""
-#         if not self.parent():
-#             return
-#         if not self.index.isValid():
-#             return
-#
-#         v = self.lock.value('open')
-#         v = False if v is None else v
-#         v = v if isinstance(v, bool) else (
-#             False if v.lower() == 'false' else True)
-#         is_open = v
-#
-#         stamp = self.lock.value('stamp')
-#         if stamp is not None:
-#             stamp = int(stamp)
-#
-#         if is_open and stamp == self.lockstamp:
-#             self.lock.setValue('stamp', None)
-#             self.lock.setValue('open', False)
+
 #
 #     def showEvent(self, event):
 #         """Event handler.

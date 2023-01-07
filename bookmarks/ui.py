@@ -682,6 +682,10 @@ class ClickableIconButton(QtWidgets.QLabel):
         """
         self.repaint()
 
+    def set_pixmap(self, pixmap):
+        self._pixmap = pixmap
+        self.update()
+
     def pixmap(self):
         if not self.isEnabled():
             return images.ImageCache.rsc_pixmap(

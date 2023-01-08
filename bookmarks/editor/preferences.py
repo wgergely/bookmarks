@@ -123,20 +123,6 @@ SECTIONS = {
             },
             1: {
                 0: {
-                    'name': 'Jobs have clients',
-                    'key': 'settings/jobs_have_clients',
-                    'validator': None,
-                    'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
-                    'placeholder': '',
-                    'description': 'In case your job folder uses a client/project like '
-                                   'structure, tick this box. Leave it un-ticked if the '
-                                   'project folders are nested directly in the server'
-                                   'folder.',
-                    'help': 'Enable if jobs have separate <span style="color:white">client/project</span> folders. By '
-                            'default, Bookmarks assumes jobs are kept directly in the '
-                            'root of the server folder but you can override this here.'
-                },
-                1: {
                     'name': 'Bookmark item search depth',
                     'key': 'settings/job_scan_depth',
                     'validator': base.int_validator,

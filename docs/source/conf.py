@@ -33,7 +33,7 @@ copyright = '© 2022 Gergely Wootsch'
 author = 'Gergely Wootsch'
 
 # The full version, including alpha/beta/rc tags
-release = '0.7.6'
+release = '0.7.7'
 
 html_baseurl = 'https://bookmarks-vfx.com'
 html_extra_path = [

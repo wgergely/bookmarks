@@ -1,14 +1,14 @@
 <!doctype html>
-<html class="no-js">
+<html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/_modules/bookmarks/images.html" />
 
-    <meta name="generator" content="sphinx-4.3.2, furo 2022.09.29"/>
-        <title>bookmarks.images - Bookmarks 0.7.4 documentation</title>
+    <!-- Generated with Sphinx 6.1.2 and Furo 2022.12.07 -->
+        <title>bookmarks.images - Bookmarks 0.7.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -160,7 +160,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">Bookmarks 0.7.4 documentation</div></a>
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.6 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -187,10 +187,10 @@
     <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.4 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.6 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -333,6 +333,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../py-modindex.html">Module Index</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Project Links</span></p>
 <ul>
@@ -386,7 +387,7 @@
 <span class="sd">Under the hood, :func:`get_thumbnail` uses :meth:`ImageCache.get_pixmap` and</span>
 <span class="sd">:meth:`ImageCache.get_image`.</span>
 
-<span class="sd">We&#39;re using OpenImageIO to generate thumbnails. See :meth:`ImageCache.oiio_make_thumbnail`.</span>
+<span class="sd">We&#39;re using OpenImageIO to generate thumbnails.</span>
 <span class="sd">To load an image using OpenImageIO as a QtGui.QImage see :func:`oiio_get_qimage`.</span>
 
 <span class="sd">To load gui resources, use :meth:`.ImageCache.rsc_pixmap`.</span>
@@ -400,8 +401,11 @@
 <span class="kn">import</span> <span class="nn">OpenImageIO</span>
 <span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
 
+<span class="kn">import</span> <span class="nn">bookmarks_oiio</span>
+
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">common</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">log</span>
+
 
 <span class="c1">#: The list of image formats QT is configured to read.</span>
 <span class="n">QT_IMAGE_FORMATS</span> <span class="o">=</span> <span class="p">{</span><span class="n">f</span><span class="o">.</span><span class="n">data</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span>
@@ -503,9 +507,8 @@
 <span class="sd">        get_path (bool): Returns a path instead of a QPixmap if set to `True`.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        tuple:                   `(QPixmap, QColor)`, or `(None, None)`.</span>
-<span class="sd">        str:                 Path to the thumbnail file when `get_path=True`.</span>
-
+<span class="sd">        tuple: `(QPixmap, QColor)`, or `(None, None)`.</span>
+<span class="sd">        str: Path to the thumbnail file when `get_path=True`.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">((</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">source</span><span class="p">)):</span>
@@ -651,7 +654,7 @@
 
 <span class="sd">    The ``server``, ``job``, ``root``, ``source`` arguments refer to a file we</span>
 <span class="sd">    want to create a new thumbnail for. The ``image`` argument should be a path to</span>
-<span class="sd">    an image file that will be converted using :func:`oiio_make_thumbnail()` to a</span>
+<span class="sd">    an image file that will be converted using `bookmarks_oiio.make_thumbnail()` to a</span>
 <span class="sd">    thumbnail image and saved to our image cache and disk to represent ``source``.</span>
 
 <span class="sd">    Args:</span>
@@ -672,12 +675,12 @@
             <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;Failed to remove existing thumbnail file.&#39;</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
-    <span class="n">res</span> <span class="o">=</span> <span class="n">ImageCache</span><span class="o">.</span><span class="n">oiio_make_thumbnail</span><span class="p">(</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">bookmarks_oiio</span><span class="o">.</span><span class="n">make_thumbnail</span><span class="p">(</span>
         <span class="n">image</span><span class="p">,</span>
         <span class="n">thumbnail_path</span><span class="p">,</span>
-        <span class="n">common</span><span class="o">.</span><span class="n">thumbnail_size</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">thumbnail_size</span><span class="p">)</span>
     <span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">res</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Failed to make thumbnail.&#39;</span><span class="p">)</span>
 
     <span class="n">ImageCache</span><span class="o">.</span><span class="n">flush</span><span class="p">(</span><span class="n">thumbnail_path</span><span class="p">)</span></div>
@@ -777,6 +780,9 @@
     <span class="k">if</span> <span class="n">ext</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">get_oiio_extensions</span><span class="p">():</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="n">i</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageInput</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="ow">or</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">i</span><span class="o">.</span><span class="n">valid_file</span><span class="p">(</span><span class="n">source</span><span class="p">):</span>
         <span class="n">i</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">None</span>
@@ -788,7 +794,6 @@
     <span class="n">buf</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageBuf</span><span class="p">()</span>
     <span class="n">buf</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">subimage</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">buf</span><span class="o">.</span><span class="n">has_error</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">geterror</span><span class="p">())</span>
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="n">ImageCache</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="nb">hash</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">BufferType</span><span class="p">)</span>
@@ -1266,174 +1271,7 @@
         <span class="n">pixmap</span><span class="o">.</span><span class="n">setDevicePixelRatio</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">pixel_ratio</span><span class="p">)</span>
         <span class="n">pixmap</span><span class="o">.</span><span class="n">convertFromImage</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ColorOnly</span><span class="p">)</span>
         <span class="n">common</span><span class="o">.</span><span class="n">image_resource_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">pixmap</span>
-        <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">image_resource_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span></div>
-
-<div class="viewcode-block" id="ImageCache.oiio_make_thumbnail"><a class="viewcode-back" href="../../modules/images.html#bookmarks.images.ImageCache.oiio_make_thumbnail">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">oiio_make_thumbnail</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">destination</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Converts the `source` image to an sRGB image fitting the bounds of</span>
-<span class="sd">        `size` and saves it to `destination`.</span>
-
-<span class="sd">        If size is `-1`, the image won&#39;t be resized.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            source (str): Source image&#39;s file path.</span>
-<span class="sd">            destination (str): Destination of the converted image.</span>
-<span class="sd">            size (int): The bounds to fit the converted image (in pixels).</span>
-<span class="sd">            nthreads (int): Number of threads to use. Defaults to 4.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            bool: True if successfully converted the image, False otherwise.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">_lock_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">destination</span><span class="si">}</span><span class="s1">.lock&#39;</span>
-        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">_lock_path</span><span class="p">):</span>
-            <span class="k">return</span>
-
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Converting </span><span class="si">{</span><span class="n">source</span><span class="si">}</span><span class="s1">...&#39;</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span>
-        <span class="nb">open</span><span class="p">(</span><span class="n">_lock_path</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf8&#39;</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">_get_scaled_spec</span><span class="p">(</span><span class="n">source_spec</span><span class="p">):</span>
-            <span class="n">w</span> <span class="o">=</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">width</span>
-            <span class="n">h</span> <span class="o">=</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">height</span>
-            <span class="n">factor</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">size</span><span class="p">)</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">w</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
-            <span class="n">w</span> <span class="o">*=</span> <span class="n">factor</span>
-            <span class="n">h</span> <span class="o">*=</span> <span class="n">factor</span>
-
-            <span class="n">s</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageSpec</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">w</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">h</span><span class="p">),</span> <span class="mi">4</span><span class="p">,</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">UINT8</span><span class="p">)</span>
-            <span class="n">s</span><span class="o">.</span><span class="n">channelnames</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">)</span>
-            <span class="n">s</span><span class="o">.</span><span class="n">alpha_channel</span> <span class="o">=</span> <span class="mi">3</span>
-            <span class="n">s</span><span class="o">.</span><span class="n">attribute</span><span class="p">(</span><span class="s1">&#39;oiio:ColorSpace&#39;</span><span class="p">,</span> <span class="s1">&#39;sRGB&#39;</span><span class="p">)</span>
-            <span class="n">s</span><span class="o">.</span><span class="n">attribute</span><span class="p">(</span><span class="s1">&#39;oiio:Gamma&#39;</span><span class="p">,</span> <span class="s1">&#39;0.454545&#39;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">s</span>
-
-        <span class="k">def</span> <span class="nf">_shuffle_channels</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">source_spec</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">source_spec</span><span class="o">.</span><span class="n">nchannels</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="n">buf</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageBufAlgo</span><span class="o">.</span><span class="n">channels</span><span class="p">(</span>
-                    <span class="n">buf</span><span class="p">,</span>
-                    <span class="p">(</span><span class="n">source_spec</span><span class="o">.</span><span class="n">channelnames</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">channelnames</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                     <span class="n">source_spec</span><span class="o">.</span><span class="n">channelnames</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
-                    <span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">)</span>
-                <span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">int</span><span class="p">(</span><span class="n">source_spec</span><span class="o">.</span><span class="n">nchannels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">channelindex</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-                    <span class="n">buf</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageBufAlgo</span><span class="o">.</span><span class="n">channels</span><span class="p">(</span>
-                        <span class="n">buf</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span> <span class="s1">&#39;A&#39;</span><span class="p">))</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">buf</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageBufAlgo</span><span class="o">.</span><span class="n">channels</span><span class="p">(</span>
-                        <span class="n">buf</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">,</span> <span class="s1">&#39;G&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">))</span>
-            <span class="k">return</span> <span class="n">buf</span>
-
-        <span class="k">def</span> <span class="nf">_resize</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">destination_spec</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageBufAlgo</span><span class="o">.</span><span class="n">resample</span><span class="p">(</span>
-                <span class="n">buf</span><span class="p">,</span> <span class="n">roi</span><span class="o">=</span><span class="n">destination_spec</span><span class="o">.</span><span class="n">roi</span><span class="p">,</span> <span class="n">interpolate</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="n">nthreads</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">_flatten</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">source_spec</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">get_int_attribute</span><span class="p">(</span><span class="s1">&#39;deep&#39;</span><span class="p">,</span> <span class="n">defaultval</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">buf</span>
-            <span class="k">if</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">deep</span><span class="p">:</span>
-                <span class="n">buf</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageBufAlgo</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">nthreads</span><span class="o">=</span><span class="n">nthreads</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">buf</span>
-
-        <span class="k">def</span> <span class="nf">_colorconvert</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">source_spec</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">get_int_attribute</span><span class="p">(</span><span class="s1">&#39;oiio:Movie&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">buf</span>
-            <span class="n">colorspace</span> <span class="o">=</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">get_string_attribute</span><span class="p">(</span><span class="s1">&#39;oiio:ColorSpace&#39;</span><span class="p">)</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">colorspace</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">:</span>
-                    <span class="n">buf</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageBufAlgo</span><span class="o">.</span><span class="n">_colorconvert</span><span class="p">(</span>
-                        <span class="n">buf</span><span class="p">,</span> <span class="n">colorspace</span><span class="p">,</span> <span class="s1">&#39;sRGB&#39;</span><span class="p">)</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Could not convert the color profile&#39;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">buf</span>
-
-        <span class="k">def</span> <span class="nf">_checker</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">source_spec</span><span class="p">,</span> <span class="n">destination_spec</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">get_int_attribute</span><span class="p">(</span><span class="s1">&#39;oiio:Movie&#39;</span><span class="p">,</span> <span class="n">defaultval</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">buf</span>
-            <span class="k">if</span> <span class="n">buf</span><span class="o">.</span><span class="n">nchannels</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">buf</span>
-            <span class="n">background_buf</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageBuf</span><span class="p">(</span><span class="n">destination_spec</span><span class="p">)</span>
-            <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageBufAlgo</span><span class="o">.</span><span class="n">_checker</span><span class="p">(</span>
-                <span class="n">background_buf</span><span class="p">,</span>
-                <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
-                <span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
-            <span class="p">)</span>
-            <span class="n">buf</span> <span class="o">=</span> <span class="n">OpenImageIO</span><span class="o">.</span><span class="n">ImageBufAlgo</span><span class="o">.</span><span class="n">over</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">background_buf</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">buf</span>
-
-        <span class="n">buf</span> <span class="o">=</span> <span class="n">oiio_get_buf</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">buf</span><span class="p">:</span>
-            <span class="n">common</span><span class="o">.</span><span class="n">oiio_cache</span><span class="o">.</span><span class="n">invalidate</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">_lock_path</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">False</span>
-
-        <span class="n">source_spec</span> <span class="o">=</span> <span class="n">buf</span><span class="o">.</span><span class="n">spec</span><span class="p">()</span>
-
-        <span class="c1"># The LibPNG seems to be fussy about corrupted and invalid ICC profiles</span>
-        <span class="c1"># and OpenImageIO seems to interpret warning about these as errors that</span>
-        <span class="c1"># causes the interpreter to crash. Removing the ICC profile seems to fix</span>
-        <span class="c1"># the issue. Also, OpenImageIO seems to have a bug when trying to</span>
-        <span class="c1"># explicitly erase the attribute. The workaround seems to be to set the</span>
-        <span class="c1"># attribute value prior to deleting it.</span>
-        <span class="n">source_spec</span><span class="p">[</span><span class="s1">&#39;ICCProfile&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">source_spec</span><span class="o">.</span><span class="n">erase_attribute</span><span class="p">(</span><span class="s1">&#39;ICCProfile&#39;</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">get_int_attribute</span><span class="p">(</span><span class="s1">&#39;oiio:Movie&#39;</span><span class="p">,</span> <span class="n">defaultval</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="c1"># Load the middle frame of the video</span>
-            <span class="n">buf</span> <span class="o">=</span> <span class="n">oiio_get_buf</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">subimage</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">buf</span><span class="o">.</span><span class="n">nsubimages</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
-
-            <span class="n">is_gif</span> <span class="o">=</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">get_int_attribute</span><span class="p">(</span><span class="s1">&#39;gif:LoopCount&#39;</span><span class="p">,</span> <span class="n">defaultval</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span>
-
-            <span class="c1"># I&#39;m having issues working with very short movie files - that contain only a couple of frames,</span>
-            <span class="c1"># so, let&#39;s ignore those (gifs are fine)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_gif</span> <span class="ow">and</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">get_int_attribute</span><span class="p">(</span><span class="s1">&#39;oiio:subimages&#39;</span><span class="p">,</span>
-                                                            <span class="n">defaultval</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="n">common</span><span class="o">.</span><span class="n">oiio_cache</span><span class="o">.</span><span class="n">invalidate</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">_lock_path</span><span class="p">)</span>
-                <span class="k">return</span> <span class="kc">False</span>
-
-            <span class="c1"># [BUG] Not all codec formats are supported by ffmpeg. There does</span>
-            <span class="c1"># not seem to be (?) error handling and an unsupported codec will</span>
-            <span class="c1"># crash ffmpeg and the rest of the app.</span>
-            <span class="n">codec_name</span> <span class="o">=</span> <span class="n">source_spec</span><span class="o">.</span><span class="n">get_string_attribute</span><span class="p">(</span><span class="s1">&#39;ffmpeg:codec_name&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_gif</span> <span class="ow">and</span> <span class="n">codec_name</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">accepted_codecs</span> <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">codec_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()]:</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unsupported movie format: </span><span class="si">{</span><span class="n">codec_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-                    <span class="n">common</span><span class="o">.</span><span class="n">oiio_cache</span><span class="o">.</span><span class="n">invalidate</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                    <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">_lock_path</span><span class="p">)</span>
-                    <span class="k">return</span> <span class="kc">False</span>
-
-        <span class="n">destination_spec</span> <span class="o">=</span> <span class="n">_get_scaled_spec</span><span class="p">(</span><span class="n">source_spec</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">size</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="n">buf</span> <span class="o">=</span> <span class="n">_resize</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">destination_spec</span><span class="p">)</span>
-        <span class="n">buf</span> <span class="o">=</span> <span class="n">_shuffle_channels</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">source_spec</span><span class="p">)</span>
-        <span class="n">buf</span> <span class="o">=</span> <span class="n">_flatten</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">source_spec</span><span class="p">)</span>
-        <span class="n">buf</span> <span class="o">=</span> <span class="n">_colorconvert</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">source_spec</span><span class="p">)</span>
-        <span class="c1"># buf = _checker(buf, source_spec, destination_spec)</span>
-
-        <span class="n">spec</span> <span class="o">=</span> <span class="n">buf</span><span class="o">.</span><span class="n">spec</span><span class="p">()</span>
-        <span class="n">buf</span><span class="o">.</span><span class="n">set_write_format</span><span class="p">(</span><span class="n">OpenImageIO</span><span class="o">.</span><span class="n">UINT8</span><span class="p">)</span>
-
-        <span class="c1"># On some dpx images I&#39;m getting &quot;GammaCorrectedinf&quot;</span>
-        <span class="k">if</span> <span class="s1">&#39;gammacorrectedinf&#39;</span> <span class="ow">in</span> <span class="n">spec</span><span class="o">.</span><span class="n">get_string_attribute</span><span class="p">(</span><span class="s1">&#39;oiio:ColorSpace&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
-            <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;oiio:ColorSpace&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;sRGB&#39;</span>
-            <span class="n">spec</span><span class="p">[</span><span class="s1">&#39;oiio:Gamma&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;0.454545&#39;</span>
-
-        <span class="c1"># Create a lock file before writing</span>
-        <span class="n">success</span> <span class="o">=</span> <span class="n">buf</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">destination</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">OpenImageIO</span><span class="o">.</span><span class="n">UINT8</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">_lock_path</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">success</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">buf</span><span class="o">.</span><span class="n">geterror</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">OpenImageIO</span><span class="o">.</span><span class="n">geterror</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFile</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span><span class="o">.</span><span class="n">remove</span><span class="p">():</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Cleanup failed.&#39;</span><span class="p">)</span>
-
-            <span class="n">common</span><span class="o">.</span><span class="n">oiio_cache</span><span class="o">.</span><span class="n">invalidate</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">False</span>
-
-        <span class="n">common</span><span class="o">.</span><span class="n">oiio_cache</span><span class="o">.</span><span class="n">invalidate</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">True</span></div></div>
+        <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">image_resource_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span></div></div>
 </pre></div>
         </article>
       </div>
@@ -1454,9 +1292,7 @@
             
           </div>
           <div class="right-details">
-            <div class="icons">
-              
-            </div>
+            
           </div>
         </div>
         
@@ -1469,9 +1305,8 @@
     </aside>
   </div>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>
     <script src="../../_static/design-tabs.js"></script>
     </body>

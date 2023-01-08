@@ -2,15 +2,16 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta content="Developer documentation page for the Bookmarks python modules" name="description" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<meta content="Developer documentation page for the Bookmarks python modules" name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="bookmarker" href="bookmarker.html" /><link rel="prev" title="Python Modules" href="../modules.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/actions.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
-        <title>actions - Bookmarks 0.7.5 documentation</title>
+    <!-- Generated with Sphinx 6.1.2 and Furo 2022.12.07 -->
+        <title>actions - Bookmarks 0.7.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -162,7 +163,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">Bookmarks 0.7.5 documentation</div></a>
+      <a href="../index.html"><div class="brand">Bookmarks 0.7.6 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -189,10 +190,10 @@
     <img class="sidebar-logo only-dark" src="../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.5 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.6 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -375,7 +376,7 @@
           </label>
         </div>
         <article role="main">
-          <div class="section" id="module-bookmarks.actions">
+          <section id="module-bookmarks.actions">
 <span id="actions"></span><h1>actions<a class="headerlink" href="#module-bookmarks.actions" title="Permalink to this heading">#</a></h1>
 <p>User actions module.</p>
 <p>These actions are usually triggered by the user via keyboard shortcuts or by
@@ -383,10 +384,6 @@ interactions with the UI.</p>
 <p><strong>Functions:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.add_bookmark" title="bookmarks.actions.add_bookmark"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_bookmark</span></code></a>(server, job, root)</p></td>
 <td><p>Add the given bookmark item and save it in the user settings file.</p></td>
@@ -577,23 +574,23 @@ interactions with the UI.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.show_bookmarker" title="bookmarks.actions.show_bookmarker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_bookmarker</span></code></a>()</p></td>
 <td><p>Shows <a class="reference internal" href="bookmarker/main.html#bookmarks.bookmarker.main.BookmarkerWidget" title="bookmarks.bookmarker.main.BookmarkerWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">BookmarkerWidget</span></code></a>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.show_preferences" title="bookmarks.actions.show_preferences"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_preferences</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.show_notes" title="bookmarks.actions.show_notes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_notes</span></code></a>(index)</p></td>
+<td><p>Shows the <code class="xref py py-class docutils literal notranslate"><span class="pre">NoteEditor</span></code> editor.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.show_preferences" title="bookmarks.actions.show_preferences"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_preferences</span></code></a>()</p></td>
 <td><p>Shows the <a class="reference internal" href="editor/preferences.html#bookmarks.editor.preferences.PreferenceEditor" title="bookmarks.editor.preferences.PreferenceEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">PreferenceEditor</span></code></a> editor widget.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.show_publish_widget" title="bookmarks.actions.show_publish_widget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_publish_widget</span></code></a>(index)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.show_publish_widget" title="bookmarks.actions.show_publish_widget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_publish_widget</span></code></a>(index)</p></td>
 <td><p>Shows the <code class="xref py py-class docutils literal notranslate"><span class="pre">PublishWidget</span></code> editor.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.show_sg_connecting_message" title="bookmarks.actions.show_sg_connecting_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_sg_connecting_message</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.show_sg_connecting_message" title="bookmarks.actions.show_sg_connecting_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_sg_connecting_message</span></code></a>()</p></td>
 <td><p>Shows a ShotGrid connection progress message.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.show_sg_error_message" title="bookmarks.actions.show_sg_error_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_sg_error_message</span></code></a>(v)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.show_sg_error_message" title="bookmarks.actions.show_sg_error_message"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_sg_error_message</span></code></a>(v)</p></td>
 <td><p>Shows a ShotGrid error message.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.show_slack" title="bookmarks.actions.show_slack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_slack</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.show_slack" title="bookmarks.actions.show_slack"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_slack</span></code></a>()</p></td>
 <td><p>Opens the Slack widget used to send messages using SlackAPI.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.actions.show_notes" title="bookmarks.actions.show_notes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_notes</span></code></a>(index)</p></td>
-<td><p>Shows the <a class="reference internal" href="notes.html#bookmarks.notes.NoteEditor" title="bookmarks.notes.NoteEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">NoteEditor</span></code></a> editor.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.actions.suggest_prefix" title="bookmarks.actions.suggest_prefix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">suggest_prefix</span></code></a>(job)</p></td>
 <td><p>Suggests a prefix for the given job.</p></td>
@@ -663,7 +660,7 @@ interactions with the UI.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">add_bookmark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#add_bookmark"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.add_bookmark" title="Permalink to this definition">#</a></dt>
 <dd><p>Add the given bookmark item and save it in the user settings file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>server</strong> (<em>str</em>) – <cite>server</cite> path segment.</p></li>
 <li><p><strong>job</strong> (<em>str</em>) – <cite>job</cite> path segment.</p></li>
@@ -678,7 +675,7 @@ interactions with the UI.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">add_favourite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#add_favourite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.add_favourite" title="Permalink to this definition">#</a></dt>
 <dd><p>Add and save a favourite item.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source_paths</strong> (<em>list</em>) – A list of parent paths.</p></li>
 <li><p><strong>source</strong> (<em>str</em>) – The item to save as a favourite item.</p></li>
@@ -698,7 +695,7 @@ interactions with the UI.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">add_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#add_server"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.add_server" title="Permalink to this definition">#</a></dt>
 <dd><p>Adds a server item to the list of user specified servers.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>v</strong> (<em>str</em>) – A path to a server, e.g. <cite>Q:/jobs</cite>.</p>
 </dd>
 </dl>
@@ -709,17 +706,17 @@ interactions with the UI.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">add_zip_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#add_zip_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.add_zip_template" title="Permalink to this definition">#</a></dt>
 <dd><p>Adds the selected source zip archive as a <cite>mode</cite> template file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source</strong> (<em>str</em>) – Path to a zip template file.</p></li>
 <li><p><strong>mode</strong> (<em>str</em>) – A template mode (one of  ‘job’ or ‘asset’).</p></li>
 <li><p><strong>prompt</strong> (<em>bool</em>) – Prompt user to confirm overriding existing files.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Path to the saved template file, or None.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -742,7 +739,7 @@ interactions with the UI.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">capture_thumbnail</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#capture_thumbnail"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.capture_thumbnail" title="Permalink to this definition">#</a></dt>
 <dd><p>Captures a thumbnail for the given index.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>index</strong> (<em>QtCore.QModelIndex</em>) – The item index.</p>
 </dd>
 </dl>
@@ -765,7 +762,7 @@ interactions with the UI.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">clear_favourites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#clear_favourites"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.clear_favourites" title="Permalink to this definition">#</a></dt>
 <dd><p>Clear the list of saved favourite items.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>prompt</strong> (<em>bool</em>) – If True, will prompt the user for confirmation.</p>
 </dd>
 </dl>
@@ -782,7 +779,7 @@ interactions with the UI.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">copy_asset_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#copy_asset_properties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.copy_asset_properties" title="Permalink to this definition">#</a></dt>
 <dd><p>Copy asset properties to clipboard.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>index</strong> (<em>QModelIndex</em>) – Index of the currently selected item.</p>
 </dd>
 </dl>
@@ -795,7 +792,7 @@ interactions with the UI.</p>
 <p>The path will be conformed to the given mode. E.g. forward slashes
 converted to back-slashes for <cite>WindowsPath</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>path</strong> (<em>str</em>) – A file path.</p></li>
 <li><p><strong>mode</strong> (<em>int</em>) – Any of <code class="docutils literal notranslate"><span class="pre">WindowsPath</span></code>, <code class="docutils literal notranslate"><span class="pre">UnixPath</span></code>, <code class="docutils literal notranslate"><span class="pre">SlackPath</span></code> or <code class="docutils literal notranslate"><span class="pre">MacOSPath</span></code>.
@@ -805,10 +802,10 @@ Defaults to <code class="docutils literal notranslate"><span class="pre">Windows
 Defaults to <cite>True</cite>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The path copied to the clipboard.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -819,7 +816,7 @@ Defaults to <cite>True</cite>.</p></li>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">copy_selected_alt_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#copy_selected_alt_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.copy_selected_alt_path" title="Permalink to this definition">#</a></dt>
 <dd><p>Copies the path of the given item to the clipboard.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>index</strong> (<em>QtCore.QModelIndex</em>) – The item index.</p>
 </dd>
 </dl>
@@ -830,7 +827,7 @@ Defaults to <cite>True</cite>.</p></li>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">copy_selected_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#copy_selected_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.copy_selected_path" title="Permalink to this definition">#</a></dt>
 <dd><p>Copies the path of the given item to the clipboard.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>index</strong> (<em>QtCore.QModelIndex</em>) – The item index.</p>
 </dd>
 </dl>
@@ -854,7 +851,7 @@ Defaults to <cite>True</cite>.</p></li>
 <dd><p>Shows <a class="reference internal" href="editor/asset_properties.html#bookmarks.editor.asset_properties.AssetPropertyEditor" title="bookmarks.editor.asset_properties.AssetPropertyEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssetPropertyEditor</span></code></a> to
 edit the properties of a bookmark item.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>asset</strong> (<em>str</em>) – <cite>asset</cite> path segment.</p>
 </dd>
 </dl>
@@ -866,7 +863,7 @@ edit the properties of a bookmark item.</p>
 <dd><p>Shows <a class="reference internal" href="editor/bookmark_properties.html#bookmarks.editor.bookmark_properties.BookmarkPropertyEditor" title="bookmarks.editor.bookmark_properties.BookmarkPropertyEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">BookmarkPropertyEditor</span></code></a> to
 edit the properties of a bookmark item.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>server</strong> (<em>str</em>) – <cite>server</cite> path segment. Optional.</p></li>
 <li><p><strong>job</strong> (<em>str</em>) – <cite>job</cite> path segment. Optional.</p></li>
@@ -900,7 +897,7 @@ edit the properties of a bookmark item.</p>
 <dd><p>Given the model index, executes the index’s path using
 <cite>QDesktopServices</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>index</strong> (<em>QModelIndex or str</em>) – A list item index or a path to a file.</p></li>
 <li><p><strong>first</strong> (<em>bool</em>) – Execute the first item of a collapsed sequence.</p></li>
@@ -922,7 +919,7 @@ new process does not inherit the current environment.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">export_favourites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#export_favourites"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.export_favourites" title="Permalink to this definition">#</a></dt>
 <dd><p>Saves all favourite items to a zip file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> (<em>tuple</em>) – A <cite>server</cite>, <cite>job</cite>, <cite>root</cite> argument tuple.</p></li>
 <li><p><strong>destination</strong> (<em>str</em>) – The path to save the zip file to. Optional.</p></li>
@@ -944,17 +941,17 @@ new process does not inherit the current environment.</p>
 <p>The contents will be expanded to a <cite>{destination}/{name}</cite> where name is an
 arbitrary name of a job or an asset item to be created.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source</strong> (<em>str</em>) – Path to a zip archive.</p></li>
 <li><p><strong>destination</strong> (<em>str</em>) – Path to a folder</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – Name of the root folder where the archive contents will be expanded to.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Path to the expanded archive contents.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>str</p>
 </dd>
 </dl>
@@ -967,7 +964,7 @@ arbitrary name of a job or an asset item to be created.</p>
 <p>For instance, the favourite item model might set flag values that we want to
 keep updated in other models too.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>flag</strong> (<em>int</em>) – A filter flag.</p></li>
 <li><p><strong>parent_paths</strong> (<em>list</em>) – The parent paths that make up the source file.</p></li>
@@ -984,7 +981,7 @@ keep updated in other models too.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">generate_thumbnails_changed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#generate_thumbnails_changed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.generate_thumbnails_changed" title="Permalink to this definition">#</a></dt>
 <dd><p>Slot called when the thumbnail generating preference has changed.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> (<em>QtCore.Qt.CheckState</em>) – The preference state.</p>
 </dd>
 </dl>
@@ -1001,7 +998,7 @@ keep updated in other models too.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">import_favourites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#import_favourites"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.import_favourites" title="Permalink to this definition">#</a></dt>
 <dd><p>Import a previously exported favourites file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>source</strong> (<em>str</em>) – Path to a file. Defaults to <cite>None</cite>.</p>
 </dd>
 </dl>
@@ -1037,7 +1034,7 @@ exists and initialized.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">paste_asset_properties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#paste_asset_properties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.paste_asset_properties" title="Permalink to this definition">#</a></dt>
 <dd><p>Paste asset properties from clipboard to the selected item.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>index</strong> (<em>QModelIndex</em>) – Index of the currently selected item.</p>
 </dd>
 </dl>
@@ -1057,7 +1054,7 @@ directory structure.</p>
 <p>The template is copied to <code class="docutils literal notranslate"><span class="pre">%localappdata%/[product]/[mode]_templates/*.zip</span></code>
 folder.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>mode</strong> (<em>str</em>) – A template mode, e.g. <cite>JobTemplateMode</cite>.</p>
 </dd>
 </dl>
@@ -1068,7 +1065,7 @@ folder.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">pick_thumbnail_from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#pick_thumbnail_from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.pick_thumbnail_from_file" title="Permalink to this definition">#</a></dt>
 <dd><p>Picks a thumbnail for the given index.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>index</strong> (<em>QtCore.QModelIndex</em>) – The item index.</p>
 </dd>
 </dl>
@@ -1079,7 +1076,7 @@ folder.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">pick_thumbnail_from_library</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#pick_thumbnail_from_library"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.pick_thumbnail_from_library" title="Permalink to this definition">#</a></dt>
 <dd><p>Picks a thumbnail for the given index.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>index</strong> (<em>QtCore.QModelIndex</em>) – The item index.</p>
 </dd>
 </dl>
@@ -1090,7 +1087,7 @@ folder.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">preview_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#preview_image"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.preview_image" title="Permalink to this definition">#</a></dt>
 <dd><p>Shows a preview of the given image.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>index</strong> (<em>QtCore.QModelIndex</em>) – The item index.</p>
 </dd>
 </dl>
@@ -1121,7 +1118,7 @@ other case we will fall back to cached or default thumbnail images.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">refresh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#refresh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.refresh" title="Permalink to this definition">#</a></dt>
 <dd><p>Refresh the model of an item view.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>idx</strong> (<em>int</em>) – The item tab number. Optional.</p>
 </dd>
 </dl>
@@ -1134,7 +1131,7 @@ other case we will fall back to cached or default thumbnail images.</p>
 <p>Removing a bookmark item will close and delete the item’s database controller
 instances.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>server</strong> (<em>str</em>) – <cite>server</cite> path segment.</p></li>
 <li><p><strong>job</strong> (<em>str</em>) – <cite>job</cite> path segment.</p></li>
@@ -1149,7 +1146,7 @@ instances.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">remove_favourite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#remove_favourite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.remove_favourite" title="Permalink to this definition">#</a></dt>
 <dd><p>Remove a saved favourite item.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source_paths</strong> (<em>list</em>) – A list of parent paths.</p></li>
 <li><p><strong>source</strong> (<em>str</em>) – The item to save as a favourite item.</p></li>
@@ -1163,7 +1160,7 @@ instances.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">remove_server</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#remove_server"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.remove_server" title="Permalink to this definition">#</a></dt>
 <dd><p>Remove a server item from the list of user specified servers.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>v</strong> (<em>str</em>) – A path to a server, e.g. <cite>Q:/jobs</cite>.</p>
 </dd>
 </dl>
@@ -1181,7 +1178,7 @@ with it.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">remove_zip_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#remove_zip_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.remove_zip_template" title="Permalink to this definition">#</a></dt>
 <dd><p>Deletes a zip template file from the disk.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source</strong> (<em>str</em>) – Path to a zip template file.</p></li>
 <li><p><strong>prompt</strong> (<em>bool</em>) – Prompt the user for confirmation.</p></li>
@@ -1201,7 +1198,7 @@ with it.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">reveal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#reveal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.reveal" title="Permalink to this definition">#</a></dt>
 <dd><p>Reveals an item in the file explorer.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>item</strong> (<em>str or QModelIndex</em>) – The item to show in the file manager.</p>
 </dd>
 </dl>
@@ -1218,7 +1215,7 @@ with it.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">reveal_selected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#reveal_selected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.reveal_selected" title="Permalink to this definition">#</a></dt>
 <dd><p>Reveal the currently selected item in the file explorer.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>index</strong> (<em>QtCore.QModelIndex</em>) – The item index.</p>
 </dd>
 </dl>
@@ -1229,7 +1226,7 @@ with it.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">reveal_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#reveal_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.reveal_url" title="Permalink to this definition">#</a></dt>
 <dd><p>Opens the given item’s primary ULR.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>index</strong> (<em>QtCore.QModelIndex</em>) – The item index.</p>
 </dd>
 </dl>
@@ -1247,7 +1244,7 @@ are in a valid state.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">set_active</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#set_active"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.set_active" title="Permalink to this definition">#</a></dt>
 <dd><p>Sets the given path as the active path segment for the given key.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>k</strong> (<em>str</em>) – An active key, e.g. <cite>‘server’</cite>.</p></li>
 <li><p><strong>v</strong> (<em>str or None</em>) – A path segment, e.g. ‘//myserver/jobs’.</p></li>
@@ -1261,7 +1258,7 @@ are in a valid state.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">set_task_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#set_task_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.set_task_folder" title="Permalink to this definition">#</a></dt>
 <dd><p>Sets the active task folder.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>v</strong> (<em>str</em>) – A <cite>task</cite> path segment, e.g. ‘scenes’.</p>
 </dd>
 </dl>
@@ -1273,7 +1270,7 @@ are in a valid state.</p>
 <dd><p>Shows <a class="reference internal" href="editor/asset_properties.html#bookmarks.editor.asset_properties.AssetPropertyEditor" title="bookmarks.editor.asset_properties.AssetPropertyEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">AssetPropertyEditor</span></code></a> to create
 a new asset item.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>server</strong> (<em>str</em>) – <cite>server</cite> path segment. Optional.</p></li>
 <li><p><strong>job</strong> (<em>str</em>) – <cite>job</cite> path segment. Optional.</p></li>
@@ -1289,7 +1286,7 @@ a new asset item.</p>
 <dd><p>Shows <code class="xref py py-class docutils literal notranslate"><span class="pre">FileSaverWidget</span></code> to add a new empty template
 path file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>asset</strong> (<em>str</em>) – Name of the asset.</p></li>
 <li><p><strong>extension</strong> (<em>str</em>) – An format, e.g. ‘psd’.</p></li>
@@ -1298,7 +1295,7 @@ path file.</p>
 <li><p><strong>increment</strong> (<em>bool</em>) – Increment the version number element of <code class="docutils literal notranslate"><span class="pre">file</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The editor widget instance.</p>
 </dd>
 </dl>
@@ -1309,7 +1306,7 @@ path file.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">show_asset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#show_asset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.show_asset" title="Permalink to this definition">#</a></dt>
 <dd><p>Slot used to reveal an asset item in the asset tab.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Path of the asset item.</p>
 </dd>
 </dl>
@@ -1319,6 +1316,17 @@ path file.</p>
 <dt class="sig sig-object py" id="bookmarks.actions.show_bookmarker">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">show_bookmarker</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#show_bookmarker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.show_bookmarker" title="Permalink to this definition">#</a></dt>
 <dd><p>Shows <a class="reference internal" href="bookmarker/main.html#bookmarks.bookmarker.main.BookmarkerWidget" title="bookmarks.bookmarker.main.BookmarkerWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">BookmarkerWidget</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.actions.show_notes">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">show_notes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#show_notes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.show_notes" title="Permalink to this definition">#</a></dt>
+<dd><p>Shows the <code class="xref py py-class docutils literal notranslate"><span class="pre">NoteEditor</span></code> editor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> (<em>QtCore.QModelIndex</em>) – The item index.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1352,22 +1360,11 @@ path file.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="bookmarks.actions.show_notes">
-<span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">show_notes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#show_notes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.show_notes" title="Permalink to this definition">#</a></dt>
-<dd><p>Shows the <a class="reference internal" href="notes.html#bookmarks.notes.NoteEditor" title="bookmarks.notes.NoteEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">NoteEditor</span></code></a> editor.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>index</strong> (<em>QtCore.QModelIndex</em>) – The item index.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="bookmarks.actions.suggest_prefix">
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">suggest_prefix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#suggest_prefix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.suggest_prefix" title="Permalink to this definition">#</a></dt>
 <dd><p>Suggests a prefix for the given job.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>job</strong> (<em>Job</em>) – The <cite>job</cite> to suggest prefix for.</p>
 </dd>
 </dl>
@@ -1378,7 +1375,7 @@ path file.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">test_slack_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">token</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#test_slack_token"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.test_slack_token" title="Permalink to this definition">#</a></dt>
 <dd><p>Tests the given slack api token.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>token</strong> (<em>str</em>) – The slack api token.</p>
 </dd>
 </dl>
@@ -1401,7 +1398,7 @@ path file.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">toggle_archived</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#toggle_archived"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.toggle_archived" title="Permalink to this definition">#</a></dt>
 <dd><p>Toggles the <code class="docutils literal notranslate"><span class="pre">MarkedAsArchived</span></code> flag of the given item.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>index</strong> (<em>QtCore.QModelIndex</em>) – The item index.</p>
 </dd>
 </dl>
@@ -1419,7 +1416,7 @@ path file.</p>
 <dd><p>Toggles debugging staten on or off.</p>
 <p>When on, the app will print debugging information to the console.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>state</strong> (<em>QtCore.Qt.CheckState</em>) – Debugging state.</p>
 </dd>
 </dl>
@@ -1430,7 +1427,7 @@ path file.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">toggle_favourite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#toggle_favourite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.toggle_favourite" title="Permalink to this definition">#</a></dt>
 <dd><p>Toggles the <code class="docutils literal notranslate"><span class="pre">MarkedAsFavourite</span></code> flag of the given item.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>index</strong> (<em>QtCore.QModelIndex</em>) – The item index.</p>
 </dd>
 </dl>
@@ -1453,7 +1450,7 @@ path file.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.actions.</span></span><span class="sig-name descname"><span class="pre">toggle_flag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/actions.html#toggle_flag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.actions.toggle_flag" title="Permalink to this definition">#</a></dt>
 <dd><p>Toggle an item filter flag in the current item tab.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>flag</strong> (<em>int</em>) – An item filter flag.</p></li>
 <li><p><strong>v</strong> (<em>bool</em>) – The filter flag value.</p></li>
@@ -1517,7 +1514,7 @@ path file.</p>
 :class:~bookmarks.items.task_items.TaskItemView`` widget.</p>
 </dd></dl>
 
-</div>
+</section>
 
         </article>
       </div>
@@ -1556,9 +1553,7 @@ path file.</p>
             
           </div>
           <div class="right-details">
-            <div class="icons">
-              
-            </div>
+            
           </div>
         </div>
         
@@ -1640,12 +1635,12 @@ path file.</p>
 <li><a class="reference internal" href="#bookmarks.actions.show_add_file"><code class="docutils literal notranslate"><span class="pre">show_add_file()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.actions.show_asset"><code class="docutils literal notranslate"><span class="pre">show_asset()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.actions.show_bookmarker"><code class="docutils literal notranslate"><span class="pre">show_bookmarker()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.actions.show_notes"><code class="docutils literal notranslate"><span class="pre">show_notes()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.actions.show_preferences"><code class="docutils literal notranslate"><span class="pre">show_preferences()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.actions.show_publish_widget"><code class="docutils literal notranslate"><span class="pre">show_publish_widget()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.actions.show_sg_connecting_message"><code class="docutils literal notranslate"><span class="pre">show_sg_connecting_message()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.actions.show_sg_error_message"><code class="docutils literal notranslate"><span class="pre">show_sg_error_message()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.actions.show_slack"><code class="docutils literal notranslate"><span class="pre">show_slack()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.actions.show_notes"><code class="docutils literal notranslate"><span class="pre">show_notes()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.actions.suggest_prefix"><code class="docutils literal notranslate"><span class="pre">suggest_prefix()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.actions.test_slack_token"><code class="docutils literal notranslate"><span class="pre">test_slack_token()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.actions.toggle_active_item"><code class="docutils literal notranslate"><span class="pre">toggle_active_item()</span></code></a></li>
@@ -1678,9 +1673,6 @@ path file.</p>
     </aside>
   </div>
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>

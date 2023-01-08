@@ -13,6 +13,8 @@ import time
 
 from PySide2 import QtWidgets, QtCore, QtGui
 
+import bookmarks_oiio
+
 from . import actions
 from . import common
 from . import database
@@ -653,13 +655,11 @@ class PublishWidget(base.BasePropertyEditor):
         self.thumbnail_editor.save_image(destination=temp)
 
         if QtCore.QFileInfo(temp).exists():
-            images.ImageCache.oiio_make_thumbnail(
+            res = bookmarks_oiio.make_thumbnail(
                 temp,
                 dest,
-                size=common.thumbnail_size
+                int(common.thumbnail_size)
             )
-            images.ImageCache.flush(temp)
-            images.ImageCache.flush(dest)
             QtCore.QFile(temp).remove()
 
         payload['thumbnail'] = dest

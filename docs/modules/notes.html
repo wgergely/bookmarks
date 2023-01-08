@@ -2,15 +2,16 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta content="Developer documentation page for the Bookmarks python modules" name="description" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<meta content="Developer documentation page for the Bookmarks python modules" name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="progress" href="progress.html" /><link rel="prev" title="maya.viewport" href="maya/viewport.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/notes.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
-        <title>notes - Bookmarks 0.7.5 documentation</title>
+    <!-- Generated with Sphinx 6.1.2 and Furo 2022.12.07 -->
+        <title>notes - Bookmarks 0.7.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -162,7 +163,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">Bookmarks 0.7.5 documentation</div></a>
+      <a href="../index.html"><div class="brand">Bookmarks 0.7.6 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -189,10 +190,10 @@
     <img class="sidebar-logo only-dark" src="../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.5 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.6 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -375,48 +376,252 @@
           </label>
         </div>
         <article role="main">
-          <div class="section" id="module-bookmarks.notes">
+          <section id="module-bookmarks.notes">
 <span id="notes"></span><h1>notes<a class="headerlink" href="#module-bookmarks.notes" title="Permalink to this heading">#</a></h1>
-<p>Item note editor.</p>
-<p>The main edit widget is <a class="reference internal" href="#bookmarks.notes.NoteEditor" title="bookmarks.notes.NoteEditor"><code class="xref py py-class docutils literal notranslate"><span class="pre">NoteEditor</span></code></a>, a</p>
+<p>Module contains the widgets used to add and edit item cards/notes.</p>
 <p><strong>Classes:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.DragIndicatorButton" title="bookmarks.notes.DragIndicatorButton"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DragIndicatorButton</span></code></a>([parent])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.CardWidget" title="bookmarks.notes.CardWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CardWidget</span></code></a>(extra_data[, read_only, parent])</p></td>
+<td><p>Card widget represents a single note item.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.CardsScrollWidget" title="bookmarks.notes.CardsScrollWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CardsScrollWidget</span></code></a>([parent])</p></td>
+<td><p>Widget used to store a list of :class:<a href="#id1"><span class="problematic" id="id2">`</span></a>CardWidget`s.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.CardsWidget" title="bookmarks.notes.CardsWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CardsWidget</span></code></a>(index[, parent])</p></td>
+<td><p>This is the main cards/notes widget.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.DragIndicatorButton" title="bookmarks.notes.DragIndicatorButton"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DragIndicatorButton</span></code></a>([parent])</p></td>
 <td><p>Dotted button indicating a draggable item.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.Highlighter" title="bookmarks.notes.Highlighter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Highlighter</span></code></a></p></td>
-<td><p>Class responsible for highlighting urls</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.DragOverlayWidget" title="bookmarks.notes.DragOverlayWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DragOverlayWidget</span></code></a>([parent])</p></td>
+<td><p>Widget responsible for indicating files are being loaded.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.Lockfile" title="bookmarks.notes.Lockfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Lockfile</span></code></a>(index[, parent])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.Lockfile" title="bookmarks.notes.Lockfile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Lockfile</span></code></a>(index[, parent])</p></td>
 <td><p>Lockfile to prevent another user from modifying the database whilst an edit is in progress.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.NoteContainerWidget" title="bookmarks.notes.NoteContainerWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NoteContainerWidget</span></code></a>([parent])</p></td>
-<td><p>This widget for storing the added note items.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.NoteEditor" title="bookmarks.notes.NoteEditor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NoteEditor</span></code></a>(index[, parent])</p></td>
-<td><p>Main widget used to view and edit and add Notes and Tasks.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.NoteItemWidget" title="bookmarks.notes.NoteItemWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NoteItemWidget</span></code></a>([parent])</p></td>
-<td><p>The item-wrapper widget for the drag indicator and editor widgets.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.NoteTextEditor" title="bookmarks.notes.NoteTextEditor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NoteTextEditor</span></code></a>(text[, read_only, parent])</p></td>
-<td><p>Custom QTextBrowser widget for writing note items.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.OverlayWidget" title="bookmarks.notes.OverlayWidget"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OverlayWidget</span></code></a>([parent])</p></td>
+<td><p>Widget responsible for indicating files are being loaded.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.RemoveNoteButton" title="bookmarks.notes.RemoveNoteButton"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RemoveNoteButton</span></code></a>([parent])</p></td>
 <td><p>Button used to remove a note item.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.Separator" title="bookmarks.notes.Separator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Separator</span></code></a>([parent])</p></td>
-<td><p>A custom label used as an item separator.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.SyntaxHighlighter" title="bookmarks.notes.SyntaxHighlighter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SyntaxHighlighter</span></code></a>(document[, parent])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.TextEditor" title="bookmarks.notes.TextEditor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TextEditor</span></code></a>([parent])</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
 </div>
+<p><strong>Functions:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.close" title="bookmarks.notes.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a>()</p></td>
+<td><p>Closes the <a class="reference internal" href="#bookmarks.notes.CardsWidget" title="bookmarks.notes.CardsWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">CardsWidget</span></code></a> editor.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.show" title="bookmarks.notes.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>(index)</p></td>
+<td><p>Shows the <a class="reference internal" href="#bookmarks.notes.CardsWidget" title="bookmarks.notes.CardsWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">CardsWidget</span></code></a> editor.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.notes.CardWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.notes.</span></span><span class="sig-name descname"><span class="pre">CardWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extra_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#CardWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.CardWidget" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
+<p>Card widget represents a single note item.</p>
+<p>It has a title and a main note editor. Use <a class="reference internal" href="#bookmarks.notes.CardWidget.set_card_data" title="bookmarks.notes.CardWidget.set_card_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_card_data()</span></code></a> to set,
+and <a class="reference internal" href="#bookmarks.notes.CardWidget.get_card_data" title="bookmarks.notes.CardWidget.get_card_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_card_data()</span></code></a> to retrieve the card contents.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.CardWidget.eventFilter" title="bookmarks.notes.CardWidget.eventFilter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eventFilter</span></code></a>(self, watched, event)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.CardWidget.get_card_data" title="bookmarks.notes.CardWidget.get_card_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_card_data</span></code></a>()</p></td>
+<td><p>Returns the title and note of the card.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.CardWidget.set_card_data" title="bookmarks.notes.CardWidget.set_card_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_card_data</span></code></a>([title, body, extra_data])</p></td>
+<td><p>Sets the note contents and extra data.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.notes.CardWidget.eventFilter">
+<span class="sig-name descname"><span class="pre">eventFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">watched</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QObject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtCore.QEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../_modules/bookmarks/notes.html#CardWidget.eventFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.CardWidget.eventFilter" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.notes.CardWidget.get_card_data">
+<span class="sig-name descname"><span class="pre">get_card_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#CardWidget.get_card_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.CardWidget.get_card_data" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns the title and note of the card.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Title, body and extra data of the card.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.notes.CardWidget.set_card_data">
+<span class="sig-name descname"><span class="pre">set_card_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#CardWidget.set_card_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.CardWidget.set_card_data" title="Permalink to this definition">#</a></dt>
+<dd><p>Sets the note contents and extra data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<em>str</em>) – The note’s title.</p></li>
+<li><p><strong>body</strong> (<em>str</em>) – The note’s content.</p></li>
+<li><p><strong>extra_data</strong> (<em>dict</em>) – Extra data about the note.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.notes.CardsScrollWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.notes.</span></span><span class="sig-name descname"><span class="pre">CardsScrollWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#CardsScrollWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.CardsScrollWidget" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QScrollArea</span></code></p>
+<p>Widget used to store a list of :class:<a href="#id3"><span class="problematic" id="id4">`</span></a>CardWidget`s.</p>
+<p>The widget implements user sorting by custom drag and drop
+mechanisms.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.CardsScrollWidget.add_card" title="bookmarks.notes.CardsScrollWidget.add_card"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_card</span></code></a>(title, body[, extra_data, read_only])</p></td>
+<td><p>Add a new <a class="reference internal" href="#bookmarks.notes.CardWidget" title="bookmarks.notes.CardWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">CardWidget</span></code></a> to the list.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.CardsScrollWidget.dragEnterEvent" title="bookmarks.notes.CardsScrollWidget.dragEnterEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dragEnterEvent</span></code></a>(event)</p></td>
+<td><p>Event handler.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.CardsScrollWidget.eventFilter" title="bookmarks.notes.CardsScrollWidget.eventFilter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eventFilter</span></code></a>(widget, event)</p></td>
+<td><p>Custom event filter.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.notes.CardsScrollWidget.add_card">
+<span class="sig-name descname"><span class="pre">add_card</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">body</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#CardsScrollWidget.add_card"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.CardsScrollWidget.add_card" title="Permalink to this definition">#</a></dt>
+<dd><p>Add a new <a class="reference internal" href="#bookmarks.notes.CardWidget" title="bookmarks.notes.CardWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">CardWidget</span></code></a> to the list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<em>str</em>) – Title of the note.</p></li>
+<li><p><strong>body</strong> (<em>str</em>) – Note.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.notes.CardsScrollWidget.dragEnterEvent">
+<span class="sig-name descname"><span class="pre">dragEnterEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#CardsScrollWidget.dragEnterEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.CardsScrollWidget.dragEnterEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Event handler.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.notes.CardsScrollWidget.eventFilter">
+<span class="sig-name descname"><span class="pre">eventFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#CardsScrollWidget.eventFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.CardsScrollWidget.eventFilter" title="Permalink to this definition">#</a></dt>
+<dd><p>Custom event filter.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.notes.CardsWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.notes.</span></span><span class="sig-name descname"><span class="pre">CardsWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#CardsWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.CardsWidget" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
+<p>This is the main cards/notes widget.</p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.CardsWidget.done" title="bookmarks.notes.CardsWidget.done"><code class="xref py py-obj docutils literal notranslate"><span class="pre">done</span></code></a>(r)</p></td>
+<td><p>Close the window.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.CardsWidget.get_cards_data" title="bookmarks.notes.CardsWidget.get_cards_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_cards_data</span></code></a>()</p></td>
+<td><p>Get all cards data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.CardsWidget.init_data" title="bookmarks.notes.CardsWidget.init_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_data</span></code></a>()</p></td>
+<td><p>Load cards data stored in the database.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.CardsWidget.save" title="bookmarks.notes.CardsWidget.save"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save</span></code></a>()</p></td>
+<td><p>Save the note items to the database.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.CardsWidget.sizeHint" title="bookmarks.notes.CardsWidget.sizeHint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sizeHint</span></code></a>()</p></td>
+<td><p>Returns a size hint.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Attributes:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.CardsWidget.index" title="bookmarks.notes.CardsWidget.index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a></p></td>
+<td><p>The QModelIndex of the current item.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.notes.CardsWidget.done">
+<span class="sig-name descname"><span class="pre">done</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#CardsWidget.done"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.CardsWidget.done" title="Permalink to this definition">#</a></dt>
+<dd><p>Close the window.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.notes.CardsWidget.get_cards_data">
+<span class="sig-name descname"><span class="pre">get_cards_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#CardsWidget.get_cards_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.CardsWidget.get_cards_data" title="Permalink to this definition">#</a></dt>
+<dd><p>Get all cards data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary of each card item’s data.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.notes.CardsWidget.init_data">
+<span class="sig-name descname"><span class="pre">init_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#CardsWidget.init_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.CardsWidget.init_data" title="Permalink to this definition">#</a></dt>
+<dd><p>Load cards data stored in the database.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.notes.CardsWidget.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#CardsWidget.save"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.CardsWidget.save" title="Permalink to this definition">#</a></dt>
+<dd><p>Save the note items to the database.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.notes.CardsWidget.sizeHint">
+<span class="sig-name descname"><span class="pre">sizeHint</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#CardsWidget.sizeHint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.CardsWidget.sizeHint" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns a size hint.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="bookmarks.notes.CardsWidget.index">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">index</span></span><a class="headerlink" href="#bookmarks.notes.CardsWidget.index" title="Permalink to this definition">#</a></dt>
+<dd><p>The QModelIndex of the current item.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt class="sig sig-object py" id="bookmarks.notes.DragIndicatorButton">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.notes.</span></span><span class="sig-name descname"><span class="pre">DragIndicatorButton</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#DragIndicatorButton"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.DragIndicatorButton" title="Permalink to this definition">#</a></dt>
@@ -428,10 +633,6 @@ The latter is needed to accept the drag operation in the target drop widget.</p>
 <p><strong>Methods:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.DragIndicatorButton.mouseMoveEvent" title="bookmarks.notes.DragIndicatorButton.mouseMoveEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mouseMoveEvent</span></code></a>(event)</p></td>
 <td><p>Event handler.</p></td>
@@ -457,40 +658,24 @@ The latter is needed to accept the drag operation in the target drop widget.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="bookmarks.notes.Highlighter">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.notes.</span></span><span class="sig-name descname"><span class="pre">Highlighter</span></span><a class="reference internal" href="../_modules/bookmarks/notes.html#Highlighter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.Highlighter" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QSyntaxHighlighter</span></code></p>
-<p>Class responsible for highlighting urls</p>
+<dt class="sig sig-object py" id="bookmarks.notes.DragOverlayWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.notes.</span></span><span class="sig-name descname"><span class="pre">DragOverlayWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#DragOverlayWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.DragOverlayWidget" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#bookmarks.notes.OverlayWidget" title="bookmarks.notes.OverlayWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">OverlayWidget</span></code></a></p>
+<p>Widget responsible for indicating files are being loaded.</p>
 <p><strong>Methods:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.Highlighter.highlightBlock" title="bookmarks.notes.Highlighter.highlightBlock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">highlightBlock</span></code></a>(text)</p></td>
-<td><p>Highlights the given text.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.DragOverlayWidget.paintEvent" title="bookmarks.notes.DragOverlayWidget.paintEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paintEvent</span></code></a>(self, event)</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.Highlighter.highlightBlock">
-<span class="sig-name descname"><span class="pre">highlightBlock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#Highlighter.highlightBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.Highlighter.highlightBlock" title="Permalink to this definition">#</a></dt>
-<dd><p>Highlights the given text.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – The text to assess.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>int, int, int</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple</p>
-</dd>
-</dl>
-</dd></dl>
+<dt class="sig sig-object py" id="bookmarks.notes.DragOverlayWidget.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtGui.QPaintEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/bookmarks/notes.html#DragOverlayWidget.paintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.DragOverlayWidget.paintEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -500,347 +685,45 @@ The latter is needed to accept the drag operation in the target drop widget.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QSettings</span></code></p>
 <p>Lockfile to prevent another user from modifying the database whilst
 an edit is in progress.</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteContainerWidget">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.notes.</span></span><span class="sig-name descname"><span class="pre">NoteContainerWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteContainerWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteContainerWidget" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
-<p>This widget for storing the added note items.</p>
-<p>As this is the container widget, it is responsible for handling the dragging
-and setting the order of the contained child widgets.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteContainerWidget.items">
-<span class="sig-name descname"><span class="pre">items</span></span><a class="headerlink" href="#bookmarks.notes.NoteContainerWidget.items" title="Permalink to this definition">#</a></dt>
-<dd><p>The added note items.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>list</p>
-</dd>
-</dl>
-</dd></dl>
-
 <p><strong>Methods:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.NoteContainerWidget.dragEnterEvent" title="bookmarks.notes.NoteContainerWidget.dragEnterEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dragEnterEvent</span></code></a>(event)</p></td>
-<td><p>Event handler.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.NoteContainerWidget.dragMoveEvent" title="bookmarks.notes.NoteContainerWidget.dragMoveEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dragMoveEvent</span></code></a>(event)</p></td>
-<td><p>Event handler.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.NoteContainerWidget.dropEvent" title="bookmarks.notes.NoteContainerWidget.dropEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dropEvent</span></code></a>(event)</p></td>
-<td><p>Event handler.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteContainerWidget.dragEnterEvent">
-<span class="sig-name descname"><span class="pre">dragEnterEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteContainerWidget.dragEnterEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteContainerWidget.dragEnterEvent" title="Permalink to this definition">#</a></dt>
-<dd><p>Event handler.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteContainerWidget.dragMoveEvent">
-<span class="sig-name descname"><span class="pre">dragMoveEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteContainerWidget.dragMoveEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteContainerWidget.dragMoveEvent" title="Permalink to this definition">#</a></dt>
-<dd><p>Event handler.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteContainerWidget.dropEvent">
-<span class="sig-name descname"><span class="pre">dropEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteContainerWidget.dropEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteContainerWidget.dropEvent" title="Permalink to this definition">#</a></dt>
-<dd><p>Event handler.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteEditor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.notes.</span></span><span class="sig-name descname"><span class="pre">NoteEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteEditor" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></p>
-<p>Main widget used to view and edit and add Notes and Tasks.</p>
-<p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.NoteEditor.add_item" title="bookmarks.notes.NoteEditor.add_item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_item</span></code></a>([idx, text])</p></td>
-<td><p>Creates a new <code class="xref py py-class docutils literal notranslate"><span class="pre">NoteItemWidget`editor</span> <span class="pre">and</span> <span class="pre">adds</span> <span class="pre">it</span> <span class="pre">to</span> <span class="pre">:meth:`NoteContainerWidget.items</span></code>.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.NoteEditor.clear" title="bookmarks.notes.NoteEditor.clear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clear</span></code></a>()</p></td>
-<td><p>Deletes all note item editors.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.NoteEditor.eventFilter" title="bookmarks.notes.NoteEditor.eventFilter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eventFilter</span></code></a>(widget, event)</p></td>
-<td><p>Event filter handler.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.NoteEditor.hideEvent" title="bookmarks.notes.NoteEditor.hideEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hideEvent</span></code></a>(event)</p></td>
-<td><p>Hide event handler.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.NoteEditor.init_lock" title="bookmarks.notes.NoteEditor.init_lock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_lock</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.Lockfile.init_lock" title="bookmarks.notes.Lockfile.init_lock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">init_lock</span></code></a>()</p></td>
 <td><p>Creates a lock file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.NoteEditor.keyPressEvent" title="bookmarks.notes.NoteEditor.keyPressEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keyPressEvent</span></code></a>(event)</p></td>
-<td><p>Key press event handler.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.NoteEditor.key_return" title="bookmarks.notes.NoteEditor.key_return"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key_return</span></code></a>()</p></td>
-<td><p>Custom key action.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.NoteEditor.key_tab" title="bookmarks.notes.NoteEditor.key_tab"><code class="xref py py-obj docutils literal notranslate"><span class="pre">key_tab</span></code></a>()</p></td>
-<td><p>Custom key action.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.NoteEditor.refresh" title="bookmarks.notes.NoteEditor.refresh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">refresh</span></code></a>()</p></td>
-<td><p>Populates the list from the database.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.NoteEditor.save_settings" title="bookmarks.notes.NoteEditor.save_settings"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_settings</span></code></a>()</p></td>
-<td><p>Saves the current list of note items to the assets configuration file.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.NoteEditor.showEvent" title="bookmarks.notes.NoteEditor.showEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showEvent</span></code></a>(event)</p></td>
-<td><p>Event handler.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.NoteEditor.sizeHint" title="bookmarks.notes.NoteEditor.sizeHint"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sizeHint</span></code></a>()</p></td>
-<td><p>Returns a size hint.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.NoteEditor.unlock" title="bookmarks.notes.NoteEditor.unlock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unlock</span></code></a>()</p></td>
-<td><p>Removes the temporary lockfile on close</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><strong>Attributes:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.NoteEditor.index" title="bookmarks.notes.NoteEditor.index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">index</span></code></a></p></td>
-<td><p>The path used to initialize the widget.</p></td>
-</tr>
 </tbody>
 </table>
 </div>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteEditor.add_item">
-<span class="sig-name descname"><span class="pre">add_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteEditor.add_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteEditor.add_item" title="Permalink to this definition">#</a></dt>
-<dd><p>Creates a new <code class="xref py py-class docutils literal notranslate"><span class="pre">NoteItemWidget`editor</span> <span class="pre">and</span> <span class="pre">adds</span> <span class="pre">it</span> <span class="pre">to</span>
-<span class="pre">:meth:`NoteContainerWidget.items</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>idx</strong> (<em>int</em>) – The index of the item to be added. Optional.</p></li>
-<li><p><strong>text</strong> (<em>str</em>) – The text of the item to be added. Optional.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteEditor.clear">
-<span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteEditor.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteEditor.clear" title="Permalink to this definition">#</a></dt>
-<dd><p>Deletes all note item editors.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteEditor.eventFilter">
-<span class="sig-name descname"><span class="pre">eventFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">widget</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteEditor.eventFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteEditor.eventFilter" title="Permalink to this definition">#</a></dt>
-<dd><p>Event filter handler.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteEditor.hideEvent">
-<span class="sig-name descname"><span class="pre">hideEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteEditor.hideEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteEditor.hideEvent" title="Permalink to this definition">#</a></dt>
-<dd><p>Hide event handler.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteEditor.init_lock">
-<span class="sig-name descname"><span class="pre">init_lock</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteEditor.init_lock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteEditor.init_lock" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.notes.Lockfile.init_lock">
+<span class="sig-name descname"><span class="pre">init_lock</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#Lockfile.init_lock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.Lockfile.init_lock" title="Permalink to this definition">#</a></dt>
 <dd><p>Creates a lock file.</p>
-<p>This will prevent other sessions editing notes.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteEditor.keyPressEvent">
-<span class="sig-name descname"><span class="pre">keyPressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteEditor.keyPressEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteEditor.keyPressEvent" title="Permalink to this definition">#</a></dt>
-<dd><p>Key press event handler.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteEditor.key_return">
-<span class="sig-name descname"><span class="pre">key_return</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteEditor.key_return"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteEditor.key_return" title="Permalink to this definition">#</a></dt>
-<dd><p>Custom key action.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteEditor.key_tab">
-<span class="sig-name descname"><span class="pre">key_tab</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteEditor.key_tab"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteEditor.key_tab" title="Permalink to this definition">#</a></dt>
-<dd><p>Custom key action.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteEditor.refresh">
-<span class="sig-name descname"><span class="pre">refresh</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteEditor.refresh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteEditor.refresh" title="Permalink to this definition">#</a></dt>
-<dd><p>Populates the list from the database.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteEditor.save_settings">
-<span class="sig-name descname"><span class="pre">save_settings</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteEditor.save_settings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteEditor.save_settings" title="Permalink to this definition">#</a></dt>
-<dd><p>Saves the current list of note items to the assets configuration file.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteEditor.showEvent">
-<span class="sig-name descname"><span class="pre">showEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteEditor.showEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteEditor.showEvent" title="Permalink to this definition">#</a></dt>
-<dd><p>Event handler.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteEditor.sizeHint">
-<span class="sig-name descname"><span class="pre">sizeHint</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteEditor.sizeHint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteEditor.sizeHint" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns a size hint.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteEditor.unlock">
-<span class="sig-name descname"><span class="pre">unlock</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteEditor.unlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteEditor.unlock" title="Permalink to this definition">#</a></dt>
-<dd><p>Removes the temporary lockfile on close</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteEditor.index">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">index</span></span><a class="headerlink" href="#bookmarks.notes.NoteEditor.index" title="Permalink to this definition">#</a></dt>
-<dd><p>The path used to initialize the widget.</p>
+<p>This will prevent others from editing the notes of this time whilst we have the
+editor open.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteItemWidget">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.notes.</span></span><span class="sig-name descname"><span class="pre">NoteItemWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteItemWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteItemWidget" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.notes.OverlayWidget">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.notes.</span></span><span class="sig-name descname"><span class="pre">OverlayWidget</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#OverlayWidget"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.OverlayWidget" title="Permalink to this definition">#</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></p>
-<p>The item-wrapper widget for the drag indicator and editor widgets.</p>
+<p>Widget responsible for indicating files are being loaded.</p>
 <p><strong>Methods:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.NoteItemWidget.paintEvent" title="bookmarks.notes.NoteItemWidget.paintEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paintEvent</span></code></a>(event)</p></td>
-<td><p>Event handler.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.OverlayWidget.paintEvent" title="bookmarks.notes.OverlayWidget.paintEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paintEvent</span></code></a>(self, event)</p></td>
+<td><p></p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteItemWidget.paintEvent">
-<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteItemWidget.paintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteItemWidget.paintEvent" title="Permalink to this definition">#</a></dt>
-<dd><p>Event handler.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteTextEditor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.notes.</span></span><span class="sig-name descname"><span class="pre">NoteTextEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteTextEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteTextEditor" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QTextBrowser</span></code></p>
-<p>Custom QTextBrowser widget for writing note items.</p>
-<p>The editor automatically sets its size to accommodate the contents of the
-document.</p>
-<p><strong>Methods:</strong></p>
-<div class="table-wrapper autosummary longtable docutils container">
-<table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.NoteTextEditor.adjust_height" title="bookmarks.notes.NoteTextEditor.adjust_height"><code class="xref py py-obj docutils literal notranslate"><span class="pre">adjust_height</span></code></a>()</p></td>
-<td><p>Slot used to set the editor height based on the current item contents.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.NoteTextEditor.canInsertFromMimeData" title="bookmarks.notes.NoteTextEditor.canInsertFromMimeData"><code class="xref py py-obj docutils literal notranslate"><span class="pre">canInsertFromMimeData</span></code></a>(mimedata)</p></td>
-<td><p>Checks if we can insert from the given mime-type.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.NoteTextEditor.contentChanged" title="bookmarks.notes.NoteTextEditor.contentChanged"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contentChanged</span></code></a>()</p></td>
-<td><p>Sets the height of the editor.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.NoteTextEditor.dragEnterEvent" title="bookmarks.notes.NoteTextEditor.dragEnterEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dragEnterEvent</span></code></a>(event)</p></td>
-<td><p>Event handler.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.NoteTextEditor.dropEvent" title="bookmarks.notes.NoteTextEditor.dropEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dropEvent</span></code></a>(event)</p></td>
-<td><p>Event handler.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.NoteTextEditor.keyPressEvent" title="bookmarks.notes.NoteTextEditor.keyPressEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keyPressEvent</span></code></a>(event)</p></td>
-<td><p>Key press event handler.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.NoteTextEditor.open_url" title="bookmarks.notes.NoteTextEditor.open_url"><code class="xref py py-obj docutils literal notranslate"><span class="pre">open_url</span></code></a>(url)</p></td>
-<td><p>We're handling the clicking of anchors here manually.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.NoteTextEditor.showEvent" title="bookmarks.notes.NoteTextEditor.showEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showEvent</span></code></a>(event)</p></td>
-<td><p>Event handler.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteTextEditor.adjust_height">
-<span class="sig-name descname"><span class="pre">adjust_height</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteTextEditor.adjust_height"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteTextEditor.adjust_height" title="Permalink to this definition">#</a></dt>
-<dd><p>Slot used to set the editor height based on the current item contents.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteTextEditor.canInsertFromMimeData">
-<span class="sig-name descname"><span class="pre">canInsertFromMimeData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mimedata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteTextEditor.canInsertFromMimeData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteTextEditor.canInsertFromMimeData" title="Permalink to this definition">#</a></dt>
-<dd><p>Checks if we can insert from the given mime-type.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteTextEditor.contentChanged">
-<span class="sig-name descname"><span class="pre">contentChanged</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteTextEditor.contentChanged"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteTextEditor.contentChanged" title="Permalink to this definition">#</a></dt>
-<dd><p>Sets the height of the editor.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteTextEditor.dragEnterEvent">
-<span class="sig-name descname"><span class="pre">dragEnterEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteTextEditor.dragEnterEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteTextEditor.dragEnterEvent" title="Permalink to this definition">#</a></dt>
-<dd><p>Event handler.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteTextEditor.dropEvent">
-<span class="sig-name descname"><span class="pre">dropEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteTextEditor.dropEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteTextEditor.dropEvent" title="Permalink to this definition">#</a></dt>
-<dd><p>Event handler.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteTextEditor.keyPressEvent">
-<span class="sig-name descname"><span class="pre">keyPressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteTextEditor.keyPressEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteTextEditor.keyPressEvent" title="Permalink to this definition">#</a></dt>
-<dd><p>Key press event handler.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteTextEditor.open_url">
-<span class="sig-name descname"><span class="pre">open_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteTextEditor.open_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteTextEditor.open_url" title="Permalink to this definition">#</a></dt>
-<dd><p>We’re handling the clicking of anchors here manually.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.NoteTextEditor.showEvent">
-<span class="sig-name descname"><span class="pre">showEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#NoteTextEditor.showEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.NoteTextEditor.showEvent" title="Permalink to this definition">#</a></dt>
-<dd><p>Event handler.</p>
-</dd></dl>
+<dt class="sig sig-object py" id="bookmarks.notes.OverlayWidget.paintEvent">
+<span class="sig-name descname"><span class="pre">paintEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtGui.QPaintEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/bookmarks/notes.html#OverlayWidget.paintEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.OverlayWidget.paintEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
@@ -852,62 +735,107 @@ document.</p>
 <p><strong>Methods:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.RemoveNoteButton.remove_note" title="bookmarks.notes.RemoveNoteButton.remove_note"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_note</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.RemoveNoteButton.action" title="bookmarks.notes.RemoveNoteButton.action"><code class="xref py py-obj docutils literal notranslate"><span class="pre">action</span></code></a>()</p></td>
 <td><p>Remove note item action.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.RemoveNoteButton.remove_note">
-<span class="sig-name descname"><span class="pre">remove_note</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#RemoveNoteButton.remove_note"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.RemoveNoteButton.remove_note" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.notes.RemoveNoteButton.action">
+<span class="sig-name descname"><span class="pre">action</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#RemoveNoteButton.action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.RemoveNoteButton.action" title="Permalink to this definition">#</a></dt>
 <dd><p>Remove note item action.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="bookmarks.notes.Separator">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.notes.</span></span><span class="sig-name descname"><span class="pre">Separator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#Separator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.Separator" title="Permalink to this definition">#</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QLabel</span></code></p>
-<p>A custom label used as an item separator.</p>
+<dt class="sig sig-object py" id="bookmarks.notes.SyntaxHighlighter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.notes.</span></span><span class="sig-name descname"><span class="pre">SyntaxHighlighter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">document</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#SyntaxHighlighter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.SyntaxHighlighter" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QSyntaxHighlighter</span></code></p>
 <p><strong>Methods:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.Separator.dragEnterEvent" title="bookmarks.notes.Separator.dragEnterEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dragEnterEvent</span></code></a>(event)</p></td>
-<td><p>Event handler.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.SyntaxHighlighter.highlightBlock" title="bookmarks.notes.SyntaxHighlighter.highlightBlock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">highlightBlock</span></code></a>(self, text)</p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.Separator.dropEvent" title="bookmarks.notes.Separator.dropEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dropEvent</span></code></a>(event)</p></td>
+</tbody>
+</table>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.notes.SyntaxHighlighter.highlightBlock">
+<span class="sig-name descname"><span class="pre">highlightBlock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/bookmarks/notes.html#SyntaxHighlighter.highlightBlock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.SyntaxHighlighter.highlightBlock" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="bookmarks.notes.TextEditor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">bookmarks.notes.</span></span><span class="sig-name descname"><span class="pre">TextEditor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#TextEditor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.TextEditor" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QTextBrowser</span></code></p>
+<p><strong>Methods:</strong></p>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.TextEditor.keyPressEvent" title="bookmarks.notes.TextEditor.keyPressEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keyPressEvent</span></code></a>(event)</p></td>
+<td><p>Key press event handler.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.TextEditor.mouseMoveEvent" title="bookmarks.notes.TextEditor.mouseMoveEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mouseMoveEvent</span></code></a>(self, ev)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.notes.TextEditor.mouseReleaseEvent" title="bookmarks.notes.TextEditor.mouseReleaseEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mouseReleaseEvent</span></code></a>(self, ev)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.notes.TextEditor.showEvent" title="bookmarks.notes.TextEditor.showEvent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">showEvent</span></code></a>(event)</p></td>
 <td><p>Event handler.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.Separator.dragEnterEvent">
-<span class="sig-name descname"><span class="pre">dragEnterEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#Separator.dragEnterEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.Separator.dragEnterEvent" title="Permalink to this definition">#</a></dt>
-<dd><p>Event handler.</p>
+<dt class="sig sig-object py" id="bookmarks.notes.TextEditor.keyPressEvent">
+<span class="sig-name descname"><span class="pre">keyPressEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#TextEditor.keyPressEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.TextEditor.keyPressEvent" title="Permalink to this definition">#</a></dt>
+<dd><p>Key press event handler.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.notes.Separator.dropEvent">
-<span class="sig-name descname"><span class="pre">dropEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#Separator.dropEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.Separator.dropEvent" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.notes.TextEditor.mouseMoveEvent">
+<span class="sig-name descname"><span class="pre">mouseMoveEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtGui.QMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/bookmarks/notes.html#TextEditor.mouseMoveEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.TextEditor.mouseMoveEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.notes.TextEditor.mouseReleaseEvent">
+<span class="sig-name descname"><span class="pre">mouseReleaseEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ev</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PySide2.QtGui.QMouseEvent</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/bookmarks/notes.html#TextEditor.mouseReleaseEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.TextEditor.mouseReleaseEvent" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="bookmarks.notes.TextEditor.showEvent">
+<span class="sig-name descname"><span class="pre">showEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#TextEditor.showEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.TextEditor.showEvent" title="Permalink to this definition">#</a></dt>
 <dd><p>Event handler.</p>
 </dd></dl>
 
 </dd></dl>
 
-</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.notes.close">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.notes.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#close"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.close" title="Permalink to this definition">#</a></dt>
+<dd><p>Closes the <a class="reference internal" href="#bookmarks.notes.CardsWidget" title="bookmarks.notes.CardsWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">CardsWidget</span></code></a> editor.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="bookmarks.notes.show">
+<span class="sig-prename descclassname"><span class="pre">bookmarks.notes.</span></span><span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/notes.html#show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.notes.show" title="Permalink to this definition">#</a></dt>
+<dd><p>Shows the <a class="reference internal" href="#bookmarks.notes.CardsWidget" title="bookmarks.notes.CardsWidget"><code class="xref py py-class docutils literal notranslate"><span class="pre">CardsWidget</span></code></a> editor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> (<em>QModelIndex</em>) – The item’s</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 
         </article>
       </div>
@@ -946,9 +874,7 @@ document.</p>
             
           </div>
           <div class="right-details">
-            <div class="icons">
-              
-            </div>
+            
           </div>
         </div>
         
@@ -967,64 +893,61 @@ document.</p>
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">notes</a><ul>
+<li><a class="reference internal" href="#bookmarks.notes.CardWidget"><code class="docutils literal notranslate"><span class="pre">CardWidget</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.notes.CardWidget.eventFilter"><code class="docutils literal notranslate"><span class="pre">CardWidget.eventFilter()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.notes.CardWidget.get_card_data"><code class="docutils literal notranslate"><span class="pre">CardWidget.get_card_data()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.notes.CardWidget.set_card_data"><code class="docutils literal notranslate"><span class="pre">CardWidget.set_card_data()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.notes.CardsScrollWidget"><code class="docutils literal notranslate"><span class="pre">CardsScrollWidget</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.notes.CardsScrollWidget.add_card"><code class="docutils literal notranslate"><span class="pre">CardsScrollWidget.add_card()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.notes.CardsScrollWidget.dragEnterEvent"><code class="docutils literal notranslate"><span class="pre">CardsScrollWidget.dragEnterEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.notes.CardsScrollWidget.eventFilter"><code class="docutils literal notranslate"><span class="pre">CardsScrollWidget.eventFilter()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.notes.CardsWidget"><code class="docutils literal notranslate"><span class="pre">CardsWidget</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.notes.CardsWidget.done"><code class="docutils literal notranslate"><span class="pre">CardsWidget.done()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.notes.CardsWidget.get_cards_data"><code class="docutils literal notranslate"><span class="pre">CardsWidget.get_cards_data()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.notes.CardsWidget.init_data"><code class="docutils literal notranslate"><span class="pre">CardsWidget.init_data()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.notes.CardsWidget.save"><code class="docutils literal notranslate"><span class="pre">CardsWidget.save()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.notes.CardsWidget.sizeHint"><code class="docutils literal notranslate"><span class="pre">CardsWidget.sizeHint()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.notes.CardsWidget.index"><code class="docutils literal notranslate"><span class="pre">CardsWidget.index</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#bookmarks.notes.DragIndicatorButton"><code class="docutils literal notranslate"><span class="pre">DragIndicatorButton</span></code></a><ul>
 <li><a class="reference internal" href="#bookmarks.notes.DragIndicatorButton.mouseMoveEvent"><code class="docutils literal notranslate"><span class="pre">DragIndicatorButton.mouseMoveEvent()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.notes.DragIndicatorButton.mousePressEvent"><code class="docutils literal notranslate"><span class="pre">DragIndicatorButton.mousePressEvent()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#bookmarks.notes.Highlighter"><code class="docutils literal notranslate"><span class="pre">Highlighter</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.notes.Highlighter.highlightBlock"><code class="docutils literal notranslate"><span class="pre">Highlighter.highlightBlock()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.notes.DragOverlayWidget"><code class="docutils literal notranslate"><span class="pre">DragOverlayWidget</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.notes.DragOverlayWidget.paintEvent"><code class="docutils literal notranslate"><span class="pre">DragOverlayWidget.paintEvent()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#bookmarks.notes.Lockfile"><code class="docutils literal notranslate"><span class="pre">Lockfile</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteContainerWidget"><code class="docutils literal notranslate"><span class="pre">NoteContainerWidget</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.notes.NoteContainerWidget.items"><code class="docutils literal notranslate"><span class="pre">NoteContainerWidget.items</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteContainerWidget.dragEnterEvent"><code class="docutils literal notranslate"><span class="pre">NoteContainerWidget.dragEnterEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteContainerWidget.dragMoveEvent"><code class="docutils literal notranslate"><span class="pre">NoteContainerWidget.dragMoveEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteContainerWidget.dropEvent"><code class="docutils literal notranslate"><span class="pre">NoteContainerWidget.dropEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.notes.Lockfile"><code class="docutils literal notranslate"><span class="pre">Lockfile</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.notes.Lockfile.init_lock"><code class="docutils literal notranslate"><span class="pre">Lockfile.init_lock()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteEditor"><code class="docutils literal notranslate"><span class="pre">NoteEditor</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.notes.NoteEditor.add_item"><code class="docutils literal notranslate"><span class="pre">NoteEditor.add_item()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteEditor.clear"><code class="docutils literal notranslate"><span class="pre">NoteEditor.clear()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteEditor.eventFilter"><code class="docutils literal notranslate"><span class="pre">NoteEditor.eventFilter()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteEditor.hideEvent"><code class="docutils literal notranslate"><span class="pre">NoteEditor.hideEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteEditor.init_lock"><code class="docutils literal notranslate"><span class="pre">NoteEditor.init_lock()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteEditor.keyPressEvent"><code class="docutils literal notranslate"><span class="pre">NoteEditor.keyPressEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteEditor.key_return"><code class="docutils literal notranslate"><span class="pre">NoteEditor.key_return()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteEditor.key_tab"><code class="docutils literal notranslate"><span class="pre">NoteEditor.key_tab()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteEditor.refresh"><code class="docutils literal notranslate"><span class="pre">NoteEditor.refresh()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteEditor.save_settings"><code class="docutils literal notranslate"><span class="pre">NoteEditor.save_settings()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteEditor.showEvent"><code class="docutils literal notranslate"><span class="pre">NoteEditor.showEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteEditor.sizeHint"><code class="docutils literal notranslate"><span class="pre">NoteEditor.sizeHint()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteEditor.unlock"><code class="docutils literal notranslate"><span class="pre">NoteEditor.unlock()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteEditor.index"><code class="docutils literal notranslate"><span class="pre">NoteEditor.index</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteItemWidget"><code class="docutils literal notranslate"><span class="pre">NoteItemWidget</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.notes.NoteItemWidget.paintEvent"><code class="docutils literal notranslate"><span class="pre">NoteItemWidget.paintEvent()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteTextEditor"><code class="docutils literal notranslate"><span class="pre">NoteTextEditor</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.notes.NoteTextEditor.adjust_height"><code class="docutils literal notranslate"><span class="pre">NoteTextEditor.adjust_height()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteTextEditor.canInsertFromMimeData"><code class="docutils literal notranslate"><span class="pre">NoteTextEditor.canInsertFromMimeData()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteTextEditor.contentChanged"><code class="docutils literal notranslate"><span class="pre">NoteTextEditor.contentChanged()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteTextEditor.dragEnterEvent"><code class="docutils literal notranslate"><span class="pre">NoteTextEditor.dragEnterEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteTextEditor.dropEvent"><code class="docutils literal notranslate"><span class="pre">NoteTextEditor.dropEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteTextEditor.keyPressEvent"><code class="docutils literal notranslate"><span class="pre">NoteTextEditor.keyPressEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteTextEditor.open_url"><code class="docutils literal notranslate"><span class="pre">NoteTextEditor.open_url()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.NoteTextEditor.showEvent"><code class="docutils literal notranslate"><span class="pre">NoteTextEditor.showEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.notes.OverlayWidget"><code class="docutils literal notranslate"><span class="pre">OverlayWidget</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.notes.OverlayWidget.paintEvent"><code class="docutils literal notranslate"><span class="pre">OverlayWidget.paintEvent()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#bookmarks.notes.RemoveNoteButton"><code class="docutils literal notranslate"><span class="pre">RemoveNoteButton</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.notes.RemoveNoteButton.remove_note"><code class="docutils literal notranslate"><span class="pre">RemoveNoteButton.remove_note()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.notes.RemoveNoteButton.action"><code class="docutils literal notranslate"><span class="pre">RemoveNoteButton.action()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#bookmarks.notes.Separator"><code class="docutils literal notranslate"><span class="pre">Separator</span></code></a><ul>
-<li><a class="reference internal" href="#bookmarks.notes.Separator.dragEnterEvent"><code class="docutils literal notranslate"><span class="pre">Separator.dragEnterEvent()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.notes.Separator.dropEvent"><code class="docutils literal notranslate"><span class="pre">Separator.dropEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.notes.SyntaxHighlighter"><code class="docutils literal notranslate"><span class="pre">SyntaxHighlighter</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.notes.SyntaxHighlighter.highlightBlock"><code class="docutils literal notranslate"><span class="pre">SyntaxHighlighter.highlightBlock()</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#bookmarks.notes.TextEditor"><code class="docutils literal notranslate"><span class="pre">TextEditor</span></code></a><ul>
+<li><a class="reference internal" href="#bookmarks.notes.TextEditor.keyPressEvent"><code class="docutils literal notranslate"><span class="pre">TextEditor.keyPressEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.notes.TextEditor.mouseMoveEvent"><code class="docutils literal notranslate"><span class="pre">TextEditor.mouseMoveEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.notes.TextEditor.mouseReleaseEvent"><code class="docutils literal notranslate"><span class="pre">TextEditor.mouseReleaseEvent()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.notes.TextEditor.showEvent"><code class="docutils literal notranslate"><span class="pre">TextEditor.showEvent()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bookmarks.notes.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.notes.show"><code class="docutils literal notranslate"><span class="pre">show()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -1037,9 +960,6 @@ document.</p>
     </aside>
   </div>
 </div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/scripts/furo.js"></script>

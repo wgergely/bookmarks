@@ -197,7 +197,9 @@ class BookmarkItemEditor(ui.ListWidget):
     @common.error
     @QtCore.Slot()
     def add(self, *args, **kwargs):
-        """Pick and add a folder as a new bookmark item."""
+        """Pick and add a folder as a new bookmark item.
+
+        """
         if not self.window().server() or not self.window().job():
             return
 
@@ -214,8 +216,8 @@ class BookmarkItemEditor(ui.ListWidget):
 
         if self.window().job_path() not in path:
             raise RuntimeError('Bookmark item must be inside the current job folder.')
-
-        if not QtCore.QDir(path).mkdir(common.bookmark_cache_dir):
+        dir = QtCore.QDir(path)
+        if not dir.exists() and not dir.mkdir(common.bookmark_cache_dir):
             raise RuntimeError('Could not create bookmark')
 
         name = path[len(self.window().job_path()) + 1:]
@@ -229,6 +231,11 @@ class BookmarkItemEditor(ui.ListWidget):
                 ).open()
                 return
 
+        # Add link
+        if not common.add_link(self.window().job_path(), name, section='links/root'):
+            log.error('Could not add link')
+
+        # Add the QListWidgetItem
         item = QtWidgets.QListWidgetItem()
         item.setFlags(
             QtCore.Qt.ItemIsEnabled |
@@ -317,18 +324,20 @@ class BookmarkItemEditor(ui.ListWidget):
         if self._interrupt_requested:
             return
 
-        # Return items stored in the link file
+        # If links exist, return items stored in the link file and nothing else
         if recursion == 0:
-            for v in common.get_links(path, section='links/root'):
+            links = common.get_links(path, section='links/root')
+            for v in links:
                 if self._interrupt_requested:
                     return
                 yield v, f'{path}/{v}'
 
+        # Otherwise parse the folder
         recursion += 1
         if recursion > max_recursion:
             return
 
-        # We'll let unreadable paths fail silently
+        # Let unreadable paths fail silently
         try:
             it = os.scandir(path)
         except:

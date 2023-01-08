@@ -17,6 +17,7 @@ from .. import actions
 from .. import common
 from .. import contextmenu
 from .. import images
+from .. import log
 from .. import shortcuts
 from .. import templates
 from .. import ui
@@ -119,8 +120,8 @@ class AddJobWidget(base.BasePropertyEditor):
         self.jobs = []
         items = []
 
-        for name, path in self.parent().job_editor.item_generator(self.server,
-                                                                  emit_progress=False):
+        it = self.parent().job_editor.item_generator(self.server, emit_progress=False)
+        for name, path in it:
             items.append(name)
 
         completer = QtWidgets.QCompleter(items, parent=self)
@@ -135,31 +136,36 @@ class AddJobWidget(base.BasePropertyEditor):
         """Saves changes.
 
         """
-        if not self.name_editor.text():
+        text = self.name_editor.text()
+        if not text:
             raise ValueError('Must enter a name to create a job.')
 
+        text = text.replace('\\', '/')
         root = self.server
 
-        name = self.name_editor.text()
-        if not name:
-            raise ValueError('Must enter a name to create job')
-        name = name.replace('\\', '/')
-
-        if '/' in name:
-            _name = name.split('/')[-1]
-            _root = name[:-len(_name) - 1]
+        if '/' in self.name_editor.text():
+            _name = text.split('/')[-1]
+            _root = text[:-len(_name) - 1]
             name = _name
-            root = f'{self.server}/{_root}'
+            root = f'{self.server}/{_root}'.rstrip('/')
 
             if not QtCore.QFileInfo(root).exists():
                 if not QtCore.QDir(root).mkpath('.'):
                     raise RuntimeError('Error creating folders.')
+        else:
+            name = text
 
         # Create template and signal
         self.template_editor.template_list_widget.create(name, root)
         path = f'{root}/{name}'
 
-        if not QtCore.QFileInfo(path).exists():
+        # Save link
+        if '/' in text:
+            if not common.add_link(root, name, section='links/job'):
+                log.error('Could not add link')
+
+        file_info = QtCore.QFileInfo(path)
+        if not file_info.exists():
             raise RuntimeError('Could not find the added job.')
 
         try:
@@ -168,7 +174,7 @@ class AddJobWidget(base.BasePropertyEditor):
         except:
             pass
 
-        common.signals.jobAdded.emit(path)
+        common.signals.jobAdded.emit(file_info.filePath())
         ui.MessageBox(f'{name} was successfully created.').open()
 
         return True
@@ -286,23 +292,17 @@ class JobItemEditor(ui.ListViewWidget):
         if emit_progress:
             self.progressUpdate.emit('')
 
-        has_subdir = common.settings.value('settings/jobs_have_clients')
-        has_subdir = QtCore.Qt.Unchecked if has_subdir is None else \
-            QtCore.Qt.CheckState(
-                has_subdir
-            )
-        has_subdir = has_subdir == QtCore.Qt.Checked
-
-        for client_entry in os.scandir(source):
+        # Parse source otherwise
+        for entry in os.scandir(source):
             if self._interrupt_requested:
                 if emit_progress:
                     self.progressUpdate.emit('')
                 return
 
-            if not client_entry.is_dir():
+            if not entry.is_dir():
                 continue
 
-            file_info = QtCore.QFileInfo(client_entry.path)
+            file_info = QtCore.QFileInfo(entry.path)
             if emit_progress:
                 self.progressUpdate.emit(f'Scanning:  {file_info.filePath()}')
 
@@ -310,38 +310,21 @@ class JobItemEditor(ui.ListViewWidget):
                 continue
             if not file_info.isReadable():
                 continue
+            # Test access
             try:
                 next(os.scandir(file_info.filePath()))
             except:
                 continue
 
-            if not has_subdir:
-                yield client_entry.name, file_info.filePath()
-                continue
-
-            for job_entry in os.scandir(client_entry.path):
-                if self._interrupt_requested:
-                    if emit_progress:
-                        self.progressUpdate.emit('')
-                    return
-
-                if not job_entry.is_dir():
-                    continue
-
-                file_info = QtCore.QFileInfo(job_entry.path)
-                if emit_progress:
-                    self.progressUpdate.emit(f'Scanning:  {file_info.filePath()}')
-
-                if file_info.isHidden():
-                    continue
-                if not file_info.isReadable():
-                    continue
-                try:
-                    next(os.scandir(file_info.filePath()))
-                except:
-                    continue
-                yield f'{client_entry.name}/{job_entry.name}', file_info.filePath()
-                continue
+            # Use paths in the link file, if available
+            links = common.get_links(file_info.filePath(), section='links/job')
+            if links:
+                for link in links:
+                    _file_info = QtCore.QFileInfo(f'{file_info.filePath()}/{link}')
+                    _name = _file_info.filePath()[len(source) + 1:]
+                    yield _name, _file_info.filePath()
+            else:
+                yield entry.name, file_info.filePath()
 
         if emit_progress:
             self.progressUpdate.emit('')
@@ -382,7 +365,7 @@ class JobItemEditor(ui.ListViewWidget):
                 replace('  ', ' ').
                 strip().
                 replace('/', '  ｜  ').
-                strip().upper()
+                strip()
             )
 
             item.setData(_name, role=QtCore.Qt.DisplayRole)

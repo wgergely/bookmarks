@@ -499,7 +499,7 @@ def add_link(path, link, section='links/asset'):
         path (str): Path to a folder where the link file resides. E.g. an asset root folder.
         link (str): Relative path to the link file.
         section (str):
-            The settings section to look for links in. Defaults to `links/assets`.
+            The settings section to look for links in. Defaults to `links/asset`.
 
     """
     l = f'{path}/{common.link_file}'
@@ -508,6 +508,8 @@ def add_link(path, link, section='links/asset'):
     links = []
     if QtCore.QFileInfo(l).exists():
         links = s.value(section)
+        if links and not isinstance(links, (list, tuple)):
+            links = [links,]
     links = links if links else []
 
     # Make sure the link points to a valid file

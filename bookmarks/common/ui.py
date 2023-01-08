@@ -34,12 +34,14 @@ def rgb(v):
     """Returns the `rgba(r,g,b,a)` string representation of a QColor.
 
     Args:
-            v (QColor): A color.
+            v (QColor or int): A color.
 
     Returns:
             str: The string representation of the color.
 
     """
+    if not isinstance(v, QtGui.QColor):
+        v = common.color(v)
     r = repr(v)
     if r not in common.color_cache_str:
         common.color_cache_str[r] = (
@@ -199,18 +201,18 @@ def init_stylesheet():
             size_margin3=int(size(common.size_margin) * 4),
             size_row_height=int(size(common.size_row_height)),
             size_row_height2=int(size(common.size_row_height) * 0.8),
-            color_background=rgb(common.color(common.color_background)),
-            color_light_background=rgb(common.color(common.color_light_background)),
-            color_dark_background=rgb(common.color(common.color_dark_background)),
-            color_text=rgb(common.color(common.color_text)),
-            color_secondary_text=rgb(common.color(common.color_secondary_text)),
-            color_selected_text=rgb(common.color(common.color_selected_text)),
-            color_disabled_text=rgb(common.color(common.color_disabled_text)),
-            color_green=rgb(common.color(common.color_green)),
-            color_red=rgb(common.color(common.color_red)),
-            color_separator=rgb(common.color(common.color_separator)),
-            color_blue=rgb(common.color(common.color_blue)),
-            color_opaque=rgb(common.color(common.color_opaque)),
+            color_background=rgb(common.color_background),
+            color_light_background=rgb(common.color_light_background),
+            color_dark_background=rgb(common.color_dark_background),
+            color_text=rgb(common.color_text),
+            color_secondary_text=rgb(common.color_secondary_text),
+            color_selected_text=rgb(common.color_selected_text),
+            color_disabled_text=rgb(common.color_disabled_text),
+            color_green=rgb(common.color_green),
+            color_red=rgb(common.color_red),
+            color_separator=rgb(common.color_separator),
+            color_blue=rgb(common.color_blue),
+            color_opaque=rgb(common.color_opaque),
             branch_closed=images.ImageCache.rsc_pixmap(
                 'branch_closed', None, None, get_path=True
             ),

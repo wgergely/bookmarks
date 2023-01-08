@@ -470,13 +470,13 @@ class TokenConfigEditor(QtWidgets.QWidget):
         if v != self.current_data[key]:
             self.changed_data[key] = v
             editor.setStyleSheet(
-                'color: {};'.format(common.rgb(common.color(common.color_green)))
+                'color: {};'.format(common.rgb(common.color_green))
             )
             return
 
         if key in self.changed_data:
             del self.changed_data[key]
-        editor.setStyleSheet(f'color: {common.rgb(common.color(common.color_text))};')
+        editor.setStyleSheet(f'color: {common.rgb(common.color_text)};')
 
     @QtCore.Slot()
     def save_changes(self):

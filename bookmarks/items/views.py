@@ -493,11 +493,11 @@ class BaseItemView(QtWidgets.QTableView):
         self.timer.setSingleShot(True)
         self.timed_search_string = ''
 
-        self.delayed_save_selection_timer = common.Timer()
+        self.delayed_save_selection_timer = common.Timer(parent=self)
         self.delayed_save_selection_timer.setSingleShot(True)
         self.delayed_save_selection_timer.setInterval(100)
 
-        self.delayed_restore_selection_timer = common.Timer()
+        self.delayed_restore_selection_timer = common.Timer(parent=self)
         self.delayed_restore_selection_timer.setInterval(10)
         self.delayed_restore_selection_timer.setSingleShot(True)
 
@@ -1927,7 +1927,7 @@ class InlineIconView(BaseItemView):
                     actions.reveal(index)
 
             if _check_rect(delegate.TodoRect) and not archived:
-                actions.show_todos()
+                actions.show_notes()
 
             if _check_rect(delegate.AddItemRect) and not archived:
                 self.add_item_action(index)
@@ -2107,7 +2107,7 @@ class ThreadedItemView(InlineIconView):
         super().__init__(icon=icon, parent=parent)
 
         self.update_queue = collections.deque([], common.max_list_items)
-        self.update_queue_timer = common.Timer()
+        self.update_queue_timer = common.Timer(parent=self)
         self.update_queue_timer.setSingleShot(True)
         self.update_queue_timer.setInterval(1)
         self.update_queue_timer.timeout.connect(self.queued_row_update)

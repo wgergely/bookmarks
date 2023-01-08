@@ -84,7 +84,7 @@ class AddServerEditor(QtWidgets.QDialog):
         self.pick_button.clicked.connect(self.pick)
         self.editor.textChanged.connect(
             lambda: self.editor.setStyleSheet(
-                'color: {};'.format(common.rgb(common.color(common.color_green)))
+                'color: {};'.format(common.rgb(common.color_green))
             )
         )
 
@@ -122,7 +122,7 @@ class AddServerEditor(QtWidgets.QDialog):
             # Indicate the selected item is invalid and keep the editor open
             self.editor.setStyleSheet(
                 'color: {0}; border-color: {0}'.format(
-                    common.rgb(common.color(common.color_red))
+                    common.rgb(common.color_red)
                 )
             )
             self.editor.blockSignals(True)

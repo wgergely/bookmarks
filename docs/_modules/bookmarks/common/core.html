@@ -6,7 +6,7 @@
         <link rel="canonical" href="https://bookmarks-vfx.com/_modules/bookmarks/common/core.html" />
 
     <!-- Generated with Sphinx 6.1.2 and Furo 2022.12.07 -->
-        <title>bookmarks.common.core - Bookmarks 0.7.6 documentation</title>
+        <title>bookmarks.common.core - Bookmarks 0.7.7 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/license_info.css" />
@@ -160,7 +160,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.6 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.7 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -187,7 +187,7 @@
     <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.6 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.7 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -874,7 +874,7 @@
 <span class="sd">        path (str): Path to a folder where the link file resides. E.g. an asset root folder.</span>
 <span class="sd">        link (str): Relative path to the link file.</span>
 <span class="sd">        section (str):</span>
-<span class="sd">            The settings section to look for links in. Defaults to `links/assets`.</span>
+<span class="sd">            The settings section to look for links in. Defaults to `links/asset`.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">l</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">link_file</span><span class="si">}</span><span class="s1">&#39;</span>
@@ -883,6 +883,8 @@
     <span class="n">links</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileInfo</span><span class="p">(</span><span class="n">l</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="n">links</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">links</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">links</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+            <span class="n">links</span> <span class="o">=</span> <span class="p">[</span><span class="n">links</span><span class="p">,]</span>
     <span class="n">links</span> <span class="o">=</span> <span class="n">links</span> <span class="k">if</span> <span class="n">links</span> <span class="k">else</span> <span class="p">[]</span>
 
     <span class="c1"># Make sure the link points to a valid file</span>

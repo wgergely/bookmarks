@@ -18,7 +18,7 @@
 Welcome
 -----------
 
-Bookmarks is a lightweight Python asset manager designed to browse and manage the content of animation, VFX and film projects.
+Bookmarks is a free, open-source utility that simplifies the process of organizing and preparing assets for digital productions. With Bookmarks, you can quickly create new jobs and assets using templates, parse and read existing jobs and assets, and sort and filter items with ease. Additionally, you can annotate items with notes to help keep track of important information. Bookmarks can be a valuable tool for anyone working on a film, TV show, or other digital production, as it helps save time and keep your workflows organized.
 
 
 Features

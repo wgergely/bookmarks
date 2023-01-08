@@ -50,7 +50,8 @@ class Test(base.BaseCase):
             self.assertIsInstance(v, str)
             self.assertTrue(os.path.isfile(v))
 
-    def test_oiio_make_thumbnail(self):
+    def test_make_thumbnail(self):
+        import bookmarks_oiio
         from .. import images
         server, job, root = common.pseudo_local_bookmark()
         size = int(round(common.thumbnail_size * 0.5))
@@ -72,11 +73,12 @@ class Test(base.BaseCase):
             d.mkpath('.')
             self.assertTrue(os.path.isdir(d.path()))
 
-            res = images.ImageCache.oiio_make_thumbnail(source, dest, size)
-            self.assertTrue(res)
+            res = bookmarks_oiio.make_thumbnail(source, dest, int(size))
+            self.assertEqual(res, 0)
             self.assertTrue(os.path.isfile(dest))
 
     def test_get_thumbnail(self):
+        import bookmarks_oiio
         from .. import images
         server, job, root = common.pseudo_local_bookmark()
 
@@ -111,8 +113,8 @@ class Test(base.BaseCase):
             d.mkpath('.')
             self.assertTrue(os.path.isdir(d.path()))
 
-            res = images.ImageCache.oiio_make_thumbnail(source, dest, s)
-            self.assertTrue(res)
+            res = bookmarks_oiio.make_thumbnail(source, dest, int(s))
+            self.assertEqual(res, 0)
             self.assertTrue(os.path.isfile(dest))
 
             v = images.get_thumbnail(

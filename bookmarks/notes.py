@@ -1,9 +1,8 @@
-"""Item note editor.
-
-The main edit widget is :class:`NoteEditor`, a 
+"""Module contains the widgets used to add and edit item cards/notes.
 
 """
 import functools
+import os
 import re
 import time
 
@@ -11,8 +10,42 @@ from PySide2 import QtWidgets, QtGui, QtCore
 
 from . import actions
 from . import common
+from . import database
 from . import images
+from . import log
 from . import ui
+
+
+def close():
+    """Closes the :class:`CardsWidget` editor.
+
+    """
+    if common.notes_widget is None:
+        return
+    try:
+        common.notes_widget.close()
+        common.notes_widget.deleteLater()
+    except:
+        pass
+    common.notes_widget = None
+
+
+def show(index):
+    """Shows the :class:`CardsWidget` editor.
+
+    Args:
+        index (QModelIndex): The item's
+    """
+    close()
+    if common.notes_widget is None:
+        common.notes_widget = CardsWidget(index, parent=common.widget())
+
+    common.widget().resized.connect(common.notes_widget.setGeometry)
+    common.notes_widget.setGeometry(common.widget().geometry())
+    # common.notes_widget.setFocus()
+    common.notes_widget.open()
+
+    return common.notes_widget
 
 
 class Lockfile(QtCore.QSettings):
@@ -23,13 +56,15 @@ class Lockfile(QtCore.QSettings):
 
     def __init__(self, index, parent=None):
         self.index = index
-        self.lockstamp = int(round(time.time() * 1000))
-        self.read_only = False
+        self._is_locked = False
 
         if index.isValid():
             p = '/'.join(index.data(common.ParentPathRole)[0:3])
             f = QtCore.QFileInfo(index.data(common.PathRole))
-            self.config_path = f'{p}/{common.bookmark_cache_dir}/{f.baseName()}.lock'
+            self.config_path = f'{p}/{common.bookmark_cache_dir}/locks/{f.baseName()}.lock'
+            _dir = QtCore.QFileInfo(self.config_path).dir()
+            if not _dir.exists():
+                _dir.mkpath('.')
         else:
             self.config_path = '/'
 
@@ -39,56 +74,39 @@ class Lockfile(QtCore.QSettings):
             parent=parent
         )
 
-    def _get_values(self):
-        is_open = self.value('open')
-        is_open = False if is_open is None else is_open
-        is_open = is_open if isinstance(is_open, bool) else (
-            False if is_open.lower() == 'false' else True)
-
-        stamp = self.value('stamp')
-        if stamp is not None:
-            stamp = int(stamp)
-
-        return is_open, stamp
+        self.init_lock()
 
     def init_lock(self):
         """Creates a lock file.
 
-        This will prevent other sessions editing notes.
+        This will prevent others from editing the notes of this time whilst we have the
+        editor open.
 
         """
         if not self.index.isValid():
             return
 
-        is_open, stamp = self._get_values()
-
-        if not is_open:
-            self.read_only = False
-            self.setValue('open', True)
-            self.setValue('stamp', self.lockstamp)
+        file_info = QtCore.QFileInfo(self.config_path)
+        if not file_info.exists():
+            self.setValue('pid', os.getpid())
+            self.sync()
             return
-
-        if stamp == self.lockstamp:
-            self.lock.setValue('stamp', self.lockstamp)
-            return
-
-        if stamp != self.lockstamp:
-            self.read_only = True
 
     @QtCore.Slot()
-    def unlock(self):
-        """Removes the temporary lockfile on close"""
-        if not self.index.isValid():
+    def unlock(self, force=False):
+        if self.is_locked() and not force:
             return
 
-        is_open, stamp = self._get_values()
+        self.deleteLater()
+        if not QtCore.QFile(self.config_path).remove():
+            log.error('Could not remove the lock file.')
 
-        if is_open and stamp == self.lockstamp:
-            self.setValue('stamp', None)
-            self.setValue('open', False)
+    def is_locked(self):
+        file_info = QtCore.QFileInfo(self.config_path)
+        return file_info.exists() and self.value('pid') != os.getpid()
 
 
-class SyntaxHighliter(QtGui.QSyntaxHighlighter):
+class SyntaxHighlighter(QtGui.QSyntaxHighlighter):
     formats = {
         'bold': {
             'regex': re.compile(r'(\*\*|__)(.*?)(\*\*|__)', re.IGNORECASE),
@@ -171,7 +189,7 @@ class TextEditor(QtWidgets.QTextBrowser):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
 
-        self.highlighter = SyntaxHighliter(self.document())
+        self.highlighter = SyntaxHighlighter(self.document())
 
         self.document().setUseDesignMetrics(True)
         self.document().setDocumentMargin(common.size(common.size_margin))
@@ -474,8 +492,8 @@ class DragOverlayWidget(OverlayWidget):
 class CardWidget(QtWidgets.QWidget):
     """Card widget represents a single note item.
 
-    It has a title and a main note editor. Use :meth:`set_data` to set,
-    and :meth:`get_data` to retrieve the card contents.
+    It has a title and a main note editor. Use :meth:`set_card_data` to set,
+    and :meth:`get_card_data` to retrieve the card contents.
 
     """
     deleteCard = QtCore.Signal(QtWidgets.QWidget)
@@ -483,8 +501,10 @@ class CardWidget(QtWidgets.QWidget):
     endDrag = QtCore.Signal(QtWidgets.QWidget)
     resized = QtCore.Signal(QtCore.QRect)
 
-    def __init__(self, parent=None):
+    def __init__(self, extra_data, read_only=False, parent=None):
         super().__init__(parent=parent)
+        self.extra_data = extra_data
+        self.read_only = read_only
 
         self.title_editor = None
         self.body_editor = None
@@ -495,8 +515,16 @@ class CardWidget(QtWidgets.QWidget):
 
         self.installEventFilter(self)
 
+        self.setSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Maximum,
+        )
+
         self._create_ui()
         self._connect_signals()
+
+        if 'fold' in extra_data and extra_data['fold']:
+            self.fold_card()
 
     def _create_ui(self):
         QtWidgets.QHBoxLayout(self)
@@ -523,8 +551,8 @@ class CardWidget(QtWidgets.QWidget):
         self.body_editor.setWhatsThis('Edit note...')
         self.body_editor.setToolTip('Edit note...')
         self.body_editor.setSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding,
-            QtWidgets.QSizePolicy.MinimumExpanding
+            QtWidgets.QSizePolicy.Minimum,
+            QtWidgets.QSizePolicy.Minimum
         )
         self.title_editor.setStatusTip('Edit note')
         self.title_editor.setWhatsThis('Edit note')
@@ -543,9 +571,19 @@ class CardWidget(QtWidgets.QWidget):
 
         widget = ui.get_group(parent=self, margin=o / 4.0)
         widget.setSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding,
-            QtWidgets.QSizePolicy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Minimum,
+            QtWidgets.QSizePolicy.Minimum,
         )
+
+        info = f'<span style="font-size:{int(common.size_font_small)}px;">'
+        if 'created_by' in self.extra_data:
+            info += f'Added by <span style="color:{common.rgb(common.color_green)};">' \
+                    f'{self.extra_data["created_by"]}</span>'
+        if 'created_at' in self.extra_data:
+            info += f' at <span style="color:{common.rgb(common.color_green)};">' \
+                    f'{self.extra_data["created_at"]}</span>'
+        info += '</span>'
+        label = QtWidgets.QLabel(info, parent=self)
 
         _widget = QtWidgets.QWidget(parent=self)
         _widget.setAttribute(QtCore.Qt.WA_TranslucentBackground)
@@ -553,7 +591,10 @@ class CardWidget(QtWidgets.QWidget):
         _widget.layout().setContentsMargins(0, 0, 0, 0)
         _widget.layout().setSpacing(0)
         _widget.layout().addWidget(self.fold_button, 0)
-        _widget.layout().addWidget(self.title_editor, 0)
+        _widget.layout().addWidget(self.title_editor, 1)
+        _widget.layout().addWidget(label, 0)
+
+        _widget.layout().addWidget(self.body_editor, 1)
 
         widget.layout().addWidget(_widget)
         widget.layout().addWidget(self.body_editor, 1)
@@ -574,6 +615,14 @@ class CardWidget(QtWidgets.QWidget):
 
         self.overlay_widget = OverlayWidget(parent=self)
 
+        if self.read_only:
+            self.body_editor.setReadOnly(True)
+            self.body_editor.setFocusPolicy(QtCore.Qt.NoFocus)
+            self.title_editor.setReadOnly(True)
+            self.title_editor.setFocusPolicy(QtCore.Qt.NoFocus)
+            self.remove_button.setDisabled(True)
+            self.move_button.setDisabled(True)
+
     def _connect_signals(self):
         self.beginDrag.connect(self.overlay_widget.begin_drag)
         self.endDrag.connect(self.overlay_widget.end_drag)
@@ -586,8 +635,17 @@ class CardWidget(QtWidgets.QWidget):
 
         if self.body_editor.isHidden():
             self.fold_button.set_pixmap('branch_closed')
+            self.setSizePolicy(
+                QtWidgets.QSizePolicy.MinimumExpanding,
+                QtWidgets.QSizePolicy.Maximum,
+            )
         else:
             self.fold_button.set_pixmap('branch_open')
+            self.setSizePolicy(
+                QtWidgets.QSizePolicy.MinimumExpanding,
+                QtWidgets.QSizePolicy.Minimum,
+            )
+
     def eventFilter(self, widget, event):
         if widget != self:
             return False
@@ -596,30 +654,36 @@ class CardWidget(QtWidgets.QWidget):
         self.resized.emit(self.rect())
         return False
 
-    def set_data(self, title, note):
-        """Set the data for the note.
+    def set_card_data(self, title='', body='', extra_data={}):
+        """Sets the note contents and extra data.
 
         Args:
-            title (str): Title of the note.
-            note (str): Note.
+            title (str): The note's title.
+            body (str): The note's content.
+            extra_data (dict): Extra data about the note.
 
         """
         if title:
             self.title_editor.setText(title)
-        if note:
-            self.body_editor.setPlainText(note)
+        if body:
+            self.body_editor.setPlainText(body)
+        if extra_data:
+            self.extra_data.update(extra_data)
 
-    def get_data(self):
+    def get_card_data(self):
         """Returns the title and note of the card.
 
         Returns:
-            dict: Title and note of the card.
+            dict: Title, body and extra data of the card.
 
         """
-        return {
+        data = {
             'title': self.title_editor.text(),
-            'note': self.body_editor.toPlainText(),
+            'body': self.body_editor.toPlainText(),
+            'extra_data': self.extra_data
         }
+        data['extra_data']['fold'] = self.body_editor.isHidden()
+        return data
 
 
 class CardsScrollWidget(QtWidgets.QScrollArea):
@@ -672,25 +736,22 @@ class CardsScrollWidget(QtWidgets.QScrollArea):
     def _connect_signals(self):
         self.resized.connect(self.overlay_widget.setGeometry)
 
-    def add_card(self, title, note, fold):
+    def add_card(self, title, body, extra_data={}, read_only=False):
         """Add a new :class:`CardWidget` to the list.
 
         Args:
             title (str): Title of the note.
-            note (str): Note.
+            body (str): Note.
 
         """
-        widget = CardWidget(parent=self)
-        widget.set_data(title, note)
+        widget = CardWidget(extra_data, read_only=read_only, parent=self)
+        widget.set_card_data(title=title, body=body, extra_data=extra_data)
         widget.beginDrag.connect(self.begin_drag)
         widget.endDrag.connect(self.end_drag)
         widget.deleteCard.connect(self.delete_card)
-        if fold:
-            widget.fold_card()
 
         self.widget().layout().insertWidget(0, widget)
-
-        # widget.title_editor.setFocus()
+        return widget
 
     def _reset_drag_item_properties(self):
         self.drag_item_properties = {
@@ -733,6 +794,7 @@ class CardsScrollWidget(QtWidgets.QScrollArea):
 
         self._reset_drag_item_properties()
         self.overlay_widget.update()
+
     def eventFilter(self, widget, event):
         """Custom event filter.
 
@@ -776,18 +838,33 @@ class CardsScrollWidget(QtWidgets.QScrollArea):
         event.accept()
 
 
-class CardsWidget(QtWidgets.QWidget):
+class CardsWidget(QtWidgets.QDialog):
+    """This is the main cards/notes widget.
 
-    def __init__(self, parent=None):
+    """
+
+    def __init__(self, index, parent=None):
         super().__init__(parent=parent)
-        self.add_button = None
-        self.refresh_button = None
-        self.save_button = None
+        self._index = index
 
-        self.container_widget = None
+        self.add_button = None
+        self.save_button = None
+        self.cards_widget = None
+
+        self.setWindowTitle('Notes')
+        self.setWindowFlags(QtCore.Qt.Widget)
+        self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+
+        self.lock = Lockfile(index)
+        self.autosave_timer = common.Timer(parent=self)
+        self.autosave_timer.setInterval(5000)
+        self.autosave_timer.timeout.connect(self.save)
 
         self._create_ui()
         self._connect_signals()
+
+        QtCore.QTimer.singleShot(100, self.init_data)
+        QtCore.QTimer.singleShot(1000, self.autosave_timer.start)
 
     def _create_ui(self):
         common.set_stylesheet(self)
@@ -800,7 +877,7 @@ class CardsWidget(QtWidgets.QWidget):
         QtWidgets.QHBoxLayout(widget)
         self.layout().addWidget(widget, 0)
 
-        h = common.size(common.size_margin) * 1.3
+        h = common.size(common.size_margin) * 1.4
         self.add_button = ui.ClickableIconButton(
             'add',
             (common.color(common.color_green),
@@ -810,453 +887,173 @@ class CardsWidget(QtWidgets.QWidget):
             state=True,
             parent=self
         )
-        self.refresh_button = ui.PaintedButton('Refresh', parent=self)
+        self.save_button = ui.PaintedButton('Save', parent=self)
         self.close_button = ui.PaintedButton('Close', parent=self)
 
-        widget.layout().addWidget(self.add_button, 0)
+        pixmap, color = images.get_thumbnail(
+            self.index.data(common.ParentPathRole)[0],
+            self.index.data(common.ParentPathRole)[1],
+            self.index.data(common.ParentPathRole)[2],
+            self.index.data(common.PathRole),
+            size=common.size(common.size_row_height)
+        )
+        if not pixmap.isNull():
+            label = QtWidgets.QLabel(parent=self)
+            label.setPixmap(pixmap)
+        widget.layout().addWidget(label, 0)
+
+        info = ''
+        info = f'<span style="font-size:{int(common.size_font_large)}px;">'
+        info += f'{self.index.data(QtCore.Qt.DisplayRole)}'
+        info += f'<span style="color:{common.rgb(common.color_secondary_text)};">'
+        info += ' notes'
+        if self.lock.is_locked():
+            info += ' (read-only)'
+
+        info += '</span></span>'
+        label = QtWidgets.QLabel(info, parent=self)
+        widget.layout().addWidget(label, 0)
+
         widget.layout().addStretch(1)
-        widget.layout().addWidget(self.refresh_button, 0)
+        widget.layout().addWidget(self.add_button, 0)
+        widget.layout().addWidget(self.save_button, 0)
         widget.layout().addWidget(self.close_button, 0)
 
-        self.container_widget = CardsScrollWidget(parent=self)
-        self.layout().addWidget(self.container_widget, 1)
+        # Separator pixmap
+        pixmap = images.ImageCache.rsc_pixmap(
+            'gradient2', None, common.size(common.size_row_height), opacity=0.5
+        )
+        separator = QtWidgets.QLabel(parent=self)
+        separator.setScaledContents(True)
+        separator.setFixedHeight(common.size(common.size_row_height))
+        separator.setPixmap(pixmap)
+        self.layout().addWidget(separator, 1)
+
+        self.cards_widget = CardsScrollWidget(parent=self)
+        self.layout().addWidget(self.cards_widget, 1)
+
+        if self.lock.is_locked():
+            self.add_button.setHidden(True)
+            self.save_button.setHidden(True)
 
     def _connect_signals(self):
         self.add_button.clicked.connect(self.add_new_note)
+        self.close_button.clicked.connect(lambda: self.done(QtWidgets.QDialog.Accepted))
+        self.save_button.clicked.connect(self.save)
+        self.destroyed.connect(self.autosave_timer.stop)
+
+    def sizeHint(self):
+        """Returns a size hint.
+
+        """
+        return QtCore.QSize(
+            common.size(common.size_width),
+            common.size(common.size_height)
+        )
+
+    @property
+    def index(self):
+        """The QModelIndex of the current item.
+
+        """
+        return self._index
 
     @QtCore.Slot()
-    def add_new_note(self):
-        self.container_widget.add_card('', '', False)
+    def add_new_note(self, title='', body='', extra_data={}):
+        extra_data.update({
+            'created_by': common.get_username(),
+            'created_at': time.strftime('%d/%m/%Y %H:%M'),
+            'fold': False
+        })
+        widget = self.cards_widget.add_card(
+            title,
+            body,
+            extra_data=extra_data,
+            read_only=self.lock.is_locked()
+        )
+        widget.setSizePolicy(
+            QtWidgets.QSizePolicy.MinimumExpanding,
+            QtWidgets.QSizePolicy.Minimum,
+        )
 
-# class NoteEditor(QtWidgets.QDialog):
-#     """Main widget used to view and edit and add Notes and Tasks."""
-#
-#     def __init__(self, index, parent=None):
-#         super().__init__(parent=parent)
-#         self.note_container_widget = None
-#         self._index = index
-#
-#         self.read_only = False
-#
-#         self.lock = Lockfile(self.index, parent=self)
-#         self.destroyed.connect(self.unlock)
-#
-#         self.lockstamp = int(round(time.time() * 1000))
-#         self.save_timer = common.Timer(parent=self)
-#         self.save_timer.setInterval(1000)
-#         self.save_timer.setSingleShot(False)
-#         self.save_timer.timeout.connect(self.save_settings)
-#
-#         self.refresh_timer = common.Timer(parent=self)
-#         self.refresh_timer.setInterval(10000)  # refresh every 30 seconds
-#         self.refresh_timer.setSingleShot(False)
-#         self.refresh_timer.timeout.connect(self.refresh)
-#
-#         self.setWindowTitle('Notes & Tasks')
-#         self.setWindowFlags(QtCore.Qt.Widget)
-#         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-#
-#         self._create_ui()
-#         self.installEventFilter(self)
-#
-#         self.init_lock()
-#
-#     def _create_ui(self):
-#         """Creates the ui layout."""
-#         QtWidgets.QVBoxLayout(self)
-#         o = common.size(common.size_margin)
-#         self.layout().setSpacing(common.size(common.size_indicator))
-#         self.layout().setContentsMargins(o, o, o, o)
-#
-#         # Top row
-#         height = common.size(common.size_row_height) * 0.6666
-#         row = ui.add_row(None, height=height, parent=self)
-#         row.layout().addSpacing(height * 0.33)
-#
-#         # Thumbnail
-#         self.add_button = ui.ClickableIconButton(
-#             'add',
-#             (common.color(common.color_green), common.color(common.color_green)),
-#             height,
-#             description='Click to add a new Todo item...',
-#             parent=self
-#         )
-#         self.add_button.clicked.connect(lambda: self.add_item(idx=0))
-#
-#         # Name label
-#         text = 'Notes'
-#         label = ui.PaintedLabel(
-#             text, color=common.color(common.color_dark_background),
-#             size=common.size(common.size_font_large), parent=self
-#         )
-#         label.setFixedHeight(height)
-#
-#         self.refresh_button = ui.ClickableIconButton(
-#             'refresh',
-#             (QtGui.QColor(0, 0, 0, 255), QtGui.QColor(0, 0, 0, 255)),
-#             height,
-#             description='Refresh...',
-#             parent=self
-#         )
-#         self.refresh_button.clicked.connect(self.refresh)
-#
-#         self.remove_button = ui.ClickableIconButton(
-#             'close',
-#             (QtGui.QColor(0, 0, 0, 255), QtGui.QColor(0, 0, 0, 255)),
-#             height,
-#             description='Refresh...',
-#             parent=self
-#         )
-#         self.remove_button.clicked.connect(self.close)
-#
-#         row.layout().addWidget(label)
-#         row.layout().addStretch(1)
-#         row.layout().addWidget(self.refresh_button, 0)
-#         row.layout().addWidget(self.remove_button, 0)
-#
-#         row = ui.add_row(None, height=height, parent=self)
-#
-#         text = 'Add Note'
-#         self.add_label = ui.PaintedLabel(
-#             text, color=common.color(common.color_dark_background),
-#             parent=row
-#         )
-#
-#         row.layout().addWidget(self.add_button, 0)
-#         row.layout().addWidget(self.add_label, 0)
-#         row.layout().addStretch(1)
-#
-#         self.note_container_widget = NoteContainerWidget(parent=self)
-#         self.setMinimumHeight(common.size(common.size_row_height) * 3.0)
-#
-#         self.scroll_area = QtWidgets.QScrollArea(parent=self)
-#         self.scroll_area.setWidgetResizable(True)
-#         self.scroll_area.setWidget(self.note_container_widget)
-#
-#         self.scroll_area.setAttribute(QtCore.Qt.WA_NoSystemBackground)
-#         self.scroll_area.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-#
-#         self.layout().addWidget(self.scroll_area)
-#
-#     def clear(self):
-#         """Deletes all note item editors.
-#
-#         """
-#         for idx in reversed(range(len(list(self.note_container_widget.items)))):
-#             row = self.note_container_widget.items.pop(idx)
-#             for c in row.children():
-#                 c.deleteLater()
-#             self.note_container_widget.layout().removeWidget(row)
-#             row.deleteLater()
-#             del row
-#
-#     @common.error
-#     @common.debug
-#     def refresh(self):
-#         """Populates the list from the database.
-#
-#         """
-#         if not self.parent():
-#             return
-#         if not self.index.isValid():
-#             return
-#         if not self.index.data(common.FileInfoLoaded):
-#             return
-#
-#         if self.index.data(common.TypeRole) == common.FileItem:
-#             source = self.index.data(common.PathRole)
-#         elif self.index.data(common.TypeRole) == common.SequenceItem:
-#             source = common.proxy_path(self.index)
-#
-#         db = database.get_db(*self.index.data(common.ParentPathRole)[0:3])
-#         v = db.value(source, 'notes', database.AssetTable)
-#         if not v:
-#             return
-#
-#         self.clear()
-#
-#         keys = sorted(v.keys())
-#         for k in keys:
-#             self.add_item(
-#                 text=v[k]['text']
-#             )
-#
-#     @property
-#     def index(self):
-#         """The path used to initialize the widget.
-#
-#         """
-#         return self._index
-#
-#     def eventFilter(self, widget, event):
-#         """Event filter handler.
-#
-#         """
-#         if event.type() == QtCore.QEvent.Paint:
-#             painter = QtGui.QPainter()
-#             painter.begin(self)
-#             font = common.font_db.medium_font(
-#                 common.size(common.size_font_medium)
-#             )[0]
-#             painter.setFont(font)
-#             painter.setRenderHints(QtGui.QPainter.Antialiasing)
-#
-#             o = common.size(common.size_indicator)
-#             rect = self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o))
-#             painter.setBrush(QtGui.QColor(250, 250, 250, 255))
-#             painter.setPen(QtCore.Qt.NoPen)
-#             painter.drawRoundedRect(rect, o * 2, o * 2)
-#
-#             center = rect.center()
-#             rect.setWidth(rect.width() - common.size(common.size_margin))
-#             rect.setHeight(rect.height() - common.size(common.size_margin))
-#             rect.moveCenter(center)
-#
-#             text = 'Click the plus icon on the top to add a note'
-#             text = text if not len(self.note_container_widget.items) else ''
-#             common.draw_aliased_text(
-#                 painter, font, rect, text, QtCore.Qt.AlignCenter,
-#                 common.color(common.color_dark_background)
-#             )
-#             painter.end()
-#         return False
-#
-#     def _get_next_enabled(self, n):
-#         hasEnabled = False
-#         for i in range(len(self.note_container_widget.items)):
-#             item = self.note_container_widget.items[i]
-#             editor = item.findChild(NoteTextEditor)
-#             if editor.isEnabled():
-#                 hasEnabled = True
-#                 break
-#
-#         if not hasEnabled:
-#             return -1
-#
-#         # Finding the next enabled editor
-#         for _ in range(len(self.note_container_widget.items) - n):
-#             n += 1
-#             if n >= len(self.note_container_widget.items):
-#                 return self._get_next_enabled(-1)
-#             item = self.note_container_widget.items[n]
-#             editor = item.findChild(NoteTextEditor)
-#             if editor.isEnabled():
-#                 return n
-#
-#     def key_tab(self):
-#         """Custom key action.
-#
-#         """
-#         if not self.note_container_widget.items:
-#             return
-#
-#         n = 0
-#         for n, item in enumerate(self.note_container_widget.items):
-#             editor = item.findChild(NoteTextEditor)
-#             if editor.hasFocus():
-#                 break
-#
-#         n = self._get_next_enabled(n)
-#         if n > -1:
-#             item = self.note_container_widget.items[n]
-#             editor = item.findChild(NoteTextEditor)
-#             editor.setFocus()
-#             self.scroll_area.ensureWidgetVisible(
-#                 editor, ymargin=editor.height()
-#             )
-#
-#     def key_return(self, ):
-#         """Custom key action.
-#
-#         """
-#         for item in self.note_container_widget.items:
-#             editor = item.findChild(NoteTextEditor)
-#
-#             if not editor.hasFocus():
-#                 continue
-#
-#             if editor.document().toPlainText():
-#                 continue
-#
-#             idx = self.note_container_widget.items.index(editor.parent())
-#             row = self.note_container_widget.items.pop(idx)
-#             self.todoedfitors_widget.layout().removeWidget(row)
-#             row.deleteLater()
-#
-#             break
-#
-#     def keyPressEvent(self, event):
-#         """Key press event handler.
-#
-#         """
-#         control_modifier = event.modifiers() == QtCore.Qt.ControlModifier
-#         shift_modifier = event.modifiers() == QtCore.Qt.ShiftModifier
-#
-#         if event.key() == QtCore.Qt.Key_Escape:
-#             self.close()
-#
-#         if shift_modifier:
-#             if event.key() == QtCore.Qt.Key_Tab:
-#                 return True
-#             if event.key() == QtCore.Qt.Key_Backtab:
-#                 return True
-#
-#         if control_modifier:
-#             if event.key() == QtCore.Qt.Key_S:
-#                 self.save_settings()
-#                 return True
-#             elif event.key() == QtCore.Qt.Key_N:
-#                 self.add_button.clicked.emit()
-#                 return True
-#             elif event.key() == QtCore.Qt.Key_Tab:
-#                 self.key_tab()
-#                 return True
-#             elif event.key() == QtCore.Qt.Key_Return:
-#                 self.key_return()
-#
-#     def add_item(self, idx=None, text=None):
-#         """Creates a new :class:`NoteItemWidget`editor and adds it to
-#         :meth:`NoteContainerWidget.items`.
-#
-#         Args:
-#             idx (int): The index of the item to be added. Optional.
-#             text (str): The text of the item to be added. Optional.
-#
-#         """
-#         item = NoteItemWidget(parent=self)
-#
-#         editor = NoteTextEditor(
-#             text,
-#             read_only=self.read_only,
-#             parent=item
-#         )
-#         editor.setFocusPolicy(QtCore.Qt.StrongFocus)
-#         item.layout().addWidget(editor, 1)
-#
-#         drag = DragIndicatorButton(parent=item)
-#         drag.setFocusPolicy(QtCore.Qt.NoFocus)
-#
-#         item.layout().addWidget(drag)
-#         if self.read_only:
-#             drag.setDisabled(True)
-#
-#         if not self.read_only:
-#             remove = RemoveNoteButton(parent=item)
-#             remove.setFocusPolicy(QtCore.Qt.NoFocus)
-#             item.layout().addWidget(remove)
-#
-#         if idx is None:
-#             self.note_container_widget.layout().addWidget(item, 0)
-#             self.note_container_widget.items.append(item)
-#         else:
-#             self.note_container_widget.layout().insertWidget(idx, item, 0)
-#             self.note_container_widget.items.insert(idx, item)
-#
-#         editor.setFocus()
-#         item.editor = editor
-#         return item
-#
-#     @QtCore.Slot()
-#     def save_settings(self):
-#         """Saves the current list of note items to the assets configuration file."""
-#         if not self.index.isValid():
-#             return
-#
-#         data = {}
-#         for n in range(len(self.note_container_widget.items)):
-#             item = self.note_container_widget.items[n]
-#             editor = item.findChild(NoteTextEditor)
-#             if not editor.document().toPlainText():
-#                 continue
-#             data[n] = {
-#                 'text': editor.document().toHtml(),
-#             }
-#
-#         if self.index.data(common.TypeRole) == common.FileItem:
-#             source = self.index.data(common.PathRole)
-#         elif self.index.data(common.TypeRole) == common.SequenceItem:
-#             source = common.proxy_path(self.index)
-#
-#         db = database.get_db(*self.index.data(common.ParentPathRole)[0:3])
-#         db.setValue(source, 'notes', data)
-#
-#     def init_lock(self):
-#         """Creates a lock file.
-#
-#         This will prevent other sessions editing notes.
-#
-#         """
-#         if not self.parent():
-#             return
-#         if not self.index.isValid():
-#             return
-#
-#         v = self.lock.value('open')
-#         v = False if v is None else v
-#         v = v if isinstance(v, bool) else (
-#             False if v.lower() == 'false' else True)
-#         is_open = v
-#
-#         stamp = self.lock.value('stamp')
-#         if stamp is not None:
-#             stamp = int(stamp)
-#
-#         if not is_open:
-#             self.read_only = False
-#             self.add_button.show()
-#             self.add_label.show()
-#             self.refresh_button.hide()
-#             self.save_timer.start()
-#             self.refresh_timer.stop()
-#
-#             self.lock.setValue('open', True)
-#             self.lock.setValue('stamp', self.lockstamp)
-#             return
-#
-#         if stamp == self.lockstamp:
-#             self.read_only = False
-#             self.add_label.show()
-#             self.add_button.show()
-#             self.refresh_button.hide()
-#             self.save_timer.start()
-#             self.refresh_timer.stop()
-#
-#             self.lock.setValue('stamp', self.lockstamp)
-#             return
-#
-#         if stamp != self.lockstamp:
-#             self.read_only = True
-#             self.add_button.hide()
-#             self.add_label.hide()
-#             self.refresh_button.show()
-#             self.save_timer.stop()
-#             self.refresh_timer.start()
-#
+    def add_card(self, *args, **kwargs):
+        return self.cards_widget.add_card(*args, **kwargs)
 
-#
-#     def showEvent(self, event):
-#         """Event handler.
-#
-#         """
-#         if self.parent():
-#             geo = self.parent().viewport().rect()
-#             self.resize(geo.width(), geo.height())
-#         self.setFocus(QtCore.Qt.OtherFocusReason)
-#         self.refresh()
-#
-#     def hideEvent(self, event):
-#         """Hide event handler.
-#
-#         """
-#         if not self.read_only:
-#             self.save_settings()
-#         self.unlock()
-#
-#     def sizeHint(self):
-#         """Returns a size hint.
-#
-#         """
-#         return QtCore.QSize(
-#             common.size(common.size_width),
-#             common.size(common.size_height)
-#         )
+    def get_cards_data(self):
+        """Get all cards data.
+
+        Returns:
+            dict: A dictionary of each card item's data.
+
+        """
+        data = {}
+        container = self.cards_widget.widget()
+        for idx in range(container.layout().count()):
+            widget = container.layout().itemAt(idx).widget()
+            data[idx] = widget.get_card_data()
+        return data
+
+    @common.error
+    @common.debug
+    @QtCore.Slot()
+    def init_data(self):
+        """Load cards data stored in the database.
+
+        """
+        if not self.index.isValid():
+            return False
+        if not self.index.data(common.FileInfoLoaded):
+            return False
+
+        if self.index.data(common.TypeRole) == common.FileItem:
+            source = self.index.data(common.PathRole)
+        elif self.index.data(common.TypeRole) == common.SequenceItem:
+            source = common.proxy_path(self.index)
+
+        db = database.get_db(*self.index.data(common.ParentPathRole)[0:3])
+        v = db.value(source, 'notes', database.AssetTable)
+        if not v:
+            return False
+
+        for idx in sorted(v.keys(), reverse=True):
+            # Let's do some data sanity checks and ignore invalid items
+            if not isinstance(v[idx], dict):
+                continue
+            if set(v[idx].keys()) != set(['title', 'body', 'extra_data']):
+                continue
+
+            self.add_card(
+                title=v[idx]['title'],
+                body=v[idx]['body'],
+                extra_data=v[idx]['extra_data'],
+                read_only=self.lock.is_locked()
+            )
+        return True
+
+    @QtCore.Slot()
+    def done(self, r):
+        """Close the window.
+
+        """
+        if r == QtWidgets.QDialog.Accepted:
+            self.save()
+            self.lock.unlock()
+        return super().done(r)
+
+    @QtCore.Slot()
+    def save(self):
+        """Save the note items to the database.
+
+        """
+        if not self.index.isValid():
+            return
+        if self.lock.is_locked():
+            return
+
+        if self.index.data(common.TypeRole) == common.FileItem:
+            source = self.index.data(common.PathRole)
+        elif self.index.data(common.TypeRole) == common.SequenceItem:
+            source = common.proxy_path(self.index)
+
+        db = database.get_db(*self.index.data(common.ParentPathRole)[0:3])
+        db.setValue(source, 'notes', self.get_cards_data())

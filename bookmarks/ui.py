@@ -184,7 +184,7 @@ class MessageBox(QtWidgets.QDialog):
                 common.size(common.size_font_medium)
             )[0].family(),
             TEXT=common.rgb(self.secondary_color.darker(255)),
-            TRANSPARENT=common.rgb(common.color(common.color_transparent)),
+            TRANSPARENT=common.rgb(common.color_transparent),
         )
         self.setStyleSheet(stylesheet)
 
@@ -287,7 +287,7 @@ class MessageBox(QtWidgets.QDialog):
             p=common.rgb(color),
             pl=common.rgb(self.primary_color.lighter(120)),
             pd=common.rgb(self.primary_color.darker(120)),
-            SELECTED_TEXT=common.rgb(common.color(common.color_selected_text)),
+            SELECTED_TEXT=common.rgb(common.color_selected_text),
         )
         if 'buttons' in kwargs and isinstance(kwargs['buttons'], (tuple, list)) and \
                 kwargs['buttons']:
@@ -939,7 +939,7 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
         editor.setWindowFlags(QtCore.Qt.Widget)
         editor.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         editor.setStyleSheet(
-            f'background-color: {common.rgb(common.color(common.color_separator))};'
+            f'background-color: {common.rgb(common.color_separator)};'
             f'height: {option.rect.height()}px;'
         )
         return editor
@@ -1583,7 +1583,7 @@ class GalleryWidget(QtWidgets.QDialog):
 
         widget = QtWidgets.QWidget(parent=self)
         widget.setStyleSheet(
-            f'background-color: {common.rgb(common.color(common.color_separator))}'
+            f'background-color: {common.rgb(common.color_separator)}'
         )
 
         _width = (

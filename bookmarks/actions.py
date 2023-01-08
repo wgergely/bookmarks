@@ -1188,7 +1188,7 @@ def copy_selected_alt_path(index):
 @common.debug
 @common.error
 @selection
-def show_todos(index):
+def show_notes(index):
     """Shows the :class:`~bookmarks.notes.NoteEditor` editor.
 
     Args:
@@ -1196,21 +1196,8 @@ def show_todos(index):
 
     """
     from . import notes
-    parent = common.widget()
-    editors = [f for f in parent.children() if isinstance(
-        f, notes.NoteEditor
-    )]
-    if editors:
-        for editor in editors:
-            editor.done(QtWidgets.QDialog.Rejected)
-
-    source_index = parent.model().mapToSource(index)
-
-    editor = notes.NoteEditor(source_index, parent=parent)
-    parent.resized.connect(editor.setGeometry)
-    editor.finished.connect(editor.deleteLater)
-    editor.open()
-
+    editor = notes.show(index)
+    return editor
 
 @common.debug
 @common.error

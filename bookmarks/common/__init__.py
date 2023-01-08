@@ -106,6 +106,7 @@ maya_export_widget = None
 ffmpeg_export_widget = None
 screen_capture_widget = None
 pick_thumbnail_widget = None
+notes_widget = None
 
 sg_connecting_message = None
 sg_error_message = None

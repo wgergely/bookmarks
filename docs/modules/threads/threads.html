@@ -2,15 +2,16 @@
 <html class="no-js" lang="en">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><meta content="Developer documentation page for the Bookmarks python modules" name="description" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<meta content="Developer documentation page for the Bookmarks python modules" name="description" />
 <meta content="Bookmarks, bookmarksvfx, asset manager, assets, PySide, Qt5, PySide2, Python, vfx, animation, film, productivity, free, open-source, opensource, lightweight, ShotGrid, RV, FFMpeg, ffmpeg, publish, manage, digital content management, production, OpenImageIO" name="keywords" />
 <link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" /><link rel="next" title="threads.workers" href="workers.html" /><link rel="prev" title="threads" href="../threads.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/threads/threads.html" />
 
-    <meta name="generator" content="sphinx-5.3.0, furo 2022.09.29"/>
-        <title>threads.threads - Bookmarks 0.7.5 documentation</title>
+    <!-- Generated with Sphinx 6.1.2 and Furo 2022.12.07 -->
+        <title>threads.threads - Bookmarks 0.7.6 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=d81277517bee4d6b0349d71bb2661d4890b5617c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/license_info.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
@@ -162,7 +163,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">Bookmarks 0.7.5 documentation</div></a>
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.6 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -189,10 +190,10 @@
     <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.5 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.6 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
-  <input class="sidebar-search" placeholder=Search name="q" aria-label="Search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
@@ -375,16 +376,12 @@
           </label>
         </div>
         <article role="main">
-          <div class="section" id="module-bookmarks.threads.threads">
+          <section id="module-bookmarks.threads.threads">
 <span id="threads-threads"></span><h1>threads.threads<a class="headerlink" href="#module-bookmarks.threads.threads" title="Permalink to this heading">#</a></h1>
 <p>Thread definitions and associated worker classes.</p>
 <p><strong>Classes:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.threads.BaseThread" title="bookmarks.threads.threads.BaseThread"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseThread</span></code></a>(worker[, parent])</p></td>
 <td><p>Base QThread controller.</p></td>
@@ -398,10 +395,6 @@
 <p><strong>Functions:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.threads.add_to_queue" title="bookmarks.threads.threads.add_to_queue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_to_queue</span></code></a>(k, ref)</p></td>
 <td><p>Adds a wekref item to the worker's queue.</p></td>
@@ -434,7 +427,7 @@
 <span class="sig-name descname"><span class="pre">initWorker</span></span><a class="headerlink" href="#bookmarks.threads.threads.BaseThread.initWorker" title="Permalink to this definition">#</a></dt>
 <dd><p>Signal emitted when the thread has spun up.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>QtCore.Signal</p>
 </dd>
 </dl>
@@ -445,7 +438,7 @@
 <span class="sig-name descname"><span class="pre">startTimer</span></span><a class="headerlink" href="#bookmarks.threads.threads.BaseThread.startTimer" title="Permalink to this definition">#</a></dt>
 <dd><p>Starts the thread’s queue timer.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>QtCore.Signal</p>
 </dd>
 </dl>
@@ -456,7 +449,7 @@
 <span class="sig-name descname"><span class="pre">stopTimer</span></span><a class="headerlink" href="#bookmarks.threads.threads.BaseThread.stopTimer" title="Permalink to this definition">#</a></dt>
 <dd><p>Stops the thread’s queue timer.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>QtCore.Signal</p>
 </dd>
 </dl>
@@ -465,10 +458,6 @@
 <p><strong>Methods:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.threads.threads.BaseThread.move_worker_to_thread" title="bookmarks.threads.threads.BaseThread.move_worker_to_thread"><code class="xref py py-obj docutils literal notranslate"><span class="pre">move_worker_to_thread</span></code></a>()</p></td>
 <td><p>Slot called when the thread is started.</p></td>
@@ -479,10 +468,6 @@
 <p><strong>Attributes:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#id0" title="bookmarks.threads.threads.BaseThread.startTimer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">startTimer</span></code></a>(*args, **kwargs)</p></td>
 <td><p></p></td>
@@ -517,7 +502,7 @@ communicate with the worker.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.threads.threads.</span></span><span class="sig-name descname"><span class="pre">add_to_queue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/threads/threads.html#add_to_queue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.threads.threads.add_to_queue" title="Permalink to this definition">#</a></dt>
 <dd><p>Adds a wekref item to the worker’s queue.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ref</strong> (<em>weakref.ref</em>) – A weak reference to a data segment.</p></li>
 <li><p><strong>end</strong> (<em>bool</em>) – Add to the end of the queue instead if <cite>True</cite>.</p></li>
@@ -531,7 +516,7 @@ communicate with the worker.</p>
 <span class="sig-prename descclassname"><span class="pre">bookmarks.threads.threads.</span></span><span class="sig-name descname"><span class="pre">get_thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/bookmarks/threads/threads.html#get_thread"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.threads.threads.get_thread" title="Permalink to this definition">#</a></dt>
 <dd><p>Get a cached thread controller instance.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>k</strong> (<em>str</em>) – Name of the thread controller to return, e.g.
 <code class="docutils literal notranslate"><span class="pre">threads.QueuedShotgunQuery</span></code>.</p>
 </dd>
@@ -564,7 +549,7 @@ All threads are associated with worker, defined by <cite>THREADS</cite>.</p>
 <dd><p>Clear all thread queues.</p>
 </dd></dl>
 
-</div>
+</section>
 
         </article>
       </div>
@@ -603,9 +588,7 @@ All threads are associated with worker, defined by <cite>THREADS</cite>.</p>
             
           </div>
           <div class="right-details">
-            <div class="icons">
-              
-            </div>
+            
           </div>
         </div>
         
@@ -651,9 +634,6 @@ All threads are associated with worker, defined by <cite>THREADS</cite>.</p>
     </aside>
   </div>
 </div><script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/scripts/furo.js"></script>

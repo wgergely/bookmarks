@@ -41,7 +41,7 @@ token_validator = QtGui.QRegExpValidator()
 token_validator.setRegExp(QtCore.QRegExp(r'[0-0a-zA-Z\_\-\.\{\}]*'))
 
 span = {
-    'start': f'<span style="color:{common.rgb(common.color(common.color_green))}">',
+    'start': f'<span style="color:{common.rgb(common.color_green)}">',
     'end': '</span>',
 }
 
@@ -218,7 +218,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
             self.left_row.hide()
 
         self.left_row.setStyleSheet(
-            f'background-color: {common.rgb(common.color(common.color_separator))};'
+            f'background-color: {common.rgb(common.color_separator)};'
         )
         QtWidgets.QHBoxLayout(self.left_row)
         self.left_row.layout().setSpacing(0)
@@ -427,7 +427,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         button.setStyleSheet(
             'outline: none;'
             'border: none;'
-            f'color: {common.rgb(common.color(common.color_light_background))};'
+            f'color: {common.rgb(common.color_light_background)};'
             'text-align: left;'
             'padding: 0px;'
             'margin: 0px;'
@@ -752,7 +752,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
             if not isinstance(editor, QtWidgets.QCheckBox):
                 editor.setStyleSheet(
-                    f'color: {common.rgb(common.color(common.color_green))};'
+                    f'color: {common.rgb(common.color_green)};'
                 )
             return
 
@@ -761,7 +761,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
 
         if not isinstance(editor, QtWidgets.QCheckBox):
             editor.setStyleSheet(
-                f'color: {common.rgb(common.color(common.color_text))};'
+                f'color: {common.rgb(common.color_text)};'
             )
 
     def db_source(self):

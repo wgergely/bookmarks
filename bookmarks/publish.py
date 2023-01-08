@@ -502,7 +502,7 @@ class PublishWidget(base.BasePropertyEditor):
         """Set source item label.
 
         """
-        c = common.rgb(common.color(common.color_green))
+        c = common.rgb(common.color_green)
         n = self._index.data(common.PathRole)
 
         self.source_editor.setText(
@@ -524,7 +524,7 @@ class PublishWidget(base.BasePropertyEditor):
             **kwargs
         )
 
-        r = common.rgb(common.color(common.color_red))
+        r = common.rgb(common.color_red)
         v = v.replace(
             tokens.invalid_token,
             f'<span style="color:{r}">{tokens.invalid_token}</span>'
@@ -532,7 +532,7 @@ class PublishWidget(base.BasePropertyEditor):
         v = v.replace(
             '###',
             '<span style="color:{}">###</span>'.format(
-                common.rgb(common.color(common.color_red))
+                common.rgb(common.color_red)
             )
         )
 

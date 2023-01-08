@@ -120,7 +120,7 @@ class Test(base.BaseCase):
 
     def test_Timer(self):
         from PySide2 import QtCore
-        t = common.Timer()
+        t = common.Timer(parent=self)
         self.assertIsInstance(t, QtCore.QTimer)
 
     def test_ui_scale(self):

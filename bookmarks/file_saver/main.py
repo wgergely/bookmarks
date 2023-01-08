@@ -468,7 +468,7 @@ class FileSaverWidget(base.BasePropertyEditor):
             ext=_get('file_saver_extension').lower()
         )
         v = _strip(v)
-        r = common.rgb(common.color(common.color_red))
+        r = common.rgb(common.color_red)
         v = v.replace(
             tokens.invalid_token,
             f'<span style="color:{r}">{tokens.invalid_token}</span>'
@@ -477,7 +477,7 @@ class FileSaverWidget(base.BasePropertyEditor):
         v = v.replace(
             '###',
             '<span style="color:{}">###</span>'.format(
-                common.rgb(common.color(common.color_red))
+                common.rgb(common.color_red)
             )
         )
 
@@ -495,11 +495,11 @@ class FileSaverWidget(base.BasePropertyEditor):
 
         if self._filelist[self.db_source()]:
             self.filename_editor.setStyleSheet(
-                'color:{};'.format(common.rgb(common.color(common.color_red)))
+                'color:{};'.format(common.rgb(common.color_red))
             )
         else:
             self.filename_editor.setStyleSheet(
-                'color:{};'.format(common.rgb(common.color(common.color_green)))
+                'color:{};'.format(common.rgb(common.color_green))
             )
 
     def parent_folder(self):

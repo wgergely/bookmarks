@@ -810,7 +810,7 @@ class FilterProxyModel(QtCore.QSortFilterProxyModel):
         self.verify_items.setInterval(10)
         self.verify_items.timeout.connect(self.verify)
 
-        self.queued_invalidate_timer = common.Timer()
+        self.queued_invalidate_timer = common.Timer(parent=self)
         self.queued_invalidate_timer.setSingleShot(True)
         self.queued_invalidate_timer.setInterval(100)
 

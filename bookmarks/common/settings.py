@@ -30,7 +30,6 @@ SECTIONS = {
         'user/favourites',
     ),
     'settings': (
-        'settings/jobs_have_clients',
         'settings/job_scan_depth',
         'settings/ui_scale',
         'settings/show_menu_icons',

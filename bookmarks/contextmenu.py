@@ -1124,7 +1124,7 @@ class BaseContextMenu(QtWidgets.QMenu):
         self.menu[key()] = {
             'text': 'Notes',
             'icon': ui.get_icon('todo'),
-            'action': actions.show_todos,
+            'action': actions.show_notes,
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
                 shortcuts.OpenTodo

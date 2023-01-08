@@ -396,12 +396,16 @@ def load_json(value):
     """Load a base 64 encoded json value.
 
     """
-    return json.loads(
-        b64decode(value.encode('utf-8')),
-        parse_int=int,
-        parse_float=float,
-        object_hook=common.int_key
-    )
+    try:
+        return json.loads(
+            b64decode(value.encode('utf-8')),
+            parse_int=int,
+            parse_float=float,
+            object_hook=common.int_key
+        )
+    except UnicodeDecodeError as e:
+        log.error(e)
+        return {}
 
 
 def convert_return_values(table, key, value):

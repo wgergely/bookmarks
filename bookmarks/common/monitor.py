@@ -22,7 +22,7 @@ class FileWatcher(QtCore.QFileSystemWatcher):
 
         self.tab_idx = tab_idx
 
-        self.update_queue_timer = common.Timer()
+        self.update_queue_timer = common.Timer(parent=self)
         self.update_queue_timer.setSingleShot(True)
         self.update_queue_timer.setInterval(500)
 

@@ -336,7 +336,7 @@ class MainWidget(QtWidgets.QWidget):
 
         connect(shortcuts.OpenSlack, actions.show_slack)
         connect(shortcuts.OpenPreferences, actions.show_preferences)
-        connect(shortcuts.OpenTodo, actions.show_todos)
+        connect(shortcuts.OpenTodo, actions.show_notes)
 
         connect(shortcuts.ToggleItemArchived, actions.toggle_archived)
         connect(shortcuts.ToggleItemFavourite, actions.toggle_favourite)

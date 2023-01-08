@@ -11,7 +11,12 @@
 </p> 
 
 <p align="center">
-  ☺  Bookmarks is a free and open-source Python asset manager designed to browse and manage the content of animation, VFX and film projects.
+    ☺  Bookmarks is a free, open-source utility that helps you organize and prepare assets
+    for digital productions. With Bookmarks, you can easily create folders for new jobs and assets
+    using templates, parse and read existing jobs and assets, sort and filter items,
+    and annotate them with notes.
+    Whether you're working on a film, TV show, or other digital production,
+    Bookmarks can help you save time and stay organized.
 </p>
 
 ---
@@ -30,18 +35,9 @@ configure their properties like frame rate and resolution to set [`Maya scene se
 You can use filters to sort and hide items, preview images, convert footage sequences, or ‘publish’ files.
 See [User Guide](https://bookmarks-vfx.com/guide.html#user-guide) for more information.
 
-# Background
+# About
 
-I developed the app to help manage personal projects and keep myself organised (I’m a digitally messy person). So, whilst it works great for me, it might not work for you. Still, I tried to make it easily customisable to help adapt to site-specific environments. See the python modules documentation for more information.
-
-# Quick Start
-
-The simplest way to start Bookmarks as a standalone application is to run:
-
-```python
-import bookmarks
-bookmarks.exec_()
-```
+I developed the app to help manage personal projects and keep [`myself`](https://gergely-wootsch.com) organised (I’m a digitally messy person!). So, whilst it works great for me, it might not be best suited for you. Still, I tried to make it easily customisable to help adapt to site-specific environments. See the [`Python Modules`](https://bookmarks-vfx.com/modules.html#python-modules) page for more information.
 
 # Dependencies
 

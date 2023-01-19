@@ -84,10 +84,12 @@ def _add_path_to_mime(mime, path):
 
 
 @functools.lru_cache(maxsize=1048576)
-def get_path_elements(name, path, source_path):
+def get_path_elements(p, k, name, path, source_path):
     """Returns the path elements needed to populate the file item model data.
 
     Args:
+        p (tuple): Parent path elements.
+        k (str): Task folder.
         name (str): File name.
         path (str): File path.
         source_path (str): File source path.
@@ -118,7 +120,9 @@ def get_path_elements(name, path, source_path):
             if _idx == 6:
                 break
     sort_by_name_role[7] = name.lower()
-
+    # Add server, job, root and task folders to the name sort list
+    for idx, _p in enumerate(p + (k,)):
+        sort_by_name_role[idx] = _p.lower()
     return path, ext, file_root, _dir, sort_by_name_role
 
 
@@ -334,15 +338,13 @@ class FileItemModel(models.ItemModel):
             # These values will always resolve to be the same, and therefore we
             # can use a cache to retrieve them
             filepath, ext, file_root, _dir, sort_by_name_role = get_path_elements(
+                p,
+                k,
                 filename,
                 entry.path,
                 _source_path
             )
             _dirs.append(_dir)
-
-            # Add server, job, root and task folders to the name sort list
-            for idx, _p in enumerate(p + (k,)):
-                sort_by_name_role[idx] = _p.lower()
 
             # We'll check against the current file extension against the allowed
             # extensions. If the task folder is not defined in the token config,

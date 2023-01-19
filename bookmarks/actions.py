@@ -2018,6 +2018,7 @@ def delete_selected_files(index):
     s_data = common.get_data(model.source_path(), model.task(), common.SequenceItem)
 
     paths = set(common.get_sequence_paths(index))
+    print(paths)
 
     # Remove file on disk
     for path in paths:
@@ -2029,8 +2030,8 @@ def delete_selected_files(index):
 
     # Mark cached file data
     for v in f_data.values():
-        if v[QtCore.Qt.DisplayRole] in paths:
-            paths.remove(v[QtCore.Qt.DisplayRole])
+        if v[common.PathRole] in paths:
+            paths.remove(v[common.PathRole])
             v[common.FlagsRole] = QtCore.Qt.NoItemFlags | common.MarkedAsArchived
 
     # Mark cache sequence data

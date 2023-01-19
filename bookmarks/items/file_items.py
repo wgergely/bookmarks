@@ -105,7 +105,6 @@ def get_path_elements(name, path, source_path):
     file_root = path[:path.rfind('/')][len(source_path) + 1:]
 
     sort_by_name_role = models.DEFAULT_SORT_BY_NAME_ROLE.copy()
-
     _dir = None
     if file_root:
         # Save the file's parent folder for the file system watcher
@@ -114,8 +113,9 @@ def get_path_elements(name, path, source_path):
         # list with the sub-folders and file names. Sorting is case-insensitive.
         _file_root = file_root.lower().split('/')
         for idx in range(len(_file_root)):
-            sort_by_name_role[idx + 4] = _file_root[idx].lower()
-            if idx + 4 == 6:
+            _idx = idx + 5
+            sort_by_name_role[_idx] = _file_root[idx].lower()
+            if _idx == 6:
                 break
     sort_by_name_role[7] = name.lower()
 
@@ -271,7 +271,7 @@ class FileItemModel(models.ItemModel):
         fetched by thread workers.
 
         The method iterate the items returned by
-        ``self.item_generator()`` and gathers information for both individual
+        :meth:`item_generator` and gathers information for both individual
         ``FileItems`` and collapsed ``SequenceItems``, excluding items the current
         token filters exclude.
 
@@ -340,8 +340,9 @@ class FileItemModel(models.ItemModel):
             )
             _dirs.append(_dir)
 
+            # Add server, job, root and task folders to the name sort list
             for idx, _p in enumerate(p + (k,)):
-                sort_by_name_role[idx] = _p
+                sort_by_name_role[idx] = _p.lower()
 
             # We'll check against the current file extension against the allowed
             # extensions. If the task folder is not defined in the token config,
@@ -427,7 +428,7 @@ class FileItemModel(models.ItemModel):
                     if sequence_path in common.favourites:
                         flags = flags | common.MarkedAsFavourite
 
-                    sort_by_name_role = list(sort_by_name_role)
+                    sort_by_name_role = sort_by_name_role.copy()
                     sort_by_name_role[7] = sequence_name.lower()
 
                     sequence_data[sequence_path] = common.DataDict(

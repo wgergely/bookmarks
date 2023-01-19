@@ -114,6 +114,8 @@ class FavouriteItemModel(file_items.FileItemModel):
             _source_path = '/'.join(source_paths)
             filename = entry.name
             filepath, ext, file_root, _dir, sort_by_name_role = file_items.get_path_elements(
+                __p,
+                __k,
                 filename,
                 entry.path,
                 _source_path

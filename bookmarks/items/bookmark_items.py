@@ -64,6 +64,7 @@ from . import views
 from .. import actions
 from .. import common
 from .. import contextmenu
+from .. import database
 from ..threads import threads
 
 
@@ -140,6 +141,7 @@ class BookmarkItemModel(models.ItemModel):
             return
 
         data = common.get_data(p, _k, t)
+        database.remove_all_connections()
 
         for k, v in self.item_generator():
             common.check_type(v, dict)
@@ -152,6 +154,8 @@ class BookmarkItemModel(models.ItemModel):
             server = v['server']
             job = v['job']
             root = v['root']
+
+            database.get_db(server, job, root)
 
             file_info = QtCore.QFileInfo(k)
             exists = file_info.exists()

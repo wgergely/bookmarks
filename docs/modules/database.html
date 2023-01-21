@@ -490,7 +490,7 @@ property, but they don’t and instead use the superfluous bookmark table
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.database.BookmarkDB.close" title="bookmarks.database.BookmarkDB.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a>()</p></td>
 <td><p>Closes the connection.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.database.BookmarkDB.connect_with_retries" title="bookmarks.database.BookmarkDB.connect_with_retries"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect_with_retries</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.database.BookmarkDB.connect_to_db" title="bookmarks.database.BookmarkDB.connect_to_db"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect_to_db</span></code></a>()</p></td>
 <td><p>Connects to the database file.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.database.BookmarkDB.connection" title="bookmarks.database.BookmarkDB.connection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connection</span></code></a>()</p></td>
@@ -521,8 +521,8 @@ property, but they don’t and instead use the superfluous bookmark table
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.database.BookmarkDB.connect_with_retries">
-<span class="sig-name descname"><span class="pre">connect_with_retries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/database.html#BookmarkDB.connect_with_retries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.database.BookmarkDB.connect_with_retries" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.database.BookmarkDB.connect_to_db">
+<span class="sig-name descname"><span class="pre">connect_to_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/database.html#BookmarkDB.connect_to_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.database.BookmarkDB.connect_to_db" title="Permalink to this definition">#</a></dt>
 <dd><p>Connects to the database file.</p>
 <p>The database can be locked for a brief period of time whilst it is being
 used by another other controller instance in another thread. This might
@@ -802,7 +802,7 @@ in <cite>common.db_connections</cite>.</p>
 <li><a class="reference internal" href="#">database</a><ul>
 <li><a class="reference internal" href="#bookmarks.database.BookmarkDB"><code class="docutils literal notranslate"><span class="pre">BookmarkDB</span></code></a><ul>
 <li><a class="reference internal" href="#bookmarks.database.BookmarkDB.close"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.close()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.BookmarkDB.connect_with_retries"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.connect_with_retries()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.database.BookmarkDB.connect_to_db"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.connect_to_db()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.database.BookmarkDB.connection"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.connection()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.database.BookmarkDB.get_row"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.get_row()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.database.BookmarkDB.is_valid"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.is_valid()</span></code></a></li>

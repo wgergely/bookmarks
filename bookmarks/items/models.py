@@ -186,6 +186,9 @@ class ItemModel(QtCore.QAbstractTableModel):
     # Update signals
     updateIndex = QtCore.Signal(QtCore.QModelIndex)
 
+    # Row size change signal
+    rowHeightChanged = QtCore.Signal(int)
+
     queues = ()
 
     def __init__(self, parent=None):
@@ -242,6 +245,8 @@ class ItemModel(QtCore.QAbstractTableModel):
             if role in data[index.row()]:
                 return data[index.row()][role]
 
+        if role == QtCore.Qt.SizeHintRole:
+            return self.row_size
         return None
 
     def setData(self, index, v, role=QtCore.Qt.DisplayRole):
@@ -547,6 +552,7 @@ class ItemModel(QtCore.QAbstractTableModel):
         val = int(common.thumbnail_size) if val >= int(
             common.thumbnail_size) else val
         self.row_size.setHeight(int(val))
+        self.rowHeightChanged.emit(self.row_size.height())
 
     def sort_by(self):
         """Current sort role.

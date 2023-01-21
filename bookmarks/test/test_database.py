@@ -68,7 +68,7 @@ class Test(base.BaseCase):
                     v = float(random.randrange(99999))
                 elif _type == dict:
                     v = {0: base.random_ascii(36), 1: base.random_str(36)}
-                    db.setValue(db.source(), k, v, t)
+                    db.set_value(db.source(), k, v, t)
                     _v = db.value(db.source(), k, t)
                     self.assertNotEqual(v, _v)
 
@@ -77,7 +77,7 @@ class Test(base.BaseCase):
                 else:
                     v = None
 
-                db.setValue(db.source(), k, v, t)
+                db.set_value(db.source(), k, v, t)
                 _v = db.value(db.source(), k, t)
                 self.assertEqual(_v, v)
                 self.assertIsInstance(_v, _type)
@@ -111,6 +111,6 @@ class Test(base.BaseCase):
                 else:
                     v = None
 
-                db.setValue(db.source(), k, v, t)
+                db.set_value(db.source(), k, v, t)
                 _v = db.value(db.source(), k, t)
                 self.assertIsNone(_v)

@@ -429,7 +429,7 @@ def import_favourites(*args, source=None):
                 table = database.BookmarkTable
             else:
                 table = database.AssetTable
-            db.setValue(source, k, database.b64decode(v), table=table)
+            db.set_value(source, k, database.b64decode(v), table=table)
 
     common.settings.set_favourites(data)
     common.signals.favouritesChanged.emit()

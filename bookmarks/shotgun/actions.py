@@ -258,7 +258,7 @@ def save_entity_data_to_db(server, job, root, source, table, entity, value_map):
             # If 'overwrite' is `True`, no matter what, we'll overwrite the
             # current database value
             if v['overwrite']:
-                db.setValue(s, k, _v, table=t)
+                db.set_value(s, k, _v, table=t)
                 continue
 
             # Nothing to do if there's overwrite is False, and the entity does
@@ -269,7 +269,7 @@ def save_entity_data_to_db(server, job, root, source, table, entity, value_map):
             # Entity has data, and we have nothing set currently in our database
             cval = db.value(s, k, t)
             if not cval and _v:
-                db.setValue(s, k, _v, t)
+                db.set_value(s, k, _v, t)
 
 
 def get_status_codes(sg):

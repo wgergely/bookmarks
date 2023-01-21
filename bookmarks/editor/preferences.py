@@ -273,15 +273,6 @@ SECTIONS = {
                     'description': '',
                     'button': 'Reset Image Cache'
                 },
-                2: {
-                    'name': '',
-                    'key': 'reset_databases',
-                    'validator': None,
-                    'widget': None,
-                    'placeholder': '',
-                    'description': '',
-                    'button': 'Reset Database Connections'
-                },
             },
         },
     },
@@ -365,9 +356,3 @@ class PreferenceEditor(base.BasePropertyEditor):
         from .. import images
         images.init_image_cache()
 
-    @common.error
-    @common.debug
-    @QtCore.Slot()
-    def reset_databases_button_clicked(self, *args, **kwargs):
-        from .. import database
-        database.remove_all_connections()

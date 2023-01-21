@@ -580,7 +580,7 @@ class TokenConfig(QtCore.QObject):
         common.check_type(data, dict)
 
         db = database.get_db(self.server, self.job, self.root)
-        db.setValue(
+        db.set_value(
             db.source(),
             TOKENS_DB_KEY,
             data,

@@ -918,14 +918,11 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
             k = p
 
         # Set the database value
+        # Note that we don't need to set the data directly as
+        # the database will emit a value changed signal that will
+        # automatically update the views and model data caches
         db = database.get_db(*source_path[0:3])
-        db.setValue(k, 'description', editor.text())
-
-        # Set value to cached data
-        source_index = index.model().mapToSource(index)
-        data = source_index.model().model_data()
-        idx = source_index.row()
-        data[idx][common.DescriptionRole] = editor.text()
+        db.set_value(k, 'description', editor.text())
 
     def paint(self, painter, option, index):
         """Paints an item.
@@ -1592,17 +1589,19 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         if index.row() == (self.parent().model().rowCount() - 1):
             rect.setHeight(rect.height() + common.size(common.size_separator))
 
+        op = 0.5 if selected else 0.2
+
         rect.setLeft(
             option.rect.left() +
             common.size(common.size_indicator) + option.rect.height()
         )
-        painter.setOpacity(0.5)
+        painter.setOpacity(op)
         painter.setBrush(common.color(common.color_green))
         painter.drawRoundedRect(
             rect, common.size(common.size_indicator),
             common.size(common.size_indicator)
         )
-        painter.setOpacity(0.5)
+        painter.setOpacity(op)
         pen = QtGui.QPen(common.color(common.color_green))
         pen.setWidth(common.size(common.size_separator) * 2)
         painter.setPen(pen)
@@ -2252,6 +2251,57 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         )
         painter.drawPixmap(rect, pixmap, pixmap.rect())
 
+
+    @save_painter
+    def paint_db_status(self, *args):
+        """Paints the item's Slack configuration status.
+
+        """
+        (
+            rectangles,
+            painter,
+            option,
+            index,
+            selected,
+            focused,
+            active,
+            archived,
+            favourite,
+            hover,
+            font,
+            metrics,
+            cursor_position
+        ) = args
+
+        if not index.isValid():
+            return
+        if not index.data(QtCore.Qt.DisplayRole):
+            return
+        if not index.data(common.ParentPathRole):
+            return
+
+        db = database.get_db(*index.data(common.ParentPathRole)[0:3])
+        if db.is_valid():
+            return
+
+        rect = QtCore.QRect(
+            0, 0, common.size(
+                common.size_margin
+            ), common.size(common.size_margin)
+        )
+        rect.moveCenter(rectangles[BackgroundRect].center())
+
+        painter.setOpacity(1.0) if hover else painter.setOpacity(0.9)
+
+        pixmap = images.ImageCache.rsc_pixmap(
+            'alert', common.color(common.color_red), common.size(common.size_margin)
+        )
+        painter.drawPixmap(rect, pixmap, pixmap.rect())
+        painter.setBrush(common.color(common.color_red))
+        painter.setPen(QtCore.Qt.NoPen)
+        painter.setOpacity(0.1)
+        painter.drawRect(rectangles[BackgroundRect])
+
     @save_painter
     def paint_drag_source(self, *args, **kwargs):
         """Overlay do indicate the source of a drag operation."""
@@ -2766,7 +2816,7 @@ class BookmarkItemViewDelegate(ItemDelegate):
         # Set the database value
         db = database.get_db(*source_path[0:3])
         with db.connection():
-            db.setValue(k, 'description', editor.text(), table=database.BookmarkTable)
+            db.set_value(k, 'description', editor.text(), table=database.BookmarkTable)
             bookmark_row_data = db.get_row(db.source(), database.BookmarkTable)
 
         # Set value to cached data
@@ -2802,6 +2852,7 @@ class BookmarkItemViewDelegate(ItemDelegate):
             self.paint_selection_indicator(*args)
             self.paint_slack_status(*args)
             self.paint_shotgun_status(*args)
+            self.paint_db_status(*args)
             self.paint_drag_source(*args)
             self.paint_deleted(*args)
 
@@ -2843,6 +2894,7 @@ class AssetItemViewDelegate(ItemDelegate):
             self.paint_thumbnail_drop_indicator(*args)
             self.paint_selection_indicator(*args)
             self.paint_shotgun_status(*args)
+            self.paint_db_status(*args)
             self.paint_dcc_icon(*args)
             self.paint_drag_source(*args)
             self.paint_deleted(*args)
@@ -2893,6 +2945,7 @@ class FileItemViewDelegate(ItemDelegate):
             self.paint_description_editor_background(*args)
             self.paint_drag_source(*args)
             self.paint_deleted(*args)
+            self.paint_db_status(*args)
 
     def sizeHint(self, option, index):
         """Returns the item's size hint.

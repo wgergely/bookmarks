@@ -466,7 +466,7 @@ class PrefixEditor(QtWidgets.QDialog):
             self.parent().job,
             self.parent().root
         )
-        db.setValue(
+        db.set_value(
             db.source(),
             'prefix',
             self.editor.text(),

@@ -311,6 +311,6 @@ def import_item_properties(index, source=None, prompt=True):
     source = index.data(common.PathRole)
     with db.connection():
         for k, v in bookmark_table_data.items():
-            db.setValue(source, k, v, table=database.BookmarkTable)
+            db.set_value(source, k, v, table=database.BookmarkTable)
         for k, v in asset_table_data.items():
-            db.setValue(source, k, v, table=database.AssetTable)
+            db.set_value(source, k, v, table=database.AssetTable)

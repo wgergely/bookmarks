@@ -25,7 +25,7 @@ This will return cached, thread-specific database controllers. E.g.:
     db = database.get_db(server, job, root)
     v = db.value(*args)
 
-Each :meth:`BookmarkDB.value` and :meth:`BookmarkDB.setValue` call will autocommit.
+Each :meth:`BookmarkDB.value` and :meth:`BookmarkDB.set_value` call will autocommit.
 You can batch commits together by using the built-in context manager:
 
 .. code-block:: python
@@ -35,7 +35,7 @@ You can batch commits together by using the built-in context manager:
 
     db = database.get_db(server, job, root)
     with db.connection():
-        db.setValue(*args)
+        db.set_value(*args)
 
 There are two tables that hold item data: ``common.BookmarkTable`` and
 ``common.AssetTable``. The asset table is meant to be used as a general table to hold
@@ -69,8 +69,6 @@ AssetTable = 'AssetData'
 BookmarkTable = 'BookmarkData'
 #: Database table name
 InfoTable = 'InfoData'
-
-database_connect_retries = 100
 
 #: sqlite3 database structure definition
 TABLES = {
@@ -284,7 +282,8 @@ def get_db(server, job, root, force=False):
 
     if key in common.db_connections:
         if force:
-            common.db_connections[key].connect_with_retries()
+            common.db_connections[key].deleteLater()
+            common.db_connections[key] = BookmarkDB(server, job, root)
         return common.db_connections[key]
 
     db = BookmarkDB(server, job, root)
@@ -323,6 +322,7 @@ def remove_all_connections():
         common.db_connections[k].close()
         common.db_connections[k].deleteLater()
         del common.db_connections[k]
+    common.db_connections = {}
 
 
 @functools.lru_cache(maxsize=4194304)
@@ -362,7 +362,7 @@ def set_flag(server, job, root, k, mode, flag):
     f = db.value(k, 'flags', AssetTable)
     f = 0 if f is None else f
     f = f | flag if mode else f & ~flag
-    db.setValue(k, 'flags', f, AssetTable)
+    db.set_value(k, 'flags', f, AssetTable)
 
 
 def _verify_args(source, key, table, value=None):
@@ -455,6 +455,7 @@ class BookmarkDB(QtCore.QObject):
             common.check_type(arg, str)
 
         self._is_valid = False
+        self._is_memory = False
         self._connection = None
         self._version = None
 
@@ -466,43 +467,36 @@ class BookmarkDB(QtCore.QObject):
         self._bookmark_root = f'{self._bookmark}/{common.bookmark_cache_dir}'
         self._database_path = f'{self._bookmark_root}/{common.bookmark_database}'
 
-        if self._create_bookmark_dir():
-            self.connect_with_retries()
+        if not self._create_bookmark_dir():
+            self.connect_to_db(memory=True)
         else:
-            self._connect_to_memory_db()
+            self.connect_to_db(memory=False)
 
-        self._init_version()
-        self._init_tables()
+        self.init_tables()
+        self._connect_signals()
 
+    def _connect_signals(self):
         self.destroyed.connect(self.close)
 
-    def _init_version(self):
-        if not self._connection:
-            return
-        v = self._connection.execute("SELECT sqlite_version();").fetchone()[0]
-        if not v:
-            self._version = [0, 0, 0]
-            return
-        self._version = [int(i) for i in v.split('.')]
+    def init_tables(self):
+        def _init():
+            for table in TABLES:
+                self._create_table(table)
+                self._patch_table(table)
+            self._add_info()
+            self._init_version()
+            self._connection.commit()
 
-    def _connect_to_memory_db(self):
-        """Creates an in-memory database when we're unable to connect to the
-        physical database.
+        try:
+            _init()
+            self._is_valid = True
+        except sqlite3.Error as e:
+            self._is_valid = False
+            log.error(e)
+            self.connect_to_db(memory=True)
+            _init()
 
-        This is so that Bookmarks keeps running uninterrupted even when the database is unreachable.
-        Data saved the in-memory database won't be saved to disk.
-
-        """
-        self._connection = sqlite3.connect(
-            ':memory:',
-            isolation_level=None,
-            check_same_thread=False,
-            cached_statements=1000
-        )
-        self._is_valid = False
-        return self._connection
-
-    def connect_with_retries(self):
+    def connect_to_db(self, memory=False):
         """Connects to the database file.
 
         The database can be locked for a brief period of time whilst it is being
@@ -514,27 +508,34 @@ class BookmarkDB(QtCore.QObject):
         mark the instance ``invalid`` (:meth:`BookmarkDB.is_valid` will return `False`).
 
         """
-        n = 0
-        while True:
+        if not memory:
             try:
                 self._connection = sqlite3.connect(
                     self._database_path,
                     isolation_level=None,
                     check_same_thread=False,
-                    cached_statements=1000
+                    cached_statements=1000,
+                    timeout=2
                 )
                 self._is_valid = True
-                return self._connection
-            except sqlite3.Error:
-                if n == database_connect_retries:
-                    self._connect_to_memory_db()
-                    return self._connection
-                sleep()
-                log.error('Error.')
-                n += 1
-            except (RuntimeError, ValueError, TypeError, OSError):
-                log.error('Error.')
-                raise
+            except sqlite3.Error as e:
+                self._is_valid = False
+                log.error(e)
+
+        if memory or not self._is_valid:
+            self._connection = sqlite3.connect(
+                ':memory:',
+                isolation_level=None,
+                check_same_thread=False,
+            )
+            self._is_valid = False
+            self._is_memory = True
+
+    def _init_version(self):
+        sql = 'SELECT sqlite_version();'
+        res = self._connection.execute(sql)
+        v = res.fetchone()[0]
+        self._version = [int(i) for i in v.split('.')] if v else [0, 0, 0]
 
     def _create_bookmark_dir(self):
         """Creates the `bookmark_cache_dir` if it does not yet exist.
@@ -546,22 +547,19 @@ class BookmarkDB(QtCore.QObject):
         """
         _root_dir = QtCore.QDir(self._bookmark)
         if not _root_dir.exists():
+            log.error(f'Could not create {_root_dir.path()}')
             return False
 
         _cache_dir = QtCore.QDir(self._bookmark_root)
-        _thumb_dir = QtCore.QDir(f'{self._bookmark_root}/thumbnails')
-        if not _cache_dir.exists():
-            if not _cache_dir.mkpath('.'):
-                log.error(f'Could not create {_cache_dir.path()}')
-                return False
-            if not _thumb_dir.mkpath('.'):
-                log.error(f'Could not create {_thumb_dir.path()}')
-                return False
-            return True
+        if not _cache_dir.exists() and not _cache_dir.mkpath('.'):
+            log.error(f'Could not create {_cache_dir.path()}')
+            return False
 
+        _thumb_dir = QtCore.QDir(f'{self._bookmark_root}/thumbnails')
         if not _thumb_dir.exists() and not _thumb_dir.mkpath('.'):
             log.error(f'Could not create {_thumb_dir.path()}')
             return False
+
         return True
 
     def _create_table(self, table):
@@ -574,10 +572,10 @@ class BookmarkDB(QtCore.QObject):
             args.append(f'{k} {v["sql"]}')
 
         sql = f'CREATE TABLE IF NOT EXISTS {table} ({",".join(args)})'
-        self.connection().execute(sql)
+        self._connection.execute(sql)
 
         sql = f'CREATE UNIQUE INDEX IF NOT EXISTS {table}_id_idx ON {table} (id)'
-        self.connection().execute(sql)
+        self._connection.execute(sql)
 
     def _patch_table(self, table):
         """Patches the table for backwards compatibility using ALTER if we encounter
@@ -585,21 +583,16 @@ class BookmarkDB(QtCore.QObject):
 
         """
         sql = f'PRAGMA table_info(\'{table}\');'
+        res = self._connection.execute(sql)
+        data = res.fetchall()
 
-        table_info = self.connection().execute(sql).fetchall()
-
-        columns = [c[1] for c in table_info]
+        columns = [c[1] for c in data]
         missing = list(set(TABLES[table]) - set(columns))
 
         for column in missing:
-            cmd = f'ALTER TABLE {table} ADD COLUMN {column};'
-            try:
-                self.connection().execute(cmd)
-                log.success(f'Added missing column {missing}')
-            except Exception as e:
-                log.error(
-                    f'Failed to add missing column {column}\n{e}')
-                raise
+            sql = f'ALTER TABLE {table} ADD COLUMN {column};'
+            self._connection.execute(sql)
+            log.success(f'Added missing column "{missing}"')
 
     def _add_info(self):
         """Adds information about who and when created the database.
@@ -622,32 +615,14 @@ class BookmarkDB(QtCore.QObject):
             host=b64encode(platform.node()),
             created=time.time(),
         )
-        self.connection().execute(sql)
 
-    def _init_tables(self):
-        """Initialises the database with the default tables.
+        self._connection.execute(sql)
 
-        If the database is new or empty, we will create the tables.
-        If the database has tables already, we'll check the columns against
-        the table definitions and add any missing ones.
+    def connection(self):
+        """Returns the connection instance.
 
         """
-        n = 0
-        while True:
-            n += 1
-
-            try:
-                for table in TABLES:
-                    self._create_table(table)
-                    self._patch_table(table)
-                self._add_info()
-                self.connection().commit()
-                return
-            except:
-                if n >= database_connect_retries:
-                    self.connection().rollback()
-                    raise
-                sleep()
+        return self._connection
 
     def is_valid(self):
         """Returns the database's status.
@@ -656,15 +631,9 @@ class BookmarkDB(QtCore.QObject):
             bool: True if the database is valid, False otherwise.
 
         """
-        if not self._connection:
+        if self._is_memory:
             return False
         return self._is_valid
-
-    def connection(self):
-        """Returns the connection instance.
-
-        """
-        return self._connection
 
     def close(self):
         """Closes the connection.
@@ -673,8 +642,9 @@ class BookmarkDB(QtCore.QObject):
         try:
             self._connection.commit()
             self._connection.close()
-        except sqlite3.Error:
-            log.error('Database error.')
+        except sqlite3.Error as e:
+            log.error(e)
+            self._is_valid = False
         finally:
             self._connection = None
 
@@ -697,7 +667,7 @@ class BookmarkDB(QtCore.QObject):
 
         Args:
             source (str): A source file path.
-            table (str): A database table name.
+            table (str): A database 01table name.
 
         Returns:
             dict: A dictionary of column/value pairs.
@@ -706,26 +676,31 @@ class BookmarkDB(QtCore.QObject):
         common.check_type(source, str)
         common.check_type(table, str)
 
+        def _get_empty_row():
+            _values = {}
+            for k in columns:
+                if k == 'id':
+                    continue
+                _values[k] = None
+            return _values
+
         _hash = common.get_hash(source)
         sql = f'SELECT * FROM {table} WHERE id=\'{_hash}\''
 
         try:
-            cursor = self.connection().execute(sql)
-            columns = [f[0] for f in cursor.description]
-            row = cursor.fetchone()
-        except Exception as e:
-            log.error(f'Failed to get value from database.\n{e}')
-            raise
+            res = self._connection.execute(sql)
+            self._is_valid = True
+        except sqlite3.Error as e:
+            self._is_valid = False
+            log.error(e)
+            return _get_empty_row()
+
+        columns = [f[0] for f in res.description]
+        row = res.fetchone()
+        if not row:
+            return _get_empty_row()
 
         values = {}
-
-        if not row:
-            for key in columns:
-                if key == 'id':
-                    continue
-                values[key] = None
-            return values
-
         for idx, key in enumerate(columns):
             if key == 'id':
                 continue
@@ -757,19 +732,18 @@ class BookmarkDB(QtCore.QObject):
 
         sql = _get_sql(source, key, table)
 
+        value = None
         try:
-            row = self.connection().execute(sql).fetchone()
-        except Exception as e:
-            log.error(f'Failed to get value from database.\n{e}')
-            raise
-
-        if not row:
-            return None
-
-        value = row[0]
+            res = self._connection.execute(sql)
+            row = res.fetchone()
+            value = row[0] if row else None
+            self._is_valid = True
+        except sqlite3.Error as e:
+            self._is_valid = False
+            log.error(e)
         return convert_return_values(table, key, value)
 
-    def setValue(self, source, key, value, table=AssetTable):
+    def set_value(self, source, key, value, table=AssetTable):
         """Sets the given value in the database.
 
         .. code-block:: python
@@ -777,7 +751,7 @@ class BookmarkDB(QtCore.QObject):
 
             db = database.get_db(server, job, root)
             source = f'//{server}/{job}/{root}/sh0010/scenes/my_scene.ma'
-            db.setValue(source, 'description', 'hello world')
+            db.set_value(source, 'description', 'hello world')
 
         Args:
             source (str): Source file path.
@@ -833,7 +807,7 @@ class BookmarkDB(QtCore.QObject):
                 values=','.join(values),
                 table=table
             )
-        else: # use upsert for versions 3.24.0 and above
+        else:  # use upsert for versions 3.24.0 and above
             sql = 'INSERT INTO {table} (id, {key}) VALUES (\'{hash}\', \'{value}\')' \
                   ' ON CONFLICT(id) DO UPDATE SET {key}=excluded.{key};'.format(
                 hash=_hash,
@@ -843,12 +817,13 @@ class BookmarkDB(QtCore.QObject):
             )
 
         try:
-            self.connection().execute(sql)
+            self._connection.execute(sql)
+            self._is_valid = True
 
-            # Finally, we'll notify others of the changed value
+            # Emit change signal with the value set in the database
             _value = self.value(source, key, table=table)
             common.signals.databaseValueUpdated.emit(
                 table, source, key, _value)
-
-        except Exception as e:
-            log.error(f'Failed to set value.\n{e}')
+        except sqlite3.Error as e:
+            log.error(f'Error setting value:\n{e}')
+            self._is_valid = False

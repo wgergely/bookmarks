@@ -315,14 +315,14 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
         data = common.get_data(p, k, t)
 
         # We don't have to modify the internal data directly because
-        # the db.setValue call will trigger an item refresh
+        # the db.set_value call will trigger an item refresh
         progress_data = copy.deepcopy(data[index.row()][common.AssetProgressRole])
         progress_data[index.column() - 1]['value'] = editor.currentData()
 
         # Write current data to the database
         pp = data[index.row()][common.ParentPathRole]
         db = database.get_db(*pp[0:3])
-        db.setValue(
+        db.set_value(
             data[index.row()][common.PathRole],
             'progress',
             progress_data,

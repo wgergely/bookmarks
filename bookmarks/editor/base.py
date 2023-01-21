@@ -715,7 +715,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         db = database.get_db(self.server, self.job, self.root)
         with db.connection():
             for k, v in self.changed_data.copy().items():
-                db.setValue(
+                db.set_value(
                     self.db_source(),
                     k,
                     v,

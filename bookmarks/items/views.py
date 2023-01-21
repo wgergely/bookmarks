@@ -501,6 +501,10 @@ class BaseItemView(QtWidgets.QTableView):
         self.delayed_restore_selection_timer.setInterval(10)
         self.delayed_restore_selection_timer.setSingleShot(True)
 
+        self.delayed_save_visible_timer = common.Timer(parent=self)
+        self.delayed_save_visible_timer.setInterval(100)
+        self.delayed_save_visible_timer.setSingleShot(True)
+
         self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
 
@@ -529,6 +533,7 @@ class BaseItemView(QtWidgets.QTableView):
 
         self.delayed_save_selection_timer.timeout.connect(self.save_selection)
         self.delayed_restore_selection_timer.timeout.connect(self.restore_selection)
+        self.delayed_save_visible_timer.timeout.connect(self.save_visible_rows)
 
     def get_source_model(self):
         """Returns the model class associated with this view.
@@ -599,11 +604,9 @@ class BaseItemView(QtWidgets.QTableView):
         model.modelReset.connect(self.delay_restore_selection)
         proxy.invalidated.connect(self.delay_restore_selection)
 
-        model.modelReset.connect(self.save_visible_rows)
-        proxy.modelReset.connect(self.save_visible_rows)
-        proxy.invalidated.connect(self.save_visible_rows)
-
-        model.modelReset.connect(self.reset_row_layout)
+        model.modelReset.connect(self.delayed_save_visible_rows)
+        proxy.modelReset.connect(self.delayed_save_visible_rows)
+        proxy.invalidated.connect(self.delayed_save_visible_rows)
 
         model.updateIndex.connect(
             self.update, type=QtCore.Qt.DirectConnection)
@@ -611,6 +614,13 @@ class BaseItemView(QtWidgets.QTableView):
         common.signals.paintThumbnailBGChanged.connect(
             self.repaint_visible_rows
         )
+        model.rowHeightChanged.connect(self.row_size_changed)
+
+    @QtCore.Slot(int)
+    def row_size_changed(self, v):
+        v = int(v)
+        self.verticalHeader().setDefaultSectionSize(v)
+        self.reset_row_layout()
 
     @QtCore.Slot(QtCore.QModelIndex)
     def update(self, index):
@@ -1190,7 +1200,7 @@ class BaseItemView(QtWidgets.QTableView):
         row = index.row() if index.isValid() else -1
 
         # Update the layout
-        self.save_visible_rows()
+        self.delayed_save_visible_rows()
 
         # Restore the selection
         if row >= 0:
@@ -1217,13 +1227,6 @@ class BaseItemView(QtWidgets.QTableView):
         model.set_filter_setting('filters/row_heights', int(v))
 
         self.verticalHeader().setDefaultSectionSize(int(v))
-
-        # Notify the delegate of the new row size
-        for idx in range(proxy.rowCount()):
-            index = proxy.index(idx, 0)
-            self.itemDelegate().sizeHintChanged.emit(index)
-            break
-
         self.reset_row_layout()
 
     @common.error
@@ -1562,13 +1565,13 @@ class BaseItemView(QtWidgets.QTableView):
         """Custom wheel event responsible for scrolling the list.
 
         """
-        event.accept()
+        event.ignore()
         control_modifier = event.modifiers() & QtCore.Qt.ControlModifier
 
         if not control_modifier:
             shift_modifier = event.modifiers() & QtCore.Qt.ShiftModifier
 
-            # Adjust the scroll amount based on thw row size
+            # Adjust the scroll amount based on the row size
             if self.model().sourceModel().row_size.height() > (
                     common.size(common.size_row_height) * 2):
                 o = 9 if shift_modifier else 1
@@ -1580,12 +1583,14 @@ class BaseItemView(QtWidgets.QTableView):
                 v = self.verticalScrollBar().setValue(v + o)
             else:
                 v = self.verticalScrollBar().setValue(v - o)
+            self.start_delayed_queue_timer()
             return
 
         if event.angleDelta().y() > 0:
             actions.increase_row_size()
         else:
             actions.decrease_row_size()
+        self.start_delayed_queue_timer()
 
     def contextMenuEvent(self, event):
         """Custom context menu event."""
@@ -1677,7 +1682,7 @@ class InlineIconView(BaseItemView):
     """
 
     def __init__(self, icon='bw_icon', parent=None):
-        super(InlineIconView, self).__init__(icon=icon, parent=parent)
+        super().__init__(icon=icon, parent=parent)
 
         self._clicked_rect = QtCore.QRect()
 
@@ -1806,7 +1811,7 @@ class InlineIconView(BaseItemView):
 
         if index.column() == 0:
             if not index.isValid() or not index.flags() & QtCore.Qt.ItemIsEnabled:
-                super(InlineIconView, self).mousePressEvent(event)
+                super().mousePressEvent(event)
                 self._clicked_rect = QtCore.QRect()
                 self.reset_multi_toggle()
                 return
@@ -1837,14 +1842,14 @@ class InlineIconView(BaseItemView):
                 self.multi_toggle_state = not index.flags() & common.MarkedAsArchived
                 self.multi_toggle_flag = delegate.ArchiveRect
 
-        super(InlineIconView, self).mousePressEvent(event)
+        super().mousePressEvent(event)
 
     def enterEvent(self, event):
         """Event handler.
 
         """
         QtWidgets.QApplication.instance().restoreOverrideCursor()
-        super(InlineIconView, self).enterEvent(event)
+        super().enterEvent(event)
 
     def leaveEvent(self, event):
         """Event handler.
@@ -1887,12 +1892,12 @@ class InlineIconView(BaseItemView):
 
             if not index.isValid():
                 self.reset_multi_toggle()
-                super(InlineIconView, self).mouseReleaseEvent(event)
+                super().mouseReleaseEvent(event)
                 return
 
             if self.multi_toggle_items:
                 self.reset_multi_toggle()
-                super(InlineIconView, self).mouseReleaseEvent(event)
+                super().mouseReleaseEvent(event)
                 self.model().invalidateFilter()
                 return
 
@@ -1937,7 +1942,7 @@ class InlineIconView(BaseItemView):
 
             self._clicked_rect = QtCore.QRect()
 
-        super(InlineIconView, self).mouseReleaseEvent(event)
+        super().mouseReleaseEvent(event)
 
     def add_item_action(self, index):
         """Action to execute when the add item icon is clicked."""
@@ -2044,7 +2049,7 @@ class InlineIconView(BaseItemView):
                     app.setOverrideCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
             else:
                 app.restoreOverrideCursor()
-            super(InlineIconView, self).mouseMoveEvent(event)
+            super().mouseMoveEvent(event)
             return
 
         if event.buttons() == QtCore.Qt.NoButton:
@@ -2101,7 +2106,7 @@ class ThreadedItemView(InlineIconView):
 
     def __init__(self, icon='bw_icon', parent=None):
         self.delayed_queue_timer = common.Timer()
-        self.delayed_queue_timer.setInterval(100)
+        self.delayed_queue_timer.setInterval(500)
         self.delayed_queue_timer.setSingleShot(True)
 
         super().__init__(icon=icon, parent=parent)
@@ -2109,8 +2114,8 @@ class ThreadedItemView(InlineIconView):
         self.update_queue = collections.deque([], common.max_list_items)
         self.update_queue_timer = common.Timer(parent=self)
         self.update_queue_timer.setSingleShot(True)
-        self.update_queue_timer.setInterval(10)
-        self.update_queue_timer.timeout.connect(self.queued_row_update)
+        self.update_queue_timer.setInterval(20)
+        self.update_queue_timer.timeout.connect(self.queued_row_repaint)
 
         self.init_threads()
 
@@ -2140,7 +2145,7 @@ class ThreadedItemView(InlineIconView):
         super().init_model(*args, **kwargs)
         self.refUpdated.connect(self.update_row)
 
-        self.delayed_queue_timer.timeout.connect(self.save_visible_rows)
+        self.delayed_queue_timer.timeout.connect(self.delayed_save_visible_rows)
         self.delayed_queue_timer.timeout.connect(self.queue_visible_indexes)
 
         self.model().invalidated.connect(self.start_delayed_queue_timer)
@@ -2218,7 +2223,7 @@ class ThreadedItemView(InlineIconView):
             self.update_queue.append(ref)
             self.update_queue_timer.start(self.update_queue_timer.interval())
 
-    def queued_row_update(self):
+    def queued_row_repaint(self):
         """Process a repaint request."""
         try:
             ref = self.update_queue.popleft()
@@ -2234,6 +2239,11 @@ class ThreadedItemView(InlineIconView):
                 break
 
         self.update_queue_timer.start(self.update_queue_timer.interval())
+
+    @QtCore.Slot()
+    def delayed_save_visible_rows(self):
+        self.delayed_save_visible_timer.start(
+            self.delayed_save_visible_timer.interval())
 
     @QtCore.Slot()
     @common.debug
@@ -2262,7 +2272,6 @@ class ThreadedItemView(InlineIconView):
             i += 1
 
             self.visible_rows['proxy_rows'].append(index.row())
-            # self.visible_rows['source_rows'].append(model.mapToSource(index).row())
             self.visible_rows['source_rows'].append(index.data(common.IdRole))
 
             rect.moveTop(rect.top() + rect.height())

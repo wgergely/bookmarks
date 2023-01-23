@@ -1282,6 +1282,48 @@ def get_group(parent=None, vertical=True, margin=common.size(common.size_margin)
     return grp
 
 
+def get_progress_bar(title, label, start, end, parent=None):
+    """A progress bar used during the conversion process.
+
+    Args:
+        title (str): The title of the progress bar window.
+        label (str): The current progress description.
+        start (int): The range start.
+        end (int): The range end.
+        parent (QObject, optional): A QWidget instance
+
+    Returns:
+        QProgressBar: A widget instance.
+
+    """
+    start = int(start)
+    end = int(end)
+
+    v = QtWidgets.QProgressDialog(parent=parent)
+    common.set_stylesheet(v)
+    v.setFixedWidth(common.size(common.size_width))
+    v.setLabelText(label)
+    v.setMinimum(start)
+    v.setMaximum(end)
+    v.setRange(start, end)
+    v.setWindowTitle(title)
+
+    if parent:
+        # v.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        # v.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        v.setWindowFlags(
+            QtCore.Qt.Dialog |
+            QtCore.Qt.WindowStaysOnTopHint |
+            QtCore.Qt.FramelessWindowHint
+        )
+        v.setFixedWidth(parent.width())
+        v.setFixedHeight(parent.height())
+        v.setGeometry(parent.geometry())
+        v.move(parent.geometry().topLeft())
+
+    return v
+
+
 def add_row(
         label,
         color=common.color(common.color_secondary_text),

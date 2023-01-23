@@ -243,6 +243,8 @@ class ListsWidget(QtWidgets.QStackedWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setObjectName('BrowserStackedWidget')
+        self.animation = QtCore.QParallelAnimationGroup(self)
+        self.animation.finished.connect(self.animation_finished)
         common.signals.tabChanged.connect(self.setCurrentIndex)
 
     def setCurrentIndex(self, idx):
@@ -273,8 +275,68 @@ class ListsWidget(QtWidgets.QStackedWidget):
 
         # Save tab to user settings
         common.settings.setValue('selection/current_tab', idx)
-        super().setCurrentIndex(idx)
-        self.currentWidget().setFocus()
+
+        current_index = self.currentIndex()
+        if current_index == idx:
+            return
+
+        a = self.animation.animationAt(0)
+        if a and a.currentTime() < a.totalDuration():
+            return
+
+        self.animation.clear()
+
+        duration = 200
+        # Create animation for outgoing widget
+        out_anim = QtCore.QPropertyAnimation(self.widget(current_index), b"geometry")
+        out_anim.setEasingCurve(QtCore.QEasingCurve.OutQuad)
+        out_anim.setDuration(duration)
+
+        out_rect = self.currentWidget().geometry()
+        if current_index > idx:
+            out_rect.moveLeft(self.width())
+        else:
+            out_rect.moveLeft(-self.width())
+        out_anim.setStartValue(self.currentWidget().geometry())
+        out_anim.setEndValue(out_rect)
+
+        # Create animation for incoming widget
+        in_anim = QtCore.QPropertyAnimation(self.widget(idx), b"geometry")
+        in_anim.setEasingCurve(QtCore.QEasingCurve.OutQuad)
+        in_anim.setDuration(duration)
+
+        in_rect = self.currentWidget().geometry()
+        if current_index > idx:
+            in_rect.moveLeft(-in_rect.width())
+        else:
+            in_rect.moveLeft(in_rect.width())
+        in_anim.setStartValue(in_rect)
+        in_anim.setEndValue(self.currentWidget().geometry())
+
+        out_op = QtCore.QPropertyAnimation(self.widget(current_index).graphicsEffect(), b"opacity")
+        out_op.setStartValue(1.0)
+        out_op.setEndValue(0.0)
+        in_op = QtCore.QPropertyAnimation(self.widget(idx).graphicsEffect(), b"opacity")
+        in_op.setStartValue(0.0)
+        in_op.setEndValue(1.0)
+
+        self.animation.addAnimation(out_anim)
+        self.animation.addAnimation(in_anim)
+        self.animation.addAnimation(out_op)
+        self.animation.addAnimation(in_op)
+
+        self.widget(idx).show()
+        self.animation.start()
+
+    @QtCore.Slot()
+    def animation_finished(self):
+        anim = self.animation.animationAt(1)
+        if not anim:
+            return
+        if isinstance(anim.targetObject(), QtWidgets.QWidget):
+            idx = self.indexOf(anim.targetObject())
+            super().setCurrentIndex(idx)
+            common.signals.tabChanged.emit(idx)
 
     def showEvent(self, event):
         """Event handler.
@@ -445,6 +507,10 @@ class BaseItemView(QtWidgets.QTableView):
             'proxy_rows': []
         }
 
+        self.setGraphicsEffect(QtWidgets.QGraphicsOpacityEffect(self))
+        self.graphicsEffect().setOpacity(1.0)
+        self.setAutoFillBackground(True)
+
         self.verticalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Fixed)
         self.verticalHeader().setHidden(True)
         self.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
@@ -467,15 +533,7 @@ class BaseItemView(QtWidgets.QTableView):
             QtWidgets.QAbstractItemView.EditKeyPressed
         )
 
-        self.delayed_layout_timer = common.Timer(parent=self)
-        self.delayed_layout_timer.setObjectName('DelayedLayoutTimer')
-        self.delayed_layout_timer.setSingleShot(True)
-        self.delayed_layout_timer.setInterval(33)
-        self.delayed_layout_timer.timeout.connect(self.scheduleDelayedItemsLayout)
-        self.delayed_layout_timer.timeout.connect(self.repaint_visible_rows)
-
         self._buttons_hidden = False
-
         self._thumbnail_drop = (-1, False)  # row, accepted state
         self._background_icon = icon
 
@@ -486,6 +544,22 @@ class BaseItemView(QtWidgets.QTableView):
         self.filter_editor = filter_editor.TextFilterEditor(parent=self)
         self.filter_editor.setHidden(True)
 
+        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self.viewport().setAttribute(QtCore.Qt.WA_NoSystemBackground)
+        self.viewport().setAttribute(QtCore.Qt.WA_TranslucentBackground)
+
+        self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        self.setShowGrid(False)
+        self.setMouseTracking(True)
+        self.setWordWrap(False)
+
+        self.installEventFilter(self)
+        self.setFocusPolicy(QtCore.Qt.StrongFocus)
+        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+
         # Keyboard search timer and placeholder string.
         self.timer = common.Timer(parent=self)
         self.timer.setInterval(
@@ -493,47 +567,40 @@ class BaseItemView(QtWidgets.QTableView):
         self.timer.setSingleShot(True)
         self.timed_search_string = ''
 
+        self.delayed_layout_timer = common.Timer(parent=self)
+        self.delayed_layout_timer.setSingleShot(True)
+        self.delayed_layout_timer.setInterval(33)
+
         self.delayed_save_selection_timer = common.Timer(parent=self)
         self.delayed_save_selection_timer.setSingleShot(True)
         self.delayed_save_selection_timer.setInterval(100)
 
         self.delayed_restore_selection_timer = common.Timer(parent=self)
-        self.delayed_restore_selection_timer.setInterval(10)
+        self.delayed_restore_selection_timer.setInterval(100)
         self.delayed_restore_selection_timer.setSingleShot(True)
 
         self.delayed_save_visible_timer = common.Timer(parent=self)
         self.delayed_save_visible_timer.setInterval(100)
         self.delayed_save_visible_timer.setSingleShot(True)
 
-        self.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
-        self.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-
-        self.setShowGrid(False)
-
-        self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
-        self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        self.viewport().setAttribute(QtCore.Qt.WA_NoSystemBackground)
-        self.viewport().setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        self.setMouseTracking(True)
-
-        self.setWordWrap(False)
-
-        self.installEventFilter(self)
-
-        self.setFocusPolicy(QtCore.Qt.StrongFocus)
-        self.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
-        self.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+        self.delayed_reset_row_layout_timer = common.Timer(parent=self)
+        self.delayed_reset_row_layout_timer.setInterval(100)
+        self.delayed_reset_row_layout_timer.setSingleShot(True)
 
         self.setItemDelegate(self.Delegate(parent=self))
         self.init_model()
+        self._connect_signals()
 
+    def _connect_signals(self):
         self.resized.connect(self.filter_indicator_widget.setGeometry)
         self.resized.connect(self.progress_indicator_widget.setGeometry)
         self.resized.connect(self.filter_editor.setGeometry)
-
+        self.delayed_layout_timer.timeout.connect(self.scheduleDelayedItemsLayout)
+        self.delayed_layout_timer.timeout.connect(self.repaint_visible_rows)
         self.delayed_save_selection_timer.timeout.connect(self.save_selection)
         self.delayed_restore_selection_timer.timeout.connect(self.restore_selection)
         self.delayed_save_visible_timer.timeout.connect(self.save_visible_rows)
+        self.delayed_reset_row_layout_timer.timeout.connect(self.reset_row_layout)
 
     def get_source_model(self):
         """Returns the model class associated with this view.
@@ -620,7 +687,8 @@ class BaseItemView(QtWidgets.QTableView):
     def row_size_changed(self, v):
         v = int(v)
         self.verticalHeader().setDefaultSectionSize(v)
-        self.reset_row_layout()
+        self.delayed_reset_row_layout()
+        self.delayed_save_visible_rows()
 
     @QtCore.Slot(QtCore.QModelIndex)
     def update(self, index):
@@ -1186,6 +1254,10 @@ class BaseItemView(QtWidgets.QTableView):
             index = self.model().index(idx, 0)
             super().update(index)
 
+    def delayed_reset_row_layout(self):
+        self.delayed_reset_row_layout_timer.start(
+            self.delayed_reset_row_layout_timer.interval())
+
     @common.error
     @common.debug
     @QtCore.Slot()
@@ -1198,9 +1270,6 @@ class BaseItemView(QtWidgets.QTableView):
 
         # Save the current selection
         row = index.row() if index.isValid() else -1
-
-        # Update the layout
-        self.delayed_save_visible_rows()
 
         # Restore the selection
         if row >= 0:
@@ -1227,7 +1296,8 @@ class BaseItemView(QtWidgets.QTableView):
         model.set_filter_setting('filters/row_heights', int(v))
 
         self.verticalHeader().setDefaultSectionSize(int(v))
-        self.reset_row_layout()
+        self.delayed_reset_row_layout()
+        self.delayed_save_visible_rows()
 
     @common.error
     @common.debug
@@ -2145,7 +2215,7 @@ class ThreadedItemView(InlineIconView):
         super().init_model(*args, **kwargs)
         self.refUpdated.connect(self.update_row)
 
-        self.delayed_queue_timer.timeout.connect(self.delayed_save_visible_rows)
+        self.delayed_queue_timer.timeout.connect(self.save_visible_rows)
         self.delayed_queue_timer.timeout.connect(self.queue_visible_indexes)
 
         self.model().invalidated.connect(self.start_delayed_queue_timer)

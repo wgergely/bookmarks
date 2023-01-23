@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/_modules/bookmarks/editor/preferences.html" />
 
-    <!-- Generated with Sphinx 6.1.2 and Furo 2022.12.07 -->
-        <title>bookmarks.editor.preferences - Bookmarks 0.7.7 documentation</title>
+    <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
+        <title>bookmarks.editor.preferences - Bookmarks 0.7.8 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/license_info.css" />
@@ -160,7 +160,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.7 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.8 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -187,7 +187,7 @@
     <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.7 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.8 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -648,15 +648,6 @@
                     <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
                     <span class="s1">&#39;button&#39;</span><span class="p">:</span> <span class="s1">&#39;Reset Image Cache&#39;</span>
                 <span class="p">},</span>
-                <span class="mi">2</span><span class="p">:</span> <span class="p">{</span>
-                    <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;key&#39;</span><span class="p">:</span> <span class="s1">&#39;reset_databases&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;validator&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="s1">&#39;widget&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                    <span class="s1">&#39;placeholder&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
-                    <span class="s1">&#39;button&#39;</span><span class="p">:</span> <span class="s1">&#39;Reset Database Connections&#39;</span>
-                <span class="p">},</span>
             <span class="p">},</span>
         <span class="p">},</span>
     <span class="p">},</span>
@@ -738,14 +729,8 @@
     <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">reset_image_cache_button_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">images</span>
-        <span class="n">images</span><span class="o">.</span><span class="n">init_image_cache</span><span class="p">()</span>
+        <span class="n">images</span><span class="o">.</span><span class="n">init_image_cache</span><span class="p">()</span></div>
 
-    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
-    <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
-    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
-    <span class="k">def</span> <span class="nf">reset_databases_button_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">database</span>
-        <span class="n">database</span><span class="o">.</span><span class="n">remove_all_connections</span><span class="p">()</span></div>
 </pre></div>
         </article>
       </div>

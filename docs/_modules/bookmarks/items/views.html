@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/_modules/bookmarks/items/views.html" />
 
-    <!-- Generated with Sphinx 6.1.2 and Furo 2022.12.07 -->
-        <title>bookmarks.items.views - Bookmarks 0.7.6 documentation</title>
+    <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
+        <title>bookmarks.items.views - Bookmarks 0.7.8 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/license_info.css" />
@@ -160,7 +160,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.6 documentation</div></a>
+      <a href="../../../index.html"><div class="brand">Bookmarks 0.7.8 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -187,7 +187,7 @@
     <img class="sidebar-logo only-dark" src="../../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.6 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.8 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -618,6 +618,8 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s1">&#39;BrowserStackedWidget&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">animation</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QParallelAnimationGroup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">animation</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">animation_finished</span><span class="p">)</span>
         <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">tabChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ListsWidget.setCurrentIndex"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.ListsWidget.setCurrentIndex">[docs]</a>    <span class="k">def</span> <span class="nf">setCurrentIndex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
@@ -648,8 +650,68 @@
 
         <span class="c1"># Save tab to user settings</span>
         <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="s1">&#39;selection/current_tab&#39;</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">currentWidget</span><span class="p">()</span><span class="o">.</span><span class="n">setFocus</span><span class="p">()</span></div>
+
+        <span class="n">current_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">current_index</span> <span class="o">==</span> <span class="n">idx</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">animation</span><span class="o">.</span><span class="n">animationAt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">a</span> <span class="ow">and</span> <span class="n">a</span><span class="o">.</span><span class="n">currentTime</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">a</span><span class="o">.</span><span class="n">totalDuration</span><span class="p">():</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">animation</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="n">duration</span> <span class="o">=</span> <span class="mi">200</span>
+        <span class="c1"># Create animation for outgoing widget</span>
+        <span class="n">out_anim</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPropertyAnimation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">(</span><span class="n">current_index</span><span class="p">),</span> <span class="sa">b</span><span class="s2">&quot;geometry&quot;</span><span class="p">)</span>
+        <span class="n">out_anim</span><span class="o">.</span><span class="n">setEasingCurve</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QEasingCurve</span><span class="o">.</span><span class="n">OutQuad</span><span class="p">)</span>
+        <span class="n">out_anim</span><span class="o">.</span><span class="n">setDuration</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+
+        <span class="n">out_rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentWidget</span><span class="p">()</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">current_index</span> <span class="o">&gt;</span> <span class="n">idx</span><span class="p">:</span>
+            <span class="n">out_rect</span><span class="o">.</span><span class="n">moveLeft</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out_rect</span><span class="o">.</span><span class="n">moveLeft</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">())</span>
+        <span class="n">out_anim</span><span class="o">.</span><span class="n">setStartValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentWidget</span><span class="p">()</span><span class="o">.</span><span class="n">geometry</span><span class="p">())</span>
+        <span class="n">out_anim</span><span class="o">.</span><span class="n">setEndValue</span><span class="p">(</span><span class="n">out_rect</span><span class="p">)</span>
+
+        <span class="c1"># Create animation for incoming widget</span>
+        <span class="n">in_anim</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPropertyAnimation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">(</span><span class="n">idx</span><span class="p">),</span> <span class="sa">b</span><span class="s2">&quot;geometry&quot;</span><span class="p">)</span>
+        <span class="n">in_anim</span><span class="o">.</span><span class="n">setEasingCurve</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QEasingCurve</span><span class="o">.</span><span class="n">OutQuad</span><span class="p">)</span>
+        <span class="n">in_anim</span><span class="o">.</span><span class="n">setDuration</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span>
+
+        <span class="n">in_rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentWidget</span><span class="p">()</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">current_index</span> <span class="o">&gt;</span> <span class="n">idx</span><span class="p">:</span>
+            <span class="n">in_rect</span><span class="o">.</span><span class="n">moveLeft</span><span class="p">(</span><span class="o">-</span><span class="n">in_rect</span><span class="o">.</span><span class="n">width</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">in_rect</span><span class="o">.</span><span class="n">moveLeft</span><span class="p">(</span><span class="n">in_rect</span><span class="o">.</span><span class="n">width</span><span class="p">())</span>
+        <span class="n">in_anim</span><span class="o">.</span><span class="n">setStartValue</span><span class="p">(</span><span class="n">in_rect</span><span class="p">)</span>
+        <span class="n">in_anim</span><span class="o">.</span><span class="n">setEndValue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">currentWidget</span><span class="p">()</span><span class="o">.</span><span class="n">geometry</span><span class="p">())</span>
+
+        <span class="n">out_op</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPropertyAnimation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">(</span><span class="n">current_index</span><span class="p">)</span><span class="o">.</span><span class="n">graphicsEffect</span><span class="p">(),</span> <span class="sa">b</span><span class="s2">&quot;opacity&quot;</span><span class="p">)</span>
+        <span class="n">out_op</span><span class="o">.</span><span class="n">setStartValue</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="n">out_op</span><span class="o">.</span><span class="n">setEndValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">in_op</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QPropertyAnimation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">.</span><span class="n">graphicsEffect</span><span class="p">(),</span> <span class="sa">b</span><span class="s2">&quot;opacity&quot;</span><span class="p">)</span>
+        <span class="n">in_op</span><span class="o">.</span><span class="n">setStartValue</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">in_op</span><span class="o">.</span><span class="n">setEndValue</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">animation</span><span class="o">.</span><span class="n">addAnimation</span><span class="p">(</span><span class="n">out_anim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">animation</span><span class="o">.</span><span class="n">addAnimation</span><span class="p">(</span><span class="n">in_anim</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">animation</span><span class="o">.</span><span class="n">addAnimation</span><span class="p">(</span><span class="n">out_op</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">animation</span><span class="o">.</span><span class="n">addAnimation</span><span class="p">(</span><span class="n">in_op</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">animation</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">animation_finished</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">anim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">animation</span><span class="o">.</span><span class="n">animationAt</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">anim</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">anim</span><span class="o">.</span><span class="n">targetObject</span><span class="p">(),</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indexOf</span><span class="p">(</span><span class="n">anim</span><span class="o">.</span><span class="n">targetObject</span><span class="p">())</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">tabChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ListsWidget.showEvent"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.ListsWidget.showEvent">[docs]</a>    <span class="k">def</span> <span class="nf">showEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler.</span>
@@ -820,6 +882,10 @@
             <span class="s1">&#39;proxy_rows&#39;</span><span class="p">:</span> <span class="p">[]</span>
         <span class="p">}</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">setGraphicsEffect</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QGraphicsOpacityEffect</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">graphicsEffect</span><span class="p">()</span><span class="o">.</span><span class="n">setOpacity</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setAutoFillBackground</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">verticalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">setSectionResizeMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHeaderView</span><span class="o">.</span><span class="n">Fixed</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verticalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">horizontalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">setSectionResizeMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QHeaderView</span><span class="o">.</span><span class="n">Stretch</span><span class="p">)</span>
@@ -842,15 +908,7 @@
             <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">EditKeyPressed</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s1">&#39;DelayedLayoutTimer&#39;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span><span class="o">.</span><span class="n">setSingleShot</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">33</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scheduleDelayedItemsLayout</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repaint_visible_rows</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_buttons_hidden</span> <span class="o">=</span> <span class="kc">False</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_thumbnail_drop</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>  <span class="c1"># row, accepted state</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_background_icon</span> <span class="o">=</span> <span class="n">icon</span>
 
@@ -861,6 +919,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">filter_editor</span> <span class="o">=</span> <span class="n">filter_editor</span><span class="o">.</span><span class="n">TextFilterEditor</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filter_editor</span><span class="o">.</span><span class="n">setHidden</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_NoSystemBackground</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_TranslucentBackground</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_NoSystemBackground</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_TranslucentBackground</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setSelectionMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">SingleSelection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setSelectionBehavior</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">SelectRows</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setShowGrid</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setMouseTracking</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWordWrap</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">installEventFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setFocusPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StrongFocus</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setHorizontalScrollBarPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarAsNeeded</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setVerticalScrollBarPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarAsNeeded</span><span class="p">)</span>
+
         <span class="c1"># Keyboard search timer and placeholder string.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span>
@@ -868,42 +942,40 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">setSingleShot</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timed_search_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span><span class="o">.</span><span class="n">setSingleShot</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">33</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_save_selection_timer</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_save_selection_timer</span><span class="o">.</span><span class="n">setSingleShot</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_save_selection_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_restore_selection_timer</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_restore_selection_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_restore_selection_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_restore_selection_timer</span><span class="o">.</span><span class="n">setSingleShot</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">setSelectionMode</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">SingleSelection</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setSelectionBehavior</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QAbstractItemView</span><span class="o">.</span><span class="n">SelectRows</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_save_visible_timer</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_save_visible_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_save_visible_timer</span><span class="o">.</span><span class="n">setSingleShot</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">setShowGrid</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_NoSystemBackground</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_TranslucentBackground</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_NoSystemBackground</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">viewport</span><span class="p">()</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WA_TranslucentBackground</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setMouseTracking</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">setWordWrap</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">installEventFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">setFocusPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">StrongFocus</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setHorizontalScrollBarPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarAsNeeded</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setVerticalScrollBarPolicy</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarAsNeeded</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_reset_row_layout_timer</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_reset_row_layout_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_reset_row_layout_timer</span><span class="o">.</span><span class="n">setSingleShot</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">setItemDelegate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Delegate</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_model</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connect_signals</span><span class="p">()</span>
 
+    <span class="k">def</span> <span class="nf">_connect_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resized</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_indicator_widget</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resized</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">progress_indicator_widget</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resized</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filter_editor</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">)</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scheduleDelayedItemsLayout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_layout_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">repaint_visible_rows</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_save_selection_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_selection</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_restore_selection_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">restore_selection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_save_visible_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_visible_rows</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_reset_row_layout_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reset_row_layout</span><span class="p">)</span>
 
 <div class="viewcode-block" id="BaseItemView.get_source_model"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.BaseItemView.get_source_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_source_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the model class associated with this view.</span>
@@ -974,18 +1046,24 @@
         <span class="n">model</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delay_restore_selection</span><span class="p">)</span>
         <span class="n">proxy</span><span class="o">.</span><span class="n">invalidated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delay_restore_selection</span><span class="p">)</span>
 
-        <span class="n">model</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_visible_rows</span><span class="p">)</span>
-        <span class="n">proxy</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_visible_rows</span><span class="p">)</span>
-        <span class="n">proxy</span><span class="o">.</span><span class="n">invalidated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_visible_rows</span><span class="p">)</span>
-
-        <span class="n">model</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reset_row_layout</span><span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delayed_save_visible_rows</span><span class="p">)</span>
+        <span class="n">proxy</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delayed_save_visible_rows</span><span class="p">)</span>
+        <span class="n">proxy</span><span class="o">.</span><span class="n">invalidated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">delayed_save_visible_rows</span><span class="p">)</span>
 
         <span class="n">model</span><span class="o">.</span><span class="n">updateIndex</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DirectConnection</span><span class="p">)</span>
 
         <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">paintThumbnailBGChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">repaint_visible_rows</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">rowHeightChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">row_size_changed</span><span class="p">)</span></div>
+
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">row_size_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verticalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">setDefaultSectionSize</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_reset_row_layout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_save_visible_rows</span><span class="p">()</span>
 
 <div class="viewcode-block" id="BaseItemView.update"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.BaseItemView.update">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QModelIndex</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
@@ -1551,6 +1629,10 @@
             <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
 
+    <span class="k">def</span> <span class="nf">delayed_reset_row_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_reset_row_layout_timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delayed_reset_row_layout_timer</span><span class="o">.</span><span class="n">interval</span><span class="p">())</span>
+
 <div class="viewcode-block" id="BaseItemView.reset_row_layout"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.BaseItemView.reset_row_layout">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
     <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
@@ -1563,9 +1645,6 @@
 
         <span class="c1"># Save the current selection</span>
         <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">()</span> <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
-
-        <span class="c1"># Update the layout</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">save_visible_rows</span><span class="p">()</span>
 
         <span class="c1"># Restore the selection</span>
         <span class="k">if</span> <span class="n">row</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
@@ -1592,14 +1671,8 @@
         <span class="n">model</span><span class="o">.</span><span class="n">set_filter_setting</span><span class="p">(</span><span class="s1">&#39;filters/row_heights&#39;</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">verticalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">setDefaultSectionSize</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
-
-        <span class="c1"># Notify the delegate of the new row size</span>
-        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">proxy</span><span class="o">.</span><span class="n">rowCount</span><span class="p">()):</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="n">proxy</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">itemDelegate</span><span class="p">()</span><span class="o">.</span><span class="n">sizeHintChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
-            <span class="k">break</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset_row_layout</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_reset_row_layout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_save_visible_rows</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="BaseItemView.show_item"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.BaseItemView.show_item">[docs]</a>    <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
@@ -1937,13 +2010,13 @@
         <span class="sd">&quot;&quot;&quot;Custom wheel event responsible for scrolling the list.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">event</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">ignore</span><span class="p">()</span>
         <span class="n">control_modifier</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">modifiers</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ControlModifier</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">control_modifier</span><span class="p">:</span>
             <span class="n">shift_modifier</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">modifiers</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ShiftModifier</span>
 
-            <span class="c1"># Adjust the scroll amount based on thw row size</span>
+            <span class="c1"># Adjust the scroll amount based on the row size</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">sourceModel</span><span class="p">()</span><span class="o">.</span><span class="n">row_size</span><span class="o">.</span><span class="n">height</span><span class="p">()</span> <span class="o">&gt;</span> <span class="p">(</span>
                     <span class="n">common</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">size_row_height</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">):</span>
                 <span class="n">o</span> <span class="o">=</span> <span class="mi">9</span> <span class="k">if</span> <span class="n">shift_modifier</span> <span class="k">else</span> <span class="mi">1</span>
@@ -1955,12 +2028,14 @@
                 <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">verticalScrollBar</span><span class="p">()</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">v</span> <span class="o">+</span> <span class="n">o</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">verticalScrollBar</span><span class="p">()</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">v</span> <span class="o">-</span> <span class="n">o</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">start_delayed_queue_timer</span><span class="p">()</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">angleDelta</span><span class="p">()</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">actions</span><span class="o">.</span><span class="n">increase_row_size</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">actions</span><span class="o">.</span><span class="n">decrease_row_size</span><span class="p">()</span></div>
+            <span class="n">actions</span><span class="o">.</span><span class="n">decrease_row_size</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_delayed_queue_timer</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="BaseItemView.contextMenuEvent"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.BaseItemView.contextMenuEvent">[docs]</a>    <span class="k">def</span> <span class="nf">contextMenuEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Custom context menu event.&quot;&quot;&quot;</span>
@@ -2052,7 +2127,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="o">=</span><span class="s1">&#39;bw_icon&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">InlineIconView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">icon</span><span class="o">=</span><span class="n">icon</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">icon</span><span class="o">=</span><span class="n">icon</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_clicked_rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">()</span>
 
@@ -2181,7 +2256,7 @@
 
         <span class="k">if</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">flags</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span><span class="p">:</span>
-                <span class="nb">super</span><span class="p">(</span><span class="n">InlineIconView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">mousePressEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">mousePressEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_clicked_rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">reset_multi_toggle</span><span class="p">()</span>
                 <span class="k">return</span>
@@ -2212,14 +2287,14 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">multi_toggle_state</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">flags</span><span class="p">()</span> <span class="o">&amp;</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">multi_toggle_flag</span> <span class="o">=</span> <span class="n">delegate</span><span class="o">.</span><span class="n">ArchiveRect</span>
 
-        <span class="nb">super</span><span class="p">(</span><span class="n">InlineIconView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">mousePressEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">mousePressEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="InlineIconView.enterEvent"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.InlineIconView.enterEvent">[docs]</a>    <span class="k">def</span> <span class="nf">enterEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">instance</span><span class="p">()</span><span class="o">.</span><span class="n">restoreOverrideCursor</span><span class="p">()</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">InlineIconView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">enterEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">enterEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="InlineIconView.leaveEvent"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.InlineIconView.leaveEvent">[docs]</a>    <span class="k">def</span> <span class="nf">leaveEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler.</span>
@@ -2262,12 +2337,12 @@
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">reset_multi_toggle</span><span class="p">()</span>
-                <span class="nb">super</span><span class="p">(</span><span class="n">InlineIconView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">mouseReleaseEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">mouseReleaseEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
                 <span class="k">return</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multi_toggle_items</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">reset_multi_toggle</span><span class="p">()</span>
-                <span class="nb">super</span><span class="p">(</span><span class="n">InlineIconView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">mouseReleaseEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+                <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">mouseReleaseEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">invalidateFilter</span><span class="p">()</span>
                 <span class="k">return</span>
 
@@ -2312,7 +2387,7 @@
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_clicked_rect</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">()</span>
 
-        <span class="nb">super</span><span class="p">(</span><span class="n">InlineIconView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">mouseReleaseEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">mouseReleaseEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="InlineIconView.add_item_action"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.InlineIconView.add_item_action">[docs]</a>    <span class="k">def</span> <span class="nf">add_item_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Action to execute when the add item icon is clicked.&quot;&quot;&quot;</span>
@@ -2419,7 +2494,7 @@
                     <span class="n">app</span><span class="o">.</span><span class="n">setOverrideCursor</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QCursor</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">IBeamCursor</span><span class="p">))</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">app</span><span class="o">.</span><span class="n">restoreOverrideCursor</span><span class="p">()</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">InlineIconView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">mouseMoveEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">mouseMoveEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">buttons</span><span class="p">()</span> <span class="o">==</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoButton</span><span class="p">:</span>
@@ -2476,7 +2551,7 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="o">=</span><span class="s1">&#39;bw_icon&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_queue_timer</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Timer</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_queue_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_queue_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">delayed_queue_timer</span><span class="o">.</span><span class="n">setSingleShot</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">icon</span><span class="o">=</span><span class="n">icon</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
@@ -2484,8 +2559,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">update_queue</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">deque</span><span class="p">([],</span> <span class="n">common</span><span class="o">.</span><span class="n">max_list_items</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">Timer</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">setSingleShot</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queued_row_update</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">setInterval</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queued_row_repaint</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">init_threads</span><span class="p">()</span>
 
@@ -2593,7 +2668,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">update_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ref</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">interval</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="ThreadedItemView.queued_row_update"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.ThreadedItemView.queued_row_update">[docs]</a>    <span class="k">def</span> <span class="nf">queued_row_update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ThreadedItemView.queued_row_repaint"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.ThreadedItemView.queued_row_repaint">[docs]</a>    <span class="k">def</span> <span class="nf">queued_row_repaint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Process a repaint request.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">ref</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_queue</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
@@ -2609,6 +2684,11 @@
                 <span class="k">break</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_queue_timer</span><span class="o">.</span><span class="n">interval</span><span class="p">())</span></div>
+
+    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">delayed_save_visible_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delayed_save_visible_timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">delayed_save_visible_timer</span><span class="o">.</span><span class="n">interval</span><span class="p">())</span>
 
 <div class="viewcode-block" id="ThreadedItemView.save_visible_rows"><a class="viewcode-back" href="../../../modules/items/views.html#bookmarks.items.views.ThreadedItemView.save_visible_rows">[docs]</a>    <span class="nd">@QtCore</span><span class="o">.</span><span class="n">Slot</span><span class="p">()</span>
     <span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
@@ -2637,7 +2717,6 @@
             <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">visible_rows</span><span class="p">[</span><span class="s1">&#39;proxy_rows&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">())</span>
-            <span class="c1"># self.visible_rows[&#39;source_rows&#39;].append(model.mapToSource(index).row())</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">visible_rows</span><span class="p">[</span><span class="s1">&#39;source_rows&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">IdRole</span><span class="p">))</span>
 
             <span class="n">rect</span><span class="o">.</span><span class="n">moveTop</span><span class="p">(</span><span class="n">rect</span><span class="o">.</span><span class="n">top</span><span class="p">()</span> <span class="o">+</span> <span class="n">rect</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>

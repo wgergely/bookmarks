@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/_modules/bookmarks/actions.html" />
 
-    <!-- Generated with Sphinx 6.1.2 and Furo 2022.12.07 -->
-        <title>bookmarks.actions - Bookmarks 0.7.6 documentation</title>
+    <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
+        <title>bookmarks.actions - Bookmarks 0.7.8 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/license_info.css" />
@@ -160,7 +160,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">Bookmarks 0.7.6 documentation</div></a>
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.8 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -187,7 +187,7 @@
     <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.6 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.8 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -804,7 +804,7 @@
                 <span class="n">table</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">BookmarkTable</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">table</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">AssetTable</span>
-            <span class="n">db</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">database</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">)</span>
+            <span class="n">db</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">database</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">)</span>
 
     <span class="n">common</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">set_favourites</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
     <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">favouritesChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span></div>
@@ -1574,6 +1574,7 @@
     <span class="n">editor</span> <span class="o">=</span> <span class="n">notes</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">editor</span></div>
 
+
 <div class="viewcode-block" id="preview_thumbnail"><a class="viewcode-back" href="../../modules/actions.html#bookmarks.actions.preview_thumbnail">[docs]</a><span class="nd">@common</span><span class="o">.</span><span class="n">debug</span>
 <span class="nd">@common</span><span class="o">.</span><span class="n">error</span>
 <span class="nd">@selection</span>
@@ -2147,7 +2148,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">.external</span> <span class="kn">import</span> <span class="n">ffmpeg_widget</span>
-    <span class="n">ffmpeg_widget</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">))</span></div>
+    <span class="n">ffmpeg_widget</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="add_zip_template"><a class="viewcode-back" href="../../modules/actions.html#bookmarks.actions.add_zip_template">[docs]</a><span class="k">def</span> <span class="nf">add_zip_template</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">prompt</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
@@ -2395,26 +2396,37 @@
     <span class="n">paths</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">get_sequence_paths</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
 
     <span class="c1"># Remove file on disk</span>
+    <span class="n">_failed</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
         <span class="n">_file</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFile</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="k">continue</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">_file</span><span class="o">.</span><span class="n">remove</span><span class="p">():</span>
+            <span class="n">_failed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Could not remove </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">.&#39;</span><span class="p">)</span>
 
     <span class="c1"># Mark cached file data</span>
     <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">f_data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">]</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
-            <span class="n">paths</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">]</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">]</span> <span class="ow">in</span> <span class="n">_failed</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">paths</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">])</span>
             <span class="n">v</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">]</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoItemFlags</span> <span class="o">|</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span>
 
     <span class="c1"># Mark cache sequence data</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">s_data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">]</span> <span class="o">==</span> <span class="n">path</span><span class="p">:</span>
-            <span class="n">v</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">]</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoItemFlags</span> <span class="o">|</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_failed</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">s_data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">v</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">PathRole</span><span class="p">]</span> <span class="o">==</span> <span class="n">path</span><span class="p">:</span>
+                <span class="n">v</span><span class="p">[</span><span class="n">common</span><span class="o">.</span><span class="n">FlagsRole</span><span class="p">]</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">NoItemFlags</span> <span class="o">|</span> <span class="n">common</span><span class="o">.</span><span class="n">MarkedAsArchived</span>
 
-    <span class="n">index</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">invalidateFilter</span><span class="p">()</span></div>
+    <span class="n">index</span><span class="o">.</span><span class="n">model</span><span class="p">()</span><span class="o">.</span><span class="n">invalidateFilter</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">_failed</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s1">&#39;Not all files could be removed.</span><span class="se">\n</span><span class="s1">&#39;</span>
+            <span class="s1">&#39;Some might be in use by another process.&#39;</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="show_publish_widget"><a class="viewcode-back" href="../../modules/actions.html#bookmarks.actions.show_publish_widget">[docs]</a><span class="nd">@common</span><span class="o">.</span><span class="n">error</span>

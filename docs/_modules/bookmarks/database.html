@@ -5,8 +5,8 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html" /><link rel="search" title="Search" href="../../search.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/_modules/bookmarks/database.html" />
 
-    <!-- Generated with Sphinx 6.1.2 and Furo 2022.12.07 -->
-        <title>bookmarks.database - Bookmarks 0.7.6 documentation</title>
+    <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
+        <title>bookmarks.database - Bookmarks 0.7.8 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/license_info.css" />
@@ -160,7 +160,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../index.html"><div class="brand">Bookmarks 0.7.6 documentation</div></a>
+      <a href="../../index.html"><div class="brand">Bookmarks 0.7.8 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -187,7 +187,7 @@
     <img class="sidebar-logo only-dark" src="../../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.6 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.8 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -400,7 +400,7 @@
 <span class="sd">    db = database.get_db(server, job, root)</span>
 <span class="sd">    v = db.value(*args)</span>
 
-<span class="sd">Each :meth:`BookmarkDB.value` and :meth:`BookmarkDB.setValue` call will autocommit.</span>
+<span class="sd">Each :meth:`BookmarkDB.value` and :meth:`BookmarkDB.set_value` call will autocommit.</span>
 <span class="sd">You can batch commits together by using the built-in context manager:</span>
 
 <span class="sd">.. code-block:: python</span>
@@ -410,7 +410,7 @@
 
 <span class="sd">    db = database.get_db(server, job, root)</span>
 <span class="sd">    with db.connection():</span>
-<span class="sd">        db.setValue(*args)</span>
+<span class="sd">        db.set_value(*args)</span>
 
 <span class="sd">There are two tables that hold item data: ``common.BookmarkTable`` and</span>
 <span class="sd">``common.AssetTable``. The asset table is meant to be used as a general table to hold</span>
@@ -444,8 +444,6 @@
 <span class="n">BookmarkTable</span> <span class="o">=</span> <span class="s1">&#39;BookmarkData&#39;</span>
 <span class="c1">#: Database table name</span>
 <span class="n">InfoTable</span> <span class="o">=</span> <span class="s1">&#39;InfoData&#39;</span>
-
-<span class="n">database_connect_retries</span> <span class="o">=</span> <span class="mi">100</span>
 
 <span class="c1">#: sqlite3 database structure definition</span>
 <span class="n">TABLES</span> <span class="o">=</span> <span class="p">{</span>
@@ -659,7 +657,8 @@
 
     <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">common</span><span class="o">.</span><span class="n">db_connections</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">force</span><span class="p">:</span>
-            <span class="n">common</span><span class="o">.</span><span class="n">db_connections</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">connect_with_retries</span><span class="p">()</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">db_connections</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">()</span>
+            <span class="n">common</span><span class="o">.</span><span class="n">db_connections</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">BookmarkDB</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">common</span><span class="o">.</span><span class="n">db_connections</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
     <span class="n">db</span> <span class="o">=</span> <span class="n">BookmarkDB</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
@@ -697,7 +696,8 @@
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">db_connections</span><span class="p">):</span>
         <span class="n">common</span><span class="o">.</span><span class="n">db_connections</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">common</span><span class="o">.</span><span class="n">db_connections</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">()</span>
-        <span class="k">del</span> <span class="n">common</span><span class="o">.</span><span class="n">db_connections</span><span class="p">[</span><span class="n">k</span><span class="p">]</span></div>
+        <span class="k">del</span> <span class="n">common</span><span class="o">.</span><span class="n">db_connections</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+    <span class="n">common</span><span class="o">.</span><span class="n">db_connections</span> <span class="o">=</span> <span class="p">{}</span></div>
 
 
 <div class="viewcode-block" id="b64encode"><a class="viewcode-back" href="../../modules/database.html#bookmarks.database.b64encode">[docs]</a><span class="nd">@functools</span><span class="o">.</span><span class="n">lru_cache</span><span class="p">(</span><span class="n">maxsize</span><span class="o">=</span><span class="mi">4194304</span><span class="p">)</span>
@@ -737,7 +737,7 @@
     <span class="n">f</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s1">&#39;flags&#39;</span><span class="p">,</span> <span class="n">AssetTable</span><span class="p">)</span>
     <span class="n">f</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">f</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">f</span>
     <span class="n">f</span> <span class="o">=</span> <span class="n">f</span> <span class="o">|</span> <span class="n">flag</span> <span class="k">if</span> <span class="n">mode</span> <span class="k">else</span> <span class="n">f</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">flag</span>
-    <span class="n">db</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s1">&#39;flags&#39;</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">AssetTable</span><span class="p">)</span></div>
+    <span class="n">db</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s1">&#39;flags&#39;</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">AssetTable</span><span class="p">)</span></div>
 
 
 <span class="k">def</span> <span class="nf">_verify_args</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -830,6 +830,7 @@
             <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_memory</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_version</span> <span class="o">=</span> <span class="kc">None</span>
 
@@ -841,43 +842,36 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_bookmark_root</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_bookmark</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">bookmark_cache_dir</span><span class="si">}</span><span class="s1">&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_database_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_bookmark_root</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">common</span><span class="o">.</span><span class="n">bookmark_database</span><span class="si">}</span><span class="s1">&#39;</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_bookmark_dir</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">connect_with_retries</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_bookmark_dir</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">connect_to_db</span><span class="p">(</span><span class="n">memory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_connect_to_memory_db</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">connect_to_db</span><span class="p">(</span><span class="n">memory</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_init_version</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_init_tables</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_tables</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connect_signals</span><span class="p">()</span>
 
+    <span class="k">def</span> <span class="nf">_connect_signals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">destroyed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_init_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="p">:</span>
-            <span class="k">return</span>
-        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT sqlite_version();&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">v</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_version</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
-            <span class="k">return</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_version</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)]</span>
+    <span class="k">def</span> <span class="nf">init_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">_init</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">TABLES</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_create_table</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_patch_table</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_info</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_init_version</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_connect_to_memory_db</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Creates an in-memory database when we&#39;re unable to connect to the</span>
-<span class="sd">        physical database.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_init</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">connect_to_db</span><span class="p">(</span><span class="n">memory</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">_init</span><span class="p">()</span>
 
-<span class="sd">        This is so that Bookmarks keeps running uninterrupted even when the database is unreachable.</span>
-<span class="sd">        Data saved the in-memory database won&#39;t be saved to disk.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
-            <span class="s1">&#39;:memory:&#39;</span><span class="p">,</span>
-            <span class="n">isolation_level</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">check_same_thread</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">cached_statements</span><span class="o">=</span><span class="mi">1000</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span>
-
-<div class="viewcode-block" id="BookmarkDB.connect_with_retries"><a class="viewcode-back" href="../../modules/database.html#bookmarks.database.BookmarkDB.connect_with_retries">[docs]</a>    <span class="k">def</span> <span class="nf">connect_with_retries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="BookmarkDB.connect_to_db"><a class="viewcode-back" href="../../modules/database.html#bookmarks.database.BookmarkDB.connect_to_db">[docs]</a>    <span class="k">def</span> <span class="nf">connect_to_db</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memory</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Connects to the database file.</span>
 
 <span class="sd">        The database can be locked for a brief period of time whilst it is being</span>
@@ -889,27 +883,34 @@
 <span class="sd">        mark the instance ``invalid`` (:meth:`BookmarkDB.is_valid` will return `False`).</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">memory</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_database_path</span><span class="p">,</span>
                     <span class="n">isolation_level</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                     <span class="n">check_same_thread</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                    <span class="n">cached_statements</span><span class="o">=</span><span class="mi">1000</span>
+                    <span class="n">cached_statements</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+                    <span class="n">timeout</span><span class="o">=</span><span class="mi">2</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span>
-            <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="n">database_connect_retries</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_connect_to_memory_db</span><span class="p">()</span>
-                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span>
-                <span class="n">sleep</span><span class="p">()</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Error.&#39;</span><span class="p">)</span>
-                <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">except</span> <span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">):</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Error.&#39;</span><span class="p">)</span>
-                <span class="k">raise</span></div>
+            <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">memory</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+                <span class="s1">&#39;:memory:&#39;</span><span class="p">,</span>
+                <span class="n">isolation_level</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">check_same_thread</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_memory</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+    <span class="k">def</span> <span class="nf">_init_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">sql</span> <span class="o">=</span> <span class="s1">&#39;SELECT sqlite_version();&#39;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_version</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)]</span> <span class="k">if</span> <span class="n">v</span> <span class="k">else</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_create_bookmark_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Creates the `bookmark_cache_dir` if it does not yet exist.</span>
@@ -921,22 +922,19 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_root_dir</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QDir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bookmark</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">_root_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Could not create </span><span class="si">{</span><span class="n">_root_dir</span><span class="o">.</span><span class="n">path</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span>
 
         <span class="n">_cache_dir</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QDir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_bookmark_root</span><span class="p">)</span>
-        <span class="n">_thumb_dir</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QDir</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_bookmark_root</span><span class="si">}</span><span class="s1">/thumbnails&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">_cache_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">_cache_dir</span><span class="o">.</span><span class="n">mkpath</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Could not create </span><span class="si">{</span><span class="n">_cache_dir</span><span class="o">.</span><span class="n">path</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-                <span class="k">return</span> <span class="kc">False</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">_thumb_dir</span><span class="o">.</span><span class="n">mkpath</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Could not create </span><span class="si">{</span><span class="n">_thumb_dir</span><span class="o">.</span><span class="n">path</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-                <span class="k">return</span> <span class="kc">False</span>
-            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_cache_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_cache_dir</span><span class="o">.</span><span class="n">mkpath</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Could not create </span><span class="si">{</span><span class="n">_cache_dir</span><span class="o">.</span><span class="n">path</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
 
+        <span class="n">_thumb_dir</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QDir</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_bookmark_root</span><span class="si">}</span><span class="s1">/thumbnails&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">_thumb_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_thumb_dir</span><span class="o">.</span><span class="n">mkpath</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">):</span>
             <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Could not create </span><span class="si">{</span><span class="n">_thumb_dir</span><span class="o">.</span><span class="n">path</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">False</span>
+
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">_create_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
@@ -949,10 +947,10 @@
             <span class="n">args</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1"> </span><span class="si">{</span><span class="n">v</span><span class="p">[</span><span class="s2">&quot;sql&quot;</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="n">sql</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;CREATE TABLE IF NOT EXISTS </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s1"> (</span><span class="si">{</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
 
         <span class="n">sql</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;CREATE UNIQUE INDEX IF NOT EXISTS </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s1">_id_idx ON </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s1"> (id)&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_patch_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Patches the table for backwards compatibility using ALTER if we encounter</span>
@@ -960,21 +958,16 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;PRAGMA table_info(</span><span class="se">\&#39;</span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="se">\&#39;</span><span class="s1">);&#39;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
 
-        <span class="n">table_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
-
-        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">table_info</span><span class="p">]</span>
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
         <span class="n">missing</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">TABLES</span><span class="p">[</span><span class="n">table</span><span class="p">])</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">columns</span><span class="p">))</span>
 
         <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">missing</span><span class="p">:</span>
-            <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;ALTER TABLE </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s1"> ADD COLUMN </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s1">;&#39;</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Added missing column </span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s1">&#39;Failed to add missing column </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-                <span class="k">raise</span>
+            <span class="n">sql</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;ALTER TABLE </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s1"> ADD COLUMN </span><span class="si">{</span><span class="n">column</span><span class="si">}</span><span class="s1">;&#39;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Added missing column &quot;</span><span class="si">{</span><span class="n">missing</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_add_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Adds information about who and when created the database.</span>
@@ -997,32 +990,14 @@
             <span class="n">host</span><span class="o">=</span><span class="n">b64encode</span><span class="p">(</span><span class="n">platform</span><span class="o">.</span><span class="n">node</span><span class="p">()),</span>
             <span class="n">created</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">(),</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_init_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialises the database with the default tables.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
 
-<span class="sd">        If the database is new or empty, we will create the tables.</span>
-<span class="sd">        If the database has tables already, we&#39;ll check the columns against</span>
-<span class="sd">        the table definitions and add any missing ones.</span>
+<div class="viewcode-block" id="BookmarkDB.connection"><a class="viewcode-back" href="../../modules/database.html#bookmarks.database.BookmarkDB.connection">[docs]</a>    <span class="k">def</span> <span class="nf">connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the connection instance.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-            <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
-
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">TABLES</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_create_table</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_patch_table</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_add_info</span><span class="p">()</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">()</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-                <span class="k">return</span>
-            <span class="k">except</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="n">database_connect_retries</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">()</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
-                    <span class="k">raise</span>
-                <span class="n">sleep</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span></div>
 
 <div class="viewcode-block" id="BookmarkDB.is_valid"><a class="viewcode-back" href="../../modules/database.html#bookmarks.database.BookmarkDB.is_valid">[docs]</a>    <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the database&#39;s status.</span>
@@ -1031,15 +1006,9 @@
 <span class="sd">            bool: True if the database is valid, False otherwise.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_memory</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span></div>
-
-<div class="viewcode-block" id="BookmarkDB.connection"><a class="viewcode-back" href="../../modules/database.html#bookmarks.database.BookmarkDB.connection">[docs]</a>    <span class="k">def</span> <span class="nf">connection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the connection instance.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span></div>
 
 <div class="viewcode-block" id="BookmarkDB.close"><a class="viewcode-back" href="../../modules/database.html#bookmarks.database.BookmarkDB.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Closes the connection.</span>
@@ -1048,8 +1017,9 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Database error.&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">finally</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span> <span class="o">=</span> <span class="kc">None</span></div>
 
@@ -1072,7 +1042,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            source (str): A source file path.</span>
-<span class="sd">            table (str): A database table name.</span>
+<span class="sd">            table (str): A database 01table name.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dict: A dictionary of column/value pairs.</span>
@@ -1081,26 +1051,31 @@
         <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
         <span class="n">common</span><span class="o">.</span><span class="n">check_type</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
 
+        <span class="k">def</span> <span class="nf">_get_empty_row</span><span class="p">():</span>
+            <span class="n">_values</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">_values</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span> <span class="n">_values</span>
+
         <span class="n">_hash</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">get_hash</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
         <span class="n">sql</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;SELECT * FROM </span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s1"> WHERE id=</span><span class="se">\&#39;</span><span class="si">{</span><span class="n">_hash</span><span class="si">}</span><span class="se">\&#39;</span><span class="s1">&#39;</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">cursor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
-            <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">cursor</span><span class="o">.</span><span class="n">description</span><span class="p">]</span>
-            <span class="n">row</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Failed to get value from database.</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-            <span class="k">raise</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">_get_empty_row</span><span class="p">()</span>
+
+        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">description</span><span class="p">]</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">row</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_get_empty_row</span><span class="p">()</span>
 
         <span class="n">values</span> <span class="o">=</span> <span class="p">{}</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">row</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span>
-                    <span class="k">continue</span>
-                <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">return</span> <span class="n">values</span>
-
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">columns</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s1">&#39;id&#39;</span><span class="p">:</span>
                 <span class="k">continue</span>
@@ -1132,19 +1107,18 @@
 
         <span class="n">sql</span> <span class="o">=</span> <span class="n">_get_sql</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">table</span><span class="p">)</span>
 
+        <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">row</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Failed to get value from database.</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-            <span class="k">raise</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">row</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-        <span class="n">value</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">row</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">convert_return_values</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="BookmarkDB.setValue"><a class="viewcode-back" href="../../modules/database.html#bookmarks.database.BookmarkDB.setValue">[docs]</a>    <span class="k">def</span> <span class="nf">setValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="n">AssetTable</span><span class="p">):</span>
+<div class="viewcode-block" id="BookmarkDB.set_value"><a class="viewcode-back" href="../../modules/database.html#bookmarks.database.BookmarkDB.set_value">[docs]</a>    <span class="k">def</span> <span class="nf">set_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="n">AssetTable</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets the given value in the database.</span>
 
 <span class="sd">        .. code-block:: python</span>
@@ -1152,7 +1126,7 @@
 
 <span class="sd">            db = database.get_db(server, job, root)</span>
 <span class="sd">            source = f&#39;//{server}/{job}/{root}/sh0010/scenes/my_scene.ma&#39;</span>
-<span class="sd">            db.setValue(source, &#39;description&#39;, &#39;hello world&#39;)</span>
+<span class="sd">            db.set_value(source, &#39;description&#39;, &#39;hello world&#39;)</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            source (str): Source file path.</span>
@@ -1208,7 +1182,7 @@
                 <span class="n">values</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">values</span><span class="p">),</span>
                 <span class="n">table</span><span class="o">=</span><span class="n">table</span>
             <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span> <span class="c1"># use upsert for versions 3.24.0 and above</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># use upsert for versions 3.24.0 and above</span>
             <span class="n">sql</span> <span class="o">=</span> <span class="s1">&#39;INSERT INTO </span><span class="si">{table}</span><span class="s1"> (id, </span><span class="si">{key}</span><span class="s1">) VALUES (</span><span class="se">\&#39;</span><span class="si">{hash}</span><span class="se">\&#39;</span><span class="s1">, </span><span class="se">\&#39;</span><span class="si">{value}</span><span class="se">\&#39;</span><span class="s1">)&#39;</span> \
                   <span class="s1">&#39; ON CONFLICT(id) DO UPDATE SET </span><span class="si">{key}</span><span class="s1">=excluded.</span><span class="si">{key}</span><span class="s1">;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="nb">hash</span><span class="o">=</span><span class="n">_hash</span><span class="p">,</span>
@@ -1218,15 +1192,16 @@
             <span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="kc">True</span>
 
-            <span class="c1"># Finally, we&#39;ll notify others of the changed value</span>
+            <span class="c1"># Emit change signal with the value set in the database</span>
             <span class="n">_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">)</span>
             <span class="n">common</span><span class="o">.</span><span class="n">signals</span><span class="o">.</span><span class="n">databaseValueUpdated</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span>
                 <span class="n">table</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">_value</span><span class="p">)</span>
-
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Failed to set value.</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span></div></div>
+        <span class="k">except</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Error setting value:</span><span class="se">\n</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="kc">False</span></div></div>
 </pre></div>
         </article>
       </div>

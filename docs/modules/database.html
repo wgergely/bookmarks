@@ -8,8 +8,8 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="editor" href="editor.html" /><link rel="prev" title="contextmenu" href="contextmenu.html" />
         <link rel="canonical" href="https://bookmarks-vfx.com/modules/database.html" />
 
-    <!-- Generated with Sphinx 6.1.2 and Furo 2022.12.07 -->
-        <title>database - Bookmarks 0.7.7 documentation</title>
+    <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
+        <title>database - Bookmarks 0.7.8 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
     <link rel="stylesheet" type="text/css" href="../_static/css/license_info.css" />
@@ -163,7 +163,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">Bookmarks 0.7.7 documentation</div></a>
+      <a href="../index.html"><div class="brand">Bookmarks 0.7.8 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -190,7 +190,7 @@
     <img class="sidebar-logo only-dark" src="../_static/icon_bw.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">Bookmarks 0.7.7 documentation</span>
+  <span class="sidebar-brand-text">Bookmarks 0.7.8 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -396,13 +396,13 @@ This will return cached, thread-specific database controllers. E.g.:</p>
 <span class="linenos">4</span><span class="n">v</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Each <a class="reference internal" href="#bookmarks.database.BookmarkDB.value" title="bookmarks.database.BookmarkDB.value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BookmarkDB.value()</span></code></a> and <a class="reference internal" href="#bookmarks.database.BookmarkDB.setValue" title="bookmarks.database.BookmarkDB.setValue"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BookmarkDB.setValue()</span></code></a> call will autocommit.
+<p>Each <a class="reference internal" href="#bookmarks.database.BookmarkDB.value" title="bookmarks.database.BookmarkDB.value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BookmarkDB.value()</span></code></a> and <a class="reference internal" href="#bookmarks.database.BookmarkDB.set_value" title="bookmarks.database.BookmarkDB.set_value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">BookmarkDB.set_value()</span></code></a> call will autocommit.
 You can batch commits together by using the built-in context manager:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="kn">from</span> <span class="nn">bookmarks</span> <span class="kn">import</span> <span class="n">database</span>
 <span class="linenos">2</span>
 <span class="linenos">3</span><span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get_db</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
 <span class="linenos">4</span><span class="k">with</span> <span class="n">db</span><span class="o">.</span><span class="n">connection</span><span class="p">():</span>
-<span class="linenos">5</span>    <span class="n">db</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+<span class="linenos">5</span>    <span class="n">db</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>There are two tables that hold item data: <code class="docutils literal notranslate"><span class="pre">common.BookmarkTable</span></code> and
@@ -490,7 +490,7 @@ property, but they don’t and instead use the superfluous bookmark table
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.database.BookmarkDB.close" title="bookmarks.database.BookmarkDB.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a>()</p></td>
 <td><p>Closes the connection.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.database.BookmarkDB.connect_to_db" title="bookmarks.database.BookmarkDB.connect_to_db"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect_to_db</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.database.BookmarkDB.connect_to_db" title="bookmarks.database.BookmarkDB.connect_to_db"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect_to_db</span></code></a>([memory])</p></td>
 <td><p>Connects to the database file.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.database.BookmarkDB.connection" title="bookmarks.database.BookmarkDB.connection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connection</span></code></a>()</p></td>
@@ -502,7 +502,7 @@ property, but they don’t and instead use the superfluous bookmark table
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.database.BookmarkDB.is_valid" title="bookmarks.database.BookmarkDB.is_valid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_valid</span></code></a>()</p></td>
 <td><p>Returns the database's status.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.database.BookmarkDB.setValue" title="bookmarks.database.BookmarkDB.setValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setValue</span></code></a>(source, key, value[, table])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.database.BookmarkDB.set_value" title="bookmarks.database.BookmarkDB.set_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_value</span></code></a>(source, key, value[, table])</p></td>
 <td><p>Sets the given value in the database.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.database.BookmarkDB.source" title="bookmarks.database.BookmarkDB.source"><code class="xref py py-obj docutils literal notranslate"><span class="pre">source</span></code></a>(*args)</p></td>
@@ -522,7 +522,7 @@ property, but they don’t and instead use the superfluous bookmark table
 
 <dl class="py method">
 <dt class="sig sig-object py" id="bookmarks.database.BookmarkDB.connect_to_db">
-<span class="sig-name descname"><span class="pre">connect_to_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/database.html#BookmarkDB.connect_to_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.database.BookmarkDB.connect_to_db" title="Permalink to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">connect_to_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">memory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/database.html#BookmarkDB.connect_to_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.database.BookmarkDB.connect_to_db" title="Permalink to this definition">#</a></dt>
 <dd><p>Connects to the database file.</p>
 <p>The database can be locked for a brief period of time whilst it is being
 used by another other controller instance in another thread. This might
@@ -546,7 +546,7 @@ mark the instance <code class="docutils literal notranslate"><span class="pre">i
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source</strong> (<em>str</em>) – A source file path.</p></li>
-<li><p><strong>table</strong> (<em>str</em>) – A database table name.</p></li>
+<li><p><strong>table</strong> (<em>str</em>) – A database 01table name.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -573,12 +573,12 @@ mark the instance <code class="docutils literal notranslate"><span class="pre">i
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.database.BookmarkDB.setValue">
-<span class="sig-name descname"><span class="pre">setValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">AssetTable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/database.html#BookmarkDB.setValue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.database.BookmarkDB.setValue" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.database.BookmarkDB.set_value">
+<span class="sig-name descname"><span class="pre">set_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">AssetTable</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/database.html#BookmarkDB.set_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.database.BookmarkDB.set_value" title="Permalink to this definition">#</a></dt>
 <dd><p>Sets the given value in the database.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="linenos">1</span><span class="n">db</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="n">get_db</span><span class="p">(</span><span class="n">server</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">root</span><span class="p">)</span>
 <span class="linenos">2</span><span class="n">source</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;//</span><span class="si">{</span><span class="n">server</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">job</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">root</span><span class="si">}</span><span class="s1">/sh0010/scenes/my_scene.ma&#39;</span>
-<span class="linenos">3</span><span class="n">db</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="s1">&#39;hello world&#39;</span><span class="p">)</span>
+<span class="linenos">3</span><span class="n">db</span><span class="o">.</span><span class="n">set_value</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">,</span> <span class="s1">&#39;hello world&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
@@ -806,7 +806,7 @@ in <cite>common.db_connections</cite>.</p>
 <li><a class="reference internal" href="#bookmarks.database.BookmarkDB.connection"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.connection()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.database.BookmarkDB.get_row"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.get_row()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.database.BookmarkDB.is_valid"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.is_valid()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.database.BookmarkDB.setValue"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.setValue()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.database.BookmarkDB.set_value"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.set_value()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.database.BookmarkDB.source"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.source()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.database.BookmarkDB.value"><code class="docutils literal notranslate"><span class="pre">BookmarkDB.value()</span></code></a></li>
 </ul>

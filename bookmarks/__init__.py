@@ -73,7 +73,7 @@ The release contains all Windows dependencies. For setting up a custom developme
 .. |label3| image:: https://img.shields.io/badge/Platform-Windows-lightgrey
    :height: 18
 
-.. |label4| image:: https://img.shields.io/badge/Version-v0.7.7-green
+.. |label4| image:: https://img.shields.io/badge/Version-v0.7.8-green
    :height: 18
 
 .. |image1| image:: ./images/active_bookmark.png
@@ -97,7 +97,7 @@ __website__ = 'https://bookmarks-vfx.com'
 __email__ = 'hello@gergely-wootsch.com'
 
 #: Project version
-__version__ = '0.7.7'
+__version__ = '0.7.8'
 
 #: Project version
 __version_info__ = __version__.split('.')

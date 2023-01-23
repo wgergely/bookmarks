@@ -270,29 +270,11 @@ def _get_info_label(job, asset, task, output_path, startframe, endframe):
     return v
 
 
-def get_progress_bar(startframe, endframe):
-    """A progress bar used during the conversion process.
-
-    Returns:
-        QProgressBar: A widget instance.
-
-    """
-    v = QtWidgets.QProgressDialog()
-    common.set_stylesheet(v)
-    v.setFixedWidth(common.size(common.size_width))
-    v.setLabelText('FFMpeg is converting, please wait...')
-    v.setMinimum(int(startframe))
-    v.setMaximum(int(endframe))
-    v.setRange(int(startframe), int(endframe))
-    v.setWindowTitle('Convert Progress')
-    return v
-
-
 @common.error
 @common.debug
 def convert(
         path, preset, server=None, job=None, root=None, asset=None, task=None,
-        size=(None, None), timecode=False, output_path=None
+        size=(None, None), timecode=False, output_path=None, parent=None
 ):
     """Start a convert process using ffmpeg.
 
@@ -388,7 +370,14 @@ def convert(
             stderr=subprocess.STDOUT,
             universal_newlines=True
     ) as proc:
-        pbar = get_progress_bar(startframe, endframe)
+
+        pbar = ui.get_progress_bar(
+            'Making Video',
+            'Processing images...',
+            startframe,
+            endframe,
+            parent=parent
+        )
         pbar.open()
 
         lines = []
@@ -397,7 +386,7 @@ def convert(
             if pbar.wasCanceled():
                 proc.kill()
                 pbar.close()
-                break
+                return None
 
             line = proc.stdout.readline()
             if not line:

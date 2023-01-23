@@ -1199,6 +1199,7 @@ def show_notes(index):
     editor = notes.show(index)
     return editor
 
+
 @common.debug
 @common.error
 @selection
@@ -1772,7 +1773,7 @@ def convert_image_sequence(index):
 
     """
     from .external import ffmpeg_widget
-    ffmpeg_widget.show(index.data(common.PathRole))
+    ffmpeg_widget.show(index)
 
 
 def add_zip_template(source, mode, prompt=False):
@@ -2018,29 +2019,39 @@ def delete_selected_files(index):
     s_data = common.get_data(model.source_path(), model.task(), common.SequenceItem)
 
     paths = set(common.get_sequence_paths(index))
-    print(paths)
 
     # Remove file on disk
+    _failed = []
     for path in paths:
         _file = QtCore.QFile(path)
         if not _file.exists():
             continue
         if not _file.remove():
+            _failed.append(path)
             log.error(f'Could not remove {path}.')
 
     # Mark cached file data
     for v in f_data.values():
         if v[common.PathRole] in paths:
+            if v[common.PathRole] in _failed:
+                continue
             paths.remove(v[common.PathRole])
             v[common.FlagsRole] = QtCore.Qt.NoItemFlags | common.MarkedAsArchived
 
     # Mark cache sequence data
-    path = index.data(common.PathRole)
-    for v in s_data.values():
-        if v[common.PathRole] == path:
-            v[common.FlagsRole] = QtCore.Qt.NoItemFlags | common.MarkedAsArchived
+    if not _failed:
+        path = index.data(common.PathRole)
+        for v in s_data.values():
+            if v[common.PathRole] == path:
+                v[common.FlagsRole] = QtCore.Qt.NoItemFlags | common.MarkedAsArchived
 
     index.model().invalidateFilter()
+
+    if _failed:
+        raise RuntimeError(
+            'Not all files could be removed.\n'
+            'Some might be in use by another process.'
+        )
 
 
 @common.error

@@ -4,6 +4,7 @@
 import functools
 import os
 
+import bookmarks_oiio
 from PySide2 import QtCore, QtWidgets
 
 from . import ffmpeg
@@ -294,12 +295,9 @@ class FFMpegWidget(base.BasePropertyEditor):
             destination_path = f'{_dir.path()}/ffmpeg_{frame}.jpg'
 
             # Convert to jpeg
-            buf = images.oiio_get_buf(source_path)
-            if not buf:
+            if bookmarks_oiio.save_image(source_path, destination_path) == 1:
                 pbar.close()
                 raise RuntimeError(f'{source_frame} could not be read')
-
-            buf.write(destination_path)
             jpg_paths.append(destination_path)
 
         return jpg_paths

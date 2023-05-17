@@ -183,6 +183,11 @@ DEFAULT_TOKEN_CONFIG = {
             'value': '{element}.{ext}',
             'description': 'A non-versioned element file'
         },
+        6: {
+            'name': 'Studio Aka - ShotGrid',
+            'value': '{prefix}_{seq}_{shot}_{mode}_{element}.{version}.{ext}',
+            'description': 'Studio Aka - ShotGrid file template'
+        }
     },
     PublishConfig: {
         0: {

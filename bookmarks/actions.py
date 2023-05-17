@@ -1765,6 +1765,20 @@ def import_properties(index):
     importexport.import_item_properties(index)
 
 
+@common.error
+@common.debug
+def import_json_asset_properties():
+    """Imports properties and applies them to the selected item.
+
+    """
+    from . import importexport
+
+    model = common.model(common.AssetTab)
+    indexes = [QtCore.QPersistentModelIndex(model.index(f, 0)) for f in range(model.rowCount())]
+    importexport.import_json_asset_properties(indexes)
+
+
+
 @common.debug
 @common.error
 @selection

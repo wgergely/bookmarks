@@ -18,7 +18,7 @@ HEIGHT = common.size(common.size_row_height) * 0.8
 TEMP_THUMBNAIL_PATH = '{temp}/{product}/temp/{uuid}.{ext}'
 
 ProjectTypes = ('Project',)
-AssetTypes = ('Asset', 'Sequence', 'Shot')
+AssetTypes = ('Episode', 'Asset', 'Sequence', 'Shot')
 
 
 @common.error

@@ -147,14 +147,15 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
         :class:`~bookmarks.items.asset_items.AssetItemView`.
 
         """
-        model = index.model().sourceModel()
+        source_model = index.model().sourceModel()
+        source_index = index.model().mapToSource(index)
 
-        p = model.source_path()
-        k = model.task()
+        p = source_model.source_path()
+        k = source_model.task()
         t = common.FileItem
 
         _data = common.get_data(p, k, t)
-        data = _data[index.row()][common.AssetProgressRole][index.column() - 1]
+        data = _data[source_index.row()][common.AssetProgressRole][index.column() - 1]
 
         right_edge = self._draw_background(painter, option, data)
         self._draw_text(painter, option, data, right_edge)
@@ -272,12 +273,15 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
         """Loads the state values from the current index into the editor.
 
         """
-        model = index.model().sourceModel()
-        p = model.source_path()
-        k = model.task()
+        source_model = index.model().sourceModel()
+        source_index = index.model().mapToSource(index)
+
+        p = source_model.source_path()
+        k = source_model.task()
         t = common.FileItem
-        data = common.get_data(p, k, t)
-        data = data[index.row()][common.AssetProgressRole][index.column() - 1]
+
+        _data = common.get_data(p, k, t)
+        data = _data[source_index.row()][common.AssetProgressRole][index.column() - 1]
 
         for state in sorted(data['states']):
             editor.addItem(
@@ -308,22 +312,25 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
         """Saves the current state value to the bookmark database.
 
         """
-        model = index.model().sourceModel()
-        p = model.source_path()
-        k = model.task()
+        source_model = index.model().sourceModel()
+        source_index = index.model().mapToSource(index)
+
+        p = source_model.source_path()
+        k = source_model.task()
         t = common.FileItem
+
         data = common.get_data(p, k, t)
 
         # We don't have to modify the internal data directly because
         # the db.set_value call will trigger an item refresh
-        progress_data = copy.deepcopy(data[index.row()][common.AssetProgressRole])
+        progress_data = copy.deepcopy(data[source_index.row()][common.AssetProgressRole])
         progress_data[index.column() - 1]['value'] = editor.currentData()
 
         # Write current data to the database
-        pp = data[index.row()][common.ParentPathRole]
+        pp = data[source_index.row()][common.ParentPathRole]
         db = database.get_db(*pp[0:3])
         db.set_value(
-            data[index.row()][common.PathRole],
+            data[source_index.row()][common.PathRole],
             'progress',
             progress_data,
             table=database.AssetTable

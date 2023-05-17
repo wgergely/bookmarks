@@ -374,7 +374,8 @@ def get_sequence_and_shot(s):
     """Returns the sequence and shot name of the given path.
 
     E.g. if the path is `C:/SEQ050/SH010/my_file.ma` will return
-    `('SEQ050', 'SH010')`.
+    `('SEQ050', 'SH010')`. If neither the sequence or shot name is found,
+    will try to match using digits only.
 
     Args:
         s (str): A file or folder path.
@@ -386,27 +387,30 @@ def get_sequence_and_shot(s):
     """
     common.check_type(s, str)
 
+    # Get sequence name
     match = re.search(
         r'(SQ|SEQ|SEQUENCE)([0-9]+)',
         s,
         flags=re.IGNORECASE
     )
+    seq = ''.join(match.groups()) if match and match.groups() else None
 
-    if match and match.groups():
-        seq = ''.join(match.groups())
-    else:
-        seq = None
-
+    # Get shot name
     match = re.search(
         r'(SH|SHOT)([0-9]+)',
         s,
         flags=re.IGNORECASE
     )
+    shot = ''.join(match.groups()) if match and match.groups() else None
 
-    if match and match.groups():
-        shot = ''.join(match.groups())
-    else:
-        shot = None
+    # If we don't have a match for either, we could try to check for a numerical pattern
+    if not seq and not shot:
+        match = re.search(
+            r'(?<=\D)(\d{2,4})_(\d{2,5})(?=\D)',
+            s,
+            flags=re.IGNORECASE
+        )
+        seq, shot = (match.group(1), match.group(2)) if match else (seq, shot)
 
     return seq, shot
 

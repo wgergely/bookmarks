@@ -27,6 +27,7 @@ Attributes:
 
 """
 import os
+import re
 
 from PySide2 import QtWidgets, QtCore
 
@@ -453,12 +454,17 @@ class FileSaverWidget(base.BasePropertyEditor):
 
         # Get generic shot and sequence numbers from the current asset name
         seq, shot = common.get_sequence_and_shot(self.parent_folder())
+
+        # Studio Aka specific override
+        match = re.match(r'.*[0-9]{4}/([A-Z]+)/work/.*', self.parent_folder())
+        task = f'{match.group(1)}_{_get("file_saver_task")}' if match else _get('file_saver_task')
+
         v = config.expand_tokens(
             template,
             asset=_get('asset'),
             user=_get('file_saver_user'),
             version=_get('version').lower(),
-            task=_get('file_saver_task'),
+            task=task,
             element=_get('file_saver_element') if _get('file_saver_element') else 'main',
             sh=shot,
             shot=shot,
@@ -510,6 +516,12 @@ class FileSaverWidget(base.BasePropertyEditor):
             return QtCore.QFileInfo(self._file).dir().path()
 
         folder = self.file_saver_task_editor.currentData(QtCore.Qt.UserRole)
+
+        # Studio Aka specific override
+        match = re.match(r'.*[0-9]{4}/([A-Z]+)/work/.*', self.asset)
+        if match and folder:
+            folder = folder.split('/')[0]
+
         if not folder:
             return None
         return '/'.join((self.server, self.job, self.root, self.asset, folder))

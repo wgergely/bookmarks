@@ -10,7 +10,6 @@ asset_table_properties.json and a thumbnail file. See the main export function
 """
 import json
 import shutil
-import tempfile
 import time
 import uuid
 import zipfile
@@ -95,7 +94,7 @@ def get_save_path(name):
     return v
 
 
-def get_load_path():
+def get_load_path(extension='preset'):
     """Prompts the user to pick a file-load path.
 
     Returns:
@@ -106,8 +105,8 @@ def get_load_path():
 
     d = _last_directory if _last_directory else ''
     v, _ = QtWidgets.QFileDialog.getOpenFileName(
-        caption='Import item properties...',
-        filter='*.preset',
+        caption='Import properties...',
+        filter=f'*.{extension}',
         dir=d
     )
 
@@ -319,15 +318,14 @@ def import_item_properties(index, source=None, prompt=True):
 
 
 
-def batch_import_properties(indexes, json_file_path, prompt=True):
+def import_json_asset_properties(indexes, prompt=True):
     """Import properties for multiple items from a JSON file.
 
     Args:
         indexes (list[QtCore.QModelIndex]): A list of item indexes.
-        json_file_path (str): Path to the JSON file containing item properties.
         prompt (bool): Show prompt before overriding.
     """
-    json_file_path = get_load_path()
+    json_file_path = get_load_path(extension='json')
 
     # Load JSON data from file
     if not os.path.exists(json_file_path):
@@ -339,43 +337,44 @@ def batch_import_properties(indexes, json_file_path, prompt=True):
     except json.JSONDecodeError:
         raise ValueError(f"File is not a valid JSON file: {json_file_path}")
 
-        # Determine the directory of the json file
-    json_dir = os.path.dirname(json_file_path)
+    if prompt:
+        from . import ui
+        mbox = ui.MessageBox(
+            'Are you sure you want override the properties of the visible items?',
+            buttons=[ui.YesButton, ui.NoButton]
+        )
+        if mbox.exec_() == QtWidgets.QDialog.Rejected:
+            return
 
-    # Loop through each item in the JSON data
-    for item_data in data:
-        # Check if 'name' key exists in the current item data
-        if 'name' not in item_data:
-            raise ValueError("'name' key is missing in the JSON data")
+    # Loop through all visible indexes
+    for index in indexes:
 
-        # Extract the name of the item
-        name = item_data['name']
+        path = index.data(common.PathRole)
+        db = database.get_db(*index.data(common.ParentPathRole)[0:3])
 
-        # Find all indexes containing this name in its PathRole data
-        matching_indexes = [i for i in indexes if name in i.data(common.PathRole)]
+        for item in data:
 
-        # If an index is found, import the item properties
-        for index in matching_indexes:
-            # Create a temporary file to store the item properties
-            with tempfile.NamedTemporaryFile(suffix='.json', delete=False) as temp_file:
-                json.dump(item_data, temp_file)
+            # Skip invalid items
+            if 'name' not in data[item]:
+                continue
 
-            # Import the item properties
-            import_item_properties(index, source=temp_file.name, prompt=prompt)
+            # Match a corresponding item by name
+            if item.lower() not in path.lower():
+                continue
 
-            # Try to find the thumbnail path, first try .png then .jpg
-            for ext in ['png', 'jpg']:
-                thumbnail_path = os.path.join(json_dir, f"{name}.{ext}")
-                if os.path.exists(thumbnail_path):
-                    images.create_thumbnail_from_image(
-                        index.data(common.ParentPathRole)[0],
-                        index.data(common.ParentPathRole)[1],
-                        index.data(common.ParentPathRole)[2],
-                        index.data(common.PathRole),
-                        thumbnail_path,
-                        proxy=False
-                    )
-                    break  # If we found and processed a thumbnail, we can break the loop
+            # Set valid database values
+            with db.connection():
+                for k, v in data[item].items():
+                    if k not in database.TABLES[database.AssetTable]:
+                        continue
+                    db.set_value(path, k, v, table=database.AssetTable)
 
-            # Delete the temporary file
-            os.remove(temp_file.name)
+            if 'thumbnail' in data[item] and os.path.isfile(data[item]['thumbnail']):
+                images.create_thumbnail_from_image(
+                    index.data(common.ParentPathRole)[0],
+                    index.data(common.ParentPathRole)[1],
+                    index.data(common.ParentPathRole)[2],
+                    index.data(common.PathRole),
+                    data[item]['thumbnail'],
+                    proxy=False
+                )

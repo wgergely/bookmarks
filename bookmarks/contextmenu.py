@@ -494,13 +494,13 @@ class BaseContextMenu(QtWidgets.QMenu):
         primary_url = db.value(db.source(asset), 'url1', database.AssetTable)
         secondary_url = db.value(db.source(asset), 'url2', database.AssetTable)
 
-        if not any((primary_url, secondary_url)):
-            return
-
         k = 'Links'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
             self.menu[f'{k}:icon'] = ui.get_icon('link')
+
+        if not any((primary_url, secondary_url)):
+            return
 
         if primary_url:
             self.menu[k][key()] = {
@@ -1199,7 +1199,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[f'{k}:icon'] = settings_icon
 
         self.menu[k][key()] = {
-            'text': 'Edit Asset Properties...',
+            'text': 'Edit asset properties...',
             'icon': settings_icon,
             'action': functools.partial(actions.edit_asset, asset=asset),
             'shortcut': shortcuts.get(
@@ -1224,7 +1224,7 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[f'{k}:icon'] = settings_icon
 
         self.menu[k][key()] = {
-            'text': 'Edit Asset Properties...',
+            'text': 'Edit asset properties...',
             'icon': settings_icon,
             'action': actions.edit_asset,
             'shortcut': shortcuts.get(
@@ -1363,8 +1363,8 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[f'{k}:icon'] = ui.get_icon('sg')
 
         self.separator(self.menu[k])
+
         for url in reversed(sg_properties.urls()):
-            print(url)
             self.menu[k][key()] = {
                 'text': url,
                 'icon': ui.get_icon('sg'),
@@ -1578,25 +1578,30 @@ class BaseContextMenu(QtWidgets.QMenu):
         """Export property
 
         """
-        if not self.index.isValid():
-            return
-
         k = 'Properties'
         if k not in self.menu:
             self.menu[k] = collections.OrderedDict()
             self.menu[f'{k}:icon'] = ui.get_icon('settings')
 
         self.separator(menu=self.menu[k])
+        if self.index.isValid():
+            self.menu[k][key()] = {
+                'text': 'Export properties...',
+                'action': actions.export_properties,
+                'icon': ui.get_icon('branch_closed')
+            }
+
+            self.menu[k][key()] = {
+                'text': 'Import properties...',
+                'action': actions.import_properties,
+                'icon': ui.get_icon('branch_backwards')
+            }
+
+        self.separator(menu=self.menu[k])
 
         self.menu[k][key()] = {
-            'text': 'Export properties...',
-            'action': actions.export_properties,
-            'icon': ui.get_icon('branch_closed')
-        }
-
-        self.menu[k][key()] = {
-            'text': 'Import properties...',
-            'action': actions.import_properties,
+            'text': 'Import asset properties from json...',
+            'action': actions.import_json_asset_properties,
             'icon': ui.get_icon('branch_backwards')
         }
 

@@ -1,0 +1,53 @@
+@echo off
+@REM Packaging script for Bookmark's Windows distribution
+
+if EXIST "${PACKAGE_DIR}" rmdir "${PACKAGE_DIR}" /S /Q
+
+@REM 
+mkdir "${PACKAGE_DIR}"
+mkdir "${PACKAGE_DIR}/bin"
+mkdir "${PACKAGE_DIR}/core"
+mkdir "${PACKAGE_DIR}/DLLs"
+mkdir "${PACKAGE_DIR}/imageformats"
+mkdir "${PACKAGE_DIR}/platforms"
+mkdir "${PACKAGE_DIR}/shared"
+
+@REM python
+robocopy "${PACKAGES_DIR}/vcpkg/installed/${VCPKG_TRIPLET}/tools/python${PYTHON_VERSION_MAJOR}/DLLs" "${PACKAGE_DIR}/DLLs" *.dll *.pyd *.exe /R:0 /W:0
+robocopy "${PACKAGES_DIR}/python-embed" "${PACKAGE_DIR}" python${PYTHON_VERSION_MAJOR}.dll python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}.zip vcruntime* /R:0 /W:0
+robocopy "${PACKAGES_DIR}/python" "${PACKAGE_DIR}" *.dll *.pyd *.exe /R:0 /W:0 /XF pythonw.exe _freeze_importlib.exe venv*
+robocopy "${CMAKE_SOURCE_DIR}" "${PACKAGE_DIR}" .pythonstartup python.bat /R:0 /W:0
+
+@REM vcpkg openimageio
+robocopy "${PACKAGES_DIR}/vcpkg/installed/${VCPKG_TRIPLET}/tools/openimageio" "${PACKAGE_DIR}/bin" *.dll *.exe /R:0 /W:0
+
+robocopy "${PACKAGES_DIR}/vcpkg/installed/${VCPKG_TRIPLET}/lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages/OpenImageIO" "${PACKAGE_DIR}/shared" *.pyd /R:0 /W:0
+
+@REM vcpkg ffmpeg
+robocopy "${PACKAGES_DIR}/vcpkg/installed/${VCPKG_TRIPLET}/tools/ffmpeg" "${PACKAGE_DIR}/bin" *.dll *.exe /R:0 /W:0
+
+@REM vcpkg qt
+robocopy "${PACKAGES_DIR}/vcpkg/installed/${VCPKG_TRIPLET}/plugins/imageformats" "${PACKAGE_DIR}/imageformats" *.dll *.exe /R:0 /W:0
+robocopy "${PACKAGES_DIR}/vcpkg/installed/${VCPKG_TRIPLET}/plugins/platforms" "${PACKAGE_DIR}/platforms" *.dll *.exe /R:0 /W:0
+
+@REM pyside
+mkdir "${PACKAGE_DIR}/core/${PYSIDE}"
+robocopy "${PACKAGES_DIR}/pyside-setup/build/sources/${PYSIDE_LOWER}/${PYSIDE}" "${PACKAGE_DIR}/core/${PYSIDE}" *.py /R:0 /W:0
+robocopy "${PACKAGES_DIR}/pyside-setup/build/sources/${PYSIDE_LOWER}/${PYSIDE}/Release" "${PACKAGE_DIR}/core/${PYSIDE}" *.pyd /R:0 /W:0
+robocopy "${PACKAGES_DIR}/pyside-setup/build/sources/${PYSIDE_LOWER}/libpyside/Release" "${PACKAGE_DIR}/core" *.dll /R:0 /W:0
+
+@REM shiboken
+mkdir "${PACKAGE_DIR}/core/${SHIBOKEN_LOWER}"
+robocopy "${PACKAGES_DIR}/pyside-setup/build/sources/${SHIBOKEN_LOWER}/shibokenmodule" "${PACKAGE_DIR}/core/${SHIBOKEN_LOWER}" *.py /R:0 /W:0
+robocopy "${PACKAGES_DIR}/pyside-setup/build/sources/${SHIBOKEN_LOWER}/shibokenmodule/Release" "${PACKAGE_DIR}/core/${SHIBOKEN_LOWER}" *.pyd /R:0 /W:0
+robocopy "${PACKAGES_DIR}/pyside-setup/build/sources/${SHIBOKEN_LOWER}/libshiboken/Release" "${PACKAGE_DIR}/core" *.dll /R:0 /W:0
+
+@REM launcher
+robocopy "${CMAKE_BINARY_DIR}/launcher/Release" "${PACKAGE_DIR}" *.exe /R:0 /W:0
+
+@REM imageutil
+robocopy "${CMAKE_BINARY_DIR}/launcher/Release" "${PACKAGE_DIR}" *.pyd /R:0 /W:0
+
+@REM bookmarks
+robocopy "${CMAKE_SOURCE_DIR}/../bookmarks" "${PACKAGE_DIR}/shared/bookmarks" *.* /R:0 /W:0 /e
+"${PACKAGES_DIR}/python/python.exe" -m pip install -r "${REQUIREMENTS_FILE}" --target="${PACKAGE_DIR}/shared"

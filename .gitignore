@@ -1,24 +1,185 @@
+# .gitignore
+*~
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore Python build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+
+# Ignore Jupyter notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore VS Code settings and extensions
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Ignore PyCharm files
+.idea/
+
+# Ignore Atom editor files
+.atom/
+
+# Ignore files from JetBrains IDEs (e.g., PyCharm)
+*.iml
+.idea/
+
+# Ignore Sublime Text project files
+*.sublime-workspace
+
+# Ignore Eclipse project files
+*.project
+*.cproject
+*.settings/
+
+# Ignore files from NetBeans
+/nbproject/
+
+# Ignore files from Vim
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+
+# Ignore Emacs files
+\#*\#
+.\#*
+
+# .gitignore
+
 # Byte-compiled / optimized / DLL files
-*.py[c]
+__pycache__/
+*.py[cod]
 *$py.class
-__pycache__
+
+# C extensions
+*.so
 
 # Distribution / packaging
 .Python
-.idea
-.pytest*
-.DS_Store
+build/
 develop-eggs/
 dist/
-dest
+downloads/
 eggs/
 .eggs/
-.vs/
 lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 MANIFEST
-debug.log
 
-# Docs
-docs/build/
-packages
-oiioutil/build 
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+__pypackages__/
+
+# Pyenv
+.python-version
+
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if having platform-specific dependencies or dependencies
+#   having no cross-platform support, pipenv may install dependencies that don't work, or not
+#   install all needed dependencies.
+#Pipfile.lock
+
+# PEP 517 and 518 pyproject.toml/pyproject.lock
+pyproject.toml
+.pydistutils.cfg
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jekyll-style directory for GitHub Pages
+_site/
+
+# dotenv
+.env
+
+# virtualenv
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/

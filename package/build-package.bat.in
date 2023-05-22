@@ -3,7 +3,7 @@
 
 if EXIST "${PACKAGE_DIR}" rmdir "${PACKAGE_DIR}" /S /Q
 
-@REM 
+@REM
 mkdir "${PACKAGE_DIR}"
 mkdir "${PACKAGE_DIR}/bin"
 mkdir "${PACKAGE_DIR}/core"
@@ -46,7 +46,8 @@ robocopy "${PACKAGES_DIR}/pyside-setup/build/sources/${SHIBOKEN_LOWER}/libshibok
 robocopy "${CMAKE_BINARY_DIR}/launcher/Release" "${PACKAGE_DIR}" *.exe /R:0 /W:0
 
 @REM imageutil
-robocopy "${CMAKE_BINARY_DIR}/launcher/Release" "${PACKAGE_DIR}" *.pyd /R:0 /W:0
+robocopy "${CMAKE_BINARY_DIR}/imageutil/build/Release" "${PACKAGE_DIR}/bin" *.exe *.dll /R:0 /W:0
+robocopy "${CMAKE_BINARY_DIR}/imageutil/build/Release" "${PACKAGE_DIR}/shared" *.pyd /R:0 /W:0
 
 @REM bookmarks
 robocopy "${CMAKE_SOURCE_DIR}/../bookmarks" "${PACKAGE_DIR}/shared/bookmarks" *.* /R:0 /W:0 /e

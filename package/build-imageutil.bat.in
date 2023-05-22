@@ -1,0 +1,24 @@
+@echo off
+
+set "CMAKE_TOOLCHAIN_FILE=${PACKAGES_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+if not exist "%CMAKE_TOOLCHAIN_FILE%" (
+    echo "%CMAKE_TOOLCHAIN_FILE% not found"
+    exit /b 1
+)
+
+"${CMAKE_COMMAND}" ^
+-S "${PROJECT_SOURCE_DIR}/imageutil" ^
+-B "${PROJECT_BINARY_DIR}/imageutil" ^
+-G "${CMAKE_GENERATOR}" ^
+-A ${CMAKE_GENERATOR_PLATFORM} ^
+-DCMAKE_BUILD_TYPE=Release ^
+-DCMAKE_TOOLCHAIN_FILE="${PACKAGES_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake" ^
+-DBUILD_TEST:BOOL=OFF
+
+cd "${PROJECT_BINARY_DIR}/imageutil"
+if not exist "${PROJECT_BINARY_DIR}/imageutil/imageutil.sln" (
+    echo "imageutil.sln not found"
+    exit /b 1
+)
+
+msbuild.exe "${PROJECT_BINARY_DIR}/imageutil/imageutil.sln" /t:Build /p:Configuration=Release /p:Platform=${CMAKE_GENERATOR_PLATFORM} /m /nologo

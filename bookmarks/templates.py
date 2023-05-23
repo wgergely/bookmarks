@@ -211,9 +211,9 @@ class TemplateListWidget(ui.ListWidget):
         h = common.size(common.size_row_height)
         size = QtCore.QSize(1, h)
 
-        off_pixmap = images.ImageCache.rsc_pixmap(
+        off_pixmap = images.rsc_pixmap(
             'close', common.color(common.color_separator), h)
-        on_pixmap = images.ImageCache.rsc_pixmap(
+        on_pixmap = images.rsc_pixmap(
             'check', common.color(common.color_green), h)
 
         icon = QtGui.QIcon()
@@ -460,7 +460,7 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
 
         size = QtCore.QSize(0, common.size(common.size_row_height) * 0.8)
 
-        folder_pixmap = images.ImageCache.rsc_pixmap(
+        folder_pixmap = images.rsc_pixmap(
             'folder', common.color(common.color_secondary_text),
             common.size(common.size_margin))
         folder_icon = QtGui.QIcon()
@@ -468,7 +468,7 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
         folder_icon.addPixmap(folder_pixmap, QtGui.QIcon.Selected)
         folder_icon.addPixmap(folder_pixmap, QtGui.QIcon.Disabled)
 
-        file_pixmap = images.ImageCache.rsc_pixmap(
+        file_pixmap = images.rsc_pixmap(
             'file', common.color(common.color_green), common.size(common.size_margin),
             opacity=0.5)
         file_icon = QtGui.QIcon()

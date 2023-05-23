@@ -80,9 +80,14 @@ def get_item_info(ref):
     if not buf:
         return info
 
-    s = buf.spec().serialize()
-    if not s:
+    try:
+        s = buf.spec().serialize()
+        if not s:
+            return
+
+    except (RuntimeError, UnicodeDecodeError):
         return
+
     for n, _s in enumerate([f.strip() for f in s.split('\n') if f]):
         if n > 32:
             break
@@ -245,13 +250,10 @@ class ImageViewer(QtWidgets.QWidget):
             )
 
         # Wait for the thread to finish loading the thumbnail
-        images.wait_for_lock(source)
-        with images.lock:
-            pixmap = images.ImageCache.get_pixmap(source, -1, oiio=oiio)
+        pixmap = images.ImageCache.get_pixmap(source, -1, oiio=oiio)
 
         if pixmap and not pixmap.isNull():
-            with images.lock:
-                images.ImageCache.flush(source)
+            images.ImageCache.flush(source)
 
             self.viewer.setSceneRect(self.rect())
             self.viewer.scene().setSceneRect(self.rect())

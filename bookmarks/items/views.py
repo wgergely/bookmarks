@@ -162,7 +162,7 @@ class ItemDrag(QtGui.QDrag):
         self.setMimeData(model.mimeData([index, ]))
 
         def _get(s, color=common.color(common.color_green)):
-            return images.ImageCache.rsc_pixmap(
+            return images.rsc_pixmap(
                 s, color,
                 common.size(
                     common.size_margin
@@ -183,7 +183,7 @@ class ItemDrag(QtGui.QDrag):
 
         # Set file item apperance
         if index.data(common.ItemTabRole) in (common.BookmarkTab, common.AssetTab):
-            pixmap = images.ImageCache.rsc_pixmap(
+            pixmap = images.rsc_pixmap(
                 'copy',
                 common.color(common.color_disabled_text),
                 common.size(common.size_row_height)
@@ -209,20 +209,20 @@ class ItemDrag(QtGui.QDrag):
                     size=common.size(common.size_row_height),
                 )
             elif alt_modifier and shift_modifier:
-                pixmap = images.ImageCache.rsc_pixmap(
+                pixmap = images.rsc_pixmap(
                     'folder', common.color(common.color_secondary_text),
                     common.size(common.size_row_height)
                 )
                 source = QtCore.QFileInfo(source).dir().path()
             elif alt_modifier:
-                pixmap = images.ImageCache.rsc_pixmap(
+                pixmap = images.rsc_pixmap(
                     'file', common.color(common.color_secondary_text),
                     common.size(common.size_row_height)
                 )
                 source = common.get_sequence_start_path(source)
             elif shift_modifier:
                 source = common.get_sequence_start_path(source) + ', ++'
-                pixmap = images.ImageCache.rsc_pixmap(
+                pixmap = images.rsc_pixmap(
                     'multiples_files', common.color(common.color_secondary_text),
                     common.size(common.size_row_height)
                 )

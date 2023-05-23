@@ -80,18 +80,18 @@ class ToggleSessionModeButton(ui.ClickableIconButton):
 
         """
         if common.active_mode == common.SynchronisedActivePaths:
-            return images.ImageCache.rsc_pixmap(
+            return images.rsc_pixmap(
                 'check',
                 common.color(common.color_green),
                 self._size
             )
         if common.active_mode == common.PrivateActivePaths:
-            return images.ImageCache.rsc_pixmap(
+            return images.rsc_pixmap(
                 'crossed',
                 common.color(common.color_red),
                 self._size
             )
-        return images.ImageCache.rsc_pixmap(
+        return images.rsc_pixmap(
             'crossed',
             common.color(common.color_red),
             self._size

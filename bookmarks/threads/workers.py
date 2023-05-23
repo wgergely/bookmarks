@@ -9,7 +9,7 @@ import weakref
 
 from PySide2 import QtCore, QtWidgets, QtGui
 
-import bookmarks_oiio
+import pyimageutil
 
 from .. import common
 from .. import database
@@ -776,7 +776,6 @@ class ThumbnailWorker(BaseWorker):
         if not self.is_valid(ref):
             return False
         source = ref()[common.PathRole]
-
         # Resolve the thumbnail's path...
         destination = images.get_cached_thumbnail_path(
             _p[0],
@@ -784,52 +783,48 @@ class ThumbnailWorker(BaseWorker):
             _p[2],
             source,
         )
-
-        with images.lock:
-            # ...and use it to load the resource
-            image = images.ImageCache.get_image(
-                destination,
-                int(size),
-                force=True  # force=True will refresh the cache
-            )
+        # ...and use it to load the resource
+        image = images.ImageCache.get_image(
+            destination,
+            int(size),
+            force=True  # force=True will refresh the cache
+        )
 
         # If the image successfully loads we can wrap things up here
         if image and not image.isNull():
-            with images.lock:
-                images.ImageCache.make_color(destination)
+            images.make_color(destination)
+            return True
+
+        # Otherwise, we will try to generate a thumbnail using OpenImageIO
+
+        # If the items is a sequence, we'll use the first image of the
+        # sequence to make the thumbnail.
+        if not self.is_valid(ref):
+            return False
+        if ref()[common.TypeRole] == common.SequenceItem:
+            if not self.is_valid(ref):
+                return False
+            source = ref()[common.EntryRole][0].path.replace('\\', '/')
+
+        if QtCore.QFileInfo(source).size() >= pow(1024, 3) * 2:
+            return True
+
+        buf = images.oiio_get_buf(source)
+
+        if not buf:
             return True
 
         try:
-            # Otherwise, we will try to generate a thumbnail using OpenImageIO
-
-            # If the items is a sequence, we'll use the first image of the
-            # sequence to make the thumbnail.
-            if not self.is_valid(ref):
-                return False
-            if ref()[common.TypeRole] == common.SequenceItem:
-                if not self.is_valid(ref):
-                    return False
-                source = ref()[common.EntryRole][0].path.replace('\\', '/')
-
-            with images.lock:
-                buf = images.oiio_get_buf(source)
-
-            if not buf:
-                return True
-
             # Skip large files
-            if QtCore.QFileInfo(source).size() >= pow(1024, 3) * 2:
-                return True
 
-            res = bookmarks_oiio.make_thumbnail(
+            res = pyimageutil.convert_image(
                 source,
                 destination,
-                int(common.thumbnail_size),
+                max_size=int(common.thumbnail_size),
             )
-            if res == 0:
-                with images.lock:
-                    images.ImageCache.get_image(destination, int(size), force=True)
-                    images.ImageCache.make_color(destination)
+            if res:
+                images.ImageCache.get_image(destination, int(size), force=True)
+                images.make_color(destination)
                 return True
 
             # We should never get here ideally, but if we do we'll mark the item
@@ -839,10 +834,9 @@ class ThumbnailWorker(BaseWorker):
                 f'{common.GuiResource}/failed.{common.thumbnail_format}')
             hash = common.get_hash(destination)
 
-            with images.lock:
-                images.ImageCache.get_image(fpath, int(size), hash=hash, force=True)
-                images.ImageCache.setValue(
-                    hash, common.color(common.color_dark_background), images.ColorType)
+            images.ImageCache.get_image(fpath, int(size), hash=hash, force=True)
+            images.ImageCache.setValue(
+                hash, common.color(common.color_dark_background), images.ColorType)
             return True
 
         except TypeError:
@@ -917,7 +911,7 @@ class ShotgunWorker(BaseWorker):
             else:
                 entities = sg.find(entity_type, filters, fields=fields)
 
-            # Emit the retrieved data so the ui componenets can fetch it
+            # Emit the retrieved data so the ui components can fetch it
             self.sgEntityDataReady.emit(idx, entities)
         except IndexError:
             pass  # ignore index errors

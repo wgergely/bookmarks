@@ -213,16 +213,16 @@ def init_stylesheet():
             color_separator=rgb(common.color_separator),
             color_blue=rgb(common.color_blue),
             color_opaque=rgb(common.color_opaque),
-            branch_closed=images.ImageCache.rsc_pixmap(
+            branch_closed=images.rsc_pixmap(
                 'branch_closed', None, None, get_path=True
             ),
-            branch_open=images.ImageCache.rsc_pixmap(
+            branch_open=images.rsc_pixmap(
                 'branch_open', None, None, get_path=True
             ),
-            check=images.ImageCache.rsc_pixmap(
+            check=images.rsc_pixmap(
                 'check', None, None, get_path=True
             ),
-            close=images.ImageCache.rsc_pixmap(
+            close=images.rsc_pixmap(
                 'close', None, None, get_path=True
             ),
             menu_border_radius=int(size(common.size_margin) * 0.5)

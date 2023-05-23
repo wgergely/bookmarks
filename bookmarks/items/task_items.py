@@ -145,11 +145,11 @@ class TaskItemViewDelegate(delegate.ItemDelegate):
         rect = QtCore.QRect(option.rect)
 
         if index.data(common.TodoCountRole):
-            pixmap = images.ImageCache.rsc_pixmap(
+            pixmap = images.rsc_pixmap(
                 'folder', common.color(common.color_separator), o
             )
         else:
-            pixmap = images.ImageCache.rsc_pixmap(
+            pixmap = images.rsc_pixmap(
                 'folder', common.color(common.color_dark_background), o
             )
 

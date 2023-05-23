@@ -1,0 +1,8 @@
+sphinx
+furo
+autodocsumm
+sphinx_sitemap
+sphinx_markdown_builder
+sphinx_design
+sphinxcontrib.youtube
+sphinx_licenseinfo

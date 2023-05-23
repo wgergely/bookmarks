@@ -17,10 +17,8 @@ STRINGS = {
                                         flags=re.MULTILINE),
     f'{pkg_root}/bookmarks/maya/plugin.py': re.compile(
         r"__version__ = \'([0-9]\.[0-9]\.[0-9])\'", flags=re.MULTILINE),
-    f'{pkg_root}/installer/installer.iss': re.compile(
-        r'#define MyAppVersion "([0-9]\.[0-9]\.[0-9])"', flags=re.MULTILINE),
-    f'{pkg_root}/launcher/CMakeLists.txt': re.compile(r'VERSION ([0-9]\.[0-9]\.[0-9])',
-                                                      flags=re.MULTILINE),
+    f'{pkg_root}/package/CMakeLists.txt': re.compile(
+        r"VERSION ([0-9]\.[0-9]\.[0-9])", flags=re.MULTILINE),
     f'{pkg_root}/docs/source/guide.rst': re.compile(r'.*([0-9]\.[0-9]\.[0-9]).*',
                                                     flags=re.MULTILINE),
 }

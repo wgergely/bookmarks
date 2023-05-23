@@ -88,7 +88,7 @@ class TableWidget(QtWidgets.QTableWidget):
         _item = QtWidgets.QTableWidgetItem(name)
         _item.setFlags(QtCore.Qt.ItemIsEnabled)
         _item.setTextAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'asset', common.color(common.color_dark_background),
             common.size(common.size_margin))
         icon = QtGui.QIcon()
@@ -100,7 +100,7 @@ class TableWidget(QtWidgets.QTableWidget):
         item.setFlags(QtCore.Qt.NoItemFlags)
         item.setTextAlignment(QtCore.Qt.AlignCenter)
         self.setItem(row, 1, item)
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'branch_closed', common.color(common.color_dark_background),
             common.size(common.size_margin))
         label = QtWidgets.QLabel()

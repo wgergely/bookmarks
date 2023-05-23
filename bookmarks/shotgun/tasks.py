@@ -214,9 +214,9 @@ class TaskModel(QtCore.QAbstractItemModel):
     @common.error
     @common.debug
     def init_icons(self):
-        pixmap1 = images.ImageCache.rsc_pixmap(
+        pixmap1 = images.rsc_pixmap(
             'sg', common.color(common.color_green), common.size(common.size_margin))
-        pixmap2 = images.ImageCache.rsc_pixmap(
+        pixmap2 = images.rsc_pixmap(
             'check', common.color(common.color_selected_text),
             common.size(common.size_margin))
         icon = QtGui.QIcon()
@@ -225,7 +225,7 @@ class TaskModel(QtCore.QAbstractItemModel):
         icon.addPixmap(pixmap2, mode=QtGui.QIcon.Selected)
         self.task_icon = icon
 
-        self.step_icon = QtGui.QIcon(images.ImageCache.rsc_pixmap(
+        self.step_icon = QtGui.QIcon(images.rsc_pixmap(
             'sg', common.color(common.color_blue), common.size(common.size_margin)))
 
     def entities_to_nodes(self):

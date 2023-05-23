@@ -10,6 +10,7 @@
 
 #ifdef BUILD_PYBIND11
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 namespace py = pybind11;
 #endif
 
@@ -172,7 +173,7 @@ OIIO::ImageBuf get_buf(const std::string& filename, bool debug) {
 
     // Leaving this here for posterity but the code doesn't work and
     // has no real performance benefit as far as I can see:
-    // 
+    //
     //for (ChannelInfo info : channels) {
     //    // From the docs:
     //    // Please note that chstart/chend is �advisory� and not guaranteed to be honored by the underlying implementation
@@ -468,7 +469,13 @@ bool py_convert_images(
     if (release_gil) {
         py::gil_scoped_release release;
     }
-    return convert_images(input_images, output_images, max_size, debug);
+    try {
+        return convert_images(input_images, output_images, max_size, debug);
+    }
+    catch (...) {
+        // Exception occurred while calling convert_images
+        return false;
+    }
 }
 
 PYBIND11_MODULE(pyimageutil, m)

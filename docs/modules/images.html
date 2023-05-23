@@ -392,7 +392,7 @@ suitable placeholder image. See  <a class="reference internal" href="#bookmarks.
 <a class="reference internal" href="#bookmarks.images.ImageCache.get_image" title="bookmarks.images.ImageCache.get_image"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ImageCache.get_image()</span></code></a>.</p>
 <p>We’re using OpenImageIO to generate thumbnails.
 To load an image using OpenImageIO as a QtGui.QImage see <a class="reference internal" href="#bookmarks.images.oiio_get_qimage" title="bookmarks.images.oiio_get_qimage"><code class="xref py py-func docutils literal notranslate"><span class="pre">oiio_get_qimage()</span></code></a>.</p>
-<p>To load gui resources, use <a class="reference internal" href="#bookmarks.images.ImageCache.rsc_pixmap" title="bookmarks.images.ImageCache.rsc_pixmap"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ImageCache.rsc_pixmap()</span></code></a>.</p>
+<p>To load gui resources, use <a class="reference internal" href="#bookmarks.images.rsc_pixmap" title="bookmarks.images.rsc_pixmap"><code class="xref py py-meth docutils literal notranslate"><span class="pre">.rsc_pixmap()</span></code></a>.</p>
 <p><strong>Classes:</strong></p>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
@@ -496,7 +496,7 @@ multiple QPixmap and QImage cache entries as various sizes are requested and cac
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.images.ImageCache.resize_image" title="bookmarks.images.ImageCache.resize_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resize_image</span></code></a>(image, size)</p></td>
 <td><p>Returns a scaled copy of the image that fits in size.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.images.ImageCache.rsc_pixmap" title="bookmarks.images.ImageCache.rsc_pixmap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rsc_pixmap</span></code></a>(name, color, size[, opacity, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#bookmarks.images.rsc_pixmap" title="bookmarks.images.rsc_pixmap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rsc_pixmap</span></code></a>(name, color, size[, opacity, ...])</p></td>
 <td><p>Loads an image resource and returns it as a resized (and recolored) QPixmap.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#bookmarks.images.ImageCache.setValue" title="bookmarks.images.ImageCache.setValue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setValue</span></code></a>(hash, value, cache_type[, size])</p></td>
@@ -642,8 +642,8 @@ anyway.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="bookmarks.images.ImageCache.rsc_pixmap">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rsc_pixmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">common.GuiResource</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oiio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#ImageCache.rsc_pixmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.ImageCache.rsc_pixmap" title="Permalink to this definition">#</a></dt>
+<dt class="sig sig-object py" id="bookmarks.images.rsc_pixmap">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rsc_pixmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">common.GuiResource</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oiio</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/bookmarks/images.html#.rsc_pixmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#bookmarks.images.rsc_pixmap" title="Permalink to this definition">#</a></dt>
 <dd><p>Loads an image resource and returns it as a resized (and recolored) QPixmap.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -691,7 +691,7 @@ setting the new value. This only applies to Image- and PixmapTypes.</p>
 file’s thumbnail image.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">server</span></code>, <code class="docutils literal notranslate"><span class="pre">job</span></code>, <code class="docutils literal notranslate"><span class="pre">root</span></code>, <code class="docutils literal notranslate"><span class="pre">source</span></code> arguments refer to a file we
 want to create a new thumbnail for. The <code class="docutils literal notranslate"><span class="pre">image</span></code> argument should be a path to
-an image file that will be converted using <cite>bookmarks_oiio.make_thumbnail()</cite> to a
+an image file that will be converted using <cite>pyimageutil.make_thumbnail()</cite> to a
 thumbnail image and saved to our image cache and disk to represent <code class="docutils literal notranslate"><span class="pre">source</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -948,7 +948,7 @@ as the source instead of <cite>source</cite>. Defaults to <cite>None</cite>.</p>
 <li><a class="reference internal" href="#bookmarks.images.ImageCache.get_pixmap"><code class="docutils literal notranslate"><span class="pre">ImageCache.get_pixmap()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.images.ImageCache.make_color"><code class="docutils literal notranslate"><span class="pre">ImageCache.make_color()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.images.ImageCache.resize_image"><code class="docutils literal notranslate"><span class="pre">ImageCache.resize_image()</span></code></a></li>
-<li><a class="reference internal" href="#bookmarks.images.ImageCache.rsc_pixmap"><code class="docutils literal notranslate"><span class="pre">ImageCache.rsc_pixmap()</span></code></a></li>
+<li><a class="reference internal" href="#bookmarks.images.rsc_pixmap"><code class="docutils literal notranslate"><span class="pre">.rsc_pixmap()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.images.ImageCache.setValue"><code class="docutils literal notranslate"><span class="pre">ImageCache.setValue()</span></code></a></li>
 <li><a class="reference internal" href="#bookmarks.images.ImageCache.value"><code class="docutils literal notranslate"><span class="pre">ImageCache.value()</span></code></a></li>
 </ul>

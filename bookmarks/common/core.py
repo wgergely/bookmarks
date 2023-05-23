@@ -89,6 +89,7 @@ ThumbnailResource = 'thumbnails'
 FormatResource = 'formats'
 TemplateResource = 'templates'
 
+hashes_mutex = QtCore.QMutex()
 
 def rsc(rel_path):
     """Returns a resource item from the `rsc` directory.
@@ -149,8 +150,6 @@ def get_hash(key):
         str: MD5 hexadecimal digest of the key.
 
     """
-    check_type(key, str)
-
     # Path must not contain backslashes
     if '\\' in key:
         key = key.replace('\\', '/')
@@ -165,12 +164,8 @@ def get_hash(key):
             key = key.lstrip('/')
             break
 
-    if key in common.hashes:
-        return common.hashes[key]
-
     # Otherwise, we calculate, save and return the digest
-    common.hashes[key] = hashlib.md5(key.encode('utf8')).hexdigest()
-    return common.hashes[key]
+    return hashlib.md5(key.encode('utf8')).hexdigest()
 
 
 def error(func):
@@ -479,7 +474,7 @@ def get_links(path, section='links/asset'):
     if not v:
         return []
     if not isinstance(v, (list, tuple)):
-        v = [v,]
+        v = [v, ]
 
     try:
         # Check validity of the list before returning anything
@@ -513,7 +508,7 @@ def add_link(path, link, section='links/asset'):
     if QtCore.QFileInfo(l).exists():
         links = s.value(section)
         if links and not isinstance(links, (list, tuple)):
-            links = [links,]
+            links = [links, ]
     links = links if links else []
 
     # Make sure the link points to a valid file

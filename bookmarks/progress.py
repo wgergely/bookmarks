@@ -171,7 +171,7 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
         rect.setWidth(o)
 
         painter.setOpacity(0.5)
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'gradient', None, rect.height()
         )
         painter.drawPixmap(rect, pixmap, pixmap.rect())
@@ -217,7 +217,7 @@ class ProgressDelegate(QtWidgets.QItemDelegate):
         else:
             painter.setOpacity(0.5)
 
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             STATES[data['value']]['icon'],
             color=None,
             size=r

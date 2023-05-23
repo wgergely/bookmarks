@@ -382,7 +382,7 @@ class DragIndicatorButton(QtWidgets.QLabel):
         self.setFocusPolicy(QtCore.Qt.NoFocus)
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'drag_indicator', common.color(common.color_dark_background),
             common.size(common.size_margin) * 1.2
         )
@@ -920,7 +920,7 @@ class CardsWidget(QtWidgets.QDialog):
         widget.layout().addWidget(self.close_button, 0)
 
         # Separator pixmap
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'gradient2', None, common.size(common.size_row_height), opacity=0.5
         )
         separator = QtWidgets.QLabel(parent=self)

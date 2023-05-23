@@ -403,12 +403,12 @@ class MayaButtonWidget(ui.ClickableIconButton):
         painter.setBrush(QtGui.QColor(0, 0, 0, 10))
 
         if hover:
-            pixmap = images.ImageCache.rsc_pixmap(
+            pixmap = images.rsc_pixmap(
                 'icon', None, self.width()
             )
             painter.setOpacity(1.0)
         else:
-            pixmap = images.ImageCache.rsc_pixmap(
+            pixmap = images.rsc_pixmap(
                 'icon_bw', None, self.width()
             )
             painter.setOpacity(0.80)

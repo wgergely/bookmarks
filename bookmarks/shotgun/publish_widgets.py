@@ -160,7 +160,7 @@ class DropWidget(QtWidgets.QWidget):
             color = common.color(common.color_green)
 
         h = common.size(common.size_margin)
-        pixmap = images.ImageCache.rsc_pixmap(icon, color, h)
+        pixmap = images.rsc_pixmap(icon, color, h)
 
         prect = pixmap.rect()
         prect.moveCenter(self.rect().center())

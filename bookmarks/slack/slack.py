@@ -356,7 +356,7 @@ class UsersModel(QtCore.QAbstractItemModel):
         self.INTERNAL_USER_DATA = common.DataDict()
         client = get_client(self.token)
 
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'slack',
             common.color(common.color_secondary_text),
             self.row_size.height()

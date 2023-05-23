@@ -451,16 +451,16 @@ class EntityModel(QtCore.QAbstractItemModel):
 
     def get_sg_icon(self):
         icon = QtGui.QIcon()
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'sg', common.color(common.color_separator),
             common.size(common.size_row_height))
         icon.addPixmap(pixmap, QtGui.QIcon.Normal)
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'sg', common.color(common.color_selected_text),
             common.size(common.size_row_height))
         icon.addPixmap(pixmap, QtGui.QIcon.Active)
         icon.addPixmap(pixmap, QtGui.QIcon.Selected)
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'sg', common.color(common.color_disabled_text),
             common.size(common.size_row_height),
             opacity=0.66)
@@ -469,7 +469,7 @@ class EntityModel(QtCore.QAbstractItemModel):
 
     def get_spinner(self):
         icon = QtGui.QIcon()
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'spinner', common.color(common.color_text),
             common.size(common.size_row_height))
         icon.addPixmap(pixmap, QtGui.QIcon.Normal)
@@ -563,7 +563,7 @@ class EntityModel(QtCore.QAbstractItemModel):
         if k in v and v[k]:
             args = [int(f) for f in v['bg_color'].split(',')]
             color = QtGui.QColor(*args)
-            pixmap = images.ImageCache.rsc_pixmap(
+            pixmap = images.rsc_pixmap(
                 'sg', color, common.size(common.size_margin))
             return QtGui.QIcon(pixmap)
 

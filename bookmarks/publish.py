@@ -13,7 +13,7 @@ import time
 
 from PySide2 import QtWidgets, QtCore, QtGui
 
-import bookmarks_oiio
+import pyimageutil
 
 from . import actions
 from . import common
@@ -150,12 +150,12 @@ class TemplateModel(ui.AbstractListModel):
         template = common.settings.value('publish/template')
         for v in data[tokens.PublishConfig].values():
             if template == v['name']:
-                pixmap = images.ImageCache.rsc_pixmap(
+                pixmap = images.rsc_pixmap(
                     'check', common.color(common.color_green),
                     common.size(common.size_margin) * 2
                 )
             else:
-                pixmap = images.ImageCache.rsc_pixmap(
+                pixmap = images.rsc_pixmap(
                     'file', common.color(common.color_separator),
                     common.size(common.size_margin) * 2
                 )
@@ -655,11 +655,13 @@ class PublishWidget(base.BasePropertyEditor):
         self.thumbnail_editor.save_image(destination=temp)
 
         if QtCore.QFileInfo(temp).exists():
-            res = bookmarks_oiio.make_thumbnail(
+            res = pyimageutil.convert_image(
                 temp,
                 dest,
-                int(common.thumbnail_size)
+                max_size=int(common.thumbnail_size)
             )
+            if not res:
+                print(f'Error: Could not convert {temp}')
             QtCore.QFile(temp).remove()
 
         payload['thumbnail'] = dest

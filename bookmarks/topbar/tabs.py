@@ -117,7 +117,7 @@ class BaseTabButton(QtWidgets.QLabel):
                 hover
         ):
             # Draw icon
-            pixmap = images.ImageCache.rsc_pixmap(
+            pixmap = images.rsc_pixmap(
                 'branch_open',
                 common.color(common.color_selected_text),
                 common.size(common.size_margin)
@@ -140,7 +140,7 @@ class BaseTabButton(QtWidgets.QLabel):
                 delegate.draw_painter_path(painter, x, y, font, self.text())
             else:
                 # Draw icon
-                pixmap = images.ImageCache.rsc_pixmap(
+                pixmap = images.rsc_pixmap(
                     self.icon,
                     color,
                     common.size(common.size_margin)
@@ -265,12 +265,12 @@ class FilesTabButton(BaseTabButton):
         painter.drawRect(rect)
 
         o = common.size(common.size_margin)
-        pixmap = images.ImageCache.rsc_pixmap('gradient2', None, o)
+        pixmap = images.rsc_pixmap('gradient2', None, o)
         painter.drawPixmap(self.rect(), pixmap, pixmap.rect())
 
         rect = QtCore.QRect(0, 0, o, o)
         rect.moveCenter(self.rect().center())
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'folder', common.color(common.color_green), o)
         painter.drawPixmap(rect, pixmap, pixmap.rect())
 

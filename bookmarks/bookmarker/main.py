@@ -101,7 +101,7 @@ class BookmarkerWidget(QtWidgets.QDialog):
 
         # =====================================================
 
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'icon',
             color=None,
             size=common.size(common.size_row_height * 4),

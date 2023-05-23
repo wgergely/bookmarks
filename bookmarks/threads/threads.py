@@ -50,7 +50,6 @@ THREADS = {
         'worker': workers.InfoWorker,
         'role': common.FileInfoLoaded,
         'tab': common.BookmarkTab,
-        'mutex': QtCore.QMutex()
     },
     BookmarkThumbnail: {
         'queue': collections.deque([], 99),
@@ -61,7 +60,6 @@ THREADS = {
         'worker': workers.ThumbnailWorker,
         'role': common.ThumbnailLoaded,
         'tab': common.BookmarkTab,
-        'mutex': QtCore.QMutex()
     },
     AssetInfo: {
         'queue': collections.deque([], common.max_list_items),
@@ -72,7 +70,6 @@ THREADS = {
         'worker': workers.InfoWorker,
         'role': common.FileInfoLoaded,
         'tab': common.AssetTab,
-        'mutex': QtCore.QMutex()
     },
     AssetThumbnail: {
         'queue': collections.deque([], 99),
@@ -83,7 +80,6 @@ THREADS = {
         'worker': workers.ThumbnailWorker,
         'role': common.ThumbnailLoaded,
         'tab': common.AssetTab,
-        'mutex': QtCore.QMutex()
     },
     FileInfo: {
         'queue': collections.deque([], common.max_list_items),
@@ -95,7 +91,6 @@ THREADS = {
         'worker': workers.InfoWorker,
         'role': common.FileInfoLoaded,
         'tab': common.FileTab,
-        'mutex': QtCore.QMutex()
     },
     FileInfo2: {
         'queue': collections.deque([], common.max_list_items),
@@ -107,7 +102,6 @@ THREADS = {
         'worker': workers.InfoWorker,
         'role': common.FileInfoLoaded,
         'tab': common.FileTab,
-        'mutex': QtCore.QMutex()
     },
     FileInfo3: {
         'queue': collections.deque([], common.max_list_items),
@@ -119,7 +113,6 @@ THREADS = {
         'worker': workers.InfoWorker,
         'role': common.FileInfoLoaded,
         'tab': common.FileTab,
-        'mutex': QtCore.QMutex()
     },
     FileThumbnail: {
         'queue': collections.deque([], 99),
@@ -131,7 +124,6 @@ THREADS = {
         'worker': workers.ThumbnailWorker,
         'role': common.ThumbnailLoaded,
         'tab': common.FileTab,
-        'mutex': QtCore.QMutex()
     },
     FavouriteInfo: {
         'queue': collections.deque([], common.max_list_items),
@@ -143,7 +135,6 @@ THREADS = {
         'worker': workers.InfoWorker,
         'role': common.FileInfoLoaded,
         'tab': common.FavouriteTab,
-        'mutex': QtCore.QMutex()
     },
     FavouriteThumbnail: {
         'queue': collections.deque([], 99),
@@ -155,7 +146,6 @@ THREADS = {
         'worker': workers.ThumbnailWorker,
         'role': common.ThumbnailLoaded,
         'tab': common.FavouriteTab,
-        'mutex': QtCore.QMutex()
     },
     QueuedDatabaseTransaction: {
         'queue': collections.deque([], common.max_list_items),
@@ -164,7 +154,6 @@ THREADS = {
         'worker': workers.TransactionsWorker,
         'role': None,
         'tab': -1,
-        'mutex': QtCore.QMutex()
     },
     QueuedShotgunQuery: {
         'queue': collections.deque([], common.max_list_items),
@@ -173,7 +162,6 @@ THREADS = {
         'worker': workers.ShotgunWorker,
         'role': None,
         'tab': -1,
-        'mutex': QtCore.QMutex()
     },
 }
 

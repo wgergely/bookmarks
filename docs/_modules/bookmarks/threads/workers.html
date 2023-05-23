@@ -384,7 +384,7 @@
 
 <span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtGui</span>
 
-<span class="kn">import</span> <span class="nn">bookmarks_oiio</span>
+<span class="kn">import</span> <span class="nn">pyimageutil</span>
 
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">common</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">database</span>
@@ -1196,7 +1196,7 @@
             <span class="k">if</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileInfo</span><span class="p">(</span><span class="n">source</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="nb">pow</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">True</span>
 
-            <span class="n">res</span> <span class="o">=</span> <span class="n">bookmarks_oiio</span><span class="o">.</span><span class="n">make_thumbnail</span><span class="p">(</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">pyimageutil</span><span class="o">.</span><span class="n">make_thumbnail</span><span class="p">(</span>
                 <span class="n">source</span><span class="p">,</span>
                 <span class="n">destination</span><span class="p">,</span>
                 <span class="nb">int</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">thumbnail_size</span><span class="p">),</span>

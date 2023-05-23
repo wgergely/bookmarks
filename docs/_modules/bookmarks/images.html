@@ -390,7 +390,7 @@
 <span class="sd">We&#39;re using OpenImageIO to generate thumbnails.</span>
 <span class="sd">To load an image using OpenImageIO as a QtGui.QImage see :func:`oiio_get_qimage`.</span>
 
-<span class="sd">To load gui resources, use :meth:`.ImageCache.rsc_pixmap`.</span>
+<span class="sd">To load gui resources, use :meth:`.rsc_pixmap`.</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">functools</span>
@@ -401,7 +401,7 @@
 <span class="kn">import</span> <span class="nn">OpenImageIO</span>
 <span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
 
-<span class="kn">import</span> <span class="nn">bookmarks_oiio</span>
+<span class="kn">import</span> <span class="nn">pyimageutil</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">common</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">log</span>
@@ -654,7 +654,7 @@
 
 <span class="sd">    The ``server``, ``job``, ``root``, ``source`` arguments refer to a file we</span>
 <span class="sd">    want to create a new thumbnail for. The ``image`` argument should be a path to</span>
-<span class="sd">    an image file that will be converted using `bookmarks_oiio.make_thumbnail()` to a</span>
+<span class="sd">    an image file that will be converted using `pyimageutil.make_thumbnail()` to a</span>
 <span class="sd">    thumbnail image and saved to our image cache and disk to represent ``source``.</span>
 
 <span class="sd">    Args:</span>
@@ -675,7 +675,7 @@
             <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;Failed to remove existing thumbnail file.&#39;</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 
-    <span class="n">res</span> <span class="o">=</span> <span class="n">bookmarks_oiio</span><span class="o">.</span><span class="n">make_thumbnail</span><span class="p">(</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">pyimageutil</span><span class="o">.</span><span class="n">make_thumbnail</span><span class="p">(</span>
         <span class="n">image</span><span class="p">,</span>
         <span class="n">thumbnail_path</span><span class="p">,</span>
         <span class="nb">int</span><span class="p">(</span><span class="n">common</span><span class="o">.</span><span class="n">thumbnail_size</span><span class="p">)</span>
@@ -1202,7 +1202,7 @@
         <span class="n">h</span> <span class="o">*=</span> <span class="n">factor</span>
         <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">smoothScaled</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">w</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">h</span><span class="p">))</span></div>
 
-<div class="viewcode-block" id="ImageCache.rsc_pixmap"><a class="viewcode-back" href="../../modules/images.html#bookmarks.images.ImageCache.rsc_pixmap">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id=".rsc_pixmap"><a class="viewcode-back" href="../../modules/images.html#bookmarks.images.rsc_pixmap">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">rsc_pixmap</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">resource</span><span class="o">=</span><span class="n">common</span><span class="o">.</span><span class="n">GuiResource</span><span class="p">,</span>
                    <span class="n">get_path</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">oiio</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Loads an image resource and returns it as a resized (and recolored) QPixmap.</span>

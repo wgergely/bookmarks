@@ -71,8 +71,6 @@ class Test(base.BaseCase):
         common.typecheck_on = True
 
     def test_get_hash(self):
-        self.assertIsInstance(common.hashes, dict)
-
         with self.assertRaises(TypeError):
             common.get_hash(0)
         with self.assertRaises(TypeError):
@@ -83,20 +81,6 @@ class Test(base.BaseCase):
         v = base.random_str(128)
         _v = common.get_hash(v)
         self.assertIsInstance(_v, str)
-        self.assertIn(_v, common.hashes.values())
-
-        l = len(common.hashes)
-        for _ in range(10):
-            _v = common.get_hash(v)
-        self.assertEqual(len(common.hashes), l)
-
-        # Test server agnostic hashes
-        s = base.random_str(16)
-        f = 'job/root/asset/myfile.abc'
-        common.servers[s] = s
-        v = f'{s}/{f}'
-        common.get_hash(v)
-        self.assertIn(f, common.hashes)
 
     def test_get_platform(self):
         self.assertIn(

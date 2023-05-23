@@ -147,7 +147,7 @@ class LauncherItemEditor(QtWidgets.QDialog):
             return
 
         image.setDevicePixelRatio(common.pixel_ratio)
-        image = images.ImageCache.resize_image(
+        image = images.resize_image(
             image, self.thumbnail_viewer_widget.width())
 
         self.thumbnail_viewer_widget.setPixmap(QtGui.QPixmap.fromImage(image))

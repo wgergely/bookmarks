@@ -1,8 +1,8 @@
-sphinx
-furo
-autodocsumm
-sphinx_sitemap
-sphinx_markdown_builder
-sphinx_design
-sphinxcontrib.youtube
-sphinx_licenseinfo
+sphinx>=7.0.1
+furo>=2023.5.20
+autodocsumm>=0.2.11
+sphinx_sitemap>=2.5.0
+sphinx_markdown_builder>=0.5.5
+sphinx_design>=0.4.1
+sphinxcontrib.youtube>=1.2.0
+sphinx_licenseinfo>=0.3.1

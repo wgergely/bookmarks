@@ -1,5 +1,5 @@
 #define MyAppName "Bookmarks"
-#define MyAppVersion "0.7.8"
+#define MyAppVersion "0.8.0"
 #define MyAppPublisher "Gergely Wootsch"
 #define MyAppURL "http:\\github.com\wgergely\bookmarks"
 #define MyAppExeName "Bookmarks.exe"

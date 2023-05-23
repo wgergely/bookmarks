@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 
 project(
 	Bookmarks
-	VERSION 0.8.0
+	VERSION 0.7.8
 	DESCRIPTION "Bookmarks is a lightweight asset manager for digital artists working in the animation, motion graphics and VFX industries."
 	HOMEPAGE_URL "https://bookmarks-vfx.com"
 )

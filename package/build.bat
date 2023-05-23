@@ -51,17 +51,17 @@ cmake ^
 -A %VS_ARCH% ^
 -DCMAKE_BUILD_TYPE=Release
 
-@REM Build dependencies
+@REM @REM Build dependencies
 cmd /c msbuild.exe "%_script_dir%/build/Bookmarks.sln" -target:Build -property:Configuration=Release -property:Platform=%VS_ARCH% /m /nologo
 
 @REM @REM Build pyside
-@REM cmd /c "%_script_dir%/build/packages/build-pyside.bat"
+cmd /c "%_script_dir%/build/packages/build-pyside.bat"
 
 @REM @REM Build image util
-@REM cmd /c "%_script_dir%/build/build-imageutil.bat"
+cmd /c "%_script_dir%/build/build-imageutil.bat"
 
-@REM @REM Build application package
-@REM cmd /c "%_script_dir%/build/packages/build-package.bat"
+@REM Build application package
+cmd /c "%_script_dir%/build/packages/build-package.bat"
 
 @REM Build installer
 mkdir "%_script_dir%/build/install"

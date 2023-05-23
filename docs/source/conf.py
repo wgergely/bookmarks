@@ -18,8 +18,8 @@ print('\n\n#####################################################################
 from bookmarks import common
 common.initialize(common.StandaloneMode)
 
-from maya import standalone
 try:
+    from maya import standalone
     standalone.initialize(name='python')
 except:
     pass
@@ -29,11 +29,11 @@ print('\n\n#####################################################################
 # -- Project information -----------------------------------------------------
 
 project = 'Bookmarks'
-copyright = '© 2022 Gergely Wootsch'
+copyright = '2023 Gergely Wootsch'
 author = 'Gergely Wootsch'
 
 # The full version, including alpha/beta/rc tags
-release = '0.7.8'
+release = '0.8.0'
 
 html_baseurl = 'https://bookmarks-vfx.com'
 html_extra_path = [

@@ -3,7 +3,7 @@
 
 if EXIST "${PACKAGE_DIR}" rmdir "${PACKAGE_DIR}" /S /Q
 
-@REM
+@REM 
 mkdir "${PACKAGE_DIR}"
 mkdir "${PACKAGE_DIR}/bin"
 mkdir "${PACKAGE_DIR}/core"

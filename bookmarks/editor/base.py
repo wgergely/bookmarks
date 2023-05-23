@@ -75,7 +75,7 @@ def add_section(icon, label, parent, color=None):
 
     if icon:
         w = QtWidgets.QLabel(parent=parent)
-        pixmap = images.ImageCache.rsc_pixmap(icon, color, h * 0.8)
+        pixmap = images.rsc_pixmap(icon, color, h * 0.8)
         w.setPixmap(pixmap)
         row.layout().addWidget(w, 0)
 
@@ -206,7 +206,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
         )
 
         # Separator pixmap
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'gradient3', None, common.size(common.size_margin), opacity=0.5
         )
         separator = QtWidgets.QLabel(parent=self)

@@ -5,7 +5,7 @@ import uuid
 
 from PySide2 import QtCore, QtGui, QtWidgets
 
-import bookmarks_oiio
+import pyimageutil
 
 from .. import common
 from .. import contextmenu
@@ -47,12 +47,12 @@ def process_image(source):
         if not f.dir().mkpath('.'):
             raise RuntimeError('Could not create temp folder')
 
-    res = bookmarks_oiio.make_thumbnail(
+    res = pyimageutil.convert_image(
         source,
         destination,
-        int(common.thumbnail_size)
+        max_size=int(common.thumbnail_size)
     )
-    if res == 1:
+    if not res:
         raise RuntimeError('Failed to convert the thumbnail')
 
     images.ImageCache.flush(destination)
@@ -101,15 +101,15 @@ class BaseComboBox(QtWidgets.QComboBox):
 
         """
         idx = self.count() - 1
-        sg_pixmap = images.ImageCache.rsc_pixmap(
+        sg_pixmap = images.rsc_pixmap(
             'sg', common.color(common.color_separator),
             common.size(common.size_margin) * 2
         )
-        check_pixmap = images.ImageCache.rsc_pixmap(
+        check_pixmap = images.rsc_pixmap(
             'check', common.color(common.color_green),
             common.size(common.size_margin) * 2
         )
-        error_pixmap = images.ImageCache.rsc_pixmap(
+        error_pixmap = images.rsc_pixmap(
             'close', common.color(common.color_red),
             common.size(common.size_margin) * 2
         )
@@ -169,10 +169,10 @@ class ThumbnailContextMenu(contextmenu.BaseContextMenu):
         """Creates the context menu.
 
         """
-        add_pixmap = images.ImageCache.rsc_pixmap(
+        add_pixmap = images.rsc_pixmap(
             'add', common.color(common.color_green), common.size(common.size_margin)
         )
-        remove_pixmap = images.ImageCache.rsc_pixmap(
+        remove_pixmap = images.rsc_pixmap(
             'close', common.color(common.color_red), common.size(common.size_margin)
         )
 
@@ -342,7 +342,7 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
         pen.setWidthF(common.size(common.size_separator))
         painter.setPen(pen)
 
-        image = images.ImageCache.resize_image(
+        image = images.resize_image(
             self._image, int(self.rect().height())
         )
 
@@ -383,7 +383,7 @@ class ThumbnailEditorWidget(ui.ClickableIconButton):
 
         """
         if not all((self.window().server, self.window().job, self.window().root)):
-            pixmap = images.ImageCache.rsc_pixmap(
+            pixmap = images.rsc_pixmap(
                 self.fallback_thumb, None, self.rect().height()
             )
         else:

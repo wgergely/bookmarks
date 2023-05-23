@@ -1551,7 +1551,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
             painter.setPen(pen)
             painter.setBrush(common.color(common.color_green))
             painter.setOpacity(0.5)
-            pixmap = images.ImageCache.rsc_pixmap(
+            pixmap = images.rsc_pixmap(
                 'add', common.color(common.color_green), rect.height() * 0.5
             )
             painter.drawRect(rect)
@@ -1805,7 +1805,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         color = color if rect.contains(cursor_position) else _color
         color = common.color(common.color_selected_text) if favourite else color
 
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'favourite', color, common.size(common.size_margin)
         )
         painter.drawPixmap(rect, pixmap)
@@ -1839,12 +1839,12 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         color = color if archived else common.color(common.color_red)
         color = color if rect.contains(cursor_position) else _color
         if archived:
-            pixmap = images.ImageCache.rsc_pixmap(
+            pixmap = images.rsc_pixmap(
                 'archivedVisible', common.color(common.color_green),
                 common.size(common.size_margin)
             )
         else:
-            pixmap = images.ImageCache.rsc_pixmap(
+            pixmap = images.rsc_pixmap(
                 'archivedHidden', color, common.size(common.size_margin)
             )
         painter.drawPixmap(rect, pixmap)
@@ -1877,7 +1877,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         color = common.color(common.color_selected_text)
         color = color if rect.contains(cursor_position) else _color
 
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'folder', color, common.size(common.size_margin)
         )
         painter.drawPixmap(rect, pixmap)
@@ -1910,7 +1910,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         color = common.color(common.color_selected_text)
         color = color if rect.contains(cursor_position) else _color
 
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'todo', color, common.size(common.size_margin)
         )
         painter.drawPixmap(rect, pixmap)
@@ -1946,7 +1946,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         color = common.color(common.color_green)
         color = color if rect.contains(cursor_position) else _color
 
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'add_circle', color, common.size(common.size_margin)
         )
         painter.drawPixmap(rect, pixmap)
@@ -1984,7 +1984,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         color = common.color(common.color_selected_text)
         color = color if rect.contains(cursor_position) else _color
 
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'settings', color, common.size(common.size_margin)
         )
         painter.drawPixmap(rect, pixmap)
@@ -2003,7 +2003,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         count_rect.moveCenter(rect.bottomRight())
 
         if rect.contains(cursor_position):
-            pixmap = images.ImageCache.rsc_pixmap(
+            pixmap = images.rsc_pixmap(
                 icon, common.color(common.color_green), size
             )
             painter.drawPixmap(count_rect, pixmap)
@@ -2084,7 +2084,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
 
         painter.setOpacity(0.5)
 
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'gradient', None, rect.height()
         )
 
@@ -2190,7 +2190,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
 
         painter.setOpacity(1.0) if hover else painter.setOpacity(0.9)
 
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'sg', common.color(common.color_text), common.size(common.size_margin)
         )
         painter.drawPixmap(rect, pixmap, pixmap.rect())
@@ -2246,7 +2246,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
 
         painter.setOpacity(0.9) if hover else painter.setOpacity(0.8)
 
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'slack', common.color(common.color_text), common.size(common.size_margin)
         )
         painter.drawPixmap(rect, pixmap, pixmap.rect())
@@ -2293,7 +2293,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
 
         painter.setOpacity(1.0) if hover else painter.setOpacity(0.9)
 
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'alert', common.color(common.color_red), common.size(common.size_margin)
         )
         painter.drawPixmap(rect, pixmap, pixmap.rect())
@@ -2765,7 +2765,7 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
 
         painter.setOpacity(0.9) if hover else painter.setOpacity(0.8)
 
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             icon,
             None,
             common.size(common.size_margin),

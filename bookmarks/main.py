@@ -374,7 +374,7 @@ class MainWidget(QtWidgets.QWidget):
                 QtCore.QMargins(o * 3, o * 3, o * 3, o * 3)),
             o, o)
 
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'icon_bw', None, s)
         painter.setOpacity(0.5)
         painter.drawPixmap(pixmaprect, pixmap, pixmap.rect())

@@ -15,28 +15,23 @@ Under the hood, :func:`get_thumbnail` uses :meth:`ImageCache.get_pixmap` and
 We're using OpenImageIO to generate thumbnails.
 To load an image using OpenImageIO as a QtGui.QImage see :func:`oiio_get_qimage`.
 
-To load gui resources, use :meth:`.ImageCache.rsc_pixmap`.
+To load gui resources, use :meth:`rsc_pixmap`.
 
 """
 import functools
 import os
-import threading
 import time
 
 import OpenImageIO
+import pyimageutil
 from PySide2 import QtWidgets, QtGui, QtCore
-
-import bookmarks_oiio
 
 from . import common
 from . import log
 
-
 #: The list of image formats QT is configured to read.
 QT_IMAGE_FORMATS = {f.data().decode('utf8')
                     for f in QtGui.QImageReader.supportedImageFormats()}
-
-lock = threading.RLock()
 
 BufferType = QtCore.Qt.UserRole
 PixmapType = BufferType + 1
@@ -59,12 +54,6 @@ def init_image_cache():
     """Initialises the OpenImageIO and our own internal image cache.
 
     """
-    common.oiio_cache = OpenImageIO.ImageCache(True)
-    common.oiio_cache.attribute('max_memory_MB', 4096.0)
-    common.oiio_cache.attribute('max_open_files', 0)
-    common.oiio_cache.attribute('trust_file_extensions', 1)
-    common.oiio_cache.attribute('forcefloat', 1)
-
     common.image_resource_list = {
         common.GuiResource: [],
         common.ThumbnailResource: [],
@@ -133,7 +122,7 @@ def get_thumbnail(server, job, root, source, size=common.thumbnail_size,
 
     Returns:
         tuple: `(QPixmap, QColor)`, or `(None, None)`.
-        str: Path to the thumbnail file when `get_path=True`.
+        str: Path to the thumbnail file if `get_path=True`.
 
     """
     if not all((server, job, root, source)):
@@ -144,12 +133,10 @@ def get_thumbnail(server, job, root, source, size=common.thumbnail_size,
     def _get(server, job, root, source, proxy):
         path = get_cached_thumbnail_path(
             server, job, root, source, proxy=proxy)
-        with lock:
-            pixmap = ImageCache.get_pixmap(path, size)
+        pixmap = ImageCache.get_pixmap(path, size)
         if not pixmap or pixmap.isNull():
             return (path, None, None)
-        with lock:
-            color = ImageCache.get_color(path)
+        color = ImageCache.get_color(path)
         if not color:
             return (path, pixmap, None)
         return (path, pixmap, color)
@@ -193,11 +180,10 @@ def get_thumbnail(server, job, root, source, size=common.thumbnail_size,
             if pixmap and get_path:
                 return thumb_path
             if pixmap:
-                with lock:
-                    color = ImageCache.get_color(
-                        thumb_path,
-                        hash=_hash,
-                    )
+                color = ImageCache.get_color(
+                    thumb_path,
+                    hash=_hash,
+                )
                 return pixmap, color
             n -= 1
 
@@ -227,8 +213,8 @@ def wait_for_lock(source, timeout=1.0):
 
     """
     t = 0.0
-    while os.path.isfile(f'{source}.lock'):
-        if t > timeout:
+    while t <= timeout:
+        if not os.path.isfile(f'{source}.lock'):
             break
         time.sleep(0.1)
         t += 0.1
@@ -243,7 +229,7 @@ def get_oiio_extensions():
     extensions = []
     for e in [f.split(':')[1] for f in v.split(';')]:
         extensions += e.split(',')
-    return sorted(extensions)
+    return set(sorted(extensions))
 
 
 @functools.lru_cache(maxsize=4194304)
@@ -279,7 +265,7 @@ def create_thumbnail_from_image(server, job, root, source, image, proxy=False):
 
     The ``server``, ``job``, ``root``, ``source`` arguments refer to a file we
     want to create a new thumbnail for. The ``image`` argument should be a path to
-    an image file that will be converted using `bookmarks_oiio.make_thumbnail()` to a
+    an image file that will be converted using `pyimageutil.make_thumbnail()` to a
     thumbnail image and saved to our image cache and disk to represent ``source``.
 
     Args:
@@ -300,12 +286,12 @@ def create_thumbnail_from_image(server, job, root, source, image, proxy=False):
             s = 'Failed to remove existing thumbnail file.'
             raise RuntimeError(s)
 
-    res = bookmarks_oiio.make_thumbnail(
+    res = pyimageutil.convert_image(
         image,
         thumbnail_path,
-        int(common.thumbnail_size)
+        max_size=int(common.thumbnail_size)
     )
-    if res == 1:
+    if not res:
         raise RuntimeError('Failed to make thumbnail.')
 
     ImageCache.flush(thumbnail_path)
@@ -393,7 +379,6 @@ def oiio_get_buf(source, hash=None, force=False, subimage=0):
 
     if hash is None:
         hash = common.get_hash(source)
-
     if not force and ImageCache.contains(hash, BufferType):
         return ImageCache.value(hash, BufferType)
 
@@ -404,22 +389,21 @@ def oiio_get_buf(source, hash=None, force=False, subimage=0):
     ext = source.split('.')[-1].lower()
     if ext not in get_oiio_extensions():
         return None
-    i = OpenImageIO.ImageInput.create(ext)
 
-    if not os.path.exists(source) or os.path.getsize(source) == 0:
-        return None
+    i = OpenImageIO.ImageInput.create(ext)
     if not i or not i.valid_file(source):
         i.close()
-        return None
+        return OpenImageIO.ImageBuf()
 
     # If all went well, we can initiate an ImageBuf
     config = OpenImageIO.ImageSpec()
     config.format = OpenImageIO.TypeDesc(OpenImageIO.FLOAT)
 
     buf = OpenImageIO.ImageBuf()
+
     buf.reset(source, subimage, 0, config=config)
     if buf.has_error:
-        return None
+        return OpenImageIO.ImageBuf()
 
     ImageCache.setValue(hash, buf, BufferType)
     return buf
@@ -489,6 +473,148 @@ def oiio_get_qimage(source, buf=None, force=True):
     return image.copy()
 
 
+def make_color(source, hash=None):
+    """Calculate the average color of a source image.
+
+    Args:
+        source (str): Path to an image file.
+        hash (str, optional): Has value to use instead of source image's hash.
+
+    Returns:
+        QtGui.QImage: The average color of the source image.
+
+    """
+    buf = oiio_get_buf(source)
+    if not buf:
+        return None
+
+    if hash is None:
+        hash = common.get_hash(source)
+
+    stats = OpenImageIO.ImageBufAlgo.computePixelStats(buf)
+    if not stats:
+        return None
+    if stats.avg and len(stats.avg) > 3:
+        color = QtGui.QColor(
+            int(stats.avg[0] * 255),
+            int(stats.avg[1] * 255),
+            int(stats.avg[2] * 255),
+            a=240
+            # a=int(stats.avg[3] * 255)
+        )
+    elif stats.avg and len(stats.avg) == 3:
+        color = QtGui.QColor(
+            int(stats.avg[0] * 255),
+            int(stats.avg[1] * 255),
+            int(stats.avg[2] * 255),
+        )
+    elif stats.avg and len(stats.avg) < 3:
+        color = QtGui.QColor(
+            int(stats.avg[0] * 255),
+            int(stats.avg[0] * 255),
+            int(stats.avg[0] * 255),
+        )
+    else:
+        return None
+
+    ImageCache.setValue(hash, color, ColorType)
+
+    return color
+
+
+def resize_image(image, size):
+    """Returns a scaled copy of the image that fits in size.
+
+    Args:
+        image (QImage): The image to rescale.
+        size (int): The size of the square to fit.
+
+    Returns:
+        QImage: The resized copy of the original image.
+
+    """
+    common.check_type(size, (int, float))
+    common.check_type(image, QtGui.QImage)
+
+    w = image.width()
+    h = image.height()
+    factor = float(size) / max(w, h)
+    w *= factor
+    h *= factor
+    return image.smoothScaled(round(w), round(h))
+
+
+def rsc_pixmap(name, color, size, opacity=1.0, resource=common.GuiResource,
+               get_path=False, oiio=False):
+    """Loads an image resource and returns it as a resized (and recolored) QPixmap.
+
+    Args:
+        name (str): Name of the resource without the extension.
+        color (QColor or None): The color of the icon.
+        size (int or None): The size of pixmap.
+        opacity (float): Sets the opacity of the returned pixmap.
+        resource (str): Optional resource type. Default: common.GuiResource.
+        get_path (bool): Returns a path when True.
+
+    Returns:
+        A QPixmap of the requested resource, or a str path if ``get_path`` is True.
+        None if the resource could not be found.
+
+    """
+    common.check_type(name, str)
+    common.check_type(color, (None, QtGui.QColor))
+    common.check_type(size, (None, float, int))
+    common.check_type(opacity, float)
+
+    source = common.rsc(f'{resource}/{name}.{common.thumbnail_format}')
+
+    if get_path:
+        file_info = QtCore.QFileInfo(source)
+        return file_info.absoluteFilePath()
+
+    size = size if isinstance(size, (float, int)) else -1
+    _color = color.name() if isinstance(color, QtGui.QColor) else 'null'
+    k = 'rsc:' + name + ':' + str(int(size)) + ':' + _color
+
+    if k in common.image_resource_data:
+        return common.image_resource_data[k]
+
+    image = ImageCache.get_image(source, size, oiio=oiio)
+    if image.isNull():
+        return QtGui.QPixmap()
+
+    # Do a re-color pass on the source image
+    if color is not None:
+        painter = QtGui.QPainter()
+        painter.begin(image)
+        painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
+        painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, True)
+        painter.setCompositionMode(QtGui.QPainter.CompositionMode_SourceIn)
+        painter.setBrush(QtGui.QBrush(color))
+        painter.drawRect(image.rect())
+        painter.end()
+
+    # Setting transparency
+    if opacity < 1.0:
+        _image = QtGui.QImage(image)
+        _image.setDevicePixelRatio(common.pixel_ratio)
+        _image.fill(QtCore.Qt.transparent)
+
+        painter = QtGui.QPainter()
+        painter.begin(_image)
+        painter.setOpacity(opacity)
+        painter.drawImage(0, 0, image)
+        painter.end()
+        image = _image
+
+    # Finally, we'll convert the image to a pixmap
+    pixmap = QtGui.QPixmap()
+    pixmap.setDevicePixelRatio(common.pixel_ratio)
+    pixmap.convertFromImage(image, flags=QtCore.Qt.ColorOnly)
+    common.image_resource_data[k] = pixmap
+    return common.image_resource_data[k]
+
+
 class ImageCache(QtCore.QObject):
     """Utility class for storing, and accessing image data.
 
@@ -508,6 +634,7 @@ class ImageCache(QtCore.QObject):
     To remove a resource from the cache use the :meth:`flush` method.
 
     """
+    lock = QtCore.QMutex()
 
     @classmethod
     def flush(cls, source):
@@ -522,77 +649,6 @@ class ImageCache(QtCore.QObject):
         for k in common.image_cache:
             if hash in common.image_cache[k]:
                 del common.image_cache[k][hash]
-
-    @classmethod
-    def get_image(cls, source, size, hash=None, force=False, oiio=False):
-        """Loads, resizes `source` as a QImage and stores it for later use.
-
-        When size is '-1' the full image will be loaded without resizing.
-
-        The resource will be stored as QImage instance at
-        `common.image_cache[ImageType][hash]`. The hash value is generated by default
-        using `source`'s value but this can be overwritten by explicitly
-        setting `hash`.
-
-        Args:
-            source (str): Path to an OpenImageIO compliant image file.
-            size (int): The size of the requested image.
-            hash (str): Use this hash key instead source to store the data.
-            force (bool): Force reloads the image from source.
-            oiio (bool): Use OpenImageIO to load the image data.
-
-        Returns:
-            QImage: The loaded and resized QImage, or `None` if loading fails.
-
-        """
-        common.check_type(source, str)
-
-        if isinstance(size, float):
-            size = int(round(size))
-
-        if size == -1:
-            buf = oiio_get_buf(source)
-            spec = buf.spec()
-            size = max((spec.width, spec.height))
-
-        if hash is None:
-            hash = common.get_hash(source)
-
-        # Check the cache and return the previously stored value
-        if not force and cls.contains(hash, ImageType):
-            data = cls.value(hash, ImageType, size=size)
-            if data:
-                return data
-
-        # If not yet stored, load and save the data
-        # wait_for_lock(source)
-        if size != -1:
-            buf = oiio_get_buf(source, hash=hash, force=force)
-        if not buf:
-            return None
-
-        if oiio:
-            image = oiio_get_qimage(source)
-        else:
-            image = QtGui.QImage(source)
-            image.setDevicePixelRatio(common.pixel_ratio)
-
-        if image.isNull():
-            return None
-
-        # Let's resize, but only if the source is bigger than the requested size
-        # spec = buf.spec()
-        # msize = max((spec.width, spec.height))
-
-        # if size != -1 and size < msize:
-        if size != -1:
-            image = cls.resize_image(image, size)
-        if image.isNull():
-            return None
-
-        # ...and store
-        cls.setValue(hash, image, ImageType, size=size)
-        return image
 
     @classmethod
     def get_pixmap(cls, source, size, hash=None, force=False, oiio=False):
@@ -666,71 +722,69 @@ class ImageCache(QtCore.QObject):
         return pixmap
 
     @classmethod
-    def contains(cls, _hash, cache_type):
-        """Checks if the given hash exists in the database."""
-        return _hash in common.image_cache[cache_type]
+    def get_image(cls, source, size, hash=None, force=False, oiio=False):
+        """Loads, resizes `source` as a QImage and stores it for later use.
 
-    @classmethod
-    def value(cls, hash, cache_type, size=None):
-        """Get a value from the ImageCache.
+        When size is '-1' the full image will be loaded without resizing.
+
+        The resource will be stored as QImage instance at
+        `common.image_cache[ImageType][hash]`. The hash value is generated by default
+        using `source`'s value but this can be overwritten by explicitly
+        setting `hash`.
 
         Args:
-            hash (str): A hash value generated by `common.get_hash`
+            source (str): Path to an OpenImageIO compliant image file.
+            size (int): The size of the requested image.
+            hash (str): Use this hash key instead source to store the data.
+            force (bool): Force reloads the image from source.
+            oiio (bool): Use OpenImageIO to load the image data.
+
+        Returns:
+            QImage: The loaded and resized QImage, or `None` if loading fails.
 
         """
-        if not cls.contains(hash, cache_type):
+        common.check_type(source, str)
+
+        if isinstance(size, float):
+            size = int(round(size))
+
+        if size == -1:
+            buf = oiio_get_buf(source)
+            spec = buf.spec()
+            size = max((spec.width, spec.height))
+
+        if hash is None:
+            hash = common.get_hash(source)
+
+        # Check the cache and return the previously stored value
+        if not force and cls.contains(hash, ImageType):
+            data = cls.value(hash, ImageType, size=size)
+            if data:
+                return data
+
+        # If not yet stored, load and save the data
+        if size != -1:
+            buf = oiio_get_buf(source, hash=hash, force=force)
+        if not buf:
             return None
-        if size is not None:
-            if size not in common.image_cache[cache_type][hash]:
-                return None
-            return common.image_cache[cache_type][hash][size]
-        return common.image_cache[cache_type][hash]
 
-    @classmethod
-    def setValue(cls, hash, value, cache_type, size=None):
-        """Sets a value in the ImageCache using `hash` and the `cache_type`.
+        if oiio:
+            image = oiio_get_qimage(source)
+        else:
+            image = QtGui.QImage(source)
+            image.setDevicePixelRatio(common.pixel_ratio)
 
-        If force is `True`, we will flush the sizes stored in the cache before
-        setting the new value. This only applies to Image- and PixmapTypes.
+        if image.isNull():
+            return None
 
-        """
-        if not cls.contains(hash, cache_type):
-            common.image_cache[cache_type][hash] = {}
+        if size != -1:
+            image = resize_image(image, size)
+        if image.isNull():
+            return None
 
-        if cache_type == BufferType:
-            common.check_type(value, OpenImageIO.ImageBuf)
-
-            common.image_cache[BufferType][hash] = value
-            return common.image_cache[BufferType][hash]
-
-        elif cache_type == ImageType:
-            common.check_type(value, QtGui.QImage)
-
-            if size is None:
-                raise ValueError('Invalid size value.')
-
-            if not isinstance(size, int):
-                size = int(size)
-
-            common.image_cache[cache_type][hash][size] = value
-            return common.image_cache[cache_type][hash][size]
-
-        elif cache_type in (PixmapType, ResourcePixmapType):
-            common.check_type(value, QtGui.QPixmap)
-
-            if not isinstance(size, int):
-                size = int(size)
-
-            common.image_cache[cache_type][hash][size] = value
-            return common.image_cache[cache_type][hash][size]
-
-        elif cache_type == ColorType:
-            common.check_type(value, QtGui.QColor)
-
-            common.image_cache[ColorType][hash] = value
-            return common.image_cache[ColorType][hash]
-
-        raise TypeError('`cache_type` is invalid.')
+        # ...and store
+        cls.setValue(hash, image, ImageType, size=size)
+        return image
 
     @classmethod
     def get_color(cls, source, hash=None, force=False):
@@ -749,151 +803,84 @@ class ImageCache(QtCore.QObject):
             hash = common.get_hash(source)
 
         if not cls.contains(hash, ColorType):
-            return cls.make_color(source, hash=hash)
+            return make_color(source, hash=hash)
         elif cls.contains(hash, ColorType) and not force:
             return cls.value(hash, ColorType)
         elif cls.contains(hash, ColorType) and force:
-            return cls.make_color(source, hash=hash)
+            return make_color(source, hash=hash)
         return None
 
     @classmethod
-    def make_color(cls, source, hash=None):
-        """Calculate the average color of a source image.
-
-        Args:
-            source (str): Path to an image file.
-            hash (str, optional): Has value to use instead of source image's hash.
-
-        Returns:
-            QtGui.QImage: The average color of the source image.
-
-        """
-        buf = oiio_get_buf(source)
-        if not buf:
-            return None
-
-        if hash is None:
-            hash = common.get_hash(source)
-
-        stats = OpenImageIO.ImageBufAlgo.computePixelStats(buf)
-        if not stats:
-            return None
-        if stats.avg and len(stats.avg) > 3:
-            color = QtGui.QColor(
-                int(stats.avg[0] * 255),
-                int(stats.avg[1] * 255),
-                int(stats.avg[2] * 255),
-                a=240
-                # a=int(stats.avg[3] * 255)
-            )
-        elif stats.avg and len(stats.avg) == 3:
-            color = QtGui.QColor(
-                int(stats.avg[0] * 255),
-                int(stats.avg[1] * 255),
-                int(stats.avg[2] * 255),
-            )
-        elif stats.avg and len(stats.avg) < 3:
-            color = QtGui.QColor(
-                int(stats.avg[0] * 255),
-                int(stats.avg[0] * 255),
-                int(stats.avg[0] * 255),
-            )
-        else:
-            return None
-
-        cls.setValue(hash, color, ColorType)
-
-        return color
-
-    @staticmethod
-    def resize_image(image, size):
-        """Returns a scaled copy of the image that fits in size.
-
-        Args:
-            image (QImage): The image to rescale.
-            size (int): The size of the square to fit.
-
-        Returns:
-            QImage: The resized copy of the original image.
-
-        """
-        common.check_type(size, (int, float))
-        common.check_type(image, QtGui.QImage)
-
-        w = image.width()
-        h = image.height()
-        factor = float(size) / max(w, h)
-        w *= factor
-        h *= factor
-        return image.smoothScaled(round(w), round(h))
+    def contains(cls, _hash, cache_type):
+        """Checks if the given hash exists in the database."""
+        return _hash in common.image_cache[cache_type]
 
     @classmethod
-    def rsc_pixmap(cls, name, color, size, opacity=1.0, resource=common.GuiResource,
-                   get_path=False, oiio=False):
-        """Loads an image resource and returns it as a resized (and recolored) QPixmap.
+    def value(cls, hash, cache_type, size=None):
+        """Get a value from the ImageCache.
 
         Args:
-            name (str): Name of the resource without the extension.
-            color (QColor or None): The color of the icon.
-            size (int or None): The size of pixmap.
-            opacity (float): Sets the opacity of the returned pixmap.
-            resource (str): Optional resource type. Default: common.GuiResource.
-            get_path (bool): Returns a path when True.
-
-        Returns:
-            A QPixmap of the requested resource, or a str path if ``get_path`` is True.
-            None if the resource could not be found.
+            hash (str): A hash value generated by `common.get_hash`
 
         """
-        common.check_type(name, str)
-        common.check_type(color, (None, QtGui.QColor))
-        common.check_type(size, (None, float, int))
-        common.check_type(opacity, float)
+        cls.lock.lock()
+        try:
+            if not cls.contains(hash, cache_type):
+                return None
+            if size is not None:
+                if size not in common.image_cache[cache_type][hash]:
+                    return None
+                return common.image_cache[cache_type][hash][size]
+            return common.image_cache[cache_type][hash]
+        finally:
+            cls.lock.unlock()
 
-        source = common.rsc(f'{resource}/{name}.{common.thumbnail_format}')
+    @classmethod
+    def setValue(cls, hash, value, cache_type, size=None):
+        """Sets a value in the ImageCache using `hash` and the `cache_type`.
 
-        if get_path:
-            file_info = QtCore.QFileInfo(source)
-            return file_info.absoluteFilePath()
+        If force is `True`, we will flush the sizes stored in the cache before
+        setting the new value. This only applies to Image- and PixmapTypes.
 
-        size = size if isinstance(size, (float, int)) else -1
-        _color = color.name() if isinstance(color, QtGui.QColor) else 'null'
-        k = 'rsc:' + name + ':' + str(int(size)) + ':' + _color
+        """
+        cls.lock.lock()
+        try:
+            if not cls.contains(hash, cache_type):
+                common.image_cache[cache_type][hash] = {}
 
-        if k in common.image_resource_data:
-            return common.image_resource_data[k]
+            if cache_type == BufferType:
+                common.check_type(value, OpenImageIO.ImageBuf)
 
-        image = cls.get_image(source, size, oiio=oiio)
-        if image.isNull():
-            return QtGui.QPixmap()
+                common.image_cache[BufferType][hash] = value
+                return common.image_cache[BufferType][hash]
 
-        # Do a re-color pass on the source image
-        if color is not None:
-            painter = QtGui.QPainter()
-            painter.begin(image)
-            painter.setRenderHint(QtGui.QPainter.Antialiasing, True)
-            painter.setRenderHint(QtGui.QPainter.SmoothPixmapTransform, True)
-            painter.setCompositionMode(QtGui.QPainter.CompositionMode_SourceIn)
-            painter.setBrush(QtGui.QBrush(color))
-            painter.drawRect(image.rect())
-            painter.end()
+            elif cache_type == ImageType:
+                common.check_type(value, QtGui.QImage)
 
-        # Setting transparency
-        if opacity < 1.0:
-            _image = QtGui.QImage(image)
-            _image.setDevicePixelRatio(common.pixel_ratio)
-            _image.fill(QtCore.Qt.transparent)
+                if size is None:
+                    raise ValueError('Invalid size value.')
 
-            painter = QtGui.QPainter()
-            painter.begin(_image)
-            painter.setOpacity(opacity)
-            painter.drawImage(0, 0, image)
-            painter.end()
-            image = _image
+                if not isinstance(size, int):
+                    size = int(size)
 
-        # Finally, we'll convert the image to a pixmap
-        pixmap = QtGui.QPixmap()
-        pixmap.setDevicePixelRatio(common.pixel_ratio)
-        pixmap.convertFromImage(image, flags=QtCore.Qt.ColorOnly)
-        common.image_resource_data[k] = pixmap
-        return common.image_resource_data[k]
+                common.image_cache[cache_type][hash][size] = value
+                return common.image_cache[cache_type][hash][size]
+
+            elif cache_type in (PixmapType, ResourcePixmapType):
+                common.check_type(value, QtGui.QPixmap)
+
+                if not isinstance(size, int):
+                    size = int(size)
+
+                common.image_cache[cache_type][hash][size] = value
+                return common.image_cache[cache_type][hash][size]
+
+            elif cache_type == ColorType:
+                common.check_type(value, QtGui.QColor)
+
+                common.image_cache[ColorType][hash] = value
+                return common.image_cache[ColorType][hash]
+
+            raise TypeError('`cache_type` is invalid.')
+        finally:
+            cls.lock.unlock()

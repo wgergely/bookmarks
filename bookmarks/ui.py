@@ -199,7 +199,7 @@ class MessageBox(QtWidgets.QDialog):
 
         label = self._get_label(parent=main_row)
 
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             self.icon,
             self.secondary_color.lighter(150),
             common.size(common.size_row_height)
@@ -688,14 +688,14 @@ class ClickableIconButton(QtWidgets.QLabel):
 
     def pixmap(self):
         if not self.isEnabled():
-            return images.ImageCache.rsc_pixmap(
+            return images.rsc_pixmap(
                 self._pixmap, self._off_color, self._size
             )
         if self.state():
-            return images.ImageCache.rsc_pixmap(
+            return images.rsc_pixmap(
                 self._pixmap, self._on_color, self._size
             )
-        return images.ImageCache.rsc_pixmap(
+        return images.rsc_pixmap(
             self._pixmap, self._off_color, self._size
         )
 
@@ -861,12 +861,12 @@ class ListWidgetDelegate(QtWidgets.QStyledItemDelegate):
         _ = painter.setOpacity(1.0) if hover else painter.setOpacity(0.9)
 
         if checkable and checked:
-            pixmap = images.ImageCache.rsc_pixmap(
+            pixmap = images.rsc_pixmap(
                 'check', common.color(common.color_green), rect.height()
             )
             painter.drawPixmap(rect, pixmap)
         elif checkable and not checked:
-            pixmap = images.ImageCache.rsc_pixmap(
+            pixmap = images.rsc_pixmap(
                 'close', common.color(common.color_background), rect.height()
             )
             painter.drawPixmap(rect, pixmap)
@@ -1048,7 +1048,7 @@ class ListWidget(QtWidgets.QListWidget):
             item.setFlags(
                 QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
             )
-            pixmap = images.ImageCache.rsc_pixmap(
+            pixmap = images.rsc_pixmap(
                 icon,
                 color,
                 common.size(common.size_row_height) -
@@ -1183,7 +1183,7 @@ class ListViewWidget(QtWidgets.QListView):
             item.setFlags(
                 QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
             )
-            pixmap = images.ImageCache.rsc_pixmap(
+            pixmap = images.rsc_pixmap(
                 icon,
                 color,
                 common.size(common.size_row_height) -
@@ -1232,20 +1232,20 @@ def get_icon(
 
     icon = QtGui.QIcon()
 
-    pixmap = images.ImageCache.rsc_pixmap(
+    pixmap = images.rsc_pixmap(
         name, color, size, opacity=opacity, resource=resource
     )
     icon.addPixmap(pixmap, mode=QtGui.QIcon.Normal)
 
     _c = common.color(common.color_selected_text) if color else None
-    pixmap = images.ImageCache.rsc_pixmap(
+    pixmap = images.rsc_pixmap(
         name, _c, size, opacity=opacity, resource=resource
     )
     icon.addPixmap(pixmap, mode=QtGui.QIcon.Active)
     icon.addPixmap(pixmap, mode=QtGui.QIcon.Selected)
 
     _c = common.color(common.color_separator) if color else None
-    pixmap = images.ImageCache.rsc_pixmap(
+    pixmap = images.rsc_pixmap(
         'close', _c, size, opacity=0.5, resource=common.GuiResource
     )
 
@@ -1442,7 +1442,7 @@ def paint_background_icon(name, widget):
     painter = QtGui.QPainter()
     painter.begin(widget)
 
-    pixmap = images.ImageCache.rsc_pixmap(
+    pixmap = images.rsc_pixmap(
         name,
         common.color(common.color_opaque),
         common.size(common.size_row_height) * 3

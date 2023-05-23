@@ -156,7 +156,7 @@ def get_payload(
 
     """
     image = QtGui.QImage(thumbnail)
-    image = images.ImageCache.resize_image(image, 256)
+    image = images.resize_image(image, 256)
 
     ba = QtCore.QByteArray()
     buffer = QtCore.QBuffer(ba)

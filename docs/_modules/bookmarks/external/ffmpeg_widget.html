@@ -379,7 +379,7 @@
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
-<span class="kn">import</span> <span class="nn">bookmarks_oiio</span>
+<span class="kn">import</span> <span class="nn">pyimageutil</span>
 <span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">ffmpeg</span>
@@ -670,7 +670,7 @@
             <span class="n">destination_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_dir</span><span class="o">.</span><span class="n">path</span><span class="p">()</span><span class="si">}</span><span class="s1">/ffmpeg_</span><span class="si">{</span><span class="n">frame</span><span class="si">}</span><span class="s1">.jpg&#39;</span>
 
             <span class="c1"># Convert to jpeg</span>
-            <span class="k">if</span> <span class="n">bookmarks_oiio</span><span class="o">.</span><span class="n">save_image</span><span class="p">(</span><span class="n">source_path</span><span class="p">,</span> <span class="n">destination_path</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pyimageutil</span><span class="o">.</span><span class="n">save_image</span><span class="p">(</span><span class="n">source_path</span><span class="p">,</span> <span class="n">destination_path</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">pbar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                 <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">source_frame</span><span class="si">}</span><span class="s1"> could not be read&#39;</span><span class="p">)</span>
             <span class="n">jpg_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">destination_path</span><span class="p">)</span>

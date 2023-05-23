@@ -370,15 +370,15 @@ class ServerItemEditor(ui.ListWidget):
 
         self.blockSignals(True)
 
-        pixmap = images.ImageCache.rsc_pixmap(
+        pixmap = images.rsc_pixmap(
             'server', common.color(common.color_text),
             common.size(common.size_row_height) * 0.8
         )
-        pixmap_selected = images.ImageCache.rsc_pixmap(
+        pixmap_selected = images.rsc_pixmap(
             'server', common.color(common.color_selected_text),
             common.size(common.size_row_height) * 0.8
         )
-        pixmap_disabled = images.ImageCache.rsc_pixmap(
+        pixmap_disabled = images.rsc_pixmap(
             'close', common.color(common.color_red),
             common.size(common.size_row_height) * 0.8
         )

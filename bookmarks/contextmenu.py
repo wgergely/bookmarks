@@ -1473,9 +1473,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         )
 
         self.menu[k][key()] = {
-            'text': 'Push to RV',
+            'text': 'Push',
             'icon': ui.get_icon('sg'),
-            'action': functools.partial(rv.push, path),
+            'action': functools.partial(rv.push, path, command=rv.DEFAULT),
             'shortcut': shortcuts.get(
                 shortcuts.MainWidgetShortcuts,
                 shortcuts.PushToRV
@@ -1485,6 +1485,21 @@ class BaseContextMenu(QtWidgets.QMenu):
                 shortcuts.PushToRV
             ),
         }
+        self.menu[k][key()] = {
+            'text': 'Push full-screen',
+            'icon': ui.get_icon('sg'),
+            'action': functools.partial(rv.push, path, command=rv.FULLSCREEN),
+            'shortcut': shortcuts.get(
+                shortcuts.MainWidgetShortcuts,
+                shortcuts.PushToRVFullScreen
+            ).key(),
+            'description': shortcuts.hint(
+                shortcuts.MainWidgetShortcuts,
+                shortcuts.PushToRVFullScreen
+            ),
+        }
+
+        self.separator(self.menu[k])
 
     def sg_publish_menu(self):
         """ShotGrid publish menu actions.

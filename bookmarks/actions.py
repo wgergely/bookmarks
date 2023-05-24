@@ -1296,12 +1296,34 @@ def reveal_url(index):
 
     source = '/'.join(source_path)
     db = database.get_db(*source_path[0:3])
-    v = db.value(source, 'url1', table)
 
-    if not v:
+    if not index.isValid():
+        return
+    if not index.data(common.PathRole):
         return
 
-    QtGui.QDesktopServices.openUrl(QtCore.QUrl(v)),
+    server, job, root = index.data(common.ParentPathRole)[0:3]
+    if len(index.data(common.ParentPathRole)) >= 4:
+        asset = index.data(common.ParentPathRole)[3]
+    else:
+        asset = None
+
+    from .shotgun import shotgun
+    sg_properties = shotgun.ShotgunProperties(server, job, root, asset)
+    sg_properties.init()
+    if sg_properties.verify():
+        urls = sg_properties.urls()
+        if urls:
+            QtGui.QDesktopServices.openUrl(QtCore.QUrl(list(reversed(urls))[0]))
+            return
+
+    v = db.value(source, 'url1', table)
+    if v:
+        QtGui.QDesktopServices.openUrl(QtCore.QUrl(v)),
+
+    v = db.value(source, 'url2', table)
+    if v:
+        QtGui.QDesktopServices.openUrl(QtCore.QUrl(v)),
 
 
 @common.debug
@@ -1778,7 +1800,6 @@ def import_json_asset_properties():
     importexport.import_json_asset_properties(indexes)
 
 
-
 @common.debug
 @common.error
 @selection
@@ -2079,3 +2100,33 @@ def show_publish_widget(index):
 
     widget = editor.show(index)
     return widget
+
+
+@common.error
+@common.debug
+@selection
+def push_to_rv(index):
+    if common.current_tab() not in (common.FileTab, common.FavouriteTab):
+        return
+
+    path = common.get_sequence_start_path(
+        index.data(common.PathRole)
+    )
+
+    from .external import rv
+    rv.push(path, command=rv.DEFAULT)
+
+
+@common.error
+@common.debug
+@selection
+def push_to_rv_full_screen(index):
+    if common.current_tab() not in (common.FileTab, common.FavouriteTab):
+        return
+
+    path = common.get_sequence_start_path(
+        index.data(common.PathRole)
+    )
+
+    from .external import rv
+    rv.push(path, command=rv.FULLSCREEN)

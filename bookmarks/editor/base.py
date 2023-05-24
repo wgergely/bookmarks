@@ -565,6 +565,7 @@ class BasePropertyEditor(QtWidgets.QDialog):
             _k = k.replace('/', '_')
             if not hasattr(self, f'{_k}_editor'):
                 continue
+            print(k, _k, f'{_k}_editor')
 
             v = common.settings.value(k)
             if not v:

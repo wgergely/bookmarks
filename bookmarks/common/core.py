@@ -258,7 +258,14 @@ def debug(func):
 
 
 def get_platform():
-    """Returns the current platform."""
+    """Returns the enum of the current platform.
+
+    One of the following values: PlatFormWindows, PlatFormMacOS or PlatFormUnsupported.
+
+    Returns:
+        int: The current platform or PlatFormUnsupported.
+
+    """
     ptype = QtCore.QSysInfo().productType()
     if ptype.lower() in ('osx', 'macos'):
         return PlatformMacOS

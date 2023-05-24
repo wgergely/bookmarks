@@ -76,7 +76,7 @@ def get_item_info(ref):
     s = ref()[common.PathRole]
     s = common.get_sequence_end_path(s)
 
-    buf = images.oiio_get_buf(s)
+    buf = images.ImageCache.get_buf(s)
     if not buf:
         return info
 

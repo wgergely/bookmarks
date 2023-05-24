@@ -809,7 +809,7 @@ class ThumbnailWorker(BaseWorker):
         if QtCore.QFileInfo(source).size() >= pow(1024, 3) * 2:
             return True
 
-        buf = images.oiio_get_buf(source)
+        buf = images.ImageCache.get_buf(source)
 
         if not buf:
             return True

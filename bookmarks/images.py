@@ -40,10 +40,15 @@ IconType = ImageType + 1
 ResourcePixmapType = IconType + 1
 ColorType = ResourcePixmapType + 1
 
+# TODO: This list should come from OpenImageIO
+
 accepted_codecs = ('h.264', 'h264', 'mpeg-4', 'mpeg4')
 
 
 def get_cache_size():
+    """Returns the size of the image cache in bytes.
+
+    """
     v = common.get_py_obj_size(common.oiio_cache)
     v += common.get_py_obj_size(common.image_resource_data)
     v += common.get_py_obj_size(common.image_cache)
@@ -51,23 +56,31 @@ def get_cache_size():
 
 
 def init_image_cache():
-    """Initialises the OpenImageIO and our own internal image cache.
+    """Initialises the image cache.
+
+    The cache is used to store OpenImageIO.ImageBuf, QImage
+    and QPixmap instances. Use the :class:`ImageCache` to store and retrieve
+    image data.
 
     """
-    common.image_resource_list = {
-        common.GuiResource: [],
-        common.ThumbnailResource: [],
-        common.FormatResource: [],
-    }
-    common.image_resource_data = {}
-    common.image_cache = {
-        BufferType: {},
-        PixmapType: {},
-        ImageType: {},
-        IconType: {},
-        ResourcePixmapType: {},
-        ColorType: {},
-    }
+    ImageCache.lock.lock()
+    try:
+        common.image_resource_list = {
+            common.GuiResource: [],
+            common.ThumbnailResource: [],
+            common.FormatResource: [],
+        }
+        common.image_resource_data = {}
+        common.image_cache = {
+            BufferType: {},
+            PixmapType: {},
+            ImageType: {},
+            IconType: {},
+            ResourcePixmapType: {},
+            ColorType: {},
+        }
+    finally:
+        ImageCache.lock.unlock()
 
 
 def init_resources():
@@ -362,54 +375,7 @@ def get_placeholder_path(file_path, fallback):
     return os.path.normpath(path)
 
 
-def oiio_get_buf(source, hash=None, force=False, subimage=0):
-    """Checks and loads a source image with OpenImageIO's format reader.
-
-
-    Args:
-        source (str): Path to an OpenImageIO compatible image file.
-        hash (str): Specify the hash manually, otherwise will be generated.
-        force (bool): When `true`, forces the buffer to be re-cached.
-
-    Returns:
-        ImageBuf: An `ImageBuf` instance or `None` if the image cannot be read.
-
-    """
-    common.check_type(source, str)
-
-    if hash is None:
-        hash = common.get_hash(source)
-    if not force and ImageCache.contains(hash, BufferType):
-        return ImageCache.value(hash, BufferType)
-
-    # We use the extension to initiate an ImageInput with a format
-    # which in turn is used to check the source's validity
-    if '.' not in source:
-        return None
-    ext = source.split('.')[-1].lower()
-    if ext not in get_oiio_extensions():
-        return None
-
-    i = OpenImageIO.ImageInput.create(ext)
-    if not i or not i.valid_file(source):
-        i.close()
-        return OpenImageIO.ImageBuf()
-
-    # If all went well, we can initiate an ImageBuf
-    config = OpenImageIO.ImageSpec()
-    config.format = OpenImageIO.TypeDesc(OpenImageIO.FLOAT)
-
-    buf = OpenImageIO.ImageBuf()
-
-    buf.reset(source, subimage, 0, config=config)
-    if buf.has_error:
-        return OpenImageIO.ImageBuf()
-
-    ImageCache.setValue(hash, buf, BufferType)
-    return buf
-
-
-def oiio_get_qimage(source, buf=None, force=True):
+def oiio_get_qimage(source, buf=None, force=True, lock_mutex=True):
     """Load the pixel data using OpenImageIO and return it as a
     `RGBA8888` / `RGB888` QImage.
 
@@ -423,7 +389,7 @@ def oiio_get_qimage(source, buf=None, force=True):
 
     """
     if buf is None:
-        buf = oiio_get_buf(source, force=force)
+        buf = ImageCache.get_buf(source, force=force, lock_mutex=lock_mutex)
         if buf is None:
             return None
 
@@ -473,7 +439,7 @@ def oiio_get_qimage(source, buf=None, force=True):
     return image.copy()
 
 
-def make_color(source, hash=None):
+def make_color(source, hash=None, lock_mutex=True):
     """Calculate the average color of a source image.
 
     Args:
@@ -484,7 +450,7 @@ def make_color(source, hash=None):
         QtGui.QImage: The average color of the source image.
 
     """
-    buf = oiio_get_buf(source)
+    buf = ImageCache.get_buf(source, force=False, lock_mutex=lock_mutex)
     if not buf:
         return None
 
@@ -500,7 +466,6 @@ def make_color(source, hash=None):
             int(stats.avg[1] * 255),
             int(stats.avg[2] * 255),
             a=240
-            # a=int(stats.avg[3] * 255)
         )
     elif stats.avg and len(stats.avg) == 3:
         color = QtGui.QColor(
@@ -517,7 +482,7 @@ def make_color(source, hash=None):
     else:
         return None
 
-    ImageCache.setValue(hash, color, ColorType)
+    ImageCache.setValue(hash, color, ColorType, lock_mutex=lock_mutex)
 
     return color
 
@@ -637,7 +602,31 @@ class ImageCache(QtCore.QObject):
     lock = QtCore.QMutex()
 
     @classmethod
-    def flush(cls, source):
+    def contains(cls, hash, cache_type, lock_mutex=True):
+        """Returns True if the cache contains the given hash.
+
+        Args:
+            hash (str): The hash value of the source image.
+            cache_type (str): The type of cache to check.
+            lock_mutex (bool): When True, the mutex will be locked.
+
+        Returns:
+            bool: True if the cache contains the given hash.
+
+        """
+        if lock_mutex:
+            cls.lock.lock()
+        try:
+            return hash in common.image_cache[cache_type]
+        except:
+            return False
+        finally:
+            if lock_mutex:
+                cls.lock.unlock()
+
+
+    @classmethod
+    def flush(cls, source, lock_mutex=False):
         """Flushes all values associated with a given source from the image cache.
 
         Args:
@@ -645,10 +634,62 @@ class ImageCache(QtCore.QObject):
 
         """
         hash = common.get_hash(source)
+        if lock_mutex:
+            cls.lock.lock()
+        try:
+            for k in common.image_cache:
+                if hash in common.image_cache[k]:
+                    del common.image_cache[k][hash]
+        finally:
+            if lock_mutex:
+                cls.lock.unlock()
 
-        for k in common.image_cache:
-            if hash in common.image_cache[k]:
-                del common.image_cache[k][hash]
+    def get_buf(source, hash=None, force=False, subimage=0, lock_mutex=True):
+        """Checks and loads a source image with OpenImageIO's format reader.
+
+
+        Args:
+            source (str): Path to an OpenImageIO compatible image file.
+            hash (str): Specify the hash manually, otherwise will be generated.
+            force (bool): When `true`, forces the buffer to be re-cached.
+
+        Returns:
+            ImageBuf: An `ImageBuf` instance or `None` if the image cannot be read.
+
+        """
+        common.check_type(source, str)
+
+        if hash is None:
+            hash = common.get_hash(source)
+        if not force:
+            if ImageCache.contains(hash, BufferType, lock_mutex=lock_mutex):
+                return ImageCache.value(hash, BufferType, lock_mutex=lock_mutex)
+
+        # We use the extension to initiate an ImageInput with a format
+        # which in turn is used to check the source's validity
+        if '.' not in source:
+            return None
+        ext = source.split('.')[-1].lower()
+        if ext not in get_oiio_extensions():
+            return None
+
+        i = OpenImageIO.ImageInput.create(ext)
+        if not i or not i.valid_file(source):
+            i.close()
+            return OpenImageIO.ImageBuf()
+
+        # If all went well, we can initiate an ImageBuf
+        config = OpenImageIO.ImageSpec()
+        config.format = OpenImageIO.TypeDesc(OpenImageIO.FLOAT)
+
+        buf = OpenImageIO.ImageBuf()
+
+        buf.reset(source, subimage, 0, config=config)
+        if buf.has_error:
+            return OpenImageIO.ImageBuf()
+
+        ImageCache.setValue(hash, buf, BufferType, lock_mutex=lock_mutex)
+        return buf
 
     @classmethod
     def get_pixmap(cls, source, size, hash=None, force=False, oiio=False):
@@ -690,39 +731,44 @@ class ImageCache(QtCore.QObject):
         if isinstance(size, float):
             size = int(round(size))
 
-        if size == -1:
-            buf = oiio_get_buf(source)
-            if not buf:
+        cls.lock.lock()
+        try:
+            if size == -1:
+                buf = cls.get_buf(source, force=force, lock_mutex=False)
+                if not buf:
+                    return None
+                spec = buf.spec()
+                size = max((spec.width, spec.height))
+
+            # Check the cache and return the previously stored value if exists
+            if hash is None:
+                hash = common.get_hash(source)
+            if not force and cls.contains(hash, PixmapType, lock_mutex=False):
+                data = cls.value(hash, PixmapType, size=size, lock_mutex=False)
+                if data:
+                    return data
+
+            # We'll load a cache a QImage to use as the basis for the QPixmap. This
+            # is because of how the thread affinity of QPixmaps don't permit use
+            # outside the main gui thread
+            image = cls.get_image(source, size, hash=hash, force=force, oiio=oiio, lock_mutex=False)
+            if not image:
                 return None
-            spec = buf.spec()
-            size = max((spec.width, spec.height))
 
-        # Check the cache and return the previously stored value if exists
-        if hash is None:
-            hash = common.get_hash(source)
-        contains = cls.contains(hash, PixmapType)
-        if not force and contains:
-            data = cls.value(hash, PixmapType, size=size)
-            if data:
-                return data
+            pixmap = QtGui.QPixmap()
+            pixmap.setDevicePixelRatio(common.pixel_ratio)
+            pixmap.convertFromImage(image, flags=QtCore.Qt.ColorOnly)
+            if pixmap.isNull():
+                return None
+        finally:
+            cls.lock.unlock()
 
-        # We'll load a cache a QImage to use as the basis for the QPixmap. This
-        # is because of how the thread affinity of QPixmaps don't permit use
-        # outside the main gui thread
-        image = cls.get_image(source, size, hash=hash, force=force, oiio=oiio)
-        if not image:
-            return None
+        cls.setValue(hash, pixmap, PixmapType, size=size, lock_mutex=True)
 
-        pixmap = QtGui.QPixmap()
-        pixmap.setDevicePixelRatio(common.pixel_ratio)
-        pixmap.convertFromImage(image, flags=QtCore.Qt.ColorOnly)
-        if pixmap.isNull():
-            return None
-        cls.setValue(hash, pixmap, PixmapType, size=size)
         return pixmap
 
     @classmethod
-    def get_image(cls, source, size, hash=None, force=False, oiio=False):
+    def get_image(cls, source, size, hash=None, force=False, oiio=False, lock_mutex=True):
         """Loads, resizes `source` as a QImage and stores it for later use.
 
         When size is '-1' the full image will be loaded without resizing.
@@ -749,7 +795,7 @@ class ImageCache(QtCore.QObject):
             size = int(round(size))
 
         if size == -1:
-            buf = oiio_get_buf(source)
+            buf = cls.get_buf(source, force=force, lock_mutex=lock_mutex)
             spec = buf.spec()
             size = max((spec.width, spec.height))
 
@@ -757,14 +803,14 @@ class ImageCache(QtCore.QObject):
             hash = common.get_hash(source)
 
         # Check the cache and return the previously stored value
-        if not force and cls.contains(hash, ImageType):
-            data = cls.value(hash, ImageType, size=size)
+        if not force and cls.contains(hash, ImageType, lock_mutex=lock_mutex):
+            data = cls.value(hash, ImageType, size=size, lock_mutex=lock_mutex)
             if data:
                 return data
 
         # If not yet stored, load and save the data
         if size != -1:
-            buf = oiio_get_buf(source, hash=hash, force=force)
+            buf = cls.get_buf(source, hash=hash, force=force, lock_mutex=lock_mutex)
         if not buf:
             return None
 
@@ -783,7 +829,7 @@ class ImageCache(QtCore.QObject):
             return None
 
         # ...and store
-        cls.setValue(hash, image, ImageType, size=size)
+        cls.setValue(hash, image, ImageType, size=size, lock_mutex=lock_mutex)
         return image
 
     @classmethod
@@ -795,6 +841,9 @@ class ImageCache(QtCore.QObject):
             force (bool): Force value recache.
             hash (str): Hash value override.
 
+        Returns:
+            QColor: The cached color, or `None` if not found.
+
         """
         common.check_type(source, str)
 
@@ -802,30 +851,33 @@ class ImageCache(QtCore.QObject):
         if hash is None:
             hash = common.get_hash(source)
 
-        if not cls.contains(hash, ColorType):
-            return make_color(source, hash=hash)
-        elif cls.contains(hash, ColorType) and not force:
-            return cls.value(hash, ColorType)
-        elif cls.contains(hash, ColorType) and force:
-            return make_color(source, hash=hash)
-        return None
+        cls.lock.lock()
+        try:
+            if not cls.contains(hash, ColorType, lock_mutex=False):
+                return make_color(source, hash=hash, lock_mutex=False)
+            elif cls.contains(hash, ColorType, lock_mutex=False) and not force:
+                return cls.value(hash, ColorType, lock_mutex=False)
+            elif cls.contains(hash, ColorType, lock_mutex=False) and force:
+                return make_color(source, hash=hash, lock_mutex=False)
+            return None
+        finally:
+            cls.lock.unlock()
 
     @classmethod
-    def contains(cls, _hash, cache_type):
-        """Checks if the given hash exists in the database."""
-        return _hash in common.image_cache[cache_type]
-
-    @classmethod
-    def value(cls, hash, cache_type, size=None):
+    def value(cls, hash, cache_type, size=None, lock_mutex=True):
         """Get a value from the ImageCache.
 
         Args:
-            hash (str): A hash value generated by `common.get_hash`
+            hash (str): The requested entry's hash value calculated by :func:`common.get_hash`
+            cache_type (int): The resource type, e.g. `BufferType`.
+            size (int): The requested image size.
+            lock_mutex (bool): Lock the cache's QMutex for thread safety.
 
         """
-        cls.lock.lock()
+        if lock_mutex:
+            cls.lock.lock()
         try:
-            if not cls.contains(hash, cache_type):
+            if not hash in common.image_cache[cache_type]:
                 return None
             if size is not None:
                 if size not in common.image_cache[cache_type][hash]:
@@ -833,19 +885,31 @@ class ImageCache(QtCore.QObject):
                 return common.image_cache[cache_type][hash][size]
             return common.image_cache[cache_type][hash]
         finally:
-            cls.lock.unlock()
+            if lock_mutex:
+                cls.lock.unlock()
 
     @classmethod
-    def setValue(cls, hash, value, cache_type, size=None):
+    def setValue(cls, hash, value, cache_type, size=None, lock_mutex=True):
         """Sets a value in the ImageCache using `hash` and the `cache_type`.
 
         If force is `True`, we will flush the sizes stored in the cache before
         setting the new value. This only applies to Image- and PixmapTypes.
 
+        Args:
+            hash (str): The requested entry's hash value calculated by :func:`common.get_hash`
+            value: The value to associate with `hash` and `size`.
+            cache_type: cache_type (int): The resource type, e.g. `BufferType`.
+            size (int): The requested image size.
+            lock_mutex (bool): Lock the cache's QMutex for thread safety.
+
+        Returns:
+            object: The cached value stored at `cache_type` associated with `hash` and `size` or `None`.
+
         """
-        cls.lock.lock()
+        if lock_mutex:
+            cls.lock.lock()
         try:
-            if not cls.contains(hash, cache_type):
+            if not hash in common.image_cache[cache_type]:
                 common.image_cache[cache_type][hash] = {}
 
             if cache_type == BufferType:
@@ -882,5 +946,8 @@ class ImageCache(QtCore.QObject):
                 return common.image_cache[ColorType][hash]
 
             raise TypeError('`cache_type` is invalid.')
+        except:
+            return None
         finally:
-            cls.lock.unlock()
+            if lock_mutex:
+                cls.lock.unlock()

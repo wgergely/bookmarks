@@ -333,7 +333,7 @@ def convert(
 
     # Let's use the input image size if not specified directly
     if not all(size):
-        buf = images.oiio_get_buf(common.get_sequence_start_path(path))
+        buf = images.ImageCache.get_buf(common.get_sequence_start_path(path))
         spec = buf.spec()
         width = spec.width
         height = spec.height

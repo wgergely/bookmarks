@@ -341,6 +341,9 @@ class MainWidget(QtWidgets.QWidget):
         connect(shortcuts.ToggleItemArchived, actions.toggle_archived)
         connect(shortcuts.ToggleItemFavourite, actions.toggle_favourite)
 
+        connect(shortcuts.PushToRV, actions.push_to_rv)
+        connect(shortcuts.PushToRVFullScreen, actions.push_to_rv_full_screen)
+
     def _paint_background(self, painter):
         rect = QtCore.QRect(self.rect())
         pen = QtGui.QPen(QtGui.QColor(35, 35, 35, 255))

@@ -310,7 +310,9 @@ class PreferenceEditor(base.BasePropertyEditor):
         """
         self.thumbnail_editor.setDisabled(True)
         self.load_saved_user_settings(common.SECTIONS['settings'])
+        self.load_saved_user_settings(common.SECTIONS['maya'])
         self._connect_settings_save_signals(common.SECTIONS['settings'])
+        self._connect_settings_save_signals(common.SECTIONS['maya'])
 
     def db_source(self):
         """A file path to use as the source of database values.

@@ -57,6 +57,7 @@ ToggleItemArchived = next(n)
 ToggleItemFavourite = next(n)
 
 PushToRV = next(n)
+PushToRVFullScreen = next(n)
 
 BookmarkEditorShortcuts = {
     AddItem: {
@@ -319,6 +320,13 @@ MainWidgetShortcuts = {
         'default': 'Ctrl+P',
         'repeat': False,
         'description': 'Push footage to RV',
+        'shortcut': None,
+    },
+    PushToRVFullScreen: {
+        'value': 'Ctrl+Shift+P',
+        'default': 'Ctrl+Shift+P',
+        'repeat': False,
+        'description': 'Push footage to RV in full-screen',
         'shortcut': None,
     },
 }

@@ -74,12 +74,17 @@ class BaseQuickSwitchMenu(contextmenu.BaseContextMenu):
             if active:
                 icon = on_icon
 
+            name = path
+            if len(index.data(common.ParentPathRole)) > 3:
+                name = '/'.join(index.data(common.ParentPathRole)[3:])
+            elif len(index.data(common.ParentPathRole)) <= 3:
+                name = '/'.join(index.data(common.ParentPathRole)[1:])
             if index.data(common.AssetCountRole):
-                text = f'{path}   |   {index.data(common.AssetCountRole)} items'
-            else:
-                text = path
+                name = f'{name}   |   {index.data(common.AssetCountRole)} items'
+            name = name.replace('/', ' > ')
+
             self.menu[contextmenu.key()] = {
-                'text': text,
+                'text': name,
                 'icon': icon,
                 'action': functools.partial(common.widget(idx).activate, index)
             }

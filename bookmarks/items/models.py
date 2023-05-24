@@ -333,7 +333,7 @@ class ItemModel(QtCore.QAbstractTableModel):
         if mime.hasUrls():
             source = next(f for f in mime.urls())
             source = source.toLocalFile()
-            if images.oiio_get_buf(source):
+            if images.ImageCache.get_buf(source):
                 images.ImageCache.flush(source)
                 return True
         return False
@@ -367,7 +367,7 @@ class ItemModel(QtCore.QAbstractTableModel):
             return False
 
         image = image.toLocalFile()
-        if not images.oiio_get_buf(image):
+        if not images.ImageCache.get_buf(image):
             images.ImageCache.flush(image)
             return False
 

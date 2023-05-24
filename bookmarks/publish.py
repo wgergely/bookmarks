@@ -560,9 +560,20 @@ class PublishWidget(base.BasePropertyEditor):
 
         # init
         config = tokens.get(*common.active('root', args=True))
-        kwargs.update(config.get_tokens(asset=common.active('asset')))
+        asset = common.active('asset')
+        kwargs.update(config.get_tokens(asset=asset))
+
+        if '/' in common.active('asset'):
+            if len(common.active('asset').split('/')) > 1:
+                asset_alt1 = common.active('asset').split('/')[1]
+            else:
+                asset_alt1 = common.active('asset').split('/')[0]
+        else:
+            asset_alt1 = asset
+
 
         # Item info
+        kwargs['asset_alt1'] = asset_alt1
         kwargs['source'] = self._index.data(common.PathRole)
         kwargs['type'] = self._index.data(common.TypeRole)
         kwargs['entries'] = self._index.data(common.EntryRole)
@@ -759,7 +770,7 @@ class PublishWidget(base.BasePropertyEditor):
             file_info = QtCore.QFileInfo(destination)
             _dir = file_info.dir()
 
-            buf = images.oiio_get_buf(destination)
+            buf = images.ImageCache.get_buf(destination)
             if not buf:
                 continue
 

@@ -214,6 +214,18 @@ DEFAULT_TOKEN_CONFIG = {
             'description': 'Publish an asset thumbnail',
             'filter': ImageFormat,
         },
+        5: {
+            'name': 'Studio Aka - Asset',
+            'value': '{server}/{job}/{root}/{asset}/publish/{prefix}_{asset_alt1}_{task}_{element}.{ext}',
+            'description': 'Publish an asset',
+            'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
+        },
+        6: {
+            'name': 'Studio Aka - Shot',
+            'value': '{server}/{job}/{root}/{asset}/publish/{prefix}_{seq}_{shot}_{element}.{ext}',
+            'description': 'Publish a shot element',
+            'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
+        },
     },
     AssetFolderConfig: {
         0: {

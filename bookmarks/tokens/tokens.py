@@ -190,7 +190,7 @@ DEFAULT_TOKEN_CONFIG = {
         },
         7: {
             'name': 'Studio Aka - Asset',
-            'value': '{prefix}_{asset1}_{mode}_{element}.{version}.{ext}',
+            'value': '{asset1}_{asset5}_{element}.{version}.{ext}',
             'description': 'Studio Aka - ShotGrid file template'
         }
     },

@@ -128,7 +128,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
             alignment=QtCore.Qt.AlignRight,
             fallback_thumb='placeholder',
             hide_thumbnail_editor=False,
-            parent=None
+            parent=None,
+            section_buttons=True
     ):
         common.check_type(sections, dict)
 
@@ -149,6 +150,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
         self._section_widgets = []
         self._buttons = buttons
         self._db_table = db_table
+
+        self.section_buttons = section_buttons
 
         self.server = server
         self.job = job
@@ -287,7 +290,8 @@ class BasePropertyEditor(QtWidgets.QDialog):
                 color=section['color'],
             )
 
-            self.add_section_header_button(section['name'], grp)
+            if self.section_buttons:
+                self.add_section_header_button(section['name'], grp)
 
             for item in section['groups'].values():
                 _grp = ui.get_group(parent=grp)

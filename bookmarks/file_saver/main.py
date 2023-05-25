@@ -11,13 +11,7 @@ for more information.
 .. code-block:: python
     :linenos:
 
-    editor = FileSaverWidget(
-        server,
-        job,
-        root,
-        asset=asset,
-        extension='fbx'
-    )
+    editor = FileSaverWidget(extension='fbx')
 
 
 Attributes:
@@ -27,7 +21,6 @@ Attributes:
 
 """
 import os
-import re
 
 from PySide2 import QtWidgets, QtCore
 
@@ -55,17 +48,12 @@ def close():
     common.file_saver_widget = None
 
 
-def show(
-        server, job, root, asset, extension=None, file=None, create_file=True,
-        increment=False
-):
+def show(extension=None, file=None, create_file=True,
+         increment=False
+         ):
     """Show the :class:`FileSaverWidget` widget.
 
     Args:
-        server (str): `server` path segment.
-        job (str): `job` path segment.
-        root (str): `root` path segment.
-        asset (str): `asset` path segment.
         extension (str): Optional file extension. Default is ``None``.
         file (str): Optional, path to an existing file.
         create_file (bool): Optional, when ``True`` the widget will create empty
@@ -76,10 +64,6 @@ def show(
     """
     close()
     common.file_saver_widget = FileSaverWidget(
-        server,
-        job,
-        root,
-        asset,
         extension=extension,
         file=file,
         create_file=create_file,
@@ -89,10 +73,8 @@ def show(
     common.restore_window_state(common.file_saver_widget)
     return common.file_saver_widget
 
-
+#: Keys we don't associate with local preferences
 INACTIVE_KEYS = (
-    'bookmark',
-    'asset',
     'file_saver_task',
     'prefix',
     'file_saver_element',
@@ -105,7 +87,7 @@ INACTIVE_KEYS = (
 #: UI layout definition
 SECTIONS = {
     0: {
-        'name': 'Name Template',
+        'name': 'Save File',
         'icon': 'file',
         'color': common.color(common.color_dark_background),
         'groups': {
@@ -115,48 +97,11 @@ SECTIONS = {
                     'key': 'file_saver/template',
                     'validator': base.text_validator,
                     'widget': widgets.TemplateComboBox,
-                    'placeholder': 'Custom prefix, e.g. \'MYB\'',
-                    'description': 'A short name of the bookmark (or job) used '
-                                   'when saving files.\n\ne.g. '
-                                   '\'MYB_sh0010_anim_v001.ma\' where \'MYB\' is '
-                                   'the prefix specified here.',
-                    'button': 'Edit'
+                    'placeholder': 'A customizable template name',
+                    'description': 'The name of the template to use. These can'
+                                   'be customized in the bookmark properties.',
                 },
                 1: {
-                    'name': 'Name',
-                    'key': 'filename',
-                    'validator': None,
-                    'widget': QtWidgets.QLabel,
-                    'placeholder': 'Invalid file name...',
-                    'description': 'The file name, based on the current template.',
-                    'button': 'Reveal'
-                },
-            },
-        },
-    },
-    1: {
-        'name': 'Name Elements',
-        'icon': 'todo',
-        'color': common.color(common.color_dark_background),
-        'groups': {
-            0: {
-                0: {
-                    'name': 'Bookmark',
-                    'key': 'bookmark',
-                    'validator': None,
-                    'widget': widgets.BookmarkComboBox,
-                    'placeholder': None,
-                    'description': 'The current bookmark item.',
-                },
-                1: {
-                    'name': 'Asset',
-                    'key': 'asset',
-                    'validator': None,
-                    'widget': widgets.AssetComboBox,
-                    'placeholder': None,
-                    'description': 'The current asset item.',
-                },
-                2: {
                     'name': 'Task',
                     'key': 'file_saver/task',
                     'validator': None,
@@ -164,6 +109,15 @@ SECTIONS = {
                     'placeholder': None,
                     'description': 'The current task item.',
                     'button': 'Pick'
+                },
+                2: {
+                    'name': 'Format',
+                    'key': 'file_saver/extension',
+                    'validator': None,
+                    'widget': widgets.FormatComboBox,
+                    'placeholder': 'File extension, e.g. \'exr\'',
+                    'description': 'A file extension, without the leading dot. e.g.'
+                                   ' \'ma\'',
                 },
             },
             1: {
@@ -177,20 +131,8 @@ SECTIONS = {
                                    'contents.\nIndicate significant changes and '
                                    'notes here.',
                 },
-            },
-            2: {
-                0: {
-                    'name': 'Project Prefix',
-                    'key': 'prefix',
-                    'validator': base.text_validator,
-                    'widget': ui.LineEdit,
-                    'placeholder': 'Prefix not yet set!',
-                    'description': 'A short prefix used to identify the job '
-                                   'e.g.\'MYB\'.',
-                    'button': 'Edit'
-                },
                 1: {
-                    'name': 'Specify Element',
+                    'name': 'Element',
                     'key': 'file_saver/element',
                     'validator': base.text_validator,
                     'widget': ui.LineEdit,
@@ -199,7 +141,7 @@ SECTIONS = {
                                    '\'ForegroundTower\', or \'BackgroundElements\'',
                 },
                 2: {
-                    'name': 'File Version',
+                    'name': 'Version',
                     'key': 'version',
                     'validator': base.version_validator,
                     'widget': ui.LineEdit,
@@ -218,14 +160,16 @@ SECTIONS = {
                     'description': 'The name of the current user, e.g. \'JohnDoe\','
                                    ' or \'JD\'',
                 },
-                4: {
-                    'name': 'Format',
-                    'key': 'file_saver/extension',
+            },
+            2: {
+                0: {
+                    'name': None,
+                    'key': 'filename',
                     'validator': None,
-                    'widget': widgets.FormatComboBox,
-                    'placeholder': 'File extension, e.g. \'exr\'',
-                    'description': 'A file extension, without the leading dot. e.g.'
-                                   ' \'ma\'',
+                    'widget': widgets.FileNameInfo,
+                    'placeholder': 'Invalid file name...',
+                    'description': 'The file name, based on the current template.',
+                    'button': 'Reveal'
                 },
             },
         },
@@ -234,10 +178,26 @@ SECTIONS = {
 
 
 def increment_version(v, dir, name, func, increment):
-    """Increments the version number by one or to the smallest/largest
-    available version number based on existing files found in the
+    """Increments a version number considering existing versions in a directory.
+
+    This function can either increment the version number by a specified amount or to
+    the smallest/largest available version number based on existing files found in the
     destination folder.
 
+    Args:
+        v (str): Initial version string, e.g., 'v001'. If None, it defaults to 'v001'.
+        dir (str): Path to the directory where versions should be checked.
+        name (str): The name of the file or directory whose version should be incremented.
+        func (function): Python built-in function min or max. Determines whether to increment
+                         to the smallest (min) or largest (max) version number in the directory.
+        increment (int): The amount by which the version number should be incremented.
+
+    Returns:
+        str: The incremented version string, e.g., 'v002'. If the version cannot be incremented
+             (due to a problem with the provided values), the function will return 'v001'.
+
+    Raises:
+        ValueError: If the initial version string can't be converted to an integer.
     """
     if not v:
         v = 'v001'
@@ -313,19 +273,20 @@ class FileSaverWidget(base.BasePropertyEditor):
     """
 
     def __init__(
-            self, server, job, root, asset, extension=None, file=None,
+            self, extension=None, file=None,
             create_file=True, increment=False, parent=None
     ):
         super().__init__(
             SECTIONS,
-            server,
-            job,
-            root,
-            asset=asset,
+            common.active('server'),
+            common.active('job'),
+            common.active('root'),
+            asset=common.active('asset'),
             alignment=QtCore.Qt.AlignLeft,
             fallback_thumb='file',
             db_table=database.AssetTable,
-            parent=parent
+            parent=parent,
+            section_buttons=False
         )
 
         self._file = None
@@ -423,7 +384,7 @@ class FileSaverWidget(base.BasePropertyEditor):
 
         """
         template = self.file_saver_template_editor.currentData(QtCore.Qt.UserRole)
-        config = tokens.get(self.server, self.job, self.root)
+        config = tokens.get(*common.active('root', args=True))
 
         if not self.parent_folder():
             return tokens.invalid_token
@@ -443,7 +404,9 @@ class FileSaverWidget(base.BasePropertyEditor):
                 log.error(f'Could not find {k}_editor')
                 return ''
             editor = getattr(self, f'{k}_editor')
-            if hasattr(editor, 'currentText'):
+            if hasattr(editor, 'currentData'):
+                v = editor.currentData(QtCore.Qt.UserRole)
+            elif hasattr(editor, 'currentText'):
                 v = editor.currentText()
             elif hasattr(editor, 'text'):
                 v = editor.text()
@@ -455,9 +418,9 @@ class FileSaverWidget(base.BasePropertyEditor):
         # Get generic shot and sequence numbers from the current asset name
         seq, shot = common.get_sequence_and_shot(self.parent_folder())
 
-        # Studio Aka specific override
-        match = re.match(r'.*[0-9]{4}/([A-Z]+)/work/.*', self.parent_folder())
-        task = f'{match.group(1)}_{_get("file_saver_task")}' if match else _get('file_saver_task')
+        task = _get('file_saver_task')
+        if '/' in task:
+            task = task.split('/')[-1]
 
         v = config.expand_tokens(
             template,
@@ -501,11 +464,11 @@ class FileSaverWidget(base.BasePropertyEditor):
 
         if self._filelist[self.db_source()]:
             self.filename_editor.setStyleSheet(
-                'color:{};'.format(common.rgb(common.color_red))
+                f'color:{common.rgb(common.color_red)};font-size:{int(common.size_font_medium)}px;qproperty-alignment: AlignCenter;'
             )
         else:
             self.filename_editor.setStyleSheet(
-                'color:{};'.format(common.rgb(common.color_green))
+                f'color:{common.rgb(common.color_green)};font-size:{int(common.size_font_medium)}px;qproperty-alignment: AlignCenter;'
             )
 
     def parent_folder(self):
@@ -516,15 +479,10 @@ class FileSaverWidget(base.BasePropertyEditor):
             return QtCore.QFileInfo(self._file).dir().path()
 
         folder = self.file_saver_task_editor.currentData(QtCore.Qt.UserRole)
-
-        # Studio Aka specific override
-        match = re.match(r'.*[0-9]{4}/([A-Z]+)/work/.*', self.asset)
-        if match and folder:
-            folder = folder.split('/')[0]
-
         if not folder:
             return None
-        return '/'.join((self.server, self.job, self.root, self.asset, folder))
+
+        return f'{common.active("asset", path=True)}/{folder}'
 
     def db_source(self):
         """A file path to use as the source of database values.
@@ -552,12 +510,6 @@ class FileSaverWidget(base.BasePropertyEditor):
         previously.
 
         """
-        if all((self.server, self.job, self.root)):
-            bookmark = '/'.join((self.server, self.job, self.root))
-            self.bookmark_editor.setCurrentText(bookmark)
-        if self.asset:
-            self.asset_editor.setCurrentText(self.asset)
-
         self.file_saver_user_editor.blockSignals(True)
         if self._file is not None:
             self.file_saver_user_editor.setText('-')
@@ -569,17 +521,17 @@ class FileSaverWidget(base.BasePropertyEditor):
         if self._file is None:
             self.load_saved_user_settings(common.SECTIONS['file_saver'])
 
-        # Prefix
-        self.prefix_editor.setReadOnly(True)
-        if self._file is None:
-            db = database.get_db(self.server, self.job, self.root)
-            prefix = db.value(
-                db.source(),
-                'prefix',
-                database.BookmarkTable
-            )
-            if prefix:
-                self.prefix_editor.setText(prefix)
+        # # Prefix
+        # self.prefix_editor.setReadOnly(True)
+        # if self._file is None:
+        #     db = database.get_db(*common.active('root', args=True))
+        #     prefix = db.value(
+        #         db.source(),
+        #         'prefix',
+        #         database.BookmarkTable
+        #     )
+        #     if prefix:
+        #         self.prefix_editor.setText(prefix)
 
         if self._extension and self._file is None:
             if self.file_saver_extension_editor.findText(self._extension) > 0:
@@ -597,7 +549,7 @@ class FileSaverWidget(base.BasePropertyEditor):
 
         # Description
         if self._file is not None:
-            db = database.get_db(self.server, self.job, self.root)
+            db = database.get_db(*common.active('root', args=True))
             v = db.value(
                 self.db_source(),
                 'description',
@@ -632,7 +584,7 @@ class FileSaverWidget(base.BasePropertyEditor):
 
         """
         ext = ext.lower()
-        config = tokens.get(self.server, self.job, self.root)
+        config = tokens.get(*common.active('root', args=True))
 
         if ext in config.get_extensions(tokens.CacheFormat):
             self.file_saver_task_editor.set_mode(widgets.CacheMode)
@@ -711,7 +663,7 @@ class FileSaverWidget(base.BasePropertyEditor):
         options, it will be added as a new option.
 
         """
-        source = '/'.join((self.server, self.job, self.root, self.asset))
+        source = common.active('asset', path=True)
         _dir = QtWidgets.QFileDialog.getExistingDirectory(
             parent=self,
             caption='Select a folder...',
@@ -760,15 +712,6 @@ class FileSaverWidget(base.BasePropertyEditor):
         editor.blockSignals(False)
 
     @QtCore.Slot()
-    def file_saver_template_button_clicked(self):
-        """Button click action.
-
-        """
-        from ..editor import bookmark_properties
-        self.close()
-        bookmark_properties.show(self.server, self.job, self.root)
-
-    @QtCore.Slot()
     def filename_button_clicked(self):
         """Used to reveal the parent folder in the file explorer.
 
@@ -806,19 +749,6 @@ class FileSaverWidget(base.BasePropertyEditor):
                 return
 
         actions.reveal(_dir.path())
-
-    @QtCore.Slot()
-    def prefix_button_clicked(self):
-        """Button click action.
-
-        """
-        editor = widgets.PrefixEditor(
-            self.server,
-            self.job,
-            self.root,
-            parent=self
-        )
-        editor.open()
 
     @QtCore.Slot()
     def version_button_clicked(self):

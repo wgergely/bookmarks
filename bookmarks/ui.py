@@ -1747,7 +1747,7 @@ class AbstractListModel(QtCore.QAbstractListModel):
         return len(self._data)
 
     def display_name(self, v):
-        return v.split('/')[-1]
+        return v.replace('/', '  |   ')
 
     def init_data(self, *args, **kwargs):
         raise NotImplementedError('Abstract method must be implemented by subclass.')

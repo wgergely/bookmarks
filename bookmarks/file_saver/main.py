@@ -461,7 +461,7 @@ class FileSaverWidget(base.BasePropertyEditor):
 
         v = config.expand_tokens(
             template,
-            asset=_get('asset'),
+            asset=common.active('asset'),
             user=_get('file_saver_user'),
             version=_get('version').lower(),
             task=task,

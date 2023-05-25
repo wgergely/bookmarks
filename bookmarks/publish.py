@@ -560,20 +560,9 @@ class PublishWidget(base.BasePropertyEditor):
 
         # init
         config = tokens.get(*common.active('root', args=True))
-        asset = common.active('asset')
-        kwargs.update(config.get_tokens(asset=asset))
-
-        if '/' in common.active('asset'):
-            if len(common.active('asset').split('/')) > 1:
-                asset_alt1 = common.active('asset').split('/')[1]
-            else:
-                asset_alt1 = common.active('asset').split('/')[0]
-        else:
-            asset_alt1 = asset
-
+        kwargs.update(config.get_tokens(asset=common.active('asset')))
 
         # Item info
-        kwargs['asset_alt1'] = asset_alt1
         kwargs['source'] = self._index.data(common.PathRole)
         kwargs['type'] = self._index.data(common.TypeRole)
         kwargs['entries'] = self._index.data(common.EntryRole)

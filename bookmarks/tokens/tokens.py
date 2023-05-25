@@ -184,8 +184,13 @@ DEFAULT_TOKEN_CONFIG = {
             'description': 'A non-versioned element file'
         },
         6: {
-            'name': 'Studio Aka - ShotGrid',
+            'name': 'Studio Aka - Shot',
             'value': '{prefix}_{seq}_{shot}_{mode}_{element}.{version}.{ext}',
+            'description': 'Studio Aka - ShotGrid file template'
+        },
+        7: {
+            'name': 'Studio Aka - Asset',
+            'value': '{prefix}_{asset1}_{mode}_{element}.{version}.{ext}',
             'description': 'Studio Aka - ShotGrid file template'
         }
     },
@@ -732,15 +737,24 @@ class TokenConfig(QtCore.QObject):
 
         """
         data = self.data(force=force)
+
+        if not data:
+            return {}
+        if AssetFolderConfig not in data:
+            return {}
+
         tokens = {}
+
+        # Populate tokens with the database values
         for k, v in data[AssetFolderConfig].items():
             tokens[v['name']] = v['value']
 
+        # Populate tokens with the environment values
         tokens['server'] = self.server
         tokens['job'] = self.job
-        tokens['project'] = self.job
         tokens['root'] = self.root
 
+        tokens['project'] = self.job
         tokens['bookmark'] = f'{self.server}/{self.job}/{self.root}'
 
         for k, v in kwargs.items():
@@ -752,8 +766,7 @@ class TokenConfig(QtCore.QObject):
                 _v = _v if _v else invalid_token
                 tokens[_k] = _v
 
-        # We can also use some bookmark item properties as tokens.
-        # Let's load the values from the database:
+        # We can also use bookmark item properties as tokens
         db = database.get_db(self.server, self.job, self.root)
         _get('width')
         _get('height')
@@ -771,6 +784,17 @@ class TokenConfig(QtCore.QObject):
                 self.root,
                 kwargs['asset']
             )
+
+        # We also want to use the path elements as tokens,
+        # so we will split them and add them to the tokens dictionary
+        for k in ('server', 'job', 'root', 'asset', 'task'):
+            if k not in tokens:
+                continue
+            s = tokens[k].replace('//', '').strip('/')
+            if '/' in s:
+                for n, s in enumerate(s.split('/')):
+                    tokens[f'{k}{n}'] = s
+
         return tokens
 
     def get_extensions(self, flag, force=False):

@@ -473,7 +473,13 @@ class AssetItemView(views.ThreadedItemView):
 
     def add_item_action(self, index):
         """Action to execute when the add item icon is clicked."""
-        actions.show_add_file(asset=index.data(common.ParentPathRole)[-1])
+        self.activate(index)
+
+        from ..tokens import tokens
+        d = tokens.get_folder(tokens.SceneFolder)
+        if QtCore.QFileInfo(f'{common.active("asset", path=True)}/{d}').exists():
+            common.signals.taskFolderChanged.emit(d)
+        actions.show_add_file()
 
     def edit_item_action(self, index):
         """Action to execute when the edit item icon is clicked."""

@@ -773,14 +773,11 @@ def show_add_asset(server=None, job=None, root=None):
 
 @common.error
 @common.debug
-def show_add_file(
-        asset=None, extension=None, file=None, create_file=True, increment=False
-):
+def show_add_file(extension=None, file=None, create_file=True, increment=False):
     """Shows :class:`~bookmarks.file_saver.FileSaverWidget` to add a new empty template
     path file.
 
     Args:
-        asset (str): Name of the asset.
         extension (str): An format, e.g. 'psd'.
         file (str): Path to an existing file. Optional.
         create_file (bool): Creates an empty file if True.
@@ -790,24 +787,8 @@ def show_add_file(
         The editor widget instance.
 
     """
-    server = common.active('server')
-    job = common.active('job')
-    root = common.active('root')
-
-    if asset is None:
-        asset = common.active('asset')
-
-    args = (server, job, root, asset)
-
-    if not all(args):
-        return None
-
     from .file_saver import main as editor
     widget = editor.show(
-        server,
-        job,
-        root,
-        asset,
         file=file,
         create_file=create_file,
         increment=increment,
@@ -873,20 +854,8 @@ def edit_file(f):
     """Edit the given file.
 
     """
-    server = common.active('server')
-    job = common.active('job')
-    root = common.active('root')
-    asset = common.active('asset')
-
-    if not all((server, job, root, asset)):
-        return
-
     from .file_saver import main as editor
     widget = editor.show(
-        server,
-        job,
-        root,
-        asset,
         extension=QtCore.QFileInfo(f).suffix(),
         file=f
     )

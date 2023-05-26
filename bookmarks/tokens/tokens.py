@@ -221,7 +221,7 @@ DEFAULT_TOKEN_CONFIG = {
         },
         5: {
             'name': 'Studio Aka - Asset',
-            'value': '{server}/{job}/{root}/{asset}/publish/{prefix}_{asset_alt1}_{task}_{element}.{ext}',
+            'value': '{server}/{job}/{root}/{asset}/publish/{asset1}.{ext}',
             'description': 'Publish an asset',
             'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
         },

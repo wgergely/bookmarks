@@ -73,6 +73,7 @@ def show(extension=None, file=None, create_file=True,
     common.restore_window_state(common.file_saver_widget)
     return common.file_saver_widget
 
+
 #: Keys we don't associate with local preferences
 INACTIVE_KEYS = (
     'file_saver_task',
@@ -303,6 +304,10 @@ class FileSaverWidget(base.BasePropertyEditor):
         self.update_timer.setSingleShot(False)
         self.update_timer.timeout.connect(self.verify_unique)
 
+        self.filename_editor.setStyleSheet(
+            f'color:{common.rgb(common.color_green)};font-size:{int(common.size_font_medium)}px;qproperty-alignment: AlignCenter;'
+        )
+
         if file is not None:
             self.set_file(file)
             return
@@ -323,6 +328,9 @@ class FileSaverWidget(base.BasePropertyEditor):
             file (str): Path to a file.
 
         """
+        if not file:
+            raise RuntimeError('Invalid file path: {}'.format(file))
+
         self._file = file
 
         self.version_editor.setText('')
@@ -368,7 +376,7 @@ class FileSaverWidget(base.BasePropertyEditor):
         self.filename_editor.setText(QtCore.QFileInfo(file).fileName())
 
     def _connect_signals(self):
-        super(FileSaverWidget, self)._connect_signals()
+        super()._connect_signals()
         self._connect_settings_save_signals(common.SECTIONS['file_saver'])
 
     def name(self):
@@ -520,18 +528,6 @@ class FileSaverWidget(base.BasePropertyEditor):
         # Load previously set values from the user settings file
         if self._file is None:
             self.load_saved_user_settings(common.SECTIONS['file_saver'])
-
-        # # Prefix
-        # self.prefix_editor.setReadOnly(True)
-        # if self._file is None:
-        #     db = database.get_db(*common.active('root', args=True))
-        #     prefix = db.value(
-        #         db.source(),
-        #         'prefix',
-        #         database.BookmarkTable
-        #     )
-        #     if prefix:
-        #         self.prefix_editor.setText(prefix)
 
         if self._extension and self._file is None:
             if self.file_saver_extension_editor.findText(self._extension) > 0:

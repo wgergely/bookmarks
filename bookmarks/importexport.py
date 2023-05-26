@@ -9,11 +9,11 @@ asset_table_properties.json and a thumbnail file. See the main export function
 
 """
 import json
+import os
 import shutil
 import time
 import uuid
 import zipfile
-import os
 
 from PySide2 import QtCore, QtWidgets
 
@@ -317,7 +317,6 @@ def import_item_properties(index, source=None, prompt=True):
             db.set_value(source, k, v, table=database.AssetTable)
 
 
-
 def import_json_asset_properties(indexes, prompt=True):
     """Import properties for multiple items from a JSON file.
 
@@ -326,6 +325,8 @@ def import_json_asset_properties(indexes, prompt=True):
         prompt (bool): Show prompt before overriding.
     """
     json_file_path = get_load_path(extension='json')
+    if not json_file_path:
+        return
 
     # Load JSON data from file
     if not os.path.exists(json_file_path):

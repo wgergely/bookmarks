@@ -31,9 +31,7 @@ jobs:
         choco install git
 
     - name: Build the application
-      run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
-        ./package/build.bat
+      run: ./package/build.bat
       continue-on-error: true
 
     - name: Upload build artifact

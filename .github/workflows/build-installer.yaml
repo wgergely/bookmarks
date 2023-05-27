@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    types: [closed]
+    branches: [ main ]
+
+jobs:
+  build-bookmarks-x64-vs2019:
+    runs-on: windows-latest
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      with:
+        ref: main
+
+    - name: Read version number
+      id: vars
+      run: |
+        echo "::set-output name=version::$(python -c "import re; print(re.search('__version__ = \'(.*)\'', open('./bookmarks/__init__.py').read()).group(1))")
+
+    - name: Install dependencies
+      run: |
+        choco install visualstudio2019buildtools --package-parameters "--includeRecommended --includeOptional --add Microsoft.VisualStudio.Workload.VCTools --add Microsoft.VisualStudio.Component.Windows10SDK"
+        choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
+        choco install git
+
+    - name: Build the application
+      run: ./package/build.bat
+      continue-on-error: true
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: installer
+        path: ./package/build/install/bookmarks_${{ steps.vars.outputs.version }}.exe

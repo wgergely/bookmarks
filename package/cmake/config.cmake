@@ -87,7 +87,7 @@ function(get_archives)
     if(NOT EXISTS ${PACKAGES_DIR}/inno)
         message(STATUS "Extracting ${INNO_ARCHIVE}...")
         execute_process(
-            COMMAND "${PACKAGE_DOWNLOAD_DIR}/${INNO_ARCHIVE}" "/VERYSILENT" "/DIR=${PACKAGES_DIR}/inno"
+            COMMAND "${PACKAGE_DOWNLOAD_DIR}/${INNO_ARCHIVE}" "/VERYSILENT" "/NORESTART" "/SUPPRESSMSGBOXES" "/SP-" "/CURRENTUSER" "/DIR=${PACKAGES_DIR}/inno"
             WORKING_DIRECTORY "${PACKAGE_DOWNLOAD_DIR}"
             RESULT_VARIABLE INNO_RESULT
             OUTPUT_VARIABLE INNO_OUTPUT

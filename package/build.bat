@@ -35,7 +35,6 @@ if defined VSCMD_ARG_TGT_ARCH (
 echo VS_NAME: %VS_NAME%
 echo VS_ARCH: %VS_ARCH%
 
-
 set "_script_dir=%~dp0"
 :: Remove the trailing backslash
 set "_script_dir=%_script_dir:~0,-1%"

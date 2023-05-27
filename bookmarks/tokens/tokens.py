@@ -208,7 +208,7 @@ DEFAULT_TOKEN_CONFIG = {
             'value': '{server}/{job}/publish/asset_{asset}/{task}/{element}/{prefix}_{asset}_{task}_{element}.{ext}',
             'description': 'Publish an asset task element',
             'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
-        },
+        },  
         3: {
             'name': 'Shot Thumbnail',
             'value': '{server}/{job}/publish/{sequence}_{shot}/thumbnail.{ext}',

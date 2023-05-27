@@ -93,7 +93,9 @@ SECTIONS = {
     'ffmpeg': (
         'ffmpeg/preset',
         'ffmpeg/size',
-        'ffmpeg/timecode',
+        'ffmpeg/add_timecode',
+        'ffmpeg/timecode_preset',
+        'ffmpeg/pushtorv',
     ),
     'maya': (
         'maya/sync_workspace',

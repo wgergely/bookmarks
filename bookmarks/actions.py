@@ -472,10 +472,9 @@ def set_active(k, v):
     common.check_type(k, (str, None))
 
     if k not in common.SECTIONS['active']:
+        keys = '", "'.join(common.SECTIONS['active'])
         raise ValueError(
-            'Invalid active key. Key must be the one of "{}"'.format(
-                '", "'.join(common.SECTIONS['active'])
-            )
+            f'Invalid active key. Key must be the one of "{keys}"'
         )
 
     common.active_paths[common.active_mode][k] = v
@@ -1393,9 +1392,10 @@ def reveal(item):
             '-e',
             'activate',
             '-e',
-            'select POSIX file "{}"'.format(
-                QtCore.QDir.toNativeSeparators(path)
-            ), '-e', 'end tell']
+            f'select POSIX file "{QtCore.QDir.toNativeSeparators(path)}"',
+            '-e',
+            'end tell'
+        ]
         QtCore.QProcess.startDetached('osascript', args)
         return
     elif common.get_platform() == common.PlatformUnsupported:

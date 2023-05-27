@@ -14,16 +14,30 @@ cache folder as defined by :attr:`common.bookmark_cache_dir`.
 The database table layout is defined by :attr:`TABLES`. It maps the SQLite column types
 to the python types used in the application.
 
-To get and set values use :func:`get_db`, the preferred database interface getter.
-This will return cached, thread-specific database controllers. E.g.:
+To get a database interface instance use the :func:`.get_db` function. It returns cached,
+thread-specific database controllers.
+
+Example:
 
 .. code-block:: python
     :linenos:
 
     from bookmarks import database
 
+    # Get the database interface for a specific bookmark item
     db = database.get_db(server, job, root)
-    v = db.value(*args)
+    v = db.value(db.source(), 'width', database.BookmarkTable)
+
+
+.. code-block:: python
+    :linenos:
+
+    from bookmarks import database
+
+    # Get the database interface of the active bookmark item
+    db = database.get_db(*common.active('root', args=True))
+    v = db.value(db.source(), 'height', database.BookmarkTable)
+
 
 Each :meth:`BookmarkDB.value` and :meth:`BookmarkDB.set_value` call will autocommit.
 You can batch commits together by using the built-in context manager:
@@ -42,13 +56,11 @@ There are two tables that hold item data: ``common.BookmarkTable`` and
 descriptions and notes for all items where the bookmark table contains properties
 specifically related to the bookmark item.
 
-Warning:
+Known issues:
 
     Bookmark items should store their description in the asset table as it is a general
-    property, but they don't and instead use the superfluous bookmark table
+    property, but they don't, and instead use the superfluous bookmark table
     'description' column. Sorry about that...
-
-
 
 """
 import base64

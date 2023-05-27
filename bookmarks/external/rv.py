@@ -27,12 +27,6 @@ def push(path, command=DEFAULT):
     if not bin_path:
         return
 
-    # if common.get_platform() == common.PlatformWindows:
-        # There's some issue with RV and Windows paths, so we need to replace
-        # backslashes with forward slashes.
-        # path = path.replace('/', '\\')
-        pass
-
     cmd = command.format(
         RV=bin_path,
         PRODUCT=common.product,

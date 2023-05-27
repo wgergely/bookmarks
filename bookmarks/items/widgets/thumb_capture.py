@@ -124,11 +124,7 @@ class ScreenCapture(QtWidgets.QDialog):
         if pixmap.isNull():
             raise RuntimeError('Unknown error occurred capturing the pixmap.')
 
-        temp_image_path = '{}/{}.{}'.format(
-            common.temp_path(),
-            uuid.uuid1().hex,
-            common.thumbnail_format
-        )
+        temp_image_path = f'{common.temp_path()}/{uuid.uuid1().hex}.{common.thumbnail_format}'
         f = QtCore.QFileInfo(temp_image_path)
         if not f.dir().exists():
             if not f.dir().mkpath('.'):

@@ -99,6 +99,9 @@ def _parse_dist_env(binary_name):
         return
 
     def _scan_dir(v):
+        if not os.path.isdir(v):
+            print(f'{v} is not a directory')
+            return None
         for entry in os.scandir(v):
             try:
                 if not entry.is_file():

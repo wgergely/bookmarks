@@ -40,7 +40,7 @@ class BaseLinkWidget(QtWidgets.QDialog):
             common.set_stylesheet(self)
 
         self.setWindowTitle(
-            'Link {} with {} Entity'.format(self.db_source(), self.entity_type.title()))
+            f'Link {self.db_source()} with {self.entity_type.title()} Entity')
 
         self._create_ui()
         self._connect_signals()
@@ -52,7 +52,7 @@ class BaseLinkWidget(QtWidgets.QDialog):
         self.layout().setSpacing(o)
 
         row = ui.add_row(
-            'Select {}'.format(self.entity_type.title()),
+            f'Select {self.entity_type.title()}',
             height=common.size(common.size_row_height),
             parent=self
         )
@@ -73,7 +73,7 @@ class BaseLinkWidget(QtWidgets.QDialog):
         row = ui.add_row(None, height=common.size(common.size_row_height), parent=self)
 
         self.link_button = ui.PaintedButton(
-            'Link {} Entity'.format(self.entity_type.title()),
+            f'Link {self.entity_type.title()} Entity',
             parent=self
         )
 

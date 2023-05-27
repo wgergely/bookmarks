@@ -4,10 +4,14 @@ on:
   workflow_dispatch:
   push:
     branches: [ main ]
+  pull_request:
+    types: [closed]
+    branches: [ main ]
 
 jobs:
   build-bookmarks-x64-vs2019:
     runs-on: windows-latest
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
 
     steps:
     - name: Checkout repository

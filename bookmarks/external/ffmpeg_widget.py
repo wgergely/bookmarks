@@ -288,12 +288,12 @@ class FFMpegWidget(base.BasePropertyEditor):
         pbar = ui.get_progress_bar(
             'Pre-converting frames',
             f'Pre-converting {int(frames[-1])-int(frames[0])} frames, please wait.',
-            int(frames[0]),
-            int(frames[-1]),
+            0,
+            0,
             parent=self
         )
+        pbar.setValue(0)
 
-        pbar.setValue(-1)
         pbar.open()
         QtWidgets.QApplication.instance().processEvents()
 
@@ -346,7 +346,10 @@ class FFMpegWidget(base.BasePropertyEditor):
         )
 
         if self.ffmpeg_pushtorv_editor.isChecked():
-            rv.push(destination)
+            try:
+                rv.push(destination)
+            except:
+                log.error('Failed to push to RV.')
 
         ui.OkBox(f'Movie saved to {destination}').open()
         log.success(f'Movie saved to {destination}')

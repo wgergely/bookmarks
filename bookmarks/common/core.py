@@ -241,7 +241,7 @@ def debug(func):
             return func(*args, **kwargs)
         finally:
             if args and hasattr(args[0], '__class__'):
-                name = f'{args[0].__class__}.{func.__name__}'
+                name = f'{args[0].__class__.__module__}.{args[0].__class__.__name__}.{func.__name__}'
             else:
                 name = func.__name__
 

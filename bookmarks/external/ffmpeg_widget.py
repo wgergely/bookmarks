@@ -8,13 +8,13 @@ import pyimageutil
 from PySide2 import QtCore, QtWidgets
 
 from . import ffmpeg
-from ..external import rv
 from .. import common
 from .. import database
 from .. import images
 from .. import log
 from .. import ui
 from ..editor import base
+from ..external import rv
 from ..tokens import tokens
 
 
@@ -287,7 +287,7 @@ class FFMpegWidget(base.BasePropertyEditor):
 
         pbar = ui.get_progress_bar(
             'Pre-converting frames',
-            f'Pre-converting {int(frames[-1])-int(frames[0])} frames, please wait.',
+            f'Pre-converting {int(frames[-1]) - int(frames[0])} frames, please wait.',
             0,
             0,
             parent=self

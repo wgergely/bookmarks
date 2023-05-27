@@ -533,9 +533,7 @@ class PublishWidget(base.BasePropertyEditor):
         )
         v = v.replace(
             '###',
-            '<span style="color:{}">###</span>'.format(
-                common.rgb(common.color_red)
-            )
+            f'<span style="color:{common.rgb(common.color_red)}">###</span>'
         )
 
         self.destination_editor.setText(v)

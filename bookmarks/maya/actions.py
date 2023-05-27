@@ -184,11 +184,8 @@ def save_warning(*args):
 
     if workspace_info.path().lower() not in scene_file.filePath().lower():
         ui.MessageBox(
-            'Looks like you are saving "{}" outside the current project\nThe '
-            'current project is "{}"'.format(
-                scene_file.fileName(),
-                workspace_info.path()
-            ),
+            f'Looks like you are saving "{scene_file.fileName()}" outside the current project\nThe '
+            f'current project is "{workspace_info.path()}"',
             'If you didn\'t expect this message, is it possible the project was '
             'changed by {} from another instance of Maya?'.format(
                 common.product
@@ -271,8 +268,7 @@ def open_scene(path):
 
     _s = file_info.suffix().lower()
     if _s not in ('ma', 'mb', 'abc'):
-        s = '{} is not a valid scene.'.format(p)
-        raise RuntimeError(s)
+        raise RuntimeError(f'{p} is not a valid scene.')
 
     if _s == 'abc':
         if not cmds.pluginInfo('AbcImport.mll', loaded=True, q=True):
@@ -281,8 +277,7 @@ def open_scene(path):
             cmds.loadPlugin("AbcExport.mll", quiet=True)
 
     if not file_info.exists():
-        s = '{} does not exist.'.format(p)
-        raise RuntimeError(s)
+        raise RuntimeError(f'{p} does not exist.')
 
     if base.is_scene_modified() == QtWidgets.QMessageBox.Cancel:
         return

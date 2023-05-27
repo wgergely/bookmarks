@@ -22,7 +22,7 @@ jobs:
     - name: Read version number
       id: vars
       run: |
-        echo "::set-output name=version::$(python -c "import re; print(re.search('__version__ = \'(.*)\'', open('./bookmarks/__init__.py').read()).group(1))")
+        echo "::set-output name=version::$(python -c "import re;print(re.search('__version__ = \'(.*)\'', open('./bookmarks/__init__.py').read()).group(1))")"
 
     - name: Install dependencies
       run: |

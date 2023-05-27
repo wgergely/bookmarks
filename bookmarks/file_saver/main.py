@@ -221,7 +221,7 @@ def increment_version(v, dir, name, func, increment):
             n = 0
         if n > 999:
             n = 999
-        return '{}{}'.format(prefix, '{}'.format(n).zfill(padding))
+        return f'{prefix}{"{}".format(n).zfill(padding)}'
 
     # Let's scan the destination directory for existing versions to make
     # sure we're only suggesting valid versions

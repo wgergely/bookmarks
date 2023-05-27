@@ -9,11 +9,7 @@ import uuid
 from PySide2 import QtCore
 
 PRODUCT = f'bookmarks_test_{uuid.uuid1().hex}'
-PRODUCT_ROOT = '{}/{}'.format(
-    QtCore.QStandardPaths.writableLocation(
-        QtCore.QStandardPaths.GenericDataLocation),
-    PRODUCT
-)
+PRODUCT_ROOT = f'{QtCore.QStandardPaths.writableLocation(QtCore.QStandardPaths.GenericDataLocation)}/{PRODUCT}'
 
 ranges = (
     # (0x0030, 0x0039),

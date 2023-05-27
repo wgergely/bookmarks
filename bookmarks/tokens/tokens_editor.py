@@ -14,10 +14,11 @@ from .. import ui
 from ..editor import base
 
 SECTIONS = (
-    (tokens.PublishConfig, 'Configure publish folders'),
-    (tokens.FileNameConfig, 'Configure file-name templates'),
-    (tokens.AssetFolderConfig, 'Configure asset folders'),
-    (tokens.FileFormatConfig, 'Configure file-format filters'),
+    (tokens.FileNameConfig, 'File name template'),
+    (tokens.AssetFolderConfig, 'Asset folders template'),
+    (tokens.FileFormatConfig, 'Format whitelist'),
+    (tokens.PublishConfig, 'Publish template'),
+    (tokens.FFMpegTCConfig, 'Timecode template'),
 )
 
 
@@ -49,7 +50,7 @@ class TokenEditor(QtWidgets.QDialog):
     tokenSelected = QtCore.Signal(str)
 
     def __init__(self, server, job, root, parent=None):
-        super(TokenEditor, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.server = server
         self.job = job
         self.root = root
@@ -78,19 +79,19 @@ class TokenEditor(QtWidgets.QDialog):
 
         config = tokens.get(self.server, self.job, self.root)
         v = config.get_tokens(
-            user='MyName',
+            user='username',
             version='v001',
-            host='localhost',
-            task='ANIM',
-            mode='ANIM',
-            element='MyElement',
-            ext=common.thumbnail_format,
-            prefix='MYP',
-            asset='MyAsset',
-            seq='###',
-            shot='###',
-            sequence='###',
-            project=self.job,
+            host='my-machine',
+            task='anim',
+            mode='anim',
+            element='main',
+            ext='ma',
+            prefix='MY_PROJECT',
+            asset='asset/with/multiple/subfolders',
+            seq='SQ010',
+            sequence='SQ010',
+            shot='SH0010',
+            project='my_project',
         )
         for k in sorted(v.keys()):
             token = '{{{}}}'.format(k)
@@ -99,7 +100,7 @@ class TokenEditor(QtWidgets.QDialog):
             item.setFlags(QtCore.Qt.ItemIsEnabled)
             item.setData(
                 QtCore.Qt.ToolTipRole,
-                'Current value: "{}"'.format(v[k])
+                f'Current value: "{v[k]}"'
             )
 
     @QtCore.Slot(QtWidgets.QListWidgetItem)
@@ -203,14 +204,14 @@ class SubfolderEditor(QtWidgets.QDialog):
 
         for _k, _v in self.v['subfolders'].items():
             if not isinstance(_v, dict):
-                log.error('Invalid data. Key: {}, Value: {}'.format(_k, _v))
+                log.error(f'Invalid data. Key: {_k}, Value: {_v}')
                 continue
 
             _row = ui.add_row(_v['name'], parent=grp)
             editor = ui.LineEdit(parent=_row)
             editor.setText(_v['value'])
 
-            key = '{}/{}/subfolders/{}/value'.format(self.section, self.k, _k)
+            key = f'{self.section}/{self.k}/subfolders/{_k}/value'
             self.parent().current_data[key] = _v['value']
 
             editor.textChanged.connect(
@@ -287,7 +288,7 @@ class TokenConfigEditor(QtWidgets.QWidget):
                 if not isinstance(
                         v, dict
                 ) or 'name' not in v or 'description' not in v:
-                    log.error('Invalid data. Key: {}, value: {}'.format(k, v))
+                    log.error(f'Invalid data. Key: {k}, value: {v}')
                     return
 
             main_grp = base.add_section(
@@ -303,9 +304,7 @@ class TokenConfigEditor(QtWidgets.QWidget):
             _grp = ui.get_group(parent=main_grp)
             for k, v in data[section].items():
                 _name = v['name'].title()
-                _name = '{} Folder'.format(
-                    _name
-                ) if section == tokens.AssetFolderConfig else _name
+                _name = f'{_name} Folder' if section == tokens.AssetFolderConfig else _name
                 row = ui.add_row(
                     _name, padding=None, height=h, parent=_grp
                 )
@@ -319,7 +318,7 @@ class TokenConfigEditor(QtWidgets.QWidget):
                 editor.setText(v['value'])
 
                 # Save current data
-                key = '{}/{}/value'.format(section, k)
+                key = f'{section}/{k}/value'
                 self.current_data[key] = v['value']
 
                 editor.textChanged.connect(
@@ -328,8 +327,7 @@ class TokenConfigEditor(QtWidgets.QWidget):
 
                 row.layout().addWidget(editor)
 
-                if section == tokens.PublishConfig:
-                    editor.setValidator(base.token_validator)
+                if section == tokens.PublishConfig or section == tokens.FFMpegTCConfig:
                     button = ui.PaintedButton('+', parent=row)
                     button.clicked.connect(
                         functools.partial(self.show_token_editor, editor)
@@ -337,7 +335,6 @@ class TokenConfigEditor(QtWidgets.QWidget):
                     row.layout().addWidget(button, 0)
 
                 if section == tokens.FileNameConfig:
-                    editor.setValidator(base.token_validator)
                     button = ui.PaintedButton('+', parent=row)
                     button.clicked.connect(
                         functools.partial(self.show_token_editor, editor)
@@ -348,7 +345,7 @@ class TokenConfigEditor(QtWidgets.QWidget):
                     button = ui.PaintedButton('Formats', parent=row)
                     row.layout().addWidget(button, 0)
                     if 'filter' in v:
-                        key = '{}/{}/filter'.format(section, k)
+                        key = f'{section}/{k}/filter'
                         self.current_data[key] = v['filter']
                         button.clicked.connect(
                             functools.partial(self.show_filter_editor, key, v, data)
@@ -469,9 +466,7 @@ class TokenConfigEditor(QtWidgets.QWidget):
 
         if v != self.current_data[key]:
             self.changed_data[key] = v
-            editor.setStyleSheet(
-                'color: {};'.format(common.rgb(common.color_green))
-            )
+            editor.setStyleSheet(f'color: {common.rgb(common.color_green)};')
             return
 
         if key in self.changed_data:

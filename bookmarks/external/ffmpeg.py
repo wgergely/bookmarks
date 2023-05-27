@@ -9,7 +9,6 @@ import os
 import re
 import string
 import subprocess
-from datetime import datetime
 
 from PySide2 import QtCore, QtWidgets
 
@@ -40,6 +39,7 @@ _preset_info = ', drawtext=fontfile={FONT}:text=\'{' \
                'LABEL}%{{frame_num}}\':start_number={' \
                'STARTFRAME}:x=lh:y=h-(lh*2.5):fontcolor=white:fontsize=ceil(' \
                'w/80):box=1:boxcolor=black:boxborderw=14'
+
 _preset_x264 = '\
 "{BIN}" \
 -y \
@@ -146,6 +146,9 @@ PRESETS = {
     },
 }
 
+SHOT = 0
+ASSET = 1
+
 
 def _get_font_path():
     """Return the path to the font used to label the generated files.
@@ -243,7 +246,7 @@ def _get_framerate(server, job, root, fallback_framerate=24.0):
     return v
 
 
-def _get_info_label(job, asset, task, output_path, startframe, endframe):
+def _get_info_label(timecode_preset, output_path, in_frame, out_frame):
     """Construct an informative label when converting using the information label.
 
     This is the text the gets stamped onto the generated movie file.
@@ -252,21 +255,39 @@ def _get_info_label(job, asset, task, output_path, startframe, endframe):
         str: An informative label describing the movie file.
 
     """
-    v = ''
-    if job:
-        v += job
-        v += ' \\| '
-    if asset:
-        v += asset
-        v += ' \\| '
-    if task:
-        v += task
-    v += '\n'
-    vseq = common.get_sequence(output_path)
-    if vseq:
-        v += 'v' + vseq.group(2) + ' \\| '
-        v += datetime.now().strftime('%a %d/%m/%Y %H\\:%M \\| ')
-    v += f'{startframe}-{endframe} '
+    if not timecode_preset:
+        raise RuntimeError('No timecode preset set.')
+
+    version = re.search(r'v\d{1,4}', output_path)
+    version = version.group(0) if version else 'No version'
+    sequence, shot = common.get_sequence_and_shot(output_path)
+    sequence = sequence if sequence else '###'
+    shot = shot if shot else '####'
+
+    ext = QtCore.QFileInfo(output_path).suffix()
+
+    from ..tokens import tokens
+    config = tokens.get(*common.active('root', args=True))
+
+    v = config.expand_tokens(
+        timecode_preset,
+        asset=common.active('asset'),
+        version=version,
+        task=common.active('task'),
+        sh=shot,
+        shot=shot,
+        sq=sequence,
+        seq=sequence,
+        sequence=sequence,
+        ext=ext,
+        in_frame=in_frame,
+        out_frame=out_frame,
+    )
+
+    # replace any non-alphanumeric characters in timecode_preset with the character prefixed by '\\'
+    # this is to prevent ffmpeg from interpreting the characters as special characters
+    v = re.sub(r'([^\w])', r'\\\1', v)
+
     return v
 
 
@@ -274,7 +295,7 @@ def _get_info_label(job, asset, task, output_path, startframe, endframe):
 @common.debug
 def convert(
         path, preset, server=None, job=None, root=None, asset=None, task=None,
-        size=(None, None), timecode=False, output_path=None, parent=None
+        size=(None, None), timecode=False, timecode_preset=None, output_path=None, parent=None
 ):
     """Start a convert process using ffmpeg.
 
@@ -340,12 +361,13 @@ def convert(
     else:
         width, height = size
 
+    if timecode and not timecode_preset:
+        raise RuntimeError('Timecode preset not specified.')
+
     if timecode:
         tc = _preset_info.format(
             FONT=_get_font_path(),
-            LABEL=_get_info_label(
-                job, asset, task, output_path, startframe, endframe
-            ),
+            LABEL=_get_info_label(timecode_preset, output_path, startframe, endframe),
             STARTFRAME=startframe
         )
     else:
@@ -378,7 +400,9 @@ def convert(
             endframe,
             parent=parent
         )
+
         pbar.open()
+        QtWidgets.QApplication.instance().processEvents()
 
         lines = []
 

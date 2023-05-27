@@ -161,7 +161,7 @@ def create_entity(entity_type, entity_name, request_data=None, create_data=None,
 
             # Check for duplicates
             if has('name') or has('code') or has('contents'):
-                raise ValueError('{} exists already.'.format(entity_name))
+                raise ValueError(f'{entity_name} exists already.')
 
         # We're in the clear, let's create the entity
         entity = sg.create(
@@ -207,7 +207,7 @@ def create_project(server, job, root, entity_name):
 
             # Check for duplicates
             if has('name'):
-                raise ValueError('{} exists already.'.format(entity_name))
+                raise ValueError(f'{entity_name} exists already.')
 
         # We're in the clear, let's create the entity
         entity = sg.create(
@@ -411,8 +411,7 @@ def verify_published_file_version(
     from .. import ui
     mbox = ui.MessageBox(
         'This version is already published.',
-        'Looks like version {} has already been published. Are you sure you want to publish it again?'.format(
-            version),
+        f'Looks like version {version} has already been published. Are you sure you want to publish it again?',
         buttons=[ui.CancelButton, ui.YesButton]
     )
     if mbox.exec_() == QtWidgets.QDialog.Rejected:

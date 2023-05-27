@@ -28,6 +28,7 @@ Use :func:`.get` to retrieve token config controller instances.
 
 """
 import collections
+from datetime import datetime
 import json
 import socket
 import string
@@ -46,6 +47,7 @@ FileFormatConfig = 'FileFormatConfig'
 FileNameConfig = 'FileNameConfig'
 PublishConfig = 'PublishConfig'
 AssetFolderConfig = 'AssetFolderConfig'
+FFMpegTCConfig = 'FFMpegTCConfig'
 
 SceneFormat = 0b1
 ImageFormat = 0b10
@@ -220,15 +222,21 @@ DEFAULT_TOKEN_CONFIG = {
             'filter': ImageFormat,
         },
         5: {
-            'name': 'Studio Aka - Asset',
-            'value': '{server}/{job}/{root}/{asset}/publish/{prefix}_{asset_alt1}_{task}_{element}.{ext}',
+            'name': 'Asset (local publish)',
+            'value': '{server}/{job}/{root}/{asset}/publish/{prefix}_{asset1}_{task}_{element}.{ext}',
             'description': 'Publish an asset',
             'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
         },
         6: {
-            'name': 'Studio Aka - Shot',
+            'name': 'Shot (local publish)',
             'value': '{server}/{job}/{root}/{asset}/publish/{prefix}_{seq}_{shot}_{element}.{ext}',
             'description': 'Publish a shot element',
+            'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
+        },
+        7: {
+            'name': 'Studio Aka - vCur',
+            'value': '{server}/{job}/{root}/{asset0}/{asset1}/{asset2}/publish/{asset4}/{asset5}/{asset1}_{asset5}_{element}.vCur.{ext}',
+            'description': 'Studio Aka - vCur',
             'filter': SceneFormat | ImageFormat | MovieFormat | CacheFormat,
         },
     },
@@ -401,6 +409,23 @@ DEFAULT_TOKEN_CONFIG = {
             'description': 'Miscellaneous asset files',
             'filter': AllFormat,
             'subfolders': {},
+        }
+    },
+    FFMpegTCConfig: {
+        0: {
+            'name': 'Shot timecode',
+            'value': '{job} | {sequence}-{shot}-{task}-{version} | {date} {user} | {in_frame}-{out_frame}',
+            'description': 'Timecode to use for shots'
+        },
+        1: {
+            'name': 'Asset timecode',
+            'value': '{job} | {asset}-{task}-{version} | {date} {user}',
+            'description': 'Timecode to use for assets'
+        },
+        2: {
+            'name': 'User only timecode',
+            'value': '{job} | {date} {user}',
+            'description': 'Sparse timecode with the date and username'
         }
     }
 }
@@ -710,6 +735,9 @@ class TokenConfig(QtCore.QObject):
             extension=ext,
             format=ext,
             prefix=prefix,
+            date=datetime.now().strftime('%a %d/%m/%Y %H:%M'),
+            now=datetime.now().strftime('%a %d/%m/%Y %H:%M'),
+            timestamp=datetime.now().strftime('%a %d/%m/%Y %H:%M'),
             **_kwargs
         )
 
@@ -739,9 +767,9 @@ class TokenConfig(QtCore.QObject):
         data = self.data(force=force)
 
         if not data:
-            return {}
+            return kwargs
         if AssetFolderConfig not in data:
-            return {}
+            return kwargs
 
         tokens = {}
 
@@ -760,30 +788,18 @@ class TokenConfig(QtCore.QObject):
         for k, v in kwargs.items():
             tokens[k] = v
 
-        def _get(_k):
+        # We can also use bookmark item properties as tokens
+        db = database.get_db(self.server, self.job, self.root)
+        for _k in ('width', 'height', 'framerate', 'prefix', 'startframe', 'duration'):
             if _k not in kwargs or not kwargs[_k]:
                 _v = db.value(db.source(), _k, database.BookmarkTable)
                 _v = _v if _v else invalid_token
                 tokens[_k] = _v
 
-        # We can also use bookmark item properties as tokens
-        db = database.get_db(self.server, self.job, self.root)
-        _get('width')
-        _get('height')
-        _get('framerate')
-        _get('prefix')
-        _get('startframe')
-        _get('duration')
-
         # The asset root token will only be available when the asset is manually
         # specified
         if 'asset' in kwargs and kwargs['asset']:
-            tokens['asset_root'] = '{}/{}/{}/{}'.format(
-                self.server,
-                self.job,
-                self.root,
-                kwargs['asset']
-            )
+            tokens['asset_root'] = f'{self.server}/{self.job}/{self.root}/{kwargs["asset"]}'
 
         # We also want to use the path elements as tokens,
         # so we will split them and add them to the tokens dictionary

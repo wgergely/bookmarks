@@ -81,7 +81,7 @@ MainWidgetShortcuts = {
         'value': 'Ctrl+Shift+N',
         'default': 'Ctrl+Shift+N',
         'repeat': False,
-        'description': 'Open a new {} instance...'.format(common.product),
+        'description': f'Open a new {common.product} instance...',
         'shortcut': None,
     },
     RowIncrease: {

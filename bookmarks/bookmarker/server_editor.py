@@ -84,7 +84,7 @@ class AddServerEditor(QtWidgets.QDialog):
         self.pick_button.clicked.connect(self.pick)
         self.editor.textChanged.connect(
             lambda: self.editor.setStyleSheet(
-                'color: {};'.format(common.rgb(common.color_green))
+                f'color: {common.rgb(common.color_green)};'
             )
         )
 

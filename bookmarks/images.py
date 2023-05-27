@@ -257,15 +257,15 @@ def get_oiio_namefilters():
     for exts in extension_list.split(';'):
         exts = exts.split(':')
         _exts = exts[1].split(',')
-        e = ['*.{}'.format(f) for f in _exts]
-        namefilter = '{} files ({})'.format(exts[0].upper(), ' '.join(e))
+        e = [f'*.{f}' for f in _exts]
+        namefilter = f'{exts[0].upper()} files ({" ".join(e)})'
         namefilters.append(namefilter)
         for _e in _exts:
             arr.append(_e)
 
-    allfiles = ['*.{}'.format(f) for f in arr]
+    allfiles = [f'*.{f}' for f in arr]
     allfiles = ' '.join(allfiles)
-    allfiles = 'All files ({})'.format(allfiles)
+    allfiles = f'All files ({allfiles})'
     namefilters.insert(0, allfiles)
     return ';;'.join(namefilters)
 

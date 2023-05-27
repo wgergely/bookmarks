@@ -413,17 +413,17 @@ DEFAULT_TOKEN_CONFIG = {
     },
     FFMpegTCConfig: {
         0: {
-            'name': 'Shot timecode',
+            'name': 'Shot',
             'value': '{job} | {sequence}-{shot}-{task}-{version} | {date} {user} | {in_frame}-{out_frame}',
             'description': 'Timecode to use for shots'
         },
         1: {
-            'name': 'Asset timecode',
+            'name': 'Asset',
             'value': '{job} | {asset}-{task}-{version} | {date} {user}',
             'description': 'Timecode to use for assets'
         },
         2: {
-            'name': 'User only timecode',
+            'name': 'Date and user',
             'value': '{job} | {date} {user}',
             'description': 'Sparse timecode with the date and username'
         }

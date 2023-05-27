@@ -288,7 +288,7 @@ def _get_info_label(timecode_preset, output_path, in_frame, out_frame):
     # this is to prevent ffmpeg from interpreting the characters as special characters
     v = re.sub(r'([^\w])', r'\\\1', v)
 
-    return v
+    return f'{v} \\| '
 
 
 @common.error

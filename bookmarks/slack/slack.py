@@ -69,7 +69,6 @@ def verify_response(response):
     if response['ok']:
         return
 
-    label = 'An error occured.'
     details = ''
     if 'error' in response:
         details += 'Error: {}\n'.format(response['error'])
@@ -77,9 +76,6 @@ def verify_response(response):
         details += 'Required: {}\n'.format(response['needed'])
     if 'error' in response and 'provided' in response:
         details += 'Provided: {}\n'.format(response['provided'])
-
-    s = 'Maybe a required scope is missing?\nError: "{}"'.format(
-        response['error'])
 
     raise ValueError(details)
 
@@ -131,13 +127,17 @@ class OverlayWidget(QtWidgets.QWidget):
 
         painter.setOpacity(0.5)
         painter.drawRoundedRect(
-            rect, common.size(common.size_indicator), common.size(common.size_indicator))
+            rect, common.size(common.size_indicator), common.size(common.size_indicator)
+        )
         painter.setOpacity(1.0)
 
         painter.setBrush(QtCore.Qt.NoBrush)
         painter.setPen(common.color(common.color_text))
-        painter.setFont(common.font_db.bold_font(
-            common.size(common.size_font_medium))[0])
+        painter.setFont(
+            common.font_db.bold_font(
+                common.size(common.size_font_medium)
+            )[0]
+            )
 
         painter.drawText(
             rect,
@@ -187,14 +187,18 @@ class SlackClient(slack_sdk.WebClient):
             response = self.api_call(
                 'users.info',
                 http_verb='GET',
-                params={'user': auth_test_response['user_id']}
+                params={
+                    'user': auth_test_response['user_id']
+                }
             )
             verify_response(response)
 
             response = self.api_call(
                 'users.list',
                 http_verb='GET',
-                params={'user': auth_test_response['user_id']}
+                params={
+                    'user': auth_test_response['user_id']
+                }
             )
             verify_response(response)
 
@@ -226,7 +230,8 @@ class SlackClient(slack_sdk.WebClient):
     def _get_profiles(response):
         if not response['ok']:
             s = 'Maybe a required scope is missing?\nError: "{}"'.format(
-                response['error'])
+                response['error']
+            )
             if 'needed' in response:
                 s += '\nScope needed: "{}"'.format(response['needed'])
             raise ValueError(s)
@@ -260,7 +265,9 @@ class SlackClient(slack_sdk.WebClient):
         response = self.api_call(
             'users.list',
             http_verb="GET",
-            params={'limit': limit}
+            params={
+                'limit': limit
+            }
         )
         profiles += self._get_profiles(response)
 
@@ -369,17 +376,19 @@ class UsersModel(QtCore.QAbstractItemModel):
             channels = client.get_channels()
             for channel in sorted(channels, key=lambda x: x['name']):
                 idx = len(self.INTERNAL_USER_DATA)
-                self.INTERNAL_USER_DATA[idx] = common.DataDict({
-                    QtCore.Qt.DisplayRole: 'Channel:  ' + channel['name'],
-                    QtCore.Qt.DecorationRole: icon,
-                    QtCore.Qt.SizeHintRole: self.row_size,
-                    QtCore.Qt.FontRole:
-                        common.font_db.bold_font(common.size(common.size_font_small))[
-                            0],
-                    IdRole: channel['id'],
-                    ThumbnailHashRole: None,
-                    ThumbnailUrlRole: None,
-                })
+                self.INTERNAL_USER_DATA[idx] = common.DataDict(
+                    {
+                        QtCore.Qt.DisplayRole: 'Channel:  ' + channel['name'],
+                        QtCore.Qt.DecorationRole: icon,
+                        QtCore.Qt.SizeHintRole: self.row_size,
+                        QtCore.Qt.FontRole:
+                            common.font_db.bold_font(common.size(common.size_font_small))[
+                                0],
+                        IdRole: channel['id'],
+                        ThumbnailHashRole: None,
+                        ThumbnailUrlRole: None,
+                    }
+                )
         except Exception as e:
             log.error('Could not get channels.')
 
@@ -387,17 +396,19 @@ class UsersModel(QtCore.QAbstractItemModel):
             profiles = client.get_user_profiles()
             for profile in sorted(profiles, key=self.get_pretty_name):
                 idx = len(self.INTERNAL_USER_DATA)
-                self.INTERNAL_USER_DATA[idx] = common.DataDict({
-                    QtCore.Qt.DisplayRole: self.get_pretty_name(profile),
-                    QtCore.Qt.DecorationRole: icon,
-                    QtCore.Qt.SizeHintRole: self.row_size,
-                    QtCore.Qt.FontRole:
-                        common.font_db.bold_font(common.size(common.size_font_small))[
-                            0],
-                    IdRole: profile['id'],
-                    ThumbnailHashRole: profile['profile']['avatar_hash'],
-                    ThumbnailUrlRole: profile['profile']['image_32'],
-                })
+                self.INTERNAL_USER_DATA[idx] = common.DataDict(
+                    {
+                        QtCore.Qt.DisplayRole: self.get_pretty_name(profile),
+                        QtCore.Qt.DecorationRole: icon,
+                        QtCore.Qt.SizeHintRole: self.row_size,
+                        QtCore.Qt.FontRole:
+                            common.font_db.bold_font(common.size(common.size_font_small))[
+                                0],
+                        IdRole: profile['id'],
+                        ThumbnailHashRole: profile['profile']['avatar_hash'],
+                        ThumbnailUrlRole: profile['profile']['image_32'],
+                    }
+                )
                 index = self.index(idx, 0)
                 self.get_icon(index)
         except Exception as e:
@@ -446,12 +457,14 @@ class UsersModel(QtCore.QAbstractItemModel):
         if all((d in p, f in p, l in p)):
             if all((p[d], p[f], p[l])):
                 name = '{} ({} {})'.format(
-                    p[d], p[f], p[l])
+                    p[d], p[f], p[l]
+                )
             elif p[d]:
                 name = p[d]
             elif all((p[f], p[l])):
                 name = '{} {}'.format(
-                    p[f], p[l])
+                    p[f], p[l]
+                )
         else:
             if d in p:
                 name = p[d]
@@ -459,7 +472,8 @@ class UsersModel(QtCore.QAbstractItemModel):
                 name = p[f]
             elif f in p and l in p:
                 name = '{} {}'.format(
-                    p[f], p[l])
+                    p[f], p[l]
+                )
 
         if not name and r in p:
             name = p[r]
@@ -480,7 +494,8 @@ class UsersModel(QtCore.QAbstractItemModel):
 
         # Cache directory
         cache_dir_path = QtCore.QStandardPaths.writableLocation(
-            QtCore.QStandardPaths.GenericDataLocation)
+            QtCore.QStandardPaths.GenericDataLocation
+        )
         cache_dir_path = '{}/{}/slack'.format(cache_dir_path, common.product)
 
         cache_file_path = '{}/{}.png'.format(
@@ -570,7 +585,8 @@ class SlackWidget(QtWidgets.QDialog):
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
 
         self.channel_button = ui.PaintedButton(
-            'View Online', parent=self)
+            'View Online', parent=self
+        )
 
         self.users_group = ui.get_group(parent=self)
         self.message_group = ui.get_group(vertical=False, parent=self)
@@ -578,7 +594,8 @@ class SlackWidget(QtWidgets.QDialog):
         self.send_button = ui.PaintedButton('Send', parent=self)
         self.user_filter = ui.LineEdit(parent=self)
         self.user_filter.setAlignment(
-            QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight)
+            QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight
+        )
         self.user_filter.setPlaceholderText('Search...')
         self.users_widget = UsersWidget(self.token, parent=self)
 
@@ -592,9 +609,11 @@ class SlackWidget(QtWidgets.QDialog):
         self.message_widget.setObjectName('SlackMessageBox')
 
         self.message_widget.document().setDocumentMargin(
-            common.size(common.size_margin) * 0.5)
+            common.size(common.size_margin) * 0.5
+        )
         self.message_widget.setPlaceholderText(
-            'Enter a message to send...')
+            'Enter a message to send...'
+        )
         self.message_widget.setAcceptRichText(False)
         self.message_widget.moveCursor(QtGui.QTextCursor.End)
 
@@ -609,11 +628,13 @@ class SlackWidget(QtWidgets.QDialog):
     def _connect_signals(self):
         self.send_button.clicked.connect(self.send_message)
         self.send_button.clicked.connect(
-            lambda: self.overlay.setText('Message sent.'))
+            lambda: self.overlay.setText('Message sent.')
+        )
         self.channel_button.clicked.connect(self.open_url)
 
         self.user_filter.textChanged.connect(
-            self.users_widget.model().setFilterFixedString)
+            self.users_widget.model().setFilterFixedString
+        )
 
     def append_message(self, v):
         self.message_widget.setFocus()

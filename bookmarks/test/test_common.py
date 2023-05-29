@@ -85,7 +85,8 @@ class Test(base.BaseCase):
     def test_get_platform(self):
         self.assertIn(
             common.get_platform(),
-            (common.PlatformWindows, common.PlatformMacOS, common.PlatformUnsupported))
+            (common.PlatformWindows, common.PlatformMacOS, common.PlatformUnsupported)
+        )
 
     def test_get_username(self):
         self.assertIsInstance(common.get_username(), str)
@@ -127,9 +128,11 @@ class Test(base.BaseCase):
 
     def test_proxy_path(self):
         seq_path = '{}/{}_v001.ext'.format(
-            base.random_str(16), base.random_str(16))
+            base.random_str(16), base.random_str(16)
+        )
         non_seq_path = '{}/{}_abcd.ext'.format(
-            base.random_str(16), base.random_str(16))
+            base.random_str(16), base.random_str(16)
+        )
 
         self.assertNotEqual(seq_path, non_seq_path)
 
@@ -191,9 +194,11 @@ class Test(base.BaseCase):
             common.get_sequence(0)
 
         seq_path = '{}/{}_v001.ext'.format(
-            base.random_str(32), base.random_str(32))
+            base.random_str(32), base.random_str(32)
+        )
         non_seq_path = '{}/{}_abcd.ext'.format(
-            base.random_str(32), base.random_str(32))
+            base.random_str(32), base.random_str(32)
+        )
         self.assertNotEqual(seq_path, non_seq_path)
 
         collapsed_path = '{}/{}_{}_{}.ext'.format(

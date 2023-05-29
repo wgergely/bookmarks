@@ -550,7 +550,8 @@ class ItemModel(QtCore.QAbstractTableModel):
         val = h if val is None else val
         val = h if val < h else val
         val = int(common.thumbnail_size) if val >= int(
-            common.thumbnail_size) else val
+            common.thumbnail_size
+        ) else val
         self.row_size.setHeight(int(val))
         self.rowHeightChanged.emit(self.row_size.height())
 

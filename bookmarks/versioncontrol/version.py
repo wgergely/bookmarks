@@ -183,8 +183,13 @@ _legacy_version_component_re = re.compile(
     r"(\d+ | [a-z]+ | \.| -)", re.VERBOSE
 )
 
-_legacy_version_replacement_map = {"pre": "c", "preview": "c", "-": "final-",
-                                   "rc": "c", "dev": "@", }
+_legacy_version_replacement_map = {
+    "pre": "c",
+    "preview": "c",
+    "-": "final-",
+    "rc": "c",
+    "dev": "@",
+}
 
 
 def _parse_version_parts(s):

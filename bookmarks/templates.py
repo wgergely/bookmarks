@@ -212,9 +212,11 @@ class TemplateListWidget(ui.ListWidget):
         size = QtCore.QSize(1, h)
 
         off_pixmap = images.rsc_pixmap(
-            'close', common.color(common.color_separator), h)
+            'close', common.color(common.color_separator), h
+        )
         on_pixmap = images.rsc_pixmap(
-            'check', common.color(common.color_green), h)
+            'check', common.color(common.color_green), h
+        )
 
         icon = QtGui.QIcon()
         icon.addPixmap(off_pixmap, QtGui.QIcon.Normal)
@@ -237,8 +239,11 @@ class TemplateListWidget(ui.ListWidget):
             path = f'{dir_.path()}/{f}'
             with zipfile.ZipFile(path, compression=zipfile.ZIP_STORED) as zip:
                 item.setData(TemplatePathRole, path)
-                item.setData(TemplateContentsRole, [f.strip(
-                    '/') for f in sorted(zip.namelist())])
+                item.setData(
+                    TemplateContentsRole, [f.strip(
+                        '/'
+                    ) for f in sorted(zip.namelist())]
+                    )
                 item.setFlags(item.flags() | QtCore.Qt.ItemIsEditable)
 
             self.addItem(item)
@@ -385,7 +390,8 @@ class TemplateListWidget(ui.ListWidget):
 
             painter.setRenderHint(QtGui.QPainter.Antialiasing, on=True)
             painter.setRenderHint(
-                QtGui.QPainter.SmoothPixmapTransform, on=True)
+                QtGui.QPainter.SmoothPixmapTransform, on=True
+            )
 
             painter.setPen(common.color(common.color_secondary_text))
 
@@ -462,7 +468,8 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
 
         folder_pixmap = images.rsc_pixmap(
             'folder', common.color(common.color_secondary_text),
-            common.size(common.size_margin))
+            common.size(common.size_margin)
+        )
         folder_icon = QtGui.QIcon()
         folder_icon.addPixmap(folder_pixmap, QtGui.QIcon.Normal)
         folder_icon.addPixmap(folder_pixmap, QtGui.QIcon.Selected)
@@ -470,7 +477,8 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
 
         file_pixmap = images.rsc_pixmap(
             'file', common.color(common.color_green), common.size(common.size_margin),
-            opacity=0.5)
+            opacity=0.5
+        )
         file_icon = QtGui.QIcon()
         file_icon.addPixmap(file_pixmap, QtGui.QIcon.Normal)
         file_icon.addPixmap(file_pixmap, QtGui.QIcon.Selected)
@@ -483,8 +491,11 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
                 icon = folder_icon
 
             item = QtWidgets.QListWidgetItem(parent=self)
-            item.setData(QtCore.Qt.FontRole, common.font_db.medium_font(
-                common.size(common.size_font_small))[0])
+            item.setData(
+                QtCore.Qt.FontRole, common.font_db.medium_font(
+                    common.size(common.size_font_small)
+                )[0]
+                )
             item.setData(QtCore.Qt.DisplayRole, f)
             item.setData(QtCore.Qt.SizeHintRole, size)
             item.setData(QtCore.Qt.DecorationRole, icon)
@@ -508,7 +519,8 @@ class TemplatesPreviewWidget(QtWidgets.QListWidget):
             painter.setPen(QtCore.Qt.NoPen)
 
             painter.setFont(
-                common.font_db.medium_font(common.size(common.size_font_small))[0])
+                common.font_db.medium_font(common.size(common.size_font_small))[0]
+            )
             painter.drawRect(self.rect())
             o = common.size(common.size_font_medium)
             rect = self.rect().marginsRemoved(QtCore.QMargins(o, o, o, o))
@@ -594,7 +606,8 @@ class TemplatesWidget(QtWidgets.QSplitter):
             return
 
         self.template_contents_widget.init_data(
-            index.data(TemplateContentsRole))
+            index.data(TemplateContentsRole)
+        )
 
     def sizeHint(self):
         """Returns a size hint.

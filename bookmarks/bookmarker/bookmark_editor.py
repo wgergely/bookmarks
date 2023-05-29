@@ -93,7 +93,8 @@ class BookmarkEditorContextMenu(contextmenu.BaseContextMenu):
         self.menu[contextmenu.key()] = {
             'text': 'Copy as JSON',
             'action': functools.partial(
-                QtWidgets.QApplication.clipboard().setText, s),
+                QtWidgets.QApplication.clipboard().setText, s
+            ),
             'icon': ui.get_icon('copy')
         }
 

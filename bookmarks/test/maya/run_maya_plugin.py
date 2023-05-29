@@ -38,12 +38,24 @@ from bookmarks.maya import plugin
 plugin.init_environment('BOOKMARKS_ROOT')
 
 cmds.evalDeferred(lambda: plugin.initializePlugin('Bookmarks'))
-QtCore.QTimer.singleShot(3000, lambda: cmds.evalDeferred(
-    lambda: plugin.uninitializePlugin('Bookmarks')))
-QtCore.QTimer.singleShot(6000, lambda: cmds.evalDeferred(
-    lambda: plugin.initializePlugin('Bookmarks')))
-QtCore.QTimer.singleShot(9000, lambda: cmds.evalDeferred(
-    lambda: plugin.uninitializePlugin('Bookmarks')))
-QtCore.QTimer.singleShot(12000, lambda: cmds.evalDeferred(
-    lambda: plugin.initializePlugin('Bookmarks')))
+QtCore.QTimer.singleShot(
+    3000, lambda: cmds.evalDeferred(
+        lambda: plugin.uninitializePlugin('Bookmarks')
+    )
+    )
+QtCore.QTimer.singleShot(
+    6000, lambda: cmds.evalDeferred(
+        lambda: plugin.initializePlugin('Bookmarks')
+    )
+    )
+QtCore.QTimer.singleShot(
+    9000, lambda: cmds.evalDeferred(
+        lambda: plugin.uninitializePlugin('Bookmarks')
+    )
+    )
+QtCore.QTimer.singleShot(
+    12000, lambda: cmds.evalDeferred(
+        lambda: plugin.initializePlugin('Bookmarks')
+    )
+    )
 app.exec_()

@@ -1,16 +1,23 @@
-"""ShotGrid integration modules, classes and utility functions.
+"""This Python module provides functionality for interacting with ShotGrid.
 
-Bookmark and asset items can be linked with their ShotGrid counterparts. The linkage
+The module encompasses a range of ShotGrid operations, including:
+
+* Linking assets or bookmarks to entities.
+* Showing task pickers and link assets.
+* Publishing and uploading thumbnails to ShotGrid.
+* Testing the ShotGrid connection.
+* Creating new ShotGrid entities and projects.
+* Saving entity data to a database.
+* Retrieving status codes available in the current context.
+* Creating and verifying published file versions.
+* Uploading thumbnails.
+
+
+Bookmark and asset items m,ust be linked with their ShotGrid entities. The linkage
 information is stored in the bookmark item database.
 
-Check the :mod:`¬bookmarks.shotgun.shotgun` contains the generic entity model, and
+:mod:`¬bookmarks.shotgun.shotgun` contains the generic entity model, and
 a utility class used to collect locally set ShotGrid configuration data -
 :mod:`~bookmarks.shotgun.shotgun.ShotgunProperties`.
-
-I've also included an experimental publish script, but it was not tested.
-
-Note:
-    This module unfortunately is not well maintained. Still, in principle, as long as the
-    ShotGrid python API stays consistent most functionality here is quasi-functional.
 
 """

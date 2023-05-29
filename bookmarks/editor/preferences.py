@@ -252,7 +252,8 @@ SECTIONS = {
                     'placeholder': '',
                     'description': '',
                     'help': importlib.import_module(
-                        __name__.split('.', maxsplit=1)[0]).info(),
+                        __name__.split('.', maxsplit=1)[0]
+                    ).info(),
                 },
             },
             2: {
@@ -357,4 +358,3 @@ class PreferenceEditor(base.BasePropertyEditor):
     def reset_image_cache_button_clicked(self, *args, **kwargs):
         from .. import images
         images.init_image_cache()
-

@@ -47,7 +47,10 @@ class Test(base.BaseCase):
             self.assertEqual(v, _v)
 
         for _ in range(100):
-            v = {0: base.random_ascii(128), 1: base.random_str(128)}
+            v = {
+                0: base.random_ascii(128),
+                1: base.random_str(128)
+            }
             common.settings.setValue('test/value', v)
             _v = common.settings.value('test/value')
             self.assertEqual(v, _v)

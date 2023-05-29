@@ -349,7 +349,12 @@ def set_framerate(fps):
 
     # Store current values
     for k in data:
-        data[k] = cmds.playbackOptions(**{k: True, 'query': True})
+        data[k] = cmds.playbackOptions(
+            **{
+                k: True,
+                'query': True
+            }
+            )
 
     # Set the frame range
     for k, v in MAYA_FPS.items():
@@ -359,7 +364,11 @@ def set_framerate(fps):
 
     # Reapply original values
     for k, v in data.items():
-        cmds.playbackOptions(**{k: v})
+        cmds.playbackOptions(
+            **{
+                k: v
+            }
+            )
 
 
 def get_framerate():

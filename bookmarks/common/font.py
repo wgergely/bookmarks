@@ -30,7 +30,8 @@ class FontDatabase(QtGui.QFontDatabase):
     def __init__(self, parent=None):
         if not QtWidgets.QApplication.instance():
             raise RuntimeError(
-                'FontDatabase must be created after a QApplication was initiated.')
+                'FontDatabase must be created after a QApplication was initiated.'
+            )
 
         super().__init__(parent=parent)
 
@@ -51,11 +52,13 @@ class FontDatabase(QtGui.QFontDatabase):
             idx = self.addApplicationFont(entry.path)
             if idx < 0:
                 raise RuntimeError(
-                    'Failed to add required font to the application')
+                    'Failed to add required font to the application'
+                )
             family = self.applicationFontFamilies(idx)
             if not family:
                 raise RuntimeError(
-                    'Failed to add required font to the application')
+                    'Failed to add required font to the application'
+                )
 
     def bold_font(self, font_size):
         """The primary font used by the application.
@@ -67,7 +70,8 @@ class FontDatabase(QtGui.QFontDatabase):
         font = self.font(common.bold_font, 'Bold', font_size)
         if font.family() != common.bold_font:
             raise RuntimeError(
-                'Failed to add required font to the application')
+                'Failed to add required font to the application'
+            )
 
         font.setPixelSize(font_size)
         metrics = QtGui.QFontMetrics(font)
@@ -84,7 +88,8 @@ class FontDatabase(QtGui.QFontDatabase):
         font = self.font(common.medium_font, 'Medium', font_size)
         if font.family() != common.medium_font:
             raise RuntimeError(
-                'Failed to add required font to the application')
+                'Failed to add required font to the application'
+            )
 
         font.setPixelSize(font_size)
         metrics = QtGui.QFontMetrics(font)
@@ -101,7 +106,8 @@ class FontDatabase(QtGui.QFontDatabase):
         font = self.font(common.medium_font, 'Medium', font_size)
         if font.family() != common.medium_font:
             raise RuntimeError(
-                'Failed to add required font to the application')
+                'Failed to add required font to the application'
+            )
 
         font.setPixelSize(font_size)
         metrics = QtGui.QFontMetrics(font)

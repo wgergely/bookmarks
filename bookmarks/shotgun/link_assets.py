@@ -2,7 +2,6 @@
 
 """
 import functools
-import os
 
 from PySide2 import QtWidgets, QtCore, QtGui
 
@@ -48,7 +47,8 @@ class TableWidget(QtWidgets.QTableWidget):
 
     """
     createEntity = QtCore.Signal(
-        str, QtWidgets.QWidget, QtWidgets.QWidget)  # Name
+        str, QtWidgets.QWidget, QtWidgets.QWidget
+    )  # Name
 
     def __init__(self, parent=None):
         super(TableWidget, self).__init__(parent=parent)
@@ -57,7 +57,8 @@ class TableWidget(QtWidgets.QTableWidget):
 
         self.setColumnCount(4)
         self.setHorizontalHeaderLabels(
-            ('Local Assets', '', 'ShotGrid Entity', 'Create Entity'))
+            ('Local Assets', '', 'ShotGrid Entity', 'Create Entity')
+        )
         self.verticalHeader().setVisible(False)
 
         header = QtWidgets.QHeaderView(QtCore.Qt.Horizontal, parent=self)
@@ -90,7 +91,8 @@ class TableWidget(QtWidgets.QTableWidget):
         _item.setTextAlignment(QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft)
         pixmap = images.rsc_pixmap(
             'asset', common.color(common.color_dark_background),
-            common.size(common.size_margin))
+            common.size(common.size_margin)
+        )
         icon = QtGui.QIcon()
         icon.addPixmap(pixmap, QtGui.QIcon.Normal)
         _item.setIcon(icon)
@@ -102,7 +104,8 @@ class TableWidget(QtWidgets.QTableWidget):
         self.setItem(row, 1, item)
         pixmap = images.rsc_pixmap(
             'branch_closed', common.color(common.color_dark_background),
-            common.size(common.size_margin))
+            common.size(common.size_margin)
+        )
         label = QtWidgets.QLabel()
         label.setPixmap(pixmap)
         self.setCellWidget(row, 1, label)
@@ -168,7 +171,8 @@ class LinkMultiple(QtWidgets.QDialog):
 
         # Init the type filter
         self.entity_type_filter = shotgun.EntityComboBox(
-            ENTITY_TYPES, parent=self)
+            ENTITY_TYPES, parent=self
+        )
         row = ui.add_row('Select Entity Type', parent=self)
         row.layout().addWidget(self.entity_type_filter, 1)
 
@@ -184,9 +188,11 @@ class LinkMultiple(QtWidgets.QDialog):
     @common.error
     def _connect_signals(self):
         self.ok_button.clicked.connect(
-            lambda: self.done(QtWidgets.QDialog.Accepted))
+            lambda: self.done(QtWidgets.QDialog.Accepted)
+        )
         self.cancel_button.clicked.connect(
-            lambda: self.done(QtWidgets.QDialog.Rejected))
+            lambda: self.done(QtWidgets.QDialog.Rejected)
+        )
 
         self.entity_type_filter.activated.connect(self.save_current_filter)
         self.entity_type_filter.activated.connect(self.emit_filter_changed)
@@ -241,7 +247,8 @@ class LinkMultiple(QtWidgets.QDialog):
 
         if not sg_properties.verify(connection=True):
             raise RuntimeError(
-                'Bookmark is not configured to use ShotGrid.')
+                'Bookmark is not configured to use ShotGrid.'
+            )
 
         self.emit_request(sg_properties)
 
@@ -267,7 +274,8 @@ class LinkMultiple(QtWidgets.QDialog):
 
             # Add rows to the table widget
             editor = shotgun.EntityComboBox(
-                [NOT_LINKED, CURRENT_VALUES], fixed_height=None, parent=None)
+                [NOT_LINKED, CURRENT_VALUES], fixed_height=None, parent=None
+            )
             editor.set_model(self.model)
 
             proxy = editor.model()
@@ -285,8 +293,10 @@ class LinkMultiple(QtWidgets.QDialog):
         self.model = shotgun.EntityModel([NOT_LINKED, CURRENT_VALUES])
 
         request_filter = [
-            ['project', 'is', {'type': 'Project',
-                               'id': sg_properties.bookmark_id}],
+            ['project', 'is', {
+                'type': 'Project',
+                'id': sg_properties.bookmark_id
+            }],
         ]
 
         for entity_type in ENTITY_TYPES:
@@ -296,6 +306,7 @@ class LinkMultiple(QtWidgets.QDialog):
                 sg_properties.job,
                 sg_properties.root,
                 None,
+                False,
                 entity_type,
                 request_filter,
                 shotgun.fields[entity_type]
@@ -331,11 +342,13 @@ class LinkMultiple(QtWidgets.QDialog):
 
             # Let's check if the local asset has already a valid configuration
             # and select a default choice based on the result
-            if all((
-                    data['current_data']['id'],
-                    data['current_data']['type'],
-                    data['current_data']['code'],
-            )):
+            if all(
+                    (
+                            data['current_data']['id'],
+                            data['current_data']['type'],
+                            data['current_data']['code'],
+                    )
+            ):
                 # ALready has a valid configuration
                 editor.setCurrentIndex(1)
             else:

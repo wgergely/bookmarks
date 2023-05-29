@@ -252,17 +252,21 @@ class FFMpegWidget(base.BasePropertyEditor):
         frames = index.data(common.FramesRole)
         if not frames:
             raise RuntimeError(
-                f'{index.data(QtCore.Qt.DisplayRole)} does not seem to have any frames.')
+                f'{index.data(QtCore.Qt.DisplayRole)} does not seem to have any frames.'
+            )
 
         if len(frames) < 4:
             raise RuntimeError(
-                f'{index.data(QtCore.Qt.DisplayRole)} is too short.')
+                f'{index.data(QtCore.Qt.DisplayRole)} is too short.'
+            )
 
         # Check output video file
         seq = index.data(common.SequenceRole)
         preset = self.ffmpeg_preset_editor.currentData()
-        ext = next(v['output_extension'] for v in ffmpeg.PRESETS.values() if
-                   v['preset'] == preset)
+        ext = next(
+            v['output_extension'] for v in ffmpeg.PRESETS.values() if
+            v['preset'] == preset
+            )
 
         if self.ffmpeg_add_timecode_editor.isChecked():
             destination = f'{seq.group(1).strip().strip("_").strip(".")}' \

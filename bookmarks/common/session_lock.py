@@ -33,7 +33,8 @@ def get_lock_path():
     """Returns the path to the current session's lock file."""
     return LOCK_PATH.format(
         root=QtCore.QStandardPaths.writableLocation(
-            QtCore.QStandardPaths.GenericDataLocation),
+            QtCore.QStandardPaths.GenericDataLocation
+        ),
         product=common.product,
         prefix=PREFIX,
         pid=os.getpid(),
@@ -47,7 +48,8 @@ def prune_lock():
     """
     path = LOCK_DIR.format(
         root=QtCore.QStandardPaths.writableLocation(
-            QtCore.QStandardPaths.GenericDataLocation),
+            QtCore.QStandardPaths.GenericDataLocation
+        ),
         product=common.product,
     )
 
@@ -83,7 +85,8 @@ def init_lock():
     """
     path = LOCK_DIR.format(
         root=QtCore.QStandardPaths.writableLocation(
-            QtCore.QStandardPaths.GenericDataLocation),
+            QtCore.QStandardPaths.GenericDataLocation
+        ),
         product=common.product,
     )
     # Iterate over all lock files and check their contents

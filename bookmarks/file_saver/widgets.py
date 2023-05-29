@@ -198,6 +198,7 @@ class FormatModel(ui.AbstractListModel):
     """Format item picker model.
 
     """
+
     def init_data(self):
         """Initializes data.
 

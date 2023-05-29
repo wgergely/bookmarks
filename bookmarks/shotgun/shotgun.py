@@ -49,34 +49,21 @@ ENTITY_URL = '{domain}/detail/{entity_type}/{entity_id}'
 
 #: A list of entity and field definitions used to assist entity data queries
 fields = {
-    'LocalStorage': [
-        'type', 'id', 'code', 'description', 'mac_path', 'windows_path', 'linux_path'
-    ],
+    'LocalStorage': ['type', 'id', 'code', 'description', 'mac_path', 'windows_path', 'linux_path'],
     'PublishedFileType': ['type', 'id', 'code', 'description', 'short_name'],
-    'Project': [
-        'type', 'id', 'name', 'is_template', 'is_demo', 'is_template_project', 'archived'
-    ],
+    'Project': ['type', 'id', 'name', 'is_template', 'is_demo', 'is_template_project', 'archived'],
     'Asset': ['type', 'id', 'code', 'project', 'description', 'notes'],
     'Sequence': ['type', 'id', 'code', 'project', 'description', 'notes'],
-    'Shot': [
-        'type', 'id', 'code', 'project', 'description', 'notes', 'cut_in', 'cut_out',
-        'cut_duration', 'sg_cut_in', 'sg_cut_out', 'sg_cut_duration'
-    ],
-    'Task': [
-        'type', 'id', 'content', 'sg_description', 'project', 'entity', 'step',
-        'notes', 'color', 'task_assignees', 'start_date', 'due_date'
-    ],
+    'Shot': ['type', 'id', 'code', 'project', 'description', 'notes', 'cut_in', 'cut_out', 'cut_duration',
+             'sg_cut_in', 'sg_cut_out', 'sg_cut_duration'],
+    'Task': ['type', 'id', 'content', 'sg_description', 'project', 'entity', 'notes', 'color', 'task_assignees',
+             'start_date', 'due_date'],
     'Status': ['id', 'name', 'type', 'code', 'bg_color'],
     'HumanUser': ['type', 'id', 'name', 'firstname', 'lastname', 'projects'],
-    'Version': [
-        'type', 'id', 'code', 'description', 'sg_task', 'sg_path_to_frames',
-        'sg_path_to_movie', 'sg_path_to_geometry', 'sg_status_list', 'project',
-        'entity', 'tasks', 'user'
-    ],
-    'PublishedFile': [
-        'type', 'id', 'code', 'name', 'description', 'entity', 'version',
-        'version_number', 'project'
-    ],
+    'Version': ['type', 'id', 'code', 'description', 'sg_task', 'sg_path_to_frames', 'sg_path_to_movie',
+                'sg_path_to_geometry', 'sg_status_list', 'project', 'entity', 'tasks', 'user'],
+    'PublishedFile': ['type', 'id', 'code', 'name', 'description', 'entity', 'version', 'version_number',
+                      'project'],
 }
 
 #: ShotGrid connection instance cache
@@ -85,36 +72,25 @@ SG_CONNECTIONS = {}
 sg_connecting_message = None
 
 
+# A function that replaces all instances of either '/' or '\' with the given separator in the given path
+
+
 def sanitize_path(path, separator):
-    """Utility method mirrors the ShotGrid sanitize path method.
+    """Function replaces all instances of either '/' or '\' with the given separator in the given path.
+
+    Args:
+        path (str): The path to sanitize.
+        separator (str): The separator to replace '/' or '\' with.
+
+    Returns:
+        str: The sanitized path.
 
     """
-    if path is None:
-        return None
+    common.check_type(path, str)
+    common.check_type(separator, str)
+
     path = path.strip()
-    path = path.rstrip('{domain}/detail/{entity_type}/{entity_id}')
-    if len(path) == 2 and path.endswith('{domain}/detail/{entity_type}/{entity_id}'):
-        path += '{domain}/detail/{entity_type}/{entity_id}'
-    local_path = path.replace('\\', separator).replace(
-        '{domain}/detail/{entity_type}/{entity_id}', separator)
-    while True:
-        new_path = local_path.replace(
-            '{domain}/detail/{entity_type}/{entity_id}',
-            '{domain}/detail/{entity_type}/{entity_id}'
-        )
-        if new_path == local_path:
-            break
-        else:
-            local_path = new_path
-    while True:
-        new_path = local_path[0] + local_path[1:].replace(
-            '{domain}/detail/{entity_type}/{entity_id}',
-            '{domain}/detail/{entity_type}/{entity_id}')
-        if new_path == local_path:
-            break
-        else:
-            local_path = new_path
-    return local_path
+    return path.replace('/', separator).replace('\\', separator)
 
 
 @contextlib.contextmanager
@@ -125,7 +101,7 @@ def connection(sg_properties):
     connection when exiting.
 
     Args:
-        sg_properties (dict): The shotgun properties saved in the bookmark database.
+        sg_properties (ShotgunProperties): The shotgun properties saved in the bookmark database.
 
     Yields:
         ScriptConnection: A connected shotgun connection instance
@@ -138,11 +114,20 @@ def connection(sg_properties):
             common.signals.sgConnectionFailed.emit(s)
 
     try:
-        sg = get_sg(
-            sg_properties.domain,
-            sg_properties.script,
-            sg_properties.key,
-        )
+        if all((sg_properties.domain, sg_properties.login, sg_properties.password)):
+            sg = get_sg(sg_properties.domain, sg_properties.login, sg_properties.password, user=True)
+        elif all((sg_properties.domain, sg_properties.script, sg_properties.key)):
+            sg = get_sg(sg_properties.domain, sg_properties.script, sg_properties.key, user=False)
+        else:
+            raise ValueError(
+                f'Invalid ShotGrid properties:\n'
+                f'domain: {sg_properties.domain}\n'
+                f'script: {sg_properties.script}\n'
+                f'key: {sg_properties.key}\n'
+                f'login: {sg_properties.login}\n'
+                f'password: {sg_properties.password}'
+            )
+
         if QtWidgets.QApplication.instance():
             common.signals.sgConnectionAttemptStarted.emit()
         sg.connect()
@@ -151,8 +136,7 @@ def connection(sg_properties):
         yield sg
     except Exception as e:
         if QtWidgets.QApplication.instance():
-            common.signals.sgConnectionFailed.emit(
-                '{domain}/detail/{entity_type}/{entity_id}')
+            common.signals.sgConnectionFailed.emit(f'{e}')
         raise
     else:
         sg.close()
@@ -160,45 +144,44 @@ def connection(sg_properties):
             common.signals.sgConnectionClosed.emit()
 
 
-def get_sg(domain, script, key):
+def get_sg(domain, script, key, user=False):
     """Method for retrieving a thread specific `ScriptConnection` instance,
     backed by a cache.
-
-    Warning:
-        User authentication is not implemented currently!
 
     Args:
         domain (str): The base url or domain where the shotgun server is located.
         script (str): A valid ShotGrid API Script's name.
         key (str): A valid ShotGrid Script's API Key.
+        user (bool): Whether to authenticate as a user or not. Defaults to False.
 
     """
+    common.check_type(user, bool)
     for arg in (domain, script, key):
         common.check_type(arg, str)
-        if not arg:
-            raise ValueError(
-                'Could not get `ScriptConnection` instance. A required value is not set.')
 
-    k = _get_thread_key(domain, script, key)
+    k = _get_thread_key(domain, script, key, str(user))
 
     if k in SG_CONNECTIONS and SG_CONNECTIONS[k]:
         return SG_CONNECTIONS[k]
 
+    _script = script if not user else None
+    _key = key if not user else None
+    login = script if user else None
+    password = key if user else None
+
+    if not all((domain, login, password)):
+        if not all((domain, script, key)):
+            raise ValueError(
+                f'You must provide a valid domain, {"script" if not user else "login"}'
+                f' name and {"api key" if not user else "password"} to connect to ShotGrid:'
+                f'\ndomain: {domain}\nscript: {_script}\nkey: {_key}\nlogin: {login}\npassword: {password}'
+            )
+
     try:
         sg = shotgun_api3.Shotgun(
-            domain,
-            script_name=script,
-            api_key=key,
-            login=None,
-            password=None,
-            connect=False,
-            convert_datetimes_to_utc=True,
-            http_proxy=None,
-            ensure_ascii=False,
-            ca_certs=None,
-            sudo_as_login=None,
-            session_token=None,
-            auth_token=None
+            domain, script_name=_script, api_key=_key, login=login, password=password,
+            connect=False, convert_datetimes_to_utc=True, http_proxy=None, ensure_ascii=False,
+            ca_certs=None, sudo_as_login=None, session_token=None, auth_token=None
         )
 
         SG_CONNECTIONS[k] = sg
@@ -211,8 +194,11 @@ def get_sg(domain, script, key):
 
 
 def _get_thread_key(*args):
+    """Returns a unique key for the current thread. Used to cache shotgun connections.
+
+    """
     t = repr(QtCore.QThread.currentThread())
-    return '{domain}/detail/{entity_type}/{entity_id}'.join(args) + t
+    return ''.join(args) + t
 
 
 class ShotgunProperties(object):
@@ -230,6 +216,7 @@ class ShotgunProperties(object):
         root (str): `root` path segment.
         asset (str): `asset` path segment.
         active (bool): Use the active paths when `True`. `False` by default.
+        user (bool):
 
     """
 
@@ -244,6 +231,10 @@ class ShotgunProperties(object):
         self.domain = None
         self.key = None
         self.script = None
+
+        # Save optional user and password for user authentication
+        self.login = kwargs['login'] if 'login' in kwargs else None
+        self.password = kwargs['password'] if 'password' in kwargs else None
 
         self.bookmark_type = 'Project'
         self.bookmark_id = None
@@ -262,36 +253,28 @@ class ShotgunProperties(object):
         """`Server` path segment.
 
         """
-        if self.active:
-            return common.active('server')
-        return self._server
+        return common.active('server') if self.active else self._server
 
     @property
     def job(self):
         """`Job` path segment.
 
         """
-        if self.active:
-            return common.active('job')
-        return self._job
+        return common.active('job') if self.active else self._job
 
     @property
     def root(self):
         """`Root` path segment.
 
         """
-        if self.active:
-            return common.active('root')
-        return self._root
+        return common.active('root') if self.active else self._root
 
     @property
     def asset(self):
         """`Asset` path segment.
 
         """
-        if self.active:
-            return common.active('asset')
-        return self._asset
+        return common.active('asset') if self.active else self._asset
 
     def _load_values_from_database(self, db):
         t = database.BookmarkTable
@@ -339,24 +322,30 @@ class ShotgunProperties(object):
             bools: True if the configuration is valid, False otherwise.
 
         """
-        # Verify connection
-        if not all((self.domain, self.key, self.script)):
-            return False
+        # Verify credentials
+        if not all((self.domain, self.login, self.password)):
+            if not all((self.domain, self.key, self.script)):
+                return False
+
+        # We can connect
         if connection:
             return True
 
+        # Verify project entity
         if not all((self.bookmark_type, self.bookmark_name, self.bookmark_id)):
             return False
+
+        # We have an associated entity
         if bookmark:
             return True
 
+        # Verify asset entity
         if not self.asset and asset:
             return False
         if not self.asset and not asset:
             return True
         if not all((self.asset_type, self.asset_id, self.asset_name)):
             return False
-
         return True
 
     def urls(self):
@@ -373,20 +362,10 @@ class ShotgunProperties(object):
         urls.append(self.domain)
         if all((self.bookmark_id, self.bookmark_type)):
             urls.append(
-                ENTITY_URL.format(
-                    domain=self.domain,
-                    entity_type=self.bookmark_type,
-                    entity_id=self.bookmark_id
-                )
+                ENTITY_URL.format(domain=self.domain, entity_type=self.bookmark_type, entity_id=self.bookmark_id)
             )
         if all((self.asset_id, self.asset_type)):
-            urls.append(
-                ENTITY_URL.format(
-                    domain=self.domain,
-                    entity_type=self.asset_type,
-                    entity_id=self.asset_id
-                )
-            )
+            urls.append(ENTITY_URL.format(domain=self.domain, entity_type=self.asset_type, entity_id=self.asset_id))
         return urls
 
 
@@ -402,18 +381,24 @@ class EntityModel(QtCore.QAbstractItemModel):
     data.
 
     """
-    #: Signal used to request data from ShotGrid. Takes  `uuid`, `server`, `job`,
-    #: `root`, `asset`, `entity_type`, `filters` and `fields` arguments.
-    entityDataRequested = QtCore.Signal(
-        str, str, str, str, str, str, list, list
-    )
+    #: Signal used to request data from ShotGrid. Must be emitted with the following arguments:
+    # `uuid` (str)
+    # `server` (str)
+    # `job`  (str)
+    # `root` (str),
+    # `asset` (str),
+    # `user` (bool),
+    # `entity_type` (str),
+    # `filters` (list),
+    # `fields` (list).
+    entityDataRequested = QtCore.Signal(str, str, str, str, str, bool, str, list, list)
 
     #: Signal used by the worker thread when data is ready, with the data's uuid,
     #: and list of entities.
     entityDataReceived = QtCore.Signal(str, list)
 
     def __init__(self, items, parent=None):
-        super(EntityModel, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
         self.uuid = uuid.uuid1().hex
         self._waiting_for_data = False
@@ -424,8 +409,7 @@ class EntityModel(QtCore.QAbstractItemModel):
         self.sg_icon = self.get_sg_icon()
         self.spinner_icon = self.get_spinner()
 
-        common.signals.sgEntityDataReady.connect(
-            self.entityDataReceived)
+        common.signals.sgEntityDataReady.connect(self.entityDataReceived)
 
         self.entityDataRequested.connect(self.start_waiting_for_data)
         self.entityDataRequested.connect(threads.queue_shotgun_query)
@@ -451,27 +435,21 @@ class EntityModel(QtCore.QAbstractItemModel):
 
     def get_sg_icon(self):
         icon = QtGui.QIcon()
-        pixmap = images.rsc_pixmap(
-            'sg', common.color(common.color_separator),
-            common.size(common.size_row_height))
+        pixmap = images.rsc_pixmap('sg', common.color(common.color_separator), common.size(common.size_row_height))
         icon.addPixmap(pixmap, QtGui.QIcon.Normal)
-        pixmap = images.rsc_pixmap(
-            'sg', common.color(common.color_selected_text),
-            common.size(common.size_row_height))
+        pixmap = images.rsc_pixmap('sg', common.color(common.color_selected_text), common.size(common.size_row_height))
         icon.addPixmap(pixmap, QtGui.QIcon.Active)
         icon.addPixmap(pixmap, QtGui.QIcon.Selected)
         pixmap = images.rsc_pixmap(
-            'sg', common.color(common.color_disabled_text),
-            common.size(common.size_row_height),
-            opacity=0.66)
+            'sg', common.color(common.color_disabled_text), common.size(common.size_row_height),
+            opacity=0.66
+        )
         icon.addPixmap(pixmap, QtGui.QIcon.Disabled)
         return icon
 
     def get_spinner(self):
         icon = QtGui.QIcon()
-        pixmap = images.rsc_pixmap(
-            'spinner', common.color(common.color_text),
-            common.size(common.size_row_height))
+        pixmap = images.rsc_pixmap('spinner', common.color(common.color_text), common.size(common.size_row_height))
         icon.addPixmap(pixmap, QtGui.QIcon.Normal)
         icon.addPixmap(pixmap, QtGui.QIcon.Active)
         icon.addPixmap(pixmap, QtGui.QIcon.Selected)
@@ -480,8 +458,7 @@ class EntityModel(QtCore.QAbstractItemModel):
 
     def index(self, row, column, parent=QtCore.QModelIndex()):
         if self._waiting_for_data:
-            return self.createIndex(row, column,
-                                    '{domain}/detail/{entity_type}/{entity_id}')
+            return self.createIndex(row, column, None)
         try:
             return self.createIndex(row, column, self.internal_data[row])
         except:
@@ -540,7 +517,7 @@ class EntityModel(QtCore.QAbstractItemModel):
         if isinstance(v, str):
             return v
         if not isinstance(v, dict):
-            return '{domain}/detail/{entity_type}/{entity_id}'
+            return None
         if 'name' in v:
             return v['name']
         if 'code' in v:
@@ -548,8 +525,8 @@ class EntityModel(QtCore.QAbstractItemModel):
         if 'content' in v:
             return v['content']
         if 'type' in v and 'id' in v:
-            return '{}{}'.format(v['type'], v['id'])
-        return '{domain}/detail/{entity_type}/{entity_id}'
+            return f'{v["type"]}{v["id"]}'
+        return None
 
     def _icon(self, v):
         if self._waiting_for_data:
@@ -563,8 +540,7 @@ class EntityModel(QtCore.QAbstractItemModel):
         if k in v and v[k]:
             args = [int(f) for f in v['bg_color'].split(',')]
             color = QtGui.QColor(*args)
-            pixmap = images.rsc_pixmap(
-                'sg', color, common.size(common.size_margin))
+            pixmap = images.rsc_pixmap('sg', color, common.size(common.size_margin))
             return QtGui.QIcon(pixmap)
 
         # Otherwise return the standard shotgun icon
@@ -586,7 +562,7 @@ class EntityFilterModel(QtCore.QSortFilterProxyModel):
     """
 
     def __init__(self, model, parent=None):
-        super(EntityFilterModel, self).__init__(parent=None)
+        super().__init__(parent=None)
         self.setSourceModel(model)
         self._entity_type = 'Shot'
 
@@ -616,9 +592,8 @@ class EntityComboBox(QtWidgets.QComboBox):
 
     """
 
-    def __init__(self, items, fixed_height=common.size(common.size_row_height),
-                 parent=None):
-        super(EntityComboBox, self).__init__(parent=parent)
+    def __init__(self, items, fixed_height=common.size(common.size_row_height), parent=None):
+        super().__init__(parent=parent)
         self.setView(QtWidgets.QListView())
         if not self.parent():
             common.set_stylesheet(self)
@@ -631,10 +606,7 @@ class EntityComboBox(QtWidgets.QComboBox):
         """Sets a new EntityModel for the combobox.
 
         """
-        if not isinstance(model, EntityModel):
-            raise ValueError('{domain}/detail/{entity_type}/{entity_id}'.format(
-                EntityModel, type(model)))
-
+        common.check_type(model, EntityModel)
         self.setModel(EntityFilterModel(model))
         self.model().sourceModel().entityDataRequested.connect(self.select_first)
         self.model().sourceModel().entityDataReceived.connect(self.model().invalidate)
@@ -650,8 +622,7 @@ class EntityComboBox(QtWidgets.QComboBox):
         """
         model = self.model().sourceModel()
 
-        model.beginInsertRows(QtCore.QModelIndex(),
-                              model.rowCount(), model.rowCount())
+        model.beginInsertRows(QtCore.QModelIndex(), model.rowCount(), model.rowCount())
         model.internal_data.append(entity)
         model.endInsertRows()
         self.setCurrentIndex(self.count() - 1)

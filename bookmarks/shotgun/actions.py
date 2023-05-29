@@ -114,8 +114,10 @@ def test_shotgun_connection(sg_properties):
 
 @common.error
 @common.debug
-def create_entity(entity_type, entity_name, request_data=None, create_data=None,
-                  verify_bookmark=True, verify_all=False):
+def create_entity(
+        entity_type, entity_name, request_data=None, create_data=None,
+        verify_bookmark=True, verify_all=False
+        ):
     """Creates a new ShotGrid entity linked to the currently active  project.
 
     """
@@ -134,8 +136,10 @@ def create_entity(entity_type, entity_name, request_data=None, create_data=None,
 
     if request_data is None:
         request_data = [
-            ['project', 'is', {'type': 'Project',
-                               'id': sg_properties.bookmark_id}],
+            ['project', 'is', {
+                'type': 'Project',
+                'id': sg_properties.bookmark_id
+            }],
         ]
     if create_data is None:
         create_data = {
@@ -373,7 +377,8 @@ def create_published_file(
             'local_storage': local_storage_entity,
             'name': file_name,
             'url': QtCore.QUrl.fromLocalFile(file_path).toString(
-                options=QtCore.QUrl.FullyEncoded)
+                options=QtCore.QUrl.FullyEncoded
+            )
         },
         'path_cache': file_path.replace(common.active('server'), '').strip('/'),
     }
@@ -383,39 +388,6 @@ def create_published_file(
         create_data,
         return_fields=shotgun.fields['PublishedFile']
     )
-    return entity
-
-
-def verify_published_file_version(
-        sg,
-        name,
-        version,
-        project_entity,
-        asset_entity,
-        published_file_type_entity,
-):
-    entity = sg.find_one(
-        'PublishedFile',
-        [
-            ['project', 'is', project_entity],
-            ['entity', 'is', asset_entity],
-            ['name', 'is', name],
-            ['version_number', 'is', version],
-            ['published_file_type', 'is', published_file_type_entity],
-        ],
-        fields=shotgun.fields['PublishedFile']
-    )
-    if not entity:
-        return None
-
-    from .. import ui
-    mbox = ui.MessageBox(
-        'This version is already published.',
-        f'Looks like version {version} has already been published. Are you sure you want to publish it again?',
-        buttons=[ui.CancelButton, ui.YesButton]
-    )
-    if mbox.exec_() == QtWidgets.QDialog.Rejected:
-        return None
     return entity
 
 

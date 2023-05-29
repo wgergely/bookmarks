@@ -64,7 +64,8 @@ class BaseTabButton(QtWidgets.QLabel):
     def get_width(self):
         o = common.size(common.size_indicator) * 6
         _, metrics = common.font_db.bold_font(
-            common.size(common.size_font_medium))
+            common.size(common.size_font_medium)
+        )
         return metrics.horizontalAdvance(self.text()) + o
 
     @QtCore.Slot()
@@ -99,15 +100,18 @@ class BaseTabButton(QtWidgets.QLabel):
 
         if common.current_tab() == self.tab_idx:
             color = common.color(
-                common.color_selected_text) if hover else common.color(common.color_text)
+                common.color_selected_text
+            ) if hover else common.color(common.color_text)
             painter.setBrush(color)
         else:
             color = common.color(common.color_text) if hover else common.color(
-                common.color_background)
+                common.color_background
+            )
             painter.setBrush(color)
 
         font, metrics = common.font_db.bold_font(
-            common.size(common.size_font_medium))
+            common.size(common.size_font_medium)
+        )
 
         # When the width of the button is very small, we'll switch to an icon
         # representation instead of text:
@@ -122,8 +126,11 @@ class BaseTabButton(QtWidgets.QLabel):
                 common.color(common.color_selected_text),
                 common.size(common.size_margin)
             )
-            _rect = QtCore.QRect(0, 0, common.size(
-                common.size_margin), common.size(common.size_margin))
+            _rect = QtCore.QRect(
+                0, 0, common.size(
+                    common.size_margin
+                ), common.size(common.size_margin)
+                )
             _rect.moveCenter(self.rect().center())
             painter.drawPixmap(
                 _rect,
@@ -145,8 +152,11 @@ class BaseTabButton(QtWidgets.QLabel):
                     color,
                     common.size(common.size_margin)
                 )
-                _rect = QtCore.QRect(0, 0, common.size(
-                    common.size_margin), common.size(common.size_margin))
+                _rect = QtCore.QRect(
+                    0, 0, common.size(
+                        common.size_margin
+                    ), common.size(common.size_margin)
+                    )
                 _rect.moveCenter(self.rect().center())
                 painter.drawPixmap(
                     _rect,
@@ -162,11 +172,13 @@ class BaseTabButton(QtWidgets.QLabel):
         if common.current_tab() == self.tab_idx:
             painter.setOpacity(0.9)
             color = common.color(
-                common.color_text) if hover else common.color(common.color_red)
+                common.color_text
+            ) if hover else common.color(common.color_red)
         else:
             painter.setOpacity(0.3)
             color = common.color(
-                common.color_text) if hover else common.color(common.color_blue)
+                common.color_text
+            ) if hover else common.color(common.color_blue)
 
         painter.setBrush(color)
         painter.drawRect(rect)
@@ -224,7 +236,8 @@ class FilesTabButton(BaseTabButton):
             'Files',
             common.FileTab,
             'Click to see or change the current task folder',
-            parent=parent)
+            parent=parent
+        )
 
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
 
@@ -271,7 +284,8 @@ class FilesTabButton(BaseTabButton):
         rect = QtCore.QRect(0, 0, o, o)
         rect.moveCenter(self.rect().center())
         pixmap = images.rsc_pixmap(
-            'folder', common.color(common.color_green), o)
+            'folder', common.color(common.color_green), o
+        )
         painter.drawPixmap(rect, pixmap, pixmap.rect())
 
         painter.drawPixmap(rect, pixmap, pixmap.rect())

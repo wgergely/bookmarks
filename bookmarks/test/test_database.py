@@ -67,13 +67,20 @@ class Test(base.BaseCase):
                 elif _type == float:
                     v = float(random.randrange(99999))
                 elif _type == dict:
-                    v = {0: base.random_ascii(36), 1: base.random_str(36)}
+                    v = {
+                        0: base.random_ascii(36),
+                        1: base.random_str(36)
+                    }
                     db.set_value(db.source(), k, v, t)
                     _v = db.value(db.source(), k, t)
                     self.assertNotEqual(v, _v)
 
-                    v = {'0': base.random_ascii(
-                        128), '1': base.random_str(128)}
+                    v = {
+                        '0': base.random_ascii(
+                            128
+                        ),
+                        '1': base.random_str(128)
+                    }
                 else:
                     v = None
 

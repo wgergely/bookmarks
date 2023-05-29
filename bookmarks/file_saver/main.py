@@ -48,9 +48,10 @@ def close():
     common.file_saver_widget = None
 
 
-def show(extension=None, file=None, create_file=True,
-         increment=False
-         ):
+def show(
+        extension=None, file=None, create_file=True,
+        increment=False
+        ):
     """Show the :class:`FileSaverWidget` widget.
 
     Args:

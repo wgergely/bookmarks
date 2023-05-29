@@ -49,8 +49,10 @@ def show():
     """Shows the main application window.
 
     """
-    if common.init_mode != common.StandaloneMode or not isinstance(common.main_widget,
-                                                                   BookmarksAppWindow):
+    if common.init_mode != common.StandaloneMode or not isinstance(
+            common.main_widget,
+            BookmarksAppWindow
+            ):
         raise RuntimeError('Window can only be show in StandaloneMode.')
 
     dict_key = common.main_widget.__class__.__name__
@@ -82,7 +84,8 @@ def _set_application_properties(app=None):
 
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseOpenGLES, True)
     QtWidgets.QApplication.setAttribute(
-        QtCore.Qt.AA_EnableHighDpiScaling, True)
+        QtCore.Qt.AA_EnableHighDpiScaling, True
+    )
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
 
@@ -127,7 +130,8 @@ class Tray(QtWidgets.QSystemTrayIcon):
         super().__init__(parent=parent)
 
         p = common.rsc(
-            f'{common.GuiResource}{os.path.sep}icon.{common.thumbnail_format}')
+            f'{common.GuiResource}{os.path.sep}icon.{common.thumbnail_format}'
+        )
         pixmap = QtGui.QPixmap(p)
         icon = QtGui.QIcon(pixmap)
         self.setIcon(icon)
@@ -207,13 +211,16 @@ class HeaderWidget(QtWidgets.QWidget):
 
         self.double_click_timer = common.Timer(parent=self)
         self.double_click_timer.setInterval(
-            QtWidgets.QApplication.instance().doubleClickInterval())
+            QtWidgets.QApplication.instance().doubleClickInterval()
+        )
         self.double_click_timer.setSingleShot(True)
 
         self.setFocusPolicy(QtCore.Qt.NoFocus)
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
-        self.setFixedHeight(common.size(common.size_margin) +
-                            (common.size(common.size_indicator) * 2))
+        self.setFixedHeight(
+            common.size(common.size_margin) +
+            (common.size(common.size_indicator) * 2)
+            )
 
         self._create_ui()
 
@@ -250,7 +257,8 @@ class HeaderWidget(QtWidgets.QWidget):
         self.move_in_progress = True
         self.move_start_event_pos = event.pos()
         self.move_start_widget_pos = self.mapToGlobal(
-            self.geometry().topLeft())
+            self.geometry().topLeft()
+        )
 
     def mouseMoveEvent(self, event):
         """Event handler.
@@ -323,10 +331,12 @@ class BookmarksAppWindow(main.MainWidget):
 
         if self._always_on_top:
             self.setWindowFlags(
-                self.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
+                self.windowFlags() | QtCore.Qt.WindowStaysOnTopHint
+            )
         else:
             self.setWindowFlags(
-                self.windowFlags() & ~ QtCore.Qt.WindowStaysOnTopHint)
+                self.windowFlags() & ~ QtCore.Qt.WindowStaysOnTopHint
+            )
 
     @QtCore.Slot()
     def _connect_standalone_signals(self):
@@ -403,7 +413,8 @@ class BookmarksApp(QtWidgets.QApplication):
     def _set_window_icon(self):
         """Set the application icon."""
         path = common.rsc(
-            f'{common.GuiResource}{os.path.sep}icon.{common.thumbnail_format}')
+            f'{common.GuiResource}{os.path.sep}icon.{common.thumbnail_format}'
+        )
         pixmap = QtGui.QPixmap(path)
         icon = QtGui.QIcon(pixmap)
         self.setWindowIcon(icon)
@@ -415,7 +426,8 @@ class BookmarksApp(QtWidgets.QApplication):
         """
         if QtCore.QSysInfo().productType() in ('windows', 'winrt'):
             hresult = ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
-                MODEL_ID)
+                MODEL_ID
+            )
             # An identifier that is globally unique for all apps running on Windows
             assert hresult == 0, "SetCurrentProcessExplicitAppUserModelID failed"
 

@@ -146,10 +146,14 @@ class ToggleSequenceButton(BaseControlButton):
 
     def pixmap(self):
         if self.state():
-            return images.rsc_pixmap('collapse', self._on_color,
-                                                common.size(common.size_margin))
-        return images.rsc_pixmap('expand', self._off_color,
-                                            common.size(common.size_margin))
+            return images.rsc_pixmap(
+                'collapse', self._on_color,
+                common.size(common.size_margin)
+                )
+        return images.rsc_pixmap(
+            'expand', self._off_color,
+            common.size(common.size_margin)
+            )
 
     def state(self):
         if not common.widget():
@@ -342,8 +346,10 @@ class RefreshButton(BaseControlButton):
         if not data:
             return False
 
-        if any((data[common.FileItem].refresh_needed,
-                data[common.SequenceItem].refresh_needed)):
+        if any(
+                (data[common.FileItem].refresh_needed,
+                 data[common.SequenceItem].refresh_needed)
+                ):
             return True
 
         return False

@@ -28,10 +28,10 @@ Use :func:`.get` to retrieve token config controller instances.
 
 """
 import collections
-from datetime import datetime
 import json
 import socket
 import string
+from datetime import datetime
 
 import OpenImageIO
 from PySide2 import QtCore

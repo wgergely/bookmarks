@@ -75,8 +75,10 @@ class LauncherItemEditor(QtWidgets.QDialog):
         self.layout().setSpacing(o)
         self.layout().setAlignment(QtCore.Qt.AlignCenter)
 
-        grp = ui.get_group(margin=common.size(common.size_indicator),
-                           vertical=False, parent=self)
+        grp = ui.get_group(
+            margin=common.size(common.size_indicator),
+            vertical=False, parent=self
+            )
         grp.layout().setAlignment(QtCore.Qt.AlignCenter)
 
         h = common.size(common.size_margin) * 2
@@ -86,13 +88,18 @@ class LauncherItemEditor(QtWidgets.QDialog):
         self.thumbnail_viewer_widget.setFixedSize(QtCore.QSize(w, w))
         grp.layout().addWidget(self.thumbnail_viewer_widget, 0)
 
-        _grp = ui.get_group(margin=common.size(
-            common.size_indicator), parent=grp)
+        _grp = ui.get_group(
+            margin=common.size(
+                common.size_indicator
+            ), parent=grp
+        )
         _grp.layout().setAlignment(QtCore.Qt.AlignCenter)
 
         for k in DEFAULT_ITEM:
-            row = ui.add_row(None, height=None,
-                             padding=common.size(common.size_indicator), parent=_grp)
+            row = ui.add_row(
+                None, height=None,
+                padding=common.size(common.size_indicator), parent=_grp
+                )
             editor = DEFAULT_ITEM[k]['widget']()
             editor.setFixedHeight(h)
 
@@ -148,7 +155,8 @@ class LauncherItemEditor(QtWidgets.QDialog):
 
         image.setDevicePixelRatio(common.pixel_ratio)
         image = images.resize_image(
-            image, self.thumbnail_viewer_widget.width())
+            image, self.thumbnail_viewer_widget.width()
+        )
 
         self.thumbnail_viewer_widget.setPixmap(QtGui.QPixmap.fromImage(image))
 
@@ -198,8 +206,11 @@ class LauncherItemEditor(QtWidgets.QDialog):
             self.thumbnail_editor,
             caption='Pick a Thumbnail',
             filter=images.get_oiio_namefilters(),
-            dir=QtCore.QFileInfo(common.rsc(
-                common.FormatResource)).filePath()
+            dir=QtCore.QFileInfo(
+                common.rsc(
+                    common.FormatResource
+                )
+            ).filePath()
         )
 
     def _pick(self, editor, caption=None, filter=None, dir=None):
@@ -315,7 +326,8 @@ class LauncherListWidget(ui.ListWidget):
             parent=self
         )
         editor.itemChanged.connect(
-            lambda v: self.update_item(item, v))
+            lambda v: self.update_item(item, v)
+        )
         editor.open()
 
     @QtCore.Slot()

@@ -380,7 +380,11 @@ def apply_view(panel, **options):
         if key in _DisplayOptionsRGB:
             cmds.displayRGBColor(key, *value)
         else:
-            cmds.displayPref(**{key: value})
+            cmds.displayPref(
+                **{
+                    key: value
+                }
+                )
 
     # Camera options
     camera_options = options.get('camera_options', {})
@@ -390,7 +394,11 @@ def apply_view(panel, **options):
     # Viewport options
     viewport_options = options.get('viewport_options', {})
     for key, value in viewport_options.items():
-        cmds.modelEditor(panel, edit=True, **{key: value})
+        cmds.modelEditor(
+            panel, edit=True, **{
+                key: value
+            }
+            )
 
     viewport2_options = options.get('viewport2_options', {})
     for key, value in viewport2_options.items():
@@ -444,7 +452,11 @@ def parse_view(panel):
         if key in _DisplayOptionsRGB:
             display_options[key] = cmds.displayRGBColor(key, query=True)
         else:
-            display_options[key] = cmds.displayPref(query=True, **{key: True})
+            display_options[key] = cmds.displayPref(
+                query=True, **{
+                    key: True
+                }
+                )
 
     # Camera options
     camera_options = {}
@@ -465,7 +477,9 @@ def parse_view(panel):
 
     for key in ViewportOptions:
         viewport_options[key] = cmds.modelEditor(
-            panel, query=True, **{key: True}
+            panel, query=True, **{
+                key: True
+            }
         )
 
     viewport2_options = {}
@@ -688,7 +702,9 @@ def _applied_display_options(options):
 
     for preference in preferences:
         original[preference] = cmds.displayPref(
-            query=True, **{preference: True}
+            query=True, **{
+                preference: True
+            }
         )
 
     # Apply settings
@@ -698,7 +714,11 @@ def _applied_display_options(options):
 
     for preference in preferences:
         value = options[preference]
-        cmds.displayPref(**{preference: value})
+        cmds.displayPref(
+            **{
+                preference: value
+            }
+            )
 
     try:
         yield
@@ -708,7 +728,11 @@ def _applied_display_options(options):
         for color in colors:
             cmds.displayRGBColor(color, *original[color])
         for preference in preferences:
-            cmds.displayPref(**{preference: original[preference]})
+            cmds.displayPref(
+                **{
+                    preference: original[preference]
+                }
+                )
 
 
 @contextlib.contextmanager

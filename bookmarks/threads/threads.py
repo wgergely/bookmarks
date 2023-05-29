@@ -222,8 +222,11 @@ def get_thread(k):
 
     """
     if k not in THREADS:
-        raise KeyError('{} is invalid. Must be one of {}'.format(
-            k, '\n'.join(THREADS.keys())))
+        raise KeyError(
+            '{} is invalid. Must be one of {}'.format(
+                k, '\n'.join(THREADS.keys())
+            )
+        )
 
     if k in controllers:
         return controllers[k]

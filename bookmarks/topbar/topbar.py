@@ -85,13 +85,18 @@ class SlackDropAreaWidget(QtWidgets.QWidget):
         painter.setBrush(common.color(common.color_separator))
         painter.drawRoundedRect(
             self.rect(), common.size(common.size_indicator),
-            common.size(common.size_indicator))
+            common.size(common.size_indicator)
+        )
 
         pixmap = images.rsc_pixmap(
             'slack', common.color(common.color_green),
-            self.rect().height() - (common.size(common.size_indicator) * 1.5))
-        rect = QtCore.QRect(0, 0, common.size(
-            common.size_margin), common.size(common.size_margin))
+            self.rect().height() - (common.size(common.size_indicator) * 1.5)
+        )
+        rect = QtCore.QRect(
+            0, 0, common.size(
+                common.size_margin
+            ), common.size(common.size_margin)
+            )
         rect.moveCenter(self.rect().center())
         painter.drawPixmap(rect, pixmap, pixmap.rect())
 
@@ -200,7 +205,8 @@ class TopBarWidget(QtWidgets.QWidget):
         painter.setPen(QtCore.Qt.NoPen)
 
         pixmap = images.rsc_pixmap(
-            'gradient', None, self.height())
+            'gradient', None, self.height()
+        )
         t = QtGui.QTransform()
         t.rotate(90)
         pixmap = pixmap.transformed(t)

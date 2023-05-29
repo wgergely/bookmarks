@@ -73,7 +73,7 @@ class TaskItemViewDelegate(delegate.ItemDelegate):
         
         """
         rectangles, painter, option, index, selected, focused, active, archived, \
-        favourite, hover, font, metrics, cursor_position = args
+            favourite, hover, font, metrics, cursor_position = args
         painter.setRenderHint(QtGui.QPainter.Antialiasing)
 
         # Set rect with separator
@@ -120,7 +120,7 @@ class TaskItemViewDelegate(delegate.ItemDelegate):
         
         """
         rectangles, painter, option, index, selected, focused, active, archived, \
-        favourite, hover, font, metrics, cursor_position = args
+            favourite, hover, font, metrics, cursor_position = args
         if not index.data(QtCore.Qt.DisplayRole):
             return
 

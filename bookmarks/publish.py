@@ -11,9 +11,8 @@ import os
 import re
 import time
 
-from PySide2 import QtWidgets, QtCore, QtGui
-
 import pyimageutil
+from PySide2 import QtWidgets, QtCore, QtGui
 
 from . import actions
 from . import common
@@ -801,7 +800,8 @@ class PublishWidget(base.BasePropertyEditor):
         _dir = file_info.dir()
 
         if not QtCore.QFileInfo(f'{_dir.path()}/video').exists() and not _dir.mkpath(
-                './video'):
+                './video'
+        ):
             raise RuntimeError(f'"{_dir.path()}/video" does not exist')
 
         asset = payload['kwargs']['asset']

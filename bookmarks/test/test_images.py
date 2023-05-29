@@ -63,7 +63,8 @@ class Test(base.BaseCase):
                 continue
 
             source = QtCore.QFileInfo(
-                common.temp_path() + os.path.sep + f).filePath()
+                common.temp_path() + os.path.sep + f
+            ).filePath()
             self.assertTrue(os.path.isfile(source))
 
             dest = images.get_cached_thumbnail_path(server, job, root, source)
@@ -92,7 +93,8 @@ class Test(base.BaseCase):
 
         # Invalid
         v = images.get_thumbnail(
-            server, job, root, source, size=common.thumbnail_size)
+            server, job, root, source, size=common.thumbnail_size
+        )
         self.assertIsInstance(v, tuple)
 
         self.assertIsInstance(v[0], QtGui.QPixmap)

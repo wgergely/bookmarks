@@ -109,10 +109,14 @@ class SwitchBookmarkMenu(BaseQuickSwitchMenu):
             'icon': ui.get_icon('add', color=common.color(common.color_green)),
             'text': 'Manage Bookmark Items...',
             'action': actions.show_bookmarker,
-            'shortcut': shortcuts.string(shortcuts.MainWidgetShortcuts,
-                                         shortcuts.AddItem),
-            'description': shortcuts.hint(shortcuts.MainWidgetShortcuts,
-                                          shortcuts.AddItem),
+            'shortcut': shortcuts.string(
+                shortcuts.MainWidgetShortcuts,
+                shortcuts.AddItem
+                ),
+            'description': shortcuts.hint(
+                shortcuts.MainWidgetShortcuts,
+                shortcuts.AddItem
+                ),
         }
 
 
@@ -135,8 +139,12 @@ class SwitchAssetMenu(BaseQuickSwitchMenu):
             'icon': ui.get_icon('add', color=common.color(common.color_green)),
             'text': 'Create new asset...',
             'action': actions.show_add_asset,
-            'shortcut': shortcuts.string(shortcuts.MainWidgetShortcuts,
-                                         shortcuts.AddItem),
-            'description': shortcuts.hint(shortcuts.MainWidgetShortcuts,
-                                          shortcuts.AddItem),
+            'shortcut': shortcuts.string(
+                shortcuts.MainWidgetShortcuts,
+                shortcuts.AddItem
+                ),
+            'description': shortcuts.hint(
+                shortcuts.MainWidgetShortcuts,
+                shortcuts.AddItem
+                ),
         }

@@ -43,7 +43,8 @@ class Test(base.BaseCase):
         root = base.random_str(32)
         source_paths = (server, job, root)
         source = common.bookmark_key(
-            server, job, root) + '/' + base.random_str(32)
+            server, job, root
+        ) + '/' + base.random_str(32)
 
         actions.add_favourite(source_paths, source)
         self.assertIn(source, common.favourites)
@@ -58,7 +59,8 @@ class Test(base.BaseCase):
             root = base.random_str(32)
             source_paths = (server, job, root)
             source = common.bookmark_key(
-                server, job, root) + '/' + base.random_str(32)
+                server, job, root
+            ) + '/' + base.random_str(32)
 
             actions.add_favourite(source_paths, source)
             self.assertIn(source, common.favourites)
@@ -73,7 +75,8 @@ class Test(base.BaseCase):
             root = base.random_str(32)
             source_paths = (server, job, root)
             source = common.bookmark_key(
-                server, job, root) + '/' + base.random_str(32)
+                server, job, root
+            ) + '/' + base.random_str(32)
 
             actions.add_favourite(source_paths, source)
             self.assertIn(source, common.favourites)

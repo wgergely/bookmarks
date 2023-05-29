@@ -142,41 +142,43 @@ class FavouriteItemModel(file_items.FileItemModel):
             if idx >= common.max_list_items:
                 break
 
-            data[idx] = common.DataDict({
-                QtCore.Qt.DisplayRole: filename,
-                QtCore.Qt.EditRole: filename,
-                common.PathRole: filepath,
-                QtCore.Qt.SizeHintRole: self.row_size,
-                #
-                common.QueueRole: self.queues,
-                common.DataTypeRole: t,
-                common.ItemTabRole: common.FavouriteTab,
-                #
-                common.EntryRole: [entry, ],
-                common.FlagsRole: flags,
-                common.ParentPathRole: parent_path_role,
-                common.DescriptionRole: '',
-                common.TodoCountRole: 0,
-                common.FileDetailsRole: '',
-                common.SequenceRole: seq,
-                common.FramesRole: [],
-                common.FileInfoLoaded: False,
-                common.StartPathRole: None,
-                common.EndPathRole: None,
-                #
-                common.ThumbnailLoaded: False,
-                #
-                common.TypeRole: common.FileItem,
-                #
-                common.SortByNameRole: sort_by_name_role,
-                common.SortByLastModifiedRole: 0,
-                common.SortBySizeRole: 0,
-                common.SortByTypeRole: sort_by_type_role,
-                #
-                common.IdRole: idx,  # non-mutable
-                #
-                common.ShotgunLinkedRole: False,
-            })
+            data[idx] = common.DataDict(
+                {
+                    QtCore.Qt.DisplayRole: filename,
+                    QtCore.Qt.EditRole: filename,
+                    common.PathRole: filepath,
+                    QtCore.Qt.SizeHintRole: self.row_size,
+                    #
+                    common.QueueRole: self.queues,
+                    common.DataTypeRole: t,
+                    common.ItemTabRole: common.FavouriteTab,
+                    #
+                    common.EntryRole: [entry, ],
+                    common.FlagsRole: flags,
+                    common.ParentPathRole: parent_path_role,
+                    common.DescriptionRole: '',
+                    common.TodoCountRole: 0,
+                    common.FileDetailsRole: '',
+                    common.SequenceRole: seq,
+                    common.FramesRole: [],
+                    common.FileInfoLoaded: False,
+                    common.StartPathRole: None,
+                    common.EndPathRole: None,
+                    #
+                    common.ThumbnailLoaded: False,
+                    #
+                    common.TypeRole: common.FileItem,
+                    #
+                    common.SortByNameRole: sort_by_name_role,
+                    common.SortByLastModifiedRole: 0,
+                    common.SortBySizeRole: 0,
+                    common.SortByTypeRole: sort_by_type_role,
+                    #
+                    common.IdRole: idx,  # non-mutable
+                    #
+                    common.ShotgunLinkedRole: False,
+                }
+            )
 
             # If the file in question is a sequence, we will also save a reference
             # to it in the sequence data dict
@@ -193,40 +195,42 @@ class FavouriteItemModel(file_items.FileItemModel):
                     sort_by_name_role = list(sort_by_name_role)
                     sort_by_name_role[7] = sequence_name.lower()
 
-                    sequence_data[sequence_path] = common.DataDict({
-                        QtCore.Qt.DisplayRole: sequence_name,
-                        QtCore.Qt.EditRole: sequence_name,
-                        common.PathRole: sequence_path,
-                        QtCore.Qt.SizeHintRole: self.row_size,
-                        #
-                        common.QueueRole: self.queues,
-                        common.ItemTabRole: common.FavouriteTab,
-                        #
-                        common.EntryRole: [],
-                        common.FlagsRole: flags,
-                        common.ParentPathRole: parent_path_role,
-                        common.DescriptionRole: '',
-                        common.TodoCountRole: 0,
-                        common.FileDetailsRole: '',
-                        common.SequenceRole: seq,
-                        common.FramesRole: [],
-                        common.FileInfoLoaded: False,
-                        common.StartPathRole: None,
-                        common.EndPathRole: None,
-                        #
-                        common.ThumbnailLoaded: False,
-                        #
-                        common.TypeRole: common.SequenceItem,
-                        #
-                        common.SortByNameRole: sort_by_name_role,
-                        common.SortByLastModifiedRole: 0,
-                        common.SortBySizeRole: 0,  # Initializing with null-size,
-                        common.SortByTypeRole: sort_by_type_role,
-                        #
-                        common.IdRole: 0,
-                        #
-                        common.ShotgunLinkedRole: False,
-                    })
+                    sequence_data[sequence_path] = common.DataDict(
+                        {
+                            QtCore.Qt.DisplayRole: sequence_name,
+                            QtCore.Qt.EditRole: sequence_name,
+                            common.PathRole: sequence_path,
+                            QtCore.Qt.SizeHintRole: self.row_size,
+                            #
+                            common.QueueRole: self.queues,
+                            common.ItemTabRole: common.FavouriteTab,
+                            #
+                            common.EntryRole: [],
+                            common.FlagsRole: flags,
+                            common.ParentPathRole: parent_path_role,
+                            common.DescriptionRole: '',
+                            common.TodoCountRole: 0,
+                            common.FileDetailsRole: '',
+                            common.SequenceRole: seq,
+                            common.FramesRole: [],
+                            common.FileInfoLoaded: False,
+                            common.StartPathRole: None,
+                            common.EndPathRole: None,
+                            #
+                            common.ThumbnailLoaded: False,
+                            #
+                            common.TypeRole: common.SequenceItem,
+                            #
+                            common.SortByNameRole: sort_by_name_role,
+                            common.SortByLastModifiedRole: 0,
+                            common.SortBySizeRole: 0,  # Initializing with null-size,
+                            common.SortByTypeRole: sort_by_type_role,
+                            #
+                            common.IdRole: 0,
+                            #
+                            common.ShotgunLinkedRole: False,
+                        }
+                    )
 
                 sequence_data[sequence_path][common.FramesRole].append(seq.group(2))
                 sequence_data[sequence_path][common.EntryRole].append(entry)

@@ -271,12 +271,14 @@ class AssetPropertyEditor(base.BasePropertyEditor):
         if '/' not in asset:
             return
 
-        root = '/'.join((
-            self.server,
-            self.job,
-            self.root,
-            asset.split('/')[0]
-        ))
+        root = '/'.join(
+            (
+                self.server,
+                self.job,
+                self.root,
+                asset.split('/')[0]
+            )
+        )
         rel = '/'.join(asset.split('/')[1:])
         if not common.add_link(root, rel, section='links/asset'):
             log.error('Could not add link')

@@ -498,6 +498,8 @@ def capture_viewport(size=1.0):
     )
     push_capture(path)
     reveal_capture(path)
+
+
 def push_capture(path, command=rv.DEFAULT):
     """Action used to push a capture output to RV.
 

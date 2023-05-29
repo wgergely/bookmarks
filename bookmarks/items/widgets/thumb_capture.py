@@ -209,10 +209,12 @@ class ScreenCapture(QtWidgets.QDialog):
         if click_pos is not None:
             capture_rect = QtCore.QRect(click_pos, mouse_pos)
             painter.setCompositionMode(
-                QtGui.QPainter.CompositionMode_Clear)
+                QtGui.QPainter.CompositionMode_Clear
+            )
             painter.drawRect(capture_rect)
             painter.setCompositionMode(
-                QtGui.QPainter.CompositionMode_SourceOver)
+                QtGui.QPainter.CompositionMode_SourceOver
+            )
 
         pen = QtGui.QPen(
             QtGui.QColor(255, 255, 255, 64),

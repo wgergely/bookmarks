@@ -68,15 +68,18 @@ SECTIONS = {
     ),
     'shotgrid': (
         'shotgrid/link_multiple_filter',
-        'shotgrid/publish_task',
-        'shotgrid/publish_type',
-        'shotgrid/publish_version',
         'shotgrid/current_user',
         'shotgrid/current_asset',
         'shotgrid/current_selection',
         'shotgrid/sg_user',
         'shotgrid/sg_storage',
         'shotgrid/sg_type',
+    ),
+    'shotgrid_publish': (
+        'shotgrid_publish/login',
+        'shotgrid_publish/password',
+        'shotgrid_publish/task',
+        'shotgrid_publish/type',
     ),
     'file_saver': (
         'file_saver/task',
@@ -219,8 +222,10 @@ def active(k, path=False, args=False):
         _path = None
         _args = None
         idx = SECTIONS['active'].index(k)
-        v = tuple(common.active_paths[common.active_mode][k]
-                  for k in SECTIONS['active'][:idx + 1])
+        v = tuple(
+            common.active_paths[common.active_mode][k]
+            for k in SECTIONS['active'][:idx + 1]
+            )
 
         if path:
             _path = '/'.join(v) if all(v) else None
@@ -240,7 +245,8 @@ def active(k, path=False, args=False):
 def get_user_settings_path():
     """Returns the path to the user settings file."""
     v = QtCore.QStandardPaths.writableLocation(
-        QtCore.QStandardPaths.GenericDataLocation)
+        QtCore.QStandardPaths.GenericDataLocation
+    )
     return f'{v}/{common.product}/{common.user_settings}'
 
 
@@ -252,7 +258,8 @@ def get_default_bookmarks():
 
     """
     source = common.rsc(
-        f'{common.TemplateResource}/{common.default_bookmarks_template}')
+        f'{common.TemplateResource}/{common.default_bookmarks_template}'
+    )
 
     data = {}
     try:

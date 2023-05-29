@@ -121,9 +121,11 @@ class BookmarkItemModel(models.ItemModel):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         common.signals.bookmarkAdded.connect(
-            lambda _: self.reset_data(force=True, emit_active=False))
+            lambda _: self.reset_data(force=True, emit_active=False)
+        )
         common.signals.bookmarkRemoved.connect(
-            lambda _: self.reset_data(force=True, emit_active=False))
+            lambda _: self.reset_data(force=True, emit_active=False)
+        )
 
     @common.status_bar_message('Loading Bookmarks...')
     @models.initdata
@@ -174,11 +176,13 @@ class BookmarkItemModel(models.ItemModel):
 
             # Item flags. Active and favourite flags will be only set if the
             # bookmark exist
-            if all((
-                    server == common.active('server'),
-                    job == common.active('job'),
-                    root == common.active('root')
-            )) and exists:
+            if all(
+                    (
+                            server == common.active('server'),
+                            job == common.active('job'),
+                            root == common.active('root')
+                    )
+            ) and exists:
                 flags = flags | common.MarkedAsActive
 
             if filepath in common.favourites and exists:
@@ -201,43 +205,45 @@ class BookmarkItemModel(models.ItemModel):
                     break
                 sort_by_name_role[i] = n.lower()
 
-            data[idx] = common.DataDict({
-                QtCore.Qt.DisplayRole: root,
-                QtCore.Qt.EditRole: root,
-                common.PathRole: filepath,
-                QtCore.Qt.ToolTipRole: filepath,
-                QtCore.Qt.SizeHintRole: self.row_size,
-                #
-                common.QueueRole: self.queues,
-                common.DataTypeRole: t,
-                common.ItemTabRole: common.BookmarkTab,
-                #
-                common.FlagsRole: flags,
-                common.ParentPathRole: parent_path_role,
-                common.DescriptionRole: '',
-                common.TodoCountRole: 0,
-                common.AssetCountRole: 0,
-                common.FileDetailsRole: None,
-                common.SequenceRole: None,
-                common.EntryRole: [entry, ],
-                common.FileInfoLoaded: False,
-                common.StartPathRole: None,
-                common.EndPathRole: None,
-                #
-                common.ThumbnailLoaded: False,
-                #
-                common.TypeRole: common.FileItem,
-                #
-                common.SortByNameRole: sort_by_name_role,
-                common.SortByLastModifiedRole: file_info.lastModified().toMSecsSinceEpoch(),
-                common.SortBySizeRole: file_info.size(),
-                common.SortByTypeRole: sort_by_name_role,
-                #
-                common.IdRole: idx,
-                #
-                common.ShotgunLinkedRole: False,
-                common.SlackLinkedRole: False
-            })
+            data[idx] = common.DataDict(
+                {
+                    QtCore.Qt.DisplayRole: root,
+                    QtCore.Qt.EditRole: root,
+                    common.PathRole: filepath,
+                    QtCore.Qt.ToolTipRole: filepath,
+                    QtCore.Qt.SizeHintRole: self.row_size,
+                    #
+                    common.QueueRole: self.queues,
+                    common.DataTypeRole: t,
+                    common.ItemTabRole: common.BookmarkTab,
+                    #
+                    common.FlagsRole: flags,
+                    common.ParentPathRole: parent_path_role,
+                    common.DescriptionRole: '',
+                    common.TodoCountRole: 0,
+                    common.AssetCountRole: 0,
+                    common.FileDetailsRole: None,
+                    common.SequenceRole: None,
+                    common.EntryRole: [entry, ],
+                    common.FileInfoLoaded: False,
+                    common.StartPathRole: None,
+                    common.EndPathRole: None,
+                    #
+                    common.ThumbnailLoaded: False,
+                    #
+                    common.TypeRole: common.FileItem,
+                    #
+                    common.SortByNameRole: sort_by_name_role,
+                    common.SortByLastModifiedRole: file_info.lastModified().toMSecsSinceEpoch(),
+                    common.SortBySizeRole: file_info.size(),
+                    common.SortByTypeRole: sort_by_name_role,
+                    #
+                    common.IdRole: idx,
+                    #
+                    common.ShotgunLinkedRole: False,
+                    common.SlackLinkedRole: False
+                }
+            )
 
             if not exists:
                 continue

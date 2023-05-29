@@ -8,9 +8,9 @@ import subprocess
 from .. import common
 
 FULLSCREEN = '"{RV}" -tag {PRODUCT} url \'rvlink:// -reuse 1 -inferSequence ' \
-                  '-l -play -fullscreen -nofloat -lookback 0 -nomb \"{PATH}\"\''
+             '-l -play -fullscreen -nofloat -lookback 0 -nomb \"{PATH}\"\''
 DEFAULT = '"{RV}" -tag {PRODUCT} url \'rvlink:// -reuse 1 -inferSequence ' \
-                  '-l -play -lookback 0 \"{PATH}\"\''
+          '-l -play -lookback 0 \"{PATH}\"\''
 
 
 @common.error

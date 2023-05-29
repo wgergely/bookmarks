@@ -15,7 +15,8 @@ path = os.path.normpath(path)
 assert (os.path.isdir(path))
 
 plugin = __file__ + os.pardir.join(
-    [os.path.sep, ] * 4) + os.path.sep + 'maya' + os.path.sep + 'plugin.py'
+    [os.path.sep, ] * 4
+) + os.path.sep + 'maya' + os.path.sep + 'plugin.py'
 plugin = os.path.normpath(plugin)
 assert os.path.isfile(plugin)
 
@@ -25,7 +26,8 @@ def init_environment():
 
     if k not in os.environ:
         raise EnvironmentError(
-            'Is Bookmarks installed? Could not find BOOKMARKS_ROOT environment variable')
+            'Is Bookmarks installed? Could not find BOOKMARKS_ROOT environment variable'
+        )
 
     shared = os.environ[k] + os.path.sep + 'shared'
     sys.path.insert(1, shared)
@@ -100,7 +102,8 @@ def verify_environ():
                 break
     if b is None:
         raise RuntimeError(
-            'The mayapy executable was not found in the path. This should be added to the path befre running this script. The executable should be located in the $MAYA_ROOT/bin folder.')
+            'The mayapy executable was not found in the path. This should be added to the path befre running this script. The executable should be located in the $MAYA_ROOT/bin folder.'
+        )
 
 
 def init():

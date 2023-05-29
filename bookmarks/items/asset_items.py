@@ -113,10 +113,12 @@ class AssetItemModel(models.ItemModel):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         common.signals.sgAssetsLinked.connect(
-            lambda: self.blockSignals(True))
+            lambda: self.blockSignals(True)
+        )
         common.signals.sgAssetsLinked.connect(self.reset_data)
         common.signals.sgAssetsLinked.connect(
-            lambda: self.blockSignals(False))
+            lambda: self.blockSignals(False)
+        )
         common.signals.sgAssetsLinked.connect(self.sort_data)
 
     def columnCount(self, index):
@@ -210,7 +212,8 @@ class AssetItemModel(models.ItemModel):
             c += 9
             if not c % nth:
                 common.signals.showStatusBarMessage.emit(
-                    f'Loading assets ({c} found)...')
+                    f'Loading assets ({c} found)...'
+                )
                 QtWidgets.QApplication.instance().processEvents()
 
             filename = filepath[len(source) + 1:]
@@ -239,48 +242,50 @@ class AssetItemModel(models.ItemModel):
             if idx >= common.max_list_items:
                 break  # Let's limit the maximum number of items we load
 
-            data[idx] = common.DataDict({
-                QtCore.Qt.DisplayRole: name,
-                QtCore.Qt.EditRole: filename,
-                common.PathRole: filepath,
-                QtCore.Qt.SizeHintRole: self.row_size,
-                #
-                QtCore.Qt.StatusTipRole: filename,
-                QtCore.Qt.AccessibleDescriptionRole: filename,
-                QtCore.Qt.WhatsThisRole: filename,
-                QtCore.Qt.ToolTipRole: filename,
-                #
-                common.QueueRole: self.queues,
-                common.DataTypeRole: t,
-                common.ItemTabRole: common.AssetTab,
-                #
-                common.EntryRole: [entry, ],
-                common.FlagsRole: flags,
-                common.ParentPathRole: parent_path_role,
-                common.DescriptionRole: '',
-                common.TodoCountRole: 0,
-                common.FileDetailsRole: '',
-                common.SequenceRole: None,
-                common.FramesRole: [],
-                common.StartPathRole: None,
-                common.EndPathRole: None,
-                #
-                common.FileInfoLoaded: False,
-                common.ThumbnailLoaded: False,
-                #
-                common.TypeRole: common.FileItem,
-                #
-                common.SortByNameRole: sort_by_name_role,
-                common.SortByLastModifiedRole: 0,
-                common.SortBySizeRole: 0,
-                common.SortByTypeRole: name,
-                #
-                common.IdRole: idx,
-                #
-                common.ShotgunLinkedRole: False,
-                #
-                common.AssetProgressRole: copy.deepcopy(progress.STAGES),
-            })
+            data[idx] = common.DataDict(
+                {
+                    QtCore.Qt.DisplayRole: name,
+                    QtCore.Qt.EditRole: filename,
+                    common.PathRole: filepath,
+                    QtCore.Qt.SizeHintRole: self.row_size,
+                    #
+                    QtCore.Qt.StatusTipRole: filename,
+                    QtCore.Qt.AccessibleDescriptionRole: filename,
+                    QtCore.Qt.WhatsThisRole: filename,
+                    QtCore.Qt.ToolTipRole: filename,
+                    #
+                    common.QueueRole: self.queues,
+                    common.DataTypeRole: t,
+                    common.ItemTabRole: common.AssetTab,
+                    #
+                    common.EntryRole: [entry, ],
+                    common.FlagsRole: flags,
+                    common.ParentPathRole: parent_path_role,
+                    common.DescriptionRole: '',
+                    common.TodoCountRole: 0,
+                    common.FileDetailsRole: '',
+                    common.SequenceRole: None,
+                    common.FramesRole: [],
+                    common.StartPathRole: None,
+                    common.EndPathRole: None,
+                    #
+                    common.FileInfoLoaded: False,
+                    common.ThumbnailLoaded: False,
+                    #
+                    common.TypeRole: common.FileItem,
+                    #
+                    common.SortByNameRole: sort_by_name_role,
+                    common.SortByLastModifiedRole: 0,
+                    common.SortBySizeRole: 0,
+                    common.SortByTypeRole: name,
+                    #
+                    common.IdRole: idx,
+                    #
+                    common.ShotgunLinkedRole: False,
+                    #
+                    common.AssetProgressRole: copy.deepcopy(progress.STAGES),
+                }
+            )
 
         # Explicitly emit `activeChanged` to notify other dependent models
         self.activeChanged.emit(self.active_index())
@@ -424,7 +429,8 @@ class AssetItemView(views.ThreadedItemView):
 
         self.horizontalHeader().setHidden(False)
         self.horizontalHeader().setMinimumSectionSize(
-            common.size(common.size_section))
+            common.size(common.size_section)
+        )
 
         for idx in range(self.model().columnCount()):
             if idx == 0:
@@ -494,7 +500,8 @@ class AssetItemView(views.ThreadedItemView):
             index = self.model().mapFromSource(source_index)
             self.scrollTo(index, QtWidgets.QAbstractItemView.PositionAtCenter)
             self.selectionModel().setCurrentIndex(
-                index, QtCore.QItemSelectionModel.ClearAndSelect)
+                index, QtCore.QItemSelectionModel.ClearAndSelect
+            )
         return super().showEvent(event)
 
     def mouseReleaseEvent(self, event):

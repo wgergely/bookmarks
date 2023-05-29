@@ -3,9 +3,8 @@
 """
 import uuid
 
-from PySide2 import QtCore, QtGui, QtWidgets
-
 import pyimageutil
+from PySide2 import QtCore, QtGui, QtWidgets
 
 from .. import common
 from .. import contextmenu

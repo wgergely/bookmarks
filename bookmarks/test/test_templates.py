@@ -110,10 +110,14 @@ class Test(base.BaseCase):
             actions.extract_zip_template(base.random_str(32), None, None)
         with self.assertRaises(TypeError):
             actions.extract_zip_template(
-                base.random_str(32), base.random_str(32), None)
+                base.random_str(32), base.random_str(32), None
+            )
         with self.assertRaises(RuntimeError):
-            actions.extract_zip_template(base.random_str(
-                32), base.random_str(32), base.random_str(32))
+            actions.extract_zip_template(
+                base.random_str(
+                    32
+                ), base.random_str(32), base.random_str(32)
+            )
 
         for f in os.listdir(common.temp_path()):
             if '.zip' not in f:

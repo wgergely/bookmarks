@@ -178,19 +178,24 @@ class MainWidget(QtWidgets.QWidget):
 
         # Bookmark -> Asset
         b.model().sourceModel().activeChanged.connect(
-            a.model().sourceModel().reset_data)
+            a.model().sourceModel().reset_data
+        )
         # Asset -> File
         a.model().sourceModel().activeChanged.connect(
-            f.model().sourceModel().reset_data)
+            f.model().sourceModel().reset_data
+        )
         # Asset -> Task
         a.model().sourceModel().activeChanged.connect(
-            l.model().sourceModel().reset_data)
+            l.model().sourceModel().reset_data
+        )
         #####################################################
         # Stacked widget navigation
         b.activated.connect(
-            lambda: common.signals.tabChanged.emit(common.AssetTab))
+            lambda: common.signals.tabChanged.emit(common.AssetTab)
+        )
         a.activated.connect(
-            lambda: common.signals.tabChanged.emit(common.FileTab))
+            lambda: common.signals.tabChanged.emit(common.FileTab)
+        )
 
         common.signals.tabChanged.connect(l.tab_changed)
         common.widget(common.FileTab).resized.connect(l.resize_widget)
@@ -282,7 +287,8 @@ class MainWidget(QtWidgets.QWidget):
     @common.error
     def _init_shortcuts(self):
         connect = functools.partial(
-            shortcuts.connect, shortcuts.MainWidgetShortcuts)
+            shortcuts.connect, shortcuts.MainWidgetShortcuts
+        )
 
         # Adding shortcuts to the MainWidget
         shortcuts.add_shortcuts(self, shortcuts.MainWidgetShortcuts)
@@ -293,15 +299,27 @@ class MainWidget(QtWidgets.QWidget):
 
         connect(shortcuts.ToggleSortOrder, actions.toggle_sort_order)
 
-        connect(shortcuts.ShowBookmarksTab, functools.partial(
-            actions.change_tab, common.BookmarkTab))
-        connect(shortcuts.ShowAssetsTab, functools.partial(
-            actions.change_tab, common.AssetTab))
+        connect(
+            shortcuts.ShowBookmarksTab, functools.partial(
+                actions.change_tab, common.BookmarkTab
+            )
+            )
+        connect(
+            shortcuts.ShowAssetsTab, functools.partial(
+                actions.change_tab, common.AssetTab
+            )
+            )
         connect(shortcuts.ShowFilesTab, actions.toggle_task_view)
-        connect(shortcuts.ShowFilesTab, functools.partial(
-            actions.change_tab, common.FileTab))
-        connect(shortcuts.ShowFavouritesTab, functools.partial(
-            actions.change_tab, common.FavouriteTab))
+        connect(
+            shortcuts.ShowFilesTab, functools.partial(
+                actions.change_tab, common.FileTab
+            )
+            )
+        connect(
+            shortcuts.ShowFavouritesTab, functools.partial(
+                actions.change_tab, common.FavouriteTab
+            )
+            )
 
         connect(shortcuts.NextTab, actions.next_tab)
         connect(shortcuts.PreviousTab, actions.previous_tab)
@@ -327,12 +345,16 @@ class MainWidget(QtWidgets.QWidget):
         connect(shortcuts.ToggleSearch, common.signals.toggleFilterButton)
         connect(shortcuts.ToggleSequence, common.signals.toggleSequenceButton)
         connect(shortcuts.ToggleArchived, common.signals.toggleArchivedButton)
-        connect(shortcuts.ToggleFavourite,
-                common.signals.toggleFavouritesButton)
+        connect(
+            shortcuts.ToggleFavourite,
+            common.signals.toggleFavouritesButton
+            )
         connect(shortcuts.ToggleActive, actions.toggle_active_item)
 
-        connect(shortcuts.HideInlineButtons,
-                common.signals.toggleInlineIcons)
+        connect(
+            shortcuts.HideInlineButtons,
+            common.signals.toggleInlineIcons
+            )
 
         connect(shortcuts.OpenSlack, actions.show_slack)
         connect(shortcuts.OpenPreferences, actions.show_preferences)
@@ -354,7 +376,8 @@ class MainWidget(QtWidgets.QWidget):
 
     def _paint_loading(self, painter):
         font, metrics = common.font_db.bold_font(
-            common.size(common.size_font_medium))
+            common.size(common.size_font_medium)
+        )
         rect = QtCore.QRect(self.rect())
         align = QtCore.Qt.AlignCenter
         color = QtGui.QColor(255, 255, 255, 80)
@@ -374,11 +397,14 @@ class MainWidget(QtWidgets.QWidget):
 
         painter.drawRoundedRect(
             pixmaprect.marginsAdded(
-                QtCore.QMargins(o * 3, o * 3, o * 3, o * 3)),
-            o, o)
+                QtCore.QMargins(o * 3, o * 3, o * 3, o * 3)
+            ),
+            o, o
+        )
 
         pixmap = images.rsc_pixmap(
-            'icon_bw', None, s)
+            'icon_bw', None, s
+        )
         painter.setOpacity(0.5)
         painter.drawPixmap(pixmaprect, pixmap, pixmap.rect())
         painter.setOpacity(1.0)
@@ -386,7 +412,8 @@ class MainWidget(QtWidgets.QWidget):
         rect.setTop(pixmaprect.bottom() + (o * 0.5))
         rect.setHeight(metrics.height())
         common.draw_aliased_text(
-            painter, font, rect, 'Loading...', align, color)
+            painter, font, rect, 'Loading...', align, color
+        )
 
     def paintEvent(self, event):
         """Event handler.

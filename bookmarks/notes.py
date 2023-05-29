@@ -131,13 +131,15 @@ class SyntaxHighlighter(QtGui.QSyntaxHighlighter):
         'url': {
             'regex': re.compile(
                 r'\b[\w.+-]+://[^\s]+',
-                re.IGNORECASE),
+                re.IGNORECASE
+            ),
             'flag': 0b100000,
         },
         'filepath': {
             'regex': re.compile(
                 r'^(?:\s|^)((?:[A-Za-z]\:|(?:\/|\\))(?:[\/\\][^\/\\:*?"<>|\r\n]+)*[\/\\][^\/\\:*?"<>|\r\n]+|(?:[A-Za-z]\:|(?:\/|\\))(?:[\/\\][^\/\\:*?"<>|\r\n]+)*(?:[^\/\\:*?"<>|\r\n]+\.?)+)(?=\s|$)$',
-                re.IGNORECASE | re.MULTILINE),
+                re.IGNORECASE | re.MULTILINE
+            ),
             'flag': 0b000000,
         },
     }
@@ -256,11 +258,13 @@ class TextEditor(QtWidgets.QTextBrowser):
 
                 if k == 'url':
                     QtWidgets.QApplication.instance().setOverrideCursor(
-                        QtCore.Qt.PointingHandCursor)
+                        QtCore.Qt.PointingHandCursor
+                    )
                     return
                 if k == 'filepath':
                     QtWidgets.QApplication.instance().setOverrideCursor(
-                        QtCore.Qt.PointingHandCursor)
+                        QtCore.Qt.PointingHandCursor
+                    )
                     return
 
     def mouseReleaseEvent(self, event):
@@ -807,7 +811,8 @@ class CardsScrollWidget(QtWidgets.QScrollArea):
             return False
 
         container = next(
-            f for f in widget.children() if f.objectName() == 'card_container_widget')
+            f for f in widget.children() if f.objectName() == 'card_container_widget'
+        )
         child_at = container.childAt(event.pos())
         if not child_at:
             return False
@@ -819,7 +824,8 @@ class CardsScrollWidget(QtWidgets.QScrollArea):
         if not children:
             return False
         child = next(
-            f for f in children if child_at in f.findChildren(type(child_at), None))
+            f for f in children if child_at in f.findChildren(type(child_at), None)
+        )
         if not child:
             return False
 
@@ -960,11 +966,13 @@ class CardsWidget(QtWidgets.QDialog):
 
     @QtCore.Slot()
     def add_new_note(self, title='', body='', extra_data={}):
-        extra_data.update({
-            'created_by': common.get_username(),
-            'created_at': time.strftime('%d/%m/%Y %H:%M'),
-            'fold': False
-        })
+        extra_data.update(
+            {
+                'created_by': common.get_username(),
+                'created_at': time.strftime('%d/%m/%Y %H:%M'),
+                'fold': False
+            }
+        )
         widget = self.cards_widget.add_card(
             title,
             body,

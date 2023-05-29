@@ -40,7 +40,8 @@ class BaseLinkWidget(QtWidgets.QDialog):
             common.set_stylesheet(self)
 
         self.setWindowTitle(
-            f'Link {self.db_source()} with {self.entity_type.title()} Entity')
+            f'Link {self.db_source()} with {self.entity_type.title()} Entity'
+        )
 
         self._create_ui()
         self._connect_signals()
@@ -58,12 +59,14 @@ class BaseLinkWidget(QtWidgets.QDialog):
         )
 
         self.combobox = shotgun.EntityComboBox(
-            ['Select entity...', ], parent=self)
+            ['Select entity...', ], parent=self
+        )
         self.combobox.model().set_entity_type(self.entity_type)
         self.combobox.setMinimumWidth(common.size(common.size_width) * 0.5)
 
         self.create_button = ui.PaintedButton(
-            'Create New', parent=self)
+            'Create New', parent=self
+        )
         self.visit_button = ui.PaintedButton('Visit', parent=self)
 
         row.layout().addWidget(self.combobox, 1)
@@ -81,13 +84,15 @@ class BaseLinkWidget(QtWidgets.QDialog):
 
     def _connect_signals(self):
         self.link_button.clicked.connect(
-            lambda: self.done(QtWidgets.QDialog.Accepted))
+            lambda: self.done(QtWidgets.QDialog.Accepted)
+        )
 
         self.visit_button.clicked.connect(self.visit)
         self.create_button.clicked.connect(self.create)
 
         self.combobox.model().sourceModel().entityDataReceived.connect(
-            self.select_candidate)
+            self.select_candidate
+        )
 
     @common.error
     @common.debug
@@ -243,7 +248,8 @@ class EntityNameEditor(QtWidgets.QDialog):
 
     def _connect_signals(self):
         self.ok_button.clicked.connect(
-            lambda: self.done(QtWidgets.QDialog.Accepted))
+            lambda: self.done(QtWidgets.QDialog.Accepted)
+        )
 
     def showEvent(self, event):
         """Show event handler.

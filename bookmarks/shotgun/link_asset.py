@@ -75,7 +75,8 @@ value_map = {
 class LinkAssetWidget(link.BaseLinkWidget):
     def __init__(self, server, job, root, asset, entity_type, parent=None):
         super(LinkAssetWidget, self).__init__(
-            server, job, root, asset, entity_type, value_map, parent=parent)
+            server, job, root, asset, entity_type, value_map, parent=parent
+        )
 
     def db_source(self):
         """A file path to use as the source of database values.
@@ -115,10 +116,13 @@ class LinkAssetWidget(link.BaseLinkWidget):
             self.job,
             self.root,
             self.asset,
+            False,
             self.entity_type,
             [
-                ['project', 'is', {'type': 'Project',
-                                   'id': sg_properties.bookmark_id}],
+                ['project', 'is', {
+                    'type': 'Project',
+                    'id': sg_properties.bookmark_id
+                }],
             ],
             shotgun.fields[self.entity_type]
         )

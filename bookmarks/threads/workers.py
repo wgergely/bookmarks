@@ -7,9 +7,8 @@ import os
 import uuid
 import weakref
 
-from PySide2 import QtCore, QtWidgets, QtGui
-
 import pyimageutil
+from PySide2 import QtCore, QtWidgets
 
 from .. import common
 from .. import database
@@ -151,8 +150,7 @@ class BaseWorker(QtCore.QObject):
     def __init__(self, queue, parent=None):
         super(BaseWorker, self).__init__(parent=parent)
 
-        self.setObjectName('{}Worker_{}'.format(
-            queue, uuid.uuid1().hex))
+        self.setObjectName('{}Worker_{}'.format(queue, uuid.uuid1().hex))
 
         self.interrupt = False
         self.queue_timer = None
@@ -172,8 +170,7 @@ class BaseWorker(QtCore.QObject):
         from . import threads
 
         self.queue_timer = common.Timer(parent=self)
-        self.queue_timer.setObjectName(
-            '{}Timer_{}'.format(self.queue, uuid.uuid1().hex))
+        self.queue_timer.setObjectName('{}Timer_{}'.format(self.queue, uuid.uuid1().hex))
         self.queue_timer.setInterval(1)
 
         # Local direct worker signal connections
@@ -188,8 +185,7 @@ class BaseWorker(QtCore.QObject):
         self.coreDataLoaded.connect(self.queue_model, cnx)
         self.queue_timer.timeout.connect(self.process_data, cnx)
 
-        self.databaseValueUpdated.connect(
-            self.update_changed_database_value, cnx)
+        self.databaseValueUpdated.connect(self.update_changed_database_value, cnx)
 
         ###########################################
 
@@ -212,11 +208,9 @@ class BaseWorker(QtCore.QObject):
         if threads.THREADS[q]['preload'] and model and widget:
             model.coreDataLoaded.connect(self.coreDataLoaded, cnx)
             self.dataTypeSorted.connect(model.dataTypeSorted, cnx)
-            common.signals.databaseValueUpdated.connect(
-                self.databaseValueUpdated, cnx)
+            common.signals.databaseValueUpdated.connect(self.databaseValueUpdated, cnx)
 
-        self.sgEntityDataReady.connect(
-            common.signals.sgEntityDataReady, cnx)
+        self.sgEntityDataReady.connect(common.signals.sgEntityDataReady, cnx)
 
     def update_changed_database_value(self, table, source, key, value):
         """Process changes when any bookmark database value changes.
@@ -259,8 +253,7 @@ class BaseWorker(QtCore.QObject):
                 s = common.proxy_path(ref()[idx][common.PathRole])
                 if source == s:
                     ref()[idx][common.FileInfoLoaded] = False
-                    threads.THREADS[self.queue]['queue'].append(
-                        weakref.ref(ref()[idx]))
+                    threads.THREADS[self.queue]['queue'].append(weakref.ref(ref()[idx]))
                     self.queue_timer.start()
 
     @common.error
@@ -345,11 +338,7 @@ class BaseWorker(QtCore.QObject):
 
         if not ref():
             return
-        d = common.sort_data(
-            ref,
-            sort_by,
-            sort_order
-        )
+        d = common.sort_data(ref, sort_by, sort_order)
         if not ref():
             return
         common.set_data(p, k, t, d)
@@ -472,8 +461,7 @@ def get_ranges(arr, padding):
         if idx + 1 != len(arr):
             if arr[idx + 1] != n + 1:  # break coming up
                 k += 1
-    return ','.join(
-        ['-'.join(sorted({blocks[k][0], blocks[k][-1]})) for k in blocks])
+    return ','.join(['-'.join(sorted({blocks[k][0], blocks[k][-1]})) for k in blocks])
 
 
 def update_slack_configured(source_paths, bookmark_row_data, ref):
@@ -515,11 +503,7 @@ class InfoWorker(BaseWorker):
     """
 
     def is_valid(self, ref):
-        return False if (
-                not ref() or
-                self.interrupt or
-                ref()[common.FileInfoLoaded]
-        ) else True
+        return False if (not ref() or self.interrupt or ref()[common.FileInfoLoaded]) else True
 
     @process
     @common.error
@@ -644,24 +628,9 @@ class InfoWorker(BaseWorker):
         padding = len(frs[0])
         rangestring = get_ranges(intframes, padding)
 
-        startpath = \
-            seq.group(1) + \
-            str(min(intframes)).zfill(padding) + \
-            seq.group(3) + \
-            '.' + \
-            seq.group(4)
-        endpath = \
-            seq.group(1) + \
-            str(max(intframes)).zfill(padding) + \
-            seq.group(3) + \
-            '.' + \
-            seq.group(4)
-        seqpath = \
-            seq.group(1) + \
-            common.SEQSTART + rangestring + common.SEQEND + \
-            seq.group(3) + \
-            '.' + \
-            seq.group(4)
+        startpath = seq.group(1) + str(min(intframes)).zfill(padding) + seq.group(3) + '.' + seq.group(4)
+        endpath = seq.group(1) + str(max(intframes)).zfill(padding) + seq.group(3) + '.' + seq.group(4)
+        seqpath = seq.group(1) + common.SEQSTART + rangestring + common.SEQEND + seq.group(3) + '.' + seq.group(4)
         seqname = seqpath.split('/')[-1]
 
         _mtime = 0
@@ -673,14 +642,11 @@ class InfoWorker(BaseWorker):
                 _mtime = stat.st_mtime if stat.st_mtime > _mtime else _mtime
 
             mtime = _qlast_modified(_mtime)
-            info_string += \
-                str(len(intframes)) + 'f;' + \
-                mtime.toString('dd') + '/' + \
-                mtime.toString('MM') + '/' + \
-                mtime.toString('yyyy') + ' ' + \
-                mtime.toString('hh') + ':' + \
-                mtime.toString('mm') + ';' + \
-                common.byte_to_pretty_string(size)
+            info_string += str(len(intframes)) + 'f;' + mtime.toString('dd') + '/' + mtime.toString(
+                'MM'
+            ) + '/' + mtime.toString('yyyy') + ' ' + mtime.toString('hh') + ':' + mtime.toString(
+                'mm'
+            ) + ';' + common.byte_to_pretty_string(size)
 
         # Setting the path names
         if not self.is_valid(ref):
@@ -714,13 +680,9 @@ class InfoWorker(BaseWorker):
         _mtime = stat.st_mtime
         mtime = _qlast_modified(_mtime)
 
-        info_string = \
-            mtime.toString('dd') + '/' + \
-            mtime.toString('MM') + '/' + \
-            mtime.toString('yyyy') + ' ' + \
-            mtime.toString('hh') + ':' + \
-            mtime.toString('mm') + ';' + \
-            common.byte_to_pretty_string(size)
+        info_string = mtime.toString('dd') + '/' + mtime.toString('MM') + '/' + mtime.toString(
+            'yyyy'
+        ) + ' ' + mtime.toString('hh') + ':' + mtime.toString('mm') + ';' + common.byte_to_pretty_string(size)
 
         if not self.is_valid(ref):
             return False
@@ -741,13 +703,8 @@ class ThumbnailWorker(BaseWorker):
     """
 
     def is_valid(self, ref):
-        return False if (
-                not ref() or
-                self.interrupt or
-                ref()[common.ThumbnailLoaded] or
-                ref()[common.FlagsRole] & common.MarkedAsArchived or
-                ref()[common.ItemTabRole] != common.FileTab
-        ) else True
+        return False if (not ref() or self.interrupt or ref()[common.ThumbnailLoaded] or ref()[
+            common.FlagsRole] & common.MarkedAsArchived or ref()[common.ItemTabRole] != common.FileTab) else True
 
     @process
     @common.error
@@ -777,18 +734,11 @@ class ThumbnailWorker(BaseWorker):
             return False
         source = ref()[common.PathRole]
         # Resolve the thumbnail's path...
-        destination = images.get_cached_thumbnail_path(
-            _p[0],
-            _p[1],
-            _p[2],
-            source,
-        )
+        destination = images.get_cached_thumbnail_path(_p[0], _p[1], _p[2], source, )
         # ...and use it to load the resource
         image = images.ImageCache.get_image(
-            destination,
-            int(size),
-            force=True  # force=True will refresh the cache
-        )
+            destination, int(size), force=True  # force=True will refresh the cache
+            )
 
         # If the image successfully loads we can wrap things up here
         if image and not image.isNull():
@@ -817,11 +767,7 @@ class ThumbnailWorker(BaseWorker):
         try:
             # Skip large files
 
-            res = pyimageutil.convert_image(
-                source,
-                destination,
-                max_size=int(common.thumbnail_size),
-            )
+            res = pyimageutil.convert_image(source, destination, max_size=int(common.thumbnail_size), )
             if res:
                 images.ImageCache.get_image(destination, int(size), force=True)
                 images.make_color(destination)
@@ -830,13 +776,11 @@ class ThumbnailWorker(BaseWorker):
             # We should never get here ideally, but if we do we'll mark the item
             # with a bespoke 'failed' thumbnail
 
-            fpath = common.rsc(
-                f'{common.GuiResource}/failed.{common.thumbnail_format}')
+            fpath = common.rsc(f'{common.GuiResource}/failed.{common.thumbnail_format}')
             hash = common.get_hash(destination)
 
             images.ImageCache.get_image(fpath, int(size), hash=hash, force=True)
-            images.ImageCache.setValue(
-                hash, common.color(common.color_dark_background), images.ColorType)
+            images.ImageCache.setValue(hash, common.color(common.color_dark_background), images.ColorType)
             return True
 
         except TypeError:
@@ -892,18 +836,24 @@ class ShotgunWorker(BaseWorker):
 
         try:
             args = threads.queue(self.queue).pop()
-            idx, server, job, root, asset, entity_type, filters, fields = args
+            idx, server, job, root, asset, user, entity_type, filters, fields = args
 
-            sg_properties = shotgun.ShotgunProperties(server, job, root, asset)
+            sg_properties = shotgun.ShotgunProperties(
+                server, job, root, asset, login=common.settings.value(
+                    'shotgrid_publish/login'
+                ) if user else None, password=common.settings.value(
+                    'shotgrid_publish/password'
+                ) if user else None, )
             sg_properties.init()
             if not sg_properties.verify(connection=True):
                 return
 
             sg = shotgun.get_sg(
                 sg_properties.domain,
-                sg_properties.script,
-                sg_properties.key,
-            )
+                common.settings.value('shotgrid_publish/login') if user else sg_properties.script,
+                common.settings.value('shotgrid_publish/password') if user else sg_properties.key,
+                user=user
+                )
 
             if entity_type == 'Status':
                 from ..shotgun import actions as sg_actions
@@ -911,9 +861,25 @@ class ShotgunWorker(BaseWorker):
             else:
                 entities = sg.find(entity_type, filters, fields=fields)
 
+            # Sort the entities by code or name
+            def key(x):
+                if 'code' in x:
+                    return x['code']
+                elif 'name' in x:
+                    return x['name']
+                elif 'content' in x:
+                    return x['content']
+                else:
+                    return str(x)
+
+            try:
+                entities = sorted(entities, key=key)
+            except:
+                log.error('Could not sort entities')
+
             # Emit the retrieved data so the ui components can fetch it
             self.sgEntityDataReady.emit(idx, entities)
         except IndexError:
             pass  # ignore index errors
-        except:
-            raise
+        except Exception as e:
+            log.error(f'Error: {e}')

@@ -1505,12 +1505,9 @@ class BaseContextMenu(QtWidgets.QMenu):
         """ShotGrid publish menu actions.
 
         """
-        server = common.active('server')
-        job = common.active('job')
-        root = common.active('root')
-        asset = common.active('asset')
+        sg_properties = shotgun.ShotgunProperties(active=True)
+        sg_properties.init()
 
-        sg_properties = shotgun.ShotgunProperties(server, job, root, asset)
         if not sg_properties.verify():
             return
 
@@ -1519,11 +1516,28 @@ class BaseContextMenu(QtWidgets.QMenu):
             self.menu[k] = collections.OrderedDict()
             self.menu[f'{k}:icon'] = ui.get_icon('sg')
 
+        self.separator(self.menu[k])
+
         self.menu[k][key()] = {
             'text': 'Publish',
             'icon': ui.get_icon('sg', color=common.color(common.color_green)),
             'action': sg_actions.publish,
         }
+
+    def sg_browse_tasks_menu(self):
+        """ShotGrid publish menu actions.
+
+        """
+        sg_properties = shotgun.ShotgunProperties(active=True)
+        sg_properties.init()
+
+        if not sg_properties.verify():
+            return
+
+        k = 'ShotGrid'
+        if k not in self.menu:
+            self.menu[k] = collections.OrderedDict()
+            self.menu[f'{k}:icon'] = ui.get_icon('sg')
 
         self.separator(self.menu[k])
 
@@ -1532,6 +1546,8 @@ class BaseContextMenu(QtWidgets.QMenu):
             'icon': ui.get_icon('sg'),
             'action': sg_actions.show_task_picker,
         }
+
+        self.separator(self.menu[k])
 
     def convert_menu(self):
         """FFMpeg convert menu.

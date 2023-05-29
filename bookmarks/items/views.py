@@ -488,7 +488,8 @@ class BaseItemView(QtWidgets.QTableView):
     #: Emitted when the user shift+right-clicks on the view. Use this to show DCC
     #: specific context menus.
     customContextMenuRequested = QtCore.Signal(
-        QtCore.QModelIndex, QtCore.QObject)
+        QtCore.QModelIndex, QtCore.QObject
+    )
     #: Called when the user requests model data load by pressing the ESC key.
     interruptRequested = QtCore.Signal()
 
@@ -563,7 +564,8 @@ class BaseItemView(QtWidgets.QTableView):
         # Keyboard search timer and placeholder string.
         self.timer = common.Timer(parent=self)
         self.timer.setInterval(
-            QtWidgets.QApplication.instance().keyboardInputInterval())
+            QtWidgets.QApplication.instance().keyboardInputInterval()
+        )
         self.timer.setSingleShot(True)
         self.timed_search_string = ''
 
@@ -676,7 +678,8 @@ class BaseItemView(QtWidgets.QTableView):
         proxy.invalidated.connect(self.delayed_save_visible_rows)
 
         model.updateIndex.connect(
-            self.update, type=QtCore.Qt.DirectConnection)
+            self.update, type=QtCore.Qt.DirectConnection
+        )
 
         common.signals.paintThumbnailBGChanged.connect(
             self.repaint_visible_rows
@@ -739,7 +742,8 @@ class BaseItemView(QtWidgets.QTableView):
 
         """
         self.delayed_save_selection_timer.start(
-            self.delayed_save_selection_timer.interval())
+            self.delayed_save_selection_timer.interval()
+        )
 
     @QtCore.Slot()
     def save_selection(self):
@@ -768,7 +772,8 @@ class BaseItemView(QtWidgets.QTableView):
 
         """
         self.delayed_restore_selection_timer.start(
-            self.delayed_restore_selection_timer.interval())
+            self.delayed_restore_selection_timer.interval()
+        )
 
     @QtCore.Slot()
     def restore_selection(self):
@@ -824,14 +829,16 @@ class BaseItemView(QtWidgets.QTableView):
         index = proxy.sourceModel().active_index()
         if index.isValid():
             self.selectionModel().setCurrentIndex(
-                index, QtCore.QItemSelectionModel.ClearAndSelect)
+                index, QtCore.QItemSelectionModel.ClearAndSelect
+            )
             self.scrollTo(index, QtWidgets.QAbstractItemView.PositionAtCenter)
             return
 
         # Select the first item in the list
         index = proxy.index(0, 0)
         self.selectionModel().setCurrentIndex(
-            index, QtCore.QItemSelectionModel.ClearAndSelect)
+            index, QtCore.QItemSelectionModel.ClearAndSelect
+        )
         self.scrollTo(index, QtWidgets.QAbstractItemView.PositionAtCenter)
 
     def toggle_item_flag(self, index, flag, state=None, commit_now=True):
@@ -854,7 +861,8 @@ class BaseItemView(QtWidgets.QTableView):
         def _save_to_db(k, mode, flag):
             if not commit_now:
                 threads.queue_database_transaction(
-                    server, job, root, k, mode, flag)
+                    server, job, root, k, mode, flag
+                )
                 return
             database.set_flag(server, job, root, k, mode, flag)
 
@@ -874,12 +882,14 @@ class BaseItemView(QtWidgets.QTableView):
 
         # Ignore default items
         if flag == common.MarkedAsArchived and index.data(
-                common.FlagsRole) & common.MarkedAsDefault:
+                common.FlagsRole
+        ) & common.MarkedAsDefault:
             ui.MessageBox('Default bookmark items cannot be archived.').open()
             return
         # Ignore active items
         if flag == common.MarkedAsArchived and index.data(
-                common.FlagsRole) & common.MarkedAsActive:
+                common.FlagsRole
+        ) & common.MarkedAsActive:
             ui.MessageBox('This item is currently active and cannot be archived.').open()
             return
 
@@ -1047,7 +1057,8 @@ class BaseItemView(QtWidgets.QTableView):
         current_index = sel.currentIndex()
         first_index = self.model().index(0, 0)
         last_index = self.model().index(
-            self.model().rowCount() - 1, 0)
+            self.model().rowCount() - 1, 0
+        )
 
         if first_index == last_index:
             return
@@ -1227,7 +1238,8 @@ class BaseItemView(QtWidgets.QTableView):
         rect = rect.adjusted(o * 3, o, -o * 3, -o)
 
         font, metrics = common.font_db.bold_font(
-            common.size(common.size_font_small))
+            common.size(common.size_font_small)
+        )
         text = metrics.elidedText(
             text,
             QtCore.Qt.ElideRight,
@@ -1256,7 +1268,8 @@ class BaseItemView(QtWidgets.QTableView):
 
     def delayed_reset_row_layout(self):
         self.delayed_reset_row_layout_timer.start(
-            self.delayed_reset_row_layout_timer.interval())
+            self.delayed_reset_row_layout_timer.interval()
+        )
 
     @common.error
     @common.debug
@@ -1275,9 +1288,11 @@ class BaseItemView(QtWidgets.QTableView):
         if row >= 0:
             index = proxy.index(row, 0)
             self.selectionModel().setCurrentIndex(
-                index, QtCore.QItemSelectionModel.ClearAndSelect)
+                index, QtCore.QItemSelectionModel.ClearAndSelect
+            )
             self.scrollTo(
-                index, QtWidgets.QAbstractItemView.PositionAtCenter)
+                index, QtWidgets.QAbstractItemView.PositionAtCenter
+            )
 
     def set_row_size(self, v):
         """Sets the row size.
@@ -1318,8 +1333,11 @@ class BaseItemView(QtWidgets.QTableView):
             model.reset_data(force=True, emit_active=False)
 
         # Delay the selection to let the model process events
-        QtCore.QTimer.singleShot(100, functools.partial(
-            self.select_item, v, role=role))
+        QtCore.QTimer.singleShot(
+            100, functools.partial(
+                self.select_item, v, role=role
+            )
+            )
 
     def select_item(self, v, role=QtCore.Qt.DisplayRole):
         """Select an item in the viewer.
@@ -2066,38 +2084,46 @@ class InlineIconView(BaseItemView):
             if event.buttons() == QtCore.Qt.NoButton:
                 if rectangles[delegate.PropertiesRect].contains(cursor_position):
                     common.signals.showStatusTipMessage.emit(
-                        'Edit item properties...')
+                        'Edit item properties...'
+                    )
                     self.update(index)
                 elif rectangles[delegate.AddItemRect].contains(cursor_position):
                     common.signals.showStatusTipMessage.emit(
-                        'Add New Item...')
+                        'Add New Item...'
+                    )
                     self.update(index)
                 elif rectangles[delegate.TodoRect].contains(cursor_position):
                     common.signals.showStatusTipMessage.emit(
-                        'Edit Notes...')
+                        'Edit Notes...'
+                    )
                     self.update(index)
                 elif rectangles[delegate.RevealRect].contains(cursor_position):
                     common.signals.showStatusTipMessage.emit(
-                        'Show item in File Explorer...')
+                        'Show item in File Explorer...'
+                    )
                     self.update(index)
                 elif rectangles[delegate.ArchiveRect].contains(cursor_position):
                     common.signals.showStatusTipMessage.emit(
-                        'Archive item...')
+                        'Archive item...'
+                    )
                     self.update(index)
                 elif rectangles[delegate.FavouriteRect].contains(cursor_position):
                     common.signals.showStatusTipMessage.emit(
-                        'Star item...')
+                        'Star item...'
+                    )
                     self.update(index)
                 elif rectangles[delegate.ThumbnailRect].contains(cursor_position):
                     common.signals.showStatusTipMessage.emit(
-                        'Drag and drop an image, or right-click to edit the thumbnail...')
+                        'Drag and drop an image, or right-click to edit the thumbnail...'
+                    )
                     self.update(index)
                 elif rectangles[delegate.InlineBackgroundRect].contains(cursor_position):
                     common.signals.clearStatusBarMessage.emit()
                     self.update(index)
                 elif rectangles[delegate.DataRect].contains(cursor_position):
                     common.signals.showStatusTipMessage.emit(
-                        index.data(common.PathRole))
+                        index.data(common.PathRole)
+                    )
                 else:
                     common.signals.clearStatusBarMessage.emit()
                     self.update(index)
@@ -2107,13 +2133,15 @@ class InlineIconView(BaseItemView):
                 return
 
             rect = delegate.get_description_rectangle(
-                index, self.visualRect(index), self.buttons_hidden())
+                index, self.visualRect(index), self.buttons_hidden()
+            )
 
             if rect and rect.contains(cursor_position):
                 self.update(index)
                 if app.overrideCursor():
                     app.changeOverrideCursor(
-                        QtGui.QCursor(QtCore.Qt.IBeamCursor))
+                        QtGui.QCursor(QtCore.Qt.IBeamCursor)
+                    )
                 else:
                     app.restoreOverrideCursor()
                     app.setOverrideCursor(QtGui.QCursor(QtCore.Qt.IBeamCursor))
@@ -2313,7 +2341,8 @@ class ThreadedItemView(InlineIconView):
     @QtCore.Slot()
     def delayed_save_visible_rows(self):
         self.delayed_save_visible_timer.start(
-            self.delayed_save_visible_timer.interval())
+            self.delayed_save_visible_timer.interval()
+        )
 
     @QtCore.Slot()
     @common.debug

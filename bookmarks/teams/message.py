@@ -128,7 +128,9 @@ def send(webhook, payload):
     response = requests.post(
         webhook,
         json=payload,
-        headers={"Content-Type": "application/json"},
+        headers={
+            "Content-Type": "application/json"
+        },
         proxies={},
         timeout=60,
         verify=None,

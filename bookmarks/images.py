@@ -101,7 +101,8 @@ def init_pixel_ratio():
     app = QtWidgets.QApplication.instance()
     if not app:
         log.error(
-            '`init_pixel_ratio()` was called before a QApplication was created.')
+            '`init_pixel_ratio()` was called before a QApplication was created.'
+        )
 
     if app and common.pixel_ratio is None:
         common.pixel_ratio = app.primaryScreen().devicePixelRatio()
@@ -109,9 +110,11 @@ def init_pixel_ratio():
         common.pixel_ratio = 1.0
 
 
-def get_thumbnail(server, job, root, source, size=common.thumbnail_size,
-                  fallback_thumb='placeholder',
-                  get_path=False):
+def get_thumbnail(
+        server, job, root, source, size=common.thumbnail_size,
+        fallback_thumb='placeholder',
+        get_path=False
+        ):
     """Get the thumbnail of a list item.
 
     When an item is missing a bespoke cached thumbnail file, we will try to load
@@ -145,7 +148,8 @@ def get_thumbnail(server, job, root, source, size=common.thumbnail_size,
 
     def _get(server, job, root, source, proxy):
         path = get_cached_thumbnail_path(
-            server, job, root, source, proxy=proxy)
+            server, job, root, source, proxy=proxy
+        )
         pixmap = ImageCache.get_pixmap(path, size)
         if not pixmap or pixmap.isNull():
             return (path, None, None)
@@ -292,7 +296,8 @@ def create_thumbnail_from_image(server, job, root, source, image, proxy=False):
 
     """
     thumbnail_path = get_cached_thumbnail_path(
-        server, job, root, source, proxy=proxy)
+        server, job, root, source, proxy=proxy
+    )
 
     if QtCore.QFileInfo(thumbnail_path).exists():
         if not QtCore.QFile(thumbnail_path).remove():
@@ -405,10 +410,12 @@ def oiio_get_qimage(source, buf=None, force=True, lock_mutex=True):
     elif int(spec.nchannels) > 4:
         if spec.channelindex('A') > -1:
             b = OpenImageIO.ImageBufAlgo.channels(
-                buf, ('R', 'G', 'B', 'A'), ('R', 'G', 'B', 'A'))
+                buf, ('R', 'G', 'B', 'A'), ('R', 'G', 'B', 'A')
+            )
         else:
             b = OpenImageIO.ImageBufAlgo.channels(
-                buf, ('R', 'G', 'B'), ('R', 'G', 'B'))
+                buf, ('R', 'G', 'B'), ('R', 'G', 'B')
+            )
 
     np_arr = buf.get_pixels(OpenImageIO.UINT8)
 
@@ -509,8 +516,10 @@ def resize_image(image, size):
     return image.smoothScaled(round(w), round(h))
 
 
-def rsc_pixmap(name, color, size, opacity=1.0, resource=common.GuiResource,
-               get_path=False, oiio=False):
+def rsc_pixmap(
+        name, color, size, opacity=1.0, resource=common.GuiResource,
+        get_path=False, oiio=False
+        ):
     """Loads an image resource and returns it as a resized (and recolored) QPixmap.
 
     Args:
@@ -624,7 +633,6 @@ class ImageCache(QtCore.QObject):
             if lock_mutex:
                 cls.lock.unlock()
 
-
     @classmethod
     def flush(cls, source, lock_mutex=False):
         """Flushes all values associated with a given source from the image cache.
@@ -719,7 +727,8 @@ class ImageCache(QtCore.QObject):
         """
         if not QtGui.QGuiApplication.instance():
             raise RuntimeError(
-                'Cannot create QPixmaps without a gui application.')
+                'Cannot create QPixmaps without a gui application.'
+            )
 
         common.check_type(source, str)
 

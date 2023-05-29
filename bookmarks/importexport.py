@@ -184,7 +184,8 @@ def verify_zip_file(path, item_type):
         b = 'bookmark' if item_type == common.BookmarkTab else b
         b = 'asset' if item_type == common.AssetTab else b
         raise RuntimeError(
-            f'This is a {a} property file, and it isn\'t compatible with {b} items.')
+            f'This is a {a} property file, and it isn\'t compatible with {b} items.'
+        )
 
 
 def export_item_properties(index, destination=None):

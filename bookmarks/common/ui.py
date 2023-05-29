@@ -181,7 +181,8 @@ def init_stylesheet():
     try:
         from .. import images
         primary = common.font_db.bold_font(
-            size(common.size_font_medium))[0].family()
+            size(common.size_font_medium)
+        )[0].family()
         secondary = common.font_db.medium_font(
             size(common.size_font_small)
         )[0].family()

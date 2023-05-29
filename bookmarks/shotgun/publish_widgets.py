@@ -12,6 +12,49 @@ NOT_SELECTED = 'Not selected...'
 NOT_CONFIGURED = 'Not configured'
 
 
+class Credentials(QtWidgets.QDialog):
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.help_label = QtWidgets.QLabel('Enter your ShotGrid credentials to continue.')
+
+        self.username_label = QtWidgets.QLabel('Username')
+        self.password_label = QtWidgets.QLabel('Password')
+
+        self.username_field = QtWidgets.QLineEdit(self)
+        self.password_field = QtWidgets.QLineEdit(self)
+        self.password_field.setEchoMode(QtWidgets.QLineEdit.Password)
+
+        self.ok_button = QtWidgets.QPushButton('OK')
+        self.ok_button.clicked.connect(self.accept)
+
+        self.cancel_button = QtWidgets.QPushButton('Cancel')
+        self.cancel_button.clicked.connect(self.reject)
+
+        layout = QtWidgets.QFormLayout(self)
+        layout.addRow(self.help_label)
+        layout.addRow(self.username_label, self.username_field)
+        layout.addRow(self.password_label, self.password_field)
+        layout.addRow(self.ok_button, self.cancel_button)
+
+        self.setLayout(layout)
+
+        login = common.settings.value('shotgrid_publish/login')
+        login = login if login else ''
+        password = common.settings.value('shotgrid_publish/password')
+        password = password if password else ''
+
+        self.username_field.setText(login)
+        self.password_field.setText(password)
+
+        common.set_stylesheet(self)
+
+    def accept(self):
+        common.settings.setValue('shotgrid_publish/login', self.username_field.text())
+        common.settings.setValue('shotgrid_publish/password', self.password_field.text())
+        super().accept()
+
+
 class DropWidget(QtWidgets.QWidget):
     """Widget used to provide an area to drop a file onto.
 
@@ -20,7 +63,7 @@ class DropWidget(QtWidgets.QWidget):
     fileSelected = QtCore.Signal(str)
 
     def __init__(self, parent=None):
-        super(DropWidget, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
         self._drag_in_progress = False
         self._path = None
@@ -28,10 +71,7 @@ class DropWidget(QtWidgets.QWidget):
 
         self.setAcceptDrops(True)
         self.setFixedHeight(common.size(common.size_row_height) * 4)
-        self.setSizePolicy(
-            QtWidgets.QSizePolicy.MinimumExpanding,
-            QtWidgets.QSizePolicy.Fixed
-        )
+        self.setSizePolicy(QtWidgets.QSizePolicy.MinimumExpanding, QtWidgets.QSizePolicy.Fixed)
 
         self.clicked.connect(self.pick)
 
@@ -66,8 +106,6 @@ class DropWidget(QtWidgets.QWidget):
         option.initFrom(self)
 
         hover = option.state & QtWidgets.QStyle.State_MouseOver
-        pressed = option.state & QtWidgets.QStyle.State_Sunken
-        focus = option.state & QtWidgets.QStyle.State_HasFocus
 
         # Background
         painter.save()
@@ -97,8 +135,7 @@ class DropWidget(QtWidgets.QWidget):
 
         rect = self.rect().adjusted(o, o, -o, -o)
 
-        color = common.color(common.color_green) if hover else common.color(
-            common.color_separator)
+        color = common.color(common.color_green) if hover else common.color(common.color_separator)
         pen = QtGui.QPen(color)
         pen.setWidthF(common.size(common.size_separator) * 2)
         pen.setStyle(QtCore.Qt.DashLine)
@@ -121,8 +158,7 @@ class DropWidget(QtWidgets.QWidget):
 
         o = common.size(common.size_margin) * 1.5
 
-        color = common.color(common.color_green) if hover else common.color(
-            common.color_secondary_text)
+        color = common.color(common.color_green) if hover else common.color(common.color_secondary_text)
         color = common.color(common.color_selected_text) if self._path else color
         color = common.color(common.color_green) if self._drag_in_progress else color
 
@@ -132,13 +168,8 @@ class DropWidget(QtWidgets.QWidget):
             rect = self.rect().adjusted(o, o, -o, -o)
 
         common.draw_aliased_text(
-            painter,
-            common.font_db.bold_font(common.size(common.size_font_large))[0],
-            rect,
-            v,
-            QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight,
-            color,
-        )
+            painter, common.font_db.bold_font(common.size(common.size_font_large))[0], rect, v,
+            QtCore.Qt.AlignVCenter | QtCore.Qt.AlignRight, color, )
 
     def _draw_background_icon(self, painter, hover):
         if self._drag_in_progress:
@@ -171,25 +202,24 @@ class DropWidget(QtWidgets.QWidget):
     def enterEvent(self, event):
         app = QtWidgets.QApplication.instance()
         if app.overrideCursor():
-            app.changeOverrideCursor(
-                QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+            app.changeOverrideCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         else:
             app.restoreOverrideCursor()
             app.setOverrideCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.update()
-        super(DropWidget, self).enterEvent(event)
+        super().enterEvent(event)
 
     def leaveEvent(self, event):
         app = QtWidgets.QApplication.instance()
         if app.overrideCursor():
             app.restoreOverrideCursor()
         self.update()
-        super(DropWidget, self).leaveEvent(event)
+        super().leaveEvent(event)
 
     def mouseReleaseEvent(self, event):
         if self.rect().contains(event.pos()):
             self.clicked.emit()
-        super(DropWidget, self).mouseReleaseEvent(event)
+        super().mouseReleaseEvent(event)
 
     def dragEnterEvent(self, event):
         if event.mimeData().hasUrls():
@@ -237,20 +267,21 @@ class ProjectEntityEditor(shotgun.EntityComboBox):
     """Displays the current project entity."""
 
     def __init__(self, parent=None):
-        super(ProjectEntityEditor, self).__init__(
-            [self.entity(), ],
-            parent=None
-        )
+        super().__init__([self.entity(), ], parent=None)
         self.model().set_entity_type(None)
         self.setCurrentIndex(0)
 
     @common.error
     @common.debug
     def entity(self):
-        sg_properties = shotgun.ShotgunProperties(active=True)
+        sg_properties = shotgun.ShotgunProperties(
+            active=True, login=common.settings.value('shotgrid_publish/login'),
+            password=common.settings.value('shotgrid_publish/password'), )
         sg_properties.init()
+
         if not sg_properties.verify(bookmark=True):
             return NOT_CONFIGURED
+
         entity = {
             'id': sg_properties.bookmark_id,
             'name': sg_properties.bookmark_name,
@@ -263,20 +294,21 @@ class AssetEntityEditor(shotgun.EntityComboBox):
     """Displays the current asset entity."""
 
     def __init__(self, parent=None):
-        super(AssetEntityEditor, self).__init__(
-            [self.entity(), ],
-            parent=None
-        )
+        super().__init__([self.entity(), ], parent=None)
         self.model().set_entity_type(None)
         self.setCurrentIndex(0)
 
     @common.error
     @common.debug
     def entity(self):
-        sg_properties = shotgun.ShotgunProperties(active=True)
+        sg_properties = shotgun.ShotgunProperties(
+            active=True, login=common.settings.value('shotgrid_publish/login'),
+            password=common.settings.value('shotgrid_publish/password'), )
         sg_properties.init()
+
         if not sg_properties.verify(asset=True):
             return NOT_CONFIGURED
+
         entity = {
             'id': sg_properties.asset_id,
             'name': sg_properties.asset_name,
@@ -303,15 +335,8 @@ class StatusEditor(shotgun.EntityComboBox):
         self.model().set_entity_type(None)
 
         model.entityDataRequested.emit(
-            model.uuid,
-            common.active('server'),
-            common.active('job'),
-            common.active('root'),
-            None,
-            'Status',
-            [],
-            [],
-        )
+            model.uuid, common.active('server'), common.active('job'), common.active('root'),
+            None, True, 'Status', [], [], )
 
     def select_default(self):
         """Select the default status code, if a 'default' value is found in
@@ -333,8 +358,8 @@ class TaskEditor(shotgun.EntityComboBox):
     """Lets the user select a ShotGrid task."""
 
     def __init__(self, parent=None):
-        super(TaskEditor, self).__init__(
-            [NOT_SELECTED, 'Open Task Browser...', ], parent=parent)
+        super().__init__([NOT_SELECTED, 'Open Task Browser...', ], parent=parent)
+
         self.init_data()
 
         self.model().sourceModel().entityDataReceived.connect(self.restore_selection)
@@ -352,24 +377,22 @@ class TaskEditor(shotgun.EntityComboBox):
 
         # Set filtering
         self.model().set_entity_type('Task')
-
-        sg_properties = shotgun.ShotgunProperties(active=True)
+        sg_properties = shotgun.ShotgunProperties(
+            active=True, login=common.settings.value('shotgrid_publish/login'),
+            password=common.settings.value('shotgrid_publish/password'), )
         sg_properties.init()
+
         if not sg_properties.verify(bookmark=True):
             return
 
         model.entityDataRequested.emit(
-            model.uuid,
-            sg_properties.server,
-            sg_properties.job,
-            sg_properties.root,
-            sg_properties.asset,
-            'Task',
-            [
-                ['project', 'is', {'type': 'Project',
-                                   'id': sg_properties.bookmark_id}],
-            ],
-            shotgun.fields['Task'],
+            model.uuid, sg_properties.server, sg_properties.job, sg_properties.root,
+            sg_properties.asset, True, 'Task',
+            [['project', 'is', {
+                'type': 'Project',
+                'id': sg_properties.bookmark_id
+            }], ],
+            shotgun.fields['Task']
         )
 
     @common.error
@@ -388,12 +411,12 @@ class TaskEditor(shotgun.EntityComboBox):
             return
         k = 'content'
         if k in entity and entity[k]:
-            common.settings.setValue('shotgrid/publish_task', entity[k])
+            common.settings.setValue('shotgrid_publish/task', entity[k])
 
     @common.error
     @common.debug
     def restore_selection(self, *args, **kwargs):
-        v = common.settings.value('shotgrid/publish_task')
+        v = common.settings.value('shotgrid_publish/task')
         if not v:
             self.setCurrentIndex(0)
             return
@@ -435,8 +458,7 @@ class LocalStorageEditor(shotgun.EntityComboBox):
     """Lets the user select a ShotGrid task."""
 
     def __init__(self, parent=None):
-        super(LocalStorageEditor, self).__init__(
-            [NOT_SELECTED, ], parent=parent)
+        super().__init__([NOT_SELECTED, ], parent=parent)
         self.init_data()
         self.model().sourceModel().entityDataReceived.connect(self.select_entity)
 
@@ -451,20 +473,17 @@ class LocalStorageEditor(shotgun.EntityComboBox):
         # Set filtering
         self.model().set_entity_type('LocalStorage')
 
-        sg_properties = shotgun.ShotgunProperties(active=True)
+        sg_properties = shotgun.ShotgunProperties(
+            active=True, login=common.settings.value('shotgrid_publish/login'),
+            password=common.settings.value('shotgrid_publish/password'), )
         sg_properties.init()
+
         if not sg_properties.verify(connection=True):
             return
 
         model.entityDataRequested.emit(
-            model.uuid,
-            sg_properties.server,
-            sg_properties.job,
-            sg_properties.root,
-            sg_properties.asset,
-            'LocalStorage',
-            [],
-            shotgun.fields['LocalStorage'],
+            model.uuid, sg_properties.server, sg_properties.job, sg_properties.root,
+            sg_properties.asset, True, 'LocalStorage', [], shotgun.fields['LocalStorage']
         )
 
     def select_entity(self):
@@ -500,11 +519,12 @@ class LocalStorageEditor(shotgun.EntityComboBox):
 
 
 class PublishedFileTypeEditor(shotgun.EntityComboBox):
-    """Lets the user select a ShotGrid task."""
+    """Lets the user select a ShotGrid PublishFileType.
+
+    """
 
     def __init__(self, parent=None):
-        super(PublishedFileTypeEditor, self).__init__(
-            [NOT_SELECTED, ], parent=parent)
+        super().__init__([NOT_SELECTED, ], parent=parent)
         self.init_data()
         self.model().sourceModel().entityDataReceived.connect(self.restore_selection)
         self.currentIndexChanged.connect(self.save_selection)
@@ -520,20 +540,18 @@ class PublishedFileTypeEditor(shotgun.EntityComboBox):
         # Set filtering
         self.model().set_entity_type('PublishedFileType')
 
-        sg_properties = shotgun.ShotgunProperties(active=True)
+        sg_properties = shotgun.ShotgunProperties(
+            active=True, login=common.settings.value('shotgrid_publish/login'),
+            password=common.settings.value('shotgrid_publish/password'), )
         sg_properties.init()
+
         if not sg_properties.verify(bookmark=True):
             return
 
         model.entityDataRequested.emit(
-            model.uuid,
-            sg_properties.server,
-            sg_properties.job,
-            sg_properties.root,
-            sg_properties.asset,
-            'PublishedFileType',
-            [],
-            shotgun.fields['PublishedFileType'],
+            model.uuid, sg_properties.server, sg_properties.job, sg_properties.root,
+            sg_properties.asset, True, 'PublishedFileType', [],
+            shotgun.fields['PublishedFileType']
         )
 
     @common.error
@@ -552,12 +570,12 @@ class PublishedFileTypeEditor(shotgun.EntityComboBox):
             return
         k = 'code'
         if k in entity and entity[k]:
-            common.settings.setValue('publish/type', entity[k])
+            common.settings.setValue('shotgrid_publish/type', entity[k])
 
     @common.error
     @common.debug
     def restore_selection(self, *args, **kwargs):
-        v = common.settings.value('publish/type')
+        v = common.settings.value('shotgrid_publish/type')
         if not v:
             self.setCurrentIndex(0)
             return
@@ -597,34 +615,19 @@ class PublishedFileTypeEditor(shotgun.EntityComboBox):
 
 class PickFile(QtWidgets.QFileDialog):
     def __init__(self, parent=None):
-        super(PickFile, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
         self.setFileMode(QtWidgets.QFileDialog.ExistingFile)
         self.setViewMode(QtWidgets.QFileDialog.List)
         self.setAcceptMode(QtWidgets.QFileDialog.AcceptOpen)
 
-        self.setFilter(
-            QtCore.QDir.Files | QtCore.QDir.NoDotAndDotDot
-        )
-        self.setLabelText(
-            QtWidgets.QFileDialog.Accept,
-            'Pick a file to publish'
-        )
+        self.setFilter(QtCore.QDir.Files | QtCore.QDir.NoDotAndDotDot)
+        self.setLabelText(QtWidgets.QFileDialog.Accept, 'Pick a file to publish')
 
-        args = (
-            common.active('server'),
-            common.active('job'),
-            common.active('root'),
-            common.active('asset'),
-            common.active('task'),
-        )
+        args = (common.active('server'), common.active('job'), common.active('root'), common.active('asset'),
+                common.active('task'),)
         if not all(args):
-            args = (
-                common.active('server'),
-                common.active('job'),
-                common.active('root'),
-                common.active('asset'),
-            )
+            args = (common.active('server'), common.active('job'), common.active('root'), common.active('asset'),)
         if not all(args):
             return
         path = '/'.join(args)

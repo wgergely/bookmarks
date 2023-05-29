@@ -91,6 +91,7 @@ TemplateResource = 'templates'
 
 hashes_mutex = QtCore.QMutex()
 
+
 def rsc(rel_path):
     """Returns a resource item from the `rsc` directory.
 

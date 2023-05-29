@@ -55,7 +55,8 @@ value_map = {
 class LinkBookmarkWidget(link.BaseLinkWidget):
     def __init__(self, server, job, root, parent=None):
         super().__init__(
-            server, job, root, None, 'Project', value_map, parent=parent)
+            server, job, root, None, 'Project', value_map, parent=parent
+        )
 
     def db_source(self):
         """A file path to use as the source of database values.
@@ -87,6 +88,7 @@ class LinkBookmarkWidget(link.BaseLinkWidget):
             self.job,
             self.root,
             self.asset,
+            False,
             'Project',
             [
                 ['is_demo', 'is', False],
@@ -101,5 +103,6 @@ class LinkBookmarkWidget(link.BaseLinkWidget):
     @common.debug
     def create_entity(self, entity_name):
         entity = sg_actions.create_project(
-            self.server, self.job, self.root, entity_name)
+            self.server, self.job, self.root, entity_name
+        )
         self.combobox.append_entity(entity)

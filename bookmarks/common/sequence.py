@@ -138,7 +138,8 @@ def get_sequence(s):
     common.check_type(s, str)
     if is_collapsed(s):
         raise RuntimeError(
-            'Cannot extract sequence numbers from collapsed items.')
+            'Cannot extract sequence numbers from collapsed items.'
+        )
     return GetSequenceRegex.search(s)
 
 

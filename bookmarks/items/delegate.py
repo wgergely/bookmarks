@@ -883,7 +883,8 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
             return None
 
         description_rect = get_description_rectangle(
-            index, option.rect, self.parent().buttons_hidden())
+            index, option.rect, self.parent().buttons_hidden()
+        )
         if not description_rect:
             return None
 
@@ -998,15 +999,19 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
                 IndicatorRect: indicator_rect,
                 ThumbnailRect: thumbnail_rect,
                 ArchiveRect: inline_icon_rects[next(n)] if count > next(
-                    _n) else null_rect,
+                    _n
+                ) else null_rect,
                 RevealRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
                 TodoRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
                 FavouriteRect: inline_icon_rects[next(n)] if count > next(
-                    _n) else null_rect,
+                    _n
+                ) else null_rect,
                 AddItemRect: inline_icon_rects[next(n)] if count > next(
-                    _n) else null_rect,
+                    _n
+                ) else null_rect,
                 PropertiesRect: inline_icon_rects[next(n)] if count > next(
-                    _n) else null_rect,
+                    _n
+                ) else null_rect,
                 InlineBackgroundRect: inline_background_rect if count else null_rect,
                 DataRect: data_rect
             }
@@ -1016,15 +1021,19 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
                 IndicatorRect: indicator_rect,
                 ThumbnailRect: thumbnail_rect,
                 ArchiveRect: inline_icon_rects[next(n)] if count > next(
-                    _n) else null_rect,
+                    _n
+                ) else null_rect,
                 RevealRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
                 TodoRect: inline_icon_rects[next(n)] if count > next(_n) else null_rect,
                 AddItemRect: inline_icon_rects[next(n)] if count > next(
-                    _n) else null_rect,
+                    _n
+                ) else null_rect,
                 PropertiesRect: inline_icon_rects[next(n)] if count > next(
-                    _n) else null_rect,
+                    _n
+                ) else null_rect,
                 FavouriteRect: inline_icon_rects[next(n)] if count > next(
-                    _n) else null_rect,
+                    _n
+                ) else null_rect,
                 InlineBackgroundRect: inline_background_rect if count else null_rect,
                 DataRect: data_rect
             }
@@ -1227,14 +1236,18 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         if len(pp) == 3:
             return self.paint_bookmark_name(*args)
         elif len(pp) == 4:
-            return self.paint_asset_name(*args,
-                                         offset=common.size(common.size_indicator) * 2)
+            return self.paint_asset_name(
+                *args,
+                offset=common.size(common.size_indicator) * 2
+                )
         elif len(pp) > 4:
             return self.paint_file_name(*args)
 
     @save_painter
-    def draw_file_description(self, font, metrics, left_limit, right_limit, offset,
-                              large_mode, *args):
+    def draw_file_description(
+            self, font, metrics, left_limit, right_limit, offset,
+            large_mode, *args
+            ):
         """Draws file items' descriptions.
 
         """
@@ -1265,7 +1278,8 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
             left_limit = rectangles[DataRect].left()
 
         rect = get_description_rectangle(
-            index, option.rect, self.parent().buttons_hidden())
+            index, option.rect, self.parent().buttons_hidden()
+        )
 
         if not rect:
             rect = self._get_file_description_rect(
@@ -1956,8 +1970,10 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
             self.paint_inline_count(painter, rect, cursor_position, count, 'asset')
 
     @save_painter
-    def _paint_inline_properties(self, *args,
-                                 _color=common.color(common.color_separator)):
+    def _paint_inline_properties(
+            self, *args,
+            _color=common.color(common.color_separator)
+            ):
         (
             rectangles,
             painter,
@@ -2251,7 +2267,6 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         )
         painter.drawPixmap(rect, pixmap, pixmap.rect())
 
-
     @save_painter
     def paint_db_status(self, *args):
         """Paints the item's Slack configuration status.
@@ -2456,7 +2471,8 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         self.draw_subdir_rectangles(bg_rect, *args)
 
         self.paint_asset_name(
-            *args, offset=(bg_rect.right() - rectangles[DataRect].left()))
+            *args, offset=(bg_rect.right() - rectangles[DataRect].left())
+        )
 
     @save_painter
     def paint_asset_name(self, *args, offset=0):
@@ -2490,11 +2506,13 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         control_modifier = modifiers & QtCore.Qt.ControlModifier
 
         description_rect = get_description_rectangle(
-            index, option.rect, self.parent().buttons_hidden())
+            index, option.rect, self.parent().buttons_hidden()
+        )
 
         if not description_rect:
             description_rect = self._get_asset_description_rect(
-                index, option, rectangles, metrics, offset)
+                index, option, rectangles, metrics, offset
+            )
 
         if description_rect and description_rect.contains(cursor_position):
             underline_rect = QtCore.QRect(description_rect)
@@ -2547,7 +2565,8 @@ class ItemDelegate(QtWidgets.QAbstractItemDelegate):
         color = common.color(common.color_dark_green)
         color = color if active else common.color(common.color_blue)
         color = common.color(common.color_green).darker(150) if r.contains(
-            cursor_position) else color
+            cursor_position
+        ) else color
         color = common.color(common.color_separator) if archived else color
 
         if r.contains(cursor_position):
@@ -2827,7 +2846,8 @@ class BookmarkItemViewDelegate(ItemDelegate):
         from ..threads import workers
         data[idx][common.DescriptionRole] = editor.text()
         data[idx][common.DescriptionRole] = workers.get_bookmark_description(
-            bookmark_row_data)
+            bookmark_row_data
+        )
 
     def paint(self, painter, option, index):
         """Paints a :class:`bookmarks.items.bookmark_items.BookmarkItemView`

@@ -76,9 +76,11 @@ def _add_path_to_mime(mime, path):
 
     if common.get_platform() == common.PlatformWindows:
         mime.setData(
-            'application/x-qt-windows-mime;value="FileName"', _bytes)
+            'application/x-qt-windows-mime;value="FileName"', _bytes
+        )
         mime.setData(
-            'application/x-qt-windows-mime;value="FileNameW"', _bytes)
+            'application/x-qt-windows-mime;value="FileNameW"', _bytes
+        )
 
     return mime
 
@@ -168,6 +170,7 @@ class FileItemViewContextMenu(contextmenu.BaseContextMenu):
             self.publish_menu()
             self.separator()
         self.sg_url_menu()
+        self.sg_browse_tasks_menu()
         if self.index.flags() & QtCore.Qt.ItemIsEnabled:
             self.sg_publish_menu()
             self.sg_rv_menu()

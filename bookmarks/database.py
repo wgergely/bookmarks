@@ -835,7 +835,8 @@ class BookmarkDB(QtCore.QObject):
             # Emit change signal with the value set in the database
             _value = self.value(source, key, table=table)
             common.signals.databaseValueUpdated.emit(
-                table, source, key, _value)
+                table, source, key, _value
+            )
         except sqlite3.Error as e:
             log.error(f'Error setting value:\n{e}')
             self._is_valid = False

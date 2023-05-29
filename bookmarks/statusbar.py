@@ -30,9 +30,11 @@ class StatusBarWidget(QtWidgets.QStatusBar):
         self.setFixedHeight(HEIGHT)
 
         common.signals.showStatusBarMessage.connect(
-            functools.partial(self.showMessage, timeout=1000))
+            functools.partial(self.showMessage, timeout=1000)
+        )
         common.signals.showStatusTipMessage.connect(
-            functools.partial(self.showMessage, timeout=99999))
+            functools.partial(self.showMessage, timeout=99999)
+        )
         common.signals.clearStatusBarMessage.connect(self.clearMessage)
 
     def paintEvent(self, event):
@@ -46,9 +48,12 @@ class StatusBarWidget(QtWidgets.QStatusBar):
         common.draw_aliased_text(
             painter,
             font,
-            self.rect().marginsRemoved(QtCore.QMargins(
-                common.size(common.size_indicator), 0, common.size(common.size_indicator),
-                0)),
+            self.rect().marginsRemoved(
+                QtCore.QMargins(
+                    common.size(common.size_indicator), 0, common.size(common.size_indicator),
+                    0
+                )
+            ),
             '  {}  '.format(self.currentMessage()),
             QtCore.Qt.AlignVCenter | QtCore.Qt.AlignLeft,
             common.color(common.color_text)
@@ -143,6 +148,7 @@ class StatusBar(QtWidgets.QWidget):
         self.layout().addWidget(self.message_widget, 1)
 
         self.toggle_mode_widget = ToggleSessionModeButton(
-            parent=self)
+            parent=self
+        )
         self.layout().addWidget(self.toggle_mode_widget, 0)
         self.layout().addSpacing(common.size(common.size_indicator) * 2)

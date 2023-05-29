@@ -23,7 +23,8 @@ class Test(unittest.TestCase):
         k = 'BOOKMARKS_ROOT'
         if k not in os.environ:
             raise EnvironmentError(
-                'Is Bookmarks installed? Could not find BOOKMARKS_ROOT environment variable')
+                'Is Bookmarks installed? Could not find BOOKMARKS_ROOT environment variable'
+            )
 
         shared = os.environ[k] + os.path.sep + 'shared'
         sys.path.insert(1, shared)

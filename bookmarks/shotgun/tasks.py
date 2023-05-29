@@ -15,7 +15,7 @@ from ..editor import base
 from ..editor import base_widgets
 
 instance = None
-NoStepName = '(Tasks without Step)'
+NoEntity = 'Unassigned'
 
 
 def close():
@@ -62,10 +62,8 @@ class TaskViewContextMenu(contextmenu.BaseContextMenu):
             return
 
         url = shotgun.ENTITY_URL.format(
-            domain=sg_properties.domain,
-            entity_type=entity['type'],
-            entity_id=entity['id'],
-        )
+            domain=sg_properties.domain, entity_type=entity['type'],
+            entity_id=entity['id'], )
         self.menu['visit'] = {
             'text': 'View Online...',
             'action': functools.partial(QtGui.QDesktopServices.openUrl, QtCore.QUrl(url))
@@ -76,7 +74,7 @@ class InteralNode(QtCore.QObject):
     """Utility class to represent a hierarchy needed by the tree view."""
 
     def __init__(self, data, parentNode=None, parent=None):
-        super(InteralNode, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.data = data
         self._children = []
         self._parentNode = parentNode
@@ -135,7 +133,7 @@ class InteralNode(QtCore.QObject):
 
 class ProxyModel(QtCore.QSortFilterProxyModel):
     def __init__(self, parent=None):
-        super(ProxyModel, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         self.user_filter = -1
         self.asset_filter = -1
 
@@ -153,16 +151,15 @@ class ProxyModel(QtCore.QSortFilterProxyModel):
         filter string.
 
         """
-        if not parent.isValid():
-            return True
-
         if self.user_filter == -1 and self.asset_filter == -1:
             return True
 
-        node = parent.internalPointer()
-        if not node:
-            return True
-        entity = node.data['children'][source_row]['entity']
+        index = self.sourceModel().index(source_row, 0, parent=parent)
+        if not index.isValid():
+            return
+
+        node = index.internalPointer()
+        entity = node.data
 
         if all((self._asset_filter_accepts(entity), self._user_filter_accepts(entity))):
             return True
@@ -171,28 +168,53 @@ class ProxyModel(QtCore.QSortFilterProxyModel):
     def _asset_filter_accepts(self, entity):
         if self.asset_filter == -1:
             return True
-        elif self.asset_filter >= 0 and 'entity' in entity and entity['entity']:
-            if self.asset_filter == entity['entity']['id']:
-                return True
-        return False
+
+        if entity['entity']['type'] == 'Shot' or entity['entity']['type'] == 'Asset':
+            if entity['entity']['id'] != self.asset_filter:
+                return False
+        elif entity['entity']['type'] == 'Task':
+            if not entity['entity']['entity']:
+                return False
+            if entity['entity']['entity'] and entity['entity']['entity']['id'] != self.asset_filter:
+                return False
+
+        return True
 
     def _user_filter_accepts(self, entity):
-        if self.user_filter == -2 and (
-                'task_assignees' not in entity or not entity['task_assignees']):
+        if self.user_filter == -1:
             return True
-        elif self.user_filter == -1:
-            return True
-        elif self.user_filter >= 0 and 'task_assignees' in entity and entity[
-            'task_assignees']:
-            for user in entity['task_assignees']:
-                if self.user_filter == user['id']:
+
+        if entity['entity']['type'] == 'Shot' or entity['entity']['type'] == 'Asset':
+            if self.user_filter == -2:
+                return True
+
+            if [f for f in entity['children'] if
+                [j for j in f['entity']['task_assignees'] if j['id'] == self.user_filter]]:
+                return True
+            else:
+                return False
+        elif entity['entity']['type'] == 'Task':
+            if entity['entity']['type'] == 'Task':
+                if self.user_filter == -2 and (
+                        'task_assignees' not in entity['entity'] or not entity['entity']['task_assignees']):
                     return True
-        return False
+                elif self.user_filter == -2 and 'task_assignees' in entity['entity'] and entity['entity'][
+                    'task_assignees']:
+                    return False
+
+                if self.user_filter >= 0 and 'task_assignees' not in entity['entity'] or not entity['entity'][
+                    'task_assignees']:
+                    return False
+                if self.user_filter >= 0 and 'task_assignees' in entity['entity'] and entity['entity'][
+                    'task_assignees']:
+                    if not any([f for f in entity['entity']['task_assignees'] if f['id'] == self.user_filter]):
+                        return False
+        return True
 
 
 class TaskModel(QtCore.QAbstractItemModel):
     def __init__(self, entities, parent=None):
-        super(TaskModel, self).__init__(parent=parent)
+        super().__init__(parent=parent)
 
         self.task_icon = None
         self.step_icon = None
@@ -214,22 +236,20 @@ class TaskModel(QtCore.QAbstractItemModel):
     @common.error
     @common.debug
     def init_icons(self):
-        pixmap1 = images.rsc_pixmap(
-            'sg', common.color(common.color_green), common.size(common.size_margin))
-        pixmap2 = images.rsc_pixmap(
-            'check', common.color(common.color_selected_text),
-            common.size(common.size_margin))
+        pixmap1 = images.rsc_pixmap('sg', common.color(common.color_green), common.size(common.size_margin))
+        pixmap2 = images.rsc_pixmap('check', common.color(common.color_selected_text), common.size(common.size_margin))
         icon = QtGui.QIcon()
         icon.addPixmap(pixmap1, mode=QtGui.QIcon.Normal)
         icon.addPixmap(pixmap2, mode=QtGui.QIcon.Active)
         icon.addPixmap(pixmap2, mode=QtGui.QIcon.Selected)
         self.task_icon = icon
 
-        self.step_icon = QtGui.QIcon(images.rsc_pixmap(
-            'sg', common.color(common.color_blue), common.size(common.size_margin)))
+        self.step_icon = QtGui.QIcon(
+            images.rsc_pixmap('sg', common.color(common.color_blue), common.size(common.size_margin))
+        )
 
     def entities_to_nodes(self):
-        """Builds the internal node hierarchy base on the given entity data.
+        """Builds the internal node hierarchy based entity data.
 
         """
 
@@ -240,20 +260,30 @@ class TaskModel(QtCore.QAbstractItemModel):
 
         data = {}
         for entity in self.entities:
-
-            # Add steps
-            if 'step' in entity and entity['step']:
-                k = entity['step']['name']
+            # Add assets
+            if 'entity' in entity and entity['entity'] and 'name' in entity['entity']:
+                k = entity['entity']['name']
                 if k not in data:
                     data[k] = {
-                        'entity': entity['step'],
+                        'entity': entity['entity'],
+                        'children': [],
+                    }
+            elif 'entity' in entity and entity['entity'] and 'code' in entity['entity']:
+                k = entity['entity']['code']
+                if k not in data:
+                    data[k] = {
+                        'entity': entity['entity'],
                         'children': [],
                     }
             else:
-                k = NoStepName
+                k = NoEntity
                 if k not in data:
                     data[k] = {
-                        'entity': {'type': 'Step', 'id': -1, 'name': NoStepName},
+                        'entity': {
+                            'type': NoEntity,
+                            'id': -1,
+                            'name': NoEntity
+                        },
                         'children': [],
                     }
 
@@ -353,12 +383,10 @@ class TaskModel(QtCore.QAbstractItemModel):
             return common.color(common.color_disabled_text)
 
         if role == QtCore.Qt.FontRole and column == 0:
-            font, _ = common.font_db.bold_font(
-                common.size(common.size_font_medium))
+            font, _ = common.font_db.bold_font(common.size(common.size_font_medium))
             return font
         if role == QtCore.Qt.FontRole and column > 0:
-            font, _ = common.font_db.medium_font(
-                common.size(common.size_font_small))
+            font, _ = common.font_db.medium_font(common.size(common.size_font_small))
             return font
 
         if role == QtCore.Qt.SizeHintRole:
@@ -367,12 +395,21 @@ class TaskModel(QtCore.QAbstractItemModel):
         if role == QtCore.Qt.DecorationRole and column == 0:
             return self.task_icon
 
-    def step_entity(self, column, entity, role):
+    def asset_entity(self, column, entity, role):
         if column != 0:
             return None
 
         if role == QtCore.Qt.DisplayRole:
-            return entity['name']
+            if entity['type'] == NoEntity:
+                return entity['name']
+            elif 'name' in entity and entity['name']:
+                return f'{entity["type"]} {entity["name"]}'
+            elif 'code' in entity and entity['code']:
+                return f'{entity["type"]} {entity["code"]}'
+            elif 'id' in entity and entity['id']:
+                return f'{entity["type"]} {entity["id"]}'
+            else:
+                return 'Error getting name'
 
         if role == QtCore.Qt.ForegroundRole:
             return common.color(common.color_blue)
@@ -380,7 +417,9 @@ class TaskModel(QtCore.QAbstractItemModel):
         if role == QtCore.Qt.SizeHintRole:
             return QtCore.QSize(0, common.size(common.size_row_height) * 0.66)
 
-        if role == QtCore.Qt.DecorationRole and entity['name'] != NoStepName:
+        if role == QtCore.Qt.DecorationRole:
+            if 'name' in entity and entity['name'] == NoEntity:
+                return None
             return self.step_icon
 
     def data(self, index, role):
@@ -395,8 +434,8 @@ class TaskModel(QtCore.QAbstractItemModel):
 
         if entity['type'] == 'Task':
             return self.task_entity(column, entity, role)
-        elif entity['type'] == 'Step':
-            return self.step_entity(column, entity, role)
+        elif entity['type'] == 'Asset' or entity['type'] == 'Shot' or entity['type'] == NoEntity:
+            return self.asset_entity(column, entity, role)
 
     def flags(self, index, parent=QtCore.QModelIndex()):
         node = index.internalPointer()
@@ -404,8 +443,6 @@ class TaskModel(QtCore.QAbstractItemModel):
 
         if entity['type'] == 'Task':
             return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable
-        if entity['type'] == 'Step':
-            return QtCore.Qt.ItemIsEnabled
         return QtCore.Qt.ItemIsEnabled
 
     def headerData(self, section, orientation, role):
@@ -442,12 +479,12 @@ class TaskView(QtWidgets.QTreeView):
     """
 
     def __init__(self, parent=None):
-        super(TaskView, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         if not self.parent():
             common.set_stylesheet(self)
 
         self.setHeaderHidden(False)
-        self.setSortingEnabled(False)
+        self.setSortingEnabled(True)
         self.setItemsExpandable(True)
         self.setRootIsDecorated(True)
         self.setIndentation(common.size(common.size_margin))
@@ -475,14 +512,15 @@ class TaskView(QtWidgets.QTreeView):
             return
 
         fixed = common.size(common.size_width) * 0.3
-        w = (self.rect().width() - fixed) / \
-            (self.model().columnCount(QtCore.QModelIndex()) - 1)
+        w = (self.rect().width() - fixed) / (self.model().columnCount(QtCore.QModelIndex()) - 1)
         for x in range(self.model().columnCount(QtCore.QModelIndex())):
             if x == 0:
                 self.setColumnWidth(x, fixed)
                 continue
             else:
                 self.setColumnWidth(x, w)
+
+        self.sortByColumn(0, QtCore.Qt.AscendingOrder)
 
     def set_root_node(self, node):
         if not node.children:
@@ -521,7 +559,7 @@ class TaskPicker(QtWidgets.QDialog):
     sgEntitySelected = QtCore.Signal(dict)
 
     def __init__(self, parent=None):
-        super(TaskPicker, self).__init__(parent=parent)
+        super().__init__(parent=parent)
         if not self.parent():
             common.set_stylesheet(self)
 
@@ -542,9 +580,7 @@ class TaskPicker(QtWidgets.QDialog):
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(o)
 
-        grp = base.add_section(
-            'sg', 'Select Task', self, color=None
-        )
+        grp = base.add_section('sg', 'Select Task', self, color=None)
 
         self.user_editor = base_widgets.BaseComboBox(parent=self)
         self.user_editor.setDuplicatesEnabled(False)
@@ -571,30 +607,24 @@ class TaskPicker(QtWidgets.QDialog):
 
     def _connect_signals(self):
         self.user_editor.currentIndexChanged.connect(
-            lambda: self.task_editor.model().set_user_filter(
-                self.user_editor.currentData()))
-        self.user_editor.currentIndexChanged.connect(
-            lambda x: self.task_editor.model().invalidateFilter())
-
-        self.user_editor.currentTextChanged.connect(
-            functools.partial(common.save_selection, self.user_editor)
+            lambda: self.task_editor.model().set_user_filter(self.user_editor.currentData())
         )
+        self.user_editor.currentIndexChanged.connect(lambda x: self.task_editor.model().invalidateFilter())
+
+        self.user_editor.currentTextChanged.connect(functools.partial(common.save_selection, self.user_editor))
 
         self.asset_editor.currentIndexChanged.connect(
-            lambda: self.task_editor.model().set_asset_filter(
-                self.asset_editor.currentData()))
-        self.asset_editor.currentIndexChanged.connect(
-            lambda x: self.task_editor.model().invalidateFilter())
-
-        self.asset_editor.currentTextChanged.connect(
-            functools.partial(common.save_selection, self.asset_editor)
+            lambda: self.task_editor.model().set_asset_filter(self.asset_editor.currentData())
         )
+        self.asset_editor.currentIndexChanged.connect(lambda x: self.task_editor.model().invalidateFilter())
+        self.asset_editor.currentIndexChanged.connect(self.task_editor.expandAll)
+
+        self.asset_editor.currentTextChanged.connect(functools.partial(common.save_selection, self.asset_editor))
 
         self.task_editor.selectionModel().currentChanged.connect(
             functools.partial(common.save_selection, self.task_editor)
         )
-        self.ok_button.clicked.connect(
-            lambda: self.done(QtWidgets.QDialog.Accepted))
+        self.ok_button.clicked.connect(lambda: self.done(QtWidgets.QDialog.Accepted))
 
         self.task_editor.doubleClicked.connect(self.double_clicked)
 
@@ -603,6 +633,7 @@ class TaskPicker(QtWidgets.QDialog):
     def init_items(self):
         sg_properties = shotgun.ShotgunProperties(active=True)
         sg_properties.init()
+
         if not sg_properties.verify(bookmark=True):
             raise ValueError('Bookmark not configured.')
 
@@ -610,13 +641,12 @@ class TaskPicker(QtWidgets.QDialog):
 
         with shotgun.connection(sg_properties) as sg:
             entities = sg.find(
-                'Task',
-                [
-                    ['project', 'is', {'type': 'Project',
-                                       'id': sg_properties.bookmark_id}]
-                ],
+                'Task', [['project', 'is', {
+                    'type': 'Project',
+                    'id': sg_properties.bookmark_id
+                }], ],
                 fields=shotgun.fields['Task']
-            )
+                )
 
         model = TaskModel(entities, parent=self)
 
@@ -633,8 +663,22 @@ class TaskPicker(QtWidgets.QDialog):
 
         self._connect_signals()
 
-        common.restore_selection(self.user_editor)
         common.restore_selection(self.asset_editor)
+        self.select_asset()
+
+    def select_asset(self):
+        asset = common.active('asset')
+        if not asset:
+            return
+        for n in range(self.asset_editor.count()):
+            index = self.asset_editor.model().index(n, 0)
+            if not index.data(QtCore.Qt.DisplayRole):
+                continue
+            if index.data(QtCore.Qt.DisplayRole).lower() in common.active('asset', path=True).lower():
+                self.asset_editor.setCurrentText(index.data(QtCore.Qt.DisplayRole))
+                break
+
+        common.restore_selection(self.user_editor)
 
     def init_users(self, entities):
         self.user_editor.clear()
@@ -671,23 +715,23 @@ class TaskPicker(QtWidgets.QDialog):
     @common.debug
     def done(self, result):
         if result == QtWidgets.QDialog.Rejected:
-            super(TaskPicker, self).done(result)
+            super().done(result)
             return
 
         index = common.get_selected_index(self.task_editor)
         if not index.isValid():
             self.sgEntitySelected.emit(None)
-            super(TaskPicker, self).done(result)
+            super().done(result)
             return
 
         entity = index.data(QtCore.Qt.UserRole)
         if not entity:
             self.sgEntitySelected.emit(None)
-            super(TaskPicker, self).done(result)
+            super().done(result)
             return
 
         self.sgEntitySelected.emit(entity)
-        super(TaskPicker, self).done(result)
+        super().done(result)
 
     def double_clicked(self, index):
         if not index.isValid():
@@ -707,7 +751,4 @@ class TaskPicker(QtWidgets.QDialog):
         """Returns a size hint.
 
         """
-        return QtCore.QSize(
-            common.size(common.size_width) * 1.5,
-            common.size(common.size_height) * 1.3
-        )
+        return QtCore.QSize(common.size(common.size_width) * 1.5, common.size(common.size_height) * 1.3)

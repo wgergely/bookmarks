@@ -38,6 +38,7 @@ class LauncherGallery(ui.GalleryWidget):
 
     def __init__(self, parent=None):
         super().__init__(
+            'Applications',
             item_height=common.size(common.size_row_height) * 4,
             parent=parent
         )

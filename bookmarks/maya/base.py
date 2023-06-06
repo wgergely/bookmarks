@@ -645,7 +645,7 @@ def capture_viewport_destination():
     dest = CAPTURE_DESTINATION.format(
         workspace=workspace,
         capture_folder=DEFAULT_CAPTURE_DIR,
-        scene=scene.baseName()
+        scene=scene.completeBaseName()
     )
     return DEFAULT_CAPTURE_DIR, workspace, dest
 

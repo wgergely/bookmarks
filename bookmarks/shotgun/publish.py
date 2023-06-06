@@ -114,6 +114,7 @@ SECTIONS = {
                     'placeholder': '',
                     'description': 'Select a ShotGrid Task.',
                     'button': 'Visit',
+                    'button2': 'Pick',
                 },
                 1: {
                     'name': 'Publish Status',
@@ -268,50 +269,70 @@ class PublishWidget(base.BasePropertyEditor):
         mov_tc_path = ''
 
         # If the input is a valid image sequence, check if there is a movie
-        if is_collapsed and ext.lower() in IMAGE_FORMATS:
-            seq = common.get_sequence(common.get_sequence_start_path(v))
-            if seq:
-                fstyle_sequence = f'{is_collapsed.group(1)}{f"%0{len(seq.group(2))}d"}{is_collapsed.group(3)}'
-                log.success(f'Image sequence detected: {fstyle_sequence}')
+        seq = common.get_sequence(common.get_sequence_start_path(v))
+        if is_collapsed and ext.lower() in IMAGE_FORMATS and seq:
+            fstyle_sequence = f'{is_collapsed.group(1)}{f"%0{len(seq.group(2))}d"}{is_collapsed.group(3)}'
+            log.success(f'Image sequence detected: {fstyle_sequence}')
 
-                for _ext in MOVIE_FORMATS:
-                    _mov_path = f'{seq.group(1).strip("._- ")}{seq.group(3)}.{_ext}'
+            for _ext in MOVIE_FORMATS:
+                if seq.group(3).endswith('_tc'):
+                    mov_path = f'{seq.group(1).strip("._- ")}{seq.group(3).replace("_tc", "")}.{_ext}'
+                    mov_tc_path = f'{seq.group(1).strip("._- ")}{seq.group(3)}.{_ext}'
+                else:
+                    mov_path = f'{seq.group(1).strip("._- ")}{seq.group(3)}.{_ext}'
+                    mov_tc_path = f'{seq.group(1).strip("._- ")}{seq.group(3)}_tc.{_ext}'
 
-                    if QtCore.QFileInfo(_mov_path).exists():
-                        mov_path = _mov_path
-                        log.success(f'Movie detected:  {mov_path}')
+                if not QtCore.QFileInfo(mov_path).exists():
+                    mov_path = ''
+                else:
+                    log.success(f'Movie detected:  {mov_path}')
 
-                    _mov_path = f'{seq.group(1).strip("._- ")}{seq.group(3)}_tc.{_ext}'
-                    if QtCore.QFileInfo(_mov_path).exists():
-                        mov_tc_path = _mov_path
-                        log.success(f'Movie (TC) detected:  {mov_tc_path}')
+                if not QtCore.QFileInfo(mov_tc_path).exists():
+                    mov_tc_path = ''
+                else:
+                    log.success(f'Movie (tc) detected:  {mov_tc_path}')
+
+                if mov_path or mov_tc_path:
+                    break
 
         # If the input is a movie check for image sequence and TC
         elif not is_collapsed and ext.lower() in MOVIE_FORMATS:
-            mov_path = file_info.filePath()
-            log.success(f'Movie detected:  {mov_path}')
 
-            mov_tc_path = f'{file_info.path()}/{file_info.baseName()}_tc.{file_info.suffix()}'
-            if QtCore.QFileInfo(mov_tc_path).exists():
-                log.success(f'Movie (TC) detected:  {mov_tc_path}')
+            if '_tc.' in file_info.fileName():
+                mov_tc_path = file_info.filePath()
+                mov_path = mov_tc_path.replace('_tc.', '.')
+            else:
+                mov_tc_path = f'{file_info.path()}/{file_info.baseName()}_tc.{file_info.suffix()}'
+                mov_path = file_info.filePath()
+
+            if not QtCore.QFileInfo(mov_path).exists():
+                mov_path = ''
+            else:
+                log.success(f'Movie detected:  {mov_path}')
+            if not QtCore.QFileInfo(mov_tc_path).exists():
+                mov_tc_path = ''
+            else:
+                log.success(f'Movie (tc) detected:  {mov_path}')
 
             # Check if there is an image sequence
             for entry in os.scandir(file_info.path()):
-                if (
-                        entry.is_file() and entry.name.startswith(file_info.baseName()) and
-                        entry.name.split('.')[-1].lower() in IMAGE_FORMATS
-                ):
-                    print(entry.path)
-                    seq = common.get_sequence(entry.path.replace('\\', '/'))
-                    if seq:
-                        fstyle_sequence = f'{seq.group(1)}{f"%0{len(seq.group(2))}d"}{seq.group(3)}.{seq.group(4)}'
-                        log.success(f'Image sequence detected: {fstyle_sequence}')
-                        break
+                if not entry.is_file():
+                    continue
+                if QtCore.QFileInfo(entry.path).suffix().lower() not in IMAGE_FORMATS:
+                    continue
+                seq = common.get_sequence(entry.path.replace('\\', '/'))
+                if not seq:
+                    continue
+                if '_tc' in seq.group(3):
+                    fstyle_sequence = f'{seq.group(1)}{f"%0{len(seq.group(2))}d"}{seq.group(3).replace("_tc", "")}.{seq.group(4)}'
+                else:
+                    fstyle_sequence = f'{seq.group(1)}{f"%0{len(seq.group(2))}d"}{seq.group(3)}.{seq.group(4)}'
+                log.success(f'Image sequence detected: {fstyle_sequence}')
+                break
 
         # Prefer TC over non-TC
-        mov_path = mov_tc_path if mov_tc_path else mov_path
         self.version_sequence_editor.setText(fstyle_sequence)
-        self.version_movie_editor.setText(mov_path)
+        self.version_movie_editor.setText(mov_tc_path if mov_tc_path else mov_path)
 
     @property
     def server(self):
@@ -493,12 +514,15 @@ class PublishWidget(base.BasePropertyEditor):
         if task_entity and k in task_entity and task_entity[k]:
             if len(task_entity[k]) > 1:
                 items = [f['name'] if 'name' in f else f['id'] for f in task_entity[k]]
-                item = QtWidgets.QInputDialog.getItems(
+                v, res = QtWidgets.QInputDialog.getItem(
                     self, 'Select User', 'Users:', items, current=0,
                     editable=False
                 )
-                idx = items.index(item)
-                user_entity = task_entity[k][idx]
+                if not res:
+                    return
+                if not v:
+                    return
+                user_entity = task_entity[k][items.index(v)]
             else:
                 user_entity = task_entity[k][0]
         else:
@@ -611,6 +635,13 @@ class PublishWidget(base.BasePropertyEditor):
 
         url = shotgun.ENTITY_URL.format(domain=sg_properties.domain, entity_type=entity_type, entity_id=entity_id)
         QtGui.QDesktopServices.openUrl(QtCore.QUrl(url))
+
+
+    @QtCore.Slot()
+    @common.error
+    @common.debug
+    def task_entity_button2_clicked(self):
+        sg_actions.show_task_picker()
 
     @QtCore.Slot()
     @common.error

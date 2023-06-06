@@ -115,6 +115,7 @@ SECTIONS = {
         'maya_export/keep_open',
     ),
     'publish': (
+        'publish/archive_existing',
         'publish/template',
         'publish/task',
         'publish/copy_path',

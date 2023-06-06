@@ -444,8 +444,7 @@ class TaskEditor(shotgun.EntityComboBox):
             if not _entity:
                 continue
 
-            k = 'content'
-
+            k = 'id'
             if k in entity and entity[k] and k in _entity and _entity[k]:
                 if entity[k] == _entity[k]:
                     self.setCurrentIndex(idx)

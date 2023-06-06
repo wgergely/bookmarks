@@ -176,6 +176,7 @@ class FileItemViewContextMenu(contextmenu.BaseContextMenu):
             self.sg_rv_menu()
         if self.index.flags() & QtCore.Qt.ItemIsEnabled:
             self.convert_menu()
+        self.separator()
         self.add_file_menu()
         if self.index.flags() & QtCore.Qt.ItemIsEnabled:
             self.delete_selected_files_menu()

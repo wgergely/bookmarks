@@ -320,6 +320,7 @@ class FFMpegWidget(base.BasePropertyEditor):
                 size=self.ffmpeg_size_editor.currentData(),
                 timecode=self.ffmpeg_add_timecode_editor.isChecked(),
                 timecode_preset=timecode_preset,
+                output_path=destination,
                 parent=self
             )
         except:
@@ -338,10 +339,6 @@ class FFMpegWidget(base.BasePropertyEditor):
         if not QtCore.QFileInfo(mov).exists():
             pbar.close()
             raise RuntimeError(f'Could not find {mov}')
-
-        if not QtCore.QFile.rename(mov, destination):
-            pbar.close()
-            raise RuntimeError(f'Failed copy {mov} to {destination}')
 
         common.widget(common.FileTab).show_item(
             destination,

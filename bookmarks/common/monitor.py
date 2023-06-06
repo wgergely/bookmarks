@@ -73,6 +73,8 @@ class FileWatcher(QtCore.QFileSystemWatcher):
 
     def _file_item_updated(self):
         p = common.active('task', path=True)
+        if not p:
+            return
         for v in self.changed_items.copy():
             if p in v:
                 model = common.source_model(common.FileTab)

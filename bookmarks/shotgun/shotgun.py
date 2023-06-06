@@ -518,15 +518,34 @@ class EntityModel(QtCore.QAbstractItemModel):
             return v
         if not isinstance(v, dict):
             return None
+
         if 'name' in v:
-            return v['name']
-        if 'code' in v:
-            return v['code']
-        if 'content' in v:
-            return v['content']
-        if 'type' in v and 'id' in v:
-            return f'{v["type"]}{v["id"]}'
-        return None
+            name = v['name']
+        elif 'code' in v:
+            name = v['code']
+        elif 'content' in v:
+            name = v['content']
+        elif 'type' in v:
+            name = f'{v["type"]}'
+        elif 'id' in v:
+            name = f'id{v["id"]}'
+        else:
+            name = str(v)
+
+        if 'entity' in v and v['entity']:
+            if 'name' in v['entity']:
+                _name = v['entity']['name']
+            elif 'code' in v['entity']:
+                _name = v['entity']['code']
+            elif 'content' in v['entity']:
+                _name = v['entity']['content']
+            elif 'type' in v['entity']:
+                _name = f'{v["entity"]["type"]}'
+            else:
+                _name = str(v['entity'])
+            name = f'{name}  |  {_name}'
+
+        return name
 
     def _icon(self, v):
         if self._waiting_for_data:

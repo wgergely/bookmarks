@@ -35,6 +35,8 @@ class ThumbnailLibrary(ui.GalleryWidget):
     """Editor used to show a list of predefined thumbnail icons.
 
     """
+    def __init__(self, parent=None):
+        super().__init__('Pick a Thumbnail', parent=parent)
 
     def item_generator(self):
         """Yields a list of predefined thumbnail icons.

@@ -179,7 +179,7 @@ def save_warning(*args):
     )
     scene_file = QtCore.QFileInfo(cmds.file(query=True, expandName=True))
 
-    if scene_file.baseName().lower() == 'untitled':
+    if scene_file.completeBaseName().lower() == 'untitled':
         return
 
     if workspace_info.path().lower() not in scene_file.filePath().lower():
@@ -490,7 +490,7 @@ def capture_viewport(size=1.0):
     path = base.CAPTURE_FILE.format(
         workspace=workspace,
         capture_folder=capture_folder,
-        scene=scene_info.baseName(),
+        scene=scene_info.completeBaseName(),
         frame='{}'.format(int(cmds.playbackOptions(q=True, minTime=True))).zfill(
             base.DefaultPadding
         ),
@@ -574,7 +574,7 @@ def publish_capture(workspace, capture_folder, scene_info, ext):
         source = base.CAPTURE_FILE.format(
             workspace=workspace,
             capture_folder=capture_folder,
-            scene=scene_info.baseName(),
+            scene=scene_info.completeBaseName(),
             frame=frame,
             ext=ext
         )

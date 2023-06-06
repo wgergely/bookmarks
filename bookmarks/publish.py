@@ -35,7 +35,7 @@ def close():
         common.publish_widget.close()
         common.publish_widget.deleteLater()
     except:
-        log.error('Failed to close publish widget')
+        pass
     common.publish_widget = None
 
 
@@ -308,7 +308,6 @@ SECTIONS = {
                     'widget': TaskComboBox,
                     'placeholder': None,
                     'description': 'Select the publish template',
-                    'button1': 'Custom',
                 },
                 2: {
                     'name': 'Description',
@@ -333,11 +332,21 @@ SECTIONS = {
         },
     },
     2: {
-        'name': 'Post-Publish',
+        'name': 'Settings',
         'icon': None,
         'color': common.color(common.color_dark_background),
         'groups': {
             0: {
+                0: {
+                    'name': 'Archive existing files',
+                    'key': 'publish/archive_existing',
+                    'validator': None,
+                    'widget': functools.partial(QtWidgets.QCheckBox, 'Enable'),
+                    'placeholder': None,
+                    'description': 'Enable will archive all existing files in the destination folder.',
+                },
+            },
+            1: {
                 0: {
                     'name': 'Copy Path to Clipboard',
                     'key': 'publish/copy_path',
@@ -472,7 +481,7 @@ class PublishWidget(base.BasePropertyEditor):
                 s = s.replace(task_candidates[0], '')
                 s = _strip(s)
 
-        if s and len(s) >= 3 and 'main' not in s and 'master' not in s and '_' not in s:
+        if s and len(s) >= 3 and 'main' not in s and '_' not in s:
             mbox = ui.MessageBox(
                 f'Found a possible element name. Is it correct?',
                 f'"{s}"',
@@ -575,7 +584,7 @@ class PublishWidget(base.BasePropertyEditor):
 
         kwargs['task'] = self.publish_task_editor.currentData()
         kwargs['element'] = self.element_editor.text()
-        kwargs['element'] = kwargs['element'] if kwargs['element'] else 'master'
+        kwargs['element'] = kwargs['element'] if kwargs['element'] else 'main'
 
         # Widget state
         kwargs['publish_template'] = self.publish_template_editor.currentData()
@@ -633,7 +642,6 @@ class PublishWidget(base.BasePropertyEditor):
             self.make_videos(destination, jpegs, payload=payload)
             self.write_manifest(destination, payload=payload)
             self.post_publish(destination, kwargs)
-
             self.post_teams_message(destination, kwargs, payload=payload)
             return True
         except:
@@ -667,6 +675,9 @@ class PublishWidget(base.BasePropertyEditor):
         """Prepare the destination directory for publishing.
 
         """
+        if not common.settings.value('publish/archive_existing', False):
+            return
+
         self.progress_widget.setLabelText('Preparing publish...')
         self.progress_widget.setMinimum(0)
         self.progress_widget.setMaximum(2)

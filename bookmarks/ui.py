@@ -162,7 +162,7 @@ class MessageBox(QtWidgets.QDialog):
         )
         label.setMinimumWidth(common.size(common.size_width) * 0.66)
         label.setMaximumWidth(common.size(common.size_width))
-        label.setStyleSheet('font-size: {}px;'.format(size))
+        label.setStyleSheet(f'font-size: {size}px;')
         return label
 
     def _get_row(self, vertical=False, parent=None):
@@ -1470,6 +1470,7 @@ class GalleryItem(QtWidgets.QLabel):
             parent=None
     ):
         super().__init__(parent=parent)
+
         common.check_type(label, str)
         common.check_type(data, str)
         common.check_type(thumbnail, str)
@@ -1482,13 +1483,17 @@ class GalleryItem(QtWidgets.QLabel):
         self._height = height
 
         self.setAlignment(QtCore.Qt.AlignCenter)
-        self.setScaledContents(True)
+        self.setScaledContents(False)
         self.setSizePolicy(
             QtWidgets.QSizePolicy.MinimumExpanding,
             QtWidgets.QSizePolicy.MinimumExpanding,
         )
 
         self.setMinimumSize(QtCore.QSize(self._height, self._height))
+
+    def resizeEvent(self, event):
+        h = self.sizeHint().height()
+        self.setFixedSize(QtCore.QSize(h, h))
 
     def enterEvent(self, event):
         self.update()
@@ -1578,8 +1583,7 @@ class GalleryWidget(QtWidgets.QDialog):
     itemSelected = QtCore.Signal(str)
 
     def __init__(
-            self, columns=5, item_height=common.size(common.size_row_height) * 2,
-            label='Pick an item',
+            self, label, columns=5, item_height=common.size(common.size_row_height) * 2,
             parent=None
     ):
         super().__init__(parent=parent)
@@ -1593,7 +1597,7 @@ class GalleryWidget(QtWidgets.QDialog):
         self.setAttribute(QtCore.Qt.WA_NoSystemBackground)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
         self.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-        self.setWindowTitle('Select Item')
+        self.setWindowOpacity(0.8)
 
         self._create_ui()
         self.init_data()
@@ -1603,34 +1607,24 @@ class GalleryWidget(QtWidgets.QDialog):
             common.set_stylesheet(self)
 
         QtWidgets.QVBoxLayout(self)
-        o = common.size(common.size_margin)
+        o = common.size(common.size_margin) * 2
 
         self.layout().setContentsMargins(o, o, o, o)
         self.layout().setSpacing(0)
-        self.layout().setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
-        self.setWindowFlags(
-            self.windowFlags() | QtCore.Qt.WindowStaysOnTopHint
-        )
+        self.layout().setAlignment(QtCore.Qt.AlignCenter)
+        self.setWindowFlags(self.windowFlags() | QtCore.Qt.WindowStaysOnTopHint)
 
-        row = add_row(
-            None, height=common.size(common.size_row_height), padding=None, parent=self
-        )
         label = PaintedLabel(
             self._label,
             color=common.color(common.color_text),
             size=common.size(common.size_font_large),
             parent=self
         )
-        row.layout().addWidget(label)
-
-        widget = QtWidgets.QWidget(parent=self)
-        widget.setStyleSheet(
-            f'background-color: {common.rgb(common.color_separator)}'
-        )
+        self.layout().addWidget(label)
 
         _width = (
                 (common.size(common.size_indicator) * 2) +
-                (common.size(common.size_margin) * 2) +
+                (common.size(common.size_margin) * 4) +
                 (common.size(common.size_indicator) * (self.columns - 1)) +
                 self._item_height * self.columns
         )
@@ -1640,36 +1634,34 @@ class GalleryWidget(QtWidgets.QDialog):
 
         self.setMinimumHeight(
             (common.size(common.size_indicator) * 2) +
-            (common.size(common.size_margin) * 2) +
+            (common.size(common.size_margin) * 4) +
             self._item_height
         )
         self.setMaximumHeight(
             (common.size(common.size_indicator) * 2) +
-            (common.size(common.size_margin) * 2) +
+            (common.size(common.size_margin) * 4) +
             (common.size(common.size_indicator) * 9) +
             (self._item_height * 10)
         )
 
-        QtWidgets.QGridLayout(widget)
-        widget.layout().setAlignment(QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
-        widget.layout().setContentsMargins(
-            common.size(common.size_indicator),
-            common.size(common.size_indicator),
-            common.size(common.size_indicator),
-            common.size(common.size_indicator)
+        widget = QtWidgets.QWidget(parent=self)
+        widget.setStyleSheet(
+            f'background-color: {common.rgb(common.color_separator)};'
         )
+
+        QtWidgets.QGridLayout(widget)
+        widget.layout().setAlignment(QtCore.Qt.AlignCenter)
+        widget.layout().setContentsMargins(0, 0, 0, 0)
         widget.layout().setSpacing(common.size(common.size_indicator))
-        widget.setFocusPolicy(QtCore.Qt.StrongFocus)
 
         self.scroll_area = QtWidgets.QScrollArea(parent=self)
+        self.scroll_area.setStyleSheet('border:none;')
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setWidget(widget)
+
+        # self.layout().addSpacing(common.size(common.size_margin))
         self.layout().addWidget(self.scroll_area, 1)
 
-        self.setFocusPolicy(QtCore.Qt.NoFocus)
-        self.scroll_area.setFocusPolicy(QtCore.Qt.NoFocus)
-        self.scroll_area.setStyleSheet('border:none;')
-        self.scroll_area.setFocusProxy(widget)
         self.setFocusProxy(widget)
 
     def init_data(self):
@@ -1719,12 +1711,36 @@ class GalleryWidget(QtWidgets.QDialog):
         )
         painter.end()
 
+    def focusOutEvent(self, event):
+        self.accept()  # or self.reject()
+
     def showEvent(self, event):
         """Show event handler.
 
         """
         if not self.parent():
             common.center_window(self)
+
+        self.anim = QtCore.QPropertyAnimation(self, b'windowOpacity')
+        self.anim.setDuration(500)  # Animation duration in milliseconds
+        self.anim.setStartValue(0)
+        self.anim.setEndValue(0.95)
+        self.anim.setEasingCurve(QtCore.QEasingCurve.OutCubic)
+        self.anim.start()
+
+        self.scroll_area.widget().setFocus(QtCore.Qt.PopupFocusReason)
+
+    def done(self, r):
+        if r == QtWidgets.QDialog.Rejected:
+            self.anim = QtCore.QPropertyAnimation(self, b'windowOpacity')
+            self.anim.setDuration(500)  # Animation duration in milliseconds
+            self.anim.setStartValue(0.95)
+            self.anim.setEndValue(0.0)
+            self.anim.setEasingCurve(QtCore.QEasingCurve.OutCubic)
+            self.anim.start()
+            self.anim.finished.connect(lambda: super(GalleryWidget, self).done(r))
+        else:
+            super(GalleryWidget, self).done(r)
 
 
 class AbstractListModel(QtCore.QAbstractListModel):

@@ -261,6 +261,7 @@ def _get_info_label(timecode_preset, output_path, in_frame, out_frame):
     version = re.search(r'v\d{1,4}', output_path)
     version = version.group(0) if version else 'No version'
     sequence, shot = common.get_sequence_and_shot(output_path)
+
     sequence = sequence if sequence else '###'
     shot = shot if shot else '####'
 
